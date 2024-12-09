@@ -1,0 +1,158 @@
+:root {
+    --ant-primary-color: #669800;
+    --ant-link-color: #669800;
+    --ant-border-radius-base: 5px;
+    --ant-font-family: 'Inter', sans-serif;
+
+}
+
+.ant-form-item-label {
+    color: #7EC17A !important; /* Light Green label color */
+    font-weight: 500 !important;
+  }
+  
+  .ant-input, .ant-input-password {
+    border-radius: 5px !important;
+    border: 1px solid #E6E8F1 !important; /* Border color */
+    transition: all 0.3s ease !important;
+  }
+  
+  .ant-input:hover, .ant-input-password:hover {
+    border-color: #669800 !important; /* Change border color to primary color on hover */
+  }
+  
+  .ant-btn-primary {
+    background-color: #669800 !important; /* Primary button color */
+    border-color: #669800 !important; /* Border color */
+    font-weight: 600 !important;
+    transition: background-color 0.3s, border-color 0.3s !important;
+  }
+  
+  .ant-btn-primary:hover, .ant-btn-primary:focus {
+    background-color: #5C8B00 !important; /* Darker green for button on hover */
+    border-color: #5C8B00 !important; /* Darker green border */
+  }
+  
+  .ant-btn-primary:focus {
+    box-shadow: 0 0 0 2px rgba(102, 152, 0, 0.2) !important; /* Focus box-shadow */
+  }
+  
+  .ant-input:focus, .ant-input-password:focus {
+    border-color: #669800 !important; /* Primary color border on focus */
+  }
+  
+  /* Custom radio button styles */
+  .ant-radio-button-wrapper {
+    border-color: #E6E8F1 !important; /* Border color for radio buttons */
+    color: #7EC17A !important; /* Default color for radio buttons */
+  }
+  
+  .ant-radio-button-wrapper-checked {
+    background-color: #669800 !important; /* Primary color for checked radio button */
+    border-color: #669800 !important; /* Border color for checked radio button */
+    color: #FFFFFF !important; /* Text color inside checked radio button */
+  }
+  
+  .ant-radio-button-wrapper:hover {
+    border-color: #669800 !important; /* Border color on hover */
+  }
+  
+  .ant-radio-button-wrapper-checked:hover {
+    background-color: #5C8B00 !important; /* Darker green on hover of checked radio button */
+    border-color: #5C8B00 !important; /* Darker border on hover of checked radio button */
+  }
+  
+  .ant-radio-wrapper:hover .ant-radio-inner {
+    border-color: #669800 !important; /* Border color for the radio circle on hover */
+  }
+  
+  .ant-radio-checked .ant-radio-inner {
+    border-color: #669800 !important; /* Ensure the checked radio circle border color */
+    background-color: #669800 !important; /* Ensure the checked radio circle color */
+  }
+  
+  .ant-radio-inner {
+    border-color: #E6E8F1 !important; /* Default border color for radio circle */
+    background-color: #FFFFFF !important; /* Default background color for radio circle */
+  }
+  
+  /* Custom Select component styles */
+  .ant-select-selector {
+    border-radius: 5px !important;
+    border: 1px solid #E6E8F1 !important; /* Border color */
+    background-color: #FFFFFF !important; /* White background */
+    padding: 6px 12px !important;
+    transition: all 0.3s ease !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  
+  .ant-select-selector:hover {
+    border-color: #669800 !important; /* Change border color to primary color on hover */
+  }
+  
+  .ant-select-selector:focus {
+    border-color: #669800 !important; /* Primary color border on focus */
+    box-shadow: 0 0 0 2px rgba(102, 152, 0, 0.2) !important; /* Add focus effect */
+  }
+  
+  /* Override Ant Design blue focus color */
+  .ant-select-focused .ant-select-selector {
+    border-color: #669800 !important; /* Primary color */
+    box-shadow: 0 0 0 2px rgba(102, 152, 0, 0.2) !important; /* Remove blue box shadow */
+  }
+  
+  .ant-select-item-option {
+    font-family: 'Inter', sans-serif !important;
+    color: #333 !important; /* Text color for options */
+  }
+  
+  .ant-select-item-option-active,
+  .ant-select-item-option-selected {
+    background-color: #669800 !important; /* Highlight selected option with primary color */
+    color: #FFFFFF !important; /* White text color for selected option */
+  }
+  
+  .ant-select-item-option:hover {
+    background-color: #5C8B00 !important; /* Darker green on hover */
+    color: #FFFFFF !important; /* White text color on hover */
+  }
+  
+  /* Remove default Ant Design blue color when the Select is active */
+  .ant-select:not(.ant-select-customize-input):focus-within .ant-select-selector {
+    border-color: #669800 !important; /* Primary color for focus */
+    box-shadow: 0 0 0 2px rgba(102, 152, 0, 0.2) !important; /* Focus box-shadow */
+  }
+  
+  .ant-select-item-option:focus {
+    outline: none !important; /* Remove default blue outline */
+  }
+  /* Override the calendar's focus and selected date styles */
+.ant-picker-calendar .ant-picker-cell-selected {
+    background-color: #669800 !important;  /* Primary color for selected date */
+    border-color: #669800 !important;  /* Border color for selected date */
+  }
+  
+  /* Override hover effect for calendar cells */
+  .ant-picker-calendar .ant-picker-cell:hover {
+    background-color: #5C8B00 !important;  /* Hover effect color */
+  }
+  
+  /* Override today's date style */
+  .ant-picker-calendar .ant-picker-cell-today {
+    background-color: #5C8B00 !important;  /* Today's date background color */
+    color: #FFFFFF !important;  /* Today's date text color */
+  }
+  
+  /* Override the blue border color for focus state */
+  .ant-picker-calendar .ant-picker-cell-selected:focus,
+  .ant-picker-calendar .ant-picker-cell-today:focus {
+    box-shadow: 0 0 0 2px rgba(102, 152, 0, 0.2) !important; /* Custom focus box shadow */
+    border-color: #669800 !important;  /* Focus border color */
+  }
+  
+  /* Customize the hover color of event days (if any) */
+  .ant-picker-calendar .ant-picker-cell-event:hover {
+    background-color: #5C8B00 !important;
+    color: #FFFFFF !important;
+  }
+  

@@ -15,11 +15,11 @@
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 2em #669800); /* Primary color on hover */
+  filter: drop-shadow(0 0 2em #669800) !important; /* Primary color on hover */
 }
 
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafb); /* React color */
+  filter: drop-shadow(0 0 2em #61dafb) !important; /* React color */
 }
 
 /* Logo Spin Animation */
@@ -35,25 +35,33 @@
 /* Animation for no-reduced-motion preference */
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+    animation: logo-spin infinite 20s linear !important;
   }
 }
 
 /* Card Styles */
 .card {
   padding: 2em;
-  background-color: #FFFFFF; /* Card background color */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E6E8F1; /* Stroke/border color */
+  background-color: #FFFFFF !important; /* Card background color */
+  border-radius: 8px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #E6E8F1 !important; /* Stroke/border color */
 }
 
 /* Read The Docs Link */
 .read-the-docs {
-  color: #9A8406; /* Link color */
+  color: #9A8406 !important; /* Link color */
 }
 
 .read-the-docs:hover {
-  text-decoration: underline;
-  color: #669800; /* Change link color on hover to primary */
+  text-decoration: underline !important;
+  color: #669800 !important; /* Change link color on hover to primary */
+}
+
+.login-title {
+  text-align: center;
+  font-size: 24px !important;
+  font-weight: bold !important;
+  color: #669800 !important; /* Primary color */
+  margin-bottom: 20px !important;
 }

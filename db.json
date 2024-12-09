@@ -1,0 +1,49 @@
+{
+    "users": [
+      {
+        "id": 1,
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john.doe@example.com",
+        "password": "password123",
+        "role": "user",
+        "userCategory": "consumer",
+        "industry": "Agriculture",
+        "active": true,
+        "address": "123 Main St",
+        "landmark": "Central Park",
+        "mobile": "1234567890",
+        "city": "New York",
+        "state": "New York",
+        "country": "USA",
+        "pin": "10001",
+        "web": "https://johndoe.com",
+        "gender": "male",
+        "dob": "1990-01-01",
+        "createdTS": "2024-12-09T12:34:56Z"
+      },
+      {
+        "id": 2,
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "email": "jane.smith@example.com",
+        "password": "securepassword",
+        "role": "user",
+        "userCategory": "generator",
+        "industry": "",
+        "active": false,
+        "address": "456 Elm St",
+        "landmark": "Near Downtown",
+        "mobile": "9876543210",
+        "city": "San Francisco",
+        "state": "California",
+        "country": "USA",
+        "pin": "94101",
+        "web": "https://janesmith.com",
+        "gender": "female",
+        "dob": "1985-05-15",
+        "createdTS": "2024-11-30T08:22:10Z"
+      }
+    ]
+  }
+  
