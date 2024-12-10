@@ -78,11 +78,15 @@ const ConsumptionPattern = () => {
       style={{
         backgroundColor: "#F5F6FB",
         minHeight: "100vh",
+        height: "100vh", // Prevents scrolling
         padding: "20px",
         fontFamily: "'Inter', sans-serif",
+        overflow: "hidden", // Ensures no scrollbars appear
       }}
     >
-      <Row justify="center" gutter={[16, 16]}>
+      <Row justify="center" align="middle" gutter={[16, 8]} style={{ 
+        marginTop: '30px',
+        height: "100%" }}>
         <Col span={24} style={{ textAlign: "center" }}>
           <Title level={3} style={{ color: "#001529" }}>
             Your Consumption Pattern
@@ -90,10 +94,17 @@ const ConsumptionPattern = () => {
         </Col>
 
         <Col span={24} md={12} style={{ textAlign: "center" }}>
-          <Bar data={chartData} />
+          <Bar
+            data={chartData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: true,
+            }}
+            style={{ maxHeight: "200px" }}
+          />
         </Col>
 
-        <Col span={24} style={{ marginTop: "40px" }}>
+        <Col span={24}>
           <Title level={4} style={{ textAlign: "center", color: "#001529" }}>
             Matching IPP Profile
           </Title>
@@ -105,11 +116,13 @@ const ConsumptionPattern = () => {
             style={{
               backgroundColor: "#FFFFFF",
               border: "1px solid #E6E8F1",
+              overflow: "hidden",
+              marginBottom: "-2%",
             }}
           />
         </Col>
 
-        <Col span={24} style={{ textAlign: "center", marginTop: "20px" }}>
+        <Col span={24} style={{ textAlign: "center" }}>
           <Button
             type="primary"
             style={{
@@ -117,6 +130,7 @@ const ConsumptionPattern = () => {
               borderColor: "#669800",
               fontSize: "16px",
               padding: "10px 40px",
+              marginTop:'-2%',
             }}
           >
             Submit
