@@ -21,17 +21,19 @@ const WhatWeOffer = () => {
         <div
             style={{
                 padding: '50px',
-                backgroundColor: '#F5F6FB',
-                background: 'linear-gradient(to right, #F5F6FB ,#669800)', // Linear gradient from primary to link color
+                backgroundColor: '#F5F6FB', // Page background
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 height: '100vh',
                 color: 'black', // Text color for better contrast
+                marginTop: '50px'
             }}
         >
             <div
                 style={{
-                    backgroundColor: '#F5F6FB', // Page background
+     
+                    backgroundColor: '#F5F6FB',
+                background: 'linear-gradient(to right, #F5F6FB ,#c4d4a5)', // Linear gradient from primary to link color
                     padding: '40px',
                     borderRadius: '10px',
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
@@ -116,7 +118,7 @@ const WhatWeOffer = () => {
                 <div style={{ textAlign: 'center', marginTop: '50px' }}>
                     <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Do you know?</h2>
                     <p style={{ fontSize: '1.5rem', marginBottom: '30px' }}>
-                        The total amount you have saved: <span style={{ fontWeight: 'bold', color: '#669800' }}>$1,250,000</span>
+                        The total amount consumers have saved: <span style={{ fontWeight: 'bold', color: '#669800' }}>$1,250,000</span>
                     </p>
                 </div>
 

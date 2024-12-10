@@ -1,3 +1,8 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #F5F6FB;
+}
+
 :root {
     --ant-primary-color: #669800;
     --ant-link-color: #669800;
@@ -6,16 +11,50 @@
 
 }
 
+/* Global button styles */
+button, .ant-btn {
+  padding: 10px 20px;
+  background-color: #669800; /* Primary color */
+  color: #ffffff; /* Text color */
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: "Inter", Arial, sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover state */
+button:hover, .ant-btn:hover {
+  background-color: #557700 !important; /* Darker shade of primary color for hover */
+  color: #ffffff !important;
+}
+
+/* Disabled state */
+button:disabled, .ant-btn[disabled] {
+  background-color: #ccc; /* Disabled background color */
+  cursor: not-allowed;
+}
+
+/* Focused state */
+button:focus, .ant-btn:focus {
+  outline: none;
+  box-shadow: 0 0 4px #669800;
+}
+
 .ant-form-item-label {
     color: #7EC17A !important; /* Light Green label color */
     font-weight: 500 !important;
   }
   
-  .ant-input, .ant-input-password {
+  
+  .ant-input-password {
     border-radius: 5px !important;
-    border: 1px solid #E6E8F1 !important; /* Border color */
+    border: 1px solid #E6E8F1 !important; 
     transition: all 0.3s ease !important;
   }
+
+
   
   .ant-input:hover, .ant-input-password:hover {
     border-color: #669800 !important; /* Change border color to primary color on hover */

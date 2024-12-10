@@ -1,0 +1,8 @@
+.ipp-main{
+    background-color: rgb(245, 246, 251);
+
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}

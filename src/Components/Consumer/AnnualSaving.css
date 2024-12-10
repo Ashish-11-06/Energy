@@ -1,0 +1,49 @@
+.annual-saving-container {
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    /* padding: 20px; */
+    font-family: "Inter", Arial, sans-serif;
+    background-color: #f5f6fb;
+    border-radius: 8px;
+  }
+  
+  .custom-card {
+    background-color: #ffffff;
+    border: 1px solid #e6e8f1;
+    border-radius: 8px;
+  }
+  
+  .custom-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #669800;
+  }
+  
+  .amount-box {
+    margin-top: 2px;
+    padding: 5px;
+    background-color: #ffffff;
+    border: 1px solid #e6e8f1;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .amount {
+    font-size: 18px;
+    font-weight: bold;
+    color: #669800;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .report-message {
+    margin-top: 20px;
+    text-align: center;
+    color: #669800;
+  }
+  

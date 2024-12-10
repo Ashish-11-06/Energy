@@ -19,6 +19,30 @@ const ConsumptionPattern = () => {
     ],
   };
 
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        ticks: {
+          color: "#001529", // Custom color for labels
+        },
+      },
+      y: {
+        ticks: {
+          color: "#001529", // Custom color for labels
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: "#001529", // Legend label color
+        },
+      },
+    },
+  };
+
   // Table columns
   const columns = [
     {
@@ -78,15 +102,11 @@ const ConsumptionPattern = () => {
       style={{
         backgroundColor: "#F5F6FB",
         minHeight: "100vh",
-        height: "100vh", // Prevents scrolling
         padding: "20px",
         fontFamily: "'Inter', sans-serif",
-        overflow: "hidden", // Ensures no scrollbars appear
       }}
     >
-      <Row justify="center" align="middle" gutter={[16, 8]} style={{ 
-        marginTop: '30px',
-        height: "100%" }}>
+      <Row justify="center" align="middle" gutter={[16, 8]} style={{ marginTop: "60px", height: "100%" }}>
         <Col span={24} style={{ textAlign: "center" }}>
           <Title level={3} style={{ color: "#001529" }}>
             Your Consumption Pattern
@@ -94,18 +114,13 @@ const ConsumptionPattern = () => {
         </Col>
 
         <Col span={24} md={12} style={{ textAlign: "center" }}>
-          <Bar
-            data={chartData}
-            options={{
-              responsive: true,
-              maintainAspectRatio: true,
-            }}
-            style={{ maxHeight: "200px" }}
-          />
+          <div style={{ position: "relative", width: "100%", height: "200px" }}>
+            <Bar data={chartData} options={chartOptions} />
+          </div>
         </Col>
 
         <Col span={24}>
-          <Title level={4} style={{ textAlign: "center", color: "#001529" }}>
+          <Title level={4} style={{ textAlign: "center", color: "#001529", marginTop:"15px"}}>
             Matching IPP Profile
           </Title>
           <Table
@@ -116,8 +131,6 @@ const ConsumptionPattern = () => {
             style={{
               backgroundColor: "#FFFFFF",
               border: "1px solid #E6E8F1",
-              overflow: "hidden",
-              marginBottom: "-2%",
             }}
           />
         </Col>
@@ -130,7 +143,6 @@ const ConsumptionPattern = () => {
               borderColor: "#669800",
               fontSize: "16px",
               padding: "10px 40px",
-              marginTop:'-2%',
             }}
           >
             Submit
