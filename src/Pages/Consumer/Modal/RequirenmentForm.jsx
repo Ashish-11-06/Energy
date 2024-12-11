@@ -111,15 +111,7 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
 
                   
                     </Row>
-                    <Col>
-                        <Form.Item
-                            label="Other Requirements"
-                            name="otherRequirements"
-                        >
-                            <Input.TextArea placeholder="Enter other requirements" />
-                        </Form.Item>
-                    </Col>
-               
+                    
 
                 <Form.Item style={{ textAlign: 'center' }}>
                     <Button type="primary" htmlType="submit" style={{ padding: '10px 20px' }}>

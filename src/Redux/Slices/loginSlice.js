@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import authApi from '../../api/authApi';
+import authApi from '../api/auth';
 
 // Async Thunks
 export const loginUser = createAsyncThunk(
@@ -7,13 +7,14 @@ export const loginUser = createAsyncThunk(
     async (credentials, { rejectWithValue }) => {
         try {
             const response = await authApi.login(credentials);
+            console.log(response);
             const loginUserResponse = response.data;
-
+// console.log(loginUserResponse);
             if (loginUserResponse.httpStatus === 'OK') {
                 
-                localStorage.setItem('user', JSON.stringify(loginUserResponse.userContent));
+                localStorage.setItem('user', JSON.stringify(loginUserResponse));
                 
-                return loginUserResponse.userContent;
+                return loginUserResponse;
             } else {
                 return rejectWithValue(loginUserResponse.message);
             }

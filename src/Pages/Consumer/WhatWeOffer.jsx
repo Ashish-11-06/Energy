@@ -26,7 +26,7 @@ const WhatWeOffer = () => {
                 backgroundPosition: 'center',
                 height: '100vh',
                 color: 'black', // Text color for better contrast
-                marginTop: '50px'
+                // marginTop: '50px'
             }}
         >
             <div

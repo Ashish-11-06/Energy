@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Button, Radio, Select, Row, Col, message } from 'antd';
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are included
 import states from '../Data/States'; // Assuming states data is in the 'States.js' file
@@ -11,14 +11,14 @@ const RegisterModal = ({ open, onCancel }) => {
   const [otpVerified, setOtpVerified] = useState(false); // Track OTP verification status
 
     // Reset state when modal opens
-    React.useEffect(() => {
-        if (open) {
+    useEffect(() => {
+       {
           setSelection(null);
           setOtpRequested(false);
-          setOtp("");
+          // setOtp("");
           setOtpVerified(false);
         }
-      }, [open]);
+      }, [open, onCancel]);
       
   // Handle radio button change
   const handleSelectionChange = (e) => {
@@ -122,7 +122,7 @@ const RegisterModal = ({ open, onCancel }) => {
 
             <Row gutter={16}>
               {/* Industry */}
-              <Col span={12}>
+              {/* <Col span={12}>
                 <Form.Item
                   label="Industry"
                   name="industry"
@@ -143,7 +143,9 @@ const RegisterModal = ({ open, onCancel }) => {
                     ))}
                   </Select>
                 </Form.Item>
-              </Col>
+              </Col> */}
+
+              
 
               {/* Company Name */}
               <Col span={12}>
@@ -153,19 +155,6 @@ const RegisterModal = ({ open, onCancel }) => {
                   rules={[{ required: true, message: 'Please input your company name!' }]}
                 >
                   <Input placeholder="Enter your company name" />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={16}>
-              {/* Mobile Number */}
-              <Col span={12}>
-                <Form.Item
-                  label="Mobile"
-                  name="mobile"
-                  rules={[{ required: true, message: 'Please input your mobile number!' }]}
-                >
-                  <Input placeholder="Enter your mobile number" />
                 </Form.Item>
               </Col>
 
@@ -185,6 +174,18 @@ const RegisterModal = ({ open, onCancel }) => {
             </Row>
 
             <Row gutter={16}>
+              {/* Mobile Number */}
+              <Col span={12}>
+                <Form.Item
+                  label="Mobile"
+                  name="mobile"
+                  rules={[{ required: true, message: 'Please input your mobile number!' }]}
+                >
+                  <Input placeholder="Enter your mobile number" />
+                </Form.Item>
+              </Col>
+
+         
               {/* Password */}
               <Col span={12}>
                 <Form.Item

@@ -84,13 +84,11 @@ const MatchingIPP = () => {
           width: "100%",              // Ensure row takes full width
         }}
       >
+       
           <div style={{ backgroundColor: "#F5F6FB", padding: "20px" }}>
-            <IPPProfileGenerator
-              title="Generate Matching IPP Profile"
-              data={data}
-            />
+            <AnnualSaving />
           </div>
-      
+        
       </Row>
     </main>
   );

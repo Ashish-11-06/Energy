@@ -25,16 +25,8 @@ const ChatWithExpert = () => {
   };
 
   return (
-    <Layout>
-      {/* Header */}
-      <Header style={{ background: '#001529', padding: '0 20px' }}>
-        <Title level={3} style={{ color: '#fff', margin: 0 }}>
-          Chat with Expert
-        </Title>
-      </Header>
-
-      {/* Content */}
-      <Content style={{ padding: '20px' }}>
+  
+     
         <Row gutter={[16, 16]}>
           {/* Chat area */}
           <Col span={isMobile ? 24 : 16} offset={isMobile ? 0 : 4}>
@@ -102,8 +94,8 @@ const ChatWithExpert = () => {
             </Space>
           </Col>
         </Row>
-      </Content>
-    </Layout>
+ 
+   
   );
 };
 

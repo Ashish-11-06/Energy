@@ -131,6 +131,7 @@ const ConsumptionPattern = () => {
             style={{
               backgroundColor: "#FFFFFF",
               border: "1px solid #E6E8F1",
+              // maxWidth:"900px"
             }}
           />
         </Col>

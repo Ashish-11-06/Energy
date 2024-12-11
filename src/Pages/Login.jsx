@@ -1,27 +1,40 @@
 import React, { useState } from 'react';
-import { Form, Input, Button } from 'antd';
-import { Link } from 'react-router-dom';  // If you're using React Router
+import { Form, Input, Button, message } from 'antd';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate for redirection
 import 'antd/dist/reset.css'; // Make sure to include Ant Design styles
 import './Login.css';
-import RegisterModal from '../Modals/RegisterModal'; // Import the ModalForm component
+import RegisterModal from '../Modals/RegisterModal';
+import useLogin from '../hook/useLogin'; // Import the custom hook
 
 const Login = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false); // State to manage modal visibility
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { login, loading, error: loginError } = useLogin(); // Using the custom hook
+  const navigate = useNavigate(); // Initialize navigation
 
-  const onFinish = (values) => {
-    console.log('Success:', values);
+  const onFinish = async (values) => {
+    const { email, password } = values;
+
+    try {
+      const response = await login({ email, password });
+
+      if (response) {
+        message.success('Login successful!');
+        // Redirect after successful login
+        navigate('/what-we-offer');  // Change '/dashboard' to your target route
+      }
+    } catch (err) {
+      message.error(loginError || 'Login failed');
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
 
-  // Show the modal
   const showModal = () => {
     setIsModalVisible(true);
   };
 
-  // Hide the modal
   const handleCancel = () => {
     setIsModalVisible(false);
   };
@@ -54,15 +67,15 @@ const Login = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit" block loading={loading}>
               Login
             </Button>
           </Form.Item>
         </Form>
-        
+
         {/* Registration link */}
         <div className="register-link">
-          <p>Don't have an account? <a href="#" onClick={showModal}>Create account</a></p>
+          <p>Don't have an account? <a onClick={showModal}>Create account</a></p>
         </div>
       </div>
 

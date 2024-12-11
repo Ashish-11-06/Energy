@@ -1,12 +1,23 @@
 import React, { useState } from "react";
 import { Table, Button, Radio } from "antd";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 const IPPProfileGenerator = ({ title, data }) => {
   const [selectedIPP, setSelectedIPP] = useState(null); // State to store the selected IPP key
+  const navigate = useNavigate();
 
   const handleSelect = (key) => {
     setSelectedIPP(key); // Update the selected IPP
+  };
+
+  const handleContinue = () => {
+    if (selectedIPP) {      
+      // Navigate to another page, for example '/next-page'
+      navigate('/consumer/annual-saving', { state: { selectedIPP } }); // Pass data through navigation
+    } else {
+      message.error('Please select an IPP before continuing');
+    }
   };
 
   const columns = [
@@ -79,8 +90,7 @@ const IPPProfileGenerator = ({ title, data }) => {
             padding: "0 30px",
           }}
           disabled={!selectedIPP} // Disable the button if no IPP is selected
-          onClick={() => alert(`Selected IPP Key: ${selectedIPP}`)}
-        >
+          onClick={handleContinue}>
           Continue
         </Button>
       </div>
