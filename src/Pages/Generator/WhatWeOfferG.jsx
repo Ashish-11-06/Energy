@@ -1,16 +1,18 @@
-import React  from 'react';
+import React, { useState }  from 'react';
 import { Row, Col, Card, Statistic, Button } from 'antd';
 import { ThunderboltOutlined, BranchesOutlined, ApartmentOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import CountUp from 'react-countup'; 
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-const WhatWeOffer = () => {
+const WhatWeOfferG = () => {
+
     const navigate = useNavigate(); // Initialize useNavigate
 
     // Handle opening the modal and navigating to the next page
     const handleContinue = () => {
-      navigate('/consumer/requirenment'); // Navigate to the desired route
+      navigate('/generator/portfolio'); // Navigate to the desired route
     };
+
     // Handle closing the modal
     const handleCancel = () => {
         setIsModalVisible(false);
@@ -19,13 +21,13 @@ const WhatWeOffer = () => {
     return (
         <div
             style={{
-                padding: '50px',
+                padding: '0px 50px',
                 backgroundColor: '#F5F6FB', // Page background
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                height: '100vh',
+                // height: '100vh',
                 color: 'black', // Text color for better contrast
-                // marginTop: '50px'
+                marginTop: '20px'
             }}
         >
             <div
@@ -49,7 +51,7 @@ const WhatWeOffer = () => {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Card
                             hoverable
-                            title="Total IPPs"
+                            title="Total Consumers"
                             bordered={false}
                             style={{
                                 width: '100%',
@@ -59,11 +61,12 @@ const WhatWeOffer = () => {
                             }}
                         >
                             <Statistic
-                                title="Total IPPs"
-                                value={120} // Directly use the number
+                                title="Total Consumers"
+                                value={100} // Directly use the number
                                 prefix={<ThunderboltOutlined />}
+                                suffix={'+'}
                                 valueStyle={{ color: '#3f8600' }}
-                                formatter={() => <CountUp start={80} end={120} duration={3} />} // Use formatter to render CountUp
+                                formatter={() => <CountUp start={80} end={100} duration={3} />} // Use formatter to render CountUp
                             />
                         </Card>
                     </Col>
@@ -84,6 +87,7 @@ const WhatWeOffer = () => {
                                 title="Total Demands"
                                 value={5000} // Directly use the number
                                 prefix={<BranchesOutlined />}
+                                suffix={'+'}
                                 valueStyle={{ color: '#cf1322' }}
                                 formatter={() => <CountUp start={4700} end={5000} duration={3} />} // Use formatter to render CountUp
                             />
@@ -106,6 +110,7 @@ const WhatWeOffer = () => {
                                 title="Total States"
                                 value={28} // Directly use the number
                                 prefix={<ApartmentOutlined />}
+                                suffix={'+'}
                                 valueStyle={{ color: '#1890ff' }}
                                 formatter={() => <CountUp start={10} end={28} duration={3} />} // Use formatter to render CountUp
                             />
@@ -127,15 +132,14 @@ const WhatWeOffer = () => {
                         Explore
                     </Button>
                     <Button type="default" style={{ padding: '10px 20px', fontSize: '1rem', borderColor: '#E6E8F1' }}
-                    onClick={handleContinue}
+                   onClick={handleContinue}
                     >
                         Continue
                     </Button>
                 </div>
             </div>
-
         </div>
     );
 };
 
-export default WhatWeOffer;
+export default WhatWeOfferG;

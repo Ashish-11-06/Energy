@@ -32,7 +32,7 @@ const MatchingIPP = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
+        //   height: "100vh",
           backgroundColor: "#F5F6FB",
         }}
       >
@@ -53,7 +53,7 @@ const MatchingIPP = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
+        //   height: "100vh",
           backgroundColor: "#F5F6FB",
         }}
       >
@@ -71,7 +71,7 @@ const MatchingIPP = () => {
         alignItems: "center",      // Centers content vertically
         backgroundColor: "rgb(245, 246, 251)",
         padding: "20px",
-        height: "100vh",
+        // height: "100vh",
         flexDirection: "column",   // Stack items vertically
         marginTop:'50px'
       }}

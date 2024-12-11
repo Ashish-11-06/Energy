@@ -74,7 +74,7 @@ const RequirementsPage = () => {
   // Handle Continue and navigate to next page with data
   const handleContinue = () => {
     if (requirements.length > 0) {
-      navigate('/next-page', { state: { requirements } }); // Navigate to next page and pass the requirements data
+      navigate('/matching-ipp', { state: { requirements } }); // Navigate to next page and pass the requirements data
     } else {
       message.error('Please add at least one requirement before continuing.');
     }

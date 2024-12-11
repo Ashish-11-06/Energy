@@ -11,6 +11,10 @@ import MatchingIPP from './Pages/Consumer/MatchingIPP';
 import Layout from './Components/Layout'; // Adjust the path as needed
 import './styles/theme.less';
 import './App.css';
+import AnnualSvg from './Pages/Consumer/AnnualSaving';
+import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
+import GenerationPortfolio from './Pages/Generator/GeneratorPortfolio';
+import MatchingConsumerPage from './Pages/Generator/MatchingConsumerPage';
 
 function App() {
   return (
@@ -28,7 +32,13 @@ function App() {
           <Route path="consumption-pattern" element={<ConsumptionPattern />} />
           <Route path="project-details" element={<IppProjectDetails />} />
           <Route path="consumer/requirenment" element={<RequirementsPage />} />
-          <Route path="consumer/annual-saving" element={<AnnualSaving />} />
+          <Route path="consumer/annual-saving" element={<AnnualSvg />} />
+          {/* -------------- */}
+
+          <Route path="generator/what-we-offer" element={<WhatWeOfferG />} />
+          <Route path="generator/portfolio" element={<GenerationPortfolio />} />
+          <Route path="generator/matching-consumer" element={<MatchingConsumerPage />} />
+
         </Route>
       </Routes>
     </Router>
