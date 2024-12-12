@@ -16,11 +16,17 @@ const Login = () => {
 
     try {
       const response = await login({ email, password });
-
-      if (response) {
+      const data = response.payload.data;
+console.log(data);
+      if (data.role === 'consumer') {
         message.success('Login successful!');
         // Redirect after successful login
         navigate('/what-we-offer');  // Change '/dashboard' to your target route
+      }
+      if (data.role === 'generator') {
+        message.success('Login successful!');
+        // Redirect after successful login
+        navigate('/generator/what-we-offer');  // Change '/dashboard' to your target route
       }
     } catch (err) {
       message.error(loginError || 'Login failed');
