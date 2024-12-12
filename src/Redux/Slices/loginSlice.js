@@ -8,16 +8,18 @@ export const loginUser = createAsyncThunk(
         try {
             const response = await authApi.login(credentials);
             console.log(response);
-            const loginUserResponse = response.data;
+            const loginUserResponse = response
+            localStorage.setItem('user', JSON.stringify(loginUserResponse));
+            return loginUserResponse;
 // console.log(loginUserResponse);
-            if (loginUserResponse.httpStatus === 'OK') {
+            // if (loginUserResponse.httpStatus === 'OK') {
                 
-                localStorage.setItem('user', JSON.stringify(loginUserResponse));
                 
-                return loginUserResponse;
-            } else {
-                return rejectWithValue(loginUserResponse.message);
-            }
+                
+            //     return loginUserResponse;
+            // } else {
+            //     return rejectWithValue(loginUserResponse.message);
+            // }
         } catch (error) {
             return rejectWithValue(error.message || 'Failed to login');
         }

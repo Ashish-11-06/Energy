@@ -25,7 +25,7 @@ function App() {
 
         {/* Routes with the shared layout */}
         <Route path="/" element={<Layout />}>
-          <Route index element={<h1>Welcome to Your React App!</h1>} />
+          <Route index element={<h1>Welcome to Your App!</h1>} />
           <Route path="what-we-offer" element={<WhatWeOffer />} />
           <Route path="matching-ipp" element={<MatchingIPP />} />
           <Route path="chat-page" element={<ChatWithExpert />} />
