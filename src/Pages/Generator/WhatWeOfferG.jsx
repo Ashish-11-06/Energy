@@ -119,12 +119,12 @@ const WhatWeOfferG = () => {
                 </Row>
 
                 {/* "Do you know" section */}
-                <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                {/* <div style={{ textAlign: 'center', marginTop: '50px' }}>
                     <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Do you know?</h2>
                     <p style={{ fontSize: '1.5rem', marginBottom: '30px' }}>
                         The total amount consumers have saved: <span style={{ fontWeight: 'bold', color: '#669800' }}>$1,250,000</span>
                     </p>
-                </div>
+                </div> */}
 
                 {/* Buttons Section */}
                 <div style={{ textAlign: 'center', marginTop: '30px' }}>
