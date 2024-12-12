@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { Table, Button, message, Row, Col } from 'antd';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
-import 'antd/dist/reset.css'; // Ensure Ant Design styles are imported
-import RequirenmentForm from './Modal/RequirenmentForm'; // Import the RequirenmentForm component
+import { useNavigate } from 'react-router-dom';
+import 'antd/dist/reset.css';
+import RequirenmentForm from './Modal/RequirenmentForm';
 
 const RequirementsPage = () => {
   const [requirements, setRequirements] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Track selected row keys
+  const navigate = useNavigate();
 
-  // Define columns for the table
+  // Define columns for the table (Remove selection column)
   const columns = [
     {
       title: 'State',
@@ -39,20 +40,30 @@ const RequirementsPage = () => {
     },
   ];
 
-  // Show modal to add new requirement
+  // Add a selection column for row selection (Remove radio button column)
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (selectedKeys) => {
+      setSelectedRowKeys(selectedKeys); // Update selected row keys when selection changes
+    },
+    type: 'radio', // Single selection (radio button)
+  };
+
+  // Handle row selection when the radio button is clicked
+  const handleRowSelect = (key) => {
+    setSelectedRowKeys([key]); // Only allow single selection
+  };
+
   const showModal = () => {
     setIsModalVisible(true);
   };
 
-  // Close the modal
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
-  // Handle form submission
   const handleSubmit = (values) => {
     console.log('Form Values: ', values);
-    // Add new requirement to the table
     setRequirements([
       ...requirements,
       {
@@ -65,18 +76,20 @@ const RequirementsPage = () => {
     message.success('Requirement added successfully!');
   };
 
-  // Handle Clear All
   const handleClearAll = () => {
     setRequirements([]);
+    setSelectedRowKeys([]); // Clear the selected row when clearing all requirements
     message.success('All requirements have been cleared!');
   };
 
-  // Handle Continue and navigate to next page with data
   const handleContinue = () => {
-    if (requirements.length > 0) {
-      navigate('/matching-ipp', { state: { requirements } }); // Navigate to next page and pass the requirements data
+    if (selectedRowKeys.length === 1) {
+      const selectedRequirement = requirements.find(
+        (req) => req.key === selectedRowKeys[0]
+      );
+      navigate('/matching-ipp', { state: { selectedRequirement } }); // Pass the selected requirement to the next page
     } else {
-      message.error('Please add at least one requirement before continuing.');
+      message.error('Please select a single requirement before continuing.');
     }
   };
 
@@ -87,8 +100,12 @@ const RequirementsPage = () => {
       <Table
         columns={columns}
         dataSource={requirements}
-        pagination={false} // Disable pagination for simplicity
+        pagination={false}
         bordered
+        rowSelection={rowSelection} // Apply row selection to the table
+        onRow={(record) => ({
+          onClick: () => handleRowSelect(record.key), // Make entire row clickable
+        })}
       />
 
       <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
@@ -102,7 +119,7 @@ const RequirementsPage = () => {
             type="danger"
             onClick={handleClearAll}
             style={{ width: 160 }}
-            disabled={requirements.length === 0} // Disable button if no requirements
+            disabled={requirements.length === 0}
           >
             Clear All
           </Button>
@@ -112,7 +129,7 @@ const RequirementsPage = () => {
             type="default"
             onClick={handleContinue}
             style={{ width: 160 }}
-            disabled={requirements.length === 0} // Disable if no requirements have been added
+            disabled={selectedRowKeys.length !== 1} // Disable "Continue" if no row is selected or more than one row is selected
           >
             Continue
           </Button>

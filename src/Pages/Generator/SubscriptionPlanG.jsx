@@ -1,4 +1,4 @@
-// SubscriptionPlans.js
+// SubscriptionPlanG.js
 import React, { useState } from 'react';
 import { Card, Button, Row, Col, Typography } from 'antd';
 import SubscriptionModal from './Modal/SubscriptionModal';
@@ -6,7 +6,7 @@ import '../SubscriptionPlan.css';
 
 const { Title, Text } = Typography;
 
-const SubscriptionPlans = () => {
+const SubscriptionPlanG = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -103,4 +103,4 @@ const SubscriptionPlans = () => {
   );
 };
 
-export default SubscriptionPlans;
+export default SubscriptionPlanG;

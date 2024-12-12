@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Radio, Button, message } from 'antd';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are imported
 
 const MatchingConsumerPage = () => {
   const [consumers, setConsumers] = useState([]);
   const [selectedConsumer, setSelectedConsumer] = useState(null); // Track the selected consumer
+  const navigate = useNavigate(); // Initialize navigate hook
 
   useEffect(() => {
     // Simulating an API call to get matched consumers data
@@ -52,9 +54,18 @@ const MatchingConsumerPage = () => {
     },
   ];
 
+  const handleNextClick = () => {
+    if (selectedConsumer) {
+      // Navigate to the next page (e.g., /next-page)
+      navigate('/generator/subscription-plan', { state: { selectedConsumer } }); // Pass selected consumer as state
+    } else {
+      message.error('Please select a consumer before proceeding.');
+    }
+  };
+
   return (
     <div style={{ padding: '20px', marginTop: '50px' }}>
-      <h2>Potential Consumer </h2>
+      <h2>Potential Consumer</h2>
       <Table
         columns={columns}
         dataSource={consumers}
@@ -72,10 +83,10 @@ const MatchingConsumerPage = () => {
           color: '#fff',
           float: 'right',
         }}
-        onClick={() => selectedConsumer && message.success(`Consumer ${selectedConsumer} is selected!`)}
+        onClick={handleNextClick} // Call handleNextClick on button click
         disabled={!selectedConsumer} // Disable if no consumer is selected
       >
-        next
+        Next
       </Button>
     </div>
   );

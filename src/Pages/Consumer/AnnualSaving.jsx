@@ -100,7 +100,7 @@ const AnnualSvg = () => {
           fontSize: "16px",
           padding: "0 30px",
         }}
-        onClick={() => navigate("/next-page")} // Navigate to the next page
+        onClick={() => navigate("/consumer/subscription-plan")} // Navigate to the next page
       >
         Continue
       </Button>

@@ -19,11 +19,11 @@ const WhatWeOffer = () => {
     return (
         <div
             style={{
-                padding: '50px',
+                padding: '20px 50px',
                 backgroundColor: '#F5F6FB', // Page background
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                height: '100vh',
+                // height: '100vh',
                 color: 'black', // Text color for better contrast
                 // marginTop: '50px'
             }}

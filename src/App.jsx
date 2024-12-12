@@ -3,10 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Pages/Login';
 import WhatWeOffer from './Pages/Consumer/WhatWeOffer';
 import ChatWithExpert from './Pages/Consumer/ChatWithExpert';
-import ConsumptionPattern from './Components/Consumer/ConsumptionPattern';
+import ConsumptionPattern from './Pages/Consumer/ConsumptionPattern';
 import IppProjectDetails from './Pages/Consumer/IPPProjectDetails';
 import RequirementsPage from './Pages/Consumer/RequirenmentPage';
-import AnnualSaving from './Components/Consumer/AnnualSaving';
 import MatchingIPP from './Pages/Consumer/MatchingIPP';
 import Layout from './Components/Layout'; // Adjust the path as needed
 import './styles/theme.less';
@@ -15,6 +14,9 @@ import AnnualSvg from './Pages/Consumer/AnnualSaving';
 import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
 import GenerationPortfolio from './Pages/Generator/GeneratorPortfolio';
 import MatchingConsumerPage from './Pages/Generator/MatchingConsumerPage';
+import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
+import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
+import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
 
 function App() {
   return (
@@ -33,11 +35,15 @@ function App() {
           <Route path="project-details" element={<IppProjectDetails />} />
           <Route path="consumer/requirenment" element={<RequirementsPage />} />
           <Route path="consumer/annual-saving" element={<AnnualSvg />} />
+          <Route path="consumer/subscription-plan" element={<SubscriptionPlans />} />
+
           {/* -------------- */}
 
           <Route path="generator/what-we-offer" element={<WhatWeOfferG />} />
           <Route path="generator/portfolio" element={<GenerationPortfolio />} />
           <Route path="generator/matching-consumer" element={<MatchingConsumerPage />} />
+          <Route path="generator/subscription-plan" element={<SubscriptionPlanG />} />
+          <Route path="generator/energy-optimization" element={<EnergyOptimizationPage />} />
 
         </Route>
       </Routes>

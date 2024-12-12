@@ -37,7 +37,6 @@ const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
         console.log('Validation Failed:', info);
       });
   };
-  
 
   return (
     <Modal
@@ -91,13 +90,24 @@ const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
           </Select>
         </Form.Item>
 
-        {/* Capacity input */}
+        {/* Capacity input with integer validation */}
         <Form.Item
           name="capacity"
           label="State Capacity"
-          rules={[{ required: true, message: 'Please enter the state capacity!' }]}
+          rules={[
+            { 
+              required: true, 
+              message: 'Please enter the state capacity!' 
+            },
+            {
+              type: 'number',
+              transform: (value) => parseInt(value, 10), // Ensure the value is an integer
+              message: 'Capacity must be a valid integer!',
+            },
+          ]}
         >
           <Input
+            type="number" // Ensure input is numeric
             placeholder={`Enter capacity in ${unit}`}
             addonAfter={
               <Select value={unit} onChange={handleUnitChange} style={{ width: 100 }}>

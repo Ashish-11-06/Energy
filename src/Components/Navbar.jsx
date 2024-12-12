@@ -11,30 +11,30 @@ const NavBar = ({ }) => {
 const username = 'consumer';
 
   const menuItems = [
-    {
-      key: '1',
-      label: (
-        <Link to="/what-we-offer" style={{ color: location.pathname === '/what-we-offer' ? '#fff' : '#9A8406', fontFamily: 'Inter' }}>
-          What We Offer
-        </Link>
-      ),
-    },
-    {
-      key: '2',
-      label: (
-        <Link to="/chat-page" style={{ color: location.pathname === '/chat-page' ? '#fff' : '#9A8406', fontFamily: 'Inter' }}>
-          Chat with Expert
-        </Link>
-      ),
-    },
-    {
-      key: '3',
-      label: (
-        <Link to="/consumption-pattern" style={{ color: location.pathname === '/consumption-pattern' ? '#fff' : '#9A8406', fontFamily: 'Inter' }}>
-          Consumption Pattern
-        </Link>
-      ),
-    },
+    // {
+    //   key: '1',
+    //   label: (
+    //     <Link to="/what-we-offer" style={{ color: location.pathname === '/what-we-offer' ? '#fff' : '#9A8406', fontFamily: 'Inter' }}>
+    //       What We Offer
+    //     </Link>
+    //   ),
+    // },
+    // {
+    //   key: '2',
+    //   label: (
+    //     <Link to="/chat-page" style={{ color: location.pathname === '/chat-page' ? '#fff' : '#9A8406', fontFamily: 'Inter' }}>
+    //       Chat with Expert
+    //     </Link>
+    //   ),
+    // },
+    // {
+    //   key: '3',
+    //   label: (
+    //     <Link to="/consumption-pattern" style={{ color: location.pathname === '/consumption-pattern' ? '#fff' : '#9A8406', fontFamily: 'Inter' }}>
+    //       Consumption Pattern
+    //     </Link>
+    //   ),
+    // },
     {
       key: '4',
       label: (
