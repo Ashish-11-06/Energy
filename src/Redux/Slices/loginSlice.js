@@ -1,26 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import authApi from '../api/auth';
+import userApi from '../api/userApi';
 
 // Async Thunks
-export const loginUser = createAsyncThunk(
-    'users/loginUser',
-    async (credentials, { rejectWithValue }) => {
+export const loginUser = createAsyncThunk('users/loginUser', async (credentials, { rejectWithValue }) => {
         try {
-            const response = await authApi.login(credentials);
+            console.log(credentials);
+           console.log(await userApi.logInUser(credentials));
             console.log(response);
             const loginUserResponse = response
             localStorage.setItem('user', JSON.stringify(loginUserResponse));
             return loginUserResponse;
 // console.log(loginUserResponse);
             // if (loginUserResponse.httpStatus === 'OK') {
-                
-                
-                
             //     return loginUserResponse;
             // } else {
             //     return rejectWithValue(loginUserResponse.message);
             // }
         } catch (error) {
+            console.log(error)
             return rejectWithValue(error.message || 'Failed to login');
         }
     }

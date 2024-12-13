@@ -64,7 +64,7 @@ const MatchingConsumerPage = () => {
   };
 
   return (
-    <div style={{ padding: '20px', marginTop: '50px' }}>
+    <div style={{ padding: '20px', marginTop: '50px', border:"2px" }}>
       <h2>Potential Consumer</h2>
       <Table
         columns={columns}

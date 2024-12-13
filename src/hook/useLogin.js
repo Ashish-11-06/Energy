@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../Redux/Slices/logInSlice'; // Import the login action from your slice
+import { loginUser } from '../Redux/Slices/loginSlice'; // Import the login action from your slice
 import { useState } from 'react';
 
 const useLogin = () => {
@@ -12,6 +12,7 @@ const useLogin = () => {
     setLoginError(null); // Reset any previous error
 
     try {
+      console.log("dispatch");
       const resultAction = await dispatch(loginUser(credentials)); // Dispatch login action
 //  console.log(resultAction);
     //   if (loginUser.fulfilled.match(resultAction)) {

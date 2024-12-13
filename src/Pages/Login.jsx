@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { Form, Input, Button, message, Radio } from 'antd'; // Import Radio component
 import { useNavigate } from 'react-router-dom';  // Import useNavigate for redirection
 import 'antd/dist/reset.css'; // Make sure to include Ant Design styles
 import './Login.css';
@@ -10,23 +10,29 @@ const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { login, loading, error: loginError } = useLogin(); // Using the custom hook
   const navigate = useNavigate(); // Initialize navigation
+  const [role, setRole] = useState('consumer'); // State to store selected role
 
   const onFinish = async (values) => {
     const { email, password } = values;
 
+    const credentials = { 
+      email: values.email,
+      password: values.password,
+      role: role, // Include the selected role
+    }
+
     try {
-      const response = await login({ email, password });
+      const response = await login(credentials);
       const data = response.payload.data;
-console.log(data);
+      console.log(data);
+
       if (data.role === 'consumer') {
         message.success('Login successful!');
-        // Redirect after successful login
-        navigate('/what-we-offer');  // Change '/dashboard' to your target route
+        navigate('/what-we-offer');  // Redirect to consumer's dashboard or specific route
       }
       if (data.role === 'generator') {
         message.success('Login successful!');
-        // Redirect after successful login
-        navigate('/generator/what-we-offer');  // Change '/dashboard' to your target route
+        navigate('/generator/what-we-offer');  // Redirect to generator's dashboard or specific route
       }
     } catch (err) {
       message.error(loginError || 'Login failed');
@@ -45,6 +51,10 @@ console.log(data);
     setIsModalVisible(false);
   };
 
+  const handleRoleChange = (e) => {
+    setRole(e.target.value); // Update selected role
+  };
+
   return (
     <div className="login-container">
       <div className="login-box">
@@ -56,6 +66,18 @@ console.log(data);
           onFinishFailed={onFinishFailed}
           layout="vertical"
         >
+          {/* Radio buttons for selecting role */}
+          <Form.Item
+            // label="Role"
+            name="role"
+            rules={[{ required: true, message: 'Please select your role!' }]}
+          >
+            <Radio.Group onChange={handleRoleChange} value={role}>
+              <Radio value="consumer">Consumer</Radio>
+              <Radio value="generator">Generator</Radio>
+            </Radio.Group>
+          </Form.Item>
+          
           <Form.Item
             label="Email"
             name="email"
@@ -71,6 +93,8 @@ console.log(data);
           >
             <Input.Password placeholder="Enter your password" />
           </Form.Item>
+
+          
 
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>

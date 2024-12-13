@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Button, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
-import AddPortfolioModal from '../../Modals/Generator/AddPortfolioModal';
+import AddPortfolioModal from './Modal/AddPortfolioModal';
 const { Title } = Typography;
 
 const GenerationPortfolio = () => {
@@ -14,7 +14,7 @@ const GenerationPortfolio = () => {
 
   const columns = [
     {
-      title: 'S.No', // Serial Number column
+      title: 'Sr. No', // Serial Number column
       key: 'serialNumber',
       render: (text, record, index) => index + 1, // Display row index + 1 for serial number
     },
