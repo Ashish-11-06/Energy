@@ -17,6 +17,7 @@ import MatchingConsumerPage from './Pages/Generator/MatchingConsumerPage';
 import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
 import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
 import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
+import LandingPage from './Pages/LandingPage';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
+        <Route path="/landing-page" element={<LandingPage />} />
 
         {/* Routes with the shared layout */}
         <Route path="/" element={<Layout />}>
