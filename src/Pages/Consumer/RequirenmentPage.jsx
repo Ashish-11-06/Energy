@@ -23,14 +23,9 @@ const RequirementsPage = () => {
       key: 'industry',
     },
     {
-      title: 'Capacity',
-      dataIndex: 'capacity',
-      key: 'capacity',
-    },
-    {
-      title: 'Unit',
-      dataIndex: 'unit',
-      key: 'unit',
+      title: 'Contracted Demand',
+      dataIndex: 'contractedDemand',
+      key: 'ContractedDemand',
     },
     {
       title: 'Procurement Date',
@@ -87,7 +82,7 @@ const RequirementsPage = () => {
       const selectedRequirement = requirements.find(
         (req) => req.key === selectedRowKeys[0]
       );
-      navigate('/matching-ipp', { state: { selectedRequirement } }); // Pass the selected requirement to the next page
+      navigate('/consumer/matching-ipp', { state: { selectedRequirement } }); // Pass the selected requirement to the next page
     } else {
       message.error('Please select a single requirement before continuing.');
     }

@@ -14,7 +14,7 @@ const IppProjectDetails = () => {
     <div
       style={{
         backgroundColor: "#F5F6FB",
-        minHeight: "100vh",
+        // minHeight: "100vh",
         fontFamily: "'Inter', sans-serif",
         display: "flex",
         alignItems: "center",

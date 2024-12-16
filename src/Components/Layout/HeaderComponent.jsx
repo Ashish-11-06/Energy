@@ -6,7 +6,17 @@ import { Layout } from 'antd'; // Import Layout from 'antd'
 const { Header } = Layout; // Destructure Header from Layout
 
 const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => (
-  <Header style={{ padding: '0 16px', background: 'transparent', display: 'flex', alignItems: 'center' }}>
+  <Header
+    style={{
+      padding: '0 16px',
+      display: 'flex',
+      alignItems: 'center',
+      backgroundColor: 'black',
+      position: 'sticky', // Make header sticky
+      top: 0, // Stick to the top of the viewport
+      zIndex: 1000, // Ensure it stays above other content
+    }}
+  >
     {isMobile && (
       <Button
         icon={drawerVisible ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}

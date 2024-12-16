@@ -28,7 +28,12 @@ const LayoutComponent = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {/* Sidebar for larger screens */}
-      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} isMobile={isMobile} />
+      <Sidebar
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+        isMobile={isMobile}
+        style={{ zIndex: 0 }} // Ensure sidebar is below the header
+      />
 
       {/* Drawer for smaller screens */}
       <DrawerMenu drawerVisible={drawerVisible} toggleDrawer={toggleDrawer} />
@@ -36,7 +41,23 @@ const LayoutComponent = () => {
       {/* Layout for Header and Content */}
       <Layout>
         {/* Header */}
-        <HeaderComponent isMobile={isMobile} drawerVisible={drawerVisible} toggleDrawer={toggleDrawer} />
+        <Header
+          style={{
+            padding: '0 16px',
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: 'black',
+            position: 'sticky',
+            top: 0,
+            zIndex: 1000, // Ensure header is above sidebar and content
+          }}
+        >
+          <HeaderComponent
+            isMobile={isMobile}
+            drawerVisible={drawerVisible}
+            toggleDrawer={toggleDrawer}
+          />
+        </Header>
 
         {/* Content */}
         <Content style={{ padding: '16px' }}>
