@@ -3,7 +3,7 @@ import { Form, Input, Button, message, Radio } from 'antd'; // Import Radio comp
 import { useNavigate } from 'react-router-dom';  // Import useNavigate for redirection
 import 'antd/dist/reset.css'; // Make sure to include Ant Design styles
 import './Login.css';
-import RegisterModal from '../Modals/RegisterModal';
+import RegisterModal from '../Components/Modals/Registration/RegisterModal';
 import useLogin from '../hook/useLogin'; // Import the custom hook
 
 const Login = () => {

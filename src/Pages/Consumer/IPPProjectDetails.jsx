@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Typography, Row, Col, Button, Card } from "antd";
-import RequestForQuotationModal from "../../Modals/RequestForQuotationModal";
+import RequestForQuotationModal from "../../Components/Modals/RequestForQuotationModal";
 
 const { Title, Text } = Typography;
 

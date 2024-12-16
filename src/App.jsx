@@ -1,23 +1,22 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Pages/Login';
+import LandingPage from './Pages/LandingPage';
+import LayoutComponent from './Components/Layout/Layout';
 import WhatWeOffer from './Pages/Consumer/WhatWeOffer';
+import MatchingIPP from './Pages/Consumer/MatchingIPP';
 import ChatWithExpert from './Pages/Consumer/ChatWithExpert';
 import ConsumptionPattern from './Pages/Consumer/ConsumptionPattern';
 import IppProjectDetails from './Pages/Consumer/IPPProjectDetails';
 import RequirementsPage from './Pages/Consumer/RequirenmentPage';
-import MatchingIPP from './Pages/Consumer/MatchingIPP';
-import Layout from './Components/Layout'; // Adjust the path as needed
-import './styles/theme.less';
-import './App.css';
 import AnnualSvg from './Pages/Consumer/AnnualSaving';
+import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
 import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
 import GenerationPortfolio from './Pages/Generator/GeneratorPortfolio';
 import MatchingConsumerPage from './Pages/Generator/MatchingConsumerPage';
-import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
 import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
 import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
-import LandingPage from './Pages/LandingPage';
+import LoginC from './Pages/Consumer/LoginC';
 
 function App() {
   return (
@@ -25,28 +24,35 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/landing-page" element={<LandingPage />} />
+    {/* Landing Page */}
+    <Route path="/landing-page" element={<LandingPage />} />
+    <Route path="/consumer/login" element={<LoginC />} />
 
-        {/* Routes with the shared layout */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<h1>Welcome to Your App!</h1>} />
-          <Route path="what-we-offer" element={<WhatWeOffer />} />
-          <Route path="matching-ipp" element={<MatchingIPP />} />
-          <Route path="chat-page" element={<ChatWithExpert />} />
-          <Route path="consumption-pattern" element={<ConsumptionPattern />} />
-          <Route path="project-details" element={<IppProjectDetails />} />
-          <Route path="consumer/requirenment" element={<RequirementsPage />} />
-          <Route path="consumer/annual-saving" element={<AnnualSvg />} />
-          <Route path="consumer/subscription-plan" element={<SubscriptionPlans />} />
+        {/* Routes with shared layout */}
+        <Route path="/" element={<LayoutComponent />}>
+      
 
-          {/* -------------- */}
+          {/* Consumer Routes */}
+          <Route path="/consumer">
 
-          <Route path="generator/what-we-offer" element={<WhatWeOfferG />} />
-          <Route path="generator/portfolio" element={<GenerationPortfolio />} />
-          <Route path="generator/matching-consumer" element={<MatchingConsumerPage />} />
-          <Route path="generator/subscription-plan" element={<SubscriptionPlanG />} />
-          <Route path="generator/energy-optimization" element={<EnergyOptimizationPage />} />
+            <Route path="what-we-offer" element={<WhatWeOffer />} />
+            <Route path="matching-ipp" element={<MatchingIPP />} />
+            <Route path="chat-page" element={<ChatWithExpert />} />
+            <Route path="consumption-pattern" element={<ConsumptionPattern />} />
+            <Route path="project-details" element={<IppProjectDetails />} />
+            <Route path="requirenment" element={<RequirementsPage />} />
+            <Route path="annual-saving" element={<AnnualSvg />} />
+            <Route path="subscription-plan" element={<SubscriptionPlans />} />
+          </Route>
 
+          {/* Generator Routes */}
+          <Route path="/generator">
+            <Route path="what-we-offer" element={<WhatWeOfferG />} />
+            <Route path="portfolio" element={<GenerationPortfolio />} />
+            <Route path="matching-consumer" element={<MatchingConsumerPage />} />
+            <Route path="subscription-plan" element={<SubscriptionPlanG />} />
+            <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
+          </Route>
         </Route>
       </Routes>
     </Router>

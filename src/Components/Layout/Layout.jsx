@@ -1,46 +1,50 @@
-import React from 'react';
-import { Layout, Menu, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Layout } from 'antd';
+import Sidebar from './Sidebar';
+import DrawerMenu from './DrawerMenu';
+import HeaderComponent from './HeaderComponent';
 import { Outlet } from 'react-router-dom';
-import { HomeOutlined, UserOutlined, AppstoreAddOutlined, SettingOutlined, MenuOutlined } from '@ant-design/icons';
-import SideBar from './SideBar'; // Import the responsive navbar component
-import HeaderNav from './header'; // Adjust the path as needed
-import './Layout.css'; // Optional: Add styles for your layout
 
-const { Header, Sider, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
-const LayoutPage = () => {
+const LayoutComponent = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 992);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggleDrawer = () => {
+    setDrawerVisible(!drawerVisible);
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {/* Side Navbar (Sidebar) */}
-      <Sider width={200} className="site-layout-background">
-        <SideBar />
-      </Sider>
+      {/* Sidebar for larger screens */}
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} isMobile={isMobile} />
 
-      <Layout style={{ padding: '0 24px 24px' }}>
-        {/* Header/Navbar */}
-        <Header className="header" style={{ background: '#fff', padding: 0 }}>
-          <HeaderNav />
-        </Header>
+      {/* Drawer for smaller screens */}
+      <DrawerMenu drawerVisible={drawerVisible} toggleDrawer={toggleDrawer} />
 
-        {/* Main content area */}
-        <Content
-          style={{
-            padding: 24,
-            margin: 0,
-            minHeight: 280,
-            background: '#fff',
-          }}
-        >
-          <Outlet /> {/* This renders the matched route content */}
+      {/* Layout for Header and Content */}
+      <Layout>
+        {/* Header */}
+        <HeaderComponent isMobile={isMobile} drawerVisible={drawerVisible} toggleDrawer={toggleDrawer} />
+
+        {/* Content */}
+        <Content style={{ padding: '16px' }}>
+          <Outlet />
         </Content>
-
-        {/* Footer */}
-        <Footer style={{ textAlign: 'center' }}>
-          © 2024 Your Company. All rights reserved.
-        </Footer>
       </Layout>
     </Layout>
   );
 };
 
-export default LayoutPage;
+export default LayoutComponent;
