@@ -17,6 +17,7 @@ import MatchingConsumerPage from './Pages/Generator/MatchingConsumerPage';
 import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
 import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
 import LoginC from './Pages/Consumer/LoginC';
+import Dashboard from './Pages/Consumer/Dashboard';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           {/* Consumer Routes */}
           <Route path="/consumer">
 
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="what-we-offer" element={<WhatWeOffer />} />
             <Route path="matching-ipp" element={<MatchingIPP />} />
             <Route path="chat-page" element={<ChatWithExpert />} />
