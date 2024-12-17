@@ -30,7 +30,7 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
       open={isVisible}
       onCancel={onCancel}
       footer={null}
-      width={600}
+      width={700}
     >
       <Form form={form} onFinish={handleSubmit}>
         <Row gutter={16}>

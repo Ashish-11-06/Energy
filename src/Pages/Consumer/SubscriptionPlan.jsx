@@ -1,23 +1,16 @@
 import React, { useState } from 'react';
 import { Card, Button, Row, Col, Typography, Modal } from 'antd';
-import SubscriptionModal from './Modal/SubscriptionModal'; // Assuming this is for other subscription details
 import '../SubscriptionPlan.css';
 
 const { Title, Text } = Typography;
 
 const SubscriptionPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isQuotationVisible, setIsQuotationVisible] = useState(false);
 
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
-    setIsModalVisible(true); // Optionally show a modal with more details
     setIsQuotationVisible(true); // Show the quotation view after selection
-  };
-
-  const closeModal = () => {
-    setIsModalVisible(false);
   };
 
   const closeQuotation = () => {
@@ -29,8 +22,7 @@ const SubscriptionPlans = () => {
     if (selectedPlan === 'basic') {
       return (
         <div>
-          <Title level={3}>Quotation</Title>
-          <p><strong>Plan:</strong> Basic Plan</p>
+          <p><strong>Plan:</strong> Basic Plan [dummy] invoce will be shown </p>
           <p><strong>Price:</strong> $9.99 / month</p>
           <p><strong>Details:</strong></p>
           <ul>
@@ -49,8 +41,7 @@ const SubscriptionPlans = () => {
     } else if (selectedPlan === 'standard') {
       return (
         <div>
-          <Title level={3}>Quotation</Title>
-          <p><strong>Plan:</strong> Standard Plan</p>
+          <p><strong>Plan:</strong> Standard Plan [dummy] invoce will be shown </p>
           <p><strong>Price:</strong> $19.99 / month</p>
           <p><strong>Details:</strong></p>
           <ul>
@@ -120,18 +111,18 @@ const SubscriptionPlans = () => {
         </Col>
       </Row>
 
-      {/* Modal for Selected Plan Details */}
-      <SubscriptionModal visible={isModalVisible} plan={selectedPlan} onClose={closeModal} />
-
       {/* Quotation View */}
       {isQuotationVisible && (
         <Modal
           title="Quotation"
-          visible={isQuotationVisible}
+          open={isQuotationVisible}
           onCancel={closeQuotation}
           footer={[
             <Button key="close" onClick={closeQuotation}>
               Close
+            </Button>,
+            <Button key="button" onClick={closeQuotation}>
+              dummy button payment done
             </Button>,
           ]}
           width={600}

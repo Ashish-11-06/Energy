@@ -21,9 +21,10 @@ const AnnualSvg = () => {
         padding: "20px",
         flexDirection: "column",
         height: '100%',
+        // border:"2px solid red"
       }}
     >
-      <div style={{ backgroundColor: "#F5F6FB", padding: "20px" }}>
+      <div style={{ backgroundColor: "#F5F6FB", padding: "20px", border:"2px solid #6698005c", borderRadius:"5px"}}>
         <AnnualSaving />
       </div>
 

@@ -1,0 +1,14 @@
+.energy-table-container {
+    background-color: #f9f9f9;
+    min-height: 100vh;
+  }
+  
+  .ant-table {
+    overflow-x: auto;
+  }
+  
+  .ant-modal {
+    border-radius: 8px;
+  }
+  
+  

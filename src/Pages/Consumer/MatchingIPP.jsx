@@ -31,7 +31,7 @@ const MatchingIPP = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-        //   height: "100vh",
+          height: "100%",
           backgroundColor: "#F5F6FB",
         }}
       >
@@ -53,7 +53,7 @@ const MatchingIPP = () => {
           justifyContent: "center",
           alignItems: "center",
         //   height: "100vh",
-          backgroundColor: "#F5F6FB",
+          backgroundColor: "#EDEEF7",
         }}
       >
         <Alert message="Error" description={error} type="error" showIcon />
@@ -68,11 +68,10 @@ const MatchingIPP = () => {
         display: "flex",
         justifyContent: "center",  // Centers content horizontally
         alignItems: "center",      // Centers content vertically
-        backgroundColor: "rgb(245, 246, 251)",
+        backgroundColor: "#F5F6FB",
         padding: "20px",
-        // height: "100vh",
+        height: "100%",
         flexDirection: "column",   // Stack items vertically
-        marginTop:'50px'
       }}
     >
       <Row
@@ -83,7 +82,7 @@ const MatchingIPP = () => {
           width: "100%",              // Ensure row takes full width
         }}
       >
-          <div style={{ backgroundColor: "#F5F6FB", padding: "20px" }}>
+          <div style={{ backgroundColor: "white", padding: "20px" }}>
             <IPPProfileGenerator
               title="Generate Matching IPP Profile"
               data={data}

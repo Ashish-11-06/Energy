@@ -18,6 +18,8 @@ import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
 import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
 import LoginC from './Pages/Consumer/LoginC';
 import Dashboard from './Pages/Consumer/Dashboard';
+import EnergyConsumptionForm from './Pages/Consumer/EnergyConsumptionForm';
+import EnergyConsumptionTable from './Pages/Consumer/EnergyConsumptionTable';
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
             <Route path="what-we-offer" element={<WhatWeOffer />} />
             <Route path="matching-ipp" element={<MatchingIPP />} />
             <Route path="chat-page" element={<ChatWithExpert />} />
+            <Route path="energy-consumption-form" element={<EnergyConsumptionForm />} />
+            <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
             <Route path="consumption-pattern" element={<ConsumptionPattern />} />
             <Route path="project-details" element={<IppProjectDetails />} />
             <Route path="requirenment" element={<RequirementsPage />} />
