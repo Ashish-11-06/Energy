@@ -17,7 +17,7 @@ ChartJS.register(
 
 // Sample data for the energy consumer
 const profileData = {
-  name: 'John Doe',
+  name: 'Gohn Doe',
   role: 'Energy Consumer',
   email: 'johndoe@example.com',
   avatar: 'https://i.pravatar.cc/150?img=4',
@@ -64,19 +64,12 @@ const NoPaddingRow = styled(Row)`
 
 const ProfileCard = () => (
   <Card
-    title="Profile"
+    title={<div style={{ fontSize: '16px', padding: '5px' }}>Profile</div>}
     style={{
       margin: '10px auto',
       textAlign: 'center',
       padding: '10px',
       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-    }}
-    headStyle={{
-      fontSize: '16px',
-      padding: '5px',
-    }}
-    bodyStyle={{
-      padding: '10px',
     }}
   >
     <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -102,9 +95,8 @@ const ProfileCard = () => (
 
 const EnergyConsumption = () => (
   <Card
-    title="Energy Consumption Overview"
-    style={{ margin: '10px' }}
-    bodyStyle={{ padding: '10px' }}
+    title={<div style={{ fontSize: '16px' }}>Energy Consumption Overview</div>}
+    style={{ margin: '10px', padding: '10px' }}
   >
     <div style={{ height: '200px' }}>
       <Line
@@ -123,9 +115,8 @@ const EnergyConsumption = () => (
 
 const DemandStatus = () => (
   <Card
-    title="Demand Completion Status"
-    style={{ margin: '10px' }}
-    bodyStyle={{ padding: '10px' }}
+    title={<div style={{ fontSize: '16px' }}>Demand Completion Status</div>}
+    style={{ margin: '10px', padding: '10px' }}
   >
     <div style={{ height: '200px' }}>
       <Bar

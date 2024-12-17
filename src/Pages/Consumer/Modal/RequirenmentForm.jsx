@@ -109,10 +109,10 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
               rules={[{ required: true, message: 'Please select a tariff category!' }]}
             >
               <Select placeholder="Select tariff category">
-                <Select.Option value="htCommercial">HT Commercial</Select.Option>
-                <Select.Option value="htIndustrial">HT Industrial</Select.Option>
-                <Select.Option value="ltCommercial">LT Commercial</Select.Option>
-                <Select.Option value="ltIndustrial">LT Industrial</Select.Option>
+                <Select.Option value="HT Commercial">HT Commercial</Select.Option>
+                <Select.Option value="HT Industrial">HT Industrial</Select.Option>
+                <Select.Option value="LT Commercial">LT Commercial</Select.Option>
+                <Select.Option value="LT Industrial">LT Industrial</Select.Option>
               </Select>
             </Form.Item>
           </Col>

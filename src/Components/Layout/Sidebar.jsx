@@ -27,7 +27,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
         top: 0, // Keep it at the top of the screen
         left: 0, // Position it on the left
         height: '100vh', // Ensure it spans the full height of the viewport
-        backgroundColor: '#001529', // Background color for the sider
+        backgroundColor: '#f5f6fb', // Background color for the sider
         transition: 'all 0.3s', // Smooth transition for collapse/expand
         display: isMobile ? 'none' : 'block', // Hide on mobile
         zIndex: 100, // Ensure it stays above other elements
@@ -41,7 +41,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           padding: '21px',
           textAlign: 'center',
           fontSize: '18px',
-          backgroundColor: '#669800',
+          backgroundColor: '#6698005c',
         }}
       >
         Menu

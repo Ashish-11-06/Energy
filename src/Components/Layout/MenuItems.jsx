@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import { BarChartOutlined, DeploymentUnitOutlined } from '@ant-design/icons';
 
 export const consumerMenuItems = [
-  { key: '3', icon: <BarChartOutlined />, label: <Link to="/consumer/what-we-offer">What We Offer</Link> },
-  { key: '4', icon: <BarChartOutlined />, label: <Link to="/consumer/matching-ipp">Matching IPP</Link> },
+  { key: '3', icon: <BarChartOutlined />, label: <Link to="/consumer/dashboard">dashboard</Link> },
+  { key: '4', icon: <BarChartOutlined />, label: <Link to="/consumer/requirenment">Requirements</Link>},
   { key: '5', icon: <BarChartOutlined />, label: <Link to="/consumer/chat-page">Chat with Expert</Link> },
   { key: '6', icon: <BarChartOutlined />, label: <Link to="/consumer/consumption-pattern">Consumption Pattern</Link> },
   { key: '7', icon: <BarChartOutlined />, label: <Link to="/consumer/project-details">Project Details</Link> },
-  { key: '8', icon: <BarChartOutlined />, label: <Link to="/consumer/requirenment">Requirements</Link> },
-  { key: '9', icon: <BarChartOutlined />, label: <Link to="/consumer/annual-saving">Annual Savings</Link> },
+  { key: '8', icon: <BarChartOutlined />, label: <Link to="/consumer/matching-ipp">Matching IPP</Link>  },
+  // { key: '9', icon: <BarChartOutlined />, label: <Link to="/consumer/annual-saving">Annual Savings</Link> },
   { key: '10', icon: <BarChartOutlined />, label: <Link to="/consumer/subscription-plan">Subscription Plans</Link> },
 ];
 

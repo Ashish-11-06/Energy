@@ -11,7 +11,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => (
       padding: '0 16px',
       display: 'flex',
       alignItems: 'center',
-      backgroundColor: 'black',
+      backgroundColor: 'transparent',
       position: 'sticky', // Make header sticky
       top: 0, // Stick to the top of the viewport
       zIndex: 1000, // Ensure it stays above other content

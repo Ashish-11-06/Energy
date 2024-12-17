@@ -19,7 +19,7 @@ const DrawerMenu = ({ drawerVisible, toggleDrawer }) => {
       closable
       onClose={toggleDrawer}
       open={drawerVisible}
-      bodyStyle={{ padding: 0 }} // Update styles to remove padding
+      contentStyle={{ padding: 0 }} // Updated for Ant Design v5
     >
       <Menu theme="light" mode="inline" items={menuItems} />
     </Drawer>

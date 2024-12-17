@@ -23,9 +23,20 @@ const RequirementsPage = () => {
       key: 'industry',
     },
     {
-      title: 'Contracted Demand',
+      title: 'Contracted Demand (kWh)',
       dataIndex: 'contractedDemand',
       key: 'ContractedDemand',
+    },
+    
+    {
+      title: 'Tarrif Category',
+      dataIndex: 'tariffCategory',
+      key: 'tariffCategory',
+    },
+    {
+      title: 'Voltage Level',
+      dataIndex: 'voltageLevel',
+      key: 'voltageLevel',
     },
     {
       title: 'Procurement Date',
@@ -33,6 +44,7 @@ const RequirementsPage = () => {
       key: 'procurement',
       render: (date) => (date ? date.format('DD-MM-YYYY') : ''),
     },
+    
   ];
 
   // Add a selection column for row selection (Remove radio button column)
@@ -110,14 +122,14 @@ const RequirementsPage = () => {
           </Button>
         </Col>
         <Col>
-          <Button
+          {/* <Button
             type="danger"
             onClick={handleClearAll}
             style={{ width: 160 }}
             disabled={requirements.length === 0}
           >
             Clear All
-          </Button>
+          </Button> */}
         </Col>
         <Col>
           <Button

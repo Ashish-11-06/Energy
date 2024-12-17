@@ -60,7 +60,7 @@ const LayoutComponent = () => {
             padding: '0 16px',
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: 'black',
+            backgroundColor: '#6698005c',
             position: 'sticky',
             top: 0,
             zIndex: 1000, // Ensure header is above sidebar and content
@@ -74,7 +74,7 @@ const LayoutComponent = () => {
         </Header>
 
         {/* Content */}
-        <Content style={{ padding: '16px' }}>
+        <Content style={{  }}>
           <Outlet />
         </Content>
       </Layout>
