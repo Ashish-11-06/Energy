@@ -25,21 +25,35 @@ const LayoutComponent = () => {
     setDrawerVisible(!drawerVisible);
   };
 
+  const sidebarWidth = collapsed ? 80 : 250; // Adjust sidebar width based on collapsed state
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {/* Sidebar for larger screens */}
-      <Sidebar
-        collapsed={collapsed}
-        setCollapsed={setCollapsed}
-        isMobile={isMobile}
-        style={{ zIndex: 0 }} // Ensure sidebar is below the header
-      />
+      {!isMobile && (
+        <Sidebar
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
+          isMobile={isMobile}
+          style={{
+            width: sidebarWidth,
+            position: 'fixed', // Fix sidebar position
+            height: '100%',
+            zIndex: 10, // Ensure sidebar appears above content
+          }}
+        />
+      )}
 
       {/* Drawer for smaller screens */}
-      <DrawerMenu drawerVisible={drawerVisible} toggleDrawer={toggleDrawer} />
+      {isMobile && <DrawerMenu drawerVisible={drawerVisible} toggleDrawer={toggleDrawer} />}
 
       {/* Layout for Header and Content */}
-      <Layout>
+      <Layout
+        style={{
+          marginLeft: !isMobile ? sidebarWidth : 0, // Push content to the right when sidebar is visible
+          transition: 'margin-left 0.2s', // Smooth transition when collapsing or expanding the sidebar
+        }}
+      >
         {/* Header */}
         <Header
           style={{
