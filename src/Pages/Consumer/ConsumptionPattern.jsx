@@ -1,11 +1,13 @@
-import React from "react";
-import { Table, Button, Typography, Row, Col } from "antd";
+import React, { useState } from "react";
+import { Table, Button, Typography, Row, Col, message } from "antd";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto"; // Ensure Chart.js is loaded
 
 const { Title, Text } = Typography;
 
 const ConsumptionPattern = () => {
+  const [selectedIPP, setSelectedIPP] = useState(null); // State to store selected IPP
+
   // Data for the chart
   const chartData = {
     labels: ["Mar/24", "Apr/24", "May/24", "Jun/24", "Jul/24"],
@@ -97,16 +99,28 @@ const ConsumptionPattern = () => {
     },
   ];
 
+  // Handle row click logic
+  const handleRowClick = (record) => {
+    setSelectedIPP(record); // Set the selected IPP when a row is clicked
+  };
+
+  // Handle proceed button click
+  const handleProceed = () => {
+    if (selectedIPP) {
+      message.success(`Proceeding with IPP ${selectedIPP.ipp}`);
+    } else {
+      message.warning("Please select a matching IPP to proceed.");
+    }
+  };
+
   return (
     <div
       style={{
-        backgroundColor: "#F5F6FB",
-        minHeight: "100vh",
         padding: "20px",
         fontFamily: "'Inter', sans-serif",
       }}
     >
-      <Row justify="center" align="middle" gutter={[16, 8]} style={{ marginTop: "60px", height: "100%" }}>
+      <Row justify="center" align="middle" gutter={[16, 8]} style={{ height: "100%" }}>
         <Col span={24} style={{ textAlign: "center" }}>
           <Title level={3} style={{ color: "#001529" }}>
             Your Consumption Pattern
@@ -120,7 +134,7 @@ const ConsumptionPattern = () => {
         </Col>
 
         <Col span={24}>
-          <Title level={4} style={{ textAlign: "center", color: "#001529", marginTop:"15px"}}>
+          <Title level={4} style={{ textAlign: "center", color: "#001529", marginTop: "15px" }}>
             Matching IPP Profile
           </Title>
           <Table
@@ -128,17 +142,27 @@ const ConsumptionPattern = () => {
             columns={columns}
             pagination={false}
             bordered
+            onRow={(record) => ({
+              onClick: () => handleRowClick(record), // Handle row click
+              style: {
+                backgroundColor: record.key === selectedIPP?.key ? "#c4d4a5" : "white", // Change background color for selected row
+              },
+            })}
+            rowClassName="" // No need for rowClassName since we're using inline styles
             style={{
               backgroundColor: "#FFFFFF",
               border: "1px solid #E6E8F1",
-              // maxWidth:"900px"
+              overflowX: "auto", // Make the table scrollable on small screens
             }}
+            scroll={{ x: true }} // Enable horizontal scroll for small screens
           />
         </Col>
 
         <Col span={24} style={{ textAlign: "center" }}>
           <Button
             type="primary"
+            onClick={handleProceed}
+            disabled={!selectedIPP} // Disable if no IPP is selected
             style={{
               backgroundColor: "#669800",
               borderColor: "#669800",
@@ -146,8 +170,13 @@ const ConsumptionPattern = () => {
               padding: "10px 40px",
             }}
           >
-            Submit
+            Proceed
           </Button>
+          {!selectedIPP && (
+            <Text type="danger" style={{ display: "block", marginTop: "10px" }}>
+              Please select an IPP first.
+            </Text>
+          )}
         </Col>
       </Row>
     </div>
