@@ -17,7 +17,7 @@ ChartJS.register(
 
 // Sample data for the energy consumer
 const profileData = {
-  name: 'Gohn Doe',
+  name: 'John Doe',
   role: 'Energy Consumer',
   email: 'johndoe@example.com',
   avatar: 'https://i.pravatar.cc/150?img=4',
