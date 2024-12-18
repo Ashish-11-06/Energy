@@ -17,7 +17,7 @@ const AnnualSvg = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#F5F6FB",
+        // backgroundColor: "#F5F6FB",
         padding: "20px",
         flexDirection: "column",
         height: '100%',
