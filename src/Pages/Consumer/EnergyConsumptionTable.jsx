@@ -105,7 +105,7 @@ const EnergyConsumptionTable = () => {
   return (
     <div className="energy-table-container" style={{ padding: '20px' }}>
       <Card style={{ maxWidth: '100%', margin: '0 auto' }}>
-        <p>Please fill the details for making your energy transition plan</p>
+        <p>Please fill the details for making your energy transition plan.</p>
         <Title level={3} style={{ textAlign: 'center', marginTop: '10px' }}>
           Energy Consumption Data (12 Months)
         </Title>
@@ -212,9 +212,9 @@ const EnergyConsumptionTable = () => {
 
         {/* Upload SCADA_15 File Button */}
         <Space style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
-          For more accuracy, you can upload a SCADA dump file.
+          For more accuracy, you can upload a SCADA_15 min dump energy consumption file.
           <Upload {...uploadProps}>
-            <Button icon={<UploadOutlined />}>Upload SCADA_15 File</Button>
+            <Button icon={<UploadOutlined />}>Upload SCADA File</Button>
           </Upload>
         </Space>
       </Card>
