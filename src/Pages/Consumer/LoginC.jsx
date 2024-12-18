@@ -4,39 +4,37 @@ import { useNavigate } from 'react-router-dom';
 import 'antd/dist/reset.css';
 import '../Login.css';
 import RegisterModal from '../../Components/Modals/Registration/RegisterModal';  // Import RegisterModal
-import useLogin from '../../hook/useLogin';
 
 const LoginC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
-  const { login, loading, error: loginError } = useLogin(); 
+  const [loading, setLoading] = useState(false); // Mock loading state
   const navigate = useNavigate();
 
   const role = 'consumer'; // You can dynamically set this role based on your needs
 
-  const onFinish = async (values) => {
+  const onFinish = (values) => {
     const { email, password } = values;
-    const credentials = { 
-      email: values.email,
-      password: values.password,
-      role: role, // Include the role directly
-    };
 
-    try {
-      const response = await login(credentials);
-      const data = response.payload.data;
-      console.log(data);
+    // Mock login logic: Allow every email and password
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
 
-      if (data.role === 'consumer') {
+      // Mock user data
+      const userData = {
+        role: role, // Default to 'consumer' for this example
+        email,
+      };
+
+      // Simulate role-based navigation
+      if (userData.role === 'consumer') {
         message.success('Login successful!');
-        navigate('/what-we-offer');
-      }
-      if (data.role === 'generator') {
+        navigate('/consumer/dashboard'); // Redirect to consumer dashboard
+      } else if (userData.role === 'generator') {
         message.success('Login successful!');
-        navigate('/generator/what-we-offer');
+        navigate('/generator/what-we-offer'); // Redirect to generator-specific page
       }
-    } catch (err) {
-      message.error(loginError || 'Login failed');
-    }
+    }, 1000); // Simulate a delay for loading state
   };
 
   const onFinishFailed = (errorInfo) => {

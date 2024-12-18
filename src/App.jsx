@@ -27,17 +27,15 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
-    {/* Landing Page */}
-    <Route path="/landing-page" element={<LandingPage />} />
-    <Route path="/consumer/login" element={<LoginC />} />
+        <Route path="/consumer/login" element={<LoginC />} />
+
+        {/* Default Landing Page */}
+        <Route path="/" element={<LandingPage />} />
 
         {/* Routes with shared layout */}
-        <Route path="/" element={<LayoutComponent />}>
-      
-
+        <Route element={<LayoutComponent />}>
           {/* Consumer Routes */}
           <Route path="/consumer">
-
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="what-we-offer" element={<WhatWeOffer />} />
             <Route path="matching-ipp" element={<MatchingIPP />} />

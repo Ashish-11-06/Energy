@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Table, Typography, Card, Button, Form, InputNumber, Modal, Space, Select, Row, Col, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import Papa from 'papaparse'; // Library for CSV parsing
 import '../EnergyTable.css';
 
 const { Title } = Typography;
 
 const EnergyConsumptionTable = () => {
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June', 
+    'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
@@ -72,33 +71,11 @@ const EnergyConsumptionTable = () => {
     },
   ];
 
-  // Handle SCADA file upload
+  // Handle SCADA file upload (without processing)
   const handleFileUpload = (file) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const csv = reader.result;
-      Papa.parse(csv, {
-        complete: (result) => {
-          // Assuming the CSV file structure is known and consistent
-          const scadaData = result.data;
-          const formattedData = scadaData.map((row, index) => {
-            return {
-              key: index + 1,
-              month: row[0], // Assuming first column is the month
-              monthlyConsumption: parseFloat(row[1]),
-              peakConsumption: parseFloat(row[2]),
-              offPeakConsumption: parseFloat(row[3]),
-              monthlyBill: parseFloat(row[4]),
-            };
-          });
-          setDataSource(formattedData);
-          message.success('SCADA file data loaded successfully');
-        },
-        header: false, // set to true if the CSV file contains headers
-      });
-    };
-    reader.readAsText(file);
-    return false; // Prevent automatic file upload
+    console.log('File uploaded:', file);
+    message.success('SCADA file uploaded successfully');
+    return false;
   };
 
   const uploadProps = {
@@ -106,22 +83,38 @@ const EnergyConsumptionTable = () => {
     showUploadList: false, // Hide upload list as we manually handle the file
   };
 
+  // Get an array of months that are already added to the table
+  const usedMonths = dataSource.map(item => item.month);
+
+  // Filter the months array to exclude already used months
+  const availableMonths = months.filter(month => !usedMonths.includes(month));
+
+  // Show the "Continue" button after all 12 months are added
+  const isAllMonthsAdded = dataSource.length === 12;
+
   return (
     <div className="energy-table-container" style={{ padding: '20px' }}>
       <Card style={{ maxWidth: '100%', margin: '0 auto' }}>
-        <Title level={3} style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <p>Please fill the details for making your energy transition plan</p>
+        <Title level={3} style={{ textAlign: 'center', marginTop: '10px' }}>
           Energy Consumption Data (12 Months)
         </Title>
 
-        {/* Add Data Button */}
+        {/* Conditionally render Add Data or Continue Button */}
         <Space style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end' }}>
-          <Button type="primary" onClick={showModal}>
-            Add Data
-          </Button>
-          {/* Upload SCADA_15 File Button */}
-          <Upload {...uploadProps}>
-            <Button icon={<UploadOutlined />}>Upload SCADA_15 File</Button>
-          </Upload>
+          {!isAllMonthsAdded ? (
+            <Button type="primary" onClick={showModal}>
+              Add Data
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              block
+              onClick={() => message.success('Proceeding to next step')}
+            >
+              Continue
+            </Button>
+          )}
         </Space>
 
         {/* Table to Display Data */}
@@ -131,17 +124,17 @@ const EnergyConsumptionTable = () => {
           pagination={false}
           bordered
           scroll={{ x: 'max-content' }}
-          size="small" // This reduces the table's size and height
-          tableLayout="fixed" // Makes the table more compact by using fixed layout
+          size="small"
+          tableLayout="fixed"
         />
 
         {/* Modal for Adding New Data */}
         <Modal
           title="Add Monthly Data"
-          visible={isModalVisible}
+          open={isModalVisible}
           onCancel={handleCancel}
           footer={null}
-          width="80%"
+          width={600}
         >
           <Form form={form} layout="vertical" onFinish={handleAddData}>
             {/* Month Dropdown */}
@@ -150,7 +143,7 @@ const EnergyConsumptionTable = () => {
               name="month"
               rules={[{ required: true, message: 'Please select a month!' }]}>
               <Select placeholder="Select month">
-                {months.map((month, index) => (
+                {availableMonths.map((month, index) => (
                   <Select.Option key={index} value={month}>
                     {month}
                   </Select.Option>
@@ -206,6 +199,14 @@ const EnergyConsumptionTable = () => {
             </Form.Item>
           </Form>
         </Modal>
+
+        {/* Upload SCADA_15 File Button */}
+        <Space style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+          For more accuracy, you can upload a SCADA dump file.
+          <Upload {...uploadProps}>
+            <Button icon={<UploadOutlined />}>Upload SCADA_15 File</Button>
+          </Upload>
+        </Space>
       </Card>
     </div>
   );

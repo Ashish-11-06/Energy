@@ -1,6 +1,6 @@
 .energy-table-container {
-    background-color: #f9f9f9;
-    min-height: 100vh;
+    /* background-color: #f9f9f9; */
+    min-height: 100%;
   }
   
   .ant-table {

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Table, Button, Typography, Row, Col, message } from "antd";
+import { Table, Typography, Row, Col, message } from "antd";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto"; // Ensure Chart.js is loaded
+import IPPModal from "./Modal/IPPModal"; // Import the modal component
 
 const { Title, Text } = Typography;
 
 const ConsumptionPattern = () => {
   const [selectedIPP, setSelectedIPP] = useState(null); // State to store selected IPP
+  const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
 
   // Data for the chart
   const chartData = {
@@ -72,6 +74,12 @@ const ConsumptionPattern = () => {
       dataIndex: "replacement",
       key: "replacement",
     },
+    {
+      title: "Per Unit Cost (₹)",
+      dataIndex: "perUnitCost",
+      key: "perUnitCost",
+      render: (text) => `₹ ${text.toFixed(2)}`, // Format the cost to show as rupees
+    },
   ];
 
   // Table data
@@ -82,6 +90,7 @@ const ConsumptionPattern = () => {
       states: "Karnataka",
       capacity: "50 MW",
       replacement: "65%",
+      perUnitCost: 5.45, // Example cost
     },
     {
       key: "2",
@@ -89,6 +98,7 @@ const ConsumptionPattern = () => {
       states: "Maharashtra",
       capacity: "30 MW",
       replacement: "65%",
+      perUnitCost: 6.20, // Example cost
     },
     {
       key: "3",
@@ -96,21 +106,14 @@ const ConsumptionPattern = () => {
       states: "Rajasthan",
       capacity: "10 MW",
       replacement: "65%",
+      perUnitCost: 4.85, // Example cost
     },
   ];
 
   // Handle row click logic
   const handleRowClick = (record) => {
     setSelectedIPP(record); // Set the selected IPP when a row is clicked
-  };
-
-  // Handle proceed button click
-  const handleProceed = () => {
-    if (selectedIPP) {
-      message.success(`Proceeding with IPP ${selectedIPP.ipp}`);
-    } else {
-      message.warning("Please select a matching IPP to proceed.");
-    }
+    setIsModalVisible(true); // Show modal when row is clicked
   };
 
   return (
@@ -157,28 +160,16 @@ const ConsumptionPattern = () => {
             scroll={{ x: true }} // Enable horizontal scroll for small screens
           />
         </Col>
-
-        <Col span={24} style={{ textAlign: "center" }}>
-          <Button
-            type="primary"
-            onClick={handleProceed}
-            disabled={!selectedIPP} // Disable if no IPP is selected
-            style={{
-              backgroundColor: "#669800",
-              borderColor: "#669800",
-              fontSize: "16px",
-              padding: "10px 40px",
-            }}
-          >
-            Proceed
-          </Button>
-          {!selectedIPP && (
-            <Text type="danger" style={{ display: "block", marginTop: "10px" }}>
-              Please select an IPP first.
-            </Text>
-          )}
-        </Col>
       </Row>
+
+      {/* IPP Modal Component */}
+      {selectedIPP && (
+        <IPPModal
+          visible={isModalVisible}
+          ipp={selectedIPP}
+          onClose={() => setIsModalVisible(false)} // Close modal
+        />
+      )}
     </div>
   );
 };
