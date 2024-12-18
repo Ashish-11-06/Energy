@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Button, Row, Col, Typography, Modal } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import '../SubscriptionPlan.css';
 
 const { Title, Text } = Typography;
@@ -7,6 +8,7 @@ const { Title, Text } = Typography;
 const SubscriptionPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isQuotationVisible, setIsQuotationVisible] = useState(false);
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
@@ -22,7 +24,7 @@ const SubscriptionPlans = () => {
     if (selectedPlan === 'basic') {
       return (
         <div>
-          <p><strong>Plan:</strong> Basic Plan [dummy] invoce will be shown </p>
+          <p><strong>Plan:</strong> Basic Plan [dummy] invoice will be shown</p>
           <p><strong>Price:</strong> $9.99 / month</p>
           <p><strong>Details:</strong></p>
           <ul>
@@ -41,7 +43,7 @@ const SubscriptionPlans = () => {
     } else if (selectedPlan === 'standard') {
       return (
         <div>
-          <p><strong>Plan:</strong> Standard Plan [dummy] invoce will be shown </p>
+          <p><strong>Plan:</strong> Standard Plan [dummy] invoice will be shown</p>
           <p><strong>Price:</strong> $19.99 / month</p>
           <p><strong>Details:</strong></p>
           <ul>
@@ -58,6 +60,12 @@ const SubscriptionPlans = () => {
         </div>
       );
     }
+  };
+
+  // Handle payment done and navigate to the new page
+  const handlePaymentDone = () => {
+    // Navigate to the energy-consumption-table page after payment is done
+    navigate('/consumer/energy-consumption-table');
   };
 
   return (
@@ -118,11 +126,11 @@ const SubscriptionPlans = () => {
           open={isQuotationVisible}
           onCancel={closeQuotation}
           footer={[
-            <Button key="close" onClick={closeQuotation}>
-              Close
+            <Button key="button">
+              download quotation
             </Button>,
-            <Button key="button" onClick={closeQuotation}>
-              dummy button payment done
+            <Button key="button" onClick={handlePaymentDone}>
+              [dummy] payment done
             </Button>,
           ]}
           width={600}
