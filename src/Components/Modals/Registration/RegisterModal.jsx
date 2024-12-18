@@ -21,6 +21,7 @@ const RegisterModal = ({ open, onCancel, type }) => {
 
   const onFinish = (values) => {
     console.log('Form Submitted:', values);
+    // Check if both OTPs are verified before proceeding
     if (otpVerified && emailOtpVerified) {
       message.success("Registration successful!");
       onCancel(); // Close the modal after successful registration

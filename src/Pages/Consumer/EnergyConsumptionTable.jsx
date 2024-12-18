@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Typography, Card, Button, Form, InputNumber, Modal, Space, Select, Row, Col, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import '../EnergyTable.css';
 
 const { Title } = Typography;
@@ -14,6 +15,9 @@ const EnergyConsumptionTable = () => {
   const [dataSource, setDataSource] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  
+  // Initialize navigate hook
+  const navigate = useNavigate();
 
   // Show modal for adding data
   const showModal = () => {
@@ -27,7 +31,8 @@ const EnergyConsumptionTable = () => {
       month: values.month,
       ...values,
     };
-    setDataSource([...dataSource, newData]);
+    const updatedDataSource = [...dataSource, newData];
+    setDataSource(updatedDataSource); // Update data source state
     setIsModalVisible(false);
     form.resetFields();
   };
@@ -92,6 +97,11 @@ const EnergyConsumptionTable = () => {
   // Show the "Continue" button after all 12 months are added
   const isAllMonthsAdded = dataSource.length === 12;
 
+  const handleContinue = () => {
+    // Navigate to the specified path when "Continue" is clicked
+    navigate('/consumer/consumption-pattern');
+  };
+
   return (
     <div className="energy-table-container" style={{ padding: '20px' }}>
       <Card style={{ maxWidth: '100%', margin: '0 auto' }}>
@@ -110,7 +120,7 @@ const EnergyConsumptionTable = () => {
             <Button
               type="primary"
               block
-              onClick={() => message.success('Proceeding to next step')}
+              onClick={handleContinue}  // Handle Continue
             >
               Continue
             </Button>
@@ -141,7 +151,7 @@ const EnergyConsumptionTable = () => {
             <Form.Item
               label="Month"
               name="month"
-              rules={[{ required: true, message: 'Please select a month!' }]}>
+              rules={[{ required: true, message: 'Please select a month!' }]} >
               <Select placeholder="Select month">
                 {availableMonths.map((month, index) => (
                   <Select.Option key={index} value={month}>
@@ -156,7 +166,7 @@ const EnergyConsumptionTable = () => {
                 <Form.Item
                   label="Monthly Consumption (kWh)"
                   name="monthlyConsumption"
-                  rules={[{ required: true, message: 'Please enter monthly consumption!' }]}>
+                  rules={[{ required: true, message: 'Please enter monthly consumption!' }]} >
                   <InputNumber style={{ width: '100%' }} placeholder="Enter kWh" />
                 </Form.Item>
               </Col>
@@ -165,7 +175,7 @@ const EnergyConsumptionTable = () => {
                 <Form.Item
                   label="Peak Consumption (kWh)"
                   name="peakConsumption"
-                  rules={[{ required: true, message: 'Please enter peak consumption!' }]}>
+                  rules={[{ required: true, message: 'Please enter peak consumption!' }]} >
                   <InputNumber style={{ width: '100%' }} placeholder="Enter peak kWh" />
                 </Form.Item>
               </Col>
@@ -176,7 +186,7 @@ const EnergyConsumptionTable = () => {
                 <Form.Item
                   label="Off-Peak Consumption (kWh)"
                   name="offPeakConsumption"
-                  rules={[{ required: true, message: 'Please enter off-peak consumption!' }]}>
+                  rules={[{ required: true, message: 'Please enter off-peak consumption!' }]} >
                   <InputNumber style={{ width: '100%' }} placeholder="Enter off-peak kWh" />
                 </Form.Item>
               </Col>
@@ -185,7 +195,7 @@ const EnergyConsumptionTable = () => {
                 <Form.Item
                   label="Monthly Bill Amount ($)"
                   name="monthlyBill"
-                  rules={[{ required: true, message: 'Please enter monthly bill amount!' }]}>
+                  rules={[{ required: true, message: 'Please enter monthly bill amount!' }]} >
                   <InputNumber style={{ width: '100%' }} placeholder="Enter bill amount in $" />
                 </Form.Item>
               </Col>

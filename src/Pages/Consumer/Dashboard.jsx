@@ -64,7 +64,7 @@ const NoPaddingRow = styled(Row)`
 
 const ProfileCard = () => (
   <Card
-    title={<div style={{ fontSize: '16px', padding: '5px' }}>Profile</div>}
+    title={<div style={{ fontSize: '16px', padding: '5px' }}>Dummy Profile</div>}
     style={{
       margin: '10px auto',
       textAlign: 'center',
