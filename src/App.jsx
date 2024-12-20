@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './Pages/Login';
 import LandingPage from './Pages/LandingPage';
 import LayoutComponent from './Components/Layout/Layout';
 import WhatWeOffer from './Pages/Consumer/WhatWeOffer';
@@ -20,14 +19,16 @@ import LoginC from './Pages/Consumer/LoginC';
 import Dashboard from './Pages/Consumer/Dashboard';
 import EnergyConsumptionForm from './Pages/Consumer/EnergyConsumptionForm';
 import EnergyConsumptionTable from './Pages/Consumer/EnergyConsumptionTable';
+import LoginG from './Pages/Generator/LoginG';
+import UpdateProfileDetails from './Pages/Generator/UpdateProfileDetails';
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* Public routes */}
-        <Route path="/login" element={<Login />} />
         <Route path="/consumer/login" element={<LoginC />} />
+        <Route path="/generator/login" element={<LoginG />} />
 
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
@@ -56,6 +57,7 @@ function App() {
             <Route path="matching-consumer" element={<MatchingConsumerPage />} />
             <Route path="subscription-plan" element={<SubscriptionPlanG />} />
             <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
+            <Route path="update-profile-details" element={<UpdateProfileDetails />} />
           </Route>
         </Route>
       </Routes>
