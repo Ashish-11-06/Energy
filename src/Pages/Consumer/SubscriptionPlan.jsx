@@ -54,7 +54,6 @@ const SubscriptionPlans = () => {
           <p><strong>Terms and Conditions:</strong></p>
           <ul>
             <li>Monthly billing cycle.</li>
-            <li>Cancellation within 30 days for a full refund.</li>
             <li>Subject to terms of service.</li>
           </ul>
         </div>
