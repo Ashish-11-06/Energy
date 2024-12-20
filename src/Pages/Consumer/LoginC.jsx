@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
-import { useNavigate } from 'react-router-dom';  
+import { useNavigate } from 'react-router-dom';
 import 'antd/dist/reset.css';
 import '../Login.css';
-import RegisterModal from '../../Components/Modals/Registration/RegisterModal';  // Import RegisterModal
+import RegisterForm from '../../Components/Modals/Registration/RegisterForm';  // Import RegisterForm
 
 const LoginC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
@@ -51,6 +51,11 @@ const LoginC = () => {
     setIsModalVisible(false); // Close the modal
   };
 
+  const handleCreate = (values) => {
+    console.log('Received values of form: ', values);
+    setIsModalVisible(false);
+  };
+
   return (
     <div className="login-container">
       <div className="login-box">
@@ -90,8 +95,8 @@ const LoginC = () => {
         </div>
       </div>
 
-      {/* Pass the type prop as 'consumer' to RegisterModal */}
-      <RegisterModal open={isModalVisible} onCancel={closeModal} type="consumer" />
+      {/* Use RegisterForm instead of RegisterModal */}
+      <RegisterForm type="consumer" open={isModalVisible} onCancel={closeModal} onCreate={handleCreate} />
     </div>
   );
 };
