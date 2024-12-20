@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { Radio, Button, Table } from "antd";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
+import { Radio, Button, Typography } from "antd";
+import { Bar } from "react-chartjs-2";
+import "chart.js/auto"; // Ensure Chart.js is loaded
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
+
+const { Text } = Typography;
 
 const EnergyOptimizationPage = () => {
   const [selectedConsumer, setSelectedConsumer] = useState("");
   const [optimize, setOptimize] = useState(null);
+  const navigate = useNavigate(); // Initialize navigate hook
 
   const handleSubmit = () => {
     console.log({
@@ -12,68 +17,58 @@ const EnergyOptimizationPage = () => {
       optimize,
     });
     alert("Submitted");
+    navigate('/generator/update-profile-details'); // Navigate to the renamed page for the generator
   };
 
-  // Data for Recharts
-  const chartData = [
-    { month: "Mar/24", consumption: 100 },
-    { month: "Apr/24", consumption: 80 },
-    { month: "May/24", consumption: 60 },
-    { month: "Jun/24", consumption: 100 },
-    { month: "Jul/24", consumption: 80 },
-  ];
+  // Data for Chart.js
+  const chartData = {
+    labels: ["Mar/24", "Apr/24", "May/24", "Jun/24", "Jul/24"],
+    datasets: [
+      {
+        label: "Consumption",
+        data: [100, 80, 60, 100, 80],
+        backgroundColor: "#669800",
+        borderRadius: 10,
+      },
+    ],
+  };
 
-  // Table Data for Ant Design
-  const columns = [
-    {
-      title: "S. No",
-      dataIndex: "sno",
-      key: "sno",
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        ticks: {
+          color: "#001529", // Custom color for labels
+        },
+      },
+      y: {
+        ticks: {
+          color: "#001529", // Custom color for labels
+        },
+      },
     },
-    {
-      title: "Technology",
-      dataIndex: "technology",
-      key: "technology",
+    plugins: {
+      legend: {
+        labels: {
+          color: "#001529", // Legend label color
+        },
+      },
     },
-    {
-      title: "Offered Capacity",
-      dataIndex: "capacity",
-      key: "capacity",
-    },
-    {
-      title: "Offered Energy (MUs)",
-      dataIndex: "energy",
-      key: "energy",
-    },
-  ];
-
-  const tableData = [
-    {
-      key: "1",
-      sno: "1",
-      technology: "Solar",
-      capacity: "50 MW",
-      energy: "66",
-    },
-    {
-      key: "2",
-      sno: "2",
-      technology: "Wind",
-      capacity: "30 MW",
-      energy: "65",
-    },
-    {
-      key: "3",
-      sno: "3",
-      technology: "ESS",
-      capacity: "10 MW",
-      energy: "65",
-    },
-  ];
+  };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Inter, sans-serif", backgroundColor: "#F5F6FB" }}>
-      <h2 style={{ color: "#669800" }}>Energy Optimization</h2>
+    <div style={{ padding: "20px", fontFamily: "Inter, sans-serif" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2 style={{ color: "#669800" }}>Energy Optimization</h2>
+        <div style={{ textAlign: "right" }}>
+          <Text style={{ color: "#9A8406" }}>Consumer Name: John Doe</Text>
+          <br />
+          <Text style={{ color: "#9A8406" }}>Credit Rating: AAA</Text>
+          <br />
+          <Text style={{ color: "#9A8406" }}>Energy Demand: 20 MW</Text>
+        </div>
+      </div>
 
       {/* Top Section */}
       <div
@@ -87,43 +82,22 @@ const EnergyOptimizationPage = () => {
         {/* Left: Chart */}
         <div style={{ width: "100%", maxWidth: "500px", height: "200px", marginBottom: "20px" }}>
           <h4 style={{ color: "#669800" }}>Consumption Pattern</h4>
-          <ResponsiveContainer width="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              {/* Change Bar color here */}
-              <Bar dataKey="consumption" fill="#4CAF50" /> {/* Updated color */}
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Right: Consumer Details */}
-        <div style={{ width: "100%", maxWidth: "500px", marginTop: '3%'}}>
-          <label style={{ color: "#9A8406" }}>Consumer Name:</label>
-          <p style={{ marginTop: "20px" }}>Credit Rating: AAA</p>
-          <p>Energy Demand: 20 MW</p>
+          <div style={{ position: "relative", width: "100%", height: "200px" }}>
+            <Bar data={chartData} options={chartOptions} />
+          </div>
         </div>
       </div>
-
-      {/* Table */}
-      <Table
-        columns={columns}
-        dataSource={tableData}
-        pagination={false}
-        style={{ marginBottom: "20px", fontSize: "14px", borderColor: "#E6E8F1" }}
-      />
 
       {/* Optimization Section */}
-      <div>
-        <p style={{ color: "#669800" }}>Do you want us to optimize capacity?</p>
-      </div>
+      <div style={{ marginTop: "40px", display: "flex", justifyContent: "center", flexDirection: "column" }}>
+        <p style={{ color: "#669800", textAlign: "center"}}>Do you want us to optimize capacity?</p>
+      
 
       {/* Submit Button */}
-      <Button type="primary" onClick={handleSubmit} style={{ backgroundColor: "#669800", borderColor: "#669800" }}>
+      <Button type="primary" onClick={handleSubmit} style={{ backgroundColor: "#669800", borderColor: "#669800", textAlign: "center", maxWidth: "200px", margin: "0 auto" }}>
         Submit
       </Button>
+    </div>
     </div>
   );
 };
