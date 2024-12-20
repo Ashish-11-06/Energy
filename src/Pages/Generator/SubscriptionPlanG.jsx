@@ -1,22 +1,70 @@
-// SubscriptionPlanG.js
 import React, { useState } from 'react';
-import { Card, Button, Row, Col, Typography } from 'antd';
-import SubscriptionModal from './Modal/SubscriptionModal';
+import { Card, Button, Row, Col, Typography, Modal } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import '../SubscriptionPlan.css';
 
 const { Title, Text } = Typography;
 
 const SubscriptionPlanG = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isQuotationVisible, setIsQuotationVisible] = useState(false);
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
-    setIsModalVisible(true);
+    setIsQuotationVisible(true); // Show the quotation view after selection
   };
 
-  const closeModal = () => {
-    setIsModalVisible(false);
+  const closeQuotation = () => {
+    setIsQuotationVisible(false);
+    setSelectedPlan(null);
+  };
+
+  const renderQuotation = () => {
+    if (selectedPlan === 'basic') {
+      return (
+        <div>
+          <p><strong>Plan:</strong> Basic Plan [dummy] invoice will be shown</p>
+          <p><strong>Price:</strong> $9.99 / month</p>
+          <p><strong>Details:</strong></p>
+          <ul>
+            <li>1 User</li>
+            <li>5GB Storage</li>
+            <li>Basic Support</li>
+          </ul>
+          <p><strong>Terms and Conditions:</strong></p>
+          <ul>
+            <li>Monthly billing cycle.</li>
+            <li>No refund policy.</li>
+            <li>Subject to availability.</li>
+          </ul>
+        </div>
+      );
+    } else if (selectedPlan === 'standard') {
+      return (
+        <div>
+          <p><strong>Plan:</strong> Standard Plan [dummy] invoice will be shown</p>
+          <p><strong>Price:</strong> $19.99 / month</p>
+          <p><strong>Details:</strong></p>
+          <ul>
+            <li>5 Users</li>
+            <li>50GB Storage</li>
+            <li>Priority Support</li>
+          </ul>
+          <p><strong>Terms and Conditions:</strong></p>
+          <ul>
+            <li>Monthly billing cycle.</li>
+            <li>Subject to terms of service.</li>
+          </ul>
+        </div>
+      );
+    }
+  };
+
+  // Handle payment done and navigate to the new page
+  const handlePaymentDone = () => {
+    // Navigate to the energy-consumption-table page after payment is done
+    navigate('/generator/energy-optimization');
   };
 
   return (
@@ -68,37 +116,27 @@ const SubscriptionPlanG = () => {
             </ul>
           </Card>
         </Col>
-
-        {/* Premium Plan */}
-        <Col xs={24} sm={12} md={8}>
-          <Card
-            title="Premium Plan"
-            bordered
-            hoverable
-            className={selectedPlan === 'premium' ? 'selected-plan' : ''}
-            onClick={() => handleSelectPlan('premium')}
-            actions={[
-              <Button type="primary" block size="small" style={{ width: '160px' }}>
-                Select Plan
-              </Button>,
-            ]}
-          >
-            <Text className="price">$29.99 / month</Text>
-            <ul>
-              <li>Unlimited Users</li>
-              <li>500GB Storage</li>
-              <li>24/7 Support</li>
-            </ul>
-          </Card>
-        </Col>
       </Row>
 
-      {/* Modal for Selected Plan Details */}
-      <SubscriptionModal
-        visible={isModalVisible}
-        plan={selectedPlan}
-        onClose={closeModal}
-      />
+      {/* Quotation View */}
+      {isQuotationVisible && (
+        <Modal
+          title="Quotation"
+          open={isQuotationVisible}
+          onCancel={closeQuotation}
+          footer={[
+            <Button key="download" onClick={() => console.log('Download Quotation')}>
+              Download Quotation
+            </Button>,
+            <Button key="payment" onClick={handlePaymentDone}>
+              [dummy] Payment Done
+            </Button>,
+          ]}
+          width={600}
+        >
+          {renderQuotation()}
+        </Modal>
+      )}
     </div>
   );
 };
