@@ -1,58 +1,59 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, message, Radio } from 'antd'; // Import Radio component
-import { useNavigate } from 'react-router-dom';  // Import useNavigate for redirection
-import 'antd/dist/reset.css'; // Make sure to include Ant Design styles
-import './Login.css';
-import RegisterModal from './Modal/RegisterModal';
-import useLogin from '../hook/useLogin'; // Import the custom hook
+import { Form, Input, Button, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import 'antd/dist/reset.css';
+import '../Login.css';
+import RegisterForm from '../../Components/Modals/Registration/RegisterForm';  // Import RegisterForm
 
-const Login = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const { login, loading, error: loginError } = useLogin(); // Using the custom hook
-  const navigate = useNavigate(); // Initialize navigation
-  const [role, setRole] = useState('consumer'); // State to store selected role
+const LoginG = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
+  const [loading, setLoading] = useState(false); // Mock loading state
+  const navigate = useNavigate();
 
-  const onFinish = async (values) => {
+  const role = 'generator'; // You can dynamically set this role based on your needs
+
+  const onFinish = (values) => {
     const { email, password } = values;
 
-    const credentials = { 
-      email: values.email,
-      password: values.password,
-      role: role, // Include the selected role
-    }
+    // Mock login logic: Allow every email and password
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
 
-    try {
-      const response = await login(credentials);
-      const data = response.payload.data;
-      console.log(data);
+      // Mock user data
+      const userData = {
+        role: role, // Default to 'generator' for this example
+        email,
+      };
 
-      if (data.role === 'consumer') {
+      // Simulate role-based navigation
+      if (userData.role === 'consumer') {
         message.success('Login successful!');
-        navigate('/what-we-offer');  // Redirect to consumer's dashboard or specific route
-      }
-      if (data.role === 'generator') {
+        navigate('/consumer/dashboard'); // Redirect to consumer dashboard
+      } else if (userData.role === 'generator') {
         message.success('Login successful!');
-        navigate('/generator/what-we-offer');  // Redirect to generator's dashboard or specific route
+        navigate('/generator/portfolio'); // Redirect to generator-specific page
       }
-    } catch (err) {
-      message.error(loginError || 'Login failed');
-    }
+    }, 1000); // Simulate a delay for loading state
   };
 
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
 
+  // Show modal to register a new user
   const showModal = () => {
-    setIsModalVisible(true);
+    setIsModalVisible(true); // Open the modal
   };
 
-  const handleCancel = () => {
+  // Close modal
+  const closeModal = () => {
+    setIsModalVisible(false); // Close the modal
+  };
+
+  const handleCreate = (values) => {
+    console.log('Received values of form: ', values);
     setIsModalVisible(false);
-  };
-
-  const handleRoleChange = (e) => {
-    setRole(e.target.value); // Update selected role
   };
 
   return (
@@ -66,18 +67,6 @@ const Login = () => {
           onFinishFailed={onFinishFailed}
           layout="vertical"
         >
-          {/* Radio buttons for selecting role */}
-          <Form.Item
-            // label="Role"
-            name="role"
-            rules={[{ required: true, message: 'Please select your role!' }]}
-          >
-            <Radio.Group onChange={handleRoleChange} value={role}>
-              <Radio value="consumer">Consumer</Radio>
-              <Radio value="generator">Generator</Radio>
-            </Radio.Group>
-          </Form.Item>
-          
           <Form.Item
             label="Email"
             name="email"
@@ -94,8 +83,6 @@ const Login = () => {
             <Input.Password placeholder="Enter your password" />
           </Form.Item>
 
-          
-
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
               Login
@@ -103,16 +90,20 @@ const Login = () => {
           </Form.Item>
         </Form>
 
-        {/* Registration link */}
         <div className="register-link">
           <p>Don't have an account? <a onClick={showModal}>Create account</a></p>
         </div>
       </div>
 
-      {/* Modal for registration */}
-      <RegisterModal open={isModalVisible} onCancel={handleCancel} />
+      {/* Use RegisterForm instead of RegisterModal */}
+      <RegisterForm
+        type="generator"
+        open={isModalVisible}
+        onCancel={closeModal}
+        onCreate={handleCreate}
+      />
     </div>
   );
 };
 
-export default Login;
+export default LoginG;
