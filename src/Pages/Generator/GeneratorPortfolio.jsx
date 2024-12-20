@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 import { Table, Button, Typography } from 'antd';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate } from 'react-router-dom';
 import AddPortfolioModal from './Modal/AddPortfolioModal';
+
 const { Title } = Typography;
 
 const GenerationPortfolio = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [dataSource, setDataSource] = useState([ 
-    // Initial data if needed
-  ]);
+  const [dataSource, setDataSource] = useState([]);
 
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate();
 
   const columns = [
     {
-      title: 'Sr. No', // Serial Number column
+      title: 'Sr. No',
       key: 'serialNumber',
-      render: (text, record, index) => index + 1, // Display row index + 1 for serial number
+      render: (text, record, index) => index + 1,
     },
     {
       title: 'Type',
@@ -32,13 +31,7 @@ const GenerationPortfolio = () => {
       title: 'Capacity',
       dataIndex: 'capacity',
       key: 'capacity',
-      render: (text) => `${text}`, // Just display the numeric capacity
-    },
-    {
-      title: 'Unit',
-      dataIndex: 'unit',
-      key: 'unit',
-      render: (text) => `${text}`, // Display the unit (MW or GW)
+      render: (text) => `${text}`,
     },
     {
       title: 'COD (Commercial Operation Date)',
@@ -53,18 +46,18 @@ const GenerationPortfolio = () => {
       {
         key: Date.now().toString(),
         ...newEntry,
-        cod: newEntry.cod.format('YYYY-MM-DD'),
-        unit: newEntry.unit, // Save the selected unit in the data source
+        cod: newEntry.cod.format('DD-MM-YYYY'),
+        unit: newEntry.unit,
       },
     ]);
   };
 
   const handleFindConsumer = () => {
-    navigate('/generator/matching-consumer'); // Navigate to the consumer page (update this path as needed)
+    navigate('/generator/matching-consumer');
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#f4f4f9'}}>
+    <div style={{ padding: '20px' }}>
       <div
         style={{
           maxWidth: '1200px',
@@ -80,24 +73,30 @@ const GenerationPortfolio = () => {
         </Title>
 
         <Table dataSource={dataSource} columns={columns} pagination={false} bordered />
-        
+
         <AddPortfolioModal
           visible={isModalVisible}
           onClose={() => setIsModalVisible(false)}
           onAdd={handleAddEntry}
         />
 
-        <Button type="primary" style={{ marginTop: '20px' }} onClick={() => setIsModalVisible(true)}>
+        <Button
+          type="primary"
+          style={{ marginTop: '20px' }}
+          onClick={() => setIsModalVisible(true)}
+        >
           Add New Entry +
         </Button>
 
-        <Button
-          type="default"
-          style={{ marginTop: '20px', float: 'right',}} // Added margin for spacing
-          onClick={handleFindConsumer}
-        >
-          Find Consumer
-        </Button>
+        {dataSource.length > 0 && (
+          <Button
+            type="default"
+            style={{ marginTop: '20px', float: 'right' }}
+            onClick={handleFindConsumer}
+          >
+            Find Consumer
+          </Button>
+        )}
       </div>
     </div>
   );
