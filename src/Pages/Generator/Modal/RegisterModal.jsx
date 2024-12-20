@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Button, Radio, Select, Row, Col, message } from 'antd';
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are included
-import states from '../Data/States'; // Assuming states data is in the 'States.js' file
+import states from '../../../Data/States'; // Assuming states data is in the 'States.js' file
 
 const RegisterModal = ({ open, onCancel }) => {
   const [selection, setSelection] = useState(null); // Track selection (consumer or generator)
