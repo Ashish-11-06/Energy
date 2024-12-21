@@ -27,5 +27,5 @@ export const generatorMenuItems = [
   { key: '12', icon: <TeamOutlined />, label: <Link to="/generator/portfolio">Portfolio</Link> },
   { key: '13', icon: <DashboardOutlined />, label: <Link to="/generator/matching-consumer">Matching Consumer</Link> },
   { key: '14', icon: <ProfileOutlined />, label: <Link to="/generator/subscription-plan">Subscription Plans</Link> },
-  { key: '15', icon: <LineChartOutlined />, label: <Link to="/generator/energy-optimization">Energy Optimization</Link> },
+  // { key: '15', icon: <LineChartOutlined />, label: <Link to="/generator/energy-optimization">Energy Optimization</Link> },
 ];
