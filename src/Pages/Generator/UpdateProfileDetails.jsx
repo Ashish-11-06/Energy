@@ -1,14 +1,44 @@
 import React, { useState } from 'react';
 import { Typography, Table, Button, Modal, Form } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfileForm';
+import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
 
 const { Title, Paragraph } = Typography;
 
 const UpdateProfileDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [dataSource, setDataSource] = useState([
+    {
+      key: '1',
+      type: 'Solar',
+      state: 'Karnataka',
+      capacity: '50 MW',
+      cod: '2023-12-01',
+      updated: false,
+    },
+    {
+      key: '2',
+      type: 'Wind',
+      state: 'Maharashtra',
+      capacity: '30 MW',
+      cod: '2024-06-15',
+      updated: false,
+    },
+    {
+      key: '3',
+      type: 'ESS',
+      state: 'Rajasthan',
+      capacity: '20 MWH',
+      cod: '2025-03-10',
+      updated: false,
+    },
+  ]);
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   // Table columns
   const columns = [
@@ -33,6 +63,12 @@ const UpdateProfileDetails = () => {
       key: 'cod',
     },
     {
+      title: 'Updated',
+      dataIndex: 'updated',
+      key: 'updated',
+      render: (text) => (text ? 'Yes' : 'No'),
+    },
+    {
       title: 'Action',
       key: 'action',
       width: 100, // Minimize the width of the Action column
@@ -41,31 +77,6 @@ const UpdateProfileDetails = () => {
           Update Profile
         </Button>
       ),
-    },
-  ];
-
-  // Table data
-  const dataSource = [
-    {
-      key: '1',
-      type: 'Solar',
-      state: 'Karnataka',
-      capacity: '50 MW',
-      cod: '2023-12-01',
-    },
-    {
-      key: '2',
-      type: 'Wind',
-      state: 'Maharashtra',
-      capacity: '30 MW',
-      cod: '2024-06-15',
-    },
-    {
-      key: '3',
-      type: 'ESS',
-      state: 'Rajasthan',
-      capacity: '20 MWH',
-      cod: '2025-03-10',
     },
   ];
 
@@ -85,7 +96,13 @@ const UpdateProfileDetails = () => {
 
   const handleSave = () => {
     form.validateFields().then(values => {
-      console.log('Updated values:', values);
+      const updatedDataSource = dataSource.map(item => {
+        if (item.key === selectedRecord.key) {
+          return { ...values, key: item.key, cod: values.cod.format('YYYY-MM-DD'), updated: true };
+        }
+        return item;
+      });
+      setDataSource(updatedDataSource);
       setIsModalVisible(false);
       form.resetFields();
     }).catch(info => {
@@ -93,9 +110,19 @@ const UpdateProfileDetails = () => {
     });
   };
 
+  const allUpdated = dataSource.every(item => item.updated);
+
+  const handleProceed = () => {
+    setIsQuotationModalVisible(true);
+  };
+
+  const handleQuotationModalCancel = () => {
+    setIsQuotationModalVisible(false);
+  };
+
   return (
     <div style={{ padding: "20px", fontFamily: "Inter, sans-serif" }}>
-      <Title level={2} style={{ color: "#669800" }}>Update Profile Details(underConstruction)</Title>
+      <Title level={2} style={{ color: "#669800" }}>Update Profile Details</Title>
       <Paragraph>
         This is a page for updating profile details. You can add more content and functionality here as needed.
       </Paragraph>
@@ -107,6 +134,14 @@ const UpdateProfileDetails = () => {
         style={{ marginTop: "20px" }}
       />
 
+      {allUpdated && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+          <Button type="primary" onClick={handleProceed}>
+            Optimize Capacity
+          </Button>
+        </div>
+      )}
+
       <Modal
         title="Update Profile"
         open={isModalVisible}
@@ -116,6 +151,12 @@ const UpdateProfileDetails = () => {
       >
         <UpdateProfileForm form={form} />
       </Modal>
+
+      <RequestForQuotationModal
+        visible={isQuotationModalVisible}
+        onCancel={handleQuotationModalCancel}
+        type="generator"
+      />
     </div>
   );
 };
