@@ -52,6 +52,19 @@ const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
               </Select>
             </Form.Item>
           </Col>
+
+          <Col span={12}>
+            <Form.Item
+              label="Connectivity"
+              name="connectivity"
+              rules={[{ required: true, message: 'Please select connectivity type!' }]}>
+              <Select placeholder="Select Connectivity">
+                <Select.Option value="CTU">CTU</Select.Option>
+                <Select.Option value="STU">STU</Select.Option>
+                <Select.Option value="Discom">Discom</Select.Option>
+              </Select>
+            </Form.Item>
+          </Col>
         </Row>
 
         <Row gutter={16}>
