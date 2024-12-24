@@ -21,7 +21,7 @@ import EnergyConsumptionForm from './Pages/Consumer/EnergyConsumptionForm';
 import EnergyConsumptionTable from './Pages/Consumer/EnergyConsumptionTable';
 import LoginG from './Pages/Generator/LoginG';
 import UpdateProfileDetails from './Pages/Generator/UpdateProfileDetails';
-import NewPage from './Pages/Generator/NewPage';
+// import NewPage from './Pages/Generator/NewPage';
 
 function App() {
   return (
@@ -60,7 +60,7 @@ function App() {
             <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
             <Route path="update-profile-details" element={<UpdateProfileDetails />} />
             <Route path="chat-page" element={<ChatWithExpert />} />
-            <Route path="new-page" element={<NewPage />} />
+            {/* <Route path="new-page" element={<NewPage />} /> */}
           </Route>
         </Route>
       </Routes>
