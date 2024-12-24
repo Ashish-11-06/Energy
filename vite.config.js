@@ -20,6 +20,6 @@ export default defineConfig({
   server: {
     port: 3001,
     open: true,
-    historyApiFallback: true, // Add this line to handle routing issues
+    historyApiFallback: true, 
   },
 });
