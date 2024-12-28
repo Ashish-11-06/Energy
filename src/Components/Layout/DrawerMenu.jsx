@@ -11,6 +11,7 @@ const DrawerMenu = ({ drawerVisible, toggleDrawer }) => {
 
   // Select menu items based on the type
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
+console.log("Menu items ",menuItems);
 
   return (
     <Drawer
