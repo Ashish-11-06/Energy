@@ -22,6 +22,7 @@ import {
 // Define menu items for consumer and generator with icons
 const consumerMenuItems = [
   { label: 'Dashboard', key: '/consumer/dashboard', icon: <DashboardOutlined /> },
+  { label: 'Requirenment', key: '/consumer/requirenment', icon: <FormOutlined /> },
   { label: 'What We Offer', key: '/consumer/what-we-offer', icon: <AppstoreAddOutlined /> },
   { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
   { label: 'Chat with Expert', key: '/consumer/chat-page', icon: <MessageOutlined /> },
@@ -29,7 +30,6 @@ const consumerMenuItems = [
   { label: 'Energy Consumption Table', key: '/consumer/energy-consumption-table', icon: <TableOutlined /> },
   { label: 'Consumption Pattern', key: '/consumer/consumption-pattern', icon: <AreaChartOutlined /> },
   { label: 'Annual Saving', key: '/consumer/annual-saving', icon: <WalletOutlined /> },
-  { label: 'Requirenment', key: '/consumer/requirenment', icon: <FormOutlined /> },
   { label: 'Subscription Plan', key: '/consumer/subscription-plan', icon: <TeamOutlined /> },
   { label: 'Profile', key: '/consumer/profile', icon: <UserOutlined /> },
 ];

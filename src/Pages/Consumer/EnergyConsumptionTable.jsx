@@ -45,21 +45,19 @@ const EnergyConsumptionTable = () => {
   ];
 
   const handleFileUpload = (file) => {
-    if (uploadedFiles.length >= 12) {
-      message.error("You can upload a maximum of 12 files!");
+    if (uploadedFiles.length >= 1) {
+      message.error("You can upload only one file at a time!");
       return false;
     }
-    setUploadedFiles([file]); // Only allow one file at a time
-    setDisableForm(true); // Disable form when a file is uploaded
+    setUploadedFiles([file]);
+    setDisableForm(true);
     message.success(`${file.name} uploaded successfully`);
-    return false; // Prevent automatic upload
+    return false;
   };
 
   const handleRemoveFile = (fileUid) => {
-    setUploadedFiles((prevFiles) =>
-      prevFiles.filter((file) => file.uid !== fileUid)
-    );
-    setDisableForm(false); // Enable form when the file is removed
+    setUploadedFiles([]);
+    setDisableForm(false);
     message.info("File removed");
   };
 
@@ -69,26 +67,28 @@ const EnergyConsumptionTable = () => {
       return;
     }
 
-    // If a document is uploaded, set the month to the document name
     const newData = {
       key: dataSource.length + 1,
-      month: uploadedFiles.length > 0 ? uploadedFiles[0].name : values.month,
-      ...values,
-      documentUploaded: uploadedFiles.length > 0 ? "Yes" : "No",
+      month: disableForm ? " " : values.month, // Show "Uploaded Document" for file uploads
+      monthlyConsumption: values.monthlyConsumption,
+      peakConsumption: values.peakConsumption,
+      offPeakConsumption: values.offPeakConsumption,
+      monthlyBill: values.monthlyBill,
+      fileUploaded: uploadedFiles.length > 0 ? "Yes" : "No", // "Yes" or "No"
     };
 
     setDataSource([...dataSource, newData]);
     setIsModalVisible(false);
-    setUploadedFiles([]); // Reset files
+    setUploadedFiles([]);
     form.resetFields();
-    setDisableForm(false); // Reset form disable state
+    setDisableForm(false);
     message.success("Data added successfully!");
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     form.resetFields();
-    setDisableForm(false); // Reset form disable state
+    setDisableForm(false);
   };
 
   const uploadProps = {
@@ -128,6 +128,12 @@ const EnergyConsumptionTable = () => {
       key: "monthlyBill",
       width: 120,
     },
+    {
+      title: "File Uploaded",
+      dataIndex: "fileUploaded",
+      key: "fileUploaded",
+      width: 120,
+    },
   ];
 
   const handleContinue = () => {
@@ -163,13 +169,6 @@ const EnergyConsumptionTable = () => {
           size="small"
           tableLayout="fixed"
         />
-
-        {uploadedFiles.length > 0 && (
-          <div style={{ marginTop: "20px" }}>
-            <h2>Uploaded Document</h2>
-            <p>{uploadedFiles[0].name}</p>
-          </div>
-        )}
 
         <Modal
           title="Add Monthly Data"
@@ -212,26 +211,12 @@ const EnergyConsumptionTable = () => {
               )}
             </Form.Item>
 
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <hr
-                style={{ flex: 1, border: "none", borderTop: "1px solid #000" }}
-              />
-              <span style={{ margin: "0 10px", textAlign: "center" }}>OR</span>
-              <hr
-                style={{ flex: 1, border: "none", borderTop: "1px solid #000" }}
-              />
-            </div>
-
             <Form.Item
               label="Month"
               name="month"
-              rules={[{ required: !disableForm, message: "Please select a month!" }]}
+              rules={[
+                { required: !disableForm, message: "Please select a month!" },
+              ]}
             >
               <Select placeholder="Select month" disabled={disableForm}>
                 {availableMonths.map((month, index) => (
@@ -247,7 +232,12 @@ const EnergyConsumptionTable = () => {
                 <Form.Item
                   label="Monthly Consumption (kWh)"
                   name="monthlyConsumption"
-                  rules={[{ required: !disableForm, message: "Please enter monthly consumption!" }]}
+                  rules={[
+                    {
+                      required: !disableForm,
+                      message: "Please enter monthly consumption!",
+                    },
+                  ]}
                 >
                   <InputNumber
                     style={{ width: "100%" }}
@@ -261,7 +251,12 @@ const EnergyConsumptionTable = () => {
                 <Form.Item
                   label="Peak Consumption (kWh)"
                   name="peakConsumption"
-                  rules={[{ required: !disableForm, message: "Please enter peak consumption!" }]}
+                  rules={[
+                    {
+                      required: !disableForm,
+                      message: "Please enter peak consumption!",
+                    },
+                  ]}
                 >
                   <InputNumber
                     style={{ width: "100%" }}
@@ -277,7 +272,12 @@ const EnergyConsumptionTable = () => {
                 <Form.Item
                   label="Off-Peak Consumption (kWh)"
                   name="offPeakConsumption"
-                  rules={[{ required: !disableForm, message: "Please enter off-peak consumption!" }]}
+                  rules={[
+                    {
+                      required: !disableForm,
+                      message: "Please enter off-peak consumption!",
+                    },
+                  ]}
                 >
                   <InputNumber
                     style={{ width: "100%" }}
@@ -291,7 +291,12 @@ const EnergyConsumptionTable = () => {
                 <Form.Item
                   label="Monthly Bill ($)"
                   name="monthlyBill"
-                  rules={[{ required: !disableForm, message: "Please enter monthly bill!" }]}
+                  rules={[
+                    {
+                      required: !disableForm,
+                      message: "Please enter monthly bill!",
+                    },
+                  ]}
                 >
                   <InputNumber
                     style={{ width: "100%" }}
@@ -309,17 +314,15 @@ const EnergyConsumptionTable = () => {
             </div>
           </Form>
         </Modal>
+        <Space style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+          For more accuracy, you can upload a SCADA_15 min dump energy consumption file.
+          <Upload {...uploadProps}>
+            <Button icon={<UploadOutlined />}>Upload SCADA File</Button>
+          </Upload>
+        </Space>
       </Card>
     </div>
   );
 };
 
 export default EnergyConsumptionTable;
-
-
-
-
-
-
-
-
