@@ -86,18 +86,7 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
             </Form.Item>
           </Col>
 
-          <Col span={24}>
-            <Form.Item
-              label={renderLabelWithTooltip(
-                'Contracted Demand (in kWh)',
-                'The contracted demand is the amount of electricity in kWh that the company has committed to using.'
-              )}
-              name="contractedDemand"
-              rules={[{ required: true, message: 'Please enter the contracted demand!' }]}
-            >
-              <Input type="number" placeholder="Enter contracted demand in kWh" />
-            </Form.Item>
-          </Col>
+         
 
           <Col span={12}>
             <Form.Item
@@ -135,6 +124,20 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
             </Form.Item>
           </Col>
 
+
+          <Col span={24}>
+            <Form.Item
+              label={renderLabelWithTooltip(
+                'Contracted Demand (in kWh)',
+                'The contracted demand is the amount of electricity in kWh that the company has committed to using.'
+              )}
+              name="contractedDemand"
+              rules={[{ required: true, message: 'Please enter the contracted demand!' }]}
+            >
+              <Input type="number" placeholder="Enter contracted demand in kWh" />
+            </Form.Item>
+          </Col>
+          
           <Col span={24}>
             <Form.Item
               label={renderLabelWithTooltip(

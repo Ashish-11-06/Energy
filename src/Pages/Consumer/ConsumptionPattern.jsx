@@ -1,14 +1,39 @@
-import React, { useState } from "react";
-import { Table, Typography, Row, Col, message } from "antd";
+import React, { useState, useEffect } from "react";
+import { Table, Typography, Row, Col, Spin, Progress } from "antd";
 import { Bar } from "react-chartjs-2";
-import "chart.js/auto"; // Ensure Chart.js is loaded
-import IPPModal from "./Modal/IPPModal"; // Import the modal component
+import "chart.js/auto";
+import IPPModal from "./Modal/IPPModal";
 
 const { Title, Text } = Typography;
 
 const ConsumptionPattern = () => {
   const [selectedIPP, setSelectedIPP] = useState(null); // State to store selected IPP
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
+  const [isLoading, setIsLoading] = useState(true); // State to control loader visibility
+  const [loadingProgress, setLoadingProgress] = useState(0); // State to manage progress bar
+
+  useEffect(() => {
+    // Simulate loading delay for 10 seconds
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 10000);
+
+    // Simulate progress bar update every second for the 10 seconds
+    const progressTimer = setInterval(() => {
+      setLoadingProgress((prevProgress) => {
+        if (prevProgress >= 100) {
+          clearInterval(progressTimer); // Clear interval when progress reaches 100
+          return 100;
+        }
+        return prevProgress + 10; // Increase progress by 10 every second
+      });
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer); // Cleanup timer on unmount
+      clearInterval(progressTimer); // Cleanup progress interval on unmount
+    };
+  }, []);
 
   // Data for the chart
   const chartData = {
@@ -16,7 +41,7 @@ const ConsumptionPattern = () => {
     datasets: [
       {
         label: "Consumption",
-        data: [100, 80, 50, 90, 70], // Example data
+        data: [100, 80, 50, 90, 70],
         backgroundColor: "#669800",
         borderRadius: 10,
       },
@@ -29,19 +54,19 @@ const ConsumptionPattern = () => {
     scales: {
       x: {
         ticks: {
-          color: "#001529", // Custom color for labels
+          color: "#001529",
         },
       },
       y: {
         ticks: {
-          color: "#001529", // Custom color for labels
+          color: "#001529",
         },
       },
     },
     plugins: {
       legend: {
         labels: {
-          color: "#001529", // Legend label color
+          color: "#001529",
         },
       },
     },
@@ -59,7 +84,13 @@ const ConsumptionPattern = () => {
       dataIndex: "states",
       key: "states",
       render: (text) => (
-        <Text style={{ backgroundColor: "#F5F6FB", padding: "4px 8px", borderRadius: "4px" }}>
+        <Text
+          style={{
+            backgroundColor: "#F5F6FB",
+            padding: "4px 8px",
+            borderRadius: "4px",
+          }}
+        >
           {text}
         </Text>
       ),
@@ -78,7 +109,7 @@ const ConsumptionPattern = () => {
       title: "Per Unit Cost (₹)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
-      render: (text) => `₹ ${text.toFixed(2)}`, // Format the cost to show as rupees
+      render: (text) => `₹ ${text.toFixed(2)}`,
     },
   ];
 
@@ -90,7 +121,7 @@ const ConsumptionPattern = () => {
       states: "Karnataka",
       capacity: "50 MW",
       replacement: "65%",
-      perUnitCost: 5.45, // Example cost
+      perUnitCost: 5.45,
     },
     {
       key: "2",
@@ -98,7 +129,7 @@ const ConsumptionPattern = () => {
       states: "Maharashtra",
       capacity: "30 MW",
       replacement: "65%",
-      perUnitCost: 6.20, // Example cost
+      perUnitCost: 6.2,
     },
     {
       key: "3",
@@ -106,14 +137,14 @@ const ConsumptionPattern = () => {
       states: "Rajasthan",
       capacity: "10 MW",
       replacement: "65%",
-      perUnitCost: 4.85, // Example cost
+      perUnitCost: 4.85,
     },
   ];
 
   // Handle row click logic
   const handleRowClick = (record) => {
-    setSelectedIPP(record); // Set the selected IPP when a row is clicked
-    setIsModalVisible(true); // Show modal when row is clicked
+    setSelectedIPP(record);
+    setIsModalVisible(true);
   };
 
   return (
@@ -136,38 +167,50 @@ const ConsumptionPattern = () => {
           </div>
         </Col>
 
-        <Col span={24}>
-          <Title level={4} style={{ textAlign: "center", color: "#001529", marginTop: "15px" }}>
+        <Col span={24} style={{ marginTop: "20px" }}>
+          <Title level={4} style={{ textAlign: "center", color: "#001529" }}>
             Matching IPP Profile
           </Title>
-          <Table
-            dataSource={dataSource}
-            columns={columns}
-            pagination={false}
-            bordered
-            onRow={(record) => ({
-              onClick: () => handleRowClick(record), // Handle row click
-              style: {
-                backgroundColor: record.key === selectedIPP?.key ? "#c4d4a5" : "white", // Change background color for selected row
-              },
-            })}
-            rowClassName="" // No need for rowClassName since we're using inline styles
-            style={{
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #E6E8F1",
-              overflowX: "auto", // Make the table scrollable on small screens
-            }}
-            scroll={{ x: true }} // Enable horizontal scroll for small screens
-          />
+          {isLoading ? (
+            <div style={{ textAlign: "center", padding: "20px" }}>
+              <Progress
+                type="line"
+                percent={loadingProgress}
+                status="active"
+                showInfo={true} // Show percentage
+                width={400}
+                strokeColor="#4CAF50" // Green color
+              />
+              <Spin size="large" />
+            </div>
+          ) : (
+            <Table
+              dataSource={dataSource}
+              columns={columns}
+              pagination={false}
+              bordered
+              onRow={(record) => ({
+                onClick: () => handleRowClick(record),
+                style: {
+                  backgroundColor: record.key === selectedIPP?.key ? "#c4d4a5" : "white",
+                },
+              })}
+              style={{
+                backgroundColor: "#FFFFFF",
+                border: "1px solid #E6E8F1",
+                overflowX: "auto",
+              }}
+              scroll={{ x: true }}
+            />
+          )}
         </Col>
       </Row>
 
-      {/* IPP Modal Component */}
       {selectedIPP && (
         <IPPModal
           visible={isModalVisible}
           ipp={selectedIPP}
-          onClose={() => setIsModalVisible(false)} // Close modal
+          onClose={() => setIsModalVisible(false)}
         />
       )}
     </div>

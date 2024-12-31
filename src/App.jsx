@@ -14,6 +14,7 @@ import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
 import GenerationPortfolio from './Pages/Generator/GeneratorPortfolio';
 import MatchingConsumerPage from './Pages/Generator/MatchingConsumerPage';
 import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
+import DashboardG from './Pages/Generator/Dashboard';
 import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
 import LoginC from './Pages/Consumer/LoginC';
 import Dashboard from './Pages/Consumer/Dashboard';
@@ -21,7 +22,16 @@ import EnergyConsumptionForm from './Pages/Consumer/EnergyConsumptionForm';
 import EnergyConsumptionTable from './Pages/Consumer/EnergyConsumptionTable';
 import LoginG from './Pages/Generator/LoginG';
 import UpdateProfileDetails from './Pages/Generator/UpdateProfileDetails';
+
 // import NewPage from './Pages/Generator/NewPage';
+=======
+import NewPage from './Pages/Generator/NewPage';
+import ProfileConsumer from './Pages/Consumer/ProfileConsumer';
+import ProfileGenerator from './Pages/Generator/ProfileGenerator';
+import UserGen from './Pages/Generator/UserGen';
+import PortfolioGen from './Pages/Generator/PortfolioGen';
+import Offer from './Pages/Consumer/Offer';
+
 
 function App() {
   return (
@@ -49,10 +59,14 @@ function App() {
             <Route path="requirenment" element={<RequirementsPage />} />
             <Route path="annual-saving" element={<AnnualSvg />} />
             <Route path="subscription-plan" element={<SubscriptionPlans />} />
+            <Route path="profile" element={<ProfileConsumer />} />
+            <Route path="offer" element={<Offer />} />
+            
           </Route>
 
           {/* Generator Routes */}
           <Route path="/generator">
+            <Route path='dashboard' element={<DashboardG />} />
             <Route path="what-we-offer" element={<WhatWeOfferG />} />
             <Route path="portfolio" element={<GenerationPortfolio />} />
             <Route path="matching-consumer" element={<MatchingConsumerPage />} />
@@ -60,7 +74,14 @@ function App() {
             <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
             <Route path="update-profile-details" element={<UpdateProfileDetails />} />
             <Route path="chat-page" element={<ChatWithExpert />} />
+
             {/* <Route path="new-page" element={<NewPage />} /> */}
+=======
+            <Route path="new-page" element={<NewPage />} />
+            <Route path="profile" element={<ProfileGenerator />} />
+            <Route path="profile/user" element={<UserGen />} />
+            <Route path="profile/portfolio" element={<PortfolioGen />} />
+
           </Route>
         </Route>
       </Routes>

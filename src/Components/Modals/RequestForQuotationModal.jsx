@@ -1,45 +1,138 @@
 import React, { useState } from "react";
 import { Modal, Button, Typography, Row, Col, DatePicker, Select, InputNumber, message } from "antd";
 import moment from "moment";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import SummaryOfferModal from "./SummaryOfferModal"; // Import SummaryOfferModal
+import { useNavigate } from "react-router-dom";
+import SummaryOfferModal from "./SummaryOfferModal";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-const RequestForQuotationModal = ({ visible, onCancel, type }) => {
-  const [ppaTerm, setPpaTerm] = useState(20); // Default value for Term of PPA
-  const [lockInPeriod, setLockInPeriod] = useState(10); // Default value for Lock-in Period
-  const [minimumSupply, setMinimumSupply] = useState(18); // Default value for Minimum Supply
-  const [contractedEnergy, setContractedEnergy] = useState(20); // Default value for Contracted Energy
-  const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee"); // Default value for Payment Security Type
-  const [offerTariff, setOfferTariff] = useState(3.5); // Default value for Offer Tariff
-  const [solarCapacity, setSolarCapacity] = useState(50); // Default value for Solar Capacity
-  const [windCapacity, setWindCapacity] = useState(30); // Default value for Wind Capacity
-  const [essCapacity, setEssCapacity] = useState(20); // Default value for ESS Capacity
-  const [isSummaryModalVisible, setIsSummaryModalVisible] = useState(false); // State for Summary Offer Modal
+const CounterOfferModal = ({ visible, onCancel, onSubmit }) => (
+  <Modal
+    title={<Text style={{ color: "#001529", fontSize: "18px" }}>Submit Counter Offer</Text>}
+    open={visible}
+    onCancel={onCancel}
+    footer={null}
+    width={600}
+    style={{ fontFamily: "'Inter', sans-serif" }}
+  >
+    <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+      <Col span={12}>
+        <Typography.Paragraph>
+          <strong>Per Unit Cost:</strong>
+          <InputNumber
+            min={0.1}
+            step={0.1}
+            placeholder="Enter Per Unit Cost"
+            style={{ width: "100%" }}
+          />
+        </Typography.Paragraph>
+      </Col>
+      <Col span={12}>
+        <Typography.Paragraph>
+          <strong>Offer Tariff (INR/KWH):</strong>
+          <InputNumber
+            min={0.1}
+            step={0.1}
+            placeholder="Enter Offer Tariff"
+            style={{ width: "100%" }}
+          />
+        </Typography.Paragraph>
+      </Col>
+      <Col span={12}>
+        <Typography.Paragraph>
+          <strong>Term of PPA (years):</strong>
+          <InputNumber
+            min={1}
+            placeholder="Enter PPA Term"
+            style={{ width: "100%" }}
+          />
+        </Typography.Paragraph>
+      </Col>
+      <Col span={12}>
+        <Typography.Paragraph>
+          <strong>Lock-in Period (years):</strong>
+          <InputNumber
+            min={1}
+            placeholder="Enter Lock-in Period"
+            style={{ width: "100%" }}
+          />
+        </Typography.Paragraph>
+      </Col>
+      <Col span={12}>
+        <Typography.Paragraph>
+          <strong>Contracted Energy (million units):</strong>
+          <InputNumber
+            min={1}
+            placeholder="Enter Contracted Energy"
+            style={{ width: "100%" }}
+          />
+        </Typography.Paragraph>
+      </Col>
+    </Row>
+    <Row justify="end" style={{ marginTop: "20px" }}>
+      <Button
+        style={{ marginRight: "10px" }}
+        onClick={onCancel}
+      >
+        Cancel
+      </Button>
+      <Button
+        type="primary"
+        onClick={onSubmit}
+        style={{ backgroundColor: "#669800", borderColor: "#669800" }}
+      >
+        Submit
+      </Button>
+    </Row>
+  </Modal>
+);
 
-  const navigate = useNavigate(); // Use navigate hook for routing
+const RequestForQuotationModal = ({ visible, onCancel, type }) => {
+  const [ppaTerm, setPpaTerm] = useState(20);
+  const [lockInPeriod, setLockInPeriod] = useState(10);
+  const [minimumSupply, setMinimumSupply] = useState(18);
+  const [contractedEnergy, setContractedEnergy] = useState(20);
+  const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
+  const [offerTariff, setOfferTariff] = useState(3.5);
+  const [solarCapacity, setSolarCapacity] = useState(50);
+  const [windCapacity, setWindCapacity] = useState(30);
+  const [essCapacity, setEssCapacity] = useState(20);
+  const [isSummaryModalVisible, setIsSummaryModalVisible] = useState(false);
+  const [isCounterOfferModalVisible, setIsCounterOfferModalVisible] = useState(false);
+  const [isCounterOfferDisabled, setIsCounterOfferDisabled] = useState(false); // New state for disabling button
+
+  const navigate = useNavigate();
 
   const handleChatWithExpert = () => {
-    navigate("/consumer/chat-page"); // Navigate to the chat page
+    navigate("/consumer/chat-page");
   };
 
   const handleSendToIPPs = () => {
-    // Display a success message
     message.success("Your request has been sent to IPPs.");
-
-    // Close the modal
     onCancel();
   };
 
   const handleContinue = () => {
-    // Display the Summary Offer modal
     setIsSummaryModalVisible(true);
   };
 
   const handleSummaryModalCancel = () => {
     setIsSummaryModalVisible(false);
+  };
+
+  const handleCounterOffer = () => {
+    setIsCounterOfferModalVisible(true);
+  };
+
+  const handleCounterOfferSubmit = () => {
+    message.success("Counter offer submitted successfully.");
+    setIsCounterOfferModalVisible(false);
+    setIsCounterOfferDisabled(true); // Disable the button after submission
+  };
+
+  const handleCounterOfferCancel = () => {
+    setIsCounterOfferModalVisible(false);
   };
 
   return (
@@ -55,7 +148,7 @@ const RequestForQuotationModal = ({ visible, onCancel, type }) => {
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
           Standard Terms Sheet
         </Title>
-
+        {/* Existing form */}
         <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
           {type === "generator" && (
             <Col span={12}>
@@ -173,10 +266,18 @@ const RequestForQuotationModal = ({ visible, onCancel, type }) => {
             </Button>
           </Col>
         </Row>
-
         <Row justify="space-between" style={{ marginTop: "20px" }}>
           {type !== "generator" && (
-            <Button style={{ backgroundColor: "#FFFFFF", border: `1px solid #E6E8F1`, color: "#669800", fontSize: "14px" }}>
+            <Button
+              style={{
+                backgroundColor: "#FFFFFF",
+                border: `1px solid #E6E8F1`,
+                color: "#669800",
+                fontSize: "14px",
+              }}
+              onClick={handleCounterOffer}
+              disabled={isCounterOfferDisabled} // Disable button after submission
+            >
               Counter Offer
             </Button>
           )}
@@ -187,9 +288,8 @@ const RequestForQuotationModal = ({ visible, onCancel, type }) => {
               borderColor: "#669800",
               fontSize: "16px",
               padding: "10px 20px",
-              float: 'right'
             }}
-            onClick={type === "generator" ? handleContinue : handleSendToIPPs} // Handle the send to IPPs or continue click
+            onClick={type === "generator" ? handleContinue : handleSendToIPPs}
           >
             {type === "generator" ? "Continue" : "Send to IPPs"}
           </Button>
@@ -207,8 +307,14 @@ const RequestForQuotationModal = ({ visible, onCancel, type }) => {
           contractedEnergy,
           solarCapacity,
           windCapacity,
-          essCapacity
+          essCapacity,
         }}
+      />
+
+      <CounterOfferModal
+        visible={isCounterOfferModalVisible}
+        onCancel={handleCounterOfferCancel}
+        onSubmit={handleCounterOfferSubmit}
       />
     </>
   );
