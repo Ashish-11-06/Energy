@@ -24,7 +24,7 @@ import LoginG from './Pages/Generator/LoginG';
 import UpdateProfileDetails from './Pages/Generator/UpdateProfileDetails';
 
 // import NewPage from './Pages/Generator/NewPage';
-=======
+
 import NewPage from './Pages/Generator/NewPage';
 import ProfileConsumer from './Pages/Consumer/ProfileConsumer';
 import ProfileGenerator from './Pages/Generator/ProfileGenerator';
@@ -76,7 +76,7 @@ function App() {
             <Route path="chat-page" element={<ChatWithExpert />} />
 
             {/* <Route path="new-page" element={<NewPage />} /> */}
-=======
+
             <Route path="new-page" element={<NewPage />} />
             <Route path="profile" element={<ProfileGenerator />} />
             <Route path="profile/user" element={<UserGen />} />
