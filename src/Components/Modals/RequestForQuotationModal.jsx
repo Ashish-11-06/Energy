@@ -3,6 +3,7 @@ import { Modal, Button, Typography, Row, Col, DatePicker, Select, InputNumber, m
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import SummaryOfferModal from "./SummaryOfferModal";
+import RequestedIPP from "../../Pages/Consumer/RequestedIPP";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -88,7 +89,7 @@ const CounterOfferModal = ({ visible, onCancel, onSubmit }) => (
   </Modal>
 );
 
-const RequestForQuotationModal = ({ visible, onCancel, type }) => {
+const RequestForQuotationModal = ({ visible,ipp, onCancel, type }) => {
   const [ppaTerm, setPpaTerm] = useState(20);
   const [lockInPeriod, setLockInPeriod] = useState(10);
   const [minimumSupply, setMinimumSupply] = useState(18);
@@ -103,6 +104,8 @@ const RequestForQuotationModal = ({ visible, onCancel, type }) => {
   const [isCounterOfferDisabled, setIsCounterOfferDisabled] = useState(false); // New state for disabling button
 
   const navigate = useNavigate();
+console.log("Requested Modal IPP",ipp);
+
 
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
@@ -110,6 +113,8 @@ const RequestForQuotationModal = ({ visible, onCancel, type }) => {
 
   const handleSendToIPPs = () => {
     message.success("Your request has been sent to IPPs.");
+   
+    return <RequestedIPP ipp={ipp} />;
     onCancel();
   };
 

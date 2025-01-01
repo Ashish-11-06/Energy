@@ -7,6 +7,7 @@ const { Title, Text } = Typography;
 const IPPModal = ({ visible, ipp, onClose }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
+
   const showQuotationModal = () => setIsQuotationModalVisible(true);
   const handleQuotationCancel = () => setIsQuotationModalVisible(false);
 
@@ -81,7 +82,7 @@ const IPPModal = ({ visible, ipp, onClose }) => {
       </Modal>
 
       {/* Quotation Request Modal */}
-      <RequestForQuotationModal visible={isQuotationModalVisible} onCancel={handleQuotationCancel} />
+      <RequestForQuotationModal visible={isQuotationModalVisible} ipp={ipp} onCancel={handleQuotationCancel} />
     </div>
   );
 };

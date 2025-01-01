@@ -28,6 +28,8 @@ import ProfileGenerator from './Pages/Generator/ProfileGenerator';
 import UserGen from './Pages/Generator/UserGen';
 import PortfolioGen from './Pages/Generator/PortfolioGen';
 import Offer from './Pages/Consumer/Offer';
+import RequestedIPP from './Pages/Consumer/RequestedIPP';
+import Notification from './Pages/Consumer/Notification';
 
 function App() {
   return (
@@ -57,6 +59,9 @@ function App() {
             <Route path="subscription-plan" element={<SubscriptionPlans />} />
             <Route path="profile" element={<ProfileConsumer />} />
             <Route path="offer" element={<Offer />} />
+            <Route path="requested-ipp" element={<RequestedIPP />} />
+            <Route path="notification" element={<Notification />} />
+            
             
           </Route>
 
@@ -81,4 +86,6 @@ function App() {
   );
 }
 
-export default App;
+export default App;  
+
+

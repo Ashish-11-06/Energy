@@ -102,7 +102,7 @@ const RequirementsPage = () => {
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>Requirements Table</h2>
+     <h2 style={{ textAlign: 'center' }}>Consumption Unit</h2>
 
       <Table
         columns={columns}
