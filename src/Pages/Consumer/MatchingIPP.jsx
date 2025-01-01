@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Spin, Alert, Row, Col } from "antd"; // Ant Design layout components
 import IPPProfileGenerator from "../../Components/Consumer/IPPProfileGenerator";
+import NavbarWithProgressBar from "./NavbarWithProgressBar";
 
 const MatchingIPP = () => {
   const [data, setData] = useState([]); // State to store table data
@@ -90,6 +91,7 @@ const MatchingIPP = () => {
           </div>
       
       </Row>
+    
     </main>
   );
 };

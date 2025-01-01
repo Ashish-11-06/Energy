@@ -64,7 +64,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     const istDate = new Date(istTime); 
     const hours = istDate.getHours();
 
-    if (hours === 10) { 
+    if (hours === 16) { 
       setShowNotification(true);
     } else {
       setShowNotification(false);
