@@ -1,10 +1,18 @@
-import React from 'react';
-import { Button } from 'antd';
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Layout } from 'antd';
-import NavbarWithProgressBar from '../../Pages/Consumer/NavbarWithProgressBar';
-import { useSelector } from 'react-redux';
-import './HeaderComponent.css'; // Add custom styles for header component
+import React from "react";
+import { Button } from "antd";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { Layout } from "antd";
+import NavbarWithProgressBar from "../../Pages/Consumer/NavbarWithProgressBar";
+import { useSelector } from "react-redux";
+import "./HeaderComponent.css"; // Add custom styles for header component
+import {
+  UserOutlined,
+  HomeOutlined,
+  BookOutlined,
+  FileTextOutlined,
+  WalletOutlined,
+  CheckCircleOutlined,
+} from "@ant-design/icons";
 
 const { Header } = Layout;
 
@@ -16,15 +24,16 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     <Header
       className="header-component"
       style={{
-        padding: '0 16px',
-        display: 'flex',
-        justifyContent: 'space-between', // Space between drawer button and content
-        alignItems: 'center',
-        backgroundColor: '#fff', // White background for the header
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)', // Subtle shadow for better separation
-        position: 'sticky',
+        backgroundColor: "transparent" /* Ensure no background color */,
+        padding: "0 16px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        position: "sticky",
         top: 0,
         zIndex: 1000,
+        height: isMobile ? "auto" : "80px",
       }}
     >
       {/* Drawer button visible on mobile */}
@@ -32,31 +41,90 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
         <Button
           icon={drawerVisible ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={toggleDrawer}
-          style={{ marginRight: '16px', display: 'inline-flex', alignItems: 'center' }}
+          style={{
+            position: "absolute",
+            left: 16,
+            top: 16,
+            zIndex: 1001,
+          }}
         />
       )}
 
       {/* Header Content */}
       <div
         style={{
-          display: 'flex',
+          display: "flex",
           flex: 1,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center', // Center align the content for better aesthetics
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center", // Center align the content for better aesthetics
+          width: "100%", // Ensure it spans the full width of the parent
+          height: "100px",
         }}
       >
-        {loginType === 'consumer' ? (
-          <div className="navbar-container" style={{ width: '100%' }}>
-            <NavbarWithProgressBar />
+        {loginType === "consumer" ? (
+          <div style={{ width: "1000px", margin: "0 auto" }}>
+            <div className="navbar">
+              <div className="progress-container">
+                <div className="horizontal-line"></div>
+                <div className="progress-icons">
+                  <div className="icon-container">
+                    <span className="icon-label" style={{ fontSize: "12px"  }}>
+                      Requirements
+                    </span>
+                    <div className="icon-circle" style={{marginRight:'60px'}}>
+                      <UserOutlined />
+                    </div>
+                  </div>
+                  <div className="icon-container">
+                    <span className="icon-label" style={{ fontSize: "12px" }}>
+                      Matching IPP
+                    </span>
+                    <div className="icon-circle" style={{marginRight:'60px'}}>
+                      <HomeOutlined />
+                    </div>
+                  </div>
+                  <div className="icon-container">
+                    <span className="icon-label" style={{ fontSize: "12px" }}>
+                      Payment
+                    </span>
+                    <div className="icon-circle">
+                      <FileTextOutlined />
+                    </div>
+                  </div>
+                  <div className="icon-container">
+                    <span className="icon-label" style={{ fontSize: "12px" }}>
+                     Updated Unit
+                    </span>
+                    <div className="icon-circle" style={{marginLeft:'100px'}}>
+                      <BookOutlined />
+                    </div>
+                  </div>
+                  <div className="icon-container">
+                    <span className="icon-label" style={{ fontSize: "12px" }}>
+                      Optimized IPP
+                    </span>
+                    <div className="icon-circle" style={{marginLeft:'100px'}}>
+                      <WalletOutlined />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
-          <h1 style={{ margin: 0, fontSize: '20px', color: '#669800' }}>EXG</h1>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "20px",
+              color: "#669800",
+              textAlign: "center",
+            }}
+          >
+            EXG
+          </h1>
         )}
       </div>
-
-      {/* Optionally, add user profile or other content to the header */}
-    
     </Header>
   );
 };

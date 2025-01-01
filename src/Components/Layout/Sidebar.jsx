@@ -64,14 +64,13 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     const istDate = new Date(istTime); 
     const hours = istDate.getHours();
 
-    if (hours === 16) { 
+    if (hours === 20) {  // Checking if time is between 2pm and 3pm IST
       setShowNotification(true);
     } else {
       setShowNotification(false);
     }
   }, []);  
 
-  
   const [isDrawerVisible, setDrawerVisible] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -83,10 +82,11 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     window.location.href = url;  // Using window.location.href for redirecting
   };
 
-  // Add notification item dynamically
+  // Add notification item dynamically below "Requirenment" in the consumer menu
   const menuWithNotification = showNotification ? [
-    ...menuItems,
+    ...menuItems.slice(0, 2),
     { label: 'Notification', key: '/consumer/notification', icon: <NotificationOutlined /> },
+    ...menuItems.slice(2),
   ] : menuItems;
 
   return (
@@ -115,6 +115,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               textAlign: 'center',
               fontSize: '18px',
               backgroundColor: '#6698005c',
+              height:'100px',
             }}
           >
             Menu
@@ -172,7 +173,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 };
 
 export default Sidebar;
-
 
 
 

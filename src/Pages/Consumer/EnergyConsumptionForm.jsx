@@ -32,38 +32,38 @@ const EnergyConsumptionForm = () => {
         >
           {/* Monthly Consumption */}
           <Form.Item
-            label="Monthly Consumption (kWh)"
+            label="Monthly Consumption (MW)"
             name="monthlyConsumption"
             rules={[
               { required: true, message: 'Please enter monthly consumption!' },
               { type: 'number', min: 0, message: 'Value must be positive!' },
             ]}
           >
-            <InputNumber style={{ width: '100%' }} placeholder="Enter kWh" />
+            <InputNumber style={{ width: '100%' }} placeholder="Enter MW" />
           </Form.Item>
 
           {/* Peak Consumption */}
           <Form.Item
-            label="Peak Consumption (kWh)"
+            label="Peak Consumption (MW)"
             name="peakConsumption"
             rules={[
               { required: true, message: 'Please enter peak consumption!' },
               { type: 'number', min: 0, message: 'Value must be positive!' },
             ]}
           >
-            <InputNumber style={{ width: '100%' }} placeholder="Enter peak kWh" />
+            <InputNumber style={{ width: '100%' }} placeholder="Enter peak MW" />
           </Form.Item>
 
           {/* Off-Peak Consumption */}
           <Form.Item
-            label="Off-Peak Consumption (kWh)"
+            label="Off-Peak Consumption (MW)"
             name="offPeakConsumption"
             rules={[
               { required: true, message: 'Please enter off-peak consumption!' },
               { type: 'number', min: 0, message: 'Value must be positive!' },
             ]}
           >
-            <InputNumber style={{ width: '100%' }} placeholder="Enter off-peak kWh" />
+            <InputNumber style={{ width: '100%' }} placeholder="Enter off-peak MW" />
           </Form.Item>
 
           {/* Monthly Bill Amount */}
@@ -92,13 +92,13 @@ const EnergyConsumptionForm = () => {
             <Title level={4}>Submitted Data:</Title>
             <ul>
               <li>
-                <strong>Monthly Consumption (kWh):</strong> {formValues.monthlyConsumption}
+                <strong>Monthly Consumption (MW):</strong> {formValues.monthlyConsumption}
               </li>
               <li>
-                <strong>Peak Consumption (kWh):</strong> {formValues.peakConsumption}
+                <strong>Peak Consumption (MW):</strong> {formValues.peakConsumption}
               </li>
               <li>
-                <strong>Off-Peak Consumption (kWh):</strong> {formValues.offPeakConsumption}
+                <strong>Off-Peak Consumption (MW):</strong> {formValues.offPeakConsumption}
               </li>
               <li>
                 <strong>Monthly Bill Amount ($):</strong> {formValues.monthlyBill}

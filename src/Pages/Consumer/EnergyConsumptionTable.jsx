@@ -116,19 +116,19 @@ const EnergyConsumptionTable = () => {
       width: 100,
     },
     {
-      title: "Monthly Consumption (kWh)",
+      title: "Monthly Consumption (MW)",
       dataIndex: "monthlyConsumption",
       key: "monthlyConsumption",
       width: 150,
     },
     {
-      title: "Peak Consumption (kWh)",
+      title: "Peak Consumption (MW)",
       dataIndex: "peakConsumption",
       key: "peakConsumption",
       width: 150,
     },
     {
-      title: "Off-Peak Consumption (kWh)",
+      title: "Off-Peak Consumption (MW)",
       dataIndex: "offPeakConsumption",
       key: "offPeakConsumption",
       width: 150,
@@ -253,7 +253,7 @@ const EnergyConsumptionTable = () => {
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="Monthly Consumption (kWh)"
+                  label="Monthly Consumption (MW)"
                   name="monthlyConsumption"
                   rules={[
                     {
@@ -264,7 +264,7 @@ const EnergyConsumptionTable = () => {
                 >
                   <InputNumber
                     style={{ width: "100%" }}
-                    placeholder="Enter kWh"
+                    placeholder="Enter MW"
                     disabled={disableForm}
                   />
                 </Form.Item>
@@ -272,7 +272,7 @@ const EnergyConsumptionTable = () => {
 
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="Peak Consumption (kWh)"
+                  label="Peak Consumption (MW)"
                   name="peakConsumption"
                   rules={[
                     {
@@ -283,7 +283,7 @@ const EnergyConsumptionTable = () => {
                 >
                   <InputNumber
                     style={{ width: "100%" }}
-                    placeholder="Enter peak kWh"
+                    placeholder="Enter peak MW"
                     disabled={disableForm}
                   />
                 </Form.Item>
@@ -293,7 +293,7 @@ const EnergyConsumptionTable = () => {
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="Off-Peak Consumption (kWh)"
+                  label="Off-Peak Consumption (MW)"
                   name="offPeakConsumption"
                   rules={[
                     {
@@ -304,7 +304,7 @@ const EnergyConsumptionTable = () => {
                 >
                   <InputNumber
                     style={{ width: "100%" }}
-                    placeholder="Enter off-peak kWh"
+                    placeholder="Enter off-peak MW"
                     disabled={disableForm}
                   />
                 </Form.Item>

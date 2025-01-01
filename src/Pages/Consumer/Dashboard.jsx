@@ -22,6 +22,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import NavbarWithProgressBar from "./NavbarWithProgressBar";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -134,6 +135,7 @@ const Dashboard = () => {
   return (
     <div>
       <StatData />
+     
     </div>
   );
 };
