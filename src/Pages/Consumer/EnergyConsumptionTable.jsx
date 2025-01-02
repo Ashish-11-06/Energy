@@ -25,6 +25,7 @@ const EnergyConsumptionTable = () => {
   const [dataSource, setDataSource] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [selectedFileMonth, setSelectedFileMonth] = useState(null);
   const [disableForm, setDisableForm] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -44,19 +45,28 @@ const EnergyConsumptionTable = () => {
     "December",
   ];
 
+  const usedMonths = new Set(dataSource.map((data) => data.month));
+
   const handleFileUpload = (file) => {
     if (uploadedFiles.length >= 1) {
       message.error("You can upload only one file at a time!");
       return false;
     }
+
+    if (!selectedFileMonth) {
+      message.error("Please select a month before uploading!");
+      return false;
+    }
+
     setUploadedFiles([file]);
     setDisableForm(true);
     message.success(`${file.name} uploaded successfully`);
     return false;
   };
 
-  const handleRemoveFile = (fileUid) => {
+  const handleRemoveFile = () => {
     setUploadedFiles([]);
+    setSelectedFileMonth(null);
     setDisableForm(false);
     message.info("File removed");
   };
@@ -69,17 +79,18 @@ const EnergyConsumptionTable = () => {
 
     const newData = {
       key: dataSource.length + 1,
-      month: disableForm ? " " : values.month, // Show "Uploaded Document" for file uploads
+      month: disableForm ? selectedFileMonth : values.month,
       monthlyConsumption: values.monthlyConsumption,
       peakConsumption: values.peakConsumption,
       offPeakConsumption: values.offPeakConsumption,
       monthlyBill: values.monthlyBill,
-      fileUploaded: uploadedFiles.length > 0 ? "Yes" : "No", // "Yes" or "No"
+      fileUploaded: uploadedFiles.length > 0 ? "Yes" : "No",
     };
 
     setDataSource([...dataSource, newData]);
     setIsModalVisible(false);
     setUploadedFiles([]);
+    setSelectedFileMonth(null);
     form.resetFields();
     setDisableForm(false);
     message.success("Data added successfully!");
@@ -105,19 +116,19 @@ const EnergyConsumptionTable = () => {
       width: 100,
     },
     {
-      title: "Monthly Consumption (kWh)",
+      title: "Monthly Consumption (MW)",
       dataIndex: "monthlyConsumption",
       key: "monthlyConsumption",
       width: 150,
     },
     {
-      title: "Peak Consumption (kWh)",
+      title: "Peak Consumption (MW)",
       dataIndex: "peakConsumption",
       key: "peakConsumption",
       width: 150,
     },
     {
-      title: "Off-Peak Consumption (kWh)",
+      title: "Off-Peak Consumption (MW)",
       dataIndex: "offPeakConsumption",
       key: "offPeakConsumption",
       width: 150,
@@ -190,23 +201,31 @@ const EnergyConsumptionTable = () => {
             }}
           >
             <Form.Item>
+              <Select
+                placeholder="Select month for file upload"
+                style={{ width: "100%", marginBottom: "10px" }}
+                value={selectedFileMonth}
+                onChange={(value) => setSelectedFileMonth(value)}
+              >
+                {availableMonths.map(
+                  (month, index) =>
+                    !usedMonths.has(month) && (
+                      <Option key={index} value={month}>
+                        {month}
+                      </Option>
+                    )
+                )}
+              </Select>
               <Upload {...uploadProps}>
                 <Button icon={<UploadOutlined />}>Upload Document</Button>
               </Upload>
               {uploadedFiles.length > 0 && (
                 <div style={{ marginTop: "10px", color: "green" }}>
-                  {uploadedFiles.map((file) => (
-                    <div
-                      key={file.uid}
-                      style={{ display: "flex", alignItems: "center" }}
-                    >
-                      <span style={{ flex: 1 }}>{file.name}</span>
-                      <CloseCircleOutlined
-                        style={{ color: "red", cursor: "pointer" }}
-                        onClick={() => handleRemoveFile(file.uid)}
-                      />
-                    </div>
-                  ))}
+                  <span>{uploadedFiles[0].name}</span>
+                  <CloseCircleOutlined
+                    style={{ color: "red", cursor: "pointer", marginLeft: "10px" }}
+                    onClick={handleRemoveFile}
+                  />
                 </div>
               )}
             </Form.Item>
@@ -219,18 +238,22 @@ const EnergyConsumptionTable = () => {
               ]}
             >
               <Select placeholder="Select month" disabled={disableForm}>
-                {availableMonths.map((month, index) => (
-                  <Option key={index} value={month}>
-                    {month}
-                  </Option>
-                ))}
+                {availableMonths.map(
+                  (month, index) =>
+                    !usedMonths.has(month) && (
+                      <Option key={index} value={month}>
+                        {month}
+                      </Option>
+                    )
+                )}
               </Select>
             </Form.Item>
 
+            {/* Consumption and Bill Input Fields */}
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="Monthly Consumption (kWh)"
+                  label="Monthly Consumption (MW)"
                   name="monthlyConsumption"
                   rules={[
                     {
@@ -241,7 +264,7 @@ const EnergyConsumptionTable = () => {
                 >
                   <InputNumber
                     style={{ width: "100%" }}
-                    placeholder="Enter kWh"
+                    placeholder="Enter MW"
                     disabled={disableForm}
                   />
                 </Form.Item>
@@ -249,7 +272,7 @@ const EnergyConsumptionTable = () => {
 
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="Peak Consumption (kWh)"
+                  label="Peak Consumption (MW)"
                   name="peakConsumption"
                   rules={[
                     {
@@ -260,7 +283,7 @@ const EnergyConsumptionTable = () => {
                 >
                   <InputNumber
                     style={{ width: "100%" }}
-                    placeholder="Enter peak kWh"
+                    placeholder="Enter peak MW"
                     disabled={disableForm}
                   />
                 </Form.Item>
@@ -270,7 +293,7 @@ const EnergyConsumptionTable = () => {
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="Off-Peak Consumption (kWh)"
+                  label="Off-Peak Consumption (MW)"
                   name="offPeakConsumption"
                   rules={[
                     {
@@ -281,7 +304,7 @@ const EnergyConsumptionTable = () => {
                 >
                   <InputNumber
                     style={{ width: "100%" }}
-                    placeholder="Enter off-peak kWh"
+                    placeholder="Enter off-peak MW"
                     disabled={disableForm}
                   />
                 </Form.Item>
@@ -314,6 +337,7 @@ const EnergyConsumptionTable = () => {
             </div>
           </Form>
         </Modal>
+
         <Space style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
           For more accuracy, you can upload a SCADA_15 min dump energy consumption file.
           <Upload {...uploadProps}>

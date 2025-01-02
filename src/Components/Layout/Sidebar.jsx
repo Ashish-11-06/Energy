@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Button, Drawer } from 'antd';
 import { useLocation, Link } from 'react-router-dom';
 import {
@@ -14,9 +14,7 @@ import {
   ControlOutlined,
   FileTextOutlined,
   UserOutlined,
-  ProfileOutlined,
-  BulbOutlined,
-  ThunderboltOutlined
+  NotificationOutlined,
 } from '@ant-design/icons';
 
 // Define menu items for consumer and generator with icons
@@ -25,6 +23,7 @@ const consumerMenuItems = [
   { label: 'Requirenment', key: '/consumer/requirenment', icon: <FormOutlined /> },
   { label: 'What We Offer', key: '/consumer/what-we-offer', icon: <AppstoreAddOutlined /> },
   { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
+  { label: 'Requested IPP', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined  /> },
   { label: 'Chat with Expert', key: '/consumer/chat-page', icon: <MessageOutlined /> },
   { label: 'Energy Consumption Form', key: '/consumer/energy-consumption-form', icon: <FormOutlined /> },
   { label: 'Energy Consumption Table', key: '/consumer/energy-consumption-table', icon: <TableOutlined /> },
@@ -34,6 +33,7 @@ const consumerMenuItems = [
   { label: 'Profile', key: '/consumer/profile', icon: <UserOutlined /> },
 ];
 
+// Generator menu items
 const generatorMenuItems = [
   { label: 'Dashboard', key: '/generator/dashboard', icon: <DashboardOutlined /> },
   { label: 'What We Offer', key: '/generator/what-we-offer', icon: <AppstoreAddOutlined /> },
@@ -43,21 +43,34 @@ const generatorMenuItems = [
   { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
   { label: 'Subscription Plan', key: '/generator/subscription-plan', icon: <WalletOutlined /> },
   { label: 'Chat with Expert', key: '/generator/chat-page', icon: <MessageOutlined /> },
-  { label: 'Profile', key: '/generator/profile', icon: <ThunderboltOutlined /> },
+  { label: 'Profile', key: '/generator/profile', icon: <NotificationOutlined /> },
 ];
 
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const location = useLocation();
+  const [showNotification, setShowNotification] = useState(false);
 
   // Determine menu type based on URL
   const menuType = location.pathname.startsWith('/consumer') ? 'consumer' : 'generator';
-
-  // Select menu items based on the type
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
 
-  // State for drawer visibility on mobile
+  // Function to check time and show notification between 2pm and 3pm IST
+  useEffect(() => {
+    const now = new Date();
+    const options = { timeZone: 'Asia/Kolkata' }; 
+    const istTime = now.toLocaleString('en-US', options); 
+    const istDate = new Date(istTime); 
+    const hours = istDate.getHours();
+
+    if (hours === 20) {  // Checking if time is between 2pm and 3pm IST
+      setShowNotification(true);
+    } else {
+      setShowNotification(false);
+    }
+  }, []);  
+
   const [isDrawerVisible, setDrawerVisible] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -65,10 +78,16 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   };
 
   const closeDrawerAndNavigate = (url) => {
-    // Close the drawer and navigate
     setDrawerVisible(false);
     window.location.href = url;  // Using window.location.href for redirecting
   };
+
+  // Add notification item dynamically below "Requirenment" in the consumer menu
+  const menuWithNotification = showNotification ? [
+    ...menuItems.slice(0, 2),
+    { label: 'Notification', key: '/consumer/notification', icon: <NotificationOutlined /> },
+    ...menuItems.slice(2),
+  ] : menuItems;
 
   return (
     <>
@@ -85,6 +104,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
             top: 0,
             backgroundColor: '#f5f6fb',
             zIndex: 100,
+            overflowY: 'auto', // Make the sidebar scrollable
           }}
         >
           <div
@@ -95,12 +115,13 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               textAlign: 'center',
               fontSize: '18px',
               backgroundColor: '#6698005c',
+              height:'100px',
             }}
           >
             Menu
           </div>
           <Menu mode="inline">
-            {menuItems.map(item => (
+            {menuWithNotification.map(item => (
               <Menu.Item key={item.key} icon={item.icon}>
                 <Link to={item.key}>{item.label}</Link>
               </Menu.Item>
@@ -132,7 +153,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
             }}
           >
             <Menu mode="inline">
-              {menuItems.map(item => {
+              {menuWithNotification.map(item => {
                 return (
                   <Menu.Item
                     key={item.key}
@@ -152,8 +173,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 };
 
 export default Sidebar;
-
-
 
 
 

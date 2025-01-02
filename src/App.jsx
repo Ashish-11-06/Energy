@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import LandingPage from './Pages/LandingPage';
 import LayoutComponent from './Components/Layout/Layout';
 import WhatWeOffer from './Pages/Consumer/WhatWeOffer';
@@ -31,6 +32,9 @@ import ProfileGenerator from './Pages/Generator/ProfileGenerator';
 import UserGen from './Pages/Generator/UserGen';
 import PortfolioGen from './Pages/Generator/PortfolioGen';
 import Offer from './Pages/Consumer/Offer';
+import RequestedIPP from './Pages/Consumer/RequestedIPP';
+import NavbarWithProgressBar from './Pages/Consumer/NavbarWithProgressBar';
+import Notification from './Pages/Consumer/Notification';
 
 
 function App() {
@@ -47,26 +51,35 @@ function App() {
         {/* Routes with shared layout */}
         <Route element={<LayoutComponent />}>
           {/* Consumer Routes */}
-          <Route path="/consumer">
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="what-we-offer" element={<WhatWeOffer />} />
-            <Route path="matching-ipp" element={<MatchingIPP />} />
-            <Route path="chat-page" element={<ChatWithExpert />} />
-            <Route path="energy-consumption-form" element={<EnergyConsumptionForm />} />
-            <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
-            <Route path="consumption-pattern" element={<ConsumptionPattern />} />
-            <Route path="project-details" element={<IppProjectDetails />} />
-            <Route path="requirenment" element={<RequirementsPage />} />
-            <Route path="annual-saving" element={<AnnualSvg />} />
-            <Route path="subscription-plan" element={<SubscriptionPlans />} />
-            <Route path="profile" element={<ProfileConsumer />} />
-            <Route path="offer" element={<Offer />} />
-            
-          </Route>
+          <Route
+            path="/consumer/*"
+            element={
+              <>
+                {/* Include the NavbarWithProgressBar here */}
+                <Routes>
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="what-we-offer" element={<WhatWeOffer />} />
+                  <Route path="matching-ipp" element={<MatchingIPP />} />
+                  <Route path="chat-page" element={<ChatWithExpert />} />
+                  <Route path="energy-consumption-form" element={<EnergyConsumptionForm />} />
+                  <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
+                  <Route path="consumption-pattern" element={<ConsumptionPattern />} />
+                  <Route path="project-details" element={<IppProjectDetails />} />
+                  <Route path="requirenment" element={<RequirementsPage />} />
+                  <Route path="annual-saving" element={<AnnualSvg />} />
+                  <Route path="subscription-plan" element={<SubscriptionPlans />} />
+                  <Route path="profile" element={<ProfileConsumer />} />
+                  <Route path="offer" element={<Offer />} />
+                  <Route path="requested-ipp" element={<RequestedIPP />} />
+                  <Route path="notification" element={<Notification />} />
+                </Routes>
+              </>
+            }
+          />
 
           {/* Generator Routes */}
-          <Route path="/generator">
-            <Route path='dashboard' element={<DashboardG />} />
+          <Route path="/generator/*">
+            <Route path="dashboard" element={<DashboardG />} />
             <Route path="what-we-offer" element={<WhatWeOfferG />} />
             <Route path="portfolio" element={<GenerationPortfolio />} />
             <Route path="matching-consumer" element={<MatchingConsumerPage />} />
@@ -90,3 +103,14 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,85 @@
+/* General Styling */
+.navbar {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.progress-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.horizontal-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 10px; /* Increased line thickness */
+  background-color: #d9d9d9;
+  z-index: 1;
+  border-radius: 5px; /* Optional for rounded edges */
+}
+
+.progress-icons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* Stretch from start to end of the line */
+  position: relative;
+  z-index: 2;
+}
+
+.icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.icon-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  background-color: #fff;
+  border: 2px solid #d9d9d9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #555;
+  position: relative;
+  z-index: 3;
+}
+
+/* Completed step styling */
+.icon-circle.completed {
+  border-color: #52c41a;
+  color: #52c41a;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .progress-icons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .icon-circle {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .icon-label {
+    font-size: 0.8rem;
+  }
+}

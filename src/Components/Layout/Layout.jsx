@@ -64,6 +64,7 @@ const LayoutComponent = () => {
             position: 'sticky',
             top: 0,
             zIndex: 1000, // Ensure header is above sidebar and content
+            height:'100px'
           }}
         >
           <HeaderComponent

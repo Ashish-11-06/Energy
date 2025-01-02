@@ -65,3 +65,48 @@
   color: #669800 !important; /* Primary color */
   margin-bottom: 20px !important;
 }
+
+
+.progress-bar-container {
+  position: relative;
+  width: 100%;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.progress-bar {
+  display: flex;
+  position: relative;
+  height: 30px;
+}
+
+.progress-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  background-color: #007bff;
+  border-right: 1px solid #fff;
+}
+
+.progress-stage.completed {
+  background-color: #28a745;
+}
+
+.progress-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: rgba(0, 123, 255, 0.5);
+  z-index: -1;
+  transition: width 0.3s ease-in-out;
+}
+
+.stage-label {
+  font-size: 14px;
+  white-space: nowrap;
+}
