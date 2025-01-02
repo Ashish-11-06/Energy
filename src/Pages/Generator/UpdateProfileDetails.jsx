@@ -43,7 +43,7 @@ const UpdateProfileDetails = () => {
   // Table columns
   const columns = [
     {
-      title: 'Type',
+      title: 'Technology',
       dataIndex: 'type',
       key: 'type',
     },

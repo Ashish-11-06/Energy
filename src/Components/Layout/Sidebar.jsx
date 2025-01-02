@@ -64,7 +64,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     const istDate = new Date(istTime); 
     const hours = istDate.getHours();
 
-    if (hours === 20) {  // Checking if time is between 2pm and 3pm IST
+    if (hours === 9) {  // Checking if time is between 2pm and 3pm IST
       setShowNotification(true);
     } else {
       setShowNotification(false);
