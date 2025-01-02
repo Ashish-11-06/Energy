@@ -8,5 +8,4 @@ const axiosInstance = axios.create({
     },
     timeout: 10000, // Optional: Add timeout to handle slow requests
 });
-// kl
 export default axiosInstance;
