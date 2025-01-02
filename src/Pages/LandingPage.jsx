@@ -37,11 +37,7 @@ const LandingPage = () => {
           <Row justify="center" align="middle" style={{ height: '100%' }}>
             <Col xs={24} md={12}>
               <div className="text-content">
-                {selection === 'consumer' ? (
-                  <NavbarWithProgressBar />
-                ) : (
-                  <h1>EXG</h1>
-                )}
+              <h1>EXG</h1>
                 <p>
                   Empowering consumers and businesses with reliable energy solutions.
                 </p>

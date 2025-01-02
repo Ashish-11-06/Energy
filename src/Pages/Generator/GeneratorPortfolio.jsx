@@ -18,7 +18,7 @@ const GenerationPortfolio = () => {
       render: (text, record, index) => index + 1,
     },
     {
-      title: 'Type',
+      title: 'Technology',
       dataIndex: 'type',
       key: 'type',
     },

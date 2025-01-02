@@ -64,7 +64,7 @@ const SubscriptionPlanG = () => {
   // Handle payment done and navigate to the new page
   const handlePaymentDone = () => {
     // Navigate to the energy-consumption-table page after payment is done
-    navigate('/generator/energy-optimization');
+    navigate('/generator/update-profile-details');
   };
 
   return (

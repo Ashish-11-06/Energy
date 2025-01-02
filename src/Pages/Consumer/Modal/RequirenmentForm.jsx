@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Modal, Form, Input, Select, DatePicker, Button, Row, Col, Tooltip } from "antd";
+import {
+  Modal,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  Button,
+  Row,
+  Col,
+  Tooltip,
+} from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import states from "../../../Data/States";
 import industries from "../../../Data/Industry";
@@ -83,7 +93,9 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
                 "Industry your company is involved in (e.g., IT, Manufacturing)."
               )}
               name="industry"
-              rules={[{ required: true, message: "Please select your industry!" }]}
+              rules={[
+                { required: true, message: "Please select your industry!" },
+              ]}
             >
               <Select
                 placeholder="Select your industry"
@@ -109,13 +121,23 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
                 "Select the tariff category applicable to your company (e.g., HT Commercial, LT Industrial)."
               )}
               name="tariffCategory"
-              rules={[{ required: true, message: "Please select a tariff category!" }]}
+              rules={[
+                { required: true, message: "Please select a tariff category!" },
+              ]}
             >
               <Select placeholder="Select tariff category">
-                <Select.Option value="HT Commercial">HT Commercial</Select.Option>
-                <Select.Option value="HT Industrial">HT Industrial</Select.Option>
-                <Select.Option value="LT Commercial">LT Commercial</Select.Option>
-                <Select.Option value="LT Industrial">LT Industrial</Select.Option>
+                <Select.Option value="HT Commercial">
+                  HT Commercial
+                </Select.Option>
+                <Select.Option value="HT Industrial">
+                  HT Industrial
+                </Select.Option>
+                <Select.Option value="LT Commercial">
+                  LT Commercial
+                </Select.Option>
+                <Select.Option value="LT Industrial">
+                  LT Industrial
+                </Select.Option>
               </Select>
             </Form.Item>
           </Col>
@@ -127,9 +149,14 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
                 "Select the voltage level of the electricity being supplied to your company."
               )}
               name="voltageLevel"
-              rules={[{ required: true, message: "Please select the voltage level!" }]}
+              rules={[
+                { required: true, message: "Please select the voltage level!" },
+              ]}
             >
-              <Select placeholder="Select voltage level" onChange={handleVoltageChange}>
+              <Select
+                placeholder="Select voltage level"
+                onChange={handleVoltageChange}
+              >
                 <Select.Option value="11kv">11 kV</Select.Option>
                 <Select.Option value="33kv">33 kV</Select.Option>
                 <Select.Option value="66kv">66 kV</Select.Option>
@@ -147,7 +174,12 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
                   'Enter the custom voltage level if "Other" was selected.'
                 )}
                 name="customVoltage"
-                rules={[{ required: true, message: "Please enter a custom voltage value!" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter a custom voltage value!",
+                  },
+                ]}
               >
                 <Input
                   type="text"
@@ -166,35 +198,51 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
                 "The contracted demand is the amount of electricity in MW that the company has committed to using."
               )}
               name="contractedDemand"
-              rules={[{ required: true, message: "Please enter the contracted demand!" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter the contracted demand!",
+                },
+              ]}
             >
-              <Input type="number" placeholder="Enter contracted demand in MW" />
+              <Input
+                type="number"
+                placeholder="Enter contracted demand in MW"
+              />
             </Form.Item>
           </Col>
 
           <Col span={24}>
-          <Form.Item
-  label={renderLabelWithTooltip(
-    "Procurement Date",
-    "Select the date when the procurement of services or goods occurred (expected Date)."
-  )}
-  name="procurement"
-  rules={[{ required: true, message: "Please select a procurement date!" }]}
->
-  <DatePicker 
-    style={{ width: "100%" }} 
-    disabledDate={(current) => {
-      // Disable today and all past dates
-      return current && current <= new Date();
-    }}
-  />
-</Form.Item>
-
+            <Form.Item
+              label={renderLabelWithTooltip(
+                "Procurement Date",
+                "Select the date when the procurement of services or goods occurred (expected Date)."
+              )}
+              name="procurement"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select a procurement date!",
+                },
+              ]}
+            >
+              <DatePicker
+                style={{ width: "100%" }}
+                disabledDate={(current) => {
+                  // Disable today and all past dates
+                  return current && current <= new Date();
+                }}
+              />
+            </Form.Item>
           </Col>
         </Row>
 
         <Form.Item style={{ textAlign: "center" }}>
-          <Button type="primary" htmlType="submit" style={{ padding: "10px 20px" }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ padding: "10px 20px" }}
+          >
             Continue
           </Button>
         </Form.Item>

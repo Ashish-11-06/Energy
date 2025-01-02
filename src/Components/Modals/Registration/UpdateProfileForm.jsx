@@ -10,7 +10,7 @@ const UpdateProfileForm = ({ form }) => {
         <Col span={12}>
           <Form.Item
             name="type"
-            label="Type"
+            label="Technology"
             rules={[{ required: true, message: 'Please select the type!' }]}
           >
             <Select placeholder="Select type">
@@ -55,7 +55,21 @@ const UpdateProfileForm = ({ form }) => {
           <Form.Item
             name="capitalCost"
             label="Capital Cost"
-            rules={[{ required: true, message: 'Please input the capital cost!' }]}
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  const type = getFieldValue('type');
+                  const marginalCost = getFieldValue('marginalCost');
+                  if (type === 'ESS' && !value) {
+                    return Promise.reject(new Error('Capital Cost is required for ESS.'));
+                  }
+                  if ((type === 'Solar' || type === 'Wind') && !value && !marginalCost) {
+                    return Promise.reject(new Error('Please input either Capital Cost or Marginal Cost.'));
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
           >
             <Input />
           </Form.Item>
@@ -64,7 +78,21 @@ const UpdateProfileForm = ({ form }) => {
           <Form.Item
             name="marginalCost"
             label="Marginal Cost"
-            rules={[{ required: true, message: 'Please input the marginal cost!' }]}
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  const type = getFieldValue('type');
+                  const capitalCost = getFieldValue('capitalCost');
+                  if (type === 'ESS' && !value) {
+                    return Promise.reject(new Error('Marginal Cost is required for ESS.'));
+                  }
+                  if ((type === 'Solar' || type === 'Wind') && !value && !capitalCost) {
+                    return Promise.reject(new Error('Please input either Capital Cost or Marginal Cost.'));
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
           >
             <Input />
           </Form.Item>
@@ -96,51 +124,47 @@ const UpdateProfileForm = ({ form }) => {
       >
         {({ getFieldValue }) =>
           getFieldValue('type') === 'Solar' || getFieldValue('type') === 'Wind' ? (
-            <>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    name="hourlyData"
-                    label="Hourly Data"
-                    rules={[{ required: true, message: 'Please input the hourly data!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    name="annualGenerationPotential"
-                    label="Annual Generation Potential"
-                    rules={[{ required: true, message: 'Please input the annual generation potential!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="hourlyData"
+                  label="Hourly Data"
+                  rules={[{ required: true, message: 'Please input the hourly data!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="annualGenerationPotential"
+                  label="Annual Generation Potential (MWh)"
+                  rules={[{ required: true, message: 'Please input the annual generation potential!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
           ) : getFieldValue('type') === 'ESS' ? (
-            <>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    name="efficiencyOfStorage"
-                    label="Efficiency of Storage"
-                    rules={[{ required: true, message: 'Please input the efficiency of storage!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    name="efficiencyOfDispatch"
-                    label="Efficiency of Dispatch"
-                    rules={[{ required: true, message: 'Please input the efficiency of dispatch!' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="efficiencyOfStorage"
+                  label="Efficiency of Storage"
+                  rules={[{ required: true, message: 'Please input the efficiency of storage!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="efficiencyOfDispatch"
+                  label="Efficiency of Dispatch"
+                  rules={[{ required: true, message: 'Please input the efficiency of dispatch!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
           ) : null
         }
       </Form.Item>
