@@ -16,5 +16,11 @@ export default defineConfig({
         javascriptEnabled: true,
       },
     },
+  }, 
+  server: {
+    port: 3001,
+    open: true,
+    historyApiFallback: true, 
   },
+  // ...existing code...
 });
