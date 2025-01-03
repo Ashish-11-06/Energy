@@ -1,9 +1,30 @@
-import React from 'react';
-import { Form, Input, DatePicker, Row, Col, Select } from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, DatePicker, Row, Col, Select, Button, Upload, message } from 'antd';
+import * as XLSX from 'xlsx'; // Import xlsx
+import { UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
 const UpdateProfileForm = ({ form }) => {
+  const [fileList, setFileList] = useState([]);
+
+  // Function to generate and download the blank Excel sheet
+  const downloadExcelTemplate = () => {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet([["Hourly Data", "Annual Generation Potential (MWh)"]]); // Add headers as per your requirement
+    XLSX.utils.book_append_sheet(wb, ws, "Template");
+    XLSX.writeFile(wb, "template.xlsx");
+  };
+
+  // Function to handle file upload
+  const handleFileUpload = (info) => {
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+
   return (
     <Form form={form} layout="vertical">
       <Row gutter={16}>
@@ -56,19 +77,10 @@ const UpdateProfileForm = ({ form }) => {
             name="capitalCost"
             label="Capital Cost"
             rules={[
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  const type = getFieldValue('type');
-                  const marginalCost = getFieldValue('marginalCost');
-                  if (type === 'ESS' && !value) {
-                    return Promise.reject(new Error('Capital Cost is required for ESS.'));
-                  }
-                  if ((type === 'Solar' || type === 'Wind') && !value && !marginalCost) {
-                    return Promise.reject(new Error('Please input either Capital Cost or Marginal Cost.'));
-                  }
-                  return Promise.resolve();
-                },
-              }),
+              {
+                required: form.getFieldValue('type') === 'ESS',
+                message: 'Please input the capital cost!',
+              },
             ]}
           >
             <Input />
@@ -79,19 +91,10 @@ const UpdateProfileForm = ({ form }) => {
             name="marginalCost"
             label="Marginal Cost"
             rules={[
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  const type = getFieldValue('type');
-                  const capitalCost = getFieldValue('capitalCost');
-                  if (type === 'ESS' && !value) {
-                    return Promise.reject(new Error('Marginal Cost is required for ESS.'));
-                  }
-                  if ((type === 'Solar' || type === 'Wind') && !value && !capitalCost) {
-                    return Promise.reject(new Error('Please input either Capital Cost or Marginal Cost.'));
-                  }
-                  return Promise.resolve();
-                },
-              }),
+              {
+                required: form.getFieldValue('type') === 'ESS',
+                message: 'Please input the marginal cost!',
+              },
             ]}
           >
             <Input />
@@ -125,20 +128,20 @@ const UpdateProfileForm = ({ form }) => {
         {({ getFieldValue }) =>
           getFieldValue('type') === 'Solar' || getFieldValue('type') === 'Wind' ? (
             <Row gutter={16}>
-              <Col span={12}>
+              {/* <Col span={12}>
                 <Form.Item
                   name="hourlyData"
                   label="Hourly Data"
-                  rules={[{ required: true, message: 'Please input the hourly data!' }]}
+                  rules={[{ required: false, message: 'Please input the hourly data!' }]}
                 >
                   <Input />
                 </Form.Item>
-              </Col>
+              </Col> */}
               <Col span={12}>
                 <Form.Item
                   name="annualGenerationPotential"
                   label="Annual Generation Potential (MWh)"
-                  rules={[{ required: true, message: 'Please input the annual generation potential!' }]}
+                  rules={[{ required: false, message: 'Please input the annual generation potential!' }]}
                 >
                   <Input />
                 </Form.Item>
@@ -167,6 +170,23 @@ const UpdateProfileForm = ({ form }) => {
             </Row>
           ) : null
         }
+      </Form.Item>
+
+      {/* Download Excel Template Button */}
+      <Button onClick={downloadExcelTemplate} type="primary" style={{ marginBottom: '16px' }}>
+        Download Excel Template
+      </Button>
+
+      {/* Upload Excel File Button */}
+      <Form.Item label="Upload Excel File">
+        <Upload
+          customRequest={handleFileUpload}
+          fileList={fileList}
+          onChange={({ fileList }) => setFileList(fileList)}
+          beforeUpload={() => false} // Prevent default upload behavior
+        >
+          <Button icon={<UploadOutlined />}>Upload Filled Excel Sheet</Button>
+        </Upload>
       </Form.Item>
     </Form>
   );

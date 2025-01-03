@@ -32,6 +32,7 @@ import Offer from './Pages/Consumer/Offer';
 import RequestedIPP from './Pages/Consumer/RequestedIPP';
 import NavbarWithProgressBar from './Pages/Consumer/NavbarWithProgressBar';
 import Notification from './Pages/Consumer/Notification';
+import OptimizeCombination from './Pages/Generator/OptimizeCombination';
 
 function App() {
   return (
@@ -87,6 +88,7 @@ function App() {
             <Route path="profile" element={<ProfileGenerator />} />
             <Route path="profile/user" element={<UserGen />} />
             <Route path="profile/portfolio" element={<PortfolioGen />} />
+            <Route path="combination" element={<OptimizeCombination  />} />
           </Route>
         </Route>
       </Routes>

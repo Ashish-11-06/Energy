@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Radio, Button, message, Input, Select } from 'antd';
+import { Table, Radio, Button, message, Input, Select, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are imported
 
@@ -12,14 +12,16 @@ const MatchingConsumerPage = () => {
   const [selectedConsumer, setSelectedConsumer] = useState(null); // Track the selected consumer
   const [searchText, setSearchText] = useState('');
   const [filterState, setFilterState] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
+  const [modalConsumerDetails, setModalConsumerDetails] = useState(null); // Consumer details for the modal
   const navigate = useNavigate(); // Initialize navigate hook
 
   useEffect(() => {
     // Simulating an API call to get matched consumers data
     const exampleConsumers = [
-      { key: 1, state: 'Karnataka', demand: '500 MW', industry: 'Automobile' },
-      { key: 2, state: 'Maharashtra', demand: '300 MW', industry: 'Textile' },
-      { key: 3, state: 'Rajasthan', demand: '150 MW', industry: 'Construction'},
+      { key: 1, state: 'Karnataka', demand: '500 MW', industry: 'Automobile', address: 'Bangalore' },
+      { key: 2, state: 'Maharashtra', demand: '300 MW', industry: 'Textile', address: 'Mumbai' },
+      { key: 3, state: 'Rajasthan', demand: '150 MW', industry: 'Construction', address: 'Jaipur' },
     ];
     setConsumers(exampleConsumers); // Set the consumers data
     setFilteredConsumers(exampleConsumers); // Set the filtered consumers data
@@ -50,7 +52,6 @@ const MatchingConsumerPage = () => {
     if (searchText) {
       filtered = filtered.filter(consumer =>
         consumer.state.toLowerCase().includes(searchText.toLowerCase()) ||
-       
         consumer.industry.toLowerCase().includes(searchText.toLowerCase())
       );
     }
@@ -86,6 +87,19 @@ const MatchingConsumerPage = () => {
       key: 'industry',
     },
     {
+      title: 'User',
+      key: 'user',
+      render: (text, record) => (
+        <Button
+          type="primary"
+          onClick={() => showModal(record)} // Show modal on button click
+          style={{textAlign:'center',justifyContent:'center'}}
+        >
+          View Details
+        </Button>
+      ),
+    },
+    {
       title: 'Select',
       key: 'select',
       render: (text, record) => (
@@ -96,6 +110,16 @@ const MatchingConsumerPage = () => {
       ),
     },
   ];
+
+  const showModal = (consumer) => {
+    setModalConsumerDetails(consumer); // Set the consumer details to show in the modal
+    setIsModalVisible(true); // Display the modal
+  };
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false); // Close the modal
+    setModalConsumerDetails(null); // Clear the modal content
+  };
 
   const handleNextClick = () => {
     if (selectedConsumer) {
@@ -149,6 +173,23 @@ const MatchingConsumerPage = () => {
       >
         Next
       </Button>
+
+      {/* Modal to show consumer details */}
+      <Modal
+        title="Consumer Details"
+        visible={isModalVisible}
+        onCancel={handleModalCancel}
+        footer={null}
+        width={600}
+      >
+        <div>
+          <p><strong>Consumer:</strong> {modalConsumerDetails?.key}</p>
+          <p><strong>State:</strong> {modalConsumerDetails?.state}</p>
+          <p><strong>Demand:</strong> {modalConsumerDetails?.demand}</p>
+          <p><strong>Industry:</strong> {modalConsumerDetails?.industry}</p>
+          <p><strong>Address:</strong> {modalConsumerDetails?.address}</p> {/* Displaying address */}
+        </div>
+      </Modal>
     </div>
   );
 };

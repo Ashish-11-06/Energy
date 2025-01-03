@@ -2,23 +2,27 @@ import React from "react";
 import { Button } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
-import NavbarWithProgressBar from "../../Pages/Consumer/NavbarWithProgressBar";
 import { useSelector } from "react-redux";
-import "./HeaderComponent.css"; // Add custom styles for header component
 import {
   UserOutlined,
   HomeOutlined,
   BookOutlined,
   FileTextOutlined,
   WalletOutlined,
-  CheckCircleOutlined,
 } from "@ant-design/icons";
+import "./HeaderComponent.css"; // Add custom styles for header component
 
 const { Header } = Layout;
 
 const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   // Use useSelector to get the loginType from the Redux store
   const loginType = useSelector((state) => state.login?.loginType);
+  console.log("login type in header:", loginType);
+
+  // Labels based on login type
+  const labels = loginType === "consumer" 
+    ? ["Requirements", "Matching IPP", "Subscription", "Updated Unit", "Optimized IPP"]
+    : ["Portfolio", "Matching Consumer", "Subscription", "Update Profile", "Optimized IPP"];
 
   return (
     <Header
@@ -62,52 +66,34 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
           height: "100px",
         }}
       >
-        {loginType === "consumer" ? (
+        {loginType ? (
           <div style={{ width: "1000px", margin: "0 auto" }}>
             <div className="navbar">
               <div className="progress-container">
                 <div className="horizontal-line"></div>
                 <div className="progress-icons">
-                  <div className="icon-container">
-                    <span className="icon-label" style={{ fontSize: "12px"  }}>
-                      Requirements
-                    </span>
-                    <div className="icon-circle" style={{marginRight:'60px'}}>
-                      <UserOutlined />
+                  {labels.map((label, index) => (
+                    <div className="icon-container" key={index}>
+                      <span className="icon-label" style={{ fontSize: "12px" }}>
+                        {label}
+                      </span>
+                      <div
+                        className="icon-circle"
+                        style={{
+                          marginRight: index === 2 ? "0" : "60px",
+                          marginLeft: index >= 3 ? "100px" : "0",
+                        }}
+                      >
+                        {[
+                          <UserOutlined />,
+                          <HomeOutlined />,
+                          <FileTextOutlined />,
+                          <BookOutlined />,
+                          <WalletOutlined />,
+                        ][index]}
+                      </div>
                     </div>
-                  </div>
-                  <div className="icon-container">
-                    <span className="icon-label" style={{ fontSize: "12px" }}>
-                      Matching IPP
-                    </span>
-                    <div className="icon-circle" style={{marginRight:'60px'}}>
-                      <HomeOutlined />
-                    </div>
-                  </div>
-                  <div className="icon-container">
-                    <span className="icon-label" style={{ fontSize: "12px" }}>
-                      Payment
-                    </span>
-                    <div className="icon-circle">
-                      <FileTextOutlined />
-                    </div>
-                  </div>
-                  <div className="icon-container">
-                    <span className="icon-label" style={{ fontSize: "12px" }}>
-                     Updated Unit
-                    </span>
-                    <div className="icon-circle" style={{marginLeft:'100px'}}>
-                      <BookOutlined />
-                    </div>
-                  </div>
-                  <div className="icon-container">
-                    <span className="icon-label" style={{ fontSize: "12px" }}>
-                      Optimized IPP
-                    </span>
-                    <div className="icon-circle" style={{marginLeft:'100px'}}>
-                      <WalletOutlined />
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>

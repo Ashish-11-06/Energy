@@ -28,7 +28,7 @@
   left: 0;
   right: 0;
   height: 10px; /* Adjusted thickness */
- 
+ width: 920px;
   z-index: 1;
   border-radius: 2px; /* For rounded edges */
 }

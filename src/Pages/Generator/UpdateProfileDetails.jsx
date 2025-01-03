@@ -3,13 +3,11 @@ import { Typography, Table, Button, Modal, Form } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfileForm';
-import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
 
 const { Title, Paragraph } = Typography;
 
 const UpdateProfileDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [dataSource, setDataSource] = useState([
     {
@@ -113,11 +111,7 @@ const UpdateProfileDetails = () => {
   const allUpdated = dataSource.every(item => item.updated);
 
   const handleProceed = () => {
-    setIsQuotationModalVisible(true);
-  };
-
-  const handleQuotationModalCancel = () => {
-    setIsQuotationModalVisible(false);
+    navigate('/generator/combination');
   };
 
   return (
@@ -129,6 +123,7 @@ const UpdateProfileDetails = () => {
       <Table
         columns={columns}
         dataSource={dataSource}
+        
         pagination={false}
         bordered
         style={{ marginTop: "20px" }}
@@ -151,12 +146,6 @@ const UpdateProfileDetails = () => {
       >
         <UpdateProfileForm form={form} />
       </Modal>
-
-      <RequestForQuotationModal
-        visible={isQuotationModalVisible}
-        onCancel={handleQuotationModalCancel}
-        type="generator"
-      />
     </div>
   );
 };
