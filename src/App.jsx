@@ -8,7 +8,7 @@ import MatchingIPP from './Pages/Consumer/MatchingIPP';
 import ChatWithExpert from './Pages/Consumer/ChatWithExpert';
 import ConsumptionPattern from './Pages/Consumer/ConsumptionPattern';
 import IppProjectDetails from './Pages/Consumer/IPPProjectDetails';
-import RequirementsPage from './Pages/Consumer/RequirenmentPage';
+import RequirementsPage from './Pages/Consumer/requirementPage';
 import AnnualSvg from './Pages/Consumer/AnnualSaving';
 import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
 import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
@@ -65,7 +65,7 @@ function App() {
                   <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
                   <Route path="consumption-pattern" element={<ConsumptionPattern />} />
                   <Route path="project-details" element={<IppProjectDetails />} />
-                  <Route path="requirenment" element={<RequirementsPage />} />
+                  <Route path="requirement" element={<RequirementsPage />} />
                   <Route path="annual-saving" element={<AnnualSvg />} />
                   <Route path="subscription-plan" element={<SubscriptionPlans />} />
                   <Route path="profile" element={<ProfileConsumer />} />
@@ -124,7 +124,7 @@ export default App;
 // import ChatWithExpert from './Pages/Consumer/ChatWithExpert';
 // import ConsumptionPattern from './Pages/Consumer/ConsumptionPattern';
 // import IppProjectDetails from './Pages/Consumer/IPPProjectDetails';
-// import RequirementsPage from './Pages/Consumer/RequirenmentPage';
+// import RequirementsPage from './Pages/Consumer/requirementPage';
 // import AnnualSvg from './Pages/Consumer/AnnualSaving';
 // import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
 // import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
@@ -171,7 +171,7 @@ export default App;
 //             <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
 //             <Route path="consumption-pattern" element={<ConsumptionPattern />} />
 //             <Route path="project-details" element={<IppProjectDetails />} />
-//             <Route path="requirenment" element={<RequirementsPage />} />
+//             <Route path="requirement" element={<RequirementsPage />} />
 //             <Route path="annual-saving" element={<AnnualSvg />} />
 //             <Route path="subscription-plan" element={<SubscriptionPlans />} />
 //             <Route path="profile" element={<ProfileConsumer />} />
@@ -221,7 +221,7 @@ export default App;
 // import ChatWithExpert from './Pages/Consumer/ChatWithExpert';
 // import ConsumptionPattern from './Pages/Consumer/ConsumptionPattern';
 // import IppProjectDetails from './Pages/Consumer/IPPProjectDetails';
-// import RequirementsPage from './Pages/Consumer/RequirenmentPage';
+// import RequirementsPage from './Pages/Consumer/requirementPage';
 // import AnnualSvg from './Pages/Consumer/AnnualSaving';
 // import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
 // import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
@@ -246,7 +246,7 @@ export default App;
 
 // // Progress stages for the progress bar
 // const progressStages = [
-//   { path: '/consumer/requirenment', percentage: 20, label: 'Requirements' },
+//   { path: '/consumer/requirement', percentage: 20, label: 'Requirements' },
 //   { path: '/consumer/matching-ipp', percentage: 40, label: 'Matching IPP' },
 //   { path: '/consumer/annual-saving', percentage: 60,label: 'Annual Saving' },
 //   { path: '/consumer/subscription-plan',percentage:90,label:'Subscription-plan'},
@@ -326,7 +326,7 @@ export default App;
 //                     <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
 //                     <Route path="consumption-pattern" element={<ConsumptionPattern />} />
 //                     <Route path="project-details" element={<IppProjectDetails />} />
-//                     <Route path="requirenment" element={<RequirementsPage />} />
+//                     <Route path="requirement" element={<RequirementsPage />} />
 //                     <Route path="annual-saving" element={<AnnualSvg />} />
 //                     <Route path="subscription-plan" element={<SubscriptionPlans />} />
 //                     <Route path="profile" element={<ProfileConsumer />} />

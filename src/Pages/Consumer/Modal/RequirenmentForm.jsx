@@ -14,7 +14,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import states from "../../../Data/States";
 import industries from "../../../Data/Industry";
 
-const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
+const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [form] = Form.useForm();
   const [customVoltage, setCustomVoltage] = useState(""); // State to hold custom voltage input
   const [isCustomVoltage, setIsCustomVoltage] = useState(false); // Flag to toggle custom voltage input visibility
@@ -251,4 +251,4 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
   );
 };
 
-export default RequirenmentForm;
+export default requirementForm;

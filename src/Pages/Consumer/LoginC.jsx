@@ -3,47 +3,20 @@ import { Form, Input, Button, Modal, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import "antd/dist/reset.css";
 import "../Login.css";
-import RegisterForm from "../../Components/Modals/Registration/RegisterForm"; // Import RegisterForm
+import RegisterForm from "../../Components/Modals/Registration/RegisterForm";
+import { loginUser } from "../../Redux/Slices/loginSlice";
+import { useDispatch } from "react-redux";
 
 const LoginC = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false); // State to control Register modal
-  const [isForgotPasswordModalVisible, setForgotPasswordModalVisible] =
-    useState(false); // State for Forgot Password modal
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isForgotPasswordModalVisible, setForgotPasswordModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false); // To toggle new password fields
+  const [otpVerified, setOtpVerified] = useState(false);
   const [emailForReset, setEmailForReset] = useState("");
-  const navigate = useNavigate();
 
-  const role = "consumer"; // You can dynamically set this role based on your needs
-
-  const onFinish = (values) => {
-    const { email, password } = values;
-
-    // Mock login logic
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-
-      // Mock user data
-      const userData = {
-        role: role,
-        email,
-      };
-
-      if (userData.role === "consumer") {
-        message.success("Login successful!");
-        navigate("/consumer/dashboard");
-      } else if (userData.role === "generator") {
-        message.success("Login successful!");
-        navigate("/generator/what-we-offer");
-      }
-    }, 1000);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
+  const navigate = useNavigate(); 
+  const dispatch = useDispatch();
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -54,36 +27,55 @@ const LoginC = () => {
   };
 
   const handleCreate = (values) => {
-    console.log("Received values of form: ", values);
-    setIsModalVisible(false);
+    // Implement account creation logic here
   };
 
   const handleForgotPassword = () => {
     setForgotPasswordModalVisible(true);
   };
 
-  const handleSendOtp = (email) => {
+  const handleSendOtp = async (email) => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setEmailForReset(email);
-      setOtpSent(true);
-      message.success(`OTP sent to ${email}`); // Simulated message
-    }, 1000);
+    // Implement OTP sending logic here
+    setLoading(false);
+    setOtpSent(true);
+    setEmailForReset(email);
   };
 
-  const handleVerifyOtp = () => {
+  const handleVerifyOtp = async (values) => {
+    setLoading(true);
+    // Implement OTP verification logic here
+    setLoading(false);
     setOtpVerified(true);
-    message.success("OTP verified successfully!");
   };
 
-  const handleResetPassword = (values) => {
-    const { newPassword } = values;
-    message.success("Password reset successfully!");
+  const handleResetPassword = async (values) => {
+    setLoading(true);
+    // Implement password reset logic here
+    setLoading(false);
     setForgotPasswordModalVisible(false);
     setOtpSent(false);
     setOtpVerified(false);
-    setEmailForReset("");
+    message.success("Password reset successful!");
+  };
+
+  const onFinish = async (credentials) => {
+    setLoading(true);
+    try {
+      const response = await dispatch(loginUser(credentials)).unwrap();
+      setLoading(false);
+      if (response) {
+        message.success("Login successful!");
+        navigate("/consumer/requirement");
+      }
+    } catch (error) {
+      setLoading(false);
+      message.error(error);
+    }
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
   };
 
   return (
@@ -125,12 +117,12 @@ const LoginC = () => {
             <a
               onClick={handleForgotPassword}
               style={{
-                color: "#007bff", // Bootstrap's primary blue color
-                textDecoration: "none", // Removes underline
-                cursor: "pointer", // Changes the cursor to a pointer
+                color: "#007bff",
+                textDecoration: "none",
+                cursor: "pointer",
               }}
-              onMouseOver={(e) => (e.target.style.color = "#0056b3")} // Darker blue on hover
-              onMouseOut={(e) => (e.target.style.color = "#007bff")} // Back to original color
+              onMouseOver={(e) => (e.target.style.color = "#0056b3")}
+              onMouseOut={(e) => (e.target.style.color = "#007bff")}
             >
               Forgot Password?
             </a>
@@ -141,12 +133,12 @@ const LoginC = () => {
             <a
               onClick={showModal}
               style={{
-                color: "#007bff", // Bootstrap's primary blue color
-                textDecoration: "none", // Removes underline
-                cursor: "pointer", // Changes the cursor to a pointer
+                color: "#007bff",
+                textDecoration: "none",
+                cursor: "pointer",
               }}
-              onMouseOver={(e) => (e.target.style.color = "#0056b3")} // Darker blue on hover
-              onMouseOut={(e) => (e.target.style.color = "#007bff")} // Back to original color
+              onMouseOver={(e) => (e.target.style.color = "#0056b3")}
+              onMouseOut={(e) => (e.target.style.color = "#007bff")}
             >
               Create account
             </a>
@@ -163,7 +155,7 @@ const LoginC = () => {
 
       <Modal
         title="Forgot Password"
-        visible={isForgotPasswordModalVisible}
+        open={isForgotPasswordModalVisible}
         onCancel={() => setForgotPasswordModalVisible(false)}
         footer={null}
       >

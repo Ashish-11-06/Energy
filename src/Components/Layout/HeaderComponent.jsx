@@ -86,7 +86,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                   </div>
                   <div className="icon-container">
                     <span className="icon-label" style={{ fontSize: "12px" }}>
-                      Payment
+                      Subscription
                     </span>
                     <div className="icon-circle">
                       <FileTextOutlined />

@@ -20,7 +20,7 @@ import {
 // Define menu items for consumer and generator with icons
 const consumerMenuItems = [
   { label: 'Dashboard', key: '/consumer/dashboard', icon: <DashboardOutlined /> },
-  { label: 'Requirenment', key: '/consumer/requirenment', icon: <FormOutlined /> },
+  { label: 'requirement', key: '/consumer/requirement', icon: <FormOutlined /> },
   { label: 'What We Offer', key: '/consumer/what-we-offer', icon: <AppstoreAddOutlined /> },
   { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
   { label: 'Requested IPP', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined  /> },
@@ -82,7 +82,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     window.location.href = url;  // Using window.location.href for redirecting
   };
 
-  // Add notification item dynamically below "Requirenment" in the consumer menu
+  // Add notification item dynamically below "requirement" in the consumer menu
   const menuWithNotification = showNotification ? [
     ...menuItems.slice(0, 2),
     { label: 'Notification', key: '/consumer/notification', icon: <NotificationOutlined /> },
