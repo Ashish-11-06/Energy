@@ -1,17 +1,35 @@
-import React, { useState } from 'react';
-import { Table, Button, message, Row, Col } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Table, Button, message, Row, Col, Modal, Tooltip } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
-import RequirenmentForm from './Modal/RequirenmentForm';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchRequirements } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
+import moment from 'moment';
+import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
 
 const RequirementsPage = () => {
-  const [requirements, setRequirements] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Track selected row keys
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [isInfoModalVisible, setIsInfoModalVisible] = useState(true); // State for info modal
+  const [username, setUsername] = useState(''); // State for info modal
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
+
+  const getFromLocalStorage = (key) => {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : '';
+  };
 
   // Define columns for the table (Remove selection column)
   const columns = [
+    {
+      title: 'Sr No',
+      dataIndex: 'srNo',
+      key: 'srNo',
+      render: (text, record, index) => index + 1,
+    },
     {
       title: 'State',
       dataIndex: 'state',
@@ -23,42 +41,30 @@ const RequirementsPage = () => {
       key: 'industry',
     },
     {
-      title: 'Contracted Demand (kWh)',
-      dataIndex: 'contractedDemand',
+      title: 'Contracted Demand (MW)',
+      dataIndex: 'contracted_demand',
       key: 'ContractedDemand',
     },
-    
     {
-      title: 'Tarrif Category',
-      dataIndex: 'tariffCategory',
+      title: 'Tarriff Category',
+      dataIndex: 'tariff_category',
       key: 'tariffCategory',
     },
     {
       title: 'Voltage Level',
-      dataIndex: 'voltageLevel',
+      dataIndex: 'voltage_level',
       key: 'voltageLevel',
     },
     {
       title: 'Procurement Date',
-      dataIndex: 'procurement',
+      dataIndex: 'procurement_date',
       key: 'procurement',
-      render: (date) => (date ? date.format('DD-MM-YYYY') : ''),
+      render: (date) => (date ? moment(date).format('DD-MM-YYYY') : ''),
     },
-    
   ];
 
-  // Add a selection column for row selection (Remove radio button column)
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedKeys) => {
-      setSelectedRowKeys(selectedKeys); // Update selected row keys when selection changes
-    },
-    type: 'radio', // Single selection (radio button)
-  };
-
-  // Handle row selection when the radio button is clicked
-  const handleRowSelect = (key) => {
-    setSelectedRowKeys([key]); // Only allow single selection
+  const handleRowSelect = (record) => {
+    setSelectedRowKeys([record.key]); // Only allow single selection
   };
 
   const showModal = () => {
@@ -100,19 +106,73 @@ const RequirementsPage = () => {
     }
   };
 
+  useEffect(() => {
+    // Fetch username from local storage
+    const user = getFromLocalStorage('user');
+    if (user && user.user.company_representative) {
+      setUsername(user.user.company_representative);
+    }
+    // Show info modal when the page loads for the first time
+    setIsInfoModalVisible(true);
+
+    // Fetch requirements if not present in the state
+    if (requirements.length === 0) {
+      const id = user.user.id;
+      dispatch(fetchRequirements(id));
+    }
+  }, [dispatch, requirements.length]);
+
+  const handleInfoModalOk = () => {
+    setIsInfoModalVisible(false);
+  };
+
+  const showInfoModal = () => {
+    setIsInfoModalVisible(true);
+  };
+
   return (
     <div style={{ padding: 20 }}>
-      
-     <h2 style={{ textAlign: 'center' }}>Consumption Unit</h2>
+      <h2 style={{ textAlign: 'center' }}>Consumption Unit</h2>
+
+      <Tooltip title="Help">
+        <Button
+          shape="circle"
+          icon={<QuestionCircleOutlined />}
+          onClick={showInfoModal}
+          style={{ position: 'absolute', top: 120, right: 30 }}
+        />
+      </Tooltip>
+
+      <Modal
+        title="Welcome"
+        open={isInfoModalVisible}
+        onOk={handleInfoModalOk}
+        okText="Got it"
+        footer={[
+          <Button key="submit" type="primary" onClick={handleInfoModalOk}>
+            Got it
+          </Button>,
+        ]}
+      >
+        <p>Hi {username},</p>
+        <p>Welcome to the EXG. Please follow these steps to proceed:</p>
+        <ol>
+          <li>Add your requirements by clicking the "Add Requirement +" button.</li>
+          <li>Fill in the details shown in the form.</li>
+          <li>Use the tooltip option for each field for more information.</li>
+          <li>You can add multiple requirements (demands).</li>
+          <li>To continue, select a requirement and click the "Continue" button.</li>
+        </ol>
+        <p>Thank you!</p>
+      </Modal>
 
       <Table
         columns={columns}
         dataSource={requirements}
         pagination={false}
         bordered
-        rowSelection={rowSelection} // Apply row selection to the table
         onRow={(record) => ({
-          onClick: () => handleRowSelect(record.key), // Make entire row clickable
+          onClick: () => handleRowSelect(record), // Make entire row clickable
         })}
       />
 
@@ -121,16 +181,6 @@ const RequirementsPage = () => {
           <Button type="primary" onClick={showModal} style={{ width: 160 }}>
             Add Requirement +
           </Button>
-        </Col>
-        <Col>
-          {/* <Button
-            type="danger"
-            onClick={handleClearAll}
-            style={{ width: 160 }}
-            disabled={requirements.length === 0}
-          >
-            Clear All
-          </Button> */}
         </Col>
         <Col>
           <Button
@@ -145,7 +195,7 @@ const RequirementsPage = () => {
       </Row>
 
       {/* Modal for adding new requirement */}
-      <RequirenmentForm
+      <RequirementForm
         isVisible={isModalVisible}
         onCancel={handleCancel}
         onSubmit={handleSubmit}

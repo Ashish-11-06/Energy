@@ -13,16 +13,13 @@ import {
 import { InfoCircleOutlined } from "@ant-design/icons";
 import states from "../../../Data/States";
 import industries from "../../../Data/Industry";
-import { addCustomerRequirements } from '../../../Redux/api/generator/addCustomerRequirements';
 
-const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
+const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [form] = Form.useForm();
   const [customVoltage, setCustomVoltage] = useState(""); // State to hold custom voltage input
   const [isCustomVoltage, setIsCustomVoltage] = useState(false); // Flag to toggle custom voltage input visibility
 
   const handleSubmit = (values) => {
-    console.log({values});
-    
     if (values.voltageLevel === "other" && customVoltage) {
       values.voltageLevel = customVoltage; // Replace "Other" with the custom voltage value
     }
@@ -34,44 +31,6 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
     setCustomVoltage(""); // Reset custom voltage field
     setIsCustomVoltage(false); // Reset custom voltage flag
   };
-
-
-  // const handleSubmit = async (values) => {
-  //   console.log({ values });
-  
-  //   if (values.voltageLevel === 'other' && customVoltage) {
-  //     values.voltageLevel = customVoltage; // Replace "Other" with the custom voltage value
-  //   }
-  
-  //   // Convert procurement to the required format
-  //   const formattedValues = {
-  //     user: 'aartilahane013@gmail.com', // Replace with actual dynamic user data if needed
-  //     state: values.state,
-  //     industry: values.industry,
-  //     contracted_demand: parseInt(values.contractedDemand, 10),
-  //     tariff_category: values.tariffCategory,
-  //     voltage_level: values.voltageLevel,
-  //     procurement_date: values.procurement.format('YYYY-MM-DD'),
-  //   };
-  
-  //   console.log('Formatted Values:', formattedValues);
-  
-  //   try {
-  //     const result = await addCustomerRequirements(formattedValues);
-  //     console.log('API Response:', result);
-  
-  //     if (onSubmit) {
-  //       onSubmit(values); // Call onSubmit callback if provided
-  //     }
-  //   } catch (error) {
-  //     console.error('Error in API call:', error);
-  //   }
-  
-  //   form.resetFields();
-  //   setCustomVoltage(''); // Reset custom voltage field
-  //   setIsCustomVoltage(false); // Reset custom voltage flag
-  // };
-  
 
   const renderLabelWithTooltip = (label, tooltip) => (
     <span>
@@ -292,4 +251,4 @@ const RequirenmentForm = ({ isVisible, onCancel, onSubmit }) => {
   );
 };
 
-export default RequirenmentForm;
+export default requirementForm;

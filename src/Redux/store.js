@@ -1,32 +1,17 @@
-// import { configureStore } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
+import loginReducer from './Slices/loginSlice'; // Import the loginReducer
+import consumerRequirementReducer from './Slices/Consumer/consumerrequirementSlice'; // Import the consumerRequirementReducer
 
-// // Dummy reducer
-// const dummyReducer = (state = {}, action) => {
-//   switch (action.type) {
-//     case 'dummy/action':
-//       return { ...state, dummyData: action.payload };
-//     default:
-//       return state;
-//   }
-// };
-
-// export const store = configureStore({
-//   reducer: {
-//     dummy: dummyReducer, // Add the dummy reducer here
-//   },
-// });
-
-// export default store;
-
-
-import { createStore } from 'redux';
-import { combineReducers } from 'redux';
-import loginReducer from './Reducer/loginReducer'; // Adjust the import path
-
-const rootReducer = combineReducers({
-  login: loginReducer, // Add loginReducer to the rootReducer
+export const store = configureStore({
+  reducer: {
+    login: loginReducer, // Add loginReducer to the store
+    consumerRequirement: consumerRequirementReducer, // Add consumerRequirementReducer to the store
+    // ...other reducers
+  },
+  middleware: (getDefaultMiddleware) => 
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
-
-const store = createStore(rootReducer);
 
 export default store;
