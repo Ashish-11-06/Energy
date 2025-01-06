@@ -19,7 +19,6 @@ import DashboardG from './Pages/Generator/Dashboard';
 import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
 import LoginC from './Pages/Consumer/LoginC';
 import Dashboard from './Pages/Consumer/Dashboard';
-import EnergyConsumptionForm from './Pages/Consumer/EnergyConsumptionForm';
 import EnergyConsumptionTable from './Pages/Consumer/EnergyConsumptionTable';
 import LoginG from './Pages/Generator/LoginG';
 import UpdateProfileDetails from './Pages/Generator/UpdateProfileDetails';
@@ -62,8 +61,7 @@ function App() {
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="what-we-offer" element={<WhatWeOffer />} />
                   <Route path="matching-ipp" element={<MatchingIPP />} />
-                  <Route path="chat-page" element={<ChatWithExpert />} />
-                  <Route path="energy-consumption-form" element={<EnergyConsumptionForm />} />
+                  <Route path="chat-page" element={<ChatWithExpert />} />                
                   <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
                   <Route path="consumption-pattern" element={<ConsumptionPattern />} />
                   <Route path="project-details" element={<IppProjectDetails />} />
