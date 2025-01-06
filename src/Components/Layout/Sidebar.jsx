@@ -28,7 +28,6 @@ const consumerMenuItems = [
   { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
   { label: 'Requested IPP', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined /> },
   { label: 'Chat with Expert', key: '/consumer/chat-page', icon: <MessageOutlined /> },
-  { label: 'Energy Consumption Form', key: '/consumer/energy-consumption-form', icon: <FormOutlined /> },
   { label: 'Energy Consumption Table', key: '/consumer/energy-consumption-table', icon: <TableOutlined /> },
   { label: 'Consumption Pattern', key: '/consumer/consumption-pattern', icon: <AreaChartOutlined /> },
   { label: 'Annual Saving', key: '/consumer/annual-saving', icon: <WalletOutlined /> },

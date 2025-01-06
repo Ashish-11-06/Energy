@@ -16,7 +16,8 @@ const { Header } = Layout;
 
 const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   // Use useSelector to get the loginType from the Redux store
-  const loginType = useSelector((state) => state.login?.loginType);
+  // const loginType = useSelector((state) => state.login?.loginType);
+  const loginType='consumer';
   console.log("login type in header:", loginType);
 
   // Labels based on login type
