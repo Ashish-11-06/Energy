@@ -2,7 +2,7 @@ import axiosInstance from './axiosInstance';
 
 const userApi = {
     logInUser: (credentials) => {
-        return axiosInstance.post(`/accounts/login/`, credentials);
+        return axiosInstance.post(`/accounts/login`, credentials);
     },
     RegisterUser: (userData) => {
         return axiosInstance.post('/accounts/register', userData);
