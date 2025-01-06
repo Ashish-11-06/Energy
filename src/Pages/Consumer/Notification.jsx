@@ -33,7 +33,7 @@ const Notification = () => {
 
       <Row gutter={[16, 16]} justify="center">
         {ippData.map((item) => (
-          <Col span={12} key={item.key}>
+          <Col span={24} key={item.key}>
             <Card
               title={
                 <span style={{ fontSize: "18px", fontWeight: "500" }}>

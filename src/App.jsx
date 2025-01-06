@@ -36,6 +36,7 @@ import RequestedIPP from './Pages/Consumer/RequestedIPP';
 import NavbarWithProgressBar from './Pages/Consumer/NavbarWithProgressBar';
 import Notification from './Pages/Consumer/Notification';
 import OptimizeCombination from './Pages/Generator/OptimizeCombination';
+import NotificationGenerator from './Pages/Generator/NotificationGenerator';
 
 
 function App() {
@@ -96,6 +97,8 @@ function App() {
             <Route path="profile/user" element={<UserGen />} />
             <Route path="profile/portfolio" element={<PortfolioGen />} />
             <Route path="combination" element={<OptimizeCombination  />} />
+            <Route path="notificationgen" element={<NotificationGenerator  />} />
+            
           </Route>
         </Route>
       </Routes>

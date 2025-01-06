@@ -3,7 +3,7 @@ import { Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import 'antd/dist/reset.css';
 import '../Login.css';
-import RegisterForm from '../../Components/Modals/Registration/RegisterForm';  // Import RegisterForm
+import RegisterForm from '../../Components/Modals/Registration/RegisterForm'; // Import RegisterForm
 
 const LoginG = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
@@ -12,27 +12,34 @@ const LoginG = () => {
 
   const role = 'generator'; // You can dynamically set this role based on your needs
 
+  const user = { email: 'manikerisamruddhi@gmail.com', password: '123' };
+
   const onFinish = (values) => {
     const { email, password } = values;
 
-    // Mock login logic: Allow every email and password
+    console.log("Submitted Values:", values); // Debugging
+    console.log("Expected User:", user); // Debugging
+    console.log("Email Comparison:", email.trim().toLowerCase() === user.email.trim().toLowerCase(), email, user.email);
+    console.log("Password Comparison:", password === user.password, password, user.password);
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
 
-      // Mock user data
-      const userData = {
-        role: role, // Default to 'generator' for this example
-        email,
-      };
-
-      // Simulate role-based navigation
-      if (userData.role === 'consumer') {
+      if (role === 'generator') {
+        if (email.trim().toLowerCase() === user.email.trim().toLowerCase() && password === user.password) {
+          message.success('Login successful!');
+          // Navigate to generator portfolio with user attributes
+          navigate('/generator/dashboard', { state: { user } });
+        } else {
+         
+          navigate('/generator/what-we-offer');
+        }
+      } else if (role === 'consumer') {
         message.success('Login successful!');
         navigate('/consumer/dashboard'); // Redirect to consumer dashboard
-      } else if (userData.role === 'generator') {
-        message.success('Login successful!');
-        navigate('/generator/portfolio'); // Redirect to generator-specific page
+      } else {
+        message.error('Invalid role.');
       }
     }, 1000); // Simulate a delay for loading state
   };
@@ -95,7 +102,6 @@ const LoginG = () => {
         </div>
       </div>
 
-      {/* Use RegisterForm instead of RegisterModal */}
       <RegisterForm
         type="generator"
         open={isModalVisible}

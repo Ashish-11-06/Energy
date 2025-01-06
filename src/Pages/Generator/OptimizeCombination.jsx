@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Table } from 'antd';
+import { Table, Typography } from 'antd';
 import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
+
+const { Title } = Typography;
 
 const OptimizeCombination = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  // Static data array
   const data = [
     {
       key: '1',
@@ -47,7 +48,6 @@ const OptimizeCombination = () => {
     },
   ];
 
-  // Columns configuration
   const columns = [
     {
       title: 'Sr No',
@@ -62,9 +62,10 @@ const OptimizeCombination = () => {
     {
       title: 'Technology',
       key: 'technology',
-      render: (_, record) => record.technology.slice(0, 3).map((tech) => (
-        <div key={tech.key}>{`${tech.name} (${tech.capacity})`}</div>
-      )),
+      render: (_, record) =>
+        record.technology.map((tech) => (
+          <div key={tech.key}>{`${tech.name} (${tech.capacity})`}</div>
+        )),
     },
     {
       title: 'Total Capacity',
@@ -72,7 +73,7 @@ const OptimizeCombination = () => {
       key: 'totalCapacity',
     },
     {
-      title: 'COD',
+      title: 'COD (Commercial Operation Date)',
       dataIndex: 'cod',
       key: 'cod',
     },
@@ -83,26 +84,21 @@ const OptimizeCombination = () => {
     },
   ];
 
-  // Handle row click
   const handleRowClick = (record) => {
-    setSelectedRow(record); // Set the selected row data
-    setIsModalVisible(true); // Open the modal
-  };
-
-  // Handle modal close
-  const handleModalClose = () => {
-    setIsModalVisible(false);
+    setSelectedRow(record);
+    setIsModalVisible(true);
   };
 
   const handleQuotationModalCancel = () => {
-    // setIsQuotationModalVisible(false);
     setIsModalVisible(false);
-
-
   };
 
   return (
-    <div>
+    <div style={{ padding: '20px', fontFamily: 'Inter, sans-serif' }}>
+      <Title level={2} style={{ color: '#669800' }}>
+        Optimized Combinations
+      </Title>
+      <p>(Please select one of the following combinations to proceed)</p>
       <Table
         dataSource={data}
         columns={columns}
@@ -110,21 +106,26 @@ const OptimizeCombination = () => {
         rowKey="key"
         pagination={false}
         onRow={(record) => ({
-          onClick: () => handleRowClick(record), // Row click event
+          onClick: () => handleRowClick(record),
         })}
+        rowClassName={() => 'hover-row'}
       />
       {isModalVisible && (
         <RequestForQuotationModal
           visible={isModalVisible}
-         
           onCancel={handleQuotationModalCancel}
-          data={selectedRow} // Pass selected row data to the modal
+          data={selectedRow}
           type="generator"
-
         />
       )}
+      <style jsx>{`
+        .hover-row:hover {
+          background-color: #d4f4d2; /* Light green */
+        }
+      `}</style>
     </div>
   );
 };
 
 export default OptimizeCombination;
+

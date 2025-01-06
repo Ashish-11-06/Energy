@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select } from 'antd';
 import dayjs from 'dayjs';
 import states from '../../../Data/States';
 
 const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
   const [form] = Form.useForm(); // Ant Design form instance
+  const [unit, setUnit] = useState('MW'); // State to manage the unit dynamically
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
@@ -21,6 +22,15 @@ const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
     return current && current < dayjs().endOf('day');
   };
 
+  // Handle technology type change
+  const handleTechnologyChange = (value) => {
+    if (value === 'ess') {
+      setUnit('MWh');
+    } else {
+      setUnit('MW');
+    }
+  };
+
   return (
     <Modal
       title="Add New Project Entry"
@@ -35,7 +45,7 @@ const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
               label="Technology"
               name="type"
               rules={[{ required: true, message: 'Please select type!' }]} >
-              <Select placeholder="Select Type">
+              <Select placeholder="Select Type" onChange={handleTechnologyChange}>
                 <Select.Option value="solar">Solar</Select.Option>
                 <Select.Option value="wind">Wind</Select.Option>
                 <Select.Option value="ess">ESS (Energy Storage System)</Select.Option>
@@ -62,7 +72,7 @@ const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
             <Form.Item
               label="Connectivity"
               name="connectivity"
-              rules={[{ required: true, message: 'Please select connectivity type!' }]}>
+              rules={[{ required: true, message: 'Please select connectivity type!' }]} >
               <Select placeholder="Select Connectivity">
                 <Select.Option value="CTU">CTU</Select.Option>
                 <Select.Option value="STU">STU</Select.Option>
@@ -73,14 +83,32 @@ const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
         </Row>
 
         <Row gutter={16}>
-          <Col span={24}>
+          <Col span={12}>
             <Form.Item
-              label="Energy Capacity (in MW)"
-              name="capacity"
+              label={`Total Install Capacity (in ${unit})`}
+              name="installCapacity"
               rules={[{ required: true, message: 'Please input energy capacity!' }, { type: 'number', message: 'Please enter a valid number!' }]} >
               <InputNumber
                 style={{ width: '100%' }}
-                placeholder="Energy Capacity in kWh"
+                placeholder={`Energy Capacity in ${unit}`}
+                min={0} // Optionally, set a minimum value (0 for no negative capacity)
+                onKeyDown={(e) => {
+                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                    e.preventDefault();
+                  }
+                }}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              label={`Total Available Capacity (in ${unit})`}
+              name="availableCapacity"
+              rules={[{ required: true, message: 'Please input energy capacity!' }, { type: 'number', message: 'Please enter a valid number!' }]} >
+              <InputNumber
+                style={{ width: '100%' }}
+                placeholder={`Energy Capacity in ${unit}`}
                 min={0} // Optionally, set a minimum value (0 for no negative capacity)
                 onKeyDown={(e) => {
                   if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
