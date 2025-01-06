@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import loginReducer from './Slices/loginSlice'; // Import the loginReducer
-import consumerRequirementReducer from './Slices/Consumer/consumerrequirementSlice'; // Import the consumerRequirementReducer
+import consumerRequirementReducer from './Slices/Consumer/consumerRequirementSlice'; // Import the consumerRequirementReducer
 
 export const store = configureStore({
   reducer: {
