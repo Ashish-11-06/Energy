@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, DatePicker, Row, Col, Select, Button, Upload, message } from 'antd';
 import * as XLSX from 'xlsx'; // Import xlsx
 import { UploadOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 
 const { Option } = Select;
 
-const UpdateProfileForm = ({ form }) => {
+const UpdateProfileForm = ({ form, project }) => {
+  const selectedProject = (JSON.stringify(project, null, 2));
+
+  console.log(selectedProject);
   const [fileList, setFileList] = useState([]);
 
   // Function to generate and download the blank Excel sheet
@@ -24,6 +28,17 @@ const UpdateProfileForm = ({ form }) => {
       message.error(`${info.file.name} file upload failed.`);
     }
   };
+
+  // Set project values in form fields
+  useEffect(() => {
+    if (selectedProject) {
+      form.setFieldsValue({
+        ...selectedProject,
+        cod: selectedProject.cod ? dayjs(selectedProject.cod) : null, // Ensure date is formatted properly
+        yearOfCommissioning: selectedProject.yearOfCommissioning ? dayjs(selectedProject.yearOfCommissioning) : null,
+      });
+    }
+  }, [selectedProject, form]);
 
   return (
     <Form form={form} layout="vertical">
@@ -54,8 +69,8 @@ const UpdateProfileForm = ({ form }) => {
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
-            name="capacity"
-            label="Capacity"
+            label="Available Capacity"
+            name="available_capacity"
             rules={[{ required: true, message: 'Please input the capacity!' }]}
           >
             <Input />
@@ -63,8 +78,8 @@ const UpdateProfileForm = ({ form }) => {
         </Col>
         <Col span={12}>
           <Form.Item
-            name="totalInstallCapacity"
-            label="Total Install Capacity"
+            name="total_install_capacity"
+            label="Total install capacity"
             rules={[{ required: true, message: 'Please input the total install capacity!' }]}
           >
             <Input />
@@ -76,12 +91,7 @@ const UpdateProfileForm = ({ form }) => {
           <Form.Item
             name="capitalCost"
             label="Capital Cost"
-            rules={[
-              {
-                required: form.getFieldValue('type') === 'ESS',
-                message: 'Please input the capital cost!',
-              },
-            ]}
+            rules={[{ required: form.getFieldValue('type') === 'ESS', message: 'Please input the capital cost!' }]}
           >
             <Input />
           </Form.Item>
@@ -90,27 +100,14 @@ const UpdateProfileForm = ({ form }) => {
           <Form.Item
             name="marginalCost"
             label="Marginal Cost"
-            rules={[
-              {
-                required: form.getFieldValue('type') === 'ESS',
-                message: 'Please input the marginal cost!',
-              },
-            ]}
+            rules={[{ required: form.getFieldValue('type') === 'ESS', message: 'Please input the marginal cost!' }]}
           >
             <Input />
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item
-            name="yearOfCommissioning"
-            label="Year of Commissioning"
-            rules={[{ required: true, message: 'Please input the year of commissioning!' }]}
-          >
-            <DatePicker picker="year" style={{ width: '100%' }} />
-          </Form.Item>
-        </Col>
+        
         <Col span={12}>
           <Form.Item
             name="cod"
@@ -128,15 +125,6 @@ const UpdateProfileForm = ({ form }) => {
         {({ getFieldValue }) =>
           getFieldValue('type') === 'Solar' || getFieldValue('type') === 'Wind' ? (
             <Row gutter={16}>
-              {/* <Col span={12}>
-                <Form.Item
-                  name="hourlyData"
-                  label="Hourly Data"
-                  rules={[{ required: false, message: 'Please input the hourly data!' }]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col> */}
               <Col span={12}>
                 <Form.Item
                   name="annualGenerationPotential"

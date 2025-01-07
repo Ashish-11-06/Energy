@@ -1,42 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Typography, Table, Button, Modal, Form } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice';
 import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfileForm';
 
 const { Title, Paragraph } = Typography;
 
 const UpdateProfileDetails = () => {
+  const user = (JSON.parse(localStorage.getItem('user'))).user;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [dataSource, setDataSource] = useState([
-    {
-      key: '1',
-      type: 'Solar',
-      state: 'Karnataka',
-      capacity: '50 MW',
-      cod: '2023-12-01',
-      updated: false,
-    },
-    {
-      key: '2',
-      type: 'Wind',
-      state: 'Maharashtra',
-      capacity: '30 MW',
-      cod: '2024-06-15',
-      updated: false,
-    },
-    {
-      key: '3',
-      type: 'ESS',
-      state: 'Rajasthan',
-      capacity: '20 MWH',
-      cod: '2025-03-10',
-      updated: false,
-    },
-  ]);
+  const [Structuredprojects, setStructuredProjects] = useState([]);  // Local state for flattened projects
   const [form] = Form.useForm();
-  const navigate = useNavigate();
+
+  // Fetching projects from Redux store
+  const { projects, status } = useSelector(state => state.portfolio);
+
+  useEffect(() => {
+    const id = user.id; 
+    dispatch(getAllProjectsById(id));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (projects.Solar || projects.Wind || projects.ESS) {
+      const flatProjects = [
+        ...(projects.Solar || []).map(project => ({ ...project, type: 'Solar' })),
+        ...(projects.Wind || []).map(project => ({ ...project, type: 'Wind' })),
+        ...(projects.ESS || []).map(project => ({ ...project, type: 'ESS' }))
+      ];
+      setStructuredProjects(flatProjects);  // Update local state with flattened data
+    }
+  }, [projects.Solar, projects.Wind, projects.ESS]);
 
   // Table columns
   const columns = [
@@ -51,14 +50,15 @@ const UpdateProfileDetails = () => {
       key: 'state',
     },
     {
-      title: 'Capacity',
-      dataIndex: 'capacity',
+      title: 'Available Capacity',
+      dataIndex: 'available_capacity',
       key: 'capacity',
     },
     {
       title: 'COD',
       dataIndex: 'cod',
       key: 'cod',
+      render: (text) => dayjs(text).format('YYYY-MM-DD'), // Format the date for display
     },
     {
       title: 'Updated',
@@ -69,7 +69,7 @@ const UpdateProfileDetails = () => {
     {
       title: 'Action',
       key: 'action',
-      width: 100, // Minimize the width of the Action column
+      width: 100,
       render: (text, record) => (
         <Button type="primary" onClick={() => handleUpdate(record)} style={{ width: '120px' }}>
           Update Profile
@@ -79,6 +79,7 @@ const UpdateProfileDetails = () => {
   ];
 
   const handleUpdate = (record) => {
+    console.log('Record:', record);
     setSelectedRecord(record);
     form.setFieldsValue({
       ...record,
@@ -93,14 +94,15 @@ const UpdateProfileDetails = () => {
   };
 
   const handleSave = () => {
-    form.validateFields().then(values => {
-      const updatedDataSource = dataSource.map(item => {
+    form.validateFields().then((values) => {
+      // Update the data in the Structuredprojects array
+      const updatedProjects = Structuredprojects.map((item) => {
         if (item.key === selectedRecord.key) {
           return { ...values, key: item.key, cod: values.cod.format('YYYY-MM-DD'), updated: true };
         }
         return item;
       });
-      setDataSource(updatedDataSource);
+      setStructuredProjects(updatedProjects); // Update the state with new data
       setIsModalVisible(false);
       form.resetFields();
     }).catch(info => {
@@ -108,7 +110,7 @@ const UpdateProfileDetails = () => {
     });
   };
 
-  const allUpdated = dataSource.every(item => item.updated);
+  const allUpdated = Structuredprojects.every(item => item.updated);
 
   const handleProceed = () => {
     navigate('/generator/combination');
@@ -122,8 +124,7 @@ const UpdateProfileDetails = () => {
       </Paragraph>
       <Table
         columns={columns}
-        dataSource={dataSource}
-        
+        dataSource={Structuredprojects}
         pagination={false}
         bordered
         style={{ marginTop: "20px" }}
@@ -144,7 +145,9 @@ const UpdateProfileDetails = () => {
         onOk={handleSave}
         width={600}
       >
-        <UpdateProfileForm form={form} />
+        <UpdateProfileForm 
+        project = {selectedRecord}
+        form={form} />
       </Modal>
     </div>
   );

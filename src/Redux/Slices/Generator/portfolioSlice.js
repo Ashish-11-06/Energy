@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import generatorPortfolioApi from '../../api/generator/generatorPortfolio'; // Updated API import
+import generatorPortfolioApi from '../../api/generator/generatorPortfolioApi'; // Updated API import
 
 // Async thunk to get all projects by ID
 export const getAllProjectsById = createAsyncThunk('portfolio/getAllProjects', async (id) => {
@@ -32,7 +32,6 @@ const initialState = {
   error: null,
 };
 
-// Portfolio slice
 const portfolioSlice = createSlice({
   name: 'portfolio',
   initialState,
@@ -45,7 +44,8 @@ const portfolioSlice = createSlice({
       })
       .addCase(getAllProjectsById.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.projects = action.payload;
+        console.log("Fetched projects:", action.payload); // Log the fetched projects
+        state.projects = action.payload;  // Assuming payload returns the correct structure
       })
       .addCase(getAllProjectsById.rejected, (state, action) => {
         state.status = 'failed';
@@ -58,7 +58,17 @@ const portfolioSlice = createSlice({
       })
       .addCase(addProject.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.projects.push(action.payload);
+        const { energy_type } = action.payload; // Get the energy type from the payload
+        const newProject = action.payload; // The new project to be added
+
+        // Ensure the energy type exists in the state, if not initialize it as an empty array
+        if (!state.projects[energy_type]) {
+          state.projects[energy_type] = [];
+        }
+
+        // Add the new project to the respective energy type array
+        state.projects[energy_type].push(newProject);
+        console.log("Updated projects state:", state.projects); // Log the updated state after adding the project
       })
       .addCase(addProject.rejected, (state, action) => {
         state.status = 'failed';
@@ -71,12 +81,19 @@ const portfolioSlice = createSlice({
       })
       .addCase(updateProject.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        const index = state.projects.findIndex(
-          (project) => project.id === action.payload.id
+        const { energy_type } = action.payload;
+        const updatedProject = action.payload;
+
+        console.log("Updating project:", updatedProject); // Log the updated project
+
+        const index = state.projects[energy_type]?.findIndex(
+          (project) => project.id === updatedProject.id
         );
         if (index !== -1) {
-          state.projects[index] = action.payload;
+          state.projects[energy_type][index] = updatedProject;
         }
+
+        console.log("Updated projects state:", state.projects); // Log the state after updating
       })
       .addCase(updateProject.rejected, (state, action) => {
         state.status = 'failed';
@@ -89,9 +106,16 @@ const portfolioSlice = createSlice({
       })
       .addCase(deleteProject.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.projects = state.projects.filter(
-          (project) => project.id !== action.payload
+        const { energy_type } = action.payload;
+
+        console.log("Deleting project with ID:", action.payload.id); // Log the project being deleted
+
+        // Filter out the project from the respective energy type array
+        state.projects[energy_type] = state.projects[energy_type].filter(
+          (project) => project.id !== action.payload.id
         );
+
+        console.log("Updated projects state:", state.projects); // Log the state after deleting
       })
       .addCase(deleteProject.rejected, (state, action) => {
         state.status = 'failed';
@@ -100,5 +124,4 @@ const portfolioSlice = createSlice({
   },
 });
 
-// Export reducer (no need to export actions because we're using thunks)
 export default portfolioSlice.reducer;

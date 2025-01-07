@@ -33,11 +33,13 @@ const GenerationPortfolio = () => {
     } else {
       setUserName('Guest');
     }
+  }, []);
 
+  // useEffect(() => {
     if (status === 'idle') {
       dispatch(getAllProjectsById(user.id));  // Fetch projects
     }
-  }, [dispatch, location.state, status]);
+  // }, [status]);
 
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
@@ -67,9 +69,9 @@ const GenerationPortfolio = () => {
       key: 'state',
     },
     {
-      title: 'Capacity',
-      dataIndex: 'capacity',
-      key: 'capacity',
+      title: 'Available Capacity (MW/MWh)',
+      dataIndex: 'available_capacity',
+      key: 'available_capacity',
       render: (text) => `${text}`,
     },
     {
@@ -121,6 +123,7 @@ const GenerationPortfolio = () => {
           visible={isModalVisible}
           onClose={() => setIsModalVisible(false)}
           onAdd={handleAddEntry}
+          user={user}
         />
 
         <Button
@@ -131,7 +134,7 @@ const GenerationPortfolio = () => {
           Add New Entry +
         </Button>
 
-        {projects.length > 0 && (
+        {Structuredprojects.length > 0 && (
           <Button
             type="default"
             style={{ marginTop: '20px', float: 'right' }}

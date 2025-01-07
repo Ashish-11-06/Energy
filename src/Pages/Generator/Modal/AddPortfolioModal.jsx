@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch an
 import { addProject } from '../../../Redux/Slices/Generator/portfolioSlice'; // Import addProject action
 import states from '../../../Data/States';
 
-const AddPortfolioModal = ({ visible, onClose }) => {
+const AddPortfolioModal = ({ visible, onClose, user }) => {
   const [form] = Form.useForm(); // Ant Design form instance
   const [unit, setUnit] = useState('MW'); // State to manage the unit dynamically
   const dispatch = useDispatch(); // Get the dispatch function
@@ -21,6 +21,10 @@ const AddPortfolioModal = ({ visible, onClose }) => {
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
+      if (values.cod) {
+        values.cod = dayjs(values.cod).format('YYYY-MM-DD');
+      }
+      values.user = user.id; // Add user_id to the values object
       setLoading(true); // Set loading state to true during the request
       dispatch(addProject(values)) // Dispatch addProject action
         .unwrap() // Use unwrap to get result or catch error
@@ -68,9 +72,9 @@ const AddPortfolioModal = ({ visible, onClose }) => {
               name="energy_type"
               rules={[{ required: true, message: 'Please select type!' }]} >
               <Select placeholder="Select Type" onChange={handleTechnologyChange}>
-                <Select.Option value="solar">Solar</Select.Option>
-                <Select.Option value="wind">Wind</Select.Option>
-                <Select.Option value="ess">ESS (Energy Storage System)</Select.Option>
+                <Select.Option value="Solar">Solar</Select.Option>
+                <Select.Option value="Wind">Wind</Select.Option>
+                <Select.Option value="ESS">ESS (Energy Storage System)</Select.Option>
               </Select>
             </Form.Item>
           </Col>
@@ -108,7 +112,7 @@ const AddPortfolioModal = ({ visible, onClose }) => {
           <Col span={12}>
             <Form.Item
               label={`Total Install Capacity (in ${unit})`}
-              name="installCapacity"
+              name="total_install_capacity"
               rules={[{ required: true, message: 'Please input energy capacity!' }, { type: 'number', message: 'Please enter a valid number!' }]} >
               <InputNumber
                 style={{ width: '100%' }}
@@ -126,7 +130,7 @@ const AddPortfolioModal = ({ visible, onClose }) => {
           <Col span={12}>
             <Form.Item
               label={`Total Available Capacity (in ${unit})`}
-              name="availableCapacity"
+              name="available_capacity"
               rules={[{ required: true, message: 'Please input energy capacity!' }, { type: 'number', message: 'Please enter a valid number!' }]} >
               <InputNumber
                 style={{ width: '100%' }}
@@ -170,5 +174,4 @@ const AddPortfolioModal = ({ visible, onClose }) => {
     </Modal>
   );
 };
-
 export default AddPortfolioModal;
