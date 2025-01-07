@@ -20,7 +20,7 @@ import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
 import LoginC from './Pages/Consumer/LoginC';
 import Dashboard from './Pages/Consumer/Dashboard';
 import EnergyConsumptionTable from './Pages/Consumer/EnergyConsumptionTable';
-import LoginG from './Pages/Generator/LoginG';
+import LoginG from './Pages/Generator/Auth/LoginG';
 import UpdateProfileDetails from './Pages/Generator/UpdateProfileDetails';
 
 // import NewPage from './Pages/Generator/NewPage';
