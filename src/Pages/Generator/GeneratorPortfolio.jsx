@@ -25,7 +25,7 @@ const GenerationPortfolio = () => {
     if (location.state?.isNewUser) {
       setIsNewUserModalVisible(true); // Show modal for new users
     }
-  
+
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const user = (JSON.parse(storedUser)).user;
@@ -33,12 +33,12 @@ const GenerationPortfolio = () => {
     } else {
       setUserName('Guest');
     }
-  
+
     if (status === 'idle') {
       dispatch(getAllProjectsById(user.id));  // Fetch projects
     }
   }, [dispatch, location.state, status]);
-  
+
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
       const flatProjects = [
@@ -49,7 +49,7 @@ const GenerationPortfolio = () => {
       setStructuredProjects(flatProjects);  // Update local state with flattened data
     }
   }, [projects.Solar, projects.Wind, projects.ESS]);
-  
+
   const columns = [
     {
       title: 'Sr. No',
@@ -79,7 +79,7 @@ const GenerationPortfolio = () => {
       render: (text) => moment(text).format('DD-MM-YYYY'),  // Format date to DD-MM-YYYY
     },
   ];
-  
+
   const handleAddEntry = (newEntry) => {
     // Handle adding new entries by dispatching an action
   };
@@ -109,12 +109,13 @@ const GenerationPortfolio = () => {
         </Title>
 
         <Table
-          dataSource={Structuredprojects}
+          dataSource={Structuredprojects.map((project, index) => ({ ...project, key: index }))}
           columns={columns}
           pagination={false}
           bordered
           loading={status === 'loading'}
         />
+
 
         <AddPortfolioModal
           visible={isModalVisible}

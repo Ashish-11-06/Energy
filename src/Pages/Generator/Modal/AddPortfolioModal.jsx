@@ -1,17 +1,39 @@
-import React, { useState } from 'react';
-import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select, message } from 'antd';
 import dayjs from 'dayjs';
+import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector
+import { addProject } from '../../../Redux/Slices/Generator/portfolioSlice'; // Import addProject action
 import states from '../../../Data/States';
 
-const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
+const AddPortfolioModal = ({ visible, onClose }) => {
   const [form] = Form.useForm(); // Ant Design form instance
   const [unit, setUnit] = useState('MW'); // State to manage the unit dynamically
+  const dispatch = useDispatch(); // Get the dispatch function
+  const { status, error } = useSelector((state) => state.portfolio); // Select status and error from the Redux store
+  const [loading, setLoading] = useState(false); // State for loading indicator
+
+  useEffect(() => {
+    if (status === 'failed' && error) {
+      // console.log('Error:', error); // Log the error
+      message.error(error); // Show error message if the status is failed
+    }
+  }, [status, error]);
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
-      onAdd(values);
-      form.resetFields(); // Reset the form after submission
-      onClose(); // Close the modal
+      setLoading(true); // Set loading state to true during the request
+      dispatch(addProject(values)) // Dispatch addProject action
+        .unwrap() // Use unwrap to get result or catch error
+        .then(() => {
+          setLoading(false); // Reset loading state after successful action
+          form.resetFields(); // Reset the form after submission
+          onClose(); // Close the modal
+          message.success('Project added successfully!'); // Show success message
+        })
+        .catch((err) => {
+          setLoading(false); // Reset loading state after failure
+          message.error(err.message || 'Failed to add project. Please try again.'); // Show specific error message
+        });
     }).catch((info) => {
       console.log('Validate Failed:', info);
     });
@@ -43,7 +65,7 @@ const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
           <Col span={12}>
             <Form.Item
               label="Technology"
-              name="type"
+              name="energy_type"
               rules={[{ required: true, message: 'Please select type!' }]} >
               <Select placeholder="Select Type" onChange={handleTechnologyChange}>
                 <Select.Option value="solar">Solar</Select.Option>
@@ -135,7 +157,12 @@ const AddPortfolioModal = ({ visible, onClose, onAdd }) => {
         </Row>
 
         <Form.Item>
-          <Button type="primary" onClick={handleSubmit} style={{ width: '100%' }}>
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+            style={{ width: '100%' }}
+            loading={loading} // Show loading indicator
+          >
             Add Entry
           </Button>
         </Form.Item>
