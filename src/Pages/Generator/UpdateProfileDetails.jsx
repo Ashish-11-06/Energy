@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice';
 import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfileForm';
+// import { render } from 'less';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph } = Typography;
 
@@ -53,18 +55,29 @@ const UpdateProfileDetails = () => {
       title: 'Available Capacity',
       dataIndex: 'available_capacity',
       key: 'capacity',
+      render: (text) => {
+        // Check if the value is 'ESS' or not and render accordingly
+        if (text === 'ESS') {
+          return `${text} MWh`;
+        } else {
+          return `${text} MW`;
+        }
+      },
     },
-    {
-      title: 'COD',
-      dataIndex: 'cod',
-      key: 'cod',
-      render: (text) => dayjs(text).format('YYYY-MM-DD'), // Format the date for display
-    },
+    
     {
       title: 'Updated',
       dataIndex: 'updated',
       key: 'updated',
-      render: (text) => (text ? 'Yes' : 'No'),
+      render: (text) => (
+        <div style={{ textAlign: 'center' }}>
+          {text ? (
+            <CheckCircleOutlined style={{ color: 'green', fontSize: '18px'}} />
+          ) : (
+            <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
+          )}
+        </div>
+      ),
     },
     {
       title: 'Action',
@@ -72,7 +85,7 @@ const UpdateProfileDetails = () => {
       width: 100,
       render: (text, record) => (
         <Button type="primary" onClick={() => handleUpdate(record)} style={{ width: '120px' }}>
-          Update Profile
+          Update
         </Button>
       ),
     },
@@ -93,23 +106,6 @@ const UpdateProfileDetails = () => {
     form.resetFields();
   };
 
-  const handleSave = () => {
-    form.validateFields().then((values) => {
-      // Update the data in the Structuredprojects array
-      const updatedProjects = Structuredprojects.map((item) => {
-        if (item.key === selectedRecord.key) {
-          return { ...values, key: item.key, cod: values.cod.format('YYYY-MM-DD'), updated: true };
-        }
-        return item;
-      });
-      setStructuredProjects(updatedProjects); // Update the state with new data
-      setIsModalVisible(false);
-      form.resetFields();
-    }).catch(info => {
-      console.log('Validate Failed:', info);
-    });
-  };
-
   const allUpdated = Structuredprojects.every(item => item.updated);
 
   const handleProceed = () => {
@@ -120,7 +116,7 @@ const UpdateProfileDetails = () => {
     <div style={{ padding: "20px", fontFamily: "Inter, sans-serif" }}>
       <Title level={2} style={{ color: "#669800" }}>Update Profile Details</Title>
       <Paragraph>
-        This is a page for updating profile details. You can add more content and functionality here as needed.
+      Please Update all profile details of your projects to optimize the capacity.
       </Paragraph>
       <Table
         columns={columns}
@@ -142,14 +138,14 @@ const UpdateProfileDetails = () => {
         title="Update Profile"
         open={isModalVisible}
         onCancel={handleCancel}
-        onOk={handleSave}
-        width={600}
+        width={700}
         okButtonProps={{ style: { display: 'none' } }}
         cancelButtonProps={{ style: { display: 'none' } }}
       >
         <UpdateProfileForm 
         project = {selectedRecord}
-        form={form} />
+        form={form} 
+        onCancel={handleCancel}/>
       </Modal>
     </div>
   );
