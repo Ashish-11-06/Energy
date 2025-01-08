@@ -5,6 +5,7 @@ import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useDispatch } from 'react-redux';
 import { updateProject } from '../../../Redux/Slices/Generator/portfolioSlice';
+import states from '../../../Data/States';
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -51,6 +52,7 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
 
     // Reset form and file on unmount or form close
     return () => {
+      console.log('Form unmounted');
       form.resetFields(); // Reset form fields
       setFile(null); // Clear selected file
       setProgress(0); // Reset progress bar
@@ -63,9 +65,11 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
     setFileData(null); // Clear file data
   }, []);
 
-  const onSubmit = () => {
-    form.validateFields()
-      .then((values) => {
+  const onSubmit = (values) => {
+    console.log('Form Values:', values);
+    // form.validateFields()
+    //   .then((values) => {
+        console.log('Validated values:', values);
         const updatedValues = {
           ...values,
           id: selectedProject.id, // Add the ID from the selected project
@@ -73,8 +77,8 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
           user: user.id,
           cod: values.cod.format('YYYY-MM-DD'), // Format the date
           hourly_data: fileData ? fileData.split(',')[1] : null, // Add the base64 string here (remove the prefix)
-          state: values.state || selectedProject.state,
-          available_capacity: values.available_capacity || selectedProject.available_capacity,
+          state: values.state
+          // available_capacity: values.available_capacity || selectedProject.available_capacity,
         };
 
         console.log('Updated Form Values:', updatedValues);
@@ -83,10 +87,10 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
         dispatch(updateProject(updatedValues));
 
         message.success('Form submitted successfully!');
-      })
-      .catch((error) => {
-        console.error('Validation Failed:', error);
-      });
+      // })
+      // .catch((error) => {
+      //   console.error('Validation Failed:', error);
+      // });
       onCancel();
   };
 
@@ -162,7 +166,7 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
         <Col span={12}>
           <Form.Item
             name="marginal_cost"
-            label="Marginal Cost"
+            label="Marginal Cost (INR/MW)"
             rules={[{ required: type === 'ESS', message: 'Please input the marginal cost!' }]} >
             <Input />
           </Form.Item>

@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 // Create Axios instance
-const axiosInstance = axios.create({
+const axiosInstance2 = axios.create({
     baseURL: 'http://192.168.1.36:8001/api', // Your backend base URL
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 10000, // Optional: Add timeout to handle slow requests
+    timeout: 100000, // Optional: Add timeout to handle slow requests
 });
-export default axiosInstance;
+export default axiosInstance2;
