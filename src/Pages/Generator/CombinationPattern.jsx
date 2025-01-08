@@ -5,6 +5,7 @@ import "chart.js/auto";
 import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';  
 import { useLocation } from 'react-router-dom';
 import { fetchOptimizedCombinations } from "../../Redux/Slices/Generator/optimizeCapacitySlice";
+import { useDispatch } from "react-redux";
 
 const { Title, Text } = Typography;
 
@@ -19,10 +20,13 @@ const CombinationPattern = () => {
   const location = useLocation();
   const selectedDemandId = location.state?.selectedDemandId;
 
+  const dispatch = useDispatch();
+
   const user = JSON.parse(localStorage.getItem('user')).user;
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log('Selected demand:', selectedDemandId);
       try {
         setIsLoading(true);
         const modalData = {
@@ -30,8 +34,12 @@ const CombinationPattern = () => {
           optimize_capacity_user: "generator",
           generator_id: user.id,
         };
-        const combinations = await fetchOptimizedCombinations(modalData); // Fetch combinations
-  
+
+        const combi = await dispatch(fetchOptimizedCombinations(modalData)); // Fetch combinations
+  console.log(combi);
+
+        const combinations = combi.payload;
+
         const formattedCombinations = Object.keys(combinations).map((key, index) => {
           const combination = combinations[key];
           return {
@@ -109,7 +117,7 @@ const CombinationPattern = () => {
       dataIndex: "cod",
       key: "cod",
     },
-  ];
+  ];  
 
   return (
     <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif" }}>

@@ -5,6 +5,7 @@ import optimizeCapacityApi from '../../api/generator/optimizeCapacityApi';
 export const fetchOptimizedCombinations = createAsyncThunk(
   'optimizedCapacity/fetchById',
   async (modalData, { rejectWithValue }) => {
+    console.log(modalData);
     try {
       const response = await optimizeCapacityApi.getOptimizedCombination(modalData);
       return response.data; // Assuming the API returns data in `response.data`
