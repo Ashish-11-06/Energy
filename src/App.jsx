@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// hhjhjh
 import LandingPage from './Pages/LandingPage';
 import LayoutComponent from './Components/Layout/Layout';
 import WhatWeOffer from './Pages/Consumer/WhatWeOffer';
@@ -36,6 +35,7 @@ import NavbarWithProgressBar from './Pages/Consumer/NavbarWithProgressBar';
 import Notification from './Pages/Consumer/Notification';
 import OptimizeCombination from './Pages/Generator/OptimizeCombination';
 import NotificationGenerator from './Pages/Generator/NotificationGenerator';
+import CombinationPattern from './Pages/Generator/CombinationPattern';
 
 
 function App() {
@@ -87,6 +87,7 @@ function App() {
             <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
             <Route path="update-profile-details" element={<UpdateProfileDetails />} />
             <Route path="chat-page" element={<ChatWithExpert />} />
+            <Route path="combination-pattern" element={<CombinationPattern />} />
 
             {/* <Route path="new-page" element={<NewPage />} /> */}
 

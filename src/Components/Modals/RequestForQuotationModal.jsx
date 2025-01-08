@@ -143,7 +143,7 @@ console.log("Requested Modal IPP",ipp);
   return (
     <>
       <Modal
-        title={<Text style={{ color: "#001529", fontSize: "18px" }}>Request for Quotation</Text>}
+        title={<Text style={{ color: "#001529", fontSize: "18px" }}>Quotation</Text>}
         open={visible}
         onCancel={onCancel}
         footer={null}
@@ -151,7 +151,7 @@ console.log("Requested Modal IPP",ipp);
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
-          Standard Terms Sheet hello
+          Standard Terms Sheet
         </Title>
         {/* Existing form */}
         <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
@@ -197,7 +197,7 @@ console.log("Requested Modal IPP",ipp);
               <DatePicker
                 value={moment("2024-08-31", "YYYY-MM-DD")}
                 style={{ width: "100%" }}
-                disabled
+                // disabled
               />
             </Typography.Paragraph>
           </Col>
@@ -271,34 +271,35 @@ console.log("Requested Modal IPP",ipp);
             </Button>
           </Col>
         </Row>
-        <Row justify="space-between" style={{ marginTop: "20px" }}>
-          {type !== "generator" && (
-            <Button
-              style={{
-                backgroundColor: "#FFFFFF",
-                border: `1px solid #E6E8F1`,
-                color: "#669800",
-                fontSize: "14px",
-              }}
-              onClick={handleCounterOffer}
-              disabled={isCounterOfferDisabled} // Disable button after submission
-            >
-              Counter Offer
-            </Button>
-          )}
-          <Button
-            type="primary"
-            style={{
-              backgroundColor: "#669800",
-              borderColor: "#669800",
-              fontSize: "16px",
-              padding: "10px 20px",
-            }}
-            onClick={type === "generator" ? handleContinue : handleSendToIPPs}
-          >
-            {type === "generator" ? "Continue" : "Send to IPPs"}
-          </Button>
-        </Row>
+        <Row justify="end" style={{ marginTop: "20px" }}>
+  {type !== "generator" && (
+    <Button
+      style={{
+        backgroundColor: "#FFFFFF",
+        border: `1px solid #E6E8F1`,
+        color: "#669800",
+        fontSize: "14px",
+        marginRight: "10px", // Add spacing between buttons
+      }}
+      onClick={handleCounterOffer}
+      disabled={isCounterOfferDisabled} // Disable button after submission
+    >
+      Counter Offer
+    </Button>
+  )}
+  <Button
+    type="primary"
+    style={{
+      backgroundColor: "#669800",
+      borderColor: "#669800",
+      fontSize: "16px",
+      padding: "10px 20px",
+    }}
+    onClick={type === "generator" ? handleContinue : handleSendToIPPs}
+  >
+    {type === "generator" ? "Continue" : "Send to IPPs"}
+  </Button>
+</Row>
       </Modal>
 
       <SummaryOfferModal

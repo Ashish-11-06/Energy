@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice';
 import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfileForm';
 // import { render } from 'less';
+import { useLocation } from 'react-router-dom';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph } = Typography;
@@ -22,7 +23,13 @@ const UpdateProfileDetails = () => {
 
   // Fetching projects from Redux store
   const { projects, status } = useSelector(state => state.portfolio);
-
+  const location = useLocation();
+  const selectedDemandId = location.state?.selectedConsumer;
+  
+  useEffect(() => {
+    console.log('Selected demand:', selectedDemandId);
+  }, [selectedDemandId]);
+  
   useEffect(() => {
     const id = user.id; 
     dispatch(getAllProjectsById(id));
@@ -109,7 +116,7 @@ const UpdateProfileDetails = () => {
   const allUpdated = Structuredprojects.every(item => item.updated);
 
   const handleProceed = () => {
-    navigate('/generator/combination');
+    navigate('/generator/combination-pattern', { state: { selectedDemandId } });
   };
 
   return (
