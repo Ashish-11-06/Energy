@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, DatePicker, Row, Col, Select, Button, Upload, message } from 'antd';
+import { Form, Input, DatePicker, Row, Col, Select, Button, Upload, message, Typography } from 'antd';
 import * as XLSX from 'xlsx'; // Import xlsx
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 const { Option } = Select;
+const { Title, Text } = Typography;
 
 const UpdateProfileForm = ({ form, project }) => {
-  const selectedProject = (JSON.stringify(project, null, 2));
-
-  console.log(selectedProject);
+  const selectedProject = JSON.parse(JSON.stringify(project, null, 2));
   const [fileList, setFileList] = useState([]);
+  const [filePreview, setFilePreview] = useState(null);
 
   // Function to generate and download the blank Excel sheet
   const downloadExcelTemplate = () => {
@@ -24,12 +24,12 @@ const UpdateProfileForm = ({ form, project }) => {
   const handleFileUpload = (info) => {
     if (info.file.status === 'done') {
       message.success(`${info.file.name} file uploaded successfully`);
+      setFilePreview(info.file.name);
     } else if (info.file.status === 'error') {
       message.error(`${info.file.name} file upload failed.`);
     }
   };
 
-  // Set project values in form fields
   useEffect(() => {
     if (selectedProject) {
       form.setFieldsValue({
@@ -40,8 +40,25 @@ const UpdateProfileForm = ({ form, project }) => {
     }
   }, [selectedProject, form]);
 
+  const onSubmit = () => {
+    form.validateFields()
+      .then((values) => {
+        console.log('Form Values:', values);
+        message.success('Form submitted successfully!');
+      })
+      .catch((error) => {
+        console.error('Validation Failed:', error);
+      });
+  };
+
   return (
-    <Form form={form} layout="vertical">
+    <Form
+      form={form}
+      layout="vertical"
+      initialValues={{
+        cod: selectedProject.cod ? dayjs(selectedProject.cod) : null, // Prefill COD field
+      }}
+    >
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
@@ -66,6 +83,7 @@ const UpdateProfileForm = ({ form, project }) => {
           </Form.Item>
         </Col>
       </Row>
+
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
@@ -86,6 +104,7 @@ const UpdateProfileForm = ({ form, project }) => {
           </Form.Item>
         </Col>
       </Row>
+
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
@@ -106,8 +125,8 @@ const UpdateProfileForm = ({ form, project }) => {
           </Form.Item>
         </Col>
       </Row>
+
       <Row gutter={16}>
-        
         <Col span={12}>
           <Form.Item
             name="cod"
@@ -117,65 +136,65 @@ const UpdateProfileForm = ({ form, project }) => {
             <DatePicker style={{ width: '100%' }} />
           </Form.Item>
         </Col>
+        <Col span={12}>
+          <Form.Item
+            name="annualGenerationPotential"
+            label="Annual Generation Potential (MWh)"
+            rules={[{ required: false, message: 'Please input the annual generation potential!' }]}
+          >
+            <Input />
+          </Form.Item>
+        </Col>
       </Row>
-      <Form.Item
-        noStyle
-        shouldUpdate={(prevValues, currentValues) => prevValues.type !== currentValues.type}
-      >
-        {({ getFieldValue }) =>
-          getFieldValue('type') === 'Solar' || getFieldValue('type') === 'Wind' ? (
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  name="annualGenerationPotential"
-                  label="Annual Generation Potential (MWh)"
-                  rules={[{ required: false, message: 'Please input the annual generation potential!' }]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-            </Row>
-          ) : getFieldValue('type') === 'ESS' ? (
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  name="efficiencyOfStorage"
-                  label="Efficiency of Storage"
-                  rules={[{ required: true, message: 'Please input the efficiency of storage!' }]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="efficiencyOfDispatch"
-                  label="Efficiency of Dispatch"
-                  rules={[{ required: true, message: 'Please input the efficiency of dispatch!' }]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-            </Row>
-          ) : null
-        }
-      </Form.Item>
 
-      {/* Download Excel Template Button */}
-      <Button onClick={downloadExcelTemplate} type="primary" style={{ marginBottom: '16px' }}>
-        Download Excel Template
-      </Button>
+      <Row gutter={16}>
+        <Col span={24}>
+          <h3>Upload Hourly Generation Data</h3>
+          <Text type="secondary">Please download the template, fill it with the hourly generation data, and then upload it here.</Text>
+        </Col>
+      </Row>
 
-      {/* Upload Excel File Button */}
-      <Form.Item label="Upload Excel File">
-        <Upload
-          customRequest={handleFileUpload}
-          fileList={fileList}
-          onChange={({ fileList }) => setFileList(fileList)}
-          beforeUpload={() => false} // Prevent default upload behavior
-        >
-          <Button icon={<UploadOutlined />}>Upload Filled Excel Sheet</Button>
-        </Upload>
-      </Form.Item>
+      <Row gutter={16}>
+        {/* Download Excel Template Icon */}
+        <Col span={3}>
+          <Button onClick={downloadExcelTemplate} icon={<DownloadOutlined />} type="primary" style={{ width: '100%' }}>
+            
+          </Button>
+        </Col>
+
+        {/* Upload Excel File Icon */}
+        <Col span={12}>
+          <Upload
+            customRequest={handleFileUpload}
+            fileList={fileList}
+            onChange={({ fileList }) => setFileList(fileList)}
+            beforeUpload={() => false} // Prevent default upload behavior
+          >
+            <Button icon={<UploadOutlined />} style={{ width: '100%' }}>
+              Upload Excel Sheet
+            </Button>
+          </Upload>
+        </Col>
+      </Row>
+
+      {filePreview && (
+        <Row gutter={16}>
+          <Col span={24}>
+            <Text type="secondary">Selected file: {filePreview}</Text>
+          </Col>
+        </Row>
+      )}
+
+      {/* Submit Button aligned to the right */}
+      <Row gutter={16}>
+        <Col span={24} style={{ textAlign: 'right' }}>
+          <Form.Item>
+            <Button type="primary" onClick={onSubmit}>
+              Submit
+            </Button>
+          </Form.Item>
+        </Col>
+      </Row>
     </Form>
   );
 };

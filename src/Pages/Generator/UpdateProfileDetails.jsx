@@ -144,6 +144,8 @@ const UpdateProfileDetails = () => {
         onCancel={handleCancel}
         onOk={handleSave}
         width={600}
+        okButtonProps={{ style: { display: 'none' } }}
+        cancelButtonProps={{ style: { display: 'none' } }}
       >
         <UpdateProfileForm 
         project = {selectedRecord}
