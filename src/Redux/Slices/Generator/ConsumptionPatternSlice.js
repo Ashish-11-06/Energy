@@ -37,7 +37,7 @@ const consumptionPatternSlice = createSlice({
       })
       .addCase(fetchConsumptionPattern.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.patterns = action.payload;
+        state.patterns = action.payload.monthly_consumption;
       })
       .addCase(fetchConsumptionPattern.rejected, (state, action) => {
         state.status = 'failed';

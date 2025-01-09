@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Typography, Row, Col, Spin, message } from "antd";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
-import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';  
+import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
 import { useLocation } from 'react-router-dom';
 import { fetchOptimizedCombinations } from "../../Redux/Slices/Generator/optimizeCapacitySlice";
 import { fetchConsumptionPattern } from "../../Redux/Slices/Generator/ConsumptionPatternSlice";
@@ -41,7 +41,9 @@ const CombinationPattern = () => {
   useEffect(() => {
     const fetchPatterns = async () => {
       try {
+        console.log(consumptionPatterns, consumptionPatternStatus, 'consumptionPatterns');
         if (!consumptionPatterns.length && consumptionPatternStatus === "idle") {
+          console.log("Fetching consumption patterns");
           await dispatch(fetchConsumptionPattern(selectedDemandId));
         }
       } catch (error) {
@@ -74,7 +76,7 @@ const CombinationPattern = () => {
       } catch (error) {
         message.error("Failed to fetch combinations.");
       } finally {
-        setFetchingCombinations(false); 
+        setFetchingCombinations(false);
         setIsTableLoading(false);
       }
     };
@@ -157,16 +159,22 @@ const CombinationPattern = () => {
   ];
 
   // Chart data for consumption patterns
-  const chartData = {
-    labels: consumptionPatterns.map((pattern) => pattern.label), // Replace 'label' with actual field
-    datasets: [
-      {
-        label: "Consumption (kWh)",
-        data: consumptionPatterns.map((pattern) => pattern.value), // Replace 'value' with actual field
-        backgroundColor: "#4CAF50",
-      },
-    ],
-  };
+ // Chart data for consumption patterns
+const chartData = {
+  labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
+  datasets: [
+    {
+      label: "Consumption (kWh)",
+      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
+      backgroundColor: "#4CAF50",
+    },
+  ],
+};
+useEffect(() => {
+  console.log(consumptionPatterns, "consumptionPatterns");
+}, [consumptionPatterns]);
+
+
 
   const chartOptions = {
     responsive: true,
