@@ -146,7 +146,7 @@ const CombinationPattern = () => {
       key: "totalCapacity",
     },
     {
-      title: "Per Unit Cost (₹)",
+      title: "Per Unit Cost (MW/₹)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
     },
