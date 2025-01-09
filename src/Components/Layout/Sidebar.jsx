@@ -23,7 +23,7 @@ const { Sider } = Layout;
 // Define menu items for consumer and generator
 const consumerMenuItems = [
   { label: 'Dashboard', key: '/consumer/dashboard', icon: <DashboardOutlined /> },
-  { label: 'Requirement', key: '/consumer/requirenment', icon: <FormOutlined /> },
+  { label: 'Requirement', key: '/consumer/requirement', icon: <FormOutlined /> },
   { label: 'What We Offer', key: '/consumer/what-we-offer', icon: <AppstoreAddOutlined /> },
   { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
   { label: 'Requested IPP', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined /> },

@@ -9,7 +9,7 @@ const WhatWeOffer = () => {
 
     // Handle opening the modal and navigating to the next page
     const handleContinue = () => {
-      navigate('/consumer/requirenment'); // Navigate to the desired route
+      navigate('/consumer/requirement'); // Navigate to the desired route
     };
     // Handle closing the modal
     const handleCancel = () => {
