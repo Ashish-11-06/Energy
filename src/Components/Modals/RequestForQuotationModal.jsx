@@ -214,7 +214,7 @@ const RequestForQuotationModal = ({ visible, ipp, onCancel, type, data, selected
               />
             </Typography.Paragraph>
           </Col>
-          {type !== "generator" && (
+          {/* {type !== "generator" && ( */}
             <Col span={12}>
               <Typography.Paragraph>
                 <strong>Minimum Supply Obligation (million units):</strong>
@@ -226,8 +226,8 @@ const RequestForQuotationModal = ({ visible, ipp, onCancel, type, data, selected
                 />
               </Typography.Paragraph>
             </Col>
-          )}
-          {type !== "generator" && (
+          {/* )} */}
+          {/* {type !== "generator" && ( */}
             <>
               <Col span={12}>
                 <Typography.Paragraph>
@@ -235,14 +235,12 @@ const RequestForQuotationModal = ({ visible, ipp, onCancel, type, data, selected
                   <InputNumber
                     min={1}
                     value={10}
-                    disabled
+                    // disabled
                     style={{ width: "100%" }}
                   />
                 </Typography.Paragraph>
               </Col>
-              <Col span={12}>
-                {/* Empty Col for layout */}
-              </Col>
+           
               <Col span={12}>
                 <Typography.Paragraph>
                   <strong>Payment Security Type:</strong>
@@ -258,50 +256,54 @@ const RequestForQuotationModal = ({ visible, ipp, onCancel, type, data, selected
                 </Typography.Paragraph>
               </Col>
             </>
-          )}
-        </Row>
-
-        <Row gutter={[16, 16]} justify="center" style={{ marginTop: "20px" }}>
+          {/* )} */}
+      
+{/* 
           <Col span={12}>
-            {/* <Button block style={{ backgroundColor: "#FFFFFF", border: `1px solid #E6E8F1`, color: "#001529", fontSize: "14px" }}>
+            <Button block style={{ backgroundColor: "#FFFFFF", border: `1px solid #E6E8F1`, color: "#001529", fontSize: "14px" }}>
               Download Other Terms & Conditions
-            </Button> */}
-          </Col>
+            </Button>
+          </Col> */}
           <Col span={12}>
+          <br></br>
             <Button block onClick={handleChatWithExpert} style={{ backgroundColor: "#FFFFFF", border: `1px solid #E6E8F1`, color: "#001529", fontSize: "14px" }}>
               Chat with Expert
             </Button>
           </Col>
+
+          
         </Row>
-        <Row justify="end" style={{ marginTop: "20px" }}>
-          {type !== "generator" && (
-            <Button
-              style={{
-                backgroundColor: "#FFFFFF",
-                border: `1px solid #E6E8F1`,
-                color: "#669800",
-                fontSize: "14px",
-                marginRight: "10px", // Add spacing between buttons
-              }}
-              onClick={handleCounterOffer}
-              disabled={isCounterOfferDisabled} // Disable button after submission
-            >
-              Counter Offer
-            </Button>
-          )}
-          <Button
-            type="primary"
-            style={{
-              backgroundColor: "#669800",
-              borderColor: "#669800",
-              fontSize: "16px",
-              padding: "10px 20px",
-            }}
-            onClick={type === "generator" ? handleContinue : handleSendToIPPs}
-          >
-            {type === "generator" ? "Continue" : "Send to IPPs"}
-          </Button>
-        </Row>
+
+        <Row justify="end" gutter={[16, 16]} style={{ marginTop: "20px" }}>
+  {type !== "generator" && (
+    <Button
+      style={{
+        backgroundColor: "#FFFFFF",
+        border: `1px solid #E6E8F1`,
+        color: "#669800",
+        fontSize: "14px",
+        marginRight: "10px", // Spacing between buttons
+      }}
+      onClick={handleCounterOffer}
+      disabled={isCounterOfferDisabled} // Disable button after submission
+    >
+      Counter Offer
+    </Button>
+  )}
+  <Button
+    type="primary"
+    style={{
+      backgroundColor: "#669800",
+      borderColor: "#669800",
+      fontSize: "16px",
+      padding: "10px 20px",
+    }}
+    onClick={type === "generator" ? handleContinue : handleSendToIPPs}
+  >
+    {type === "generator" ? "Continue" : "Send to IPPs"}
+  </Button>
+</Row>
+
       </Modal>
 
       <SummaryOfferModal
