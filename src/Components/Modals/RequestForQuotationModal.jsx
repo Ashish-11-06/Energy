@@ -89,7 +89,7 @@ const CounterOfferModal = ({ visible, onCancel, onSubmit }) => (
   </Modal>
 );
 
-const RequestForQuotationModal = ({ visible,ipp, onCancel, type }) => {
+const RequestForQuotationModal = ({ visible, ipp, onCancel, type, data, selectedDemandId }) => {
   const [ppaTerm, setPpaTerm] = useState(20);
   const [lockInPeriod, setLockInPeriod] = useState(10);
   const [minimumSupply, setMinimumSupply] = useState(18);
@@ -104,8 +104,11 @@ const RequestForQuotationModal = ({ visible,ipp, onCancel, type }) => {
   const [isCounterOfferDisabled, setIsCounterOfferDisabled] = useState(false); // New state for disabling button
 
   const navigate = useNavigate();
-console.log("Requested Modal IPP",ipp);
+  console.log("Requested Modal IPP", ipp);
 
+  console.log("Requested Data", data);
+
+  console.log("Selected Demand ID", selectedDemandId);
 
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
@@ -113,7 +116,7 @@ console.log("Requested Modal IPP",ipp);
 
   const handleSendToIPPs = () => {
     message.success("Your request has been sent to IPPs.");
-   
+
     return <RequestedIPP ipp={ipp} />;
     onCancel();
   };
@@ -195,9 +198,8 @@ console.log("Requested Modal IPP",ipp);
             <Typography.Paragraph>
               <strong>Commencement of Supply:</strong>
               <DatePicker
-                value={moment("2024-08-31", "YYYY-MM-DD")}
+                value={data.cod ? moment(data.cod, "YYYY-MM-DD") : moment("2024-08-31", "YYYY-MM-DD")}
                 style={{ width: "100%" }}
-                // disabled
               />
             </Typography.Paragraph>
           </Col>
@@ -261,9 +263,9 @@ console.log("Requested Modal IPP",ipp);
 
         <Row gutter={[16, 16]} justify="center" style={{ marginTop: "20px" }}>
           <Col span={12}>
-            <Button block style={{ backgroundColor: "#FFFFFF", border: `1px solid #E6E8F1`, color: "#001529", fontSize: "14px" }}>
+            {/* <Button block style={{ backgroundColor: "#FFFFFF", border: `1px solid #E6E8F1`, color: "#001529", fontSize: "14px" }}>
               Download Other Terms & Conditions
-            </Button>
+            </Button> */}
           </Col>
           <Col span={12}>
             <Button block onClick={handleChatWithExpert} style={{ backgroundColor: "#FFFFFF", border: `1px solid #E6E8F1`, color: "#001529", fontSize: "14px" }}>
@@ -272,34 +274,34 @@ console.log("Requested Modal IPP",ipp);
           </Col>
         </Row>
         <Row justify="end" style={{ marginTop: "20px" }}>
-  {type !== "generator" && (
-    <Button
-      style={{
-        backgroundColor: "#FFFFFF",
-        border: `1px solid #E6E8F1`,
-        color: "#669800",
-        fontSize: "14px",
-        marginRight: "10px", // Add spacing between buttons
-      }}
-      onClick={handleCounterOffer}
-      disabled={isCounterOfferDisabled} // Disable button after submission
-    >
-      Counter Offer
-    </Button>
-  )}
-  <Button
-    type="primary"
-    style={{
-      backgroundColor: "#669800",
-      borderColor: "#669800",
-      fontSize: "16px",
-      padding: "10px 20px",
-    }}
-    onClick={type === "generator" ? handleContinue : handleSendToIPPs}
-  >
-    {type === "generator" ? "Continue" : "Send to IPPs"}
-  </Button>
-</Row>
+          {type !== "generator" && (
+            <Button
+              style={{
+                backgroundColor: "#FFFFFF",
+                border: `1px solid #E6E8F1`,
+                color: "#669800",
+                fontSize: "14px",
+                marginRight: "10px", // Add spacing between buttons
+              }}
+              onClick={handleCounterOffer}
+              disabled={isCounterOfferDisabled} // Disable button after submission
+            >
+              Counter Offer
+            </Button>
+          )}
+          <Button
+            type="primary"
+            style={{
+              backgroundColor: "#669800",
+              borderColor: "#669800",
+              fontSize: "16px",
+              padding: "10px 20px",
+            }}
+            onClick={type === "generator" ? handleContinue : handleSendToIPPs}
+          >
+            {type === "generator" ? "Continue" : "Send to IPPs"}
+          </Button>
+        </Row>
       </Modal>
 
       <SummaryOfferModal

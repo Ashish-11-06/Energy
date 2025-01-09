@@ -75,6 +75,8 @@ const CombinationPattern = () => {
         }
       } catch (error) {
         message.error("Failed to fetch combinations.");
+        console.log(error);
+        console.log(combinatio)
       } finally {
         setFetchingCombinations(false);
         setIsTableLoading(false);
@@ -82,25 +84,30 @@ const CombinationPattern = () => {
     };
 
     const formatAndSetCombinations = (combinations) => {
-      const formattedCombinations = Object.keys(combinations).map((key, index) => {
-        const combination = combinations[key];
+      // Use Object.entries to convert the object into an array of [key, value] pairs
+      const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => {
         return {
           key: index + 1,
           srNo: index + 1,
-          combination: key,
+          combination: key,  // Use the key as the combination name
           technology: [
             { name: 'Wind', capacity: `${combination["Optimal Wind Capacity (MW)"]} MW` },
             { name: 'Solar', capacity: `${combination["Optimal Solar Capacity (MW)"]} MW` },
             { name: 'Battery', capacity: `${combination["Optimal Battery Capacity (MW)"]} MW` },
           ],
-          totalCapacity: `${(combination["Optimal Wind Capacity (MW)"] + combination["Optimal Solar Capacity (MW)"] + combination["Optimal Battery Capacity (MW)"]).toFixed(2)} MW`,
-          perUnitCost: combination["Per Unit Cost"].toFixed(2),
-          cod: "N/A",
+          totalCapacity: `${(
+            combination["Optimal Wind Capacity (MW)"] + 
+            combination["Optimal Solar Capacity (MW)"] + 
+            combination["Optimal Battery Capacity (MW)"]
+          ).toFixed(2)} MW`,
+          perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",  // Ensure this value is valid
+          cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format('YYYY-MM-DD') : "N/A",  // Format COD date if available
         };
       });
-
+    
       setDataSource(formattedCombinations);
     };
+     
 
     fetchPatterns();
     loadCombinations();
@@ -152,9 +159,9 @@ const CombinationPattern = () => {
     },
     {
       title: "COD",
-      dataIndex: "greatest_cod",
-      key: "greatest_cod",
-      render: (text) => dayjs(text).format('YYYY-MM-DD'),
+      dataIndex: "cod",
+      key: "cod",
+      render: (text) => dayjs(text).format('DD-MM-YYYY'),
     },
   ];
 
@@ -210,9 +217,26 @@ useEffect(() => {
             Optimized Combinations
           </Title>
           {isTableLoading ? (
+            <>
             <div style={{ textAlign: "center", padding: "10px", width: "100%" }}>
               <Spin size="large" />
             </div>
+            <div
+    style={{
+      padding: "20px",
+      fontSize: "18px",
+      fontWeight: "bold",
+      backgroundColor: "#f0f0f0",
+      borderRadius: "8px",
+      border: "1px solid #ddd",
+      color: "#333",
+      textAlign: "center",
+    }}
+  >
+    Please wait while we are optimizing your best combination...
+  </div>
+            </>
+            
           ) : (
             <Table
               dataSource={dataSource}
@@ -238,6 +262,7 @@ useEffect(() => {
             visible={isModalVisible}
             onCancel={handleQuotationModalCancel}
             data={selectedRow}
+            selectedDemandId={selectedDemandId}
             type="generator"
           />
         )}

@@ -5,18 +5,23 @@ import optimizeCapacityApi from '../../api/generator/optimizeCapacityApi';
 export const fetchOptimizedCombinations = createAsyncThunk(
   'optimizedCapacity/fetchById',
   async (modalData, { rejectWithValue }) => {
-    console.log(modalData);
     try {
       const response = await optimizeCapacityApi.getOptimizedCombination(modalData);
-      return response.data; // Assuming the API returns data in `response.data`
+      if (response && response.data) {
+        return response.data; // Successfully fetched data
+      } else {
+        // If the response does not have data or is not structured correctly, reject with a message
+        return rejectWithValue('Unexpected response structure');
+      }
     } catch (error) {
-      // Handle errors
+      // Handle errors if the request fails
       return rejectWithValue(
-        error.response?.data?.message || 'Failed to fetch combinations'
+        error.response?.data?.message || 'Failed to fetch combinationsklklklk'
       );
     }
   }
 );
+
 
 // Initial state
 const initialState = {
