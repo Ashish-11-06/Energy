@@ -20,7 +20,7 @@ export const fetchOptimizedCombinations = createAsyncThunk(
 
 // Initial state
 const initialState = {
-  compinations: [], // Holds the fetched consumers
+  combinations: [], // Holds the fetched consumers
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null, // Error message if the API call fails
 };
@@ -38,7 +38,7 @@ const optimizeCapacitySlice = createSlice({
       })
       .addCase(fetchOptimizedCombinations.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.Matchingconsumers = action.payload;
+        state.combinations = action.payload;
       })
       .addCase(fetchOptimizedCombinations.rejected, (state, action) => {
         state.status = 'failed';

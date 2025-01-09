@@ -69,10 +69,17 @@ const GenerationPortfolio = () => {
       key: 'state',
     },
     {
-      title: 'Available Capacity (MW/MWh)',
+      title: 'Available Capacity',
       dataIndex: 'available_capacity',
       key: 'available_capacity',
-      render: (text) => `${text}`,
+      render: (text) => {
+        // Check if the value is 'ESS' or not and render accordingly
+        if (text === 'ESS') {
+          return `${text} MWh`;
+        } else {
+          return `${text} MW`;
+        }
+      },
     },
     {
       title: 'COD (Commercial Operation Date)',

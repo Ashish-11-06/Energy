@@ -37,7 +37,7 @@ const consumptionPatternSlice = createSlice({
       })
       .addCase(fetchConsumptionPattern.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.Matchingconsumers = action.payload;
+        state.patterns = action.payload;
       })
       .addCase(fetchConsumptionPattern.rejected, (state, action) => {
         state.status = 'failed';

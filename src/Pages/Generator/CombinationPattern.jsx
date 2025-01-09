@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Table, Typography, Row, Col, Spin, Progress, Slider, Button, message } from "antd";
+import { Table, Typography, Row, Col, Spin, message } from "antd";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';  
 import { useLocation } from 'react-router-dom';
 import { fetchOptimizedCombinations } from "../../Redux/Slices/Generator/optimizeCapacitySlice";
-import { useDispatch } from "react-redux";
+import { fetchConsumptionPattern } from "../../Redux/Slices/Generator/ConsumptionPatternSlice";
+import { useDispatch, useSelector } from "react-redux";
+import dayjs from "dayjs";
 
 const { Title, Text } = Typography;
 
 const CombinationPattern = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [sliderValue, setSliderValue] = useState(65);
-  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [isTableLoading, setIsTableLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [fetchingCombinations, setFetchingCombinations] = useState(false);
   const location = useLocation();
   const selectedDemandId = location.state?.selectedDemandId;
 
@@ -24,50 +24,86 @@ const CombinationPattern = () => {
 
   const user = JSON.parse(localStorage.getItem('user')).user;
 
+  // Redux selectors
+  const consumptionPatterns = useSelector(
+    (state) => state.consumptionPattern?.patterns || []
+  );
+  const consumptionPatternStatus = useSelector(
+    (state) => state.consumptionPattern.status
+  );
+  const optimizedCombinations = useSelector(
+    (state) => state.optimizedCapacity?.combinations || []
+  );
+  const optimizedCombinationsStatus = useSelector(
+    (state) => state.optimizedCapacity.status
+  );
+
   useEffect(() => {
-    const fetchData = async () => {
-      console.log('Selected demand:', selectedDemandId);
+    const fetchPatterns = async () => {
       try {
-        setIsLoading(true);
-        const modalData = {
-          requirement_id: selectedDemandId,
-          optimize_capacity_user: "generator",
-          generator_id: user.id,
-        };
+        if (!consumptionPatterns.length && consumptionPatternStatus === "idle") {
+          await dispatch(fetchConsumptionPattern(selectedDemandId));
+        }
+      } catch (error) {
+        message.error("Failed to fetch consumption patterns.");
+      }
+    };
 
-        const combi = await dispatch(fetchOptimizedCombinations(modalData)); // Fetch combinations
-  console.log(combi);
-
-        const combinations = combi.payload;
-
-        const formattedCombinations = Object.keys(combinations).map((key, index) => {
-          const combination = combinations[key];
-          return {
-            key: index + 1,
-            srNo: index + 1,
-            combination: key, // You can use the IPP name as the combination
-            technology: [
-              { name: 'Wind', capacity: `${combination["Optimal Wind Capacity (MW)"]} MW` },
-              { name: 'Solar', capacity: `${combination["Optimal Solar Capacity (MW)"]} MW` },
-              { name: 'Battery', capacity: `${combination["Optimal Battery Capacity (MW)"]} MW` },
-            ],
-            totalCapacity: `${(combination["Optimal Wind Capacity (MW)"] + combination["Optimal Solar Capacity (MW)"] + combination["Optimal Battery Capacity (MW)"]).toFixed(2)} MW`,
-            perUnitCost: combination["Per Unit Cost"].toFixed(2),
-            cod: "N/A", // You can modify this if you get the actual COD data
+    const loadCombinations = async () => {
+      try {
+        setIsTableLoading(true);
+        setFetchingCombinations(true);
+        console.log(optimizedCombinationsStatus, optimizedCombinations, 'adfadasfdas');
+        // Use combinations from the store if available
+        if (optimizedCombinationsStatus === "succeeded" && optimizedCombinations) {
+          formatAndSetCombinations(optimizedCombinations);
+          console.log("Combinations from store");
+        } else {
+          // Fetch from API if not in store
+          const modalData = {
+            requirement_id: selectedDemandId,
+            optimize_capacity_user: "generator",
+            generator_id: user.id,
           };
-        });
-  
-        setDataSource(formattedCombinations);
+
+          const combi = await dispatch(fetchOptimizedCombinations(modalData));
+          const combinations = combi.payload;
+
+          formatAndSetCombinations(combinations);
+        }
       } catch (error) {
         message.error("Failed to fetch combinations.");
       } finally {
-        setIsLoading(false);
+        setFetchingCombinations(false); 
+        setIsTableLoading(false);
       }
     };
-  
-    fetchData();
-  }, [selectedDemandId]);
-  
+
+    const formatAndSetCombinations = (combinations) => {
+      const formattedCombinations = Object.keys(combinations).map((key, index) => {
+        const combination = combinations[key];
+        return {
+          key: index + 1,
+          srNo: index + 1,
+          combination: key,
+          technology: [
+            { name: 'Wind', capacity: `${combination["Optimal Wind Capacity (MW)"]} MW` },
+            { name: 'Solar', capacity: `${combination["Optimal Solar Capacity (MW)"]} MW` },
+            { name: 'Battery', capacity: `${combination["Optimal Battery Capacity (MW)"]} MW` },
+          ],
+          totalCapacity: `${(combination["Optimal Wind Capacity (MW)"] + combination["Optimal Solar Capacity (MW)"] + combination["Optimal Battery Capacity (MW)"]).toFixed(2)} MW`,
+          perUnitCost: combination["Per Unit Cost"].toFixed(2),
+          cod: "N/A",
+        };
+      });
+
+      setDataSource(formattedCombinations);
+    };
+
+    fetchPatterns();
+    loadCombinations();
+  }, []);
+
   const handleRowClick = (record) => {
     setSelectedRow(record);
     setIsModalVisible(true);
@@ -114,22 +150,62 @@ const CombinationPattern = () => {
     },
     {
       title: "COD",
-      dataIndex: "cod",
-      key: "cod",
+      dataIndex: "greatest_cod",
+      key: "greatest_cod",
+      render: (text) => dayjs(text).format('YYYY-MM-DD'),
     },
-  ];  
+  ];
+
+  // Chart data for consumption patterns
+  const chartData = {
+    labels: consumptionPatterns.map((pattern) => pattern.label), // Replace 'label' with actual field
+    datasets: [
+      {
+        label: "Consumption (kWh)",
+        data: consumptionPatterns.map((pattern) => pattern.value), // Replace 'value' with actual field
+        backgroundColor: "#4CAF50",
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+  };
 
   return (
     <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif" }}>
       <Row justify="center" align="middle" gutter={[16, 8]} style={{ height: "100%" }}>
+        {/* Consumption Pattern Chart */}
         <Col span={24} style={{ textAlign: "center" }}>
           <Title level={4} style={{ color: "#001529" }}>
-            This is the consumer's consumption pattern
+            Consumer's Consumption Pattern
           </Title>
         </Col>
 
-        {!isOptimizing && !isLoading && (
-          <Col span={24}>
+        <Col span={24} style={{ marginBottom: "20px" }}>
+          <div
+            style={{
+              position: "relative",
+              width: "80%",
+              height: "300px",
+              margin: "0 auto",
+            }}
+          >
+            <Bar data={chartData} options={chartOptions} />
+          </div>
+        </Col>
+
+        {/* Combination Table */}
+        <Col span={24}>
+          <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
+            Optimized Combinations
+          </Title>
+          {isTableLoading ? (
+            <div style={{ textAlign: "center", padding: "10px", width: "100%" }}>
+              <Spin size="large" />
+            </div>
+          ) : (
             <Table
               dataSource={dataSource}
               columns={columns}
@@ -145,21 +221,17 @@ const CombinationPattern = () => {
               })}
               scroll={{ x: true }}
             />
-            {isModalVisible && (
-              <RequestForQuotationModal
-                visible={isModalVisible}
-                onCancel={handleQuotationModalCancel}
-                data={selectedRow}
-                type="generator"
-              />
-            )}
-          </Col>
-        )}
+          )}
+        </Col>
 
-        {isLoading && (
-          <div style={{ textAlign: "center", padding: "10px", width: "90%" }}>
-            <Spin size="large" />
-          </div>
+        {/* Modal for Quotation */}
+        {isModalVisible && (
+          <RequestForQuotationModal
+            visible={isModalVisible}
+            onCancel={handleQuotationModalCancel}
+            data={selectedRow}
+            type="generator"
+          />
         )}
       </Row>
     </div>

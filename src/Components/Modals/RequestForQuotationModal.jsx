@@ -155,7 +155,7 @@ console.log("Requested Modal IPP",ipp);
         </Title>
         {/* Existing form */}
         <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-          {type === "generator" && (
+          {/* {type === "generator" && (
             <Col span={12}>
               <Typography.Paragraph>
                 <strong>Offer Tariff (INR/KWH):</strong>
@@ -168,7 +168,7 @@ console.log("Requested Modal IPP",ipp);
                 />
               </Typography.Paragraph>
             </Col>
-          )}
+          )} */}
           <Col span={12}>
             <Typography.Paragraph>
               <strong>Term of PPA (years):</strong>
