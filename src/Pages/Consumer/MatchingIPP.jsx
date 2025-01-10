@@ -1,97 +1,102 @@
-import React, { useState, useEffect } from "react";
-import { Spin, Alert, Row, Col } from "antd"; // Ant Design layout components
-import IPPProfileGenerator from "../../Components/Consumer/IPPProfileGenerator";
-import NavbarWithProgressBar from "./NavbarWithProgressBar";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Table, Spin, Alert, Row, Button } from "antd";
+import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSlice";
 
 const MatchingIPP = () => {
-  const [data, setData] = useState([]); // State to store table data
-  const [loading, setLoading] = useState(true); // Set to `true` to simulate loading
-  const [error, setError] = useState(null); // State to handle API errors
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [selectedRow, setSelectedRow] = useState(null); // Track selected row
+  const { matchingIPP, status, error } = useSelector((state) => state.matchingIPP);
 
   useEffect(() => {
-    // Example fallback data
-    const exampleData = [
-      { key: 1, ipp: "IPP1", states: "Karnataka", capacity: "50 MW" },
-      { key: 2, ipp: "IPP2", states: "Maharashtra", capacity: "30 MW" },
-      { key: 3, ipp: "IPP3", states: "Rajasthan", capacity: "10 MW" },
-    ];
+    const requirementId = location.state?.selectedRequirement?.id;
+    if (requirementId) {
+      dispatch(fetchMatchingIPPById(requirementId));
+    } else {
+      console.error("Requirement ID not found in location state.");
+    }
+  }, [location, dispatch]);
 
-    // Simulate an API call delay
-    const timeout = setTimeout(() => {
-      setData(exampleData);
-      setLoading(false); // Set loading to false once data is available
-    }, 1000);
+  const handleRowClick = (record) => {
+    setSelectedRow(record); // Set selected row when a row is clicked
+  };
 
-    return () => clearTimeout(timeout);
-  }, []);
+  const handleContinue = () => {
+    if (selectedRow) {
+      const requirementId = location.state?.selectedRequirement?.id;
+      navigate("/consumer/annual-saving", { state: { requirementId } });
+    }
+  };
 
-  if (loading) {
+  const columns = [
+    {
+      title: "IPP",
+      dataIndex: "user__username",
+      key: "user__username",
+    },
+    {
+      title: "State",
+      dataIndex: "state",
+      key: "state",
+    },
+    {
+      title: "Available Capacity (MW)",
+      dataIndex: "available_capacity",
+      key: "available_capacity",
+    },
+  ];
+
+  if (status === "loading") {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100%",
-          backgroundColor: "#F5F6FB",
-        }}
-      >
-        <div>
-          <Spin size="large" tip="please wait...">
-            <div style={{ minHeight: "20px" }} /> {/* Empty content to satisfy nesting */}
-          </Spin>
-        </div>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <Spin size="large" tip="Loading IPP details..." />
       </div>
     );
   }
-  
 
-  if (error) {
+  if (status === "failed") {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        //   height: "100vh",
-          backgroundColor: "#EDEEF7",
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Alert message="Error" description={error} type="error" showIcon />
       </div>
     );
   }
 
   return (
-    <main
-      className="ipp-main"
-      style={{
-        display: "flex",
-        justifyContent: "center",  // Centers content horizontally
-        alignItems: "center",      // Centers content vertically
-        backgroundColor: "#F5F6FB",
-        padding: "20px",
-        height: "100%",
-        flexDirection: "column",   // Stack items vertically
-      }}
-    >
-      <Row
-        gutter={[20, 20]}
-        style={{
-          display: "flex",
-          justifyContent: "center",  // Ensure row is centered
-          width: "100%",              // Ensure row takes full width
-        }}
-      >
-          <div style={{ backgroundColor: "white", padding: "20px" }}>
-            <IPPProfileGenerator
-              title="Generate Matching IPP Profile"
-              data={data}
-            />
-          </div>
-      
+    <main style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px" }}>
+      <Row style={{ width: "100%" }}>
+        <h2>Matching IPP Details</h2>
+        <Table
+          columns={columns}
+          dataSource={Array.isArray(matchingIPP) ? matchingIPP : []}
+          rowKey={(record) => record.user || record.id || Math.random()}
+          pagination={false}
+          onRow={(record) => ({
+            onClick: () => handleRowClick(record), // Handle row click to set selected row
+          })}
+          locale={{
+            emptyText: "No Matching IPPs found", 
+          }}
+          style={{ marginTop: "5%", width: "60%" }}
+        />
       </Row>
-    
+      <Row style={{ width: "100%", marginTop: "20px", justifyContent: "center" }}>
+        <Button
+          type="primary"
+          onClick={handleContinue}
+          style={{
+            pointerEvents: selectedRow ? "auto" : "none",
+            opacity: selectedRow ? 1 : 0.5,
+            cursor: selectedRow ? "pointer" : "not-allowed",
+          }}
+        >
+          Continue
+        </Button>
+      </Row>
     </main>
   );
 };

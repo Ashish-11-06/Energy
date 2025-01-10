@@ -6,6 +6,8 @@ import matchingConsumerReducer from './Slices/Generator/matchingConsumerSlice'; 
 import optimizeCapacityReducer from './Slices/Generator/optimizeCapacitySlice'; // Import the optimizeCapacityReducer
 import consumptionPatternReducer from './Slices/Generator/ConsumptionPatternSlice'; // Import the consumptionPatternReducer
 import termsAndConditionsReducer from './Slices/Generator/TermsAndConditionsSlice'; // Import the termsAndConditionsReducer
+import matchingIPPSlice from './Slices/Consumer/matchingIPPSlice';
+import monthlyDataReducer from './Slices/Consumer/monthlyConsumptionSlice'
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +18,9 @@ export const store = configureStore({
     optimizedCapacity: optimizeCapacityReducer, // Add optimizeCapacityReducer to the store
     consumptionPattern: consumptionPatternReducer, // Add consumptionPatternReducer to the store
     termsAndConditions: termsAndConditionsReducer, // Add termsAndConditionsReducer to the store
+    matchingIPP: matchingIPPSlice,
+    monthlyData: monthlyDataReducer
+
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

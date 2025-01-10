@@ -5,7 +5,7 @@ import LayoutComponent from './Components/Layout/Layout';
 import WhatWeOffer from './Pages/Consumer/WhatWeOffer';
 import MatchingIPP from './Pages/Consumer/MatchingIPP';
 import ChatWithExpert from './Pages/Consumer/ChatWithExpert';
-import ConsumptionPattern from './Pages/Consumer/ConsumptionPattern';
+import ConsumptionPattern from './Pages/Consumer/CombinationPattern';
 import IppProjectDetails from './Pages/Consumer/IPPProjectDetails';
 import RequirementsPage from './Pages/Consumer/RequirenmentPage';
 import AnnualSvg from './Pages/Consumer/AnnualSaving';
@@ -31,11 +31,15 @@ import UserGen from './Pages/Generator/UserGen';
 import PortfolioGen from './Pages/Generator/PortfolioGen';
 import Offer from './Pages/Consumer/Offer';
 import RequestedIPP from './Pages/Consumer/RequestedIPP';
+import RequestedIPPOfGen from './Pages/Generator/RequestedIPPOfGen';
+import OfferRecieved from './Pages/Consumer/OfferRecievedFromIPP';
+import OfferRecievedFromCons from './Pages/Generator/OfferRecievedFromCons';
 import NavbarWithProgressBar from './Pages/Consumer/NavbarWithProgressBar';
 import Notification from './Pages/Consumer/Notification';
 import OptimizeCombination from './Pages/Generator/OptimizeCombination';
 import NotificationGenerator from './Pages/Generator/NotificationGenerator';
 import CombinationPattern from './Pages/Generator/CombinationPattern';
+import TransactionWindow from './Pages/Consumer/TransactionWindow';
 
 
 function App() {
@@ -71,7 +75,9 @@ function App() {
                   <Route path="profile" element={<ProfileConsumer />} />
                   <Route path="offer" element={<Offer />} />
                   <Route path="requested-ipp" element={<RequestedIPP />} />
+                  <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
                   <Route path="notification" element={<Notification />} />
+                  <Route path='transaction-window' element={<TransactionWindow/>}/>
                 </Routes>
               </>
             }
@@ -88,6 +94,9 @@ function App() {
             <Route path="update-profile-details" element={<UpdateProfileDetails />} />
             <Route path="chat-page" element={<ChatWithExpert />} />
             <Route path="combination-pattern" element={<CombinationPattern />} />
+            <Route path="requested-ipp-gen" element={<RequestedIPPOfGen />} />
+            <Route path="consumer-requests" element={<OfferRecievedFromCons />} />
+
 
             {/* <Route path="new-page" element={<NewPage />} /> */}
 

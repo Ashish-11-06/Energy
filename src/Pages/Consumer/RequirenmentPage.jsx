@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Table, Button, message, Row, Col, Modal, Tooltip } from 'antd';
 import { useNavigate } from 'react-router-dom';
@@ -5,13 +6,16 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchRequirements } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
+import { addNewRequirement } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
+
 import moment from 'moment';
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
 
 const RequirementsPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isInfoModalVisible, setIsInfoModalVisible] = useState(true); // State for info modal
+  const [selectedRequirement, setSelectedRequirement] = useState(null); // State to hold the selected requirement
+  const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [username, setUsername] = useState(''); // State for info modal
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -65,6 +69,9 @@ const RequirementsPage = () => {
 
   const handleRowSelect = (record) => {
     setSelectedRowKeys([record.key]); // Only allow single selection
+    setSelectedRequirement(record); // Store the selected record
+    message.success(`You selected record of state'${record.state}`);
+    console.log('recoed',record);
   };
 
   const showModal = () => {
@@ -75,31 +82,27 @@ const RequirementsPage = () => {
     setIsModalVisible(false);
   };
 
-  const handleSubmit = (values) => {
-    console.log('Form Values: ', values);
-    setRequirements([
-      ...requirements,
-      {
-        key: requirements.length + 1,
-        ...values,
-        procurement: values.procurement ? values.procurement : null,
-      },
-    ]);
-    setIsModalVisible(false);
-    message.success('Requirement added successfully!');
+  const handleSubmit = async (values) => {
+    try {
+      // Call the API to add the requirement
+      const response = await consumerrequirementApi.addRequirement(values);
+      // Dispatch the action to update Redux state
+      dispatch(addNewRequirement(response.data));
+      setIsModalVisible(false);
+      message.success('Requirement added successfully!');
+    } catch (error) {
+      message.error('Failed to add requirement');
+      setIsInfoModalVisible(false);
+    }
   };
 
   const handleClearAll = () => {
-    setRequirements([]);
     setSelectedRowKeys([]); // Clear the selected row when clearing all requirements
     message.success('All requirements have been cleared!');
   };
 
   const handleContinue = () => {
-    if (selectedRowKeys.length === 1) {
-      const selectedRequirement = requirements.find(
-        (req) => req.key === selectedRowKeys[0]
-      );
+    if (selectedRequirement) {
       navigate('/consumer/matching-ipp', { state: { selectedRequirement } }); // Pass the selected requirement to the next page
     } else {
       message.error('Please select a single requirement before continuing.');
@@ -112,8 +115,13 @@ const RequirementsPage = () => {
     if (user && user.user.company_representative) {
       setUsername(user.user.company_representative);
     }
-    // Show info modal when the page loads for the first time
-    setIsInfoModalVisible(true);
+
+    // Show info modal when the page loads for the first time in the session
+    const hasSeenWelcomeModal = localStorage.getItem("hasSeenWelcomeModal");
+    if (hasSeenWelcomeModal === "false") {
+      setIsInfoModalVisible(true);
+      localStorage.setItem("hasSeenWelcomeModal", "true");
+    }
 
     // Fetch requirements if not present in the state
     if (requirements.length === 0) {
@@ -187,7 +195,7 @@ const RequirementsPage = () => {
             type="default"
             onClick={handleContinue}
             style={{ width: 160 }}
-            disabled={selectedRowKeys.length !== 1} // Disable "Continue" if no row is selected or more than one row is selected
+            disabled={!selectedRequirement} // Disable "Continue" if no row is selected
           >
             Continue
           </Button>
@@ -198,7 +206,7 @@ const RequirementsPage = () => {
       <RequirementForm
         isVisible={isModalVisible}
         onCancel={handleCancel}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit} 
       />
     </div>
   );

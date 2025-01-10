@@ -15,7 +15,7 @@ export const addTermsAndConditions = createAsyncThunk(
       // Handle errors
       console.log(`klkkklklk`, error)
       return rejectWithValue(
-        error.response?.data?.message || 'Failed to add terms and conditions'
+        error.response?.data?.error || 'Failed to add terms and conditions'
       );
     }
   }

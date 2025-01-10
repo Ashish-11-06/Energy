@@ -54,7 +54,7 @@ const RequestedIPP = () => {
   };
 
   const filteredData = ippData.filter((record) => {
-    const statusMatch = statusFilter ? record.consumer_status === statusFilter : true;
+    const statusMatch = statusFilter ? record.generator_status === statusFilter : true;
     const searchMatch =
       record.id.toString().includes(searchText) ||
       record.requirement[0].rq_state.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -104,7 +104,7 @@ const RequestedIPP = () => {
       key: 'status',
       render: (_, record) => (
         <Button type="primary" onClick={() => showModal(record)}>
-          View Status
+          View
         </Button>
       ),
       width: '150px',

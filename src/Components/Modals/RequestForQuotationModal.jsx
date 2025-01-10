@@ -21,7 +21,6 @@ const { Option } = Select;
 
 const RequestForQuotationModal = ({
   visible,
-  ipp,
   onCancel,
   type,
   data,
@@ -54,7 +53,7 @@ const RequestForQuotationModal = ({
 
   console.log(user);
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     const termsData = {
       from_whom: user.user_category,
       requirement_id: selectedDemandId,
@@ -67,9 +66,22 @@ const RequestForQuotationModal = ({
       payment_security_type: paymentSecurityType,
       payment_security_day: paymentSecurityDays, // Add to termsData
     };
-    dispatch(addTermsAndConditions(termsData));
-    message.success("Terms and Conditions added successfully.");
-    onCancel(); // Close the modal
+    try {
+      // Wait for the dispatch to resolve
+      await dispatch(addTermsAndConditions(termsData)).unwrap(); // Use .unwrap() if using Redux Toolkit
+      message.success({
+        content: "Terms and Conditions added successfully.",
+        duration: 7, // Show for 7 seconds
+      });
+      onCancel(); // Close the modal
+    } catch (error) {
+      // Show error message
+      message.error({
+        content: error || "Failed to add Terms and Conditions.",
+        duration: 7, // Show for 7 seconds
+      });
+    }
+  
   };
 
   return (

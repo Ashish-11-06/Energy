@@ -66,6 +66,7 @@ const LoginC = () => {
       setLoading(false);
       if (response) {
         message.success("Login successful!");
+        localStorage.setItem("hasSeenWelcomeModal", "false"); // Set flag to show welcome modal
         navigate("/consumer/requirement");
       }
     } catch (error) {

@@ -7,7 +7,13 @@ export const fetchOptimizedCombinations = createAsyncThunk(
   async (modalData, { rejectWithValue }) => {
     try {
       const response = await optimizeCapacityApi.getOptimizedCombination(modalData);
+      console.log(`klkkklklk`, response)
       if (response && response.data) {
+        if(response.data.error){
+          return rejectWithValue(
+            response.data.error || 'Failed to fetch combinations'
+          );
+        }
         return response.data; // Successfully fetched data
       } else {
         // If the response does not have data or is not structured correctly, reject with a message
@@ -16,7 +22,7 @@ export const fetchOptimizedCombinations = createAsyncThunk(
     } catch (error) {
       // Handle errors if the request fails
       return rejectWithValue(
-        error.response?.data?.message || 'Failed to fetch combinationsklklklk'
+        error.response?.data?.message || 'Failed to fetch combinations'
       );
     }
   }

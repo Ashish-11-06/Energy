@@ -29,6 +29,7 @@
     "react-responsive": "^10.0.0",
     "react-router-dom": "^7.0.2",
     "recharts": "^2.14.1",
+    "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.13",
     "typeface-inter": "^3.18.1",
     "xlsx": "^0.18.5"

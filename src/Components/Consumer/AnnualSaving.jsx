@@ -4,15 +4,12 @@ import './AnnualSaving.css';
 
 const { Title, Text } = Typography;
 
-const AnnualSaving = () => {
+const AnnualSaving = (data) => {
   const [showReport, setShowReport] = useState(false);
 
   const handleDownloadReport = () => {
     // Data to be downloaded
-    const reportData = `
-      Potential Annual Saving (INR): ₹500,000
-      Potential RE Replacement %: 25%
-    `;
+    const reportData = data;
 
     // Create a Blob with the report data
     const blob = new Blob([reportData], { type: "text/plain" });

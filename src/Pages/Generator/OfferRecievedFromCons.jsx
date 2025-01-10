@@ -6,7 +6,7 @@ import { requestedIPPs } from '../../Redux/Slices/Consumer/RequestedIPPSlice';
 const { Title } = Typography;
 const { Option } = Select;
 
-const RequestedIPP = () => {
+const OfferRecievedFromCons = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [statusFilter, setStatusFilter] = useState("");
@@ -20,7 +20,11 @@ const RequestedIPP = () => {
   useEffect(() => {
     const fetchIPPData = async () => {
       try {
-        const response = await dispatch(requestedIPPs(user));
+        const data ={
+            id: user.id,
+            user_category: "Consumer"
+        }
+        const response = await dispatch(requestedIPPs(data));
         if (response?.payload?.length > 0) {
           setIppData(response.payload);
         } else {
@@ -104,7 +108,7 @@ const RequestedIPP = () => {
       key: 'status',
       render: (_, record) => (
         <Button type="primary" onClick={() => showModal(record)}>
-          View Status
+          View
         </Button>
       ),
       width: '150px',
@@ -180,4 +184,4 @@ const RequestedIPP = () => {
   );
 };
 
-export default RequestedIPP;
+export default OfferRecievedFromCons;

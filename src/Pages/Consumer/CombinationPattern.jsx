@@ -17,8 +17,12 @@ const CombinationPattern = () => {
   const [dataSource, setDataSource] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [fetchingCombinations, setFetchingCombinations] = useState(false);
-  const location = useLocation();
-  const selectedDemandId = location.state?.selectedDemandId;
+  // const location = useLocation();
+  const { state } = useLocation();
+
+  const selectedDemandId = state?.requirementId;
+
+  console.log(selectedDemandId, 'selectedDemandId');
 
   const dispatch = useDispatch();
 
@@ -38,11 +42,15 @@ const CombinationPattern = () => {
     (state) => state.optimizedCapacity.status
   );
 
+  console.log(consumptionPatterns, consumptionPatternStatus, 'consumptionPatterns');
+
+  console.log(optimizedCombinationsStatus, optimizedCombinations, 'adfadasfdas');
+
   useEffect(() => {
     const fetchPatterns = async () => {
       try {
         console.log(consumptionPatterns, consumptionPatternStatus, 'consumptionPatterns');
-        if (!consumptionPatterns.length && consumptionPatternStatus === "idle") {
+        if (!consumptionPatterns.length && consumptionPatternStatus === "idle" || consumptionPatternStatus === "failed") {
           console.log("Fetching consumption patterns");
           await dispatch(fetchConsumptionPattern(selectedDemandId));
         }
@@ -65,7 +73,7 @@ const CombinationPattern = () => {
           const modalData = {
             requirement_id: selectedDemandId,
             optimize_capacity_user: user.user_category,
-            generator_id: user.id,
+            // generator_id: user.id,
           };
 
           const combi = await dispatch(fetchOptimizedCombinations(modalData));
@@ -76,7 +84,6 @@ const CombinationPattern = () => {
       } catch (error) {
         message.error("Failed to fetch combinations.");
         console.log(error);
-        console.log(combinatio)
       } finally {
         setFetchingCombinations(false);
         setIsTableLoading(false);
@@ -84,29 +91,32 @@ const CombinationPattern = () => {
     };
 
     const formatAndSetCombinations = (combinations) => {
-      // Use Object.entries to convert the object into an array of [key, value] pairs
-      const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => {
-        return {
-          key: index + 1,
-          srNo: index + 1,
-          combination: key,  // Use the key as the combination name
-          technology: [
-            { name: 'Wind', capacity: `${combination["Optimal Wind Capacity (MW)"]} MW` },
-            { name: 'Solar', capacity: `${combination["Optimal Solar Capacity (MW)"]} MW` },
-            { name: 'Battery', capacity: `${combination["Optimal Battery Capacity (MW)"]} MW` },
-          ],
-          totalCapacity: `${(
-            combination["Optimal Wind Capacity (MW)"] + 
-            combination["Optimal Solar Capacity (MW)"] + 
-            combination["Optimal Battery Capacity (MW)"]
-          ).toFixed(2)} MW`,
-          perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",  // Ensure this value is valid
-          cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format('YYYY-MM-DD') : "N/A",  // Format COD date if available
-        };
-      });
+      if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
+        setDataSource([]);
+        return;
+      }
+    
+      const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => ({
+        key: index + 1,
+        srNo: index + 1,
+        combination: key,
+        technology: [
+          { name: "Wind", capacity: `${combination["Optimal Wind Capacity (MW)"]} MW` },
+          { name: "Solar", capacity: `${combination["Optimal Solar Capacity (MW)"]} MW` },
+          { name: "Battery", capacity: `${combination["Optimal Battery Capacity (MW)"]} MW` },
+        ],
+        totalCapacity: `${(
+          combination["Optimal Wind Capacity (MW)"] +
+          combination["Optimal Solar Capacity (MW)"] +
+          combination["Optimal Battery Capacity (MW)"]
+        ).toFixed(2)} MW`,
+        perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
+        cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
+      }));
     
       setDataSource(formattedCombinations);
     };
+    
      
 
     fetchPatterns();
@@ -212,49 +222,66 @@ useEffect(() => {
         </Col>
 
         {/* Combination Table */}
-        <Col span={24}>
-          <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-            Optimized Combinations
-          </Title>
-          {isTableLoading ? (
-            <>
-            <div style={{ textAlign: "center", padding: "10px", width: "100%" }}>
-              <Spin size="large" />
-            </div>
-            <div
-    style={{
-      padding: "20px",
-      fontSize: "18px",
-      fontWeight: "bold",
-      backgroundColor: "#f0f0f0",
-      borderRadius: "8px",
-      border: "1px solid #ddd",
-      color: "#333",
-      textAlign: "center",
-    }}
-  >
-    Please wait while we are optimizing your best combination...
-  </div>
-            </>
-            
-          ) : (
-            <Table
-              dataSource={dataSource}
-              columns={columns}
-              pagination={false}
-              bordered
-              style={{
-                backgroundColor: "#FFFFFF",
-                border: "1px solid #E6E8F1",
-                overflowX: "auto",
-              }}
-              onRow={(record) => ({
-                onClick: () => handleRowClick(record),
-              })}
-              scroll={{ x: true }}
-            />
-          )}
-        </Col>
+        {/* Combination Table */}
+<Col span={24}>
+  <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
+    Optimized Combinations
+  </Title>
+  {isTableLoading ? (
+    <>
+      <div style={{ textAlign: "center", padding: "10px", width: "100%" }}>
+        <Spin size="large" />
+      </div>
+      <div
+        style={{
+          padding: "20px",
+          fontSize: "18px",
+          fontWeight: "bold",
+          backgroundColor: "#f0f0f0",
+          borderRadius: "8px",
+          border: "1px solid #ddd",
+          color: "#333",
+          textAlign: "center",
+        }}
+      >
+        Please wait while we are showing you a best matching IPP...
+      </div>
+    </>
+  ) : dataSource.length > 0 ? (
+    <Table
+      dataSource={dataSource}
+      columns={columns}
+      pagination={false}
+      bordered
+      style={{
+        backgroundColor: "#FFFFFF",
+        border: "1px solid #E6E8F1",
+        overflowX: "auto",
+      }}
+      onRow={(record) => ({
+        onClick: () => handleRowClick(record),
+      })}
+      scroll={{ x: true }}
+    />
+  ) : ( 
+    <div
+      style={{
+        padding: "20px",
+        fontSize: "18px",
+        fontWeight: "bold",
+        backgroundColor: "#f8d7da",
+        borderRadius: "8px",
+        border: "1px solid #f5c6cb",
+        color: "#721c24",
+        textAlign: "center",
+      }}
+    >
+      No optimized combinations available at the moment. Please try again later.
+      
+    </div>
+  )}
+</Col>
+
 
         {/* Modal for Quotation */}
         {isModalVisible && (
