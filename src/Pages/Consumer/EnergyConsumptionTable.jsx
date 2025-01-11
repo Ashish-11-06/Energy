@@ -141,7 +141,7 @@ const EnergyConsumptionTable = () => {
       const response = await dispatch(addConsumption(values));
 
       message.success('Monthly data added successfully!');
-      navigate("/consumer/consumption-pattern");
+      navigate("/consumer/consumption-pattern", { state: { requirementId } });
      
     } catch (error) {
       message.error('Failed to add monthly data');

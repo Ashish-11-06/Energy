@@ -13,6 +13,9 @@ const consumerrequirementApi = {
     deleterequirement: (id) => {
         return axiosInstance.delete(`/energy/consumer-requirements/${id}`);
     },
+    addRequirement: (requirementData) => {
+        return axiosInstance.post('/energy/consumer-requirements', requirementData);
+    },
 };
 
 export default consumerrequirementApi;

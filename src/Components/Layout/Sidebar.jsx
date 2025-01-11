@@ -43,7 +43,7 @@ const generatorMenuItems = [
   { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
   { label: 'proposed offers', key: '/generator/requested-ipp-gen', icon: <AppstoreAddOutlined /> },
   { label: 'consumer requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
-  { label: 'Energy Optimization', key: '/generator/energy-optimization', icon: <ControlOutlined /> },
+  // { label: 'Energy Optimization', key: '/generator/energy-optimization', icon: <ControlOutlined /> },
   { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
   { label: 'Subscription Plan', key: '/generator/subscription-plan', icon: <WalletOutlined /> },
   { label: 'Chat with Expert', key: '/generator/chat-page', icon: <MessageOutlined /> },

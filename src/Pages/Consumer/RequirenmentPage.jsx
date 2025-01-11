@@ -85,13 +85,14 @@ const RequirementsPage = () => {
   const handleSubmit = async (values) => {
     try {
       // Call the API to add the requirement
-      const response = await consumerrequirementApi.addRequirement(values);
+      // const response = await consumerrequirementApi.addNewRequirement(values);
       // Dispatch the action to update Redux state
-      dispatch(addNewRequirement(response.data));
+      dispatch(addNewRequirement(values));
       setIsModalVisible(false);
       message.success('Requirement added successfully!');
     } catch (error) {
       message.error('Failed to add requirement');
+      console.log(error);
       setIsInfoModalVisible(false);
     }
   };

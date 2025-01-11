@@ -1,121 +1,119 @@
-import React, { useState } from 'react';
-import { Table, Button, Modal, Col, Row, Typography, Select, Input } from 'antd';
-
-// Sample data to be displayed in the table
-const ippData = [
-  {
-    key: "1",
-    ipp: "1",
-    states: "Karnataka",
-    capacity: "50 MW",
-    replacement: "65%",
-    perUnitCost: 5.45,
-    status: "Pending",
-  },
-  {
-    key: "2",
-    ipp: "2",
-    states: "Maharashtra",
-    capacity: "30 MW",
-    replacement: "65%",
-    perUnitCost: 6.2,
-    status: "Accepted",
-  },
-  {
-    key: "3",
-    ipp: "3",
-    states: "Rajasthan",
-    capacity: "10 MW",
-    replacement: "65%",
-    perUnitCost: 4.85,
-    status: "Rejected",
-  },
-];
+import React, { useState, useEffect } from 'react';
+import { Table, Button, Col, Row, Typography, Select, Input, message } from 'antd';
+import { useDispatch } from 'react-redux';
+import { requestedIPPs } from '../../Redux/Slices/Consumer/RequestedIPPSlice';
+import TermsDetailModal from '../../Components/Modals/termsDetailModal'; // Adjust the path as needed
 
 const { Title } = Typography;
 const { Option } = Select;
 
-const OfferRecieved = () => {
+const OfferRecievedFromCons = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
-  const [statusFilter, setStatusFilter] = useState(""); // State for status filter
-  const [searchText, setSearchText] = useState(""); // State for search text
+  const [statusFilter, setStatusFilter] = useState('');
+  const [searchText, setSearchText] = useState('');
+  const [ippData, setIppData] = useState([]);
+  const [error, setError] = useState(null);
 
-  // Function to handle button click and show modal
+  const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem('user')).user;
+
+  useEffect(() => {
+    const fetchIPPData = async () => {
+      try {
+        const data = {
+          id: user.id,
+          user_category: 'Generator',
+        };
+        const response = await dispatch(requestedIPPs(data));
+        if (response?.payload?.length > 0) {
+          setIppData(response.payload);
+        } else {
+          setIppData([]);
+          message.info('No data found');
+        }
+      } catch (error) {
+        setError('Error fetching IPP data');
+        message.error('Error fetching IPP data');
+      }
+    };
+
+    fetchIPPData();
+  }, [dispatch, user.id]);
+
   const showModal = (record) => {
     setModalContent(record);
     setIsModalVisible(true);
   };
 
-  // Function to handle closing the modal
-  const handleCancel = () => {
+  const handleCloseModal = () => {
     setIsModalVisible(false);
+    setModalContent(null);
   };
 
-  // Handle change in the status filter
   const handleStatusChange = (value) => {
     setStatusFilter(value);
   };
 
-  // Handle change in search input
   const handleSearchChange = (e) => {
     setSearchText(e.target.value);
   };
 
-  // Filter the data based on search text and status filter
   const filteredData = ippData.filter((record) => {
-    const statusMatch = statusFilter ? record.status === statusFilter : true;
+    const statusMatch = statusFilter ? record.consumer_status === statusFilter : true;
     const searchMatch =
-      record.ipp.includes(searchText) ||
-      record.states.toLowerCase().includes(searchText.toLowerCase()) ||
-      record.capacity.toLowerCase().includes(searchText.toLowerCase()) ||
-      record.replacement.toLowerCase().includes(searchText.toLowerCase()) ||
-      record.perUnitCost.toString().includes(searchText);
+      record.id.toString().includes(searchText) ||
+      record.requirement[0].rq_state.toLowerCase().includes(searchText.toLowerCase()) ||
+      record.requirement[0].rq_industry.toLowerCase().includes(searchText.toLowerCase()) ||
+      record.requirement[0].rq_contracted_demand.toString().includes(searchText) ||
+      record.requirement[0].rq_tariff_category.toLowerCase().includes(searchText.toLowerCase());
     return statusMatch && searchMatch;
   });
 
-  // Define table columns with filter functionality for status
+  console.log(JSON.stringify(modalContent, null, 2));
+
+
   const columns = [
     {
       title: 'IPP ID',
-      dataIndex: 'ipp',
-      key: 'ipp',
+      dataIndex: 'id',
+      key: 'id',
       width: '100px',
     },
     {
       title: 'State',
-      dataIndex: 'states',
-      key: 'states',
+      dataIndex: 'requirement',
+      key: 'requirement',
+      render: (text) => text[0]?.rq_state,
       width: '150px',
     },
     {
-      title: 'Capacity',
-      dataIndex: 'capacity',
-      key: 'capacity',
+      title: 'Industry',
+      dataIndex: 'requirement',
+      key: 'industry',
+      render: (text) => text[0]?.rq_industry,
       width: '150px',
     },
     {
-      title: 'Replacement',
-      dataIndex: 'replacement',
-      key: 'replacement',
+      title: 'Contracted Demand',
+      dataIndex: 'requirement',
+      key: 'contractedDemand',
+      render: (text) => text[0]?.rq_contracted_demand,
       width: '150px',
     },
     {
-      title: 'Per Unit Cost',
-      dataIndex: 'perUnitCost',
-      key: 'perUnitCost',
-      render: (text) => `₹${text}`, // Format cost with currency symbol
+      title: 'Tariff Category',
+      dataIndex: 'requirement',
+      key: 'tariffCategory',
+      render: (text) => text[0]?.rq_tariff_category,
       width: '150px',
     },
     {
       title: 'Status',
       key: 'status',
       render: (_, record) => (
-        <Button
-          type="primary"
-          onClick={() => showModal(record)} // Show modal on button click
-        >
-          View Status
+        <Button type="primary" onClick={() => showModal(record)}>
+          View
         </Button>
       ),
       width: '150px',
@@ -124,15 +122,14 @@ const OfferRecieved = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <Col span={24} style={{ textAlign: "center" }}>
-        <Title level={3} style={{ color: "#001529" }}>
-          Your Requested IPPs
+      <Col span={24} style={{ textAlign: 'center' }}>
+        <Title level={3} style={{ color: '#001529' }}>
+          Offer received from IPPs
         </Title>
       </Col>
 
-      {/* Search and Filter in the same row */}
       <Row gutter={16} style={{ marginBottom: '20px', justifyContent: 'center' }}>
-      <Col style={{marginRight:'40%'}}>
+        <Col style={{ marginRight: '40%' }}>
           <Input
             placeholder="Search"
             value={searchText}
@@ -152,40 +149,37 @@ const OfferRecieved = () => {
             <Option value="Rejected">Rejected</Option>
           </Select>
         </Col>
-       
       </Row>
 
-      <Table
-        dataSource={filteredData} // Use filtered data for the table
-        columns={columns} // Columns definition
-        pagination={false} // Disable pagination if not needed
-        style={{
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Add shadow to the table
-          width: '80%', // Reduce the table width
-          margin: '0 auto', // Center the table horizontally
-        }}
-      />
+      {error ? (
+        <div style={{ color: 'red', textAlign: 'center' }}>{error}</div>
+      ) : ippData.length === 0 ? (
+        <div style={{ textAlign: 'center' }}>No Data Found</div>
+      ) : (
+        <Table
+          dataSource={filteredData}
+          columns={columns}
+          pagination={false}
+          style={{
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            width: '80%',
+            margin: '0 auto',
+          }}
+        />
+      )}
 
-      {/* Modal to display status and additional information */}
-      <Modal
-        title="IPP Details"
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        footer={null} // No footer buttons, you can add if needed
-      >
-        {modalContent && (
-          <div>
-            <p><strong>IPP ID:</strong> {modalContent.ipp}</p>
-            <p><strong>State:</strong> {modalContent.states}</p>
-            <p><strong>Capacity:</strong> {modalContent.capacity}</p>
-            <p><strong>Replacement:</strong> {modalContent.replacement}</p>
-            <p><strong>Per Unit Cost:</strong> ₹{modalContent.perUnitCost}</p>
-            <p><strong>Status:</strong> {modalContent.status}</p>
-          </div>
-        )}
-      </Modal>
+      {/* Render TermsDetailModal */}
+      {modalContent && (
+        <TermsDetailModal
+          visible={isModalVisible} // Updated prop
+          data={modalContent}
+          onCancel={handleCloseModal} // Updated prop
+          type="generator"
+          selectedDemandId={modalContent.requirement[0].rq_id}
+        />
+      )}
     </div>
   );
 };
 
-export default OfferRecieved;
+export default OfferRecievedFromCons;
