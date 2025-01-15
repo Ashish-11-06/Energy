@@ -240,6 +240,31 @@ const chartData = {
     },
   ],
 };
+
+const lineChartData = {
+  labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
+  datasets: [
+    {
+      label: "Consumption (MWh)",
+      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
+      borderColor: "#4CAF50",
+      fill: false,
+    },
+    {
+      label: "Peak Consumption (MWh)",
+      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.peakConsumption) : [], // Safely check if it's an array
+      borderColor: "#FF5733",
+      fill: false,
+    },
+    {
+      label: "Off-Peak Consumption (MWh)",
+      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.offPeakConsumption) : [], // Safely check if it's an array
+      borderColor: "#337AFF",
+      fill: false,
+    },
+  ],
+};
+
 useEffect(() => {
   //console.log(consumptionPatterns, "consumptionPatterns");
 }, [consumptionPatterns]);
@@ -259,128 +284,80 @@ const staticData = [
   { month: "Dec", consumption: 220, peak: 160, offPeak: 140 },
 ];
 
-// const staticChartData = {
-//   labels: staticData.map((data) => data.month),
+// const pieChartData = {
+//   labels: ["Consumption", "Peak Consumption", "Off-Peak Consumption"],
 //   datasets: [
 //     {
-//       label: "Consumption (MWh)",
-//       data: staticData.map((data) => data.consumption),
-//       backgroundColor: "#4CAF50",
-//       barThickness: 10, // Set bar thickness
-//     },
-//     {
-//       label: "Peak Consumption (MWh)",
-//       data: staticData.map((data) => data.peak),
-//       backgroundColor: "#FF5733",
-//       barThickness: 10, // Set bar thickness
-//     },
-//     {
-//       label: "Off-Peak Consumption (MWh)",
-//       data: staticData.map((data) => data.offPeak),
-//       backgroundColor: "#337AFF",
-//       barThickness: 10, // Set bar thickness
+//       data: [
+//         staticData.reduce((acc, data) => acc + data.consumption, 0),
+//         staticData.reduce((acc, data) => acc + data.peak, 0),
+//         staticData.reduce((acc, data) => acc + data.offPeak, 0),
+//       ],
+//       backgroundColor: ["#4CAF50", "#FF5733", "#337AFF"],
 //     },
 //   ],
 // };
 
-const lineChartData = {
-  labels: staticData.map((data) => data.month),
-  datasets: [
-    {
-      label: "Consumption (MWh)",
-      data: staticData.map((data) => data.consumption),
-      borderColor: "#4CAF50",
-      fill: false,
-    },
-    {
-      label: "Peak Consumption (MWh)",
-      data: staticData.map((data) => data.peak),
-      borderColor: "#FF5733",
-      fill: false,
-    },
-    {
-      label: "Off-Peak Consumption (MWh)",
-      data: staticData.map((data) => data.offPeak),
-      borderColor: "#337AFF",
-      fill: false,
-    },
-  ],
-};
+// const bubbleChartData = {
+//   datasets: [
+//     {
+//       label: "Consumption",
+//       data: staticData.map((data, index) => ({
+//         x: index + 1,
+//         y: data.consumption,
+//         r: data.consumption / 10,
+//       })),
+//       backgroundColor: "#4CAF50",
+//     },
+//     {
+//       label: "Peak Consumption",
+//       data: staticData.map((data, index) => ({
+//         x: index + 1,
+//         y: data.peak,
+//         r: data.peak / 10,
+//       })),
+//       backgroundColor: "#FF5733",
+//     },
+//     {
+//       label: "Off-Peak Consumption",
+//       data: staticData.map((data, index) => ({
+//         x: index + 1,
+//         y: data.offPeak,
+//         r: data.offPeak / 10,
+//       })),
+//       backgroundColor: "#337AFF",
+//     },
+//   ],
+// };
 
-const pieChartData = {
-  labels: ["Consumption", "Peak Consumption", "Off-Peak Consumption"],
-  datasets: [
-    {
-      data: [
-        staticData.reduce((acc, data) => acc + data.consumption, 0),
-        staticData.reduce((acc, data) => acc + data.peak, 0),
-        staticData.reduce((acc, data) => acc + data.offPeak, 0),
-      ],
-      backgroundColor: ["#4CAF50", "#FF5733", "#337AFF"],
-    },
-  ],
-};
-
-const bubbleChartData = {
-  datasets: [
-    {
-      label: "Consumption",
-      data: staticData.map((data, index) => ({
-        x: index + 1,
-        y: data.consumption,
-        r: data.consumption / 10,
-      })),
-      backgroundColor: "#4CAF50",
-    },
-    {
-      label: "Peak Consumption",
-      data: staticData.map((data, index) => ({
-        x: index + 1,
-        y: data.peak,
-        r: data.peak / 10,
-      })),
-      backgroundColor: "#FF5733",
-    },
-    {
-      label: "Off-Peak Consumption",
-      data: staticData.map((data, index) => ({
-        x: index + 1,
-        y: data.offPeak,
-        r: data.offPeak / 10,
-      })),
-      backgroundColor: "#337AFF",
-    },
-  ],
-};
-
-const scatterChartData = {
-  datasets: [
-    {
-      label: "Consumption",
-      data: staticData.map((data, index) => ({
-        x: index + 1,
-        y: data.consumption,
-      })),
-      backgroundColor: "#4CAF50",
-    },
-    {
-      label: "Peak Consumption",
-      data: staticData.map((data, index) => ({
-        x: index + 1,
-        y: data.peak,
-      })),
-      backgroundColor: "#FF5733",
-    },
-    {
-      label: "Off-Peak Consumption",
-      data: staticData.map((data, index) => ({
-        x: index + 1,
-        y: data.offPeak,
-      })),
-      backgroundColor: "#337AFF",
-    },
-  ],
-};
+// const scatterChartData = {
+//   datasets: [
+//     {
+//       label: "Consumption",
+//       data: staticData.map((data, index) => ({
+//         x: index + 1,
+//         y: data.consumption,
+//       })),
+//       backgroundColor: "#4CAF50",
+//     },
+//     {
+//       label: "Peak Consumption",
+//       data: staticData.map((data, index) => ({
+//         x: index + 1,
+//         y: data.peak,
+//       })),
+//       backgroundColor: "#FF5733",
+//     },
+//     {
+//       label: "Off-Peak Consumption",
+//       data: staticData.map((data, index) => ({
+//         x: index + 1,
+//         y: data.offPeak,
+//       })),
+//       backgroundColor: "#337AFF",
+//     },
+//   ],
+// };
 
 const chartOptions = {
   responsive: true,
@@ -395,8 +372,43 @@ const chartOptions = {
           <Title level={4} style={{ color: "#001529" }}>
             Consumer's Consumption Pattern
           </Title>
+        </Col>
+
+        <Col span={24} style={{ marginBottom: "20px" }}>
+          <div
+            style={{
+              position: "relative",
+              width: "80%",
+              height: "300px",
+              margin: "0 auto",
+            }}
+          >
+            <Bar data={chartData} options={chartOptions} />
+          </div>
         </Col> */}
-{/* 
+
+        {/* Static Data Line Chart */}
+        <Col span={24} style={{ textAlign: "center" }}>
+          <Title level={4} style={{ color: "#001529" }}>
+            Consumer's Consumption Pattern (Line Chart)
+          </Title>
+        </Col>
+
+        <Col span={24} style={{ marginBottom: "20px" }}>
+          <div
+            style={{
+              position: "relative",
+              width: "80%",
+              height: "300px",
+              margin: "0 auto",
+            }}
+          >
+            <Line data={lineChartData} options={chartOptions} />
+          </div>
+        </Col>
+
+        {/* Combination Table */}
+        {/* <Col span={24}></Col>
         <Col span={24} style={{ marginBottom: "20px" }}>
           <div
             style={{
@@ -413,7 +425,7 @@ const chartOptions = {
       
 
         {/* Static Data Line Chart */}
-        <Col span={24} style={{ textAlign: "center" }}>
+        {/* <Col span={24} style={{ textAlign: "center" }}>
           <Title level={4} style={{ color: "#001529" }}>
             Static Data Line Chart
           </Title>
@@ -430,7 +442,7 @@ const chartOptions = {
           >
             <Line data={lineChartData} options={chartOptions} />
           </div>
-        </Col>
+        </Col> */}
 
 
         {/* Combination Table */}
