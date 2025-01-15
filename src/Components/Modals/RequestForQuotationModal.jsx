@@ -142,6 +142,17 @@ const RequestForQuotationModal = ({
           </Col>
           <Col span={12}>
             <Typography.Paragraph>
+              <strong>Offer Tariff:</strong>
+              <InputNumber
+                min={1}
+                value={contractedEnergy}
+                onChange={(value) => setContractedEnergy(value)}
+                style={{ width: "100%" }}
+              />
+            </Typography.Paragraph>
+          </Col>
+          <Col span={12}>
+            <Typography.Paragraph>
               <strong>Minimum Supply Obligation (million units):</strong>
               <InputNumber
                 min={1}
