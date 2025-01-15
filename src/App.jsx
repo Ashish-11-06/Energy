@@ -40,6 +40,7 @@ import OptimizeCombination from './Pages/Generator/OptimizeCombination';
 import NotificationGenerator from './Pages/Generator/NotificationGenerator';
 import CombinationPattern from './Pages/Generator/CombinationPattern';
 import TransactionWindow from './Pages/Consumer/TransactionWindow';
+import TransactionMainPage from './Pages/Consumer/TransactionMainPage';
 
 
 function App() {
@@ -77,7 +78,9 @@ function App() {
                   <Route path="requested-ipp" element={<RequestedIPP />} />
                   <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
                   <Route path="notification" element={<Notification />} />
-                  <Route path='transaction-window' element={<TransactionWindow/>}/>
+                  <Route path="transaction-window/:transactionId" element={<TransactionWindow />} />
+                  <Route path="transaction-page" element={<TransactionMainPage />} />
+
                 </Routes>
               </>
             }
