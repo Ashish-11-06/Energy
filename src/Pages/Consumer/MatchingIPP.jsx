@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Spin, Alert, Row, Button } from "antd";
+import { Table, Spin, Alert, Row, Button, Radio } from "antd";
 import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSlice";
 
 const MatchingIPP = () => {
@@ -25,6 +25,12 @@ const MatchingIPP = () => {
     setSelectedRow(record); // Set selected row when a row is clicked
   };
 
+  const handleRadioChange = (e, record) => {
+    if (e.target.checked) {
+      setSelectedRow(record);
+    }
+  };
+
   const handleContinue = () => {
     if (selectedRow) {
       const requirementId = location.state?.selectedRequirement?.id;
@@ -33,6 +39,16 @@ const MatchingIPP = () => {
   };
 
   const columns = [
+    {
+      title: "Select",
+      key: "select",
+      render: (text, record) => (
+        <Radio
+          checked={selectedRow?.id === record.id}
+          onChange={(e) => handleRadioChange(e, record)}
+        />
+      ),
+    },
     {
       title: "IPP",
       dataIndex: "user__username",
@@ -52,7 +68,14 @@ const MatchingIPP = () => {
 
   if (status === "loading") {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <Spin size="large" tip="Loading IPP details..." />
       </div>
     );
@@ -67,7 +90,14 @@ const MatchingIPP = () => {
   }
 
   return (
-    <main style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px" }}>
+    <main
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "20px",
+      }}
+    >
       <Row style={{ width: "100%" }}>
         <h2>Matching IPP Details</h2>
         <Table
@@ -79,15 +109,22 @@ const MatchingIPP = () => {
             onClick: () => handleRowClick(record), // Handle row click to set selected row
           })}
           locale={{
-            emptyText: "No Matching IPPs found", 
+            emptyText: "No Matching IPPs found",
           }}
           style={{ marginTop: "5%", width: "60%" }}
         />
       </Row>
-      <Row style={{ width: "100%", marginTop: "20px", justifyContent: "center" }}>
+      <Row
+        style={{
+          width: "100%",
+          marginTop: "20px",
+          justifyContent: "center",
+        }}
+      >
         <Button
           type="primary"
           onClick={handleContinue}
+          disabled={!selectedRow} // Disable button until a row is selected
           style={{
             pointerEvents: selectedRow ? "auto" : "none",
             opacity: selectedRow ? 1 : 0.5,

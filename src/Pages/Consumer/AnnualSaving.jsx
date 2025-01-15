@@ -53,6 +53,13 @@ const AnnualSvg = () => {
   const annualSaving = annualSavingResponse ? annualSavingResponse.annual_savings : null;
   const reReplacement = annualSavingResponse ? annualSavingResponse.re_replacement : null;
 
+console.log('RE replacement', reReplacement);
+
+
+  const handleContinue = () => {
+    navigate("/consumer/energy-consumption-table", { state: { requirementId, reReplacement } });
+  };
+
   return (
     <main
       style={{
@@ -112,7 +119,7 @@ const AnnualSvg = () => {
           fontSize: "16px",
           padding: "0 30px",
         }}
-        onClick={() => navigate("/consumer/energy-consumption-table", { state: { requirementId } })}
+        onClick={handleContinue}
       >
         Continue
       </Button>

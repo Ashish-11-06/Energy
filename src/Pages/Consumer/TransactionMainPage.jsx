@@ -15,10 +15,20 @@ const TransactionMainPage = () => {
 
   const columns = [
     {
+      title: 'Sr No',
+      dataIndex: 'key',
+    },
+    {
       title: 'Transaction',
       dataIndex: 'name',
       key: 'name',
       render: (text) => <span style={{ fontWeight: 'bold' }}>{text}</span>,
+    },
+    {
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+      render: () => <span>2021-09-30</span>,
     },
     {
       title: 'Action',

@@ -23,6 +23,8 @@ const RequestedIPP = () => {
         const response = await dispatch(requestedIPPs(user));
         if (response?.payload?.length > 0) {
           setIppData(response.payload);
+         
+          
         } else {
           setIppData([]);
           message.info('No data found');
@@ -35,6 +37,22 @@ const RequestedIPP = () => {
 
     fetchIPPData();
   }, []);
+
+if (ippData.length > 0) {
+  ippData.forEach(({ contracted_energy, consumer_status, id }) => {
+    console.log(`IPP ID: ${id}, Contracted Energy: ${contracted_energy}, Status: ${consumer_status}`);
+  });
+}
+
+if (ippData.length > 0) {
+  ippData.forEach(({term_of_ppa, lock_in_period, commencement_of_supply,  contracted_energy, minimum_supply_obligation, payment_security_day, payment_security_type, consumer_status, id, }) => {
+    console.log(`IPP ID: ${id}, Contracted Energy: ${contracted_energy}, Status: ${consumer_status}`);
+  });
+}
+
+console.log('term of ipp', ippData[0]?.term_of_ppa);
+console.log('lock in period', ippData[0]?.lock_in_period);
+
 
   const showModal = (record) => {
     setModalContent(record);
@@ -84,6 +102,12 @@ const RequestedIPP = () => {
       key: 'industry',
       render: (text) => text[0]?.rq_industry,
       width: '150px',
+    },
+    {
+      title: 'Site Name',
+      dataIndex: 'site',
+      key: 'site',
+      width: '100px',
     },
     {
       title: 'Contracted Demand',
@@ -173,6 +197,30 @@ const RequestedIPP = () => {
             <p><strong>Contracted Demand:</strong> {modalContent.requirement[0].rq_contracted_demand}</p>
             <p><strong>Tariff Category:</strong> {modalContent.requirement[0].rq_tariff_category}</p>
             <p><strong>Status:</strong> {modalContent.consumer_status}</p>
+         <Row>
+          <Col span={12}>
+                <p><strong>Term of PPA (years):</strong>  {ippData[0]?.term_of_ppa} </p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Lock-in Period (years): </strong>{ippData[0]?.lock_in_period} </p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Commencement of Supply: </strong>{ippData[0]?.commencement_of_supply}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Contracted Energy (million units): </strong>{ippData[0]?.contracted_energy} </p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Minimum Supply Obligation (million units):</strong> {ippData[0]?.minimum_supply_obligation}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Payment Security (days): </strong> {ippData[0]?.payment_security_day} </p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Payment Security Type:</strong> {ippData[0]?.payment_security_type} </p>
+              </Col>
+          </Row> 
+         
           </div>
         )}
       </Modal>
