@@ -211,51 +211,42 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             </Form.Item>
           </Col>
 
-<Row>
-          <Col span={12}>
-            <Form.Item
-              label={renderLabelWithTooltip(
-                "Name of Site",
-                "Name of Site where the procurement of services or goods occurred."
-              )}
-              name="siteName"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter the name of site!",
-                },
-              ]}
-            >
-              <Input
-                type="text"
-                placeholder="Enter name of site"
-              />
-            </Form.Item>
-          </Col>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                label={renderLabelWithTooltip(
+                  "Name of Site",
+                  "If you have more than one site in the same state, enter the site name here (optional)."
+                )}
+                name="siteName"
+              >
+                <Input type="text" placeholder="Enter name of site" />
+              </Form.Item>
+            </Col>
 
-          <Col span={12}>
-            <Form.Item
-              label={renderLabelWithTooltip(
-                "Procurement Date",
-                "Select the date when the procurement of services or goods occurred (expected Date)."
-              )}
-              name="procurement"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select a procurement date!",
-                },
-              ]}
-            >
-              <DatePicker
-                style={{ width: "100%" }}
-                disabledDate={(current) => {
-                  // Disable today and all past dates
-                  return current && current <= new Date();
-                }}
-              />
-            </Form.Item>
-          </Col>
+            <Col span={12}>
+              <Form.Item
+                label={renderLabelWithTooltip(
+                  "Procurement Date",
+                  "Select the date when the procurement of services or goods occurred (expected Date)."
+                )}
+                name="procurement"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a procurement date!",
+                  },
+                ]}
+              >
+                <DatePicker
+                  style={{ width: "100%" }}
+                  disabledDate={(current) => {
+                    // Disable today and all past dates
+                    return current && current <= new Date();
+                  }}
+                />
+              </Form.Item>
+            </Col>
           </Row>
         </Row>
 
