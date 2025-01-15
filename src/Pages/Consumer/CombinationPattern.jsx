@@ -1,28 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Table, Typography, Row, Col, Spin, message } from "antd";
+import { Table, Typography, Row, Col, Spin, message, Progress, Slider, Button } from "antd";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
-import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchOptimizedCombinations } from "../../Redux/Slices/Generator/optimizeCapacitySlice";
 import { fetchConsumptionPattern } from "../../Redux/Slices/Generator/ConsumptionPatternSlice";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
+import IPPModal from "./Modal/IPPModal";
+import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
 
 const { Title, Text } = Typography;
 
 const CombinationPattern = () => {
   const [isTableLoading, setIsTableLoading] = useState(true);
+  const [isIPPModalVisible, setIsIPPModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [fetchingCombinations, setFetchingCombinations] = useState(false);
-  // const location = useLocation();
+  const [progress, setProgress] = useState(0);
   const { state } = useLocation();
+  const navigate = useNavigate();
 
   const selectedDemandId = state?.requirementId;
+  const reReplacement = state?.reReplacement;
+  const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 
-  console.log(selectedDemandId, 'selectedDemandId');
+  //console.log(selectedDemandId, 'selectedDemandId');
 
   const dispatch = useDispatch();
 
@@ -42,14 +47,17 @@ const CombinationPattern = () => {
     (state) => state.optimizedCapacity.status
   );
 
-  console.log(consumptionPatterns, consumptionPatternStatus, 'consumptionPatterns');
+  //console.log(consumptionPatterns, consumptionPatternStatus, 'consumptionPatterns' );
 
-  console.log(optimizedCombinationsStatus, optimizedCombinations, 'adfadasfdas');
+ 
+  
+
+  //console.log(optimizedCombinationsStatus, optimizedCombinations, 'adfadasfdas');
 
   useEffect(() => {
     const fetchPatterns = async () => {
       try {
-        console.log(consumptionPatterns, consumptionPatternStatus, 'consumptionPatterns');
+        //console.log(consumptionPatterns, consumptionPatternStatus, 'consumptionPatterns');
         if (!consumptionPatterns.length && consumptionPatternStatus === "idle" || consumptionPatternStatus === "failed") {
           console.log("Fetching consumption patterns");
           await dispatch(fetchConsumptionPattern(selectedDemandId));
@@ -63,7 +71,7 @@ const CombinationPattern = () => {
       try {
         setIsTableLoading(true);
         setFetchingCombinations(true);
-        console.log(optimizedCombinationsStatus, optimizedCombinations, 'adfadasfdas');
+        //console.log(optimizedCombinationsStatus, optimizedCombinations, 'adfadasfdas');
         // Use combinations from the store if available
         if (optimizedCombinationsStatus === "succeeded" && optimizedCombinations) {
           formatAndSetCombinations(optimizedCombinations);
@@ -90,7 +98,7 @@ const CombinationPattern = () => {
       }
     };
 
-    const formatAndSetCombinations = (combinations) => {
+    const formatAndSetCombinations = (combinations, reReplacementValue) => {
       if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
         setDataSource([]);
         return;
@@ -112,24 +120,72 @@ const CombinationPattern = () => {
         ).toFixed(2)} MW`,
         perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
         cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
+        reReplacement: reReplacementValue || 65, // Use the updated reReplacement value or default to 65
       }));
     
       setDataSource(formattedCombinations);
     };
     
-     
-
     fetchPatterns();
     loadCombinations();
-  }, []);
+  }, [dispatch, selectedDemandId, reReplacement]);
+
+  useEffect(() => {
+    if (isTableLoading) {
+      const interval = setInterval(() => {
+        setProgress((prevProgress) => {
+          if (prevProgress >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prevProgress + 2;
+        });
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [isTableLoading]);
 
   const handleRowClick = (record) => {
     setSelectedRow(record);
+    setIsIPPModalVisible(true);
+  };
+
+  const handleIPPCancel = () => {
+    setIsIPPModalVisible(false);
+  };
+
+  const handleRequestForQuotation = () => {
+    setIsIPPModalVisible(false);
     setIsModalVisible(true);
   };
 
   const handleQuotationModalCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const handleSliderChange = (value) => {
+    setSliderValue(value);
+  };
+
+  const handleOptimizeClick = async () => {
+    try {
+      setIsTableLoading(true);
+      setFetchingCombinations(true);
+      const modalData = {
+        requirement_id: selectedDemandId,
+        optimize_capacity_user: user.user_category,
+        reReplacement: sliderValue,
+      };
+      const combi = await dispatch(fetchOptimizedCombinations(modalData));
+      const combinations = combi.payload;
+      formatAndSetCombinations(combinations, sliderValue);
+    } catch (error) {
+      message.error("Failed to fetch combinations.");
+      console.log(error);
+    } finally {
+      setFetchingCombinations(false);
+      setIsTableLoading(false);
+    }
   };
 
   const columns = [
@@ -158,6 +214,11 @@ const CombinationPattern = () => {
       ),
     },
     {
+      title: "RE Replacement",
+      dataIndex: "reReplacement",
+      key: "reReplacement",
+    },
+    {
       title: "Total Capacity",
       dataIndex: "totalCapacity",
       key: "totalCapacity",
@@ -173,10 +234,14 @@ const CombinationPattern = () => {
       key: "cod",
       render: (text) => dayjs(text).format('DD-MM-YYYY'),
     },
+    // {
+    //   title: "Status",
+    //   dataIndex: "status",
+    //   key: "status",
+    // },
   ];
 
   // Chart data for consumption patterns
- // Chart data for consumption patterns
 const chartData = {
   labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
   datasets: [
@@ -188,10 +253,8 @@ const chartData = {
   ],
 };
 useEffect(() => {
-  console.log(consumptionPatterns, "consumptionPatterns");
+  //console.log(consumptionPatterns, "consumptionPatterns");
 }, [consumptionPatterns]);
-
-
 
   const chartOptions = {
     responsive: true,
@@ -222,68 +285,90 @@ useEffect(() => {
         </Col>
 
         {/* Combination Table */}
-        {/* Combination Table */}
-<Col span={24}>
-  <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-    Optimized Combinations
-  </Title>
-  {isTableLoading ? (
-    <>
-      <div style={{ textAlign: "center", padding: "10px", width: "100%" }}>
-        <Spin size="large" />
-      </div>
-      <div
-        style={{
-          padding: "20px",
-          fontSize: "18px",
-          fontWeight: "bold",
-          backgroundColor: "#f0f0f0",
-          borderRadius: "8px",
-          border: "1px solid #ddd",
-          color: "#333",
-          textAlign: "center",
-        }}
-      >
-        Please wait while we are showing you a best matching IPP...
-      </div>
-    </>
-  ) : dataSource.length > 0 ? (
-    <Table
-      dataSource={dataSource}
-      columns={columns}
-      pagination={false}
-      bordered
-      style={{
-        backgroundColor: "#FFFFFF",
-        border: "1px solid #E6E8F1",
-        overflowX: "auto",
-      }}
-      onRow={(record) => ({
-        onClick: () => handleRowClick(record),
-      })}
-      scroll={{ x: true }}
-    />
-  ) : ( 
-    <div
-      style={{
-        padding: "20px",
-        fontSize: "18px",
-        fontWeight: "bold",
-        backgroundColor: "#f8d7da",
-        borderRadius: "8px",
-        border: "1px solid #f5c6cb",
-        color: "#721c24",
-        textAlign: "center",
-      }}
-    >
-      No optimized combinations available at the moment. Please try again later.
-      
-    </div>
-  )}
-</Col>
+        <Col span={24}>
+          <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
+            Optimized Combinations
+          </Title>
+          <div style={{ marginBottom: "20px" }}>
+            <Slider
+              min={0}
+              max={100}
+              onChange={handleSliderChange}
+              value={sliderValue}
+              tooltipVisible
+            />
+            <Button type="primary" onClick={handleOptimizeClick} style={{ marginLeft: "10px" }}>
+              Optimize
+            </Button>
+          </div>
+          {isTableLoading ? (
+            <>
+              <div style={{ textAlign: "center", padding: "10px", width: "100%" }}>
+                <Spin size="large" />
+              </div>
+              <div
+                style={{
+                  padding: "20px",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  backgroundColor: "#f0f0f0",
+                  borderRadius: "8px",
+                  border: "1px solid #ddd",
+                  color: "#333",
+                  textAlign: "center",
+                }}
+              >
+                <Progress percent={progress} strokeColor="#4CAF50" />
+                Please wait while we are showing you a best matching IPP...
+              </div>
+            </>
+          ) : dataSource.length > 0 ? (
+            <Table
+              dataSource={dataSource}
+              columns={columns}
+              pagination={false}
+              bordered
+              style={{
+                backgroundColor: "#FFFFFF",
+                border: "1px solid #E6E8F1",
+                overflowX: "auto",
+              }}
+              onRow={(record) => ({
+                onClick: () => handleRowClick(record),
+              })}
+              scroll={{ x: true }}
+            />
+          ) : ( 
+            <div
+              style={{
+                padding: "20px",
+                fontSize: "18px",
+                fontWeight: "bold",
+                backgroundColor: "#f8d7da",
+                borderRadius: "8px",
+                border: "1px solid #f5c6cb",
+                color: "#721c24",
+                textAlign: "center",
+              }}
+            >
+              No optimized combinations available at the moment. Please try again later.
+              
+            </div>
+          )}
+        </Col>
 
+        {/* IPP Modal */}
+        {isIPPModalVisible && (
+          <IPPModal
+            visible={isIPPModalVisible}
+            reReplacement={reReplacement}
+            ipp={selectedRow}
+            onClose={handleIPPCancel}
+            onRequestForQuotation={handleRequestForQuotation}
+          />
+        )}
 
-        {/* Modal for Quotation */}
+        {/* Request for Quotation Modal */}
         {isModalVisible && (
           <RequestForQuotationModal
             visible={isModalVisible}
@@ -299,3 +384,4 @@ useEffect(() => {
 };
 
 export default CombinationPattern;
+

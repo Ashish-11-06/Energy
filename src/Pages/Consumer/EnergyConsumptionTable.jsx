@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Typography, Card, Button, Upload, message, Space, InputNumber, Tooltip } from "antd";
-import { UploadOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { Table, Typography, Card, Button, Upload, message, Space, InputNumber, Tooltip, Modal } from "antd";
+import { UploadOutlined, InfoCircleOutlined, DownOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { addConsumption, fetchMonthlyDataById } from "../../Redux/Slices/Consumer/monthlyConsumptionSlice";
 import "../EnergyTable.css";
@@ -9,20 +9,32 @@ import "../EnergyTable.css";
 const { Title } = Typography;
 
 // Function to render a label with a tooltip
-const renderLabelWithTooltip = (label, tooltipText) => (
+const renderLabelWithTooltip = (label, tooltipText, onClick) => (
   <span>
     {label}{" "}
     <Tooltip title={tooltipText}>
       <InfoCircleOutlined style={{ color: "black", marginLeft: "4px" }} />
     </Tooltip>
+    <br />
+    {onClick && (
+      <Button
+        size="small"
+        style={{ marginLeft: "8px" }}
+        onClick={onClick}
+      >
+        <DownOutlined />
+      </Button>
+    )}
   </span>
 );
 
 const EnergyConsumptionTable = () => {
   const location = useLocation();
-  const { requirementId } = location.state || {}; // Destructure state to get `requirementId`
+  const { requirementId, reReplacement } = location.state || {}; // Destructure state to get `requirementId` and `annualSaving`
 
-  console.log(requirementId, "requirementId");
+
+console.log('Re replacement', reReplacement);
+
 
   const [dataSource, setDataSource] = useState(
     Array.from({ length: 12 }, (_, index) => ({
@@ -52,6 +64,8 @@ const EnergyConsumptionTable = () => {
   const monthlyData = useSelector((state) => state.monthlyData?.monthlyData || []);
 
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -117,7 +131,11 @@ const EnergyConsumptionTable = () => {
   };
 
   const handleContinue = () => { 
-    navigate("/consumer/consumption-pattern", { state: { requirementId } });
+    setIsModalVisible(true);
+  };
+
+  const handleSkip = () => {
+    navigate("/consumer/consumption-pattern", { state: { requirementId, reReplacement } });
   };
 
   const handleSave = async () => {
@@ -125,6 +143,8 @@ const EnergyConsumptionTable = () => {
       message.error('All fields are required');
       return;
     }
+
+    setLoading(true);
 
     try {
       const values = dataSource.map(item => ({
@@ -137,15 +157,33 @@ const EnergyConsumptionTable = () => {
       }));
       // Call the API to add the requirement
       console.log(values);
+      
+      
 
       const response = await dispatch(addConsumption(values));
 
+      console.log('resssss',response);
+      
+
       message.success('Monthly data added successfully!');
-      navigate("/consumer/consumption-pattern", { state: { requirementId } });
+      // Show the modal after saving data
      
     } catch (error) {
       message.error('Failed to add monthly data');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleFillBelow = (dataIndex) => {
+    const newData = [...dataSource];
+    const firstValue = newData[0][dataIndex];
+    newData.forEach((item, index) => {
+      if (index > 0) {
+        item[dataIndex] = firstValue;
+      }
+    });
+    setDataSource(newData);
   };
 
   const columns = [
@@ -157,7 +195,8 @@ const EnergyConsumptionTable = () => {
     {
       title: renderLabelWithTooltip(
         "Monthly Consumption (MWh)",
-        "Total energy consumed during the month in megawatt-hours."
+        "Total energy consumed during the month in megawatt-hours.",
+        () => handleFillBelow("monthlyConsumption")
       ),
       dataIndex: "monthlyConsumption",
       key: "monthlyConsumption",
@@ -175,7 +214,8 @@ const EnergyConsumptionTable = () => {
     {
       title: renderLabelWithTooltip(
         "Peak Consumption (MWh)",
-        "Energy consumption during peak hours in megawatt-hours."
+        "Energy consumption during peak hours in megawatt-hours.",
+        () => handleFillBelow("peakConsumption")
       ),
       dataIndex: "peakConsumption",
       key: "peakConsumption",
@@ -193,7 +233,8 @@ const EnergyConsumptionTable = () => {
     {
       title: renderLabelWithTooltip(
         "Off-Peak Consumption (MWh)",
-        "Energy consumption during off-peak hours in megawatt-hours."
+        "Energy consumption during off-peak hours in megawatt-hours.",
+        () => handleFillBelow("offPeakConsumption")
       ),
       dataIndex: "offPeakConsumption",
       key: "offPeakConsumption",
@@ -211,7 +252,8 @@ const EnergyConsumptionTable = () => {
     {
       title: renderLabelWithTooltip(
         "Monthly Bill ($)",
-        "The total cost of energy consumed during the month."
+        "The total cost of energy consumed during the month.",
+        () => handleFillBelow("monthlyBill")
       ),
       dataIndex: "monthlyBill",
       key: "monthlyBill",
@@ -292,7 +334,7 @@ const EnergyConsumptionTable = () => {
           tableLayout="fixed"
         />
 
-        <Space style={{ marginTop: "20px", display: "flex" }}>
+        {/* <Space style={{ marginTop: "20px", display: "flex" }}>
           For more accuracy, you can upload a SCADA_15 min dump energy consumption file.
           <Upload
             beforeUpload={(file) => handleFileUpload(file)}
@@ -300,30 +342,61 @@ const EnergyConsumptionTable = () => {
           >
             <Button icon={<UploadOutlined />} style={{ marginLeft: '10px' }}>Upload</Button>
           </Upload>
-        </Space>
+        </Space> */}
 
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
           <Button
             type="primary"
             onClick={handleSave}
             disabled={!allFieldsFilled}
+            loading={loading}
             style={{ marginRight: "10px" }}
           >
-            Save
+            Save 
           </Button>
           <Button
+            type="primary"
             onClick={handleContinue}
-            style={{
-              background: "green",
-              color: "white",
-              borderColor: "green",
-              marginRight: "10px",
-            }}
+            disabled={!allFieldsFilled}
+            style={{ marginRight: "10px" }}
+          >
+            Continue 
+          </Button>
+
+        </div>
+      </Card>
+
+      <Modal
+        title="Upload SCADA File"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+      >
+        <span> For more accuracy, you can upload a SCADA_15 min dump energy consumption file.</span>
+        <Upload style={{marginLeft:'5%'}}
+          beforeUpload={(file) => {
+            message.success(`${file.name} uploaded successfully`);
+            return false; // Prevent automatic upload
+          }}
+          showUploadList={false}
+        >
+          <Button style={{marginLeft:'5%'}} icon={<UploadOutlined />}>Upload File</Button>
+        </Upload>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
+          <Button
+            onClick={handleSkip}
+            style={{ marginRight: "10px" }}
+          >
+            Skip
+          </Button>
+          <Button
+            type="primary"
+            onClick={handleSkip}
           >
             Continue
           </Button>
         </div>
-      </Card>
+      </Modal>
     </div>
   );
 };
