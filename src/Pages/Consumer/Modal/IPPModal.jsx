@@ -1,14 +1,16 @@
-import React, { useState } from "react"; // 
+import React, { useState } from "react";
 import { Modal, Typography, Row, Col, Button, Card } from "antd";
 import RequestForQuotationModal from "../../../Components/Modals/RequestForQuotationModal";
 
 const { Title, Text } = Typography;
 
-const IPPModal = ({ visible, ipp, onClose }) => {
+const IPPModal = ({ visible,reReplacement, ipp, onClose, onRequestForQuotation }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
-
-  const showQuotationModal = () => setIsQuotationModalVisible(true);
+  const showQuotationModal = () => {
+    setIsQuotationModalVisible(true);
+    onRequestForQuotation();
+  };
   const handleQuotationCancel = () => setIsQuotationModalVisible(false);
 
   return (
@@ -43,12 +45,14 @@ const IPPModal = ({ visible, ipp, onClose }) => {
               </Title>
               <div style={{ borderBottom: "1px solid #E6E8F1", marginBottom: "20px" }} />
               <Text style={{ fontSize: "16px", lineHeight: "1.6" }}>
-                <strong>IPP:</strong> {ipp.ipp} <br />
-                <strong>Index:</strong>  <br />
-                <strong>State:</strong> {ipp.states} <br />
-                <strong>Available Capacity:</strong> {ipp.capacity} <br />
-                <strong>Potential RE Replacement:</strong> {ipp.replacement} <br />
-                <strong>per Unit Cost:</strong> {ipp.perUnitCost} <br />
+                {/* <strong>IPP:</strong> {ipp?.ipp} <br />
+                <strong>Index:</strong> {ipp?.index} <br />
+                <strong>State:</strong> {ipp?.states} <br /> */}
+                <strong>Available Capacity:</strong> {ipp?.capacity} <br />
+                <strong>Potential RE Replacement:</strong>75
+                 {/* {ipp?.replacement} <br /> */}
+                 <br />
+                <strong>per Unit Cost:</strong> {ipp?.perUnitCost} <br />
               </Text>
               <div style={{ borderTop: "1px solid #E6E8F1", margin: "20px 0" }} />
               <Title level={5} style={{ color: "#9A8406", marginBottom: "10px", marginTop: "20px" }}>
@@ -82,7 +86,13 @@ const IPPModal = ({ visible, ipp, onClose }) => {
       </Modal>
 
       {/* Quotation Request Modal */}
-      <RequestForQuotationModal visible={isQuotationModalVisible} ipp={ipp} onCancel={handleQuotationCancel} />
+      <RequestForQuotationModal
+        visible={isQuotationModalVisible}
+        onCancel={handleQuotationCancel}
+        data={ipp}
+        selectedDemandId={ipp?.selectedDemandId}
+        type="generator"
+      />
     </div>
   );
 };
