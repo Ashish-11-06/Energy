@@ -23,7 +23,6 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
     if (values.voltageLevel === "other" && customVoltage) {
       values.voltageLevel = customVoltage; // Replace "Other" with the custom voltage value
     }
-    console.log("Form Values: ", values);
     if (onSubmit) {
       onSubmit(values);
     }
@@ -157,10 +156,10 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
                 placeholder="Select voltage level"
                 onChange={handleVoltageChange}
               >
-                <Select.Option value="11kv">11 kV</Select.Option>
-                <Select.Option value="33kv">33 kV</Select.Option>
-                <Select.Option value="66kv">66 kV</Select.Option>
-                <Select.Option value="110kv">110 kV</Select.Option>
+                <Select.Option value="33">33 kV</Select.Option>
+                <Select.Option value="11">11 kV</Select.Option>
+                <Select.Option value="66">66 kV</Select.Option>
+                <Select.Option value="110">110 kV</Select.Option>
                 <Select.Option value="other">Other</Select.Option>
               </Select>
             </Form.Item>
@@ -212,7 +211,29 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             </Form.Item>
           </Col>
 
-          <Col span={24}>
+<Row>
+          <Col span={12}>
+            <Form.Item
+              label={renderLabelWithTooltip(
+                "Name of Site",
+                "Name of Site where the procurement of services or goods occurred."
+              )}
+              name="siteName"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter the name of site!",
+                },
+              ]}
+            >
+              <Input
+                type="text"
+                placeholder="Enter name of site"
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
             <Form.Item
               label={renderLabelWithTooltip(
                 "Procurement Date",
@@ -235,6 +256,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
               />
             </Form.Item>
           </Col>
+          </Row>
         </Row>
 
         <Form.Item style={{ textAlign: "center" }}>

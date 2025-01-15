@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Table, Button, message, Row, Col, Modal, Tooltip } from 'antd';
 import { useNavigate } from 'react-router-dom';
@@ -85,14 +84,13 @@ const RequirementsPage = () => {
   const handleSubmit = async (values) => {
     try {
       // Call the API to add the requirement
-      // const response = await consumerrequirementApi.addNewRequirement(values);
+      const response = await consumerrequirementApi.addRequirement(values);
       // Dispatch the action to update Redux state
-      dispatch(addNewRequirement(values));
+      dispatch(addNewRequirement(response.data));
       setIsModalVisible(false);
       message.success('Requirement added successfully!');
     } catch (error) {
       message.error('Failed to add requirement');
-      console.log(error);
       setIsInfoModalVisible(false);
     }
   };
