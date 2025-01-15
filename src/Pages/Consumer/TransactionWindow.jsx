@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   Row,
@@ -18,6 +18,8 @@ import {
   sendEvent,
   disconnectWebSocket,
 } from '../../Redux/api/webSocketService.js';
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
@@ -30,6 +32,7 @@ const TransactionWindow = () => {
   const [isNegotiateModalVisible, setIsNegotiateModalVisible] = useState(false);
   const [offerValue, setOfferValue] = useState(null);
   const [sortedIppData, setSortedIppData] = useState([]);
+  const contentRef = useRef();
 
   const navigate = useNavigate();
   // Access user category
@@ -93,6 +96,18 @@ const TransactionWindow = () => {
     navigate('/consumer/transaction-page');
   };
 
+  const handleDownloadTransaction = async () => {
+    const input = contentRef.current;
+    const canvas = await html2canvas(input, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("transaction_details.pdf");
+  };
+
   const handleAccept = (key) => {
     message.success("Offer accepted");
     sendEvent("acceptOffer", { offerId: key });
@@ -149,59 +164,49 @@ const TransactionWindow = () => {
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <Title level={2} style={{ textAlign: "center" }}>
-            Term Sheet Details
-          </Title>
-          <Row gutter={[16, 16]}>
-            <Col span={8}><strong>Term of PPA (years): </strong>{termSheetDetail.ppa}</Col>
-            <Col span={8}><strong>Lock-in Period (years): </strong>{termSheetDetail.period}</Col>
-            <Col span={8}><strong>Commencement of Supply: </strong>{termSheetDetail.commencement}</Col>
-          </Row>
-          <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-            <Col span={8}><strong>Contracted Energy (million units): </strong>{termSheetDetail.energy}</Col>
-            <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{termSheetDetail.supply}</Col>
-            <Col span={8}><strong>Payment Security (days):</strong>{termSheetDetail.payment}</Col>
-          </Row>
-          <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-            <Col span={8}><strong>Payment Security Type:</strong> {termSheetDetail.paymentType}</Col>
-          </Row>
-          <Row justify="center" style={{ marginTop: "24px", marginLeft:'80%'}}>
-            <Countdown title="Time Remaining" value={deadline} />
-          </Row>
-          {/* Conditionally render the "Negotiate Tariff" button for the Generator */}
-          {userCategory === "Generator" && (
-            <Row justify="end" style={{ marginTop: "24px" }}>
-              <Button
-                type="primary"
-                onClick={() => setIsNegotiateModalVisible(true)}
-              >
-                Negotiate Tariff
-              </Button>
+          <div ref={contentRef}>
+            <Title level={2} style={{ textAlign: "center" }}>
+              Term Sheet Details
+            </Title>
+            <Row gutter={[16, 16]}>
+              <Col span={8}><strong>Term of PPA (years): </strong>{termSheetDetail.ppa}</Col>
+              <Col span={8}><strong>Lock-in Period (years): </strong>{termSheetDetail.period}</Col>
+              <Col span={8}><strong>Commencement of Supply: </strong>{termSheetDetail.commencement}</Col>
             </Row>
-          )}
-
-          <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
-          {sortedIppData.map((item) => (
-            <Col span={24} key={item.key} style={{ marginTop: "16px" }}>
-              <Card
-                bordered
-                style={{
-                  width: "100%",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                <Row justify="space-between" align="middle">
-                  <span><strong>IPP {item.ipp}</strong></span>
-                  <span><strong>Offer Tariff:</strong> {item.perUnitCost}</span>
-                  <span><strong>Time:</strong> {item.time}</span>
-                  <Button onClick={() => handleAcceptButton(item.ipp)}>Accept</Button>
-                </Row>
-              </Card>
-            </Col>
-          ))}
+            <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+              <Col span={8}><strong>Contracted Energy (million units): </strong>{termSheetDetail.energy}</Col>
+              <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{termSheetDetail.supply}</Col>
+              <Col span={8}><strong>Payment Security (days):</strong>{termSheetDetail.payment}</Col>
+            </Row>
+            <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+              <Col span={8}><strong>Payment Security Type:</strong> {termSheetDetail.paymentType}</Col>
+            </Row>
+            <Row justify="center" style={{ marginTop: "24px", marginLeft:'80%'}}>
+              <Countdown title="Time Remaining" value={deadline} />
+            </Row>
+            <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
+            {sortedIppData.map((item) => (
+              <Col span={24} key={item.key} style={{ marginTop: "16px" }}>
+                <Card
+                  bordered
+                  style={{
+                    width: "100%",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <Row justify="space-between" align="middle">
+                    <span><strong>IPP {item.ipp}</strong></span>
+                    <span><strong>Offer Tariff:</strong> {item.perUnitCost}</span>
+                    <span><strong>Time:</strong> {item.time}</span>
+                  </Row>
+                </Card>
+              </Col>
+            ))}
+          </div>
           <br /><br />
           <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
+          <Button style={{marginLeft:'80%'}} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
         </Card>
       </Row>
 
