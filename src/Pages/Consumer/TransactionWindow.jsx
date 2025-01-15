@@ -8,7 +8,9 @@ import {
   Modal,
   message,
   InputNumber,
+  Statistic,
 } from "antd";
+import { useParams, useNavigate } from "react-router-dom";
 import ippData from "../../Data/IPPData.js";
 import {
   connectWebSocket,
@@ -18,17 +20,24 @@ import {
 } from '../../Redux/api/webSocketService.js';
 
 const { Title, Text } = Typography;
+const { Countdown } = Statistic;
 
-const TransactionWindow = ({ user_id, tariff_id }) => {
+const TransactionWindow = () => {
+  const { transactionId } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [buttonsDisabled, setButtonsDisabled] = useState({});
   const [isNegotiateModalVisible, setIsNegotiateModalVisible] = useState(false);
   const [offerValue, setOfferValue] = useState(null);
+  const [sortedIppData, setSortedIppData] = useState([]);
 
+  const navigate = useNavigate();
   // Access user category
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
+
+// console.log('transaction key', transactionId);
+
 
   const termSheetDetail = {
     ppa: "20",
@@ -42,7 +51,7 @@ const TransactionWindow = ({ user_id, tariff_id }) => {
 
   useEffect(() => {
     console.log("Connecting to WebSocket...");
-    connectWebSocket(user_id, tariff_id);
+    connectWebSocket(user.id, transactionId);
 
     subscribeToEvent("offerUpdate", (data) => {
       console.log("Offer Update Received:", data);
@@ -58,7 +67,13 @@ const TransactionWindow = ({ user_id, tariff_id }) => {
       console.log("Disconnecting WebSocket...");
       disconnectWebSocket();
     };
-  }, [user_id, tariff_id]);
+  }, [user.id, transactionId]);
+
+  useEffect(() => {
+    // Sort IPP data by ascending value of tariff offer
+    const sortedData = [...ippData].sort((a, b) => a.perUnitCost - b.perUnitCost);
+    setSortedIppData(sortedData);
+  }, []);
 
   const handleView = (record) => {
     setModalContent(record);
@@ -67,6 +82,15 @@ const TransactionWindow = ({ user_id, tariff_id }) => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const handleAcceptButton = (id) => {
+    message.success(`Offer accepted of IPP ${id}`);
+  };
+
+  const handleRejectTransaction = () => {
+    message.error(`Transaction ${transactionId} rejected`);
+    navigate('/consumer/transaction-page');
   };
 
   const handleAccept = (key) => {
@@ -113,6 +137,8 @@ const TransactionWindow = ({ user_id, tariff_id }) => {
     setOfferValue(value);
   };
 
+  const deadline = Date.now() + 3600 * 1000; // 1 hour from now
+
   return (
     <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
       <Row gutter={[16, 16]} justify="center">
@@ -139,6 +165,9 @@ const TransactionWindow = ({ user_id, tariff_id }) => {
           <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
             <Col span={8}><strong>Payment Security Type:</strong> {termSheetDetail.paymentType}</Col>
           </Row>
+          <Row justify="center" style={{ marginTop: "24px", marginLeft:'80%'}}>
+            <Countdown title="Time Remaining" value={deadline} />
+          </Row>
           {/* Conditionally render the "Negotiate Tariff" button for the Generator */}
           {userCategory === "Generator" && (
             <Row justify="end" style={{ marginTop: "24px" }}>
@@ -152,7 +181,7 @@ const TransactionWindow = ({ user_id, tariff_id }) => {
           )}
 
           <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
-          {ippData.map((item) => (
+          {sortedIppData.map((item) => (
             <Col span={24} key={item.key} style={{ marginTop: "16px" }}>
               <Card
                 bordered
@@ -166,19 +195,13 @@ const TransactionWindow = ({ user_id, tariff_id }) => {
                   <span><strong>IPP {item.ipp}</strong></span>
                   <span><strong>Offer Tariff:</strong> {item.perUnitCost}</span>
                   <span><strong>Time:</strong> {item.time}</span>
-                  {/* Conditionally render the "View" button only if the user is not a Generator */}
-                  {userCategory !== "Generator" && (
-                    <Button
-                      type="primary"
-                      onClick={() => handleView(item)}
-                    >
-                      View
-                    </Button>
-                  )}
+                  <Button onClick={() => handleAcceptButton(item.ipp)}>Accept</Button>
                 </Row>
               </Card>
             </Col>
           ))}
+          <br /><br />
+          <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
         </Card>
       </Row>
 
