@@ -18,7 +18,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const steps = [
+  const consumerSteps = [
     { path: '/consumer/requirenment', label: 'Requirements', icon: <UserOutlined /> },
     { path: '/consumer/matching-ipp', label: 'Matching IPP', icon: <HomeOutlined /> },
     { path: '/consumer/annual-saving', label: 'Annual Saving', icon: <FileTextOutlined /> },
@@ -26,6 +26,16 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     { path: '/consumer/energy-consumption-table', label: 'Consumption Table', icon: <BookOutlined /> },
     { path: '/consumer/consumption-pattern', label: 'Consumption Pattern', icon: <WalletOutlined /> },
   ];
+
+  const generatorSteps = [
+    { path: '/generator/portfolio', label: 'Portfolio', icon: <UserOutlined /> },
+    { path: '/generator/matching-consumer', label: 'Matching consumer', icon: <HomeOutlined /> },
+    { path: '/generator/subscription-plan', label: 'Subscription Plan', icon: <BookOutlined /> },
+    { path: '/generator/update-profile-details', label: 'Update Profile Details', icon: <FileTextOutlined /> },
+    { path: '/generator/energy-optimization', label: 'Optimized Combination', icon: <FileTextOutlined /> },
+  ];
+
+  const steps = currentPath.startsWith('/consumer') ? consumerSteps : generatorSteps;
 
   const currentStepIndex = steps.findIndex(step => step.path === currentPath);
 
