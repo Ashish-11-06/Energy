@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Typography, Row, Col, Spin, message, Progress, Slider, Button } from "antd";
-import { Bar } from "react-chartjs-2";
+import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchOptimizedCombinations } from "../../Redux/Slices/Generator/optimizeCapacitySlice";
@@ -27,8 +27,6 @@ const CombinationPattern = () => {
   const reReplacement = state?.reReplacement;
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 
-  //console.log(selectedDemandId, 'selectedDemandId');
-
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem('user')).user;
@@ -47,19 +45,10 @@ const CombinationPattern = () => {
     (state) => state.optimizedCapacity.status
   );
 
-  //console.log(consumptionPatterns, consumptionPatternStatus, 'consumptionPatterns' );
-
- 
-  
-
-  //console.log(optimizedCombinationsStatus, optimizedCombinations, 'adfadasfdas');
-
   useEffect(() => {
     const fetchPatterns = async () => {
       try {
-        //console.log(consumptionPatterns, consumptionPatternStatus, 'consumptionPatterns');
         if (!consumptionPatterns.length && consumptionPatternStatus === "idle" || consumptionPatternStatus === "failed") {
-          console.log("Fetching consumption patterns");
           await dispatch(fetchConsumptionPattern(selectedDemandId));
         }
       } catch (error) {
@@ -71,17 +60,12 @@ const CombinationPattern = () => {
       try {
         setIsTableLoading(true);
         setFetchingCombinations(true);
-        //console.log(optimizedCombinationsStatus, optimizedCombinations, 'adfadasfdas');
-        // Use combinations from the store if available
         if (optimizedCombinationsStatus === "succeeded" && optimizedCombinations) {
           formatAndSetCombinations(optimizedCombinations);
-          console.log("Combinations from store");
         } else {
-          // Fetch from API if not in store
           const modalData = {
             requirement_id: selectedDemandId,
             optimize_capacity_user: user.user_category,
-            // generator_id: user.id,
           };
 
           const combi = await dispatch(fetchOptimizedCombinations(modalData));
@@ -91,7 +75,6 @@ const CombinationPattern = () => {
         }
       } catch (error) {
         message.error("Failed to fetch combinations.");
-        console.log(error);
       } finally {
         setFetchingCombinations(false);
         setIsTableLoading(false);
@@ -181,7 +164,6 @@ const CombinationPattern = () => {
       formatAndSetCombinations(combinations, sliderValue);
     } catch (error) {
       message.error("Failed to fetch combinations.");
-      console.log(error);
     } finally {
       setFetchingCombinations(false);
       setIsTableLoading(false);
@@ -198,6 +180,11 @@ const CombinationPattern = () => {
       title: "Combination",
       dataIndex: "combination",
       key: "combination",
+    },
+    {
+      title: "Connectivity",
+      dataIndex: "connectivity",
+      key: "connectivity",
     },
     {
       title: "Technology",
@@ -224,7 +211,7 @@ const CombinationPattern = () => {
       key: "totalCapacity",
     },
     {
-      title: "Per Unit Cost (MW/₹)",
+      title: "Per Unit Cost (MW/INR)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
     },
@@ -234,11 +221,11 @@ const CombinationPattern = () => {
       key: "cod",
       render: (text) => dayjs(text).format('DD-MM-YYYY'),
     },
-    // {
-    //   title: "Status",
-    //   dataIndex: "status",
-    //   key: "status",
-    // },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+    },
   ];
 
   // Chart data for consumption patterns
@@ -246,9 +233,10 @@ const chartData = {
   labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
   datasets: [
     {
-      label: "Consumption (kWh)",
+      label: "Consumption (MWh)",
       data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
       backgroundColor: "#4CAF50",
+      barThickness: 10, // Set bar thickness
     },
   ],
 };
@@ -256,18 +244,178 @@ useEffect(() => {
   //console.log(consumptionPatterns, "consumptionPatterns");
 }, [consumptionPatterns]);
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-  };
+const staticData = [
+  { month: "Jan", consumption: 200, peak: 50, offPeak: 30 },
+  { month: "Feb", consumption: 120, peak: 100, offPeak: 40 },
+  { month: "Mar", consumption: 130, peak: 240, offPeak: 50 },
+  { month: "April", consumption: 140, peak: 80, offPeak: 60 },
+  { month: "May", consumption: 150, peak: 200, offPeak: 70 },
+  { month: "Jun", consumption: 240, peak: 100, offPeak: 140 },
+  { month: "Jul", consumption: 170, peak: 110, offPeak: 90 },
+  { month: "Aug", consumption: 180, peak: 120, offPeak: 100 },
+  { month: "Sep", consumption: 190, peak: 130, offPeak: 110 },
+  { month: "Oct", consumption: 200, peak: 140, offPeak: 120 },
+  { month: "Nov", consumption: 210, peak: 150, offPeak: 130 },
+  { month: "Dec", consumption: 220, peak: 160, offPeak: 140 },
+];
+
+// const staticChartData = {
+//   labels: staticData.map((data) => data.month),
+//   datasets: [
+//     {
+//       label: "Consumption (MWh)",
+//       data: staticData.map((data) => data.consumption),
+//       backgroundColor: "#4CAF50",
+//       barThickness: 10, // Set bar thickness
+//     },
+//     {
+//       label: "Peak Consumption (MWh)",
+//       data: staticData.map((data) => data.peak),
+//       backgroundColor: "#FF5733",
+//       barThickness: 10, // Set bar thickness
+//     },
+//     {
+//       label: "Off-Peak Consumption (MWh)",
+//       data: staticData.map((data) => data.offPeak),
+//       backgroundColor: "#337AFF",
+//       barThickness: 10, // Set bar thickness
+//     },
+//   ],
+// };
+
+const lineChartData = {
+  labels: staticData.map((data) => data.month),
+  datasets: [
+    {
+      label: "Consumption (MWh)",
+      data: staticData.map((data) => data.consumption),
+      borderColor: "#4CAF50",
+      fill: false,
+    },
+    {
+      label: "Peak Consumption (MWh)",
+      data: staticData.map((data) => data.peak),
+      borderColor: "#FF5733",
+      fill: false,
+    },
+    {
+      label: "Off-Peak Consumption (MWh)",
+      data: staticData.map((data) => data.offPeak),
+      borderColor: "#337AFF",
+      fill: false,
+    },
+  ],
+};
+
+const pieChartData = {
+  labels: ["Consumption", "Peak Consumption", "Off-Peak Consumption"],
+  datasets: [
+    {
+      data: [
+        staticData.reduce((acc, data) => acc + data.consumption, 0),
+        staticData.reduce((acc, data) => acc + data.peak, 0),
+        staticData.reduce((acc, data) => acc + data.offPeak, 0),
+      ],
+      backgroundColor: ["#4CAF50", "#FF5733", "#337AFF"],
+    },
+  ],
+};
+
+const bubbleChartData = {
+  datasets: [
+    {
+      label: "Consumption",
+      data: staticData.map((data, index) => ({
+        x: index + 1,
+        y: data.consumption,
+        r: data.consumption / 10,
+      })),
+      backgroundColor: "#4CAF50",
+    },
+    {
+      label: "Peak Consumption",
+      data: staticData.map((data, index) => ({
+        x: index + 1,
+        y: data.peak,
+        r: data.peak / 10,
+      })),
+      backgroundColor: "#FF5733",
+    },
+    {
+      label: "Off-Peak Consumption",
+      data: staticData.map((data, index) => ({
+        x: index + 1,
+        y: data.offPeak,
+        r: data.offPeak / 10,
+      })),
+      backgroundColor: "#337AFF",
+    },
+  ],
+};
+
+const scatterChartData = {
+  datasets: [
+    {
+      label: "Consumption",
+      data: staticData.map((data, index) => ({
+        x: index + 1,
+        y: data.consumption,
+      })),
+      backgroundColor: "#4CAF50",
+    },
+    {
+      label: "Peak Consumption",
+      data: staticData.map((data, index) => ({
+        x: index + 1,
+        y: data.peak,
+      })),
+      backgroundColor: "#FF5733",
+    },
+    {
+      label: "Off-Peak Consumption",
+      data: staticData.map((data, index) => ({
+        x: index + 1,
+        y: data.offPeak,
+      })),
+      backgroundColor: "#337AFF",
+    },
+  ],
+};
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+};
 
   return (
     <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif" }}>
       <Row justify="center" align="middle" gutter={[16, 8]} style={{ height: "100%" }}>
         {/* Consumption Pattern Chart */}
-        <Col span={24} style={{ textAlign: "center" }}>
+        {/* <Col span={24} style={{ textAlign: "center" }}>
           <Title level={4} style={{ color: "#001529" }}>
             Consumer's Consumption Pattern
+          </Title>
+        </Col> */}
+{/* 
+        <Col span={24} style={{ marginBottom: "20px" }}>
+          <div
+            style={{
+              position: "relative",
+              width: "80%",
+              height: "300px",
+              margin: "0 auto",
+            }}
+          >
+            <Bar data={chartData} options={chartOptions} />
+          </div>
+        </Col> */}
+
+      
+
+        {/* Static Data Line Chart */}
+        <Col span={24} style={{ textAlign: "center" }}>
+          <Title level={4} style={{ color: "#001529" }}>
+            Static Data Line Chart
           </Title>
         </Col>
 
@@ -280,9 +428,10 @@ useEffect(() => {
               margin: "0 auto",
             }}
           >
-            <Bar data={chartData} options={chartOptions} />
+            <Line data={lineChartData} options={chartOptions} />
           </div>
         </Col>
+
 
         {/* Combination Table */}
         <Col span={24}>
