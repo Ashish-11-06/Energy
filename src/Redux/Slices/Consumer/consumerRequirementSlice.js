@@ -1,6 +1,6 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import consumerrequirementApi from '../../api/consumer/consumerRequirenment';
+import consumerrequirementApi from '../../api/consumer/consumerRequirenmentApi';
 
 const initialState = {
     requirements: [],  // Stores the list of requirements
@@ -26,6 +26,8 @@ export const fetchRequirements = createAsyncThunk(
 export const addNewRequirement = createAsyncThunk(
     'consumerRequirement/addRequirement',
     async (requirementData, { rejectWithValue }) => {
+        console.log('req data slice',requirementData);
+        
         try {
             // Make API call to add a new requirement
             const response = await consumerrequirementApi.addRequirement(requirementData);

@@ -22,6 +22,8 @@ const RequirementsPage = () => {
 
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
+    console.log('item',item);
+    
     return item ? JSON.parse(item) : '';
   };
 
@@ -212,3 +214,4 @@ const RequirementsPage = () => {
 };
 
 export default RequirementsPage;
+

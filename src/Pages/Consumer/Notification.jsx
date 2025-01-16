@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Row, Col, Typography, Button } from "antd";
 import ippData from "../../Data/IPPData.js";
+import { fetchNotificationById } from "../../Redux/Slices/Consumer/notificationSlice.js";
 
 const { Title, Text } = Typography;
 
@@ -10,7 +11,7 @@ const Notification = () => {
       <Title level={2} style={{ textAlign: "center", color: "#4B4B4B" }}>
         IPP Details
       </Title>
-      <Text
+      {/* <Text
         style={{
           display: "block",
           textAlign: "center",
@@ -19,8 +20,8 @@ const Notification = () => {
         }}
       >
         This is the notification page visible only from 10 PM to 11 PM IST.
-      </Text>
-      <p
+      </Text> */}
+      {/* <p
         style={{
           textAlign: "center",
           fontSize: "18px",
@@ -29,7 +30,7 @@ const Notification = () => {
         }}
       >
         These are the IPP details:
-      </p>
+      </p> */}
 
       <Row gutter={[16, 16]} justify="center">
         {ippData.map((item) => (

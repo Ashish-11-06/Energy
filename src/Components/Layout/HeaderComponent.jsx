@@ -16,6 +16,8 @@ const { Header } = Layout;
 
 const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const location = useLocation();
+  console.log('location in header', location);
+  
   const currentPath = location.pathname;
 
   const consumerSteps = [

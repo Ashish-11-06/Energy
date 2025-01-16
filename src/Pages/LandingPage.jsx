@@ -13,8 +13,10 @@ const LandingPage = () => {
   const dispatch = useDispatch();
 
   const handleSelectionChange = (e) => {
-    dispatch(setLoginType(e.target.value)); // Dispatch action to update loginType in Redux
-    setSelection(e.target.value); // Update local selection state
+    const selectedType = e.target.value;
+    dispatch(setLoginType(selectedType)); // Dispatch action to update loginType in Redux
+    setSelection(selectedType); // Update local selection state
+    localStorage.setItem('userType', selectedType); // Store the selected type in local storage
   };
 
   const handleButtonClick = () => {

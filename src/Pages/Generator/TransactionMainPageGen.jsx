@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 
-const TransactionMainPage = () => {
+const TransactionMainPageGen = () => {
   const navigate = useNavigate();
 
   const transactions = [
@@ -34,7 +34,7 @@ const TransactionMainPage = () => {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
-        <Button type="primary" onClick={() => navigate(`/consumer/transaction-window/${record.key}`)}>
+        <Button type="primary" onClick={() => navigate(`/generator/transaction-window/${record.key}`)}>
           View
         </Button>
       ),
@@ -77,4 +77,4 @@ const TransactionMainPage = () => {
   );
 };
 
-export default TransactionMainPage;
+export default TransactionMainPageGen;

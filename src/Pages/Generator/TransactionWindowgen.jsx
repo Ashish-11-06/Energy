@@ -24,7 +24,7 @@ import html2canvas from "html2canvas";
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
 
-const TransactionWindow = () => {
+const TransactionWindowGen = () => {
   const { transactionId } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -35,9 +35,14 @@ const TransactionWindow = () => {
   const contentRef = useRef();
 
   const navigate = useNavigate();
-
+  // Access user category
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
+  console.log('user category', userCategory);
+  
+
+// console.log('transaction key', transactionId);
+
 
   const termSheetDetail = {
     ppa: "20",
@@ -75,16 +80,21 @@ const TransactionWindow = () => {
     setSortedIppData(sortedData);
   }, []);
 
-  const handleUser = (record) => {
-    if (userCategory === "consumer") {
-      message.success(`Offer sent to IPP ${record.ipp}`);
-    } else {
-      message.success(`Offer accepted of IPP ${record.ipp}`);
-    }
+  const handleView = (record) => {
+    setModalContent(record);
+    setIsModalVisible(true);
   };
+
+const handleOffer = (key) => {
+    message.success(`Offer sent to IPP ${key}`);
+}
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const handleAcceptButton = (id) => {
+    message.success(`Offer accepted of IPP ${id}`);
   };
 
   const handleRejectTransaction = () => {
@@ -180,7 +190,7 @@ const TransactionWindow = () => {
             <Row justify="center" style={{ marginTop: "24px", marginLeft:'80%'}}>
               <Countdown title="Time Remaining" value={deadline} />
             </Row>
-            <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
+            <div style={{ marginTop: "24px" }}>Offers from Consumers:</div>
             {sortedIppData.map((item) => (
               <Col span={24} key={item.key} style={{ marginTop: "16px" }}>
                 <Card
@@ -192,12 +202,10 @@ const TransactionWindow = () => {
                   }}
                 >
                   <Row justify="space-between" align="middle">
-                    <span><strong>IPP {item.ipp}</strong></span>
+                    <span><strong>Consumer {item.ipp}</strong></span>
                     <span><strong>Offer Tariff:</strong> {item.perUnitCost}</span>
                     <span><strong>Time:</strong> {item.time}</span>
-                    <Button onClick={() => handleUser(item)}>
-                      {userCategory === "consumer" ? "Send Offer" : "Accept"}
-                    </Button>
+                    <Button onClick={() => handleOffer(item.ipp)}>Send Offer</Button>
                   </Row>
                 </Card>
               </Col>
@@ -222,12 +230,12 @@ const TransactionWindow = () => {
             <Text>for offer tariff: {modalContent.perUnitCost}</Text>
             <br /><br />
             {userCategory === "consumer" ? (
-              <Button onClick={() => handleSendOffer(modalContent.key)} disabled={buttonsDisabled[modalContent.key]?.negotiate}>
-                Send Offer
-              </Button>
-            ) : (
               <Button onClick={() => handleAccept(modalContent.key)} disabled={buttonsDisabled[modalContent.key]?.accept}>
                 Accept
+              </Button>
+            ) : (
+              <Button onClick={() => handleSendOffer(modalContent.key)} disabled={buttonsDisabled[modalContent.key]?.negotiate}>
+                Send Offer
               </Button>
             )}
             <Button onClick={() => handleReject(modalContent.key)} style={{ marginLeft: "8px" }} disabled={buttonsDisabled[modalContent.key]?.reject}>
@@ -262,4 +270,5 @@ const TransactionWindow = () => {
   );
 };
 
-export default TransactionWindow;
+export default TransactionWindowGen;
+

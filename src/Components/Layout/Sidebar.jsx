@@ -40,6 +40,7 @@ const consumerMenuItems = [
 const generatorMenuItems = [
   { label: 'Dashboard', key: '/generator/dashboard', icon: <DashboardOutlined /> },
   { label: 'Portfolio', key: '/generator/portfolio', icon: <SolutionOutlined /> },
+  { label: 'Transaction Window', key: '/generator/transaction', icon: <SolutionOutlined /> },
   { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
   { label: 'proposed offers', key: '/generator/requested-ipp-gen', icon: <AppstoreAddOutlined /> },
   { label: 'consumer requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },

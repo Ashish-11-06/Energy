@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import monthlyConsumptionApi from '../../api/consumer/monthlyConsumption';
+import monthlyConsumptionApi from '../../api/consumer/monthlyConsumptionApi';
 
 // Add consumption action
 export const addConsumption = createAsyncThunk(
@@ -24,7 +24,10 @@ export const fetchMonthlyDataById = createAsyncThunk(
     try {
       // Make API call to fetch monthly consumption data
       const response = await monthlyConsumptionApi.getMonthlyConsumption(id);
+      console.log('monthly data in slice ',response.data);
+      
       return response.data;
+
     } catch (error) {
       // Handle errors
       return rejectWithValue(error.response?.data?.error || 'Failed to fetch monthly consumption data');

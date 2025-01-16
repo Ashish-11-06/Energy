@@ -34,13 +34,16 @@ import RequestedIPP from './Pages/Consumer/RequestedIPP';
 import RequestedIPPOfGen from './Pages/Generator/RequestedIPPOfGen';
 import OfferRecieved from './Pages/Consumer/OfferRecievedFromIPP';
 import OfferRecievedFromCons from './Pages/Generator/OfferRecievedFromCons';
-import NavbarWithProgressBar from './Pages/Consumer/NavbarWithProgressBar';
+//import NavbarWithProgressBar from './Pages/Consumer/NavbarWithProgressBar';
 import Notification from './Pages/Consumer/Notification';
 import OptimizeCombination from './Pages/Generator/OptimizeCombination';
 import NotificationGenerator from './Pages/Generator/NotificationGenerator';
 import CombinationPattern from './Pages/Generator/CombinationPattern';
 import TransactionWindow from './Pages/Consumer/TransactionWindow';
 import TransactionMainPage from './Pages/Consumer/TransactionMainPage';
+import TransactionMainPageGen from './Pages/Generator/TransactionMainPageGen';
+import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
+
 
 
 function App() {
@@ -81,6 +84,7 @@ function App() {
                   <Route path="transaction-window/:transactionId" element={<TransactionWindow />} />
                   <Route path="transaction-page" element={<TransactionMainPage />} />
 
+
                 </Routes>
               </>
             }
@@ -109,6 +113,9 @@ function App() {
             <Route path="profile/portfolio" element={<PortfolioGen />} />
             <Route path="combination" element={<OptimizeCombination  />} />
             <Route path="notificationgen" element={<NotificationGenerator  />} />
+            <Route path='transaction' element={<TransactionMainPageGen />}/>
+            <Route path="transaction-window/:transactionId" element={<TransactionWindowGen />} />
+
             
           </Route>
         </Route>
