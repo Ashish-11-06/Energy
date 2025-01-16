@@ -22,7 +22,7 @@ const RequirementsPage = () => {
 
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
-    console.log('item', item);
+    // console.log('item', item);
     return item ? JSON.parse(item) : '';
   };
 
@@ -76,7 +76,7 @@ const RequirementsPage = () => {
     setSelectedRequirement(record); // Store the selected record
     setToLocalStorage('selectedRequirementId', record.id); // Store the selected requirement ID in localStorage
     message.success(`You selected record of state '${record.state}'`);
-    console.log('record', record);
+    // console.log('record', record);
   };
 
   const showModal = () => {
@@ -160,6 +160,7 @@ const RequirementsPage = () => {
         title="Welcome"
         open={isInfoModalVisible}
         onOk={handleInfoModalOk}
+        onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
         okText="Got it"
         footer={[
           <Button key="submit" type="primary" onClick={handleInfoModalOk}>
@@ -168,6 +169,7 @@ const RequirementsPage = () => {
         ]}
       >
         <p>Hi {username},</p>
+       
         <p>Welcome to the EXG. Please follow these steps to proceed:</p>
         <ol>
           <li>Add your requirements by clicking the "Add Requirement +" button.</li>
@@ -187,6 +189,9 @@ const RequirementsPage = () => {
         onRow={(record) => ({
           onClick: () => handleRowSelect(record), // Make entire row clickable
         })}
+        rowClassName={(record) =>
+          selectedRequirement && record.id === selectedRequirement.id ? 'selected-row' : ''
+        }
       />
 
       <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
@@ -196,14 +201,16 @@ const RequirementsPage = () => {
           </Button>
         </Col>
         <Col>
-          <Button
-            type="default"
-            onClick={handleContinue}
-            style={{ width: 160 }}
-            disabled={!selectedRequirement} // Disable "Continue" if no row is selected
-          >
-            Continue
-          </Button>
+          <Tooltip title={!selectedRequirement ? 'Please select a requirement first' : ''}>
+            <Button
+              type="default"
+              onClick={handleContinue}
+              style={{ width: 160 }}
+              disabled={!selectedRequirement} // Disable "Continue" if no row is selected
+            >
+              Continue
+            </Button>
+          </Tooltip>
         </Col>
       </Row>
 
@@ -213,6 +220,22 @@ const RequirementsPage = () => {
         onCancel={handleCancel}
         onSubmit={handleSubmit}
       />
+      {/* CSS Styles */}
+      <style>
+        {`
+          .selected-row{
+            background-color: rgba(102, 152, 0, 0.36) !important;
+            color: white;
+          }
+        `}
+        {`
+          .selected-row: hover{
+            background-color: rgba(102, 152, 0, 0.36) !important;
+            color: white;
+          }
+        `}
+        
+      </style>
     </div>
   );
 };

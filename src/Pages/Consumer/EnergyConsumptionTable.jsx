@@ -1,9 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Typography, Card, Button, Upload, message, Space, InputNumber, Tooltip, Modal } from "antd";
-import { UploadOutlined, InfoCircleOutlined, DownOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Typography,
+  Card,
+  Button,
+  Upload,
+  message,
+  Space,
+  InputNumber,
+  Tooltip,
+  Modal,
+} from "antd";
+import {
+  UploadOutlined,
+  InfoCircleOutlined,
+  DownOutlined,
+} from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addConsumption, fetchMonthlyDataById } from "../../Redux/Slices/Consumer/monthlyConsumptionSlice";
+import { QuestionCircleOutlined } from '@ant-design/icons';
+
+import {
+  addConsumption,
+  fetchMonthlyDataById,
+} from "../../Redux/Slices/Consumer/monthlyConsumptionSlice";
 import "../EnergyTable.css";
 
 const { Title } = Typography;
@@ -17,11 +37,7 @@ const renderLabelWithTooltip = (label, tooltipText, onClick) => (
     </Tooltip>
     <br />
     {onClick && (
-      <Button
-        size="small"
-        style={{ marginLeft: "8px" }}
-        onClick={onClick}
-      >
+      <Button size="small" style={{ marginLeft: "8px" }} onClick={onClick}>
         <DownOutlined />
       </Button>
     )}
@@ -31,10 +47,16 @@ const renderLabelWithTooltip = (label, tooltipText, onClick) => (
 const EnergyConsumptionTable = () => {
   const location = useLocation();
   const { requirementId, reReplacement } = location.state || {}; // Destructure state to get `requirementId` and `annualSaving`
+  const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
 
+  const handleInfoModalOk = () => {
+    setIsInfoModalVisible(false);
+  };
+  const showInfoModal = () => {
+    setIsInfoModalVisible(true);
+  };
 
-console.log('Re replacement', reReplacement);
-
+  console.log("Re replacement", reReplacement);
 
   const [dataSource, setDataSource] = useState(
     Array.from({ length: 12 }, (_, index) => ({
@@ -61,11 +83,15 @@ console.log('Re replacement', reReplacement);
     }))
   );
 
-  const monthlyData = useSelector((state) => state.monthlyData?.monthlyData || []);
+  const monthlyData = useSelector(
+    (state) => state.monthlyData?.monthlyData || []
+  );
 
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fileUploaded, setFileUploaded] = useState(false);
+  const [uploadedFileName, setUploadedFileName] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -99,11 +125,13 @@ console.log('Re replacement', reReplacement);
 
   // Check if all fields are filled
   useEffect(() => {
-    const allFilled = dataSource.every((item) => 
-      (item.monthlyConsumption !== null &&
-      item.peakConsumption !== null &&
-      item.offPeakConsumption !== null &&
-      item.monthlyBill !== null) || item.fileUploaded !== null
+    const allFilled = dataSource.every(
+      (item) =>
+        (item.monthlyConsumption !== null &&
+          item.peakConsumption !== null &&
+          item.offPeakConsumption !== null &&
+          item.monthlyBill !== null) ||
+        item.fileUploaded !== null
     );
     setAllFieldsFilled(allFilled);
   }, [dataSource]);
@@ -113,7 +141,11 @@ console.log('Re replacement', reReplacement);
     const index = newData.findIndex((item) => key === item.key);
     if (index > -1) {
       const item = newData[index];
-      newData.splice(index, 1, { ...item, [dataIndex]: value, fileUploaded: null });
+      newData.splice(index, 1, {
+        ...item,
+        [dataIndex]: value,
+        fileUploaded: null,
+      });
       setDataSource(newData);
     }
   };
@@ -123,53 +155,58 @@ console.log('Re replacement', reReplacement);
     const index = newData.findIndex((item) => key === item.key);
     if (index > -1) {
       const item = newData[index];
-      newData.splice(index, 1, { ...item, fileUploaded: file.name, monthlyConsumption: null, peakConsumption: null, offPeakConsumption: null, monthlyBill: null });
+      newData.splice(index, 1, {
+        ...item,
+        fileUploaded: file.name,
+        monthlyConsumption: null,
+        peakConsumption: null,
+        offPeakConsumption: null,
+        monthlyBill: null,
+      });
       setDataSource(newData);
       message.success(`${file.name} uploaded successfully`);
     }
     return false; // Prevent automatic upload
   };
 
-  const handleContinue = () => { 
+  const handleContinue = () => {
     setIsModalVisible(true);
   };
 
   const handleSkip = () => {
-    navigate("/consumer/consumption-pattern", { state: { requirementId, reReplacement } });
+    navigate("/consumer/consumption-pattern", {
+      state: { requirementId, reReplacement },
+    });
   };
 
   const handleSave = async () => {
     if (!allFieldsFilled) {
-      message.error('All fields are required');
+      message.error("All fields are required");
       return;
     }
 
     setLoading(true);
 
     try {
-      const values = dataSource.map(item => ({
+      const values = dataSource.map((item) => ({
         requirement: requirementId,
         month: item.month,
         monthly_consumption: item.monthlyConsumption,
         peak_consumption: item.peakConsumption,
         off_peak_consumption: item.offPeakConsumption,
-        monthly_bill_amount: item.monthlyBill
+        monthly_bill_amount: item.monthlyBill,
       }));
       // Call the API to add the requirement
       console.log(values);
-      
-      
 
       const response = await dispatch(addConsumption(values));
 
-      console.log('resssss',response);
-      
+      console.log("resssss", response);
 
-      message.success('Monthly data added successfully!');
+      message.success("Monthly data added successfully!");
       // Show the modal after saving data
-     
     } catch (error) {
-      message.error('Failed to add monthly data');
+      message.error("Failed to add monthly data");
     } finally {
       setLoading(false);
     }
@@ -184,6 +221,13 @@ console.log('Re replacement', reReplacement);
       }
     });
     setDataSource(newData);
+  };
+
+  const handleFileUploadModal = (file) => {
+    message.success(`${file.name} uploaded successfully`);
+    setFileUploaded(true);
+    setUploadedFileName(file.name);
+    return false; // Prevent automatic upload
   };
 
   const columns = [
@@ -204,7 +248,9 @@ console.log('Re replacement', reReplacement);
       render: (_, record) => (
         <InputNumber
           value={record.monthlyConsumption}
-          onChange={(value) => handleInputChange(value, record.key, "monthlyConsumption")}
+          onChange={(value) =>
+            handleInputChange(value, record.key, "monthlyConsumption")
+          }
           style={{ width: "100%" }}
           min={0}
           disabled={record.fileUploaded !== null}
@@ -223,7 +269,9 @@ console.log('Re replacement', reReplacement);
       render: (_, record) => (
         <InputNumber
           value={record.peakConsumption}
-          onChange={(value) => handleInputChange(value, record.key, "peakConsumption")}
+          onChange={(value) =>
+            handleInputChange(value, record.key, "peakConsumption")
+          }
           style={{ width: "100%" }}
           min={0}
           disabled={record.fileUploaded !== null}
@@ -242,7 +290,9 @@ console.log('Re replacement', reReplacement);
       render: (_, record) => (
         <InputNumber
           value={record.offPeakConsumption}
-          onChange={(value) => handleInputChange(value, record.key, "offPeakConsumption")}
+          onChange={(value) =>
+            handleInputChange(value, record.key, "offPeakConsumption")
+          }
           style={{ width: "100%" }}
           min={0}
           disabled={record.fileUploaded !== null}
@@ -261,7 +311,9 @@ console.log('Re replacement', reReplacement);
       render: (_, record) => (
         <InputNumber
           value={record.monthlyBill}
-          onChange={(value) => handleInputChange(value, record.key, "monthlyBill")}
+          onChange={(value) =>
+            handleInputChange(value, record.key, "monthlyBill")
+          }
           style={{ width: "100%" }}
           min={0}
           disabled={record.fileUploaded !== null}
@@ -284,7 +336,10 @@ console.log('Re replacement', reReplacement);
                 beforeUpload={(file) => handleFileUpload(file, record.key)}
                 showUploadList={false}
               >
-                <Button icon={<UploadOutlined />} style={{ marginLeft: '60%' }}></Button>
+                <Button
+                  icon={<UploadOutlined />}
+                  style={{ marginLeft: "60%" }}
+                ></Button>
               </Upload>
             </div>
           ) : (
@@ -292,7 +347,10 @@ console.log('Re replacement', reReplacement);
               beforeUpload={(file) => handleFileUpload(file, record.key)}
               showUploadList={false}
             >
-              <Button style={{marginLeft:'70px'}} icon={<UploadOutlined />}></Button>
+              <Button
+                style={{ marginLeft: "70px" }}
+                icon={<UploadOutlined />}
+              ></Button>
             </Upload>
           )}
         </div>
@@ -325,6 +383,14 @@ console.log('Re replacement', reReplacement);
           Energy Consumption Data (12 Months)
         </Title>
 
+        <Tooltip title="Help">
+          <Button
+            shape="circle"
+            icon={<QuestionCircleOutlined />}
+            onClick={showInfoModal}
+            style={{ position: "absolute", top: 120, right: 30 }}
+          />
+        </Tooltip>
         <Table
           dataSource={dataSource}
           columns={mergedColumns}
@@ -344,7 +410,13 @@ console.log('Re replacement', reReplacement);
           </Upload>
         </Space> */}
 
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "20px",
+          }}
+        >
           <Button
             type="primary"
             onClick={handleSave}
@@ -352,7 +424,7 @@ console.log('Re replacement', reReplacement);
             loading={loading}
             style={{ marginRight: "10px" }}
           >
-            Save 
+            Save
           </Button>
           <Button
             type="primary"
@@ -360,9 +432,8 @@ console.log('Re replacement', reReplacement);
             disabled={!allFieldsFilled}
             style={{ marginRight: "10px" }}
           >
-            Continue 
+            Continue
           </Button>
-
         </div>
       </Card>
 
@@ -372,30 +443,71 @@ console.log('Re replacement', reReplacement);
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
-        <span> For more accuracy, you can upload a SCADA_15 min dump energy consumption file.</span>
-        <Upload style={{marginLeft:'5%'}}
-          beforeUpload={(file) => {
-            message.success(`${file.name} uploaded successfully`);
-            return false; // Prevent automatic upload
-          }}
+        <span>
+          {" "}
+          For more accuracy, you can upload a SCADA_15 min dump energy
+          consumption file.
+        </span>
+        <Upload
+          style={{ marginLeft: "5%" }}
+          beforeUpload={handleFileUploadModal}
           showUploadList={false}
         >
-          <Button style={{marginLeft:'5%'}} icon={<UploadOutlined />}>Upload File</Button>
+          <Button style={{ marginLeft: "5%" }} icon={<UploadOutlined />}>
+            Upload File
+          </Button>
         </Upload>
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
-          <Button
-            onClick={handleSkip}
-            style={{ marginRight: "10px" }}
-          >
-            Skip
-          </Button>
-          <Button
-            type="primary"
-            onClick={handleSkip}
-          >
-            Continue
-          </Button>
+        {fileUploaded && (
+          <div style={{ marginTop: "10px" }}>
+            <span>Uploaded File: {uploadedFileName}</span>
+          </div>
+        )}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "20px",
+          }}
+        >
+          {!fileUploaded && (
+            <Button onClick={handleSkip} style={{ marginRight: "10px" }}>
+              Skip
+            </Button>
+          )}
+          {fileUploaded && (
+            <Button type="primary" onClick={handleSkip}>
+              Continue
+            </Button>
+          )}
         </div>
+      </Modal>
+      <Modal
+        title="Welcome"
+        open={isInfoModalVisible}
+        onOk={handleInfoModalOk}
+        onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
+        okText="Got it"
+        footer={[
+          <Button key="submit" type="primary" onClick={handleInfoModalOk}>
+            Got it
+          </Button>,
+        ]}
+      >
+        <p>Hi</p>
+
+        <p>Welcome to the EXG. Please follow these steps to proceed:</p>
+        <ol>
+          <li>
+            Add your requirements by clicking the "Add Requirement +" button.
+          </li>
+          <li>Fill in the details shown in the form.</li>
+          <li>Use the tooltip option for each field for more information.</li>
+          <li>You can add multiple requirements (demands).</li>
+          <li>
+            To continue, select a requirement and click the "Continue" button.
+          </li>
+        </ol>
+        <p>Thank you!</p>
       </Modal>
     </div>
   );

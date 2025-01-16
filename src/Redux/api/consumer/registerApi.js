@@ -1,10 +1,13 @@
-
 import axiosInstance from "../axiosInstance";
 
-const registernApi = {
-  register: () => {
-    return axiosInstance.get(`/accounts/register`); 
+const registerApi = {
+  registerUser: (userData) => {
+    return axiosInstance.post(`/accounts/register`, userData); 
+  },
+
+  verifyOTP: (otp) => {
+    return axiosInstance.post(`/accounts/verify-otp`, otp );
   },
 };
 
-export default registernApi;
+export default registerApi;

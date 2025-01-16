@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FetchAnnualSaving } from "../../Redux/Slices/Consumer/AnnualSavingSlice";
-import { Typography, Card, Space } from "antd";
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Typography, Card, Space,Modal, Tooltip,  } from "antd";
 const { Title, Text } = Typography;
 
 const AnnualSvg = () => {
@@ -17,9 +18,18 @@ const AnnualSvg = () => {
   const location = useLocation();
   const { requirementId } = location.state || {}; // Destructure state to get `requirementId`
 
-  console.log(requirementId, "requirementId");
+ // console.log(requirementId, "requirementId");
 
   // Fetch annual saving data
+    const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
+  
+    const handleInfoModalOk = () => {
+      setIsInfoModalVisible(false);
+    };
+    const showInfoModal = () => {
+      setIsInfoModalVisible(true);
+    };
+
   useEffect(() => {
     const fetchData = async () => {
       const data = {
@@ -53,7 +63,7 @@ const AnnualSvg = () => {
   const annualSaving = annualSavingResponse ? annualSavingResponse.annual_savings : null;
   const reReplacement = annualSavingResponse ? annualSavingResponse.re_replacement : null;
 
-console.log('RE replacement', reReplacement);
+//console.log('RE replacement', reReplacement);
 
 
   const handleContinue = () => {
@@ -80,6 +90,15 @@ console.log('RE replacement', reReplacement);
               <Title level={3} className="text-center">
                 Annual Saving
               </Title>
+
+              <Tooltip title="Help">
+        <Button
+          shape="circle"
+          icon={<QuestionCircleOutlined />}
+          onClick={showInfoModal}
+          style={{ position: 'absolute', top: 120, right: 30 }}
+        />
+      </Tooltip>
 
               <Space direction="vertical" size="large" className="w-100">
                 <Card bordered={false} className="custom-card">
@@ -123,6 +142,32 @@ console.log('RE replacement', reReplacement);
       >
         Continue
       </Button>
+
+      <Modal
+        title="Welcome"
+        open={isInfoModalVisible}
+        onOk={handleInfoModalOk}
+        onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
+        okText="Got it"
+        footer={[
+          <Button key="submit" type="primary" onClick={handleInfoModalOk}>
+            Got it
+          </Button>,
+        ]}
+      >
+        <p>Hi</p>
+       
+        <p>Welcome to the EXG. Please follow these steps to proceed:</p>
+        <ol>
+          <li>Add your requirements by clicking the "Add Requirement +" button.</li>
+          <li>Fill in the details shown in the form.</li>
+          <li>Use the tooltip option for each field for more information.</li>
+          <li>You can add multiple requirements (demands).</li>
+          <li>To continue, select a requirement and click the "Continue" button.</li>
+        </ol>
+        <p>Thank you!</p>
+      </Modal>
+
     </main>
   );
 };
