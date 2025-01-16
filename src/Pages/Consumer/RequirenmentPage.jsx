@@ -22,9 +22,12 @@ const RequirementsPage = () => {
 
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
-    console.log('item',item);
-    
+    console.log('item', item);
     return item ? JSON.parse(item) : '';
+  };
+
+  const setToLocalStorage = (key, value) => {
+    localStorage.setItem(key, JSON.stringify(value));
   };
 
   // Define columns for the table (Remove selection column)
@@ -71,8 +74,9 @@ const RequirementsPage = () => {
   const handleRowSelect = (record) => {
     setSelectedRowKeys([record.key]); // Only allow single selection
     setSelectedRequirement(record); // Store the selected record
-    message.success(`You selected record of state'${record.state}`);
-    console.log('recoed',record);
+    setToLocalStorage('selectedRequirementId', record.id); // Store the selected requirement ID in localStorage
+    message.success(`You selected record of state '${record.state}'`);
+    console.log('record', record);
   };
 
   const showModal = () => {
@@ -118,10 +122,10 @@ const RequirementsPage = () => {
     }
 
     // Show info modal when the page loads for the first time in the session
-    const hasSeenWelcomeModal = localStorage.getItem("hasSeenWelcomeModal");
-    if (hasSeenWelcomeModal === "false") {
+    const hasSeenWelcomeModal = localStorage.getItem('hasSeenWelcomeModal');
+    if (hasSeenWelcomeModal === 'false') {
       setIsInfoModalVisible(true);
-      localStorage.setItem("hasSeenWelcomeModal", "true");
+      localStorage.setItem('hasSeenWelcomeModal', 'true');
     }
 
     // Fetch requirements if not present in the state
@@ -207,11 +211,10 @@ const RequirementsPage = () => {
       <RequirementForm
         isVisible={isModalVisible}
         onCancel={handleCancel}
-        onSubmit={handleSubmit} 
+        onSubmit={handleSubmit}
       />
     </div>
   );
 };
 
 export default RequirementsPage;
-
