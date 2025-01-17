@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, message, Row, Col, Modal, Tooltip } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +17,8 @@ const RequirementsPage = () => {
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [username, setUsername] = useState(''); // State for info modal
   const navigate = useNavigate();
+  const location = useLocation(); // Get location object
+  const newUser = location.state?.new_user; // Get new_user from location state
   const dispatch = useDispatch();
   const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
 
@@ -47,6 +49,11 @@ const RequirementsPage = () => {
       title: 'Industry',
       dataIndex: 'industry',
       key: 'industry',
+    },
+    {
+      title: 'Site Name',
+      dataIndex: 'site',
+      key: 'site',
     },
     {
       title: 'Contracted Demand (MW)',
@@ -89,8 +96,10 @@ const RequirementsPage = () => {
 
   const handleSubmit = async (values) => {
     try {
+      console.log('values',values);
+      
       // Call the API to add the requirement
-      const response = await consumerrequirementApi.addRequirement(values);
+      const response = await consumerrequirementApi.addNewRequirement(values);
       // Dispatch the action to update Redux state
       dispatch(addNewRequirement(response.data));
       setIsModalVisible(false);
@@ -121,11 +130,9 @@ const RequirementsPage = () => {
       setUsername(user.user.company_representative);
     }
 
-    // Show info modal when the page loads for the first time in the session
-    const hasSeenWelcomeModal = localStorage.getItem('hasSeenWelcomeModal');
-    if (hasSeenWelcomeModal === 'false') {
+    // Show info modal based on new_user value
+    if (newUser) {
       setIsInfoModalVisible(true);
-      localStorage.setItem('hasSeenWelcomeModal', 'true');
     }
 
     // Fetch requirements if not present in the state
@@ -133,7 +140,7 @@ const RequirementsPage = () => {
       const id = user.user.id;
       dispatch(fetchRequirements(id));
     }
-  }, [dispatch, requirements.length]);
+  }, [dispatch, requirements.length, newUser]);
 
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);

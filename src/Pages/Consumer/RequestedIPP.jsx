@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Col, Row, Typography, Select, Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
 import { requestedIPPs } from '../../Redux/Slices/Consumer/RequestedIPPSlice';
+import { addStatus } from '../../Redux/Slices/Generator/TermsAndConditionsSlice';
+import TermSheet from '../../Components/Modals/TermSheet';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -13,6 +15,7 @@ const RequestedIPP = () => {
   const [searchText, setSearchText] = useState("");
   const [ippData, setIppData] = useState([]);
   const [error, setError] = useState(null);
+  const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false); // Add this state to control visibility of TermSheet
 
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem('user')).user;
@@ -23,8 +26,6 @@ const RequestedIPP = () => {
         const response = await dispatch(requestedIPPs(user));
         if (response?.payload?.length > 0) {
           setIppData(response.payload);
-         
-          
         } else {
           setIppData([]);
           message.info('No data found');
@@ -37,22 +38,6 @@ const RequestedIPP = () => {
 
     fetchIPPData();
   }, []);
-
-// if (ippData.length > 0) {
-//   ippData.forEach(({ contracted_energy, consumer_status, id }) => {
-//     console.log(`IPP ID: ${id}, Contracted Energy: ${contracted_energy}, Status: ${consumer_status}`);
-//   });
-// }
-
-// if (ippData.length > 0) {
-//   ippData.forEach(({term_of_ppa, lock_in_period, commencement_of_supply,  contracted_energy, minimum_supply_obligation, payment_security_day, payment_security_type, consumer_status, id, }) => {
-//     console.log(`IPP ID: ${id}, Contracted Energy: ${contracted_energy}, Status: ${consumer_status}`);
-//   });
-// }
-
-// console.log('term of ipp', ippData[0]?.term_of_ppa);
-// console.log('lock in period', ippData[0]?.lock_in_period);
-
 
   const showModal = (record) => {
     setModalContent(record);
@@ -71,6 +56,26 @@ const RequestedIPP = () => {
     setSearchText(e.target.value);
   };
 
+  const handleCounterOffer = (modalContent) => {
+    // Implement the function if needed
+    setModalContent(modalContent);
+    setIsQuotationModalVisible(true);
+  };
+
+  const handleStatusUpdate = async (action) => {
+    try {
+      const statusData = {
+        
+        action: action,
+      };
+      await dispatch(addStatus({ user_id: user.id, term_id: modalContent.id, statusData }));
+      message.success(`Status updated to ${action}`);
+      setIsModalVisible(false);
+    } catch (error) {
+      message.error('Failed to update status');
+    }
+  };
+
   const filteredData = ippData.filter((record) => {
     const statusMatch = statusFilter ? record.consumer_status === statusFilter : true;
     const searchMatch =
@@ -84,7 +89,7 @@ const RequestedIPP = () => {
 
   const columns = [
     {
-      title: 'IPP ID',
+      title: 'Requirement ID',
       dataIndex: 'id',
       key: 'id',
       width: '100px',
@@ -197,33 +202,55 @@ const RequestedIPP = () => {
             <p><strong>Contracted Demand:</strong> {modalContent.requirement[0].rq_contracted_demand}</p>
             <p><strong>Tariff Category:</strong> {modalContent.requirement[0].rq_tariff_category}</p>
             <p><strong>Status:</strong> {modalContent.consumer_status}</p>
-         <Row>
-          <Col span={12}>
-                <p><strong>Term of PPA (years):</strong>  {ippData[0]?.term_of_ppa} </p>
+            <Row>
+              <Col span={12}>
+                <p><strong>Term of PPA (years):</strong> {modalContent.term_of_ppa}</p>
               </Col>
               <Col span={12}>
-                <p><strong>Lock-in Period (years): </strong>{ippData[0]?.lock_in_period} </p>
+                <p><strong>Lock-in Period (years):</strong> {modalContent.lock_in_period}</p>
               </Col>
               <Col span={12}>
-                <p><strong>Commencement of Supply: </strong>{ippData[0]?.commencement_of_supply}</p>
+                <p><strong>Commencement of Supply:</strong> {modalContent.commencement_of_supply}</p>
               </Col>
               <Col span={12}>
-                <p><strong>Contracted Energy (million units): </strong>{ippData[0]?.contracted_energy} </p>
+                <p><strong>Contracted Energy (million units):</strong> {modalContent.contracted_energy}</p>
               </Col>
               <Col span={12}>
-                <p><strong>Minimum Supply Obligation (million units):</strong> {ippData[0]?.minimum_supply_obligation}</p>
+                <p><strong>Minimum Supply Obligation (million units):</strong> {modalContent.minimum_supply_obligation}</p>
               </Col>
               <Col span={12}>
-                <p><strong>Payment Security (days): </strong> {ippData[0]?.payment_security_day} </p>
+                <p><strong>Payment Security (days):</strong> {modalContent.payment_security}</p>
               </Col>
               <Col span={12}>
-                <p><strong>Payment Security Type:</strong> {ippData[0]?.payment_security_type} </p>
+                <p><strong>Payment Security Type:</strong> {modalContent.payment_security_type}</p>
               </Col>
-          </Row> 
-         
+            </Row>
+            {console.log('ipp', modalContent)}
+
+            {modalContent?.generator_status !== 'Rejected' && modalContent?.generator_status !== 'Accepted' && (
+              <>
+                {console.log('ippju')}
+                {modalContent?.from_whom === 'Consumer' && modalContent?.count % 2 === 1 && modalContent?.count < 4 && (
+                  <>
+                    <Button onClick={() => handleStatusUpdate('Rejected')}>Reject</Button>
+                    <Button style={{ marginLeft: '10px' }} onClick={() => handleStatusUpdate('Accepted')}>Accept</Button>
+                    <Button style={{ marginLeft: '10px' }} onClick={() => handleCounterOffer(modalContent)}>Counter Offer</Button>
+                  </>
+                )}
+              </>
+            )}
           </div>
         )}
       </Modal>
+      {/* TermSheet component */}
+     
+{modalContent&& ( <TermSheet
+        visible={isQuotationModalVisible}
+        onCancel={() => setIsQuotationModalVisible(false)} // Close the modal
+        data={modalContent} // Pass the modalContent directly to the modal
+      />
+)
+}
     </div>
   );
 };

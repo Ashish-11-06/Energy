@@ -20,11 +20,19 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [isCustomVoltage, setIsCustomVoltage] = useState(false); // Flag to toggle custom voltage input visibility
 
   const handleSubmit = (values) => {
-    if (values.voltageLevel === "other" && customVoltage) {
-      values.voltageLevel = customVoltage; // Replace "Other" with the custom voltage value
-    }
+    const user = JSON.parse(localStorage.getItem('user')).user;
+    const formattedValues = {
+      user: user.id,
+      state: values.state,
+      industry: values.industry,
+      contracted_demand: values.contractedDemand,
+      tariff_category: values.tariffCategory,
+      voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
+      procurement_date: values.procurement.format('YYYY-MM-DD'),
+      site: values.site,
+    };
     if (onSubmit) {
-      onSubmit(values);
+      onSubmit(formattedValues);
     }
     form.resetFields();
     setCustomVoltage(""); // Reset custom voltage field
@@ -212,17 +220,27 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
           </Col>
 
           <Row>
-            <Col span={12}>
-              <Form.Item
-                label={renderLabelWithTooltip(
-                  "Name of Site",
-                  "If you have more than one site in the same state, enter the site name here (optional)."
-                )}
-                name="siteName"
-              >
-                <Input type="text" placeholder="Enter name of site" />
-              </Form.Item>
-            </Col>
+          <Col span={12}>
+            <Form.Item
+              label={renderLabelWithTooltip(
+                "Site name",
+                "Name of the site where the electricity is being consumed."
+              )}
+              name="site"
+              rules={[
+                {
+                 
+                  required: true,
+                  message: "Please enter the Site name!",
+                },
+              ]}
+            >
+              <Input
+                type="text"
+                placeholder="Enter Site name"
+              />
+            </Form.Item>
+          </Col>
 
             <Col span={12}>
               <Form.Item

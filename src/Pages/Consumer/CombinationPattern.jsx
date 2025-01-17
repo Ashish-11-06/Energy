@@ -263,13 +263,13 @@ const lineChartData = {
     },
     {
       label: "Peak Consumption (MWh)",
-      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.peakConsumption) : [], // Safely check if it's an array
+      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.peak_consumption) : [], // Safely check if it's an array
       borderColor: "#FF5733",
       fill: false,
     },
     {
       label: "Off-Peak Consumption (MWh)",
-      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.offPeakConsumption) : [], // Safely check if it's an array
+      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption) : [], // Safely check if it's an array
       borderColor: "#337AFF",
       fill: false,
     },

@@ -23,6 +23,9 @@ const AnnualSvg = () => {
   // Fetch annual saving data
     const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   
+    const handleChatWithExpert =()=> {
+navigate('consumer/chat-page')
+    }
     const handleInfoModalOk = () => {
       setIsInfoModalVisible(false);
     };
@@ -119,7 +122,7 @@ const AnnualSvg = () => {
                   <Button type="primary" /* onClick={handleDownloadReport} */>
                     Download Report
                   </Button>
-                  <Button type="default" /* onClick={handleChatWithExpert} */>
+                  <Button type="default"  onClick={handleChatWithExpert} >
                     Chat with Expert
                   </Button>
                 </Space>

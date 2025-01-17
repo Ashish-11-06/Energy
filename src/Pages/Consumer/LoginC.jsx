@@ -14,6 +14,7 @@ const LoginC = ({user_category}) => {
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [emailForReset, setEmailForReset] = useState("");
+  // const [isNewUser,setNewUser]=useState(false);
 console.log('user_category',user_category);
 
 
@@ -65,11 +66,15 @@ console.log('user_category',user_category);
     setLoading(true);
     try {
       const response = await dispatch(loginUser(credentials)).unwrap();
+      console.log('response', response.user.is_new_user);
+      const new_user = response.user.is_new_user;
+      // setNewUser(new_user);
+
       setLoading(false);
       if (response) {
         message.success("Login successful!");
         localStorage.setItem("hasSeenWelcomeModal", "false"); // Set flag to show welcome modal
-        navigate("/consumer/requirement", { state: { user_category } });
+        navigate("/consumer/requirement", { state: { user_category, new_user } }); // Pass new_user to RequirementsPage
       }
     } catch (error) {
       setLoading(false);
@@ -80,6 +85,7 @@ console.log('user_category',user_category);
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+console.log('isNewUser',isNewUser);
 
   return (
     <div className="login-container">

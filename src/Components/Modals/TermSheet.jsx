@@ -14,25 +14,24 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import SummaryOfferModal from "./SummaryOfferModal";
 import { useDispatch } from "react-redux";
-import { addTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
+import { addTermsAndConditions, updateTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-const RequestForQuotationModal = ({
+const TermSheet = ({
   visible,
   onCancel,
-  type,
   data,
   selectedDemandId,
 }) => {
-  const [ppaTerm, setPpaTerm] = useState(20);
-  const [lockInPeriod, setLockInPeriod] = useState(10);
-  const [minimumSupply, setMinimumSupply] = useState(18);
-  const [contractedEnergy, setContractedEnergy] = useState(20);
-  const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
-  const [paymentSecurityDays, setPaymentSecurityDays] = useState(30); // New state
-  const [offerTariff, setOfferTariff] = useState(3.5);
+  const [ppaTerm, setPpaTerm] = useState();
+  const [lockInPeriod, setLockInPeriod] = useState();
+  const [minimumSupply, setMinimumSupply] = useState();
+  const [contractedEnergy, setContractedEnergy] = useState();
+  const [paymentSecurityType, setPaymentSecurityType] = useState();
+  const [paymentSecurityDays, setPaymentSecurityDays] = useState(); // New state
+  const [offerTariff, setOfferTariff] = useState();
   const [solarCapacity, setSolarCapacity] = useState(50);
   const [windCapacity, setWindCapacity] = useState(30);
   const [essCapacity, setEssCapacity] = useState(20);
@@ -41,6 +40,8 @@ const RequestForQuotationModal = ({
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
+
+  console.log(JSON.stringify(data, null, 2)); // Pretty print with 2 spaces for indentation
 
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
@@ -51,38 +52,48 @@ const RequestForQuotationModal = ({
     onCancel();
   };
 
-  //console.log(user);
+  console.log(user);
 
   const handleContinue = async () => {
+    // Create termsData with only updated fields
     const termsData = {
-      from_whom: user.user_category,
-      requirement_id: selectedDemandId,
-      combination: data.combination,
-      term_of_ppa: ppaTerm,
-      lock_in_period: lockInPeriod,
-      commencement_of_supply: data.cod,
-      contracted_energy: contractedEnergy,
-      minimum_supply_obligation: minimumSupply,
-      payment_security_type: paymentSecurityType,
-      payment_security_day: paymentSecurityDays, // Add to termsData
-    };
+        term_of_ppa: ppaTerm ?? data.term_of_ppa,
+        lock_in_period: lockInPeriod ?? data.lock_in_period,
+        minimum_supply_obligation: minimumSupply ?? data.minimum_supply_obligation,
+        contracted_energy: contractedEnergy ?? data.contracted_energy,
+        payment_security_type: paymentSecurityType ?? data.payment_security_type,
+        payment_security_day: paymentSecurityDays ?? data.payment_security_day,
+        offer_tariff: offerTariff ?? data.offer_tarrif,
+        consumer: data.consumer, // Always include consumer if needed
+        from_whom: data.from_whom, // Always include the user category
+        requirement_id: data.requirement?.[0]?.rq_id, // Always include requirement ID
+        combination: data.combination, // Always include combination
+        commencement_of_supply: data.commencement_of_supply, // Always include supply date
+      };
+  
     try {
-      // Wait for the dispatch to resolve
-      await dispatch(addTermsAndConditions(termsData)).unwrap(); // Use .unwrap() if using Redux Toolkit
+      const userId = user.id; // User ID
+      const termSheetId = data.id; // Term Sheet ID
+  
+      console.log("Updated termsData:", termsData); // Log the updated data for debugging
+  
+      // Dispatch the updated data
+      await dispatch(updateTermsAndConditions({ userId, termSheetId, termsData })).unwrap();
+  
       message.success({
         content: "Terms and Conditions added successfully.",
-        duration: 7, // Show for 7 seconds
+        duration: 7, // Show success message for 7 seconds
       });
       onCancel(); // Close the modal
     } catch (error) {
-      // Show error message
+      console.error("Error updating Terms and Conditions:", error);
       message.error({
-        content: error || "Failed to add Terms and Conditions.",
-        duration: 7, // Show for 7 seconds
+        content: error?.message || "Failed to add Terms and Conditions.",
+        duration: 7, // Show error message for 7 seconds
       });
     }
-  
   };
+  
 
   return (
     <>
@@ -103,7 +114,7 @@ const RequestForQuotationModal = ({
               <strong>Term of PPA (years):</strong>
               <InputNumber
                 min={1}
-                value={ppaTerm}
+                value={data.term_of_ppa}
                 onChange={(value) => setPpaTerm(value)}
                 style={{ width: "100%" }}
               />
@@ -114,7 +125,7 @@ const RequestForQuotationModal = ({
               <strong>Lock-in Period (years):</strong>
               <InputNumber
                 min={1}
-                value={lockInPeriod}
+                value={data.lock_in_period}
                 onChange={(value) => setLockInPeriod(value)}
                 style={{ width: "100%" }}
               />
@@ -124,7 +135,7 @@ const RequestForQuotationModal = ({
             <Typography.Paragraph>
               <strong>Commencement of Supply:</strong>
               <DatePicker
-                value={data.cod ? moment(data.cod, "YYYY-MM-DD") : moment("2024-08-31", "YYYY-MM-DD")}
+                value={data.commencement_of_supply ? moment(data.commencement_of_supply, "YYYY-MM-DD") : moment("2024-08-31", "YYYY-MM-DD")}
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -134,7 +145,7 @@ const RequestForQuotationModal = ({
               <strong>Contracted Energy (million units):</strong>
               <InputNumber
                 min={1}
-                value={contractedEnergy}
+                value={data.contracted_energy}
                 onChange={(value) => setContractedEnergy(value)}
                 style={{ width: "100%" }}
               />
@@ -142,21 +153,22 @@ const RequestForQuotationModal = ({
           </Col>
           <Col span={12}>
             <Typography.Paragraph>
-              <strong>Offer Tariff (MW/INR):</strong>
+              <strong>Offer Tariff (INR/MW) :</strong>
               <InputNumber
                 min={1}
-                value={data.perUnitCost}
-                onChange={(value) => setContractedEnergy(value)}
+                value={data.offer_tarrif} // Use data.per_unit_cost if available, fallback to offerTariff
+                onChange={(value) => setOfferTariff(value)} // Update state when changed
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
           </Col>
+
           <Col span={12}>
             <Typography.Paragraph>
               <strong>Minimum Supply Obligation (million units):</strong>
               <InputNumber
                 min={1}
-                value={minimumSupply}
+                value={data.minimum_supply_obligation}
                 onChange={(value) => setMinimumSupply(value)}
                 style={{ width: "100%" }}
               />
@@ -166,7 +178,7 @@ const RequestForQuotationModal = ({
             <Typography.Paragraph>
               <strong>Payment Security Type:</strong>
               <Select
-                value={paymentSecurityType}
+                value={data.payment_security_type}
                 onChange={(value) => setPaymentSecurityType(value)}
                 style={{ width: "100%" }}
               >
@@ -181,7 +193,7 @@ const RequestForQuotationModal = ({
               <strong>Payment Security Days:</strong>
               <InputNumber
                 min={1}
-                value={paymentSecurityDays}
+                value={data.payment_security_day}
                 onChange={(value) => setPaymentSecurityDays(value)} // New input field
                 style={{ width: "100%" }}
               />
@@ -193,7 +205,7 @@ const RequestForQuotationModal = ({
               onClick={handleChatWithExpert}
               style={{
                 backgroundColor: "#FFFFFF",
-                border: `1px solid #E6E8F1`,
+                border: "1px solid #E6E8F1", // Fix syntax error
                 color: "#001529",
                 fontSize: "14px",
               }}
@@ -212,20 +224,20 @@ const RequestForQuotationModal = ({
               fontSize: "16px",
               padding: "10px 20px",
             }}
-            onClick={type === "generator" ? handleContinue : handleSendToIPPs}
+            onClick={handleContinue}
           >
-            {type === "generator" ? "Continue" : "Send to IPPs"}
+            {user.user_category === "Generator" ? "send to consumer" : "Send to IPPs"}
           </Button>
         </Row>
       </Modal>
 
       <SummaryOfferModal
         visible={false}
-        onCancel={() => {}}
+        onCancel={() => { }}
         offerDetails={{}}
       />
     </>
   );
 };
 
-export default RequestForQuotationModal;
+export default TermSheet;
