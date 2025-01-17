@@ -21,6 +21,24 @@ export const addTermsAndConditions = createAsyncThunk(
   }
 );
 
+export const updateTermsAndConditions = createAsyncThunk(
+  'termsAndConditions/updateById',
+  async ({ userId, termSheetId, termsData }, { rejectWithValue }) => {
+    try {
+      console.log('Updating terms and conditions:', termsData, userId, termSheetId);
+      const response = await termsAndConditionsApi.updateTermsAndConditions(userId, termSheetId, termsData);
+      console.log('API Response:', response);
+      return response.data; // Assuming the API returns data in `response.data`
+    } catch (error) {
+      console.error('Error updating terms and conditions:', error);
+      return rejectWithValue(
+        error.response?.data?.error || 'Failed to update terms and conditions'
+      );
+    }
+  }
+);
+
+
 // Initial state
 const initialState = {
   termsAndConditions: [], // Holds the fetched consumers
@@ -44,6 +62,17 @@ const TermsAndConditionsSlice = createSlice({
         state.termsAndConditions = action.payload;
       })
       .addCase(addTermsAndConditions.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      .addCase(updateTermsAndConditions.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(updateTermsAndConditions.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+      })
+      .addCase(updateTermsAndConditions.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       });

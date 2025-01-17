@@ -5,6 +5,9 @@ const termsAndConditionsApi = {
   addTermsAndConditions: (termsData) => {
     return axiosInstance.post(`/energy/terms-sheet`, termsData);
   },
+  updateTermsAndConditions: (userId, termSheetId, termsData) => {
+    return axiosInstance.put(`/energy/terms-sheet/${userId}/${termSheetId}`, termsData);
+  },
 
 };
 

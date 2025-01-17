@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Col, Row, Typography, Select, Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
 import { requestedIPPs } from '../../Redux/Slices/Consumer/RequestedIPPSlice';
-import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
+import TermSheet from '../../Components/Modals/TermSheet';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -14,7 +14,7 @@ const OfferRecievedFromCons = () => {
   const [searchText, setSearchText] = useState("");
   const [ippData, setIppData] = useState([]);
   const [error, setError] = useState(null);
-  const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false); // Add this state to control visibility of RequestForQuotationModal
+  const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false); // Add this state to control visibility of TermSheet
 
 
   const dispatch = useDispatch();
@@ -281,9 +281,9 @@ const OfferRecievedFromCons = () => {
         )}
       </Modal>
 
-      {/* RequestForQuotationModal component */}
+      {/* TermSheet component */}
      
-{modalContent&& ( <RequestForQuotationModal
+{modalContent&& ( <TermSheet
         visible={isQuotationModalVisible}
         onCancel={() => setIsQuotationModalVisible(false)} // Close the modal
         data={modalContent} // Pass the modalContent directly to the modal
