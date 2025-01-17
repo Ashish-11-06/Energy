@@ -58,7 +58,7 @@ const OfferRecievedFromCons = () => {
   // console.log('term of ipp', ippData[0]?.term_of_ppa);
   // console.log('lock in period', ippData[0]?.lock_in_period);
 
- 
+
 
 
 
@@ -147,23 +147,23 @@ const OfferRecievedFromCons = () => {
     message.success(`Offer with ID ${id} has been accepted.`);
     // Add logic for accept action here
   };
-  
+
   const handleCounterOffer = (modalContent) => {
     // Ensure modalContent is passed correctly and that it has the correct data
     console.log(modalContent);  // Add this to debug the modal content
     setModalContent(modalContent);  // Ensure modalContent is updated correctly
     setIsQuotationModalVisible(true);  // Show the quotation modal
   };
-  
-  
+
+
   const handleReject = (id) => {
     message.error(`Offer with ID ${id} has been rejected.`);
     // Add logic for reject action here
   };
-  
-const data = modalContent;
-useEffect(() => {
-  console.log(data);
+
+  const data = modalContent;
+  useEffect(() => {
+    console.log(data);
   }, [modalContent]);
 
   return (
@@ -254,40 +254,42 @@ useEffect(() => {
 
             {/* Conditional Rendering of Buttons */}
             {modalContent.generator_status === "Pending" && modalContent.from_whom === "Consumer" && (
-              <div style={{ marginTop: "20px", textAlign: "center" }}>
-                <Button
-                  type="primary"
-                  style={{ marginRight: "10px", backgroundColor: "#669800", borderColor: "#669800" }}
-                  onClick={() => handleReject(modalContent.id)}
-                >
-                  Reject
-                </Button>
-                <Button
-                  type="default"
-                  style={{ marginRight: "10px", borderColor: "#FF9900" }}
-                  onClick={() => handleCounterOffer(modalContent)}
-                >
-                  Counter Offer
-                </Button>
-                <Button
-                  type="danger"
-                  onClick={() => handleAccept(modalContent.id)}
-                >
-                  Accept
-                </Button>
-              </div>
-            )}
+            <div style={{ marginTop: "20px", textAlign: "center" }}>
+              <Button
+                type="primary"
+                style={{ marginRight: "10px", backgroundColor: "#669800", borderColor: "#669800" }}
+                onClick={() => handleReject(modalContent.id)}
+              >
+                Reject
+              </Button>
+              <Button
+                type="default"
+                style={{ marginRight: "10px", borderColor: "#FF9900" }}
+                onClick={() => handleCounterOffer(modalContent)} // Pass modalContent here
+              >
+                Counter Offer
+              </Button>
+              <Button
+                type="danger"
+                onClick={() => handleAccept(modalContent.id)}
+              >
+                Accept
+              </Button>
+            </div>
+          )}
           </div>
         )}
       </Modal>
 
       {/* RequestForQuotationModal component */}
-      <RequestForQuotationModal
+     
+{modalContent&& ( <RequestForQuotationModal
         visible={isQuotationModalVisible}
-        onCancel={handleCancel}
-        // ippId={modalContent} // Pass the IPP ID to the modal
-        data={data}
+        onCancel={() => setIsQuotationModalVisible(false)} // Close the modal
+        data={modalContent} // Pass the modalContent directly to the modal
       />
+)
+}
 
     </div>
   );
