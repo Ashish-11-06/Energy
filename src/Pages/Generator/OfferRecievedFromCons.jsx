@@ -2,17 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Col, Row, Typography, Select, Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
 import { requestedIPPs } from '../../Redux/Slices/Consumer/RequestedIPPSlice';
+import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const OfferRecievedFromCons = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
+  const [modalContent, setModalContent] = useState();
   const [statusFilter, setStatusFilter] = useState("");
   const [searchText, setSearchText] = useState("");
   const [ippData, setIppData] = useState([]);
   const [error, setError] = useState(null);
+  const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false); // Add this state to control visibility of RequestForQuotationModal
+
 
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem('user')).user;
@@ -20,9 +23,9 @@ const OfferRecievedFromCons = () => {
   useEffect(() => {
     const fetchIPPData = async () => {
       try {
-        const data ={
-            id: user.id,
-            user_category: "Consumer"
+        const data = {
+          id: user.id,
+          user_category: "Consumer"
         }
         const response = await dispatch(requestedIPPs(data));
         if (response?.payload?.length > 0) {
@@ -39,6 +42,25 @@ const OfferRecievedFromCons = () => {
 
     fetchIPPData();
   }, []);
+
+  // if (ippData.length > 0) {
+  //   ippData.forEach(({ contracted_energy, consumer_status, id }) => {
+  //     console.log(`IPP ID: ${id}, Contracted Energy: ${contracted_energy}, Status: ${consumer_status}`);
+  //   });
+  // }
+
+  // if (ippData.length > 0) {
+  //   ippData.forEach(({term_of_ppa, lock_in_period, commencement_of_supply,  contracted_energy, minimum_supply_obligation, payment_security_day, payment_security_type, consumer_status, id, }) => {
+  //     console.log(`IPP ID: ${id}, Contracted Energy: ${contracted_energy}, Status: ${consumer_status}`);
+  //   });
+  // }
+
+  // console.log('term of ipp', ippData[0]?.term_of_ppa);
+  // console.log('lock in period', ippData[0]?.lock_in_period);
+
+ 
+
+
 
   const showModal = (record) => {
     setModalContent(record);
@@ -90,6 +112,12 @@ const OfferRecievedFromCons = () => {
       width: '150px',
     },
     {
+      title: 'Site Name',
+      dataIndex: 'site',
+      key: 'site',
+      width: '100px',
+    },
+    {
       title: 'Contracted Demand',
       dataIndex: 'requirement',
       key: 'contractedDemand',
@@ -108,12 +136,35 @@ const OfferRecievedFromCons = () => {
       key: 'status',
       render: (_, record) => (
         <Button type="primary" onClick={() => showModal(record)}>
-          View
+          View Status
         </Button>
       ),
       width: '150px',
     },
   ];
+
+  const handleAccept = (id) => {
+    message.success(`Offer with ID ${id} has been accepted.`);
+    // Add logic for accept action here
+  };
+  
+  const handleCounterOffer = (modalContent) => {
+    // Ensure modalContent is passed correctly and that it has the correct data
+    console.log(modalContent);  // Add this to debug the modal content
+    setModalContent(modalContent);  // Ensure modalContent is updated correctly
+    setIsQuotationModalVisible(true);  // Show the quotation modal
+  };
+  
+  
+  const handleReject = (id) => {
+    message.error(`Offer with ID ${id} has been rejected.`);
+    // Add logic for reject action here
+  };
+  
+const data = modalContent;
+useEffect(() => {
+  console.log(data);
+  }, [modalContent]);
 
   return (
     <div style={{ padding: '20px' }}>
@@ -165,7 +216,7 @@ const OfferRecievedFromCons = () => {
 
       <Modal
         title="IPP Details"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
       >
@@ -176,10 +227,68 @@ const OfferRecievedFromCons = () => {
             <p><strong>Industry:</strong> {modalContent.requirement[0].rq_industry}</p>
             <p><strong>Contracted Demand:</strong> {modalContent.requirement[0].rq_contracted_demand}</p>
             <p><strong>Tariff Category:</strong> {modalContent.requirement[0].rq_tariff_category}</p>
-            <p><strong>Status:</strong> {modalContent.consumer_status}</p>
+            <p><strong>Status:</strong> {modalContent.generator_status}</p>
+            <Row>
+              <Col span={12}>
+                <p><strong>Term of PPA (years):</strong> {modalContent.term_of_ppa}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Lock-in Period (years):</strong> {modalContent.lock_in_period}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Commencement of Supply:</strong> {modalContent.commencement_of_supply}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Contracted Energy (million units):</strong> {modalContent.contracted_energy}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Minimum Supply Obligation (million units):</strong> {modalContent.minimum_supply_obligation}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Payment Security (days):</strong> {modalContent.payment_security_day}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Payment Security Type:</strong> {modalContent.payment_security_type}</p>
+              </Col>
+            </Row>
+
+            {/* Conditional Rendering of Buttons */}
+            {modalContent.generator_status === "Pending" && modalContent.from_whom === "Consumer" && (
+              <div style={{ marginTop: "20px", textAlign: "center" }}>
+                <Button
+                  type="primary"
+                  style={{ marginRight: "10px", backgroundColor: "#669800", borderColor: "#669800" }}
+                  onClick={() => handleReject(modalContent.id)}
+                >
+                  Reject
+                </Button>
+                <Button
+                  type="default"
+                  style={{ marginRight: "10px", borderColor: "#FF9900" }}
+                  onClick={() => handleCounterOffer(modalContent)}
+                >
+                  Counter Offer
+                </Button>
+                <Button
+                  type="danger"
+                  onClick={() => handleAccept(modalContent.id)}
+                >
+                  Accept
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </Modal>
+
+      {/* RequestForQuotationModal component */}
+      <RequestForQuotationModal
+        visible={isQuotationModalVisible}
+        onCancel={handleCancel}
+        // ippId={modalContent} // Pass the IPP ID to the modal
+        data={data}
+      />
+
     </div>
   );
 };

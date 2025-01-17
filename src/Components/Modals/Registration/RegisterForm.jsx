@@ -9,18 +9,18 @@ const RegisterForm = ({ open, onCancel, onCreate, type }) => {
   const [userCategory, setUserCategory] = useState("");
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user")).user;
-    const userCategory = user?.user_category;
-    console.log('category:', userCategory);
-    setUserCategory(userCategory);
-  }, []);
+  // useEffect(() => {
+  //   const user = JSON.parse(localStorage.getItem("user")).user;
+  //   const userCategory = user?.user_category;
+  //   console.log('category:', userCategory);
+  //   setUserCategory(userCategory);
+  // }, []);
 
   const requestOtp = () => {
     form
       .validateFields()
       .then((values) => {
-        const payload = { ...values, user_category: userCategory };
+        const payload = { ...values};
         dispatch(registerUser(payload))
           .unwrap()
           .then(() => {

@@ -42,6 +42,8 @@ const RequestForQuotationModal = ({
 
   const user = JSON.parse(localStorage.getItem("user")).user;
 
+  console.log(data);
+
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
   };
@@ -81,7 +83,7 @@ const RequestForQuotationModal = ({
         duration: 7, // Show for 7 seconds
       });
     }
-  
+
   };
 
   return (
@@ -142,15 +144,16 @@ const RequestForQuotationModal = ({
           </Col>
           <Col span={12}>
             <Typography.Paragraph>
-              <strong>Offer Tariff:</strong>
+              <strong>Offer Tariff (INR/MW) :</strong>
               <InputNumber
                 min={1}
-                value={contractedEnergy}
-                onChange={(value) => setContractedEnergy(value)}
+                value={data.perUnitCost || offerTariff} // Use data.per_unit_cost if available, fallback to offerTariff
+                onChange={(value) => setOfferTariff(value)} // Update state when changed
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
           </Col>
+
           <Col span={12}>
             <Typography.Paragraph>
               <strong>Minimum Supply Obligation (million units):</strong>
@@ -221,7 +224,7 @@ const RequestForQuotationModal = ({
 
       <SummaryOfferModal
         visible={false}
-        onCancel={() => {}}
+        onCancel={() => { }}
         offerDetails={{}}
       />
     </>
