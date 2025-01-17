@@ -7,13 +7,15 @@ import RegisterForm from "../../Components/Modals/Registration/RegisterForm";
 import { loginUser } from "../../Redux/Slices/loginSlice";
 import { useDispatch } from "react-redux";
 
-const LoginC = () => {
+const LoginC = ({user_category}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isForgotPasswordModalVisible, setForgotPasswordModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [emailForReset, setEmailForReset] = useState("");
+console.log('user_category',user_category);
+
 
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
@@ -67,7 +69,7 @@ const LoginC = () => {
       if (response) {
         message.success("Login successful!");
         localStorage.setItem("hasSeenWelcomeModal", "false"); // Set flag to show welcome modal
-        navigate("/consumer/requirement");
+        navigate("/consumer/requirement", { state: { user_category } });
       }
     } catch (error) {
       setLoading(false);

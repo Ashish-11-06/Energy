@@ -212,7 +212,7 @@ const handleOffer = (key) => {
             ))}
           </div>
           <br /><br />
-          <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
+          {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button> */}
           <Button style={{marginLeft:'20px'}} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
         </Card>
       </Row>

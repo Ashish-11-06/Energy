@@ -20,11 +20,15 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
+
 import {
   addConsumption,
   fetchMonthlyDataById,
 } from "../../Redux/Slices/Consumer/monthlyConsumptionSlice";
 import "../EnergyTable.css";
+import { consumptionBill } from "../../Redux/Slices/Consumer/monthlyConsumptionBillSlice";
+import { addScada } from "../../Redux/Slices/Consumer/uploadScadaSlice";
+
 
 const { Title } = Typography;
 
@@ -56,7 +60,7 @@ const EnergyConsumptionTable = () => {
     setIsInfoModalVisible(true);
   };
 
-  console.log("Re replacement", reReplacement);
+  // console.log("Re replacement", reReplacement);
 
   const [dataSource, setDataSource] = useState(
     Array.from({ length: 12 }, (_, index) => ({
@@ -104,7 +108,7 @@ const EnergyConsumptionTable = () => {
 
   // Update dataSource when monthlyData is fetched
   useEffect(() => {
-    console.log(monthlyData);
+ //   console.log(monthlyData);
     if (monthlyData.length > 0) {
       const updatedDataSource = dataSource.map((item) => {
         const data = monthlyData.find((data) => data.month === item.month);
@@ -119,7 +123,7 @@ const EnergyConsumptionTable = () => {
           : item;
       });
       setDataSource(updatedDataSource);
-      console.log(updatedDataSource);
+     // console.log(updatedDataSource);
     }
   }, [monthlyData]);
 
@@ -150,7 +154,7 @@ const EnergyConsumptionTable = () => {
     }
   };
 
-  const handleFileUpload = (file, key) => {
+  const handleFileUpload = async (file, key) => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => key === item.key);
     if (index > -1) {
@@ -165,6 +169,20 @@ const EnergyConsumptionTable = () => {
       });
       setDataSource(newData);
       message.success(`${file.name} uploaded successfully`);
+
+      // Convert file to Base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64File = reader.result.split(',')[1]; // Get Base64 string without prefix
+
+        // Dispatch the consumptionBill thunk with the required format
+        await dispatch(consumptionBill({
+          requirement: requirementId,
+          month: item.month,
+          bill_file: base64File,
+        }));
+      };
+      reader.readAsDataURL(file); // Read the file as a Base64 string
     }
     return false; // Prevent automatic upload
   };
@@ -223,12 +241,27 @@ const EnergyConsumptionTable = () => {
     setDataSource(newData);
   };
 
-  const handleFileUploadModal = (file) => {
+  const handleFileUploadModal = async (file) => {
     message.success(`${file.name} uploaded successfully`);
     setFileUploaded(true);
     setUploadedFileName(file.name);
+  
+    // Convert file to Base64
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64File = reader.result.split(',')[1]; // Get Base64 string without prefix
+  
+      // Dispatch the addScada thunk with the required format
+      await dispatch(addScada({
+        id: requirementId,
+        file: base64File,
+      }));
+    };
+    reader.readAsDataURL(file); // Read the file as a Base64 string
+  
     return false; // Prevent automatic upload
   };
+  
 
   const columns = [
     {
@@ -333,24 +366,34 @@ const EnergyConsumptionTable = () => {
             <div>
               <span>{record.fileUploaded}</span>
               <Upload
-                beforeUpload={(file) => handleFileUpload(file, record.key)}
-                showUploadList={false}
+                showUploadList={false} // Disable showing the default file list
+                accept=".xlsx,.xls"
+                beforeUpload={(file) => {
+                  if (file) {
+                    handleFileUpload(file, record.key); // Handle file upload
+                  } else {
+                    message.error("Please select a valid file."); // Show error message
+                  }
+                  return false; // Prevent automatic upload
+                }}
               >
-                <Button
-                  icon={<UploadOutlined />}
-                  style={{ marginLeft: "60%" }}
-                ></Button>
+                <Button icon={<UploadOutlined />} style={{ marginLeft: "60%" }} />
               </Upload>
             </div>
           ) : (
             <Upload
-              beforeUpload={(file) => handleFileUpload(file, record.key)}
-              showUploadList={false}
+              showUploadList={false} // Disable showing the default file list
+              accept=".xlsx,.xls"
+              beforeUpload={(file) => {
+                if (file) {
+                  handleFileUpload(file, record.key); // Handle file upload
+                } else {
+                  message.error("Please select a valid file."); // Show error message
+                }
+                return false; // Prevent automatic upload
+              }}
             >
-              <Button
-                style={{ marginLeft: "70px" }}
-                icon={<UploadOutlined />}
-              ></Button>
+              <Button style={{ marginLeft: "70px" }} icon={<UploadOutlined />} />
             </Upload>
           )}
         </div>
@@ -379,18 +422,19 @@ const EnergyConsumptionTable = () => {
     <div className="energy-table-container" style={{ padding: "20px" }}>
       <Card style={{ maxWidth: "100%", margin: "0 auto" }}>
         <p>Please fill the details for making your energy transition plan.</p>
-        <Title level={3} style={{ textAlign: "center", marginTop: "10px" }}>
-          Energy Consumption Data (12 Months)
-        </Title>
-
         <Tooltip title="Help">
           <Button
             shape="circle"
             icon={<QuestionCircleOutlined />}
             onClick={showInfoModal}
-            style={{ position: "absolute", top: 120, right: 30 }}
+            style={{ position: "absolute",marginLeft:'95%', right: 30 }}
           />
         </Tooltip>
+        <Title level={3} style={{ textAlign: "center", marginTop: "10px" }}>
+          Energy Consumption Data (12 Months)
+        </Title>
+
+       
         <Table
           dataSource={dataSource}
           columns={mergedColumns}
@@ -399,16 +443,6 @@ const EnergyConsumptionTable = () => {
           size="small"
           tableLayout="fixed"
         />
-
-        {/* <Space style={{ marginTop: "20px", display: "flex" }}>
-          For more accuracy, you can upload a SCADA_15 min dump energy consumption file.
-          <Upload
-            beforeUpload={(file) => handleFileUpload(file)}
-            showUploadList={false}
-          >
-            <Button icon={<UploadOutlined />} style={{ marginLeft: '10px' }}>Upload</Button>
-          </Upload>
-        </Space> */}
 
         <div
           style={{

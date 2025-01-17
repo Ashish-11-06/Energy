@@ -66,11 +66,13 @@ const Notification = () => {
                   textAlign: "left",
                 }}
               >
+                <Text strong>From: {notification.user}</Text>
                  {/* Timestamp */}
                  <div style={{ marginTop: "10px" }}>
                   <Text strong>Timestamp: </Text>
                   <Text>{new Date(notification.timestamp).toLocaleString()}</Text>
                 </div>
+                <br />
                 {/* Message */}
                 <div>
                   <Text strong>Message: </Text>
@@ -81,20 +83,7 @@ const Notification = () => {
                
               </div>
 
-              {/* Request Button */}
-              <Button
-                type="primary"
-                block
-                style={{
-                  marginTop: "10px",
-                  backgroundColor: "#1890ff",
-                  borderColor: "#1890ff",
-                  width: "100px",
-                  alignSelf: "center",
-                }}
-              >
-                View Details
-              </Button>
+            
             </Card>
           </Col>
         ))}

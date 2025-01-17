@@ -27,7 +27,7 @@ const consumerMenuItems = [
   // { label: 'What We Offer', key: '/consumer/what-we-offer', icon: <AppstoreAddOutlined /> },
   { label: 'Transaction Window', key: '/consumer/transaction-page', icon: <MessageOutlined /> },
   { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
-  { label: 'Requested IPP', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined /> },
+  { label:'Offer Sent', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined /> },
   { label: 'Offer Recieved', key: '/consumer/offer-recieved-from-ipp', icon: <AppstoreAddOutlined /> },
   { label: 'Chat with Expert', key: '/consumer/chat-page', icon: <MessageOutlined /> },
   { label: 'Energy Consumption Table', key: '/consumer/energy-consumption-table', icon: <TableOutlined /> },

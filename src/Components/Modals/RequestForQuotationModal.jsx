@@ -51,7 +51,7 @@ const RequestForQuotationModal = ({
     onCancel();
   };
 
-  console.log(user);
+  //console.log(user);
 
   const handleContinue = async () => {
     const termsData = {

@@ -6,6 +6,7 @@ const { Title, Text } = Typography;
 
 const IPPModal = ({ visible,reReplacement, ipp, onClose, onRequestForQuotation }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
+console.log('ipp',ipp);
 
   const showQuotationModal = () => {
     setIsQuotationModalVisible(true);
@@ -49,9 +50,18 @@ const IPPModal = ({ visible,reReplacement, ipp, onClose, onRequestForQuotation }
                 <strong>Index:</strong> {ipp?.index} <br />
                 <strong>State:</strong> {ipp?.states} <br /> */}
                 <strong>Available Capacity:</strong> {ipp?.capacity} <br />
-                <strong>Potential RE Replacement:</strong>75
-                 {/* {ipp?.replacement} <br /> */}
-                 <br />
+                <strong>Potential RE Replacement:</strong> {ipp?.reReplacement} <br />
+                <strong>Technology:</strong>
+                {Array.isArray(ipp?.technology) ? (
+                  ipp.technology.map((tech, index) => (
+                    <span key={index}>
+                      {tech.name}: {tech.capacity} <br />
+                    </span>
+                  ))
+                ) : (
+                  "N/A"
+                )}
+                <br />
                 <strong>per Unit Cost:</strong> {ipp?.perUnitCost} <br />
               </Text>
               <div style={{ borderTop: "1px solid #E6E8F1", margin: "20px 0" }} />

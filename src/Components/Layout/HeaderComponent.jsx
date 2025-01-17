@@ -34,7 +34,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     { path: '/generator/matching-consumer', label: 'Matching consumer', icon: <HomeOutlined /> },
     { path: '/generator/subscription-plan', label: 'Subscription Plan', icon: <BookOutlined /> },
     { path: '/generator/update-profile-details', label: 'Update Profile Details', icon: <FileTextOutlined /> },
-    { path: '/generator/energy-optimization', label: 'Optimized Combination', icon: <FileTextOutlined /> },
+    { path: '/generator/combination-pattern', label: 'Optimized Combination', icon: <FileTextOutlined /> },
   ];
 
   const steps = currentPath.startsWith('/consumer') ? consumerSteps : generatorSteps;

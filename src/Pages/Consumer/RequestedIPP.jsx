@@ -38,20 +38,20 @@ const RequestedIPP = () => {
     fetchIPPData();
   }, []);
 
-if (ippData.length > 0) {
-  ippData.forEach(({ contracted_energy, consumer_status, id }) => {
-    console.log(`IPP ID: ${id}, Contracted Energy: ${contracted_energy}, Status: ${consumer_status}`);
-  });
-}
+// if (ippData.length > 0) {
+//   ippData.forEach(({ contracted_energy, consumer_status, id }) => {
+//     console.log(`IPP ID: ${id}, Contracted Energy: ${contracted_energy}, Status: ${consumer_status}`);
+//   });
+// }
 
-if (ippData.length > 0) {
-  ippData.forEach(({term_of_ppa, lock_in_period, commencement_of_supply,  contracted_energy, minimum_supply_obligation, payment_security_day, payment_security_type, consumer_status, id, }) => {
-    console.log(`IPP ID: ${id}, Contracted Energy: ${contracted_energy}, Status: ${consumer_status}`);
-  });
-}
+// if (ippData.length > 0) {
+//   ippData.forEach(({term_of_ppa, lock_in_period, commencement_of_supply,  contracted_energy, minimum_supply_obligation, payment_security_day, payment_security_type, consumer_status, id, }) => {
+//     console.log(`IPP ID: ${id}, Contracted Energy: ${contracted_energy}, Status: ${consumer_status}`);
+//   });
+// }
 
-console.log('term of ipp', ippData[0]?.term_of_ppa);
-console.log('lock in period', ippData[0]?.lock_in_period);
+// console.log('term of ipp', ippData[0]?.term_of_ppa);
+// console.log('lock in period', ippData[0]?.lock_in_period);
 
 
   const showModal = (record) => {

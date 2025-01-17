@@ -3,17 +3,18 @@ import { Modal, Form, Input, Button, Row, Col, message } from "antd";
 import { useDispatch } from "react-redux";
 import { registerUser, verifyOtp } from "../../../Redux/Slices/Consumer/registerSlice";
 
-const RegisterForm = ({ open, onCancel, onCreate, type }) => {
+const RegisterForm = ({ open, onCancel, onCreate, type,user_category }) => {
   const [form] = Form.useForm();
   const [otpRequested, setOtpRequested] = useState(false);
   const [userCategory, setUserCategory] = useState("");
   const dispatch = useDispatch();
+console.log('user category',user_category);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user")).user;
-    const userCategory = user?.user_category;
+    // const user = JSON.parse(localStorage.getItem("user")).user;
+    // const userCategory = user?.user_category;
     console.log('category:', userCategory);
-    setUserCategory(userCategory);
+    setUserCategory(user_category);
   }, []);
 
   const requestOtp = () => {
@@ -128,7 +129,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type }) => {
               <Input />
             </Form.Item>
           </Col>
-          {/* <Col span={12}>
+          <Col span={12}>
             <Form.Item
               name="designation"
               label="Designation"
@@ -139,7 +140,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type }) => {
               <Input />
             </Form.Item>
           </Col>
-           */}
+          
           {type === "consumer" && (
             <Col span={12}>
               <Form.Item

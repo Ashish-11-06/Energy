@@ -24,9 +24,9 @@ const LandingPage = () => {
   const handleButtonClick = () => {
     if (selection) {
       if (selection === 'consumer') {
-        navigate('/consumer/login');
+        navigate('/consumer/login', { state: { use_category: 'Consumer' } });
       } else if (selection === 'generator') {
-        navigate('/generator/login');
+        navigate('/generator/login', { state: { use_category: 'Generator' } });
       }
     } else {
       message.warning('Please select Consumer or Generator');
