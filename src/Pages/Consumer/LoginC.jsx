@@ -85,7 +85,6 @@ console.log('user_category',user_category);
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-console.log('isNewUser',isNewUser);
 
   return (
     <div className="login-container">

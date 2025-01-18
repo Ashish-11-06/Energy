@@ -334,7 +334,7 @@ const EnergyConsumptionTable = () => {
     },
     {
       title: renderLabelWithTooltip(
-        "Monthly Bill ($)",
+        "Monthly Bill (INR)",
         "The total cost of energy consumed during the month.",
         () => handleFillBelow("monthlyBill")
       ),
@@ -356,7 +356,7 @@ const EnergyConsumptionTable = () => {
     {
       title: renderLabelWithTooltip(
         "File Upload",
-        "The SCADA file uploaded for the corresponding month."
+        "The bill file uploaded for the corresponding month."
       ),
       dataIndex: "fileUploaded",
       key: "fileUploaded",
@@ -529,10 +529,10 @@ const EnergyConsumptionTable = () => {
       >
         <p>Hi</p>
 
-        <p>Welcome to the EXG. Please follow these steps to proceed:</p>
+        <p>Please follow these steps to proceed:</p>
         <ol>
           <li>
-            Add your requirements by clicking the "Add Requirement +" button.
+            add your data in the table for moving further.
           </li>
           <li>Fill in the details shown in the form.</li>
           <li>Use the tooltip option for each field for more information.</li>

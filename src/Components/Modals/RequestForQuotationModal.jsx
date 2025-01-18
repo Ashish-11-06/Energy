@@ -142,7 +142,7 @@ const RequestForQuotationModal = ({
           </Col>
           <Col span={12}>
             <Typography.Paragraph>
-              <strong>Offer Tariff (MW/INR):</strong>
+              <strong>Offer Tariff (INR/Mw):</strong>
               <InputNumber
                 min={1}
                 value={data.perUnitCost}

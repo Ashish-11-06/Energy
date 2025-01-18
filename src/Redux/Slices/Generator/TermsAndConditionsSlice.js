@@ -4,11 +4,11 @@ import termsAndConditionsApi from '../../api/generator/termsAndConditionsApi';
 // Async thunk to add terms and conditions
 export const addTermsAndConditions = createAsyncThunk(
   'termsAndConditions/fetchById',
-  async (statusData, { rejectWithValue }) => {
+  async (termsData, { rejectWithValue }) => {
     console.log(`klkkklklk`)
     try {
-        console.log(`klkkklklk`, statusData)
-      const response = await termsAndConditionsApi.addStatus(statusData);
+        console.log(`klkkklklk`, termsData)
+      const response = await termsAndConditionsApi.addTermsAndConditions(termsData);
       console.log(`klkkklklk`, response)
       return response.data; // Assuming the API returns data in `response.data`
     } catch (error) {

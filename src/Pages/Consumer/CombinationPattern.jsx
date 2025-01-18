@@ -56,7 +56,7 @@ const CombinationPattern = () => {
         message.error("Failed to fetch consumption patterns.");
       }
     };
- 
+
     const loadCombinations = async () => {
       try {
         setIsTableLoading(true);
@@ -82,16 +82,16 @@ const CombinationPattern = () => {
       }
     };
 
- console.log(`combinations`,combinationData);
+    console.log(`combinations`, combinationData);
 
-    
+
 
     const formatAndSetCombinations = (combinations, reReplacementValue) => {
       if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
         setDataSource([]);
         return;
       }
-    
+
       const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => ({
         key: index + 1,
         srNo: index + 1,
@@ -108,21 +108,22 @@ const CombinationPattern = () => {
         ).toFixed(2)} MW`,
         perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
         cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
-        reReplacement: reReplacementValue || 65, // Use the updated reReplacement value or default to 65
-        status: combination.sent_from_you === 1 
-      ? "Already Sent" 
-      : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>
+        reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "N/A",
+        status: combination.sent_from_you === 1
+          ? "Request already sent"
+          : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>,
       }));
-    
+
       setDataSource(formattedCombinations);
     };
-    
+
+
     fetchPatterns();
     loadCombinations();
   }, [dispatch, selectedDemandId, reReplacement]);
 
-  console.log(combinationData, "combinationData");
-  
+  // console.log(combinationData, "combinationData");
+
 
   useEffect(() => {
     if (isTableLoading) {
@@ -140,9 +141,10 @@ const CombinationPattern = () => {
   }, [isTableLoading]);
 
   const handleRowClick = (record) => {
-    setSelectedRow(record);
+    setSelectedRow(record); // Record comes from the latest dataSource
     setIsIPPModalVisible(true);
   };
+  
 
   const handleIPPCancel = () => {
     setIsIPPModalVisible(false);
@@ -165,13 +167,17 @@ const CombinationPattern = () => {
     try {
       setIsTableLoading(true);
       setFetchingCombinations(true);
+
       const modalData = {
         requirement_id: selectedDemandId,
         optimize_capacity_user: user.user_category,
-        reReplacement: sliderValue,
-      };      
+        re_replacement: sliderValue,
+      };
+
       const combi = await dispatch(fetchOptimizedCombinations(modalData));
       const combinations = combi.payload;
+
+      // Reformat combinations based on the latest slider value
       formatAndSetCombinations(combinations, sliderValue);
     } catch (error) {
       message.error("Failed to fetch combinations.");
@@ -180,6 +186,7 @@ const CombinationPattern = () => {
       setIsTableLoading(false);
     }
   };
+
 
   const columns = [
     {
@@ -212,7 +219,7 @@ const CombinationPattern = () => {
       ),
     },
     {
-      title: "RE Replacement",
+      title: "RE Replacement %",
       dataIndex: "reReplacement",
       key: "reReplacement",
     },
@@ -222,7 +229,7 @@ const CombinationPattern = () => {
       key: "totalCapacity",
     },
     {
-      title: "Per Unit Cost (MW/INR)",
+      title: "Per Unit Cost (INR/MW)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
     },
@@ -233,64 +240,64 @@ const CombinationPattern = () => {
       render: (text) => dayjs(text).format('DD-MM-YYYY'),
     },
     {
-      title: "Status",
+      title: "Actions",
       dataIndex: "status",
       key: "status",
     },
   ];
 
   // Chart data for consumption patterns
-const chartData = {
-  labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
-  datasets: [
-    {
-      label: "Consumption (MWh)",
-      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
-      backgroundColor: "#4CAF50",
-      barThickness: 10, // Set bar thickness
-    },
-  ],
-};
+  const chartData = {
+    labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
+    datasets: [
+      {
+        label: "Consumption (MWh)",
+        data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
+        backgroundColor: "#4CAF50",
+        barThickness: 10, // Set bar thickness
+      },
+    ],
+  };
 
-const lineChartData = {
-  labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
-  datasets: [
-    {
-      label: "Consumption (MWh)",
-      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
-      borderColor: "#4CAF50",
-      fill: false,
-    },
-    {
-      label: "Peak Consumption (MWh)",
-      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.peak_consumption) : [], // Safely check if it's an array
-      borderColor: "#FF5733",
-      fill: false,
-    },
-    {
-      label: "Off-Peak Consumption (MWh)",
-      data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption) : [], // Safely check if it's an array
-      borderColor: "#337AFF",
-      fill: false,
-    },
-  ],
-};
+  const lineChartData = {
+    labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
+    datasets: [
+      {
+        label: "Consumption (MWh)",
+        data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
+        borderColor: "#4CAF50",
+        fill: false,
+      },
+      {
+        label: "Peak Consumption (MWh)",
+        data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.peak_consumption) : [], // Safely check if it's an array
+        borderColor: "#FF5733",
+        fill: false,
+      },
+      {
+        label: "Off-Peak Consumption (MWh)",
+        data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption) : [], // Safely check if it's an array
+        borderColor: "#337AFF",
+        fill: false,
+      },
+    ],
+  };
 
-useEffect(() => {
-  //console.log(consumptionPatterns, "consumptionPatterns");
-}, [consumptionPatterns]);
+  useEffect(() => {
+    //console.log(consumptionPatterns, "consumptionPatterns");
+  }, [consumptionPatterns]);
 
 
 
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-};
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+  };
 
   return (
     <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif" }}>
       <Row justify="center" align="middle" gutter={[16, 8]} style={{ height: "100%" }}>
-      
+
 
         {/* Static Data Line Chart */}
         <Col span={24} style={{ textAlign: "center" }}>
@@ -320,7 +327,7 @@ const chartOptions = {
           </div>
         </Col>
 
-       
+
 
         {/* Combination Table */}
         <Col span={24}>
@@ -333,7 +340,7 @@ const chartOptions = {
               max={100}
               onChange={handleSliderChange}
               value={sliderValue}
-             
+
             />
             <Button type="primary" onClick={handleOptimizeClick} style={{ marginLeft: "10px" }}>
               Optimize
@@ -376,7 +383,7 @@ const chartOptions = {
               })}
               scroll={{ x: true }}
             />
-          ) : ( 
+          ) : (
             <div
               style={{
                 padding: "20px",
@@ -390,7 +397,7 @@ const chartOptions = {
               }}
             >
               No optimized combinations available at the moment. Please try again later.
-              
+
             </div>
           )}
         </Col>
@@ -399,8 +406,8 @@ const chartOptions = {
         {isIPPModalVisible && (
           <IPPModal
             visible={isIPPModalVisible}
-            reReplacement={reReplacement}
-            ipp={selectedRow}
+            reReplacement={sliderValue} // Pass the latest slider value
+            ipp={selectedRow}          // Ensure selectedRow is updated
             onClose={handleIPPCancel}
             onRequestForQuotation={handleRequestForQuotation}
           />
