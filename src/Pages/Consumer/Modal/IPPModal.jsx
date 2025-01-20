@@ -52,7 +52,7 @@ const IPPModal = ({ visible,reReplacement, ipp, onClose, onRequestForQuotation }
                 <strong>Potential RE Replacement:</strong>75
                  {/* {ipp?.replacement} <br /> */}
                  <br />
-                <strong>per Unit Cost:</strong> {ipp?.perUnitCost} <br />
+                <strong>Per Unit Cost:</strong> {ipp?.perUnitCost} <br />
               </Text>
               <div style={{ borderTop: "1px solid #E6E8F1", margin: "20px 0" }} />
               <Title level={5} style={{ color: "#9A8406", marginBottom: "10px", marginTop: "20px" }}>
