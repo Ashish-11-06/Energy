@@ -27,7 +27,7 @@ export const consumerMenuItems = [
   { key: '8', icon: <TableOutlined />, label: <Link to="/consumer/energy-consumption-table">Energy Consumption Table</Link> },
   { key: '9', icon: <AreaChartOutlined />, label: <Link to="/consumer/consumption-pattern">Consumption Pattern</Link> },
   { key: '10', icon: <WalletOutlined />, label: <Link to="/consumer/annual-saving">Annual Saving</Link> },
-  { key: '11', icon: <FormOutlined />, label: <Link to="/consumer/requirement">requirement</Link> },
+  { key: '11', icon: <FormOutlined />, label: <Link to="/consumer/requirement">Requirenment</Link> },
   { key: '12', icon: <TeamOutlined />, label: <Link to="/consumer/subscription-plan">Subscription Plan</Link> },
   { key: '13', icon: <UserOutlined />, label: <Link to="/consumer/profile">Profile</Link> }
 ];

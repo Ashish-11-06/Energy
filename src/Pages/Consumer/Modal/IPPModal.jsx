@@ -1,14 +1,19 @@
-import React, { useState } from "react"; // 
+import React, { useState } from "react";
 import { Modal, Typography, Row, Col, Button, Card } from "antd";
 import RequestForQuotationModal from "../../../Components/Modals/RequestForQuotationModal";
 
 const { Title, Text } = Typography;
 
-const IPPModal = ({ visible, ipp, onClose }) => {
+const IPPModal = ({ visible,reReplacement, ipp,combination, onClose, onRequestForQuotation }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
+console.log('ipp',ipp);
 
+console.log('combinationData',combination);
 
-  const showQuotationModal = () => setIsQuotationModalVisible(true);
+  const showQuotationModal = () => {
+    setIsQuotationModalVisible(true);
+    onRequestForQuotation();
+  };
   const handleQuotationCancel = () => setIsQuotationModalVisible(false);
 
   return (
@@ -43,12 +48,20 @@ const IPPModal = ({ visible, ipp, onClose }) => {
               </Title>
               <div style={{ borderBottom: "1px solid #E6E8F1", marginBottom: "20px" }} />
               <Text style={{ fontSize: "16px", lineHeight: "1.6" }}>
-                <strong>IPP:</strong> {ipp.ipp} <br />
-                <strong>Index:</strong>  <br />
-                <strong>State:</strong> {ipp.states} <br />
-                <strong>Available Capacity:</strong> {ipp.capacity} <br />
-                <strong>Potential RE Replacement:</strong> {ipp.replacement} <br />
-                <strong>per Unit Cost:</strong> {ipp.perUnitCost} <br />
+                <strong>Available Capacity:</strong> {ipp?.capacity} <br />
+                <strong>Potential RE Replacement:</strong> {ipp?.reReplacement} <br />
+                <strong>Technology:</strong>
+                {Object.keys(combination).map((key, index) => (
+                  <span key={index}>
+                    {/* <strong>{key.split('-')[1]}:</strong> <br /> */}
+                     Battery Capacity(MW): {combination[key]["Optimal Battery Capacity (MW)"]} {combination[key].state["Battery"]} <br />
+                     Solar Capacity(MW): {combination[key]["Optimal Solar Capacity (MW)"]} {combination[key].state["Solar"]} <br />
+                     Wind Capacity(MW): {combination[key]["Optimal Wind Capacity (MW)"]} {combination[key].state["Wind_1"]} <br />
+                    {/* State: {combination[key].state[key.split('-')[1]]} <br /> */}
+                  </span>
+                ))}
+                <br />
+                <strong>Per Unit Cost:</strong> {ipp?.perUnitCost} <br />
               </Text>
               <div style={{ borderTop: "1px solid #E6E8F1", margin: "20px 0" }} />
               <Title level={5} style={{ color: "#9A8406", marginBottom: "10px", marginTop: "20px" }}>
@@ -82,7 +95,13 @@ const IPPModal = ({ visible, ipp, onClose }) => {
       </Modal>
 
       {/* Quotation Request Modal */}
-      <RequestForQuotationModal visible={isQuotationModalVisible} ipp={ipp} onCancel={handleQuotationCancel} />
+      <RequestForQuotationModal
+        visible={isQuotationModalVisible}
+        onCancel={handleQuotationCancel}
+        data={ipp}
+        selectedDemandId={ipp?.selectedDemandId}
+        type="generator"
+      />
     </div>
   );
 };

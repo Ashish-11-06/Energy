@@ -1,15 +1,56 @@
-import React, { useState } from 'react';
-import { Table, Button, Typography } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Table, Button, Typography, Modal } from 'antd';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import AddPortfolioModal from './Modal/AddPortfolioModal';
+import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice';
+import moment from 'moment';  // Import moment
 
 const { Title } = Typography;
 
 const GenerationPortfolio = () => {
+  const user = (JSON.parse(localStorage.getItem('user'))).user;
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [dataSource, setDataSource] = useState([]);
+  const [isNewUserModalVisible, setIsNewUserModalVisible] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [Structuredprojects, setStructuredProjects] = useState([]);  // Local state for flattened projects
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  const { status, projects } = useSelector((state) => state.portfolio);
+
+  useEffect(() => {
+    if (location.state?.isNewUser) {
+      setIsNewUserModalVisible(true); // Show modal for new users
+    }
+
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const user = (JSON.parse(storedUser)).user;
+      setUserName(user.company_representative || 'User');
+    } else {
+      setUserName('Guest');
+    }
+  }, []);
+
+  // useEffect(() => {
+    if (status === 'idle') {
+      dispatch(getAllProjectsById(user.id));  // Fetch projects
+    }
+  // }, [status]);
+
+  useEffect(() => {
+    if (projects.Solar || projects.Wind || projects.ESS) {
+      const flatProjects = [
+        ...(projects.Solar || []).map(project => ({ ...project, type: 'Solar' })),
+        ...(projects.Wind || []).map(project => ({ ...project, type: 'Wind' })),
+        ...(projects.ESS || []).map(project => ({ ...project, type: 'ESS' }))
+      ];
+      setStructuredProjects(flatProjects);  // Update local state with flattened data
+    }
+  }, [projects.Solar, projects.Wind, projects.ESS]);
 
   const columns = [
     {
@@ -28,32 +69,36 @@ const GenerationPortfolio = () => {
       key: 'state',
     },
     {
-      title: 'Capacity',
-      dataIndex: 'capacity',
-      key: 'capacity',
-      render: (text) => `${text}`,
+      title: 'Available Capacity',
+      dataIndex: 'available_capacity',
+      key: 'available_capacity',
+      render: (text) => {
+        // Check if the value is 'ESS' or not and render accordingly
+        if (text === 'ESS') {
+          return `${text} MWh`;
+        } else {
+          return `${text} MW`;
+        }
+      },
     },
     {
       title: 'COD (Commercial Operation Date)',
       dataIndex: 'cod',
       key: 'cod',
+      render: (text) => moment(text).format('DD-MM-YYYY'),  // Format date to DD-MM-YYYY
     },
   ];
 
   const handleAddEntry = (newEntry) => {
-    setDataSource((prev) => [
-      ...prev,
-      {
-        key: Date.now().toString(),
-        ...newEntry,
-        cod: newEntry.cod.format('DD-MM-YYYY'),
-        unit: newEntry.unit,
-      },
-    ]);
+    // Handle adding new entries by dispatching an action
   };
 
   const handleFindConsumer = () => {
     navigate('/generator/matching-consumer');
+  };
+
+  const handleNewUserModalClose = () => {
+    setIsNewUserModalVisible(false);
   };
 
   return (
@@ -72,12 +117,20 @@ const GenerationPortfolio = () => {
           Available Generation Portfolio
         </Title>
 
-        <Table dataSource={dataSource} columns={columns} pagination={false} bordered />
+        <Table
+          dataSource={Structuredprojects.map((project, index) => ({ ...project, key: index }))}
+          columns={columns}
+          pagination={false}
+          bordered
+          loading={status === 'loading'}
+        />
+
 
         <AddPortfolioModal
           visible={isModalVisible}
           onClose={() => setIsModalVisible(false)}
           onAdd={handleAddEntry}
+          user={user}
         />
 
         <Button
@@ -88,7 +141,7 @@ const GenerationPortfolio = () => {
           Add New Entry +
         </Button>
 
-        {dataSource.length > 0 && (
+        {Structuredprojects.length > 0 && (
           <Button
             type="default"
             style={{ marginTop: '20px', float: 'right' }}
@@ -98,6 +151,22 @@ const GenerationPortfolio = () => {
           </Button>
         )}
       </div>
+
+      <Modal
+        title={`Welcome, ${userName}!`}
+        open={isNewUserModalVisible}
+        onOk={handleNewUserModalClose}
+        onCancel={handleNewUserModalClose}
+        okText="Got it"
+      >
+        <p>Here’s how to get started:</p>
+        <ol>
+          <li>Add a new entry to your generation portfolio.</li>
+          <li>Find matching consumers for your portfolio.</li>
+          <li>Select a consumer and optimize your best combination for the selected consumer.</li>
+          <li>Track your progress in the dashboard.</li>
+        </ol>
+      </Modal>
     </div>
   );
 };

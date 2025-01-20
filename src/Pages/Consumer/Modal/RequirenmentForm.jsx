@@ -13,6 +13,7 @@ import {
 import { InfoCircleOutlined } from "@ant-design/icons";
 import states from "../../../Data/States";
 import industries from "../../../Data/Industry";
+import dayjs from 'dayjs';
 
 const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [form] = Form.useForm();
@@ -20,12 +21,19 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [isCustomVoltage, setIsCustomVoltage] = useState(false); // Flag to toggle custom voltage input visibility
 
   const handleSubmit = (values) => {
-    if (values.voltageLevel === "other" && customVoltage) {
-      values.voltageLevel = customVoltage; // Replace "Other" with the custom voltage value
-    }
-    console.log("Form Values: ", values);
+    const user = JSON.parse(localStorage.getItem('user')).user;
+    const formattedValues = {
+      user: user.id,
+      state: values.state,
+      industry: values.industry,
+      contracted_demand: values.contractedDemand,
+      tariff_category: values.tariffCategory,
+      voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
+      procurement_date: values.procurement.format('DD/MM/YYYY'), 
+      site: values.site,
+    };
     if (onSubmit) {
-      onSubmit(values);
+      onSubmit(formattedValues);
     }
     form.resetFields();
     setCustomVoltage(""); // Reset custom voltage field
@@ -89,6 +97,28 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
           <Col span={12}>
             <Form.Item
               label={renderLabelWithTooltip(
+                "Consumption Site name",
+                "Name of the site where the electricity is being consumed."
+              )}
+              name="site"
+              rules={[
+                {
+                 
+                  required: true,
+                  message: "Please enter the Site name!",
+                },
+              ]}
+            >
+              <Input
+                type="text"
+                placeholder="Enter Site name"
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              label={renderLabelWithTooltip(
                 "Industry",
                 "Industry your company is involved in (e.g., IT, Manufacturing)."
               )}
@@ -118,7 +148,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             <Form.Item
               label={renderLabelWithTooltip(
                 "Tariff Category",
-                "Select the tariff category applicable to your company (e.g., HT Commercial, LT Industrial)."
+                "You can refer your electricity bill."
               )}
               name="tariffCategory"
               rules={[
@@ -157,10 +187,10 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
                 placeholder="Select voltage level"
                 onChange={handleVoltageChange}
               >
-                <Select.Option value="11kv">11 kV</Select.Option>
-                <Select.Option value="33kv">33 kV</Select.Option>
-                <Select.Option value="66kv">66 kV</Select.Option>
-                <Select.Option value="110kv">110 kV</Select.Option>
+                <Select.Option value="33">33 kV</Select.Option>
+                <Select.Option value="11">11 kV</Select.Option>
+                <Select.Option value="66">66 kV</Select.Option>
+                <Select.Option value="110">110 kV</Select.Option>
                 <Select.Option value="other">Other</Select.Option>
               </Select>
             </Form.Item>
@@ -182,7 +212,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
                 ]}
               >
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Enter custom voltage"
                   value={customVoltage}
                   onChange={(e) => setCustomVoltage(e.target.value)}
@@ -212,29 +242,34 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             </Form.Item>
           </Col>
 
-          <Col span={24}>
-            <Form.Item
-              label={renderLabelWithTooltip(
-                "Procurement Date",
-                "Select the date when the procurement of services or goods occurred (expected Date)."
-              )}
-              name="procurement"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select a procurement date!",
-                },
-              ]}
-            >
-              <DatePicker
-                style={{ width: "100%" }}
-                disabledDate={(current) => {
-                  // Disable today and all past dates
-                  return current && current <= new Date();
-                }}
-              />
-            </Form.Item>
-          </Col>
+          <Row>
+         
+
+            <Col span={24}>
+              <Form.Item
+                label={renderLabelWithTooltip(
+                  "Expected Date",
+                  "Select date from which you need renewable energy."
+                )}
+                name="procurement"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select a procurement date!",
+                  },
+                ]}
+              >
+                <DatePicker
+                  style={{ width: "100%" }}
+                  format="DD/MM/YYYY" // Set the display format to DD/MM/YYYY
+                  disabledDate={(current) => {
+                    // Disable today and all past dates
+                    return current && current <= new Date();
+                  }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
         </Row>
 
         <Form.Item style={{ textAlign: "center" }}>

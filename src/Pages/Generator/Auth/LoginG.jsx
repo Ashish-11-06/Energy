@@ -1,54 +1,56 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import 'antd/dist/reset.css';
-import '../Login.css';
-import RegisterForm from '../../Components/Modals/Registration/RegisterForm';  // Import RegisterForm
+import '../../Login.css';
+import RegisterForm from '../../../Components/Modals/Registration/RegisterForm';
+import { loginUser } from "../../../Redux/Slices/loginSlice"; // Import your slice's async thunk
 
 const LoginG = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
-  const [loading, setLoading] = useState(false); // Mock loading state
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const role = 'generator'; // You can dynamically set this role based on your needs
-
-  const onFinish = (values) => {
-    const { email, password } = values;
-
-    // Mock login logic: Allow every email and password
+  const onFinish = async (values) => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-
-      // Mock user data
-      const userData = {
-        role: role, // Default to 'generator' for this example
-        email,
-      };
-
-      // Simulate role-based navigation
-      if (userData.role === 'consumer') {
+    try {
+      // Dispatch the loginUser async thunk and wait for its result
+      const resultAction = await dispatch(loginUser(values));
+     
+      // Check if the login was successful
+      if (loginUser.fulfilled.match(resultAction)) {
         message.success('Login successful!');
-        navigate('/consumer/dashboard'); // Redirect to consumer dashboard
-      } else if (userData.role === 'generator') {
-        message.success('Login successful!');
-        navigate('/generator/portfolio'); // Redirect to generator-specific page
+        const user = resultAction.payload.user ;
+        // console.log(result.is_new_user);
+        if (user.is_new_user) {
+          navigate('/generator/portfolio', { state: { isNewUser: user.is_new_user } });
+        }else{
+              navigate('/generator/dashboard'); // Navigate to the dashboard
+            }   
+      } else {
+        message.error(resultAction.payload || 'Login failed. Please try again.');
       }
-    }, 1000); // Simulate a delay for loading state
+    } catch (error) {
+      console.error('Login error:', error);
+      message.error('An error occurred during login. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
+    message.error('Please check your inputs and try again.');
   };
 
-  // Show modal to register a new user
   const showModal = () => {
-    setIsModalVisible(true); // Open the modal
+    setIsModalVisible(true);
   };
 
-  // Close modal
   const closeModal = () => {
-    setIsModalVisible(false); // Close the modal
+    setIsModalVisible(false);
   };
 
   const handleCreate = (values) => {
@@ -91,11 +93,12 @@ const LoginG = () => {
         </Form>
 
         <div className="register-link">
-          <p>Don't have an account? <a onClick={showModal}>Create account</a></p>
+          <p>
+            Don't have an account? <a onClick={showModal}>Create account</a>
+          </p>
         </div>
       </div>
 
-      {/* Use RegisterForm instead of RegisterModal */}
       <RegisterForm
         type="generator"
         open={isModalVisible}

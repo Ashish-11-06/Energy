@@ -30,7 +30,7 @@ const ippData = [
     {
       key: "3",
       ipp: "3",
-      time:"3:09:30",
+      time:"10:09:30",
       states: "Hariyana",
       capacity: "10 MW",
       replacement: "65%",

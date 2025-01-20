@@ -1,13 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Form, Input, Button, Row, Col, message } from "antd";
+import { useDispatch } from "react-redux";
+import { registerUser, verifyOtp } from "../../../Redux/Slices/Consumer/registerSlice";
 
-const RegisterForm = ({ open, onCancel, onCreate, type }) => {
+const RegisterForm = ({ open, onCancel, onCreate, type,user_category }) => {
   const [form] = Form.useForm();
   const [otpRequested, setOtpRequested] = useState(false);
+  const [userCategory, setUserCategory] = useState("");
+  const dispatch = useDispatch();
+console.log('user category',user_category);
+
+  useEffect(() => {
+    // const user = JSON.parse(localStorage.getItem("user")).user;
+    // const userCategory = user?.user_category;
+    console.log('category:', userCategory);
+    setUserCategory(user_category);
+  }, []);
 
   const requestOtp = () => {
-    // Logic to request OTP
-    setOtpRequested(true);
+    form
+      .validateFields()
+      .then((values) => {
+        const payload = { ...values, user_category: userCategory };
+        dispatch(registerUser(payload))
+          .unwrap()
+          .then(() => {
+            message.success("OTP has been sent to your email and mobile!");
+            setOtpRequested(true);
+          })
+          .catch((error) => {
+            message.error(`Failed to request OTP: ${error}`);
+          });
+      })
+      .catch((info) => {
+        console.log("Validate Failed:", info);
+      });
   };
 
   const handleCancel = () => {
@@ -15,13 +42,23 @@ const RegisterForm = ({ open, onCancel, onCreate, type }) => {
     onCancel();
   };
 
-  const handleRegister = () => {
+  const handleVerifyOtp = () => {
     form
-      .validateFields()
+      .validateFields(["email_otp", "mobile_otp"])
       .then((values) => {
-        form.resetFields();
-        onCreate(values);
-        message.success("You have successfully registered!");
+        const otp = {
+          email_otp: values.email_otp,
+          mobile_otp: values.mobile_otp,
+        };
+        dispatch(verifyOtp(otp))
+          .unwrap()
+          .then(() => {
+            message.success("OTP verified successfully!");
+            onCreate(values);
+          })
+          .catch((error) => {
+            message.error(`OTP verification failed: ${error}`);
+          });
       })
       .catch((info) => {
         console.log("Validate Failed:", info);
@@ -40,7 +77,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="companyName"
+              name="company"
               label="Company Name"
               rules={[
                 { required: true, message: "Please input the company name!" },
@@ -51,7 +88,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type }) => {
           </Col>
           <Col span={12}>
             <Form.Item
-              name="companyRepresentative"
+              name="company_representative"
               label="Name of Company Representative"
               rules={[
                 {
@@ -66,17 +103,6 @@ const RegisterForm = ({ open, onCancel, onCreate, type }) => {
           </Col>
         </Row>
         <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              name="designation"
-              label="Designation"
-              rules={[
-                { required: true, message: "Please input the designation!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
           <Col span={12}>
             <Form.Item
               name="email"
@@ -103,10 +129,22 @@ const RegisterForm = ({ open, onCancel, onCreate, type }) => {
               <Input />
             </Form.Item>
           </Col>
+          {/* <Col span={12}>
+            <Form.Item
+              name="designation"
+              label="Designation"
+              rules={[
+                { required: true, message: "Please input the designation!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </Col> */}
+          
           {type === "consumer" && (
             <Col span={12}>
               <Form.Item
-                name="cinNumber"
+                name="cin_number"
                 label="CIN Number"
                 rules={[
                   { required: true, message: "Please input the CIN number!" },
@@ -158,18 +196,18 @@ const RegisterForm = ({ open, onCancel, onCreate, type }) => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="emailOtp"
+                name="email_otp"
                 label="Email OTP"
                 rules={[
                   { required: true, message: "Please input the email OTP!" },
                 ]}
               >
-                <Input />
+                <Input  />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                name="mobileOtp"
+                name="mobile_otp"
                 label="Mobile OTP"
                 rules={[
                   { required: true, message: "Please input the mobile OTP!" },
@@ -187,8 +225,8 @@ const RegisterForm = ({ open, onCancel, onCreate, type }) => {
                 Request OTP
               </Button>
             ) : (
-              <Button type="primary" onClick={handleRegister} block>
-                Register
+              <Button type="primary" onClick={handleVerifyOtp} block>
+                Verify OTP
               </Button>
             )}
           </Col>

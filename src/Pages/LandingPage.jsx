@@ -13,16 +13,20 @@ const LandingPage = () => {
   const dispatch = useDispatch();
 
   const handleSelectionChange = (e) => {
-    dispatch(setLoginType(e.target.value)); // Dispatch action to update loginType in Redux
-    setSelection(e.target.value); // Update local selection state
+    const selectedType = e.target.value;
+    dispatch(setLoginType(selectedType)); // Dispatch action to update loginType in Redux
+    setSelection(selectedType); // Update local selection state
+    localStorage.setItem('userType', selectedType); // Store the selected type in local storage
+    console.log('selectedType', selectedType);
+    
   };
 
   const handleButtonClick = () => {
     if (selection) {
       if (selection === 'consumer') {
-        navigate('/consumer/login');
+        navigate('/consumer/login', { state: { use_category: 'Consumer' } });
       } else if (selection === 'generator') {
-        navigate('/generator/login');
+        navigate('/generator/login', { state: { use_category: 'Generator' } });
       }
     } else {
       message.warning('Please select Consumer or Generator');

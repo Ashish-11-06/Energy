@@ -7,13 +7,16 @@ import RegisterForm from "../../Components/Modals/Registration/RegisterForm";
 import { loginUser } from "../../Redux/Slices/loginSlice";
 import { useDispatch } from "react-redux";
 
-const LoginC = () => {
+const LoginC = ({user_category}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isForgotPasswordModalVisible, setForgotPasswordModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [emailForReset, setEmailForReset] = useState("");
+  // const [isNewUser,setNewUser]=useState(false);
+console.log('user_category',user_category);
+
 
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
@@ -63,10 +66,18 @@ const LoginC = () => {
     setLoading(true);
     try {
       const response = await dispatch(loginUser(credentials)).unwrap();
+      console.log('response', response.user.is_new_user);
+      const new_user = response.user.is_new_user;
+
       setLoading(false);
       if (response) {
         message.success("Login successful!");
-        navigate("/consumer/requirement");
+        localStorage.setItem("hasSeenWelcomeModal", "false"); // Set flag to show welcome modal
+        if (new_user) {
+          navigate("/consumer/what-we-offer", { state: { user_category, new_user } }); // Navigate to what-we-offer if new_user is true
+        } else {
+          navigate("/consumer/requirement", { state: { user_category, new_user } }); // Navigate to requirement if new_user is false
+        }
       }
     } catch (error) {
       setLoading(false);

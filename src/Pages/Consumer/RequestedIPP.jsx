@@ -1,36 +1,9 @@
-import React, { useState } from 'react';
-import { Table, Button, Modal, Col, Row, Typography, Select, Input } from 'antd';
-
-// Sample data to be displayed in the table
-const ippData = [
-  {
-    key: "1",
-    ipp: "1",
-    states: "Karnataka",
-    capacity: "50 MW",
-    replacement: "65%",
-    perUnitCost: 5.45,
-    status: "Pending",
-  },
-  {
-    key: "2",
-    ipp: "2",
-    states: "Maharashtra",
-    capacity: "30 MW",
-    replacement: "65%",
-    perUnitCost: 6.2,
-    status: "Accepted",
-  },
-  {
-    key: "3",
-    ipp: "3",
-    states: "Rajasthan",
-    capacity: "10 MW",
-    replacement: "65%",
-    perUnitCost: 4.85,
-    status: "Rejected",
-  },
-];
+import React, { useState, useEffect } from 'react';
+import { Table, Button, Modal, Col, Row, Typography, Select, Input, message } from 'antd';
+import { useDispatch } from 'react-redux';
+import { requestedIPPs } from '../../Redux/Slices/Consumer/RequestedIPPSlice';
+import { addStatus } from '../../Redux/Slices/Generator/TermsAndConditionsSlice';
+import TermSheet from '../../Components/Modals/TermSheet';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -38,83 +11,128 @@ const { Option } = Select;
 const RequestedIPP = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
-  const [statusFilter, setStatusFilter] = useState(""); // State for status filter
-  const [searchText, setSearchText] = useState(""); // State for search text
+  const [statusFilter, setStatusFilter] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [ippData, setIppData] = useState([]);
+  const [error, setError] = useState(null);
+  const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false); // Add this state to control visibility of TermSheet
 
-  // Function to handle button click and show modal
+  const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem('user')).user;
+
+  useEffect(() => {
+    const fetchIPPData = async () => {
+      try {
+        const response = await dispatch(requestedIPPs(user));
+        if (response?.payload?.length > 0) {
+          setIppData(response.payload);
+        } else {
+          setIppData([]);
+          message.info('No data found');
+        }
+      } catch (error) {
+        setError('Error fetching IPP data');
+        message.error('Error fetching IPP data');
+      }
+    };
+
+    fetchIPPData();
+  }, []);
+
   const showModal = (record) => {
     setModalContent(record);
     setIsModalVisible(true);
   };
 
-  // Function to handle closing the modal
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
-  // Handle change in the status filter
   const handleStatusChange = (value) => {
     setStatusFilter(value);
   };
 
-  // Handle change in search input
   const handleSearchChange = (e) => {
     setSearchText(e.target.value);
   };
 
-  // Filter the data based on search text and status filter
+  const handleCounterOffer = (modalContent) => {
+    // Implement the function if needed
+    setModalContent(modalContent);
+    setIsQuotationModalVisible(true);
+  };
+
+  const handleStatusUpdate = async (action) => {
+    try {
+      const statusData = {
+        
+        action: action,
+      };
+      await dispatch(addStatus({ user_id: user.id, term_id: modalContent.id, statusData }));
+      message.success(`Status updated to ${action}`);
+      setIsModalVisible(false);
+    } catch (error) {
+      message.error('Failed to update status');
+    }
+  };
+
   const filteredData = ippData.filter((record) => {
-    const statusMatch = statusFilter ? record.status === statusFilter : true;
+    const statusMatch = statusFilter ? record.consumer_status === statusFilter : true;
     const searchMatch =
-      record.ipp.includes(searchText) ||
-      record.states.toLowerCase().includes(searchText.toLowerCase()) ||
-      record.capacity.toLowerCase().includes(searchText.toLowerCase()) ||
-      record.replacement.toLowerCase().includes(searchText.toLowerCase()) ||
-      record.perUnitCost.toString().includes(searchText);
+      record.id.toString().includes(searchText) ||
+      record.requirement[0].rq_state.toLowerCase().includes(searchText.toLowerCase()) ||
+      record.requirement[0].rq_industry.toLowerCase().includes(searchText.toLowerCase()) ||
+      record.requirement[0].rq_contracted_demand.toString().includes(searchText) ||
+      record.requirement[0].rq_tariff_category.toLowerCase().includes(searchText.toLowerCase());
     return statusMatch && searchMatch;
   });
 
-  // Define table columns with filter functionality for status
   const columns = [
     {
-      title: 'IPP ID',
-      dataIndex: 'ipp',
-      key: 'ipp',
+      title: 'Requirement ID',
+      dataIndex: 'id',
+      key: 'id',
       width: '100px',
     },
     {
       title: 'State',
-      dataIndex: 'states',
-      key: 'states',
+      dataIndex: 'requirement',
+      key: 'requirement',
+      render: (text) => text[0]?.rq_state,
       width: '150px',
     },
     {
-      title: 'Capacity',
-      dataIndex: 'capacity',
-      key: 'capacity',
+      title: 'Industry',
+      dataIndex: 'requirement',
+      key: 'industry',
+      render: (text) => text[0]?.rq_industry,
       width: '150px',
     },
     {
-      title: 'Replacement',
-      dataIndex: 'replacement',
-      key: 'replacement',
+      title: 'Site Name',
+      dataIndex: 'site',
+      key: 'site',
+      width: '100px',
+    },
+    {
+      title: 'Contracted Demand',
+      dataIndex: 'requirement',
+      key: 'contractedDemand',
+      render: (text) => text[0]?.rq_contracted_demand,
       width: '150px',
     },
     {
-      title: 'Per Unit Cost',
-      dataIndex: 'perUnitCost',
-      key: 'perUnitCost',
-      render: (text) => `₹${text}`, // Format cost with currency symbol
+      title: 'Tariff Category',
+      dataIndex: 'requirement',
+      key: 'tariffCategory',
+      render: (text) => text[0]?.rq_tariff_category,
       width: '150px',
     },
     {
       title: 'Status',
       key: 'status',
       render: (_, record) => (
-        <Button
-          type="primary"
-          onClick={() => showModal(record)} // Show modal on button click
-        >
+        <Button type="primary" onClick={() => showModal(record)}>
           View Status
         </Button>
       ),
@@ -124,15 +142,14 @@ const RequestedIPP = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <Col span={24} style={{ textAlign: "center" }}>
-        <Title level={3} style={{ color: "#001529" }}>
+      <Col span={24} style={{ textAlign: 'center' }}>
+        <Title level={3} style={{ color: '#001529' }}>
           Your Requested IPPs
         </Title>
       </Col>
 
-      {/* Search and Filter in the same row */}
       <Row gutter={16} style={{ marginBottom: '20px', justifyContent: 'center' }}>
-      <Col style={{marginRight:'40%'}}>
+        <Col style={{ marginRight: '40%' }}>
           <Input
             placeholder="Search"
             value={searchText}
@@ -152,38 +169,88 @@ const RequestedIPP = () => {
             <Option value="Rejected">Rejected</Option>
           </Select>
         </Col>
-       
       </Row>
 
-      <Table
-        dataSource={filteredData} // Use filtered data for the table
-        columns={columns} // Columns definition
-        pagination={false} // Disable pagination if not needed
-        style={{
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Add shadow to the table
-          width: '80%', // Reduce the table width
-          margin: '0 auto', // Center the table horizontally
-        }}
-      />
+      {error ? (
+        <div style={{ color: 'red', textAlign: 'center' }}>{error}</div>
+      ) : ippData.length === 0 ? (
+        <div style={{ textAlign: 'center' }}>No Data Found</div>
+      ) : (
+        <Table
+          dataSource={filteredData}
+          columns={columns}
+          pagination={false}
+          style={{
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            width: '80%',
+            margin: '0 auto',
+          }}
+        />
+      )}
 
-      {/* Modal to display status and additional information */}
       <Modal
         title="IPP Details"
         visible={isModalVisible}
         onCancel={handleCancel}
-        footer={null} // No footer buttons, you can add if needed
+        footer={null}
       >
         {modalContent && (
           <div>
-            <p><strong>IPP ID:</strong> {modalContent.ipp}</p>
-            <p><strong>State:</strong> {modalContent.states}</p>
-            <p><strong>Capacity:</strong> {modalContent.capacity}</p>
-            <p><strong>Replacement:</strong> {modalContent.replacement}</p>
-            <p><strong>Per Unit Cost:</strong> ₹{modalContent.perUnitCost}</p>
-            <p><strong>Status:</strong> {modalContent.status}</p>
+            <p><strong>IPP ID:</strong> {modalContent.id}</p>
+            <p><strong>State:</strong> {modalContent.requirement[0].rq_state}</p>
+            <p><strong>Industry:</strong> {modalContent.requirement[0].rq_industry}</p>
+            <p><strong>Contracted Demand:</strong> {modalContent.requirement[0].rq_contracted_demand}</p>
+            <p><strong>Tariff Category:</strong> {modalContent.requirement[0].rq_tariff_category}</p>
+            <p><strong>Status:</strong> {modalContent.consumer_status}</p>
+            <Row>
+              <Col span={12}>
+                <p><strong>Term of PPA (years):</strong> {modalContent.term_of_ppa}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Lock-in Period (years):</strong> {modalContent.lock_in_period}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Commencement of Supply:</strong> {modalContent.commencement_of_supply}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Contracted Energy (million units):</strong> {modalContent.contracted_energy}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Minimum Supply Obligation (million units):</strong> {modalContent.minimum_supply_obligation}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Payment Security (days):</strong> {modalContent.payment_security}</p>
+              </Col>
+              <Col span={12}>
+                <p><strong>Payment Security Type:</strong> {modalContent.payment_security_type}</p>
+              </Col>
+            </Row>
+            {console.log('ipp', modalContent)}
+
+            {modalContent?.generator_status !== 'Rejected' && modalContent?.generator_status !== 'Accepted' && (
+              <>
+                {console.log('ippju')}
+                {modalContent?.from_whom === 'Consumer' && modalContent?.count % 2 === 0 && modalContent?.count < 4 && (
+                  <>
+                    <Button onClick={() => handleStatusUpdate('Rejected')}>Reject</Button>
+                    <Button style={{ marginLeft: '10px' }} onClick={() => handleStatusUpdate('Accepted')}>Accept</Button>
+                    <Button style={{ marginLeft: '10px' }} onClick={() => handleCounterOffer(modalContent)}>Counter Offer</Button>
+                  </>
+                )}
+              </>
+            )}
           </div>
         )}
       </Modal>
+      {/* TermSheet component */}
+     
+{modalContent&& ( <TermSheet
+        visible={isQuotationModalVisible}
+        onCancel={() => setIsQuotationModalVisible(false)} // Close the modal
+        data={modalContent} // Pass the modalContent directly to the modal
+      />
+)
+}
     </div>
   );
 };

@@ -1,44 +1,50 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Typography, Table, Button, Modal, Form } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice';
 import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfileForm';
-import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
+// import { render } from 'less';
+import { useLocation } from 'react-router-dom';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph } = Typography;
 
 const UpdateProfileDetails = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState(null);
-  const [dataSource, setDataSource] = useState([
-    {
-      key: '1',
-      type: 'Solar',
-      state: 'Karnataka',
-      capacity: '50 MW',
-      cod: '2023-12-01',
-      updated: false,
-    },
-    {
-      key: '2',
-      type: 'Wind',
-      state: 'Maharashtra',
-      capacity: '30 MW',
-      cod: '2024-06-15',
-      updated: false,
-    },
-    {
-      key: '3',
-      type: 'ESS',
-      state: 'Rajasthan',
-      capacity: '20 MWH',
-      cod: '2025-03-10',
-      updated: false,
-    },
-  ]);
-  const [form] = Form.useForm();
+  const user = (JSON.parse(localStorage.getItem('user'))).user;
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [Structuredprojects, setStructuredProjects] = useState([]);  // Local state for flattened projects
+  const [form] = Form.useForm();
+
+  // Fetching projects from Redux store
+  const { projects, status } = useSelector(state => state.portfolio);
+  const location = useLocation();
+  const selectedDemandId = location.state?.selectedConsumer;
+  
+  useEffect(() => {
+    console.log('Selected demand:', selectedDemandId);
+  }, [selectedDemandId]);
+  
+  useEffect(() => {
+    const id = user.id; 
+    dispatch(getAllProjectsById(id));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (projects.Solar || projects.Wind || projects.ESS) {
+      const flatProjects = [
+        ...(projects.Solar || []).map(project => ({ ...project, type: 'Solar' })),
+        ...(projects.Wind || []).map(project => ({ ...project, type: 'Wind' })),
+        ...(projects.ESS || []).map(project => ({ ...project, type: 'ESS' }))
+      ];
+      setStructuredProjects(flatProjects);  // Update local state with flattened data
+    }
+  }, [projects.Solar, projects.Wind, projects.ESS]);
 
   // Table columns
   const columns = [
@@ -53,34 +59,47 @@ const UpdateProfileDetails = () => {
       key: 'state',
     },
     {
-      title: 'Capacity',
-      dataIndex: 'capacity',
+      title: 'Available Capacity',
+      dataIndex: 'available_capacity',
       key: 'capacity',
+      render: (text) => {
+        // Check if the value is 'ESS' or not and render accordingly
+        if (text === 'ESS') {
+          return `${text} MWh`;
+        } else {
+          return `${text} MW`;
+        }
+      },
     },
-    {
-      title: 'COD',
-      dataIndex: 'cod',
-      key: 'cod',
-    },
+    
     {
       title: 'Updated',
       dataIndex: 'updated',
       key: 'updated',
-      render: (text) => (text ? 'Yes' : 'No'),
+      render: (text) => (
+        <div style={{ textAlign: 'center' }}>
+          {text ? (
+            <CheckCircleOutlined style={{ color: 'green', fontSize: '18px'}} />
+          ) : (
+            <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
+          )}
+        </div>
+      ),
     },
     {
       title: 'Action',
       key: 'action',
-      width: 100, // Minimize the width of the Action column
+      width: 100,
       render: (text, record) => (
         <Button type="primary" onClick={() => handleUpdate(record)} style={{ width: '120px' }}>
-          Update Profile
+          Update
         </Button>
       ),
     },
   ];
 
   const handleUpdate = (record) => {
+    console.log('Record:', record);
     setSelectedRecord(record);
     form.setFieldsValue({
       ...record,
@@ -94,41 +113,21 @@ const UpdateProfileDetails = () => {
     form.resetFields();
   };
 
-  const handleSave = () => {
-    form.validateFields().then(values => {
-      const updatedDataSource = dataSource.map(item => {
-        if (item.key === selectedRecord.key) {
-          return { ...values, key: item.key, cod: values.cod.format('YYYY-MM-DD'), updated: true };
-        }
-        return item;
-      });
-      setDataSource(updatedDataSource);
-      setIsModalVisible(false);
-      form.resetFields();
-    }).catch(info => {
-      console.log('Validate Failed:', info);
-    });
-  };
-
-  const allUpdated = dataSource.every(item => item.updated);
+  const allUpdated = Structuredprojects.every(item => item.updated);
 
   const handleProceed = () => {
-    setIsQuotationModalVisible(true);
-  };
-
-  const handleQuotationModalCancel = () => {
-    setIsQuotationModalVisible(false);
+    navigate('/generator/combination-pattern', { state: { selectedDemandId } });
   };
 
   return (
     <div style={{ padding: "20px", fontFamily: "Inter, sans-serif" }}>
       <Title level={2} style={{ color: "#669800" }}>Update Profile Details</Title>
       <Paragraph>
-        This is a page for updating profile details. You can add more content and functionality here as needed.
+      Please Update all profile details of your projects to optimize the capacity.
       </Paragraph>
       <Table
         columns={columns}
-        dataSource={dataSource}
+        dataSource={Structuredprojects}
         pagination={false}
         bordered
         style={{ marginTop: "20px" }}
@@ -146,17 +145,15 @@ const UpdateProfileDetails = () => {
         title="Update Profile"
         open={isModalVisible}
         onCancel={handleCancel}
-        onOk={handleSave}
-        width={600}
+        width={700}
+        okButtonProps={{ style: { display: 'none' } }}
+        cancelButtonProps={{ style: { display: 'none' } }}
       >
-        <UpdateProfileForm form={form} />
+        <UpdateProfileForm 
+        project = {selectedRecord}
+        form={form} 
+        onCancel={handleCancel}/>
       </Modal>
-
-      <RequestForQuotationModal
-        visible={isQuotationModalVisible}
-        onCancel={handleQuotationModalCancel}
-        type="generator"
-      />
     </div>
   );
 };
