@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, Button, Row, Col, message } from "antd";
+import { Modal, Form, Input, Button, Row, Col, message, Radio } from "antd";
 import { useDispatch } from "react-redux";
 import { registerUser, verifyOtp } from "../../../Redux/Slices/Consumer/registerSlice";
 
-const RegisterForm = ({ open, onCancel, onCreate, type,user_category }) => {
+const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
   const [form] = Form.useForm();
   const [otpRequested, setOtpRequested] = useState(false);
-  const [userCategory, setUserCategory] = useState("");
+  const [userCategory, setUserCategory] = useState(user_category);
+  const [userId, setUserId] = useState();
   const dispatch = useDispatch();
-console.log('user category',user_category);
 
   useEffect(() => {
-    // const user = JSON.parse(localStorage.getItem("user")).user;
-    // const userCategory = user?.user_category;
-    console.log('category:', userCategory);
     setUserCategory(user_category);
-  }, []);
+  }, [user_category]);
 
   const requestOtp = () => {
     form
@@ -24,7 +21,9 @@ console.log('user category',user_category);
         const payload = { ...values, user_category: userCategory };
         dispatch(registerUser(payload))
           .unwrap()
-          .then(() => {
+          .then((response) => {
+            console.log(response); // Log the response to check the data
+            setUserId(response.user_id); // Assuming the response contains a `user_id` field
             message.success("OTP has been sent to your email and mobile!");
             setOtpRequested(true);
           })
@@ -35,6 +34,7 @@ console.log('user category',user_category);
       .catch((info) => {
         console.log("Validate Failed:", info);
       });
+
   };
 
   const handleCancel = () => {
@@ -49,7 +49,10 @@ console.log('user category',user_category);
         const otp = {
           email_otp: values.email_otp,
           mobile_otp: values.mobile_otp,
+          user_id: userId,
         };
+        console.log(userId);
+        console.log(otp);
         dispatch(verifyOtp(otp))
           .unwrap()
           .then(() => {
@@ -72,16 +75,39 @@ console.log('user category',user_category);
       footer={null}
       onCancel={handleCancel}
       width={600}
+      style={{
+        marginLeft: '55%',
+        marginTop: '4%',
+      }}
     >
       <Form form={form} layout="vertical" name="consumer_registration_form">
+        {/* User Category Radio Buttons */}
+        <Row gutter={16}>
+          <Col span={24}>
+            <Form.Item
+              name="user_category"
+              label="Select User Category"
+              rules={[{ required: true, message: "Please select a user category!" }]}
+              labelCol={{ span: 10 }}
+              wrapperCol={{ span: 10 }}
+            >
+              <Radio.Group
+                onChange={(e) => setUserCategory(e.target.value)}
+                value={userCategory}
+              >
+                <Radio value="Consumer">Consumer</Radio>
+                <Radio value="Generator">Generator</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+        </Row>
+
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               name="company"
               label="Company Name"
-              rules={[
-                { required: true, message: "Please input the company name!" },
-              ]}
+              rules={[{ required: true, message: "Please input the company name!" }]}
             >
               <Input />
             </Form.Item>
@@ -90,30 +116,19 @@ console.log('user category',user_category);
             <Form.Item
               name="company_representative"
               label="Name of Company Representative"
-              rules={[
-                {
-                  required: true,
-                  message:
-                    "Please input the name of the company representative!",
-                },
-              ]}
+              rules={[{ required: true, message: "Please input the name of the company representative!" }]}
             >
               <Input />
             </Form.Item>
           </Col>
         </Row>
+
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               name="email"
               label="Email"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input the email!",
-                  type: "email",
-                },
-              ]}
+              rules={[{ required: true, message: "Please input the email!", type: "email" }]}
             >
               <Input />
             </Form.Item>
@@ -122,47 +137,23 @@ console.log('user category',user_category);
             <Form.Item
               name="mobile"
               label="Mobile"
-              rules={[
-                { required: true, message: "Please input the mobile number!" },
-              ]}
+              rules={[{ required: true, message: "Please input the mobile number!" }]}
             >
               <Input />
             </Form.Item>
           </Col>
-          {/* <Col span={12}>
-            <Form.Item
-              name="designation"
-              label="Designation"
-              rules={[
-                { required: true, message: "Please input the designation!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col> */}
-          
-          {type === "consumer" && (
-            <Col span={12}>
-              <Form.Item
-                name="cin_number"
-                label="CIN Number"
-                rules={[
-                  { required: true, message: "Please input the CIN number!" },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          )}
         </Row>
+
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="password"
-              label="Password"
+              label="New Password"
+              name="newPassword"
               rules={[
-                { required: true, message: "Please input the password!" },
+                { required: true, message: 'Please input your new password!' },
+                { min: 6, message: 'Password must be at least 6 characters long.' },
               ]}
+              hasFeedback
             >
               <Input.Password />
             </Form.Item>
@@ -170,22 +161,21 @@ console.log('user category',user_category);
 
           <Col span={12}>
             <Form.Item
-              name="confirm-password"
-              label="Confirm Password"
-              dependencies={["password"]}
+              label="Confirm New Password"
+              name="confirmPassword"
+              dependencies={['newPassword']}
               rules={[
-                { required: true, message: "Please confirm your password!" },
+                { required: true, message: 'Please confirm your new password!' },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
+                    if (!value || getFieldValue('newPassword') === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(
-                      new Error("Your passwords do not match!")
-                    );
+                    return Promise.reject(new Error('Passwords do not match!'));
                   },
                 }),
               ]}
+              hasFeedback
             >
               <Input.Password />
             </Form.Item>
@@ -198,26 +188,23 @@ console.log('user category',user_category);
               <Form.Item
                 name="email_otp"
                 label="Email OTP"
-                rules={[
-                  { required: true, message: "Please input the email OTP!" },
-                ]}
+                rules={[{ required: true, message: "Please input the email OTP!" }]}
               >
-                <Input  />
+                <Input />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
                 name="mobile_otp"
                 label="Mobile OTP"
-                rules={[
-                  { required: true, message: "Please input the mobile OTP!" },
-                ]}
+                rules={[{ required: true, message: "Please input the mobile OTP!" }]}
               >
                 <Input />
               </Form.Item>
             </Col>
           </Row>
         )}
+
         <Row gutter={16}>
           <Col span={24}>
             {!otpRequested ? (

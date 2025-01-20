@@ -1,13 +1,15 @@
+/* Ensure the body takes up the full height of the viewport */
 .landing-page {
-  position: relative;
+  display: flex;
+  height: 100vh;
+  width: 100%;
   overflow: hidden;
 }
 
 .video-container {
+  flex: 1; /* Takes up the remaining 50% of the width */
   position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
+  padding: 20px;
 }
 
 .background-video {
@@ -16,53 +18,59 @@
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Ensure video covers the full container */
   filter: blur(8px); /* Optional: Apply blur effect to background video */
-  z-index: -1;
+  z-index: -1; /* Put the video behind the content */
 }
 
-.content {
+.key-features {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: black; /* Set all text inside the content to black */
-  z-index: 1;
-  padding: 20px; /* Add padding for better spacing */
+  top: 20%;
+  left: 10%;
+  color: rgb(0, 0, 0);
+  /* background-color: rgba(0, 0, 0, 0.6); */
+  padding: 20px;
+  border-radius: 8px;
+  width: 250px;
+}
+
+.key-features h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.key-features ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.key-features li {
+  font-size: 16px;
+  margin-bottom: 10px;
 }
 
 .text-content {
-  color: black; /* Ensures the text color is black for all content */
-  font-size: 30px; /* Increase the font size for the main text */
-  font-weight: bold; /* Make the text bold */
+  position: absolute;
+  bottom: 20%;
+  left: 10%;
+  color: rgb(11, 0, 0);
+  text-align: left;
+  z-index: 1;
+}
+
+.right-content-bg {
+  width: 50%; /* Right content takes up 50% of the width */
+  background-color: white; /* White background */
+  /* padding: 40px; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Center the content */
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow on the left */
+  z-index: 1;
+  height: 100vh;
 }
 
 .cta-button {
   margin-top: 20px;
-  font-size: 18px; /* Increase font size of the button */
-  padding: 12px 24px; /* Increase button padding */
-}
-
-.ant-radio-wrapper {
-  color: black; /* Set color for radio button labels */
-  font-size: 18px; /* Make the radio label text bigger */
-}
-
-.ant-radio-button-wrapper {
-  color: black; /* Set color for radio button selected text */
-  font-size: 18px; /* Make the radio button text bigger */
-}
-
-h1 {
-  font-size: 48px; /* Set a larger font size for the main heading */
-}
-
-p {
-  font-size: 15px; /* Set a larger font size for the paragraph */
-  margin-top: 10px; /* Add some spacing between heading and paragraph */
 }

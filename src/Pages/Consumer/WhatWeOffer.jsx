@@ -1,38 +1,29 @@
-import React  from 'react';
+import React from 'react';
 import { Row, Col, Card, Statistic, Button } from 'antd';
-import { ThunderboltOutlined, BranchesOutlined, ApartmentOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { ThunderboltOutlined, DashboardOutlined, GlobalOutlined, ApartmentOutlined } from '@ant-design/icons'; // Updated icons
+import { useNavigate } from 'react-router-dom'; 
 import CountUp from 'react-countup'; 
 
 const WhatWeOffer = () => {
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
 
-    // Handle opening the modal and navigating to the next page
     const handleContinue = () => {
-      navigate('/consumer/requirement'); // Navigate to the desired route
-    };
-    // Handle closing the modal
-    const handleCancel = () => {
-        setIsModalVisible(false);
+        navigate('/consumer/requirement');
     };
 
     return (
         <div
             style={{
                 padding: '20px 50px',
-                backgroundColor: '#F5F6FB', // Page background
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                // height: '100vh',
-                color: 'black', // Text color for better contrast
-                // marginTop: '50px'
+                color: 'black',
             }}
         >
             <div
                 style={{
-     
                     backgroundColor: '#F5F6FB',
-                background: 'linear-gradient(to right, #F5F6FB ,#c4d4a5)', // Linear gradient from primary to link color
+                    background: 'linear-gradient(to right, #F5F6FB ,#c4d4a5)',
                     padding: '40px',
                     borderRadius: '10px',
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
@@ -42,98 +33,104 @@ const WhatWeOffer = () => {
                     What We Offer
                 </h1>
                 <p style={{ textAlign: 'center', fontSize: '1.2rem', marginBottom: '40px', color: '#9A8406' }}>
-                    Explore our key metrics that highlight the strength of our services and coverage:
+                    Discover the core strengths of our services that make us your reliable partner:
                 </p>
 
                 <Row gutter={16} justify="center">
-                    <Col xs={24} sm={12} md={8} lg={6}>
+                    {/* Total IPPs */}
+                    <Col xs={24} sm={12} md={8} lg={8}>
                         <Card
                             hoverable
                             title="Total IPPs"
                             bordered={false}
                             style={{
                                 width: '100%',
-                                backgroundColor: 'rgba(255, 255, 255, 0.1)', // Semi-transparent card background
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
                                 borderRadius: '10px',
-                                border: `1px solid #E6E8F1`, // Stroke/border color
+                                border: `1px solid #E6E8F1`,
+                                marginTop: `10px`,
                             }}
                         >
                             <Statistic
-                                title="Total IPPs"
-                                value={120} // Directly use the number
-                                prefix={<ThunderboltOutlined />}
+                                value={120}
+                                prefix={<ThunderboltOutlined />} // Lightning icon for energy producers
                                 valueStyle={{ color: '#3f8600' }}
-                                formatter={() => <CountUp start={80} end={120} duration={3} />} // Use formatter to render CountUp
+                                formatter={() => <CountUp start={80} end={120} duration={3} />}
                             />
                         </Card>
                     </Col>
 
-                    <Col xs={24} sm={12} md={8} lg={6}>
+                    {/* Total Capacity */}
+                    <Col xs={24} sm={12} md={8} lg={8}>
                         <Card
                             hoverable
-                            title="Total Capacity Available (MW)"
+                            title="Total Capacity Available"
                             bordered={false}
                             style={{
                                 width: '100%',
-                                backgroundColor: 'rgba(255, 255, 255, 0.1)', // Semi-transparent card background
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
                                 borderRadius: '10px',
-                                border: `1px solid #E6E8F1`, // Stroke/border color
+                                border: `1px solid #E6E8F1`,
+                                marginTop: `10px`,
                             }}
                         >
                             <Statistic
-                                title="Total Demands"
-                                value={5000} // Directly use the number
-                                prefix={<BranchesOutlined />}
+                                value={5000}
+                                prefix={<DashboardOutlined />} // Dashboard icon for capacity or performance
+                                suffix="MW"
                                 valueStyle={{ color: '#cf1322' }}
-                                formatter={() => <CountUp start={4700} end={5000} duration={3} />} // Use formatter to render CountUp
+                                formatter={() => <CountUp start={4700} end={5000} duration={3} />}
                             />
                         </Card>
                     </Col>
 
-                    <Col xs={24} sm={12} md={8} lg={6}>
+                    {/* States Covered */}
+                    <Col xs={24} sm={12} md={8} lg={8}>
                         <Card
                             hoverable
                             title="Number of States Covered"
                             bordered={false}
                             style={{
                                 width: '100%',
-                                backgroundColor: 'rgba(255, 255, 255, 0.1)', // Semi-transparent card background
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
                                 borderRadius: '10px',
-                                border: `1px solid #E6E8F1`, // Stroke/border color
+                                border: `1px solid #E6E8F1`,
+                                marginTop: `10px`,
                             }}
                         >
                             <Statistic
-                                title="Total States"
-                                value={28} // Directly use the number
-                                prefix={<ApartmentOutlined />}
+                                value={28}
+                                prefix={<ApartmentOutlined />} // Globe icon for states covered
                                 valueStyle={{ color: '#1890ff' }}
-                                formatter={() => <CountUp start={10} end={28} duration={3} />} // Use formatter to render CountUp
+                                formatter={() => <CountUp start={10} end={28} duration={3} />}
                             />
                         </Card>
                     </Col>
                 </Row>
 
-                {/* "Do you know" section */}
+                {/* "Do You Know" Section */}
                 <div style={{ textAlign: 'center', marginTop: '50px' }}>
-                    <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Do you know?</h2>
+                    <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Did You Know?</h2>
                     <p style={{ fontSize: '1.5rem', marginBottom: '30px' }}>
-                        The total amount consumers have saved: <span style={{ fontWeight: 'bold', color: '#669800' }}>$1,250,000</span>
+                    The total amount consumers have saved <span style={{ fontWeight: 'bold', color: '#669800' }}>₹12,50,000 annually!</span>
+                  
                     </p>
                 </div>
 
                 {/* Buttons Section */}
                 <div style={{ textAlign: 'center', marginTop: '30px' }}>
-                    {/* <Button type="primary" style={{ marginRight: '20px', padding: '10px 20px', fontSize: '1rem', backgroundColor: '#669800', borderColor: '#669800' }}>
-                        Explore
-                    </Button> */}
-                    <Button type="default" style={{ padding: '10px 20px', fontSize: '1rem', borderColor: '#E6E8F1' }}
-                    onClick={handleContinue}
+                    <h6 style={{ fontSize: '1.4rem', color: '#9A8406', marginBottom: '20px' }}>
+                        Start Your Journey With Us
+                    </h6>
+                    <Button
+                        type="default"
+                        style={{ padding: '10px 20px', fontSize: '1rem', borderColor: '#E6E8F1' }}
+                        onClick={handleContinue}
                     >
                         Continue
                     </Button>
                 </div>
             </div>
-
         </div>
     );
 };

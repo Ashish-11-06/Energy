@@ -1,0 +1,37 @@
+/* Login.css */
+
+/* Existing styles */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    /* background-color: #F5F6FB; Page background color */
+    font-family: 'Inter', sans-serif; /* Use the installed Inter font */
+}
+
+.login-box {
+    background-color: #FFFFFF; /* White background for the form */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #E6E8F1; /* Stroke/border color */
+}
+
+
+.register-link {
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .register-link a {
+    color: #9A8406; /* Link color */
+    text-decoration: none;
+  }
+  
+  .register-link a:hover {
+    text-decoration: underline; /* Underline link on hover */
+  }
