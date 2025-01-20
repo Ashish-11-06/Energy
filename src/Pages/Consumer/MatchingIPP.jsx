@@ -47,20 +47,13 @@ const MatchingIPP = () => {
     if (selectedRow) {
       const requirementId = location.state?.selectedRequirement?.id;
       navigate("/consumer/annual-saving", { state: { requirementId } });
+    } else {
+      message.error('Please select a single matching IPP before continuing.');
     }
   };
 
   const columns = [
-    {
-      title: "Select",
-      key: "select",
-      render: (text, record) => (
-        <Radio
-          onChange={(e) => handleRadioChange(e, record)} // Pass the entire record
-         // checked={selectedRow?.id === record.id} // Ensure the selection logic matches
-        />
-      ),
-    },
+ 
     {
       title: "IPP Pseudo Name",
       dataIndex: "user__username",
@@ -75,6 +68,16 @@ const MatchingIPP = () => {
       title: "Total Available Capacity (MW)",
       dataIndex: "available_capacity",
       key: "available_capacity",
+    },
+    {
+      title: "Select",
+      key: "select",
+      render: (text, record) => (
+        <Radio
+          onChange={(e) => handleRadioChange(e, record)} // Pass the entire record
+         // checked={selectedRow?.id === record.id} // Ensure the selection logic matches
+        />
+      ),
     },
   ];
 
@@ -147,6 +150,7 @@ const MatchingIPP = () => {
           justifyContent: "center",
         }}
       >
+         {/* <Tooltip title={!selectedRow ? 'Please select a matching IPP first' : ''}> */}
         <Button
           type="primary"
           onClick={handleContinue}
@@ -159,6 +163,7 @@ const MatchingIPP = () => {
         >
           Continue
         </Button>
+        {/* </Tooltip> */}
       </Row>
       <Modal
         title="Welcome"

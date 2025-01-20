@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, message, Row, Col, Modal, Tooltip } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Table, Button, message, Row, Col, Modal, Tooltip,Radio } from 'antd';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -60,6 +60,16 @@ const RequirementsPage = () => {
       dataIndex: 'procurement_date',
       key: 'procurement',
       render: (date) => (date ? moment(date).format('DD-MM-YYYY') : ''),
+    },
+    {
+      title: "Select",
+      key: "select",
+      render: (text, record) => (
+        <Radio
+          checked={selectedRequirement?.id === record.id} // Ensure only one record is selected
+          onChange={() => handleRowSelect(record)} // Pass the entire record
+        />
+      ),
     },
   ];
 
@@ -171,9 +181,12 @@ const RequirementsPage = () => {
         dataSource={requirements}
         pagination={false}
         bordered
-        onRow={(record) => ({
-          onClick: () => handleRowSelect(record), // Make entire row clickable
-        })}
+        // onRow={(record) => ({
+        //   onClick: () => handleRowSelect(record), // Make entire row clickable
+        // })}
+        rowClassName={(record) =>
+          selectedRequirement && record.id === selectedRequirement.id ? 'selected-row' : ''
+        }
       />
 
       <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
@@ -200,6 +213,22 @@ const RequirementsPage = () => {
         onCancel={handleCancel}
         onSubmit={handleSubmit}
       />
+      {/* CSS Styles */}
+      {/* <style>
+        {`
+          .selected-row{
+            background-color: rgba(102, 152, 0, 0.36) !important;
+            color: white;
+          }
+        `}
+        {`
+          .selected-row: hover{
+            background-color: rgba(102, 152, 0, 0.36) !important;
+            color: white;
+          }
+        `}
+        
+      </style> */}
     </div>
   );
 };
