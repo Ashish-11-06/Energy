@@ -29,7 +29,7 @@ const consumerMenuItems = [
   { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
   { label:'Offer Sent', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined /> },
   { label: 'Offer Recieved', key: '/consumer/offer-recieved-from-ipp', icon: <AppstoreAddOutlined /> },
-  { label: 'Chat with Expert', key: '/consumer/chat-page', icon: <MessageOutlined /> },
+  { label: 'Chatbot', key: '/consumer/chat-page', icon: <MessageOutlined /> },
   { label: 'Energy Consumption Table', key: '/consumer/energy-consumption-table', icon: <TableOutlined /> },
   { label: 'Consumption Pattern', key: '/consumer/consumption-pattern', icon: <AreaChartOutlined /> },
   { label: 'Annual Saving', key: '/consumer/annual-saving', icon: <WalletOutlined /> },
@@ -47,7 +47,7 @@ const generatorMenuItems = [
   // { label: 'Energy Optimization', key: '/generator/energy-optimization', icon: <ControlOutlined /> },
   { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
   { label: 'Subscription Plan', key: '/generator/subscription-plan', icon: <WalletOutlined /> },
-  { label: 'Chat with Expert', key: '/generator/chat-page', icon: <MessageOutlined /> },
+  { label: 'Chatbot', key: '/generator/chat-page', icon: <MessageOutlined /> },
   { label: 'Profile', key: '/generator/profile', icon: <NotificationOutlined /> },
 ];
 

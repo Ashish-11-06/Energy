@@ -68,13 +68,16 @@ console.log('user_category',user_category);
       const response = await dispatch(loginUser(credentials)).unwrap();
       console.log('response', response.user.is_new_user);
       const new_user = response.user.is_new_user;
-      // setNewUser(new_user);
 
       setLoading(false);
       if (response) {
         message.success("Login successful!");
         localStorage.setItem("hasSeenWelcomeModal", "false"); // Set flag to show welcome modal
-        navigate("/consumer/requirement", { state: { user_category, new_user } }); // Pass new_user to RequirementsPage
+        if (new_user) {
+          navigate("/consumer/what-we-offer", { state: { user_category, new_user } }); // Navigate to what-we-offer if new_user is true
+        } else {
+          navigate("/consumer/requirement", { state: { user_category, new_user } }); // Navigate to requirement if new_user is false
+        }
       }
     } catch (error) {
       setLoading(false);

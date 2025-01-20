@@ -109,6 +109,7 @@ const CombinationPattern = () => {
         perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
         cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
         reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "N/A",
+        connectivity: combination.connectivity,
         status: combination.sent_from_you === 1
           ? "Request already sent"
           : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>,
@@ -195,12 +196,12 @@ const CombinationPattern = () => {
       key: "srNo",
     },
     {
-      title: "Combination",
+      title: "IPP Pseudo Name",
       dataIndex: "combination",
       key: "combination",
     },
     {
-      title: "Connectivity",
+      title: "Generator's Connectivity",
       dataIndex: "connectivity",
       key: "connectivity",
     },
@@ -229,7 +230,7 @@ const CombinationPattern = () => {
       key: "totalCapacity",
     },
     {
-      title: "Per Unit Cost (INR/MW)",
+      title: "Per Unit Cost (INR/KWh)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
     },
@@ -240,10 +241,19 @@ const CombinationPattern = () => {
       render: (text) => dayjs(text).format('DD-MM-YYYY'),
     },
     {
-      title: "Actions",
-      dataIndex: "status",
-      key: "status",
-    },
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+            render: (text, record) => (
+              text === "Already Sent" ? (
+                "Already Sent"
+              ) : (
+                <button onClick={() => handleRowClick(record)}>
+                  Initiate Quotation
+                </button>
+              )
+            ),
+          },
   ];
 
   // Chart data for consumption patterns
@@ -269,13 +279,13 @@ const CombinationPattern = () => {
         fill: false,
       },
       {
-        label: "Peak Consumption (MWh)",
+        label: "Consumption during Peak hours(MWh)",
         data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.peak_consumption) : [], // Safely check if it's an array
         borderColor: "#FF5733",
         fill: false,
       },
       {
-        label: "Off-Peak Consumption (MWh)",
+        label: "Consumption during Off-Peak hours(MWh)",
         data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption) : [], // Safely check if it's an array
         borderColor: "#337AFF",
         fill: false,
@@ -378,9 +388,9 @@ const CombinationPattern = () => {
                 border: "1px solid #E6E8F1",
                 overflowX: "auto",
               }}
-              onRow={(record) => ({
-                onClick: () => handleRowClick(record),
-              })}
+              // onRow={(record) => ({
+              //   onClick: () => handleRowClick(record),
+              // })}
               scroll={{ x: true }}
             />
           ) : (
@@ -407,7 +417,8 @@ const CombinationPattern = () => {
           <IPPModal
             visible={isIPPModalVisible}
             reReplacement={sliderValue} // Pass the latest slider value
-            ipp={selectedRow}          // Ensure selectedRow is updated
+            ipp={selectedRow} 
+            combination={combinationData}         // Ensure selectedRow is updated
             onClose={handleIPPCancel}
             onRequestForQuotation={handleRequestForQuotation}
           />

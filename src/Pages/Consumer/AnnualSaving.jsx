@@ -91,31 +91,41 @@ navigate('consumer/chat-page')
           <>
             <div className="annual-saving-container">
               <Title level={3} className="text-center">
-                Annual Saving
+                Annual Savings
               </Title>
 
-              <Tooltip title="Help">
+              {/* <Tooltip title="Help">
         <Button
           shape="circle"
           icon={<QuestionCircleOutlined />}
           onClick={showInfoModal}
           style={{ position: 'absolute', top: 120, right: 30 }}
         />
-      </Tooltip>
+      </Tooltip> */}
 
               <Space direction="vertical" size="large" className="w-100">
                 <Card bordered={false} className="custom-card">
-                  <Text className="custom-label">Potential Annual Saving (INR):</Text>
-                  <div className="amount-box">
-                    <Text className="amount">₹{annualSaving ? annualSaving.toLocaleString() : "0"}</Text> {/* Dynamic annual saving */}
-                  </div>
+                  <span><Text className="custom-label" style={{marginRight:'3%'}}>Potential Savings (INR):</Text>
+                  {/* <div className="amount-box"> */}
+                    <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? annualSaving.toLocaleString() : "0"}</Text> {/* Dynamic annual saving */}
+                  {/* </div> */}
+                  </span>
                 </Card>
 
                 <Card bordered={false} className="custom-card">
-                  <Text className="custom-label">Potential RE Replacement %:</Text>
-                  <div className="amount-box">
-                    <Text className="amount">{reReplacement ? reReplacement : "0"}%</Text> {/* Dynamic RE replacement */}
-                  </div>
+                  <span><Text className="custom-label" style={{marginRight:'3%'}}>Average Savings (INR):</Text>
+                  {/* <div className="amount-box"> */}
+                    {/* <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? annualSaving.toLocaleString() : "0"}</Text> Dynamic annual saving */}
+                  {/* </div> */}
+                  </span>
+                </Card>
+
+                <Card bordered={false} className="custom-card">
+                  <span><Text className="custom-label" style={{marginRight:'3%'}}>Potential RE Replacement:</Text>
+                  {/* <div className="amount-box"> */}
+                    <Text className="amount" style={{fontSize:'20px'}}>{reReplacement ? reReplacement : "0"}%</Text> {/* Dynamic RE replacement */}
+                  {/* </div> */}
+                  </span>
                 </Card>
 
                 <Space wrap className="actions">
@@ -123,7 +133,7 @@ navigate('consumer/chat-page')
                     Download Report
                   </Button>
                   <Button type="default"  onClick={handleChatWithExpert} >
-                    Chat with Expert
+                    Chatbot
                   </Button>
                 </Space>
               </Space>
@@ -132,21 +142,23 @@ navigate('consumer/chat-page')
         )}
       </div>
 
-      <Button
-        type="primary"
-        style={{
-          marginTop: "20px",
-          backgroundColor: "#669800",
-          borderColor: "#669800",
-          fontSize: "16px",
-          padding: "0 30px",
-        }}
-        onClick={handleContinue}
-      >
-        Continue
-      </Button>
+      <Tooltip title="To further explore, subscribe to our plan">
+        <Button
+          type="primary"
+          style={{
+            marginTop: "20px",
+            backgroundColor: "#669800",
+            borderColor: "#669800",
+            fontSize: "16px",
+            padding: "0 30px",
+          }}
+          onClick={handleContinue}
+        >
+          Subscribe
+        </Button>
+      </Tooltip>
 
-      <Modal
+      {/* <Modal
         title="Welcome"
         open={isInfoModalVisible}
         onOk={handleInfoModalOk}
@@ -169,7 +181,7 @@ navigate('consumer/chat-page')
           <li>To continue, select a requirement and click the "Continue" button.</li>
         </ol>
         <p>Thank you!</p>
-      </Modal>
+      </Modal> */}
 
     </main>
   );

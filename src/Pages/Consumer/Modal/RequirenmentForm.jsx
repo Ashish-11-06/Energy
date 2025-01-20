@@ -13,6 +13,7 @@ import {
 import { InfoCircleOutlined } from "@ant-design/icons";
 import states from "../../../Data/States";
 import industries from "../../../Data/Industry";
+import dayjs from 'dayjs';
 
 const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [form] = Form.useForm();
@@ -28,7 +29,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
       contracted_demand: values.contractedDemand,
       tariff_category: values.tariffCategory,
       voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
-      procurement_date: values.procurement.format('YYYY-MM-DD'),
+      procurement_date: values.procurement.format('DD/MM/YYYY'), 
       site: values.site,
     };
     if (onSubmit) {
@@ -96,6 +97,28 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
           <Col span={12}>
             <Form.Item
               label={renderLabelWithTooltip(
+                "Consumption Site name",
+                "Name of the site where the electricity is being consumed."
+              )}
+              name="site"
+              rules={[
+                {
+                 
+                  required: true,
+                  message: "Please enter the Site name!",
+                },
+              ]}
+            >
+              <Input
+                type="text"
+                placeholder="Enter Site name"
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              label={renderLabelWithTooltip(
                 "Industry",
                 "Industry your company is involved in (e.g., IT, Manufacturing)."
               )}
@@ -125,7 +148,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             <Form.Item
               label={renderLabelWithTooltip(
                 "Tariff Category",
-                "Select the tariff category applicable to your company (e.g., HT Commercial, LT Industrial)."
+                "You can refer your electricity bill."
               )}
               name="tariffCategory"
               rules={[
@@ -189,7 +212,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
                 ]}
               >
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Enter custom voltage"
                   value={customVoltage}
                   onChange={(e) => setCustomVoltage(e.target.value)}
@@ -220,33 +243,13 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
           </Col>
 
           <Row>
-          <Col span={12}>
-            <Form.Item
-              label={renderLabelWithTooltip(
-                "Site name",
-                "Name of the site where the electricity is being consumed."
-              )}
-              name="site"
-              rules={[
-                {
-                 
-                  required: true,
-                  message: "Please enter the Site name!",
-                },
-              ]}
-            >
-              <Input
-                type="text"
-                placeholder="Enter Site name"
-              />
-            </Form.Item>
-          </Col>
+         
 
-            <Col span={12}>
+            <Col span={24}>
               <Form.Item
                 label={renderLabelWithTooltip(
-                  "Procurement Date",
-                  "Select the date when the procurement of services or goods occurred (expected Date)."
+                  "Expected Date",
+                  "Select date from which you need renewable energy."
                 )}
                 name="procurement"
                 rules={[
@@ -258,6 +261,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
               >
                 <DatePicker
                   style={{ width: "100%" }}
+                  format="DD/MM/YYYY" // Set the display format to DD/MM/YYYY
                   disabledDate={(current) => {
                     // Disable today and all past dates
                     return current && current <= new Date();

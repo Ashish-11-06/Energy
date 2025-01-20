@@ -129,7 +129,7 @@ console.log('user category',user_category);
               <Input />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          {/* <Col span={12}>
             <Form.Item
               name="designation"
               label="Designation"
@@ -139,7 +139,7 @@ console.log('user category',user_category);
             >
               <Input />
             </Form.Item>
-          </Col>
+          </Col> */}
           
           {type === "consumer" && (
             <Col span={12}>

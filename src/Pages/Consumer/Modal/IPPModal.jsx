@@ -4,9 +4,11 @@ import RequestForQuotationModal from "../../../Components/Modals/RequestForQuota
 
 const { Title, Text } = Typography;
 
-const IPPModal = ({ visible,reReplacement, ipp, onClose, onRequestForQuotation }) => {
+const IPPModal = ({ visible,reReplacement, ipp,combination, onClose, onRequestForQuotation }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 console.log('ipp',ipp);
+
+console.log('combinationData',combination);
 
   const showQuotationModal = () => {
     setIsQuotationModalVisible(true);
@@ -46,23 +48,20 @@ console.log('ipp',ipp);
               </Title>
               <div style={{ borderBottom: "1px solid #E6E8F1", marginBottom: "20px" }} />
               <Text style={{ fontSize: "16px", lineHeight: "1.6" }}>
-                {/* <strong>IPP:</strong> {ipp?.ipp} <br />
-                <strong>Index:</strong> {ipp?.index} <br />
-                <strong>State:</strong> {ipp?.states} <br /> */}
                 <strong>Available Capacity:</strong> {ipp?.capacity} <br />
                 <strong>Potential RE Replacement:</strong> {ipp?.reReplacement} <br />
                 <strong>Technology:</strong>
-                {Array.isArray(ipp?.technology) ? (
-                  ipp.technology.map((tech, index) => (
-                    <span key={index}>
-                      {tech.name}: {tech.capacity} <br />
-                    </span>
-                  ))
-                ) : (
-                  "N/A"
-                )}
+                {Object.keys(combination).map((key, index) => (
+                  <span key={index}>
+                    {/* <strong>{key.split('-')[1]}:</strong> <br /> */}
+                     Battery Capacity(MW): {combination[key]["Optimal Battery Capacity (MW)"]} {combination[key].state["Battery"]} <br />
+                     Solar Capacity(MW): {combination[key]["Optimal Solar Capacity (MW)"]} {combination[key].state["Solar"]} <br />
+                     Wind Capacity(MW): {combination[key]["Optimal Wind Capacity (MW)"]} {combination[key].state["Wind_1"]} <br />
+                    {/* State: {combination[key].state[key.split('-')[1]]} <br /> */}
+                  </span>
+                ))}
                 <br />
-                <strong>per Unit Cost:</strong> {ipp?.perUnitCost} <br />
+                <strong>Per Unit Cost:</strong> {ipp?.perUnitCost} <br />
               </Text>
               <div style={{ borderTop: "1px solid #E6E8F1", margin: "20px 0" }} />
               <Title level={5} style={{ color: "#9A8406", marginBottom: "10px", marginTop: "20px" }}>

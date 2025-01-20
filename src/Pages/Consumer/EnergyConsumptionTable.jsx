@@ -434,7 +434,20 @@ const EnergyConsumptionTable = () => {
           Energy Consumption Data (12 Months)
         </Title>
 
-       
+       <div>
+        <Tooltip title="Add details manually">
+          <Button>Add Details</Button>
+        </Tooltip>
+        <Tooltip title="Upload a CSV file">
+          <Button style={{marginLeft:'10%'}}>Upload CSV file</Button>
+        </Tooltip>
+        <Tooltip title="Upload an image file">
+          <Button style={{marginLeft:'10%'}}>Upload Image</Button>
+        </Tooltip>
+        <Tooltip title="Upload a SCADA file">
+          <Button style={{marginLeft:'8%'}}>Upload SCADA file</Button>
+        </Tooltip>
+       </div>
         <Table
           dataSource={dataSource}
           columns={mergedColumns}

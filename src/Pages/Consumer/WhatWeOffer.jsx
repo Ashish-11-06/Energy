@@ -71,7 +71,7 @@ const WhatWeOffer = () => {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Card
                             hoverable
-                            title="Total Demands"
+                            title="Total Capacity Available (MW)"
                             bordered={false}
                             style={{
                                 width: '100%',
@@ -93,7 +93,7 @@ const WhatWeOffer = () => {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Card
                             hoverable
-                            title="Total States"
+                            title="Number of States Covered"
                             bordered={false}
                             style={{
                                 width: '100%',
@@ -123,9 +123,9 @@ const WhatWeOffer = () => {
 
                 {/* Buttons Section */}
                 <div style={{ textAlign: 'center', marginTop: '30px' }}>
-                    <Button type="primary" style={{ marginRight: '20px', padding: '10px 20px', fontSize: '1rem', backgroundColor: '#669800', borderColor: '#669800' }}>
+                    {/* <Button type="primary" style={{ marginRight: '20px', padding: '10px 20px', fontSize: '1rem', backgroundColor: '#669800', borderColor: '#669800' }}>
                         Explore
-                    </Button>
+                    </Button> */}
                     <Button type="default" style={{ padding: '10px 20px', fontSize: '1rem', borderColor: '#E6E8F1' }}
                     onClick={handleContinue}
                     >

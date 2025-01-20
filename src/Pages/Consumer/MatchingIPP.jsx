@@ -57,12 +57,12 @@ const MatchingIPP = () => {
       render: (text, record) => (
         <Radio
           onChange={(e) => handleRadioChange(e, record)} // Pass the entire record
-          checked={selectedRow?.id === record.id} // Ensure the selection logic matches
+         // checked={selectedRow?.id === record.id} // Ensure the selection logic matches
         />
       ),
     },
     {
-      title: "IPP",
+      title: "IPP Pseudo Name",
       dataIndex: "user__username",
       key: "user__username",
     },
@@ -72,7 +72,7 @@ const MatchingIPP = () => {
       key: "state",
     },
     {
-      title: "Available Capacity (MW)",
+      title: "Total Available Capacity (MW)",
       dataIndex: "available_capacity",
       key: "available_capacity",
     },

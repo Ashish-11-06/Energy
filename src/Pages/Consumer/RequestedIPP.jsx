@@ -230,7 +230,7 @@ const RequestedIPP = () => {
             {modalContent?.generator_status !== 'Rejected' && modalContent?.generator_status !== 'Accepted' && (
               <>
                 {console.log('ippju')}
-                {modalContent?.from_whom === 'Consumer' && modalContent?.count % 2 === 1 && modalContent?.count < 4 && (
+                {modalContent?.from_whom === 'Consumer' && modalContent?.count % 2 === 0 && modalContent?.count < 4 && (
                   <>
                     <Button onClick={() => handleStatusUpdate('Rejected')}>Reject</Button>
                     <Button style={{ marginLeft: '10px' }} onClick={() => handleStatusUpdate('Accepted')}>Accept</Button>

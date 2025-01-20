@@ -46,15 +46,16 @@ const RequirementsPage = () => {
       key: 'state',
     },
     {
+      title: 'Consumption Site Name',
+      dataIndex: 'site',
+      key: 'site',
+    },
+    {
       title: 'Industry',
       dataIndex: 'industry',
       key: 'industry',
     },
-    {
-      title: 'Site Name',
-      dataIndex: 'site',
-      key: 'site',
-    },
+  
     {
       title: 'Contracted Demand (MW)',
       dataIndex: 'contracted_demand',
@@ -209,7 +210,7 @@ const RequirementsPage = () => {
           </Button>
         </Col>
         <Col>
-          <Tooltip title={!selectedRequirement ? 'Please select a requirement first' : ''}>
+          <Tooltip title={!selectedRequirement ? 'Please select a consumption unit first' : ''}>
             <Button
               type="default"
               onClick={handleContinue}
