@@ -241,6 +241,22 @@ const EnergyConsumptionTable = () => {
     setDataSource(newData);
   };
 
+  const handleCSVUpload = async (file) => {
+    message.success(`${file.name} uploaded successfully`);
+    // Add your CSV upload handling logic here
+    return false; // Prevent automatic upload
+  };
+  
+  const handleImageUpload = async (file) => {
+    message.success(`${file.name} uploaded successfully`);
+    // Add your image upload handling logic here
+    return false; // Prevent automatic upload
+  };
+
+  const handleScada =() => {
+    message.success('success')
+  }
+
   const handleFileUploadModal = async (file) => {
     message.success(`${file.name} uploaded successfully`);
     setFileUploaded(true);
@@ -434,20 +450,30 @@ const EnergyConsumptionTable = () => {
           Energy Consumption Data (12 Months)
         </Title>
 
-       <div>
-        <Tooltip title="Add details manually">
-          <Button>Add Details</Button>
-        </Tooltip>
-        <Tooltip title="Upload a CSV file">
-          <Button style={{marginLeft:'10%'}}>Upload CSV file</Button>
-        </Tooltip>
-        <Tooltip title="Upload an image file">
-          <Button style={{marginLeft:'10%'}}>Upload Image</Button>
-        </Tooltip>
-        <Tooltip title="Upload a SCADA file">
-          <Button style={{marginLeft:'8%'}}>Upload SCADA file</Button>
-        </Tooltip>
-       </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+  <Tooltip title="Add details manually">
+    <Button>Add Details</Button>
+  </Tooltip>
+  
+  <Tooltip title="Upload a CSV file">
+    <Upload>
+      <Button>Upload CSV file</Button>
+    </Upload>
+  </Tooltip>
+  
+  <Tooltip title="Upload an image file">
+    <Upload>
+      <Button>Upload Image</Button>
+    </Upload>
+  </Tooltip>
+  
+  <Tooltip title="Upload a SCADA file">
+    {/* <Upload> */}
+      <Button onClick={handleContinue}>Upload SCADA file</Button>
+    {/* </Upload> */}
+  </Tooltip>
+</div>
+
         <Table
           dataSource={dataSource}
           columns={mergedColumns}
@@ -517,8 +543,10 @@ const EnergyConsumptionTable = () => {
           }}
         >
           {!fileUploaded && (
-            <Button onClick={handleSkip} style={{ marginRight: "10px" }}>
-              Skip
+            <Button onClick={()=> setIsModalVisible(false)}
+            // onClick={handleSkip}
+            style={{ marginRight: "10px" }}>
+              Back
             </Button>
           )}
           {fileUploaded && (
