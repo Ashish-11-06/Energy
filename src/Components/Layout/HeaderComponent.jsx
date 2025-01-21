@@ -16,12 +16,10 @@ const { Header } = Layout;
 
 const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const location = useLocation();
- // console.log('location in header', location);
-  
   const currentPath = location.pathname;
 
   const consumerSteps = [
-    { path: '/consumer/requirenment', label: 'Requirements', icon: <UserOutlined /> },
+    { path: '/consumer/requirement', label: 'Requirements', icon: <UserOutlined /> },
     { path: '/consumer/matching-ipp', label: 'Matching IPP', icon: <HomeOutlined /> },
     { path: '/consumer/annual-saving', label: 'Annual Saving', icon: <FileTextOutlined /> },
     { path: '/consumer/subscription-plan', label: 'Subscription', icon: <FileTextOutlined /> },
@@ -41,13 +39,27 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
 
   const currentStepIndex = steps.findIndex(step => step.path === currentPath);
 
+  const showProgress = [
+    '/consumer/requirement',
+    '/consumer/matching-ipp',
+    '/consumer/annual-saving',
+    '/consumer/subscription-plan',
+    '/consumer/energy-consumption-table',
+    '/consumer/consumption-pattern',
+    '/generator/portfolio',
+    '/generator/matching-consumer',
+    '/generator/subscription-plan',
+    '/generator/update-profile-details',
+    '/generator/combination-pattern'
+  ].includes(currentPath);
+
   return (
     <Header
       className="header-component"
       style={{
         backgroundColor: "transparent" /* Ensure no background color */,
         padding: "0 16px",
-        display: "flex",
+        // display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
@@ -55,6 +67,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
         top: 0,
         zIndex: 1000,
         height: isMobile ? "auto" : "80px",
+        // border: '2px solid red'
       }}
     >
       {/* Drawer button visible on mobile */}
@@ -80,37 +93,37 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
           alignItems: "center",
           justifyContent: "center", // Center align the content for better aesthetics
           width: "100%", // Ensure it spans the full width of the parent
-          height: "100px",
+          height: "100%",
         }}
       >
-        <div style={{ width: "1000px", margin: "0 auto" }}>
-          <div className="navbar">
-        
-            <div className="progress-container">
-              <div className="horizontal-line" style={{ '--progress-width': `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
-              <div className="progress-icons">
-                {steps.map((step, index) => (
-                  <div className="icon-container" key={index}>
-                    <span className="icon-label" style={{ fontSize: "12px" }}>
-                      {step.label}
-                    </span>
-                    <Link to={step.path}>
-                      <div
-                        className={`icon-circle ${index <= currentStepIndex ? 'completed' : ''}`}
-                        style={{
-                          marginRight: index === steps.length - 1 ? "0" : "50px",
-                          marginLeft: index === 0 ? "0" : "50px",
-                          transform: index === steps.length - 1 ? "translateX(20px)" : "none", // Adjust the last circle to the right
-                        }}
-                      >
-                        {step.icon}
-                      </div>
-                    </Link>
-                  </div>
-                ))}
+        <div style={{ width: "100%", maxWidth: "1500px", margin: "0 auto" }}>
+          {showProgress && (
+            <div className="navbar">
+              <div className="progress-container" style={{ width: "100%" }}>
+                <div className="horizontal-line" style={{ '--progress-width': `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
+                <div className="progress-icons" style={{ display: "flex", justifyContent: "space-between" }}>
+                  {steps.map((step, index) => (
+                    <div className="icon-container" key={index} style={{ flex: 1, textAlign: "center" }}>
+                      <span className="icon-label" style={{ fontSize: "10px" }}>
+                        {step.label}
+                      </span>
+                      <Link to={step.path}>
+                        <div
+                          className={`icon-circle ${index <= currentStepIndex ? 'completed' : ''}`}
+                          style={{
+                            margin: "0 auto",
+                            transform: index === steps.length - 1 ? "translateX(10px)" : "none", // Adjust the last circle to the right
+                          }}
+                        >
+                          {React.cloneElement(step.icon, { style: { fontSize: '16px' } })}
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </Header>

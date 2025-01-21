@@ -72,7 +72,7 @@ const RequirementsPage = () => {
       key: 'voltageLevel',
     },
     {
-      title: 'Procurement Date',
+      title: 'Expected Procurement Date',
       dataIndex: 'procurement_date',
       key: 'procurement',
       render: (date) => (date ? moment(date).format('DD-MM-YYYY') : ''),

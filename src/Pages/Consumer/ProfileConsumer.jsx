@@ -1,25 +1,14 @@
 import React, { useState } from "react";
-import { Card, Avatar, Row, Col, Typography, Divider, Input, Button, Modal, Form } from "antd";
+import { Card, Row, Col, Typography, Avatar, Button } from "antd";
+import EditProfileModal from "./Modal/EditProfileModal"; // Import the modal component
 
 const { Title, Text } = Typography;
 
-// Mock data for the consumer profile
-const initialConsumerData = {
-  name: "John Doe",
-  role: "Consumer",
-  email: "john.doe@example.com",
-  avatar: "https://i.pravatar.cc/150?img=4",
-  address: "123 Main Street, Springfield, USA",
-  phone: "+1 (555) 123-4567",
-};
-
-const ProfileConsumer = () => {
-  const [consumerData, setConsumerData] = useState(initialConsumerData);
-  const [isEditing, setIsEditing] = useState(false);
+const ProfilePage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem("user")).user);
 
-  // Toggle the modal visibility
-  const showModal = () => {
+  const handleEditToggle = () => {
     setIsModalVisible(true);
   };
 
@@ -27,113 +16,78 @@ const ProfileConsumer = () => {
     setIsModalVisible(false);
   };
 
-  const handleEditToggle = () => {
-    showModal();
-  };
-
   const handleSave = (values) => {
-    setConsumerData(values);
+    setUserData(values);
     setIsModalVisible(false);
+    localStorage.setItem("user", JSON.stringify({ user: values }));
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <Card
-        style={{ borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}
-      >
-        <Row gutter={[16, 16]} align="middle">
-          <Col xs={24} sm={8} md={6}>
-            <Avatar
-              size={100}
-              src={consumerData.avatar}
-              style={{ border: "2px solid #1890ff" }}
-            />
-          </Col>
-          <Col xs={24} sm={16} md={18}>
-            <Title level={3}>{consumerData.name}</Title>
-            <Text type="secondary" style={{ display: "block", marginBottom: "8px" }}>
-              Role: {consumerData.role}
-            </Text>
-            <Text type="secondary" style={{ display: "block", marginBottom: "8px" }}>
-              Email: {consumerData.email}
-            </Text>
-          </Col>
-        </Row>
-        <Divider />
-        <Row gutter={[16, 16]}>
-          <Col span={12}>
-            <Text strong>Address:</Text>
-            <p>{consumerData.address}</p>
-          </Col>
-          <Col span={12}>
-            <Text strong>Phone:</Text>
-            <p>{consumerData.phone}</p>
-          </Col>
-        </Row>
-        <Button type="primary" onClick={handleEditToggle} style={{ marginTop: '16px' }}>
-          Edit Details
-        </Button>
-      </Card>
-
-      {/* Modal for Editing User Details */}
-      <Modal
-        title="Edit Profile"
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <Form
-          layout="vertical"
-          onFinish={handleSave}
-          initialValues={consumerData}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-          >
-            <Input defaultValue={consumerData.name} />
-          </Form.Item>
-
-          <Form.Item
-            label="Role"
-            name="role"
-          >
-            <Input defaultValue={consumerData.role} />
-          </Form.Item>
-
-          <Form.Item
-            label="Email"
-            name="email"
-          >
-            <Input defaultValue={consumerData.email} />
-          </Form.Item>
-
-          <Form.Item
-            label="Address"
-            name="address"
-          >
-            <Input defaultValue={consumerData.address} />
-          </Form.Item>
-
-          <Form.Item
-            label="Phone"
-            name="phone"
-          >
-            <Input defaultValue={consumerData.phone} />
-          </Form.Item>
-
-          <Row justify="end">
-            <Button onClick={handleCancel} style={{ marginRight: "10px" }}>
-              Cancel
-            </Button>
-            <Button type="primary" htmlType="submit">
-              Save Changes
+    <Row justify="center" style={{ marginTop: "50px" }}>
+      <Col xs={24} sm={18} md={12} lg={10}>
+        <Card bordered={true} style={{ borderRadius: "8px" }}>
+          <Row justify="center" style={{ marginBottom: "20px" }}>
+            <Avatar size={100} src="https://i.pravatar.cc/150?img=4" />
+          </Row>
+          <Title level={3} style={{ textAlign: "center", marginBottom: "20px" }}>
+            User Profile
+          </Title>
+          <Row gutter={[16, 16]}>
+            <Col span={12}>
+              <Text strong>CIN Number:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.cin_number}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Company:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.company}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Representative:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.company_representative}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Email:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.email}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Mobile:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.mobile}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>User Category:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.user_category}</Text>
+            </Col>
+            
+          </Row>
+          <Row justify="center" style={{ marginTop: "20px" }}>
+            <Button type="primary" onClick={handleEditToggle}>
+              Edit Profile
             </Button>
           </Row>
-        </Form>
-      </Modal>
-    </div>
+        </Card>
+
+        {/* Modal for Editing User Details */}
+        <EditProfileModal
+          isVisible={isModalVisible}
+          onCancel={handleCancel}
+          onSave={handleSave}
+          initialValues={userData}
+        />
+      </Col>
+    </Row>
   );
 };
 
-export default ProfileConsumer;
+export default ProfilePage;

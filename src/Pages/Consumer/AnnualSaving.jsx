@@ -105,7 +105,7 @@ navigate('consumer/chat-page')
       </Tooltip> */}
 
               <Space direction="vertical" size="large" className="w-100">
-                <Card bordered={false} className="custom-card">
+                <Card bordered={false} className="custom-card" style={{ width: '100%', maxWidth: '600px' }}>
                   <span><Text className="custom-label" style={{marginRight:'3%'}}>Potential Savings (INR):</Text>
                   {/* <div className="amount-box"> */}
                     <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? annualSaving.toLocaleString() : "0"}</Text> {/* Dynamic annual saving */}
@@ -113,7 +113,7 @@ navigate('consumer/chat-page')
                   </span>
                 </Card>
 
-                <Card bordered={false} className="custom-card">
+                <Card bordered={false} className="custom-card" style={{ width: '100%', maxWidth: '600px' }}>
                   <span><Text className="custom-label" style={{marginRight:'3%'}}>Average Savings(for your industry):</Text>
                   {/* <div className="amount-box"> */}
                     <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? averageSavings.toLocaleString() : "0"}</Text>
@@ -121,7 +121,7 @@ navigate('consumer/chat-page')
                   </span>
                 </Card>
 
-                <Card bordered={false} className="custom-card">
+                <Card bordered={false} className="custom-card" style={{ width: '100%', maxWidth: '600px' }}>
                   <span><Text className="custom-label" style={{marginRight:'3%'}}>Potential RE Replacement:</Text>
                   {/* <div className="amount-box"> */}
                     <Text className="amount" style={{fontSize:'20px'}}>{reReplacement ? reReplacement : "0"}%</Text> {/* Dynamic RE replacement */}
@@ -155,7 +155,8 @@ navigate('consumer/chat-page')
           }}
           onClick={handleContinue}
         >
-          Subscribe
+          {/* Subscribe */}
+          continue
         </Button>
       </Tooltip>
 

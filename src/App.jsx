@@ -7,7 +7,7 @@ import MatchingIPP from './Pages/Consumer/MatchingIPP';
 import ChatWithExpert from './Pages/Consumer/ChatWithExpert';
 import ConsumptionPattern from './Pages/Consumer/CombinationPattern';
 import IppProjectDetails from './Pages/Consumer/IPPProjectDetails';
-import RequirementsPage from './Pages/Consumer/requirementPage';
+// import RequirementsPage from './Pages/Consumer/requirementPage';
 import AnnualSvg from './Pages/Consumer/AnnualSaving';
 import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
 import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
@@ -43,6 +43,7 @@ import TransactionWindow from './Pages/Consumer/TransactionWindow';
 import TransactionMainPage from './Pages/Consumer/TransactionMainPage';
 import TransactionMainPageGen from './Pages/Generator/TransactionMainPageGen';
 import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
+import RequirementsPage from './Pages/Consumer/RequirementPage';
 
 
 

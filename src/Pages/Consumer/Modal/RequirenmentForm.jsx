@@ -284,7 +284,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             <Col span={12}>
               <Form.Item
                 label={renderLabelWithTooltip(
-                  "Expected Date",
+                  "Expected Procurement Date",
                   "Select the date from which you need energy power."
                 )}
                 name="procurement"

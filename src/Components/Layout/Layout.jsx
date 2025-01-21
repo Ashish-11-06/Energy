@@ -58,7 +58,7 @@ const LayoutComponent = () => {
         <Header
           style={{
             padding: '0 16px',
-            display: 'flex',
+            // display: 'flex',
             alignItems: 'center',
             backgroundColor: '#6698005c',
             position: 'sticky',

@@ -60,7 +60,7 @@ const RequestForQuotationModal = ({
       combination: data.combination,
       term_of_ppa: ppaTerm,
       lock_in_period: lockInPeriod,
-      commencement_of_supply: data.cod,
+      commencement_of_supply: moment(data.cod).format("YYYY-MM-DD"), // Format the date
       contracted_energy: contractedEnergy,
       minimum_supply_obligation: minimumSupply,
       payment_security_type: paymentSecurityType,

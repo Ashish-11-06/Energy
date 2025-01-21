@@ -179,17 +179,10 @@ const MatchingIPP = () => {
           </Button>,
         ]}
       >
-        <p>Hi</p>
+        <p></p>
        
-        <p>Welcome to the EXG. Please follow these steps to proceed:</p>
-        <ol>
-          <li>Add your requirements by clicking the "Add Requirement +" button.</li>
-          <li>Fill in the details shown in the form.</li>
-          <li>Use the tooltip option for each field for more information.</li>
-          <li>You can add multiple requirements (demands).</li>
-          <li>To continue, select a requirement and click the "Continue" button.</li>
-        </ol>
-        <p>Thank you!</p>
+        <p>This is a broad estimation of matching IPPs. For more refined results, please add additional details.</p>
+        
       </Modal>
     </main>
   );
