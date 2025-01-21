@@ -113,7 +113,6 @@ const EnergyConsumptionTable = () => {
       return false;
     }
 
-    // Logic to handle CSV upload
     message.success(`${file.name} uploaded successfully`);
     setIsActionCompleted(true); // Mark action as completed
 
@@ -656,16 +655,7 @@ const EnergyConsumptionTable = () => {
         <p>Hi</p>
 
         <p>Please follow these steps to proceed:</p>
-        <ol>
-          <li>add your data in the table for moving further.</li>
-          <li>Fill in the details shown in the form.</li>
-          <li>Use the tooltip option for each field for more information.</li>
-          <li>You can add multiple requirements (demands).</li>
-          <li>
-            To continue, select a requirement and click the "Continue" button.
-          </li>
-        </ol>
-        <p>Thank you!</p>
+       
       </Modal>
     </div>
   );

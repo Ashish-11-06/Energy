@@ -108,7 +108,7 @@ navigate('consumer/chat-page')
                 <Card bordered={false} className="custom-card">
                   <span><Text className="custom-label" style={{marginRight:'3%'}}>Potential Savings (INR):</Text>
                   {/* <div className="amount-box"> */}
-                    <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? annualSaving.toLocaleString() : "0"}</Text> {/* Dynamic annual saving */}
+                    <Text className="amount" style={{fontSize:'20px'}}>{annualSaving ? annualSaving.toLocaleString() : "0"}</Text> {/* Dynamic annual saving */}
                   {/* </div> */}
                   </span>
                 </Card>
