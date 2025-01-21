@@ -74,7 +74,7 @@ const SubscriptionPlanG = () => {
         {/* Basic Plan */}
         <Col xs={24} sm={12} md={8}>
           <Card
-            title="Basic Plan"
+            title="EXT Lite"
             bordered
             hoverable
             className={selectedPlan === 'basic' ? 'selected-plan' : ''}
@@ -97,7 +97,7 @@ const SubscriptionPlanG = () => {
         {/* Standard Plan */}
         <Col xs={24} sm={12} md={8}>
           <Card
-            title="Standard Plan"
+            title="EXT Pro"
             bordered
             hoverable
             className={selectedPlan === 'standard' ? 'selected-plan' : ''}

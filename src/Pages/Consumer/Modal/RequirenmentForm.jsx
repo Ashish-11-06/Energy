@@ -19,18 +19,20 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [form] = Form.useForm();
   const [customVoltage, setCustomVoltage] = useState(""); // State to hold custom voltage input
   const [isCustomVoltage, setIsCustomVoltage] = useState(false); // Flag to toggle custom voltage input visibility
+  const [customIndustry, setCustomIndustry] = useState(""); // State to hold custom industry input
+  const [isCustomIndustry, setIsCustomIndustry] = useState(false); // Flag to toggle custom industry input visibility
 
   const handleSubmit = (values) => {
     const user = JSON.parse(localStorage.getItem('user')).user;
     const formattedValues = {
       user: user.id,
       state: values.state,
-      industry: values.industry,
+      industry: values.industry === "other" ? customIndustry : values.industry,
       contracted_demand: values.contractedDemand,
       tariff_category: values.tariffCategory,
       voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
-      procurement_date: values.procurement.format('DD/MM/YYYY'), 
-      site: values.site,
+      procurement_date: values.procurement.format('YYYY-MM-DD'), // Change format to YYYY-MM-DD for submission
+      consumption_unit: values.consumption_unit,
     };
     if (onSubmit) {
       onSubmit(formattedValues);
@@ -38,6 +40,8 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
     form.resetFields();
     setCustomVoltage(""); // Reset custom voltage field
     setIsCustomVoltage(false); // Reset custom voltage flag
+    setCustomIndustry(""); // Reset custom industry field
+    setIsCustomIndustry(false); // Reset custom industry flag
   };
 
   const renderLabelWithTooltip = (label, tooltip) => (
@@ -58,13 +62,22 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
     }
   };
 
+  const handleIndustryChange = (value) => {
+    if (value === "other") {
+      setIsCustomIndustry(true);
+    } else {
+      setIsCustomIndustry(false);
+      setCustomIndustry(""); // Reset custom industry if "Other" is not selected
+    }
+  };
+
   return (
     <Modal
       title="Fill in the details"
       open={isVisible}
       onCancel={onCancel}
       footer={null}
-      width={700}
+      width={800}
     >
       <Form form={form} onFinish={handleSubmit}>
         <Row gutter={16}>
@@ -72,7 +85,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             <Form.Item
               label={renderLabelWithTooltip(
                 "State",
-                "State where the company is located or operates."
+                "State where the consumption unit is located or operates."
               )}
               name="state"
               rules={[{ required: true, message: "Please select your state!" }]}
@@ -97,21 +110,21 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
           <Col span={12}>
             <Form.Item
               label={renderLabelWithTooltip(
-                "Consumption Site name",
-                "Name of the site where the electricity is being consumed."
+                "Consumption Unit(Site name)",
+                "Name of the consumption unit where the electricity is being consumed."
               )}
-              name="site"
+              name="consumption_unit"
               rules={[
                 {
                  
                   required: true,
-                  message: "Please enter the Site name!",
+                  message: "Please enter the consumption unit name!",
                 },
               ]}
             >
               <Input
                 type="text"
-                placeholder="Enter Site name"
+                placeholder="Enter consumption unit name"
               />
             </Form.Item>
           </Col>
@@ -131,6 +144,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
                 placeholder="Select your industry"
                 showSearch
                 optionFilterProp="children"
+                onChange={handleIndustryChange}
                 filterOption={(input, option) =>
                   option.children.toLowerCase().includes(input.toLowerCase())
                 }
@@ -140,15 +154,36 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
                     {industry}
                   </Select.Option>
                 ))}
+                <Select.Option value="other">Other</Select.Option>
               </Select>
             </Form.Item>
           </Col>
+
+          {isCustomIndustry && (
+            <Col span={12}>
+              <Form.Item
+                label={renderLabelWithTooltip(
+                  "Custom Industry",
+                  'Enter the custom industry if "Other" was selected.'
+                )}
+                name="customIndustry"
+                rules={[{ required: true, message: "Please enter a custom industry!" }]}
+              >
+                <Input
+                  type="text"
+                  placeholder="Enter custom industry"
+                  value={customIndustry}
+                  onChange={(e) => setCustomIndustry(e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          )}
 
           <Col span={12}>
             <Form.Item
               label={renderLabelWithTooltip(
                 "Tariff Category",
-                "You can refer your electricity bill."
+                "Select the tariff category for your consumption unit (refer to your electricity bill)."
               )}
               name="tariffCategory"
               rules={[
@@ -176,7 +211,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             <Form.Item
               label={renderLabelWithTooltip(
                 "Voltage Level",
-                "Select the voltage level of the electricity being supplied to your company."
+                "Select the voltage level of the electricity being supplied to your consumption unit."
               )}
               name="voltageLevel"
               rules={[
@@ -200,7 +235,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             <Col span={12}>
               <Form.Item
                 label={renderLabelWithTooltip(
-                  "Custom Voltage",
+                  "Custom Voltage (kV)",
                   'Enter the custom voltage level if "Other" was selected.'
                 )}
                 name="customVoltage"
@@ -221,11 +256,12 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             </Col>
           )}
 
-          <Col span={24}>
+
+          <Col span={12}>
             <Form.Item
               label={renderLabelWithTooltip(
                 "Contracted Demand (in MW)",
-                "The contracted demand is the amount of electricity in MW that the company has committed to using."
+                "Contracted demand/sanctioned load as per your electricity bill"
               )}
               name="contractedDemand"
               rules={[
@@ -242,14 +278,14 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             </Form.Item>
           </Col>
 
-          <Row>
+        
          
 
-            <Col span={24}>
+            <Col span={12}>
               <Form.Item
                 label={renderLabelWithTooltip(
                   "Expected Date",
-                  "Select date from which you need renewable energy."
+                  "Select the date from which you need energy power."
                 )}
                 name="procurement"
                 rules={[
@@ -269,7 +305,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
                 />
               </Form.Item>
             </Col>
-          </Row>
+         
         </Row>
 
         <Form.Item style={{ textAlign: "center" }}>
