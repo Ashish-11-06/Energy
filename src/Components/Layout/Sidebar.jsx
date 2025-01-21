@@ -111,6 +111,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
             zIndex: 100,
             overflowY: 'auto',
           }}
+          trigger={null} // Remove the default trigger
         >
           <div
             className="logo"

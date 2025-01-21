@@ -55,6 +55,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
         top: 0,
         zIndex: 1000,
         height: isMobile ? "auto" : "80px",
+        opacity: 1, // Increase opacity of the entire header bar
       }}
     >
       {/* Drawer button visible on mobile */}

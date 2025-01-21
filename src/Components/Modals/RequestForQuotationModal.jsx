@@ -51,8 +51,6 @@ const RequestForQuotationModal = ({
     onCancel();
   };
 
-  //console.log(user);
-
   const handleContinue = async () => {
     const termsData = {
       from_whom: user.user_category,
@@ -60,7 +58,7 @@ const RequestForQuotationModal = ({
       combination: data.combination,
       term_of_ppa: ppaTerm,
       lock_in_period: lockInPeriod,
-      commencement_of_supply: data.cod,
+      commencement_of_supply: moment(data.cod).format("YYYY-MM-DD"), // Ensure date format is YYYY-MM-DD
       contracted_energy: contractedEnergy,
       minimum_supply_obligation: minimumSupply,
       payment_security_type: paymentSecurityType,
@@ -125,8 +123,14 @@ const RequestForQuotationModal = ({
             <Typography.Paragraph>
               <strong>Commencement of Supply:</strong>
               <DatePicker
-                value={data.cod ? moment(data.cod, "YYYY-MM-DD") : moment("2024-08-31", "YYYY-MM-DD")}
                 style={{ width: "100%" }}
+                format="DD/MM/YYYY" // Set the display format to DD/MM/YYYY
+                disabledDate={(current) => {
+                  // Disable today and all past dates
+                  return current && current <= moment().endOf('day');
+                }}
+                value={data.cod ? moment(data.cod, "YYYY-MM-DD") : moment("2024-08-31", "YYYY-MM-DD")} // Update date format
+                onChange={(date) => data.cod = date ? date.format("YYYY-MM-DD") : null} // Update data.cod on change
               />
             </Typography.Paragraph>
           </Col>

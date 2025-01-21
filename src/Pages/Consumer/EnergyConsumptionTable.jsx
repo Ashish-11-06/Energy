@@ -9,21 +9,19 @@ import {
   message,
   Space,
   InputNumber,
-
   Tooltip,
   Modal,
   Row,
-  Col
+  Col,
 } from "antd";
 import {
   UploadOutlined,
   InfoCircleOutlined,
   DownOutlined,
-  DownloadOutlined 
+  DownloadOutlined,
 } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
-import { QuestionCircleOutlined } from '@ant-design/icons';
-
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 import {
   addConsumption,
@@ -32,7 +30,7 @@ import {
 import "../EnergyTable.css";
 import { consumptionBill } from "../../Redux/Slices/Consumer/monthlyConsumptionBillSlice";
 import { addScada } from "../../Redux/Slices/Consumer/uploadScadaSlice";
-
+import { uploadCSV } from "../../Redux/Slices/Consumer/uploadCSVFileSlice";
 
 const { Title } = Typography;
 
@@ -58,6 +56,7 @@ const EnergyConsumptionTable = () => {
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [showTable, setShowTable] = useState(false); // State to control table visibility
   const [activeButton, setActiveButton] = useState(null); // State to control active button
+  const [isActionCompleted, setIsActionCompleted] = useState(false); // State to track if any action is completed
 
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);
@@ -79,23 +78,27 @@ const EnergyConsumptionTable = () => {
   const handleToggleDetails = () => {
     setShowTable((prevShowTable) => !prevShowTable);
     setActiveButton("details");
+    setIsActionCompleted(true); // Mark action as completed
   };
 
   const handleScadaUpload = async (file) => {
     message.success(`${file.name} uploaded successfully`);
     setFileUploaded(true);
     setUploadedFileName(file.name);
+    setIsActionCompleted(true); // Mark action as completed
 
     // Convert file to Base64
     const reader = new FileReader();
     reader.onloadend = async () => {
-      const base64File = reader.result.split(',')[1]; // Get Base64 string without prefix
+      const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
 
       // Dispatch the addScada thunk with the required format
-      await dispatch(addScada({
-        id: requirementId,
-        file: base64File,
-      }));
+      await dispatch(
+        addScada({
+          id: requirementId,
+          file: base64File,
+        })
+      );
     };
     reader.readAsDataURL(file); // Read the file as a Base64 string
 
@@ -104,7 +107,7 @@ const EnergyConsumptionTable = () => {
 
   const handleCSVUpload = async (file) => {
     // Validate the CSV file format
-    const isValidFormat = file.name.endsWith(".csv");
+    const isValidFormat = file.name.endsWith(".xlsx");
     if (!isValidFormat) {
       message.error("Please upload a valid CSV file.");
       return false;
@@ -112,7 +115,19 @@ const EnergyConsumptionTable = () => {
 
     // Logic to handle CSV upload
     message.success(`${file.name} uploaded successfully`);
-    // Add your CSV upload handling logic here
+    setIsActionCompleted(true); // Mark action as completed
+
+    // Convert file to Base64
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+
+      // Dispatch the uploadCSV thunk
+      await dispatch(
+        uploadCSV({ requirement_id: requirementId, file: base64File })
+      );
+    };
+    reader.readAsDataURL(file); // Read the file as a Base64 string
 
     return false; // Prevent automatic upload
   };
@@ -167,7 +182,7 @@ const EnergyConsumptionTable = () => {
 
   // Update dataSource when monthlyData is fetched
   useEffect(() => {
- //   console.log(monthlyData);
+    //   console.log(monthlyData);
     if (monthlyData.length > 0) {
       const updatedDataSource = dataSource.map((item) => {
         const data = monthlyData.find((data) => data.month === item.month);
@@ -182,7 +197,7 @@ const EnergyConsumptionTable = () => {
           : item;
       });
       setDataSource(updatedDataSource);
-     // console.log(updatedDataSource);
+      // console.log(updatedDataSource);
     }
   }, [monthlyData]);
 
@@ -228,18 +243,21 @@ const EnergyConsumptionTable = () => {
       });
       setDataSource(newData);
       message.success(`${file.name} uploaded successfully`);
+      setIsActionCompleted(true); // Mark action as completed
 
       // Convert file to Base64
       const reader = new FileReader();
       reader.onloadend = async () => {
-        const base64File = reader.result.split(',')[1]; // Get Base64 string without prefix
+        const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
 
         // Dispatch the consumptionBill thunk with the required format
-        await dispatch(consumptionBill({
-          requirement: requirementId,
-          month: item.month,
-          bill_file: base64File,
-        }));
+        await dispatch(
+          consumptionBill({
+            requirement: requirementId,
+            month: item.month,
+            bill_file: base64File,
+          })
+        );
       };
       reader.readAsDataURL(file); // Read the file as a Base64 string
     }
@@ -247,7 +265,10 @@ const EnergyConsumptionTable = () => {
   };
 
   const handleContinue = () => {
-    setIsModalVisible(true);
+    // setIsModalVisible(true);
+    navigate("/consumer/consumption-pattern", {
+      state: { requirementId, reReplacement },
+    });
   };
 
   const handleSkip = () => {
@@ -306,31 +327,32 @@ const EnergyConsumptionTable = () => {
     return false; // Prevent automatic upload
   };
 
-  const handleScada =() => {
-    message.success('success')
-  }
+  const handleScada = () => {
+    message.success("success");
+  };
 
   const handleFileUploadModal = async (file) => {
     message.success(`${file.name} uploaded successfully`);
     setFileUploaded(true);
     setUploadedFileName(file.name);
-  
+
     // Convert file to Base64
     const reader = new FileReader();
     reader.onloadend = async () => {
-      const base64File = reader.result.split(',')[1]; // Get Base64 string without prefix
-  
+      const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+
       // Dispatch the addScada thunk with the required format
-      await dispatch(addScada({
-        id: requirementId,
-        file: base64File,
-      }));
+      await dispatch(
+        addScada({
+          id: requirementId,
+          file: base64File,
+        })
+      );
     };
     reader.readAsDataURL(file); // Read the file as a Base64 string
-  
+
     return false; // Prevent automatic upload
   };
-  
 
   const columns = [
     {
@@ -444,13 +466,13 @@ const EnergyConsumptionTable = () => {
   return (
     <div className="energy-table-container" style={{ padding: "20px" }}>
       <Card style={{ maxWidth: "100%", margin: "0 auto" }}>
-       {/*<p>Please fill the details for making your energy transition plan.</p> */}
+        {/*<p>Please fill the details for making your energy transition plan.</p> */}
         <Tooltip title="Help">
           <Button
             shape="circle"
             icon={<QuestionCircleOutlined />}
             onClick={showInfoModal}
-            style={{ position: "absolute",marginLeft:'95%', right: 30 }}
+            style={{ position: "absolute", marginLeft: "95%", right: 30 }}
           />
         </Tooltip>
         <Title level={3} style={{ textAlign: "center", marginTop: "10px" }}>
@@ -458,102 +480,116 @@ const EnergyConsumptionTable = () => {
         </Title>
 
         {/* <div style={{ display: "flex", alignItems: "center", gap: "15px" }}> */}
-          <Row>
-            <Col span={6}>
-  <Tooltip title="Add details manually">
-    <Button onClick={() => handleButtonClick("details")}
-                disabled={activeButton && activeButton !== "details"}>
-      {showTable ? "Hide Details" : "Add Details"}
-    </Button>
-  </Tooltip>
-  </Col>
-  
-  <Col span={6}>
-  
-    <Upload beforeUpload={handleCSVUpload}>
-      <span>
-      <Tooltip title="Download a CSV file format">
-      <Button icon={<DownloadOutlined  />} onClick={handleDownloadTemplate} style={{marginRight:'10px'}} disabled={activeButton && activeButton !== "csv"}></Button>
-      </Tooltip>
-      <Tooltip title="Upload a CSV file">
-      <Button onClick={() => handleButtonClick("csv")}
-                    disabled={activeButton && activeButton !== "csv"}>Upload CSV file</Button>
-      </Tooltip>
-      </span>
-    </Upload>
+        <Row>
+          <Col span={6}>
+            <Tooltip title="Add details manually">
+              <Button onClick={handleToggleDetails}>
+                {showTable ? "Add Details" : "Add Details"}
+              </Button>
+            </Tooltip>
+          </Col>
 
-  </Col>
-  
-  <Col span={6}>
-  <Tooltip title="Upload an image file(It will take 24 hours to reflect your consumption unit)">
-    <Upload>
-      <Button onClick={() => handleButtonClick("bill")}
-                    disabled={activeButton && activeButton !== "bill"}>Upload Bill</Button>
-    </Upload>
-  </Tooltip>
-  {activeButton === "bill" && fileUploaded && (
+          <Col span={6}>
+            <Upload beforeUpload={handleCSVUpload}>
+              <span>
+                <Tooltip title="Download a CSV file format">
+                  <Button
+                    icon={<DownloadOutlined />}
+                    onClick={handleDownloadTemplate}
+                    style={{ marginRight: "10px" }}
+                  ></Button>
+                </Tooltip>
+                <Tooltip title="Upload a CSV file">
+                  <Button onClick={() => handleButtonClick("csv")}>
+                    Upload CSV file
+                  </Button>
+                </Tooltip>
+              </span>
+            </Upload>
+          </Col>
+
+          <Col span={6}>
+            <Tooltip title="Upload an image file(It will take 24 hours to reflect your consumption unit)">
+              <Upload>
+                <Button
+                  onClick={() => handleButtonClick("bill")}
+                  style={{ marginLeft: "50px" }}
+                >
+                  Upload Bill
+                </Button>
+              </Upload>
+            </Tooltip>
+            {activeButton === "bill" && fileUploaded && (
               <div style={{ marginTop: "10px" }}>
                 <span>Uploaded File: {uploadedFileName}</span>
               </div>
             )}
-  </Col>
-  
-  <Col span={6}>
-  <Tooltip title="Upload a SCADA file">
-    <Upload
-      showUploadList={false}
-      beforeUpload={handleScadaUpload}
-    >
-      <Button onClick={() => handleButtonClick("scada")}
-                    disabled={activeButton && activeButton !== "scada"}>Upload SCADA file</Button>
-    </Upload>
-    {activeButton === "scada" && fileUploaded && (
+          </Col>
+
+          <Col span={6}>
+            <Tooltip title="Upload a SCADA file">
+              <Upload showUploadList={false} beforeUpload={handleScadaUpload}>
+                <Button onClick={() => handleButtonClick("scada")}>
+                  Upload SCADA file
+                </Button>
+              </Upload>
+              {activeButton === "scada" && fileUploaded && (
                 <div style={{ marginTop: "10px" }}>
                   <span>Uploaded File: {uploadedFileName}</span>
                 </div>
               )}
-  </Tooltip>
-  </Col>
-  </Row>
-{/* </div> */}
+            </Tooltip>
+          </Col>
+        </Row>
+        {/* </div> */}
 
         {showTable && (
-          <Table
-            dataSource={dataSource}
-            columns={mergedColumns}
-            pagination={false}
-            bordered
-            size="small"
-            tableLayout="fixed"
-            style={{ marginTop: "20px" }}
-          />
+          <>
+            <Table
+              dataSource={dataSource}
+              columns={mergedColumns}
+              pagination={false}
+              bordered
+              size="small"
+              tableLayout="fixed"
+              style={{ marginTop: "20px" }}
+            />
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "20px",
+              }}
+            >
+              <Button
+                type="primary"
+                onClick={handleSave}
+                disabled={!allFieldsFilled}
+                loading={loading}
+                style={{ marginRight: "10px" }}
+              >
+                Save
+              </Button>
+            </div>
+          </>
         )}
-
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "20px",
-          }}
+        <Tooltip
+          title={
+            !isActionCompleted
+              ? "Please fill the details or upload any file"
+              : ""
+          }
+          placement="top"
         >
           <Button
             type="primary"
-            onClick={handleSave}
-            disabled={!allFieldsFilled}
-            loading={loading}
-            style={{ marginRight: "10px" }}
-          >
-            Save
-          </Button>
-          <Button
-            type="primary"
             onClick={handleContinue}
-            disabled={!allFieldsFilled}
-            style={{ marginRight: "10px" }}
+            disabled={!isActionCompleted} // Enable only if an action is completed
+            style={{ marginLeft: "90%", marginTop: "5%" }}
           >
             Continue
           </Button>
-        </div>
+        </Tooltip>
       </Card>
 
       <Modal
@@ -589,9 +625,11 @@ const EnergyConsumptionTable = () => {
           }}
         >
           {!fileUploaded && (
-            <Button onClick={()=> setIsModalVisible(false)}
-            // onClick={handleSkip}
-            style={{ marginRight: "10px" }}>
+            <Button
+              onClick={() => setIsModalVisible(false)}
+              // onClick={handleSkip}
+              style={{ marginRight: "10px" }}
+            >
               Back
             </Button>
           )}
@@ -619,9 +657,7 @@ const EnergyConsumptionTable = () => {
 
         <p>Please follow these steps to proceed:</p>
         <ol>
-          <li>
-            add your data in the table for moving further.
-          </li>
+          <li>add your data in the table for moving further.</li>
           <li>Fill in the details shown in the form.</li>
           <li>Use the tooltip option for each field for more information.</li>
           <li>You can add multiple requirements (demands).</li>
