@@ -46,6 +46,9 @@ const CombinationPattern = () => {
     (state) => state.optimizedCapacity.status
   );
 
+// console.log('comn',combinationData);
+
+
   useEffect(() => {
     const fetchPatterns = async () => {
       try {
@@ -69,12 +72,23 @@ const CombinationPattern = () => {
             optimize_capacity_user: user.user_category,
           };
 
-          const combi = await dispatch(fetchOptimizedCombinations(modalData));
-          const combinations = combi.payload;
-          setCombinationData(combi.payload);
-          formatAndSetCombinations(combinations);
+          try {
+            const combi = await dispatch(fetchOptimizedCombinations(modalData));
+            const combinations = combi.payload;
+            console.log('aaaaaaaaaaaaaaaaaa');
+            
+            console.log('combinationnnnnnnnnn',combinations);
+            
+            setCombinationData(combi.payload);
+            formatAndSetCombinations(combinations);
+            console.log('at the end of the try block');
+          } catch (error) {
+            console.error('Error in dispatch:', error);
+            throw error;
+          }
         }
       } catch (error) {
+        console.error('Error in loadCombinations:', error);
         message.error("Failed to fetch combinations.");
       } finally {
         setFetchingCombinations(false);
@@ -82,49 +96,61 @@ const CombinationPattern = () => {
       }
     };
 
-    console.log(`combinations`, combinationData);
-
-
+   console.log(combinationData);
+   
 
     const formatAndSetCombinations = (combinations, reReplacementValue) => {
       if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
+        console.log('hiiiiiiii');
         setDataSource([]);
         return;
       }
+    
+      const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => {
+        const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
+        const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
+        const batteryCapacity = combination["Optimal Battery Capacity (MW)"] || 0;
+    console.log('format',combination);
+    const annual_demand_met=combination["annual_demand_met"];
+    console.log(annual_demand_met);
+    
+    
+        return {
+          key: index + 1,
+          srNo: index + 1,
+          combination: key,
+          annual_demand_met,
+         
+          technology: [
+            { name: "Wind", capacity: `${windCapacity} MW `},
+            { name: "Solar", capacity: `${solarCapacity} MW` },
+            { name: "Battery", capacity: `${batteryCapacity} MW` },
+          ],
+          OACost: combination["OA_cost"] && !isNaN(combination["OA_cost"]) ? combination["OA_cost"].toFixed(2) : "N/A",
+          totalCost: combination["Total Cost"] && !isNaN(combination["Total Cost"]) ? combination["Total Cost"].toFixed(2) : "N/A",
 
-      const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => ({
-        key: index + 1,
-        srNo: index + 1,
-        combination: key,
-        technology: [
-          { name: "Wind", capacity: `${combination["Optimal Wind Capacity (MW)"]} MW` },
-          { name: "Solar", capacity: `${combination["Optimal Solar Capacity (MW)"]} MW` },
-          { name: "Battery", capacity: `${combination["Optimal Battery Capacity (MW)"]} MW` },
-        ],
-        totalCapacity: `${(
-          combination["Optimal Wind Capacity (MW)"] +
-          combination["Optimal Solar Capacity (MW)"] +
-          combination["Optimal Battery Capacity (MW)"]
-        ).toFixed(2)} MW`,
-        perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
-        cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
-        reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "N/A",
-        connectivity: combination.connectivity,
-        status: combination.sent_from_you === 1
-          ? "Request already sent"
-          : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>,
-      }));
-
+          totalCapacity: `${(windCapacity + solarCapacity + batteryCapacity).toFixed(2)} MW`,
+          perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
+          finalCost: combination["FinalCost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
+          cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
+          reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "NA", // updated to handle null or undefined values
+          connectivity: combination.connectivity,
+          status: combination.sent_from_you === 1
+            ? "Request already sent"
+            : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>,
+        };
+      });
+    
+      console.log('formatting com');
       setDataSource(formattedCombinations);
     };
-
 
     fetchPatterns();
     loadCombinations();
   }, [dispatch, selectedDemandId, reReplacement]);
 
   // console.log(combinationData, "combinationData");
-
+  // const re_index = combinationData.re_index || "NA";
 
   useEffect(() => {
     if (isTableLoading) {
@@ -138,15 +164,41 @@ const CombinationPattern = () => {
         });
       }, 100);
       return () => clearInterval(interval);
+
+      // const xhr = new XMLHttpRequest();
+      // xhr.open("GET", "/path/to/your/api", true); // Update with the actual API endpoint
+      // xhr.onprogress = (event) => {
+      //   if (event.lengthComputable) {
+      //     const percentComplete = (event.loaded / event.total) * 100;
+      //     setProgress(percentComplete);
+      //   }
+      // };
+      // xhr.onload = () => {
+      //   if (xhr.status === 200) {
+      //     setProgress(100);
+      //     setIsTableLoading(false);
+      //   } else {
+      //     message.error("Failed to load data.");
+      //     setIsTableLoading(false);
+      //   }
+      // };
+      // xhr.onerror = () => {
+      //   message.error("Failed to load data.");
+      //   setIsTableLoading(false);
+      // };
+      // xhr.send();
     }
   }, [isTableLoading]);
 
   const handleRowClick = (record) => {
+    
     setSelectedRow(record); // Record comes from the latest dataSource
     setIsIPPModalVisible(true);
   };
   
-
+  const re_index = combinationData.re_index || "NA";
+  console.log(re_index);
+  
   const handleIPPCancel = () => {
     setIsIPPModalVisible(false);
   };
@@ -175,12 +227,20 @@ const CombinationPattern = () => {
         re_replacement: sliderValue,
       };
 
-      const combi = await dispatch(fetchOptimizedCombinations(modalData));
-      const combinations = combi.payload;
+      try {
+        const combi = await dispatch(fetchOptimizedCombinations(modalData));
+        const combinations = combi.payload;
 
-      // Reformat combinations based on the latest slider value
-      formatAndSetCombinations(combinations, sliderValue);
+        
+        
+        // Reformat combinations based on the latest slider value
+        formatAndSetCombinations(combinations, sliderValue);
+      } catch (error) {
+        //console.error('Error in dispatch:', error);
+        throw error;
+      }
     } catch (error) {
+      //console.error('Error in handleOptimizeClick:', error);
       message.error("Failed to fetch combinations.");
     } finally {
       setFetchingCombinations(false);
@@ -234,6 +294,17 @@ const CombinationPattern = () => {
       dataIndex: "perUnitCost",
       key: "perUnitCost",
     },
+    {
+      title: "Total Cost (INR/KWh)",
+      dataIndex: "totalCost",
+      key: "totalCost",
+    },
+    {
+      title: "OA Cost (INR/KWh)",
+      dataIndex: "OACost",
+      key: "OACost",
+    },
+   
     {
       title: "COD",
       dataIndex: "cod",
@@ -304,6 +375,8 @@ const CombinationPattern = () => {
     maintainAspectRatio: false,
   };
 
+  console.log(dataSource);
+
   return (
     <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif" }}>
       <Row justify="center" align="middle" gutter={[16, 8]} style={{ height: "100%" }}>
@@ -312,7 +385,7 @@ const CombinationPattern = () => {
         {/* Static Data Line Chart */}
         <Col span={24} style={{ textAlign: "center" }}>
           <Title level={4} style={{ color: "#001529" }}>
-            Consumer's Consumption Pattern (Line Chart)
+            Consumption Pattern
           </Title>
         </Col>
         {/* <Tooltip title="Help">
@@ -345,16 +418,17 @@ const CombinationPattern = () => {
             Optimized Combinations
           </Title>
           <div style={{ marginBottom: "20px" }}>
+            <Text>RE Replacement Value</Text>
             <Slider
               min={0}
               max={100}
               onChange={handleSliderChange}
               value={sliderValue}
-
             />
             <Button type="primary" onClick={handleOptimizeClick} style={{ marginLeft: "10px" }}>
               Optimize
             </Button>
+            <p>(You can change your RE Replacement from above bar.If you want to proceed then please select a combination)</p>
           </div>
           {isTableLoading ? (
             <>
@@ -416,9 +490,11 @@ const CombinationPattern = () => {
         {isIPPModalVisible && (
           <IPPModal
             visible={isIPPModalVisible}
-            reReplacement={sliderValue} // Pass the latest slider value
+            // reReplacement={sliderValue} // Pass the latest slider value
             ipp={selectedRow} 
-            combination={combinationData}         // Ensure selectedRow is updated
+            combination={combinationData}
+            // combination={combinationData}         // Ensure selectedRow is updated
+            reIndex={re_index} // Pass re_index to the modal
             onClose={handleIPPCancel}
             onRequestForQuotation={handleRequestForQuotation}
           />

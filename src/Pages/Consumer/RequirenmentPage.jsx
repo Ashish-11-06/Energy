@@ -46,9 +46,9 @@ const RequirementsPage = () => {
       key: 'state',
     },
     {
-      title: 'Consumption Site Name',
-      dataIndex: 'site',
-      key: 'site',
+      title: 'Consumption Unit(Site Name)',
+      dataIndex: 'consumption_unit',
+      key: 'consumption_unit',
     },
     {
       title: 'Industry',
@@ -239,22 +239,7 @@ const RequirementsPage = () => {
         onCancel={handleCancel}
         onSubmit={handleSubmit}
       />
-      {/* CSS Styles */}
-      {/* <style>
-        {`
-          .selected-row{
-            background-color: rgba(102, 152, 0, 0.36) !important;
-            color: white;
-          }
-        `}
-        {`
-          .selected-row: hover{
-            background-color: rgba(102, 152, 0, 0.36) !important;
-            color: white;
-          }
-        `}
-        
-      </style> */}
+     
     </div>
   );
 };

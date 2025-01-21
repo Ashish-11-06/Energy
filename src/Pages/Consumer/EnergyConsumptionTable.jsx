@@ -9,13 +9,17 @@ import {
   message,
   Space,
   InputNumber,
+
   Tooltip,
   Modal,
+  Row,
+  Col
 } from "antd";
 import {
   UploadOutlined,
   InfoCircleOutlined,
   DownOutlined,
+  DownloadOutlined 
 } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -52,6 +56,8 @@ const EnergyConsumptionTable = () => {
   const location = useLocation();
   const { requirementId, reReplacement } = location.state || {}; // Destructure state to get `requirementId` and `annualSaving`
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
+  const [showTable, setShowTable] = useState(false); // State to control table visibility
+  const [activeButton, setActiveButton] = useState(null); // State to control active button
 
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);
@@ -60,7 +66,60 @@ const EnergyConsumptionTable = () => {
     setIsInfoModalVisible(true);
   };
 
-  // console.log("Re replacement", reReplacement);
+  const handleDownloadTemplate = () => {
+    // Logic to download the Excel template
+    const link = document.createElement("a");
+    link.href = "/path/to/your/template.xlsx"; // Update with the actual path to your template
+    link.download = "template.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleToggleDetails = () => {
+    setShowTable((prevShowTable) => !prevShowTable);
+    setActiveButton("details");
+  };
+
+  const handleScadaUpload = async (file) => {
+    message.success(`${file.name} uploaded successfully`);
+    setFileUploaded(true);
+    setUploadedFileName(file.name);
+
+    // Convert file to Base64
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64File = reader.result.split(',')[1]; // Get Base64 string without prefix
+
+      // Dispatch the addScada thunk with the required format
+      await dispatch(addScada({
+        id: requirementId,
+        file: base64File,
+      }));
+    };
+    reader.readAsDataURL(file); // Read the file as a Base64 string
+
+    return false; // Prevent automatic upload
+  };
+
+  const handleCSVUpload = async (file) => {
+    // Validate the CSV file format
+    const isValidFormat = file.name.endsWith(".csv");
+    if (!isValidFormat) {
+      message.error("Please upload a valid CSV file.");
+      return false;
+    }
+
+    // Logic to handle CSV upload
+    message.success(`${file.name} uploaded successfully`);
+    // Add your CSV upload handling logic here
+
+    return false; // Prevent automatic upload
+  };
+
+  const handleButtonClick = (button) => {
+    setActiveButton(button);
+  };
 
   const [dataSource, setDataSource] = useState(
     Array.from({ length: 12 }, (_, index) => ({
@@ -241,12 +300,6 @@ const EnergyConsumptionTable = () => {
     setDataSource(newData);
   };
 
-  const handleCSVUpload = async (file) => {
-    message.success(`${file.name} uploaded successfully`);
-    // Add your CSV upload handling logic here
-    return false; // Prevent automatic upload
-  };
-  
   const handleImageUpload = async (file) => {
     message.success(`${file.name} uploaded successfully`);
     // Add your image upload handling logic here
@@ -369,52 +422,6 @@ const EnergyConsumptionTable = () => {
         />
       ),
     },
-    {
-      title: renderLabelWithTooltip(
-        "File Upload",
-        "The bill file uploaded for the corresponding month."
-      ),
-      dataIndex: "fileUploaded",
-      key: "fileUploaded",
-      render: (_, record) => (
-        <div>
-          {record.fileUploaded ? (
-            <div>
-              <span>{record.fileUploaded}</span>
-              <Upload
-                showUploadList={false} // Disable showing the default file list
-                accept=".xlsx,.xls"
-                beforeUpload={(file) => {
-                  if (file) {
-                    handleFileUpload(file, record.key); // Handle file upload
-                  } else {
-                    message.error("Please select a valid file."); // Show error message
-                  }
-                  return false; // Prevent automatic upload
-                }}
-              >
-                <Button icon={<UploadOutlined />} style={{ marginLeft: "60%" }} />
-              </Upload>
-            </div>
-          ) : (
-            <Upload
-              showUploadList={false} // Disable showing the default file list
-              accept=".xlsx,.xls"
-              beforeUpload={(file) => {
-                if (file) {
-                  handleFileUpload(file, record.key); // Handle file upload
-                } else {
-                  message.error("Please select a valid file."); // Show error message
-                }
-                return false; // Prevent automatic upload
-              }}
-            >
-              <Button style={{ marginLeft: "70px" }} icon={<UploadOutlined />} />
-            </Upload>
-          )}
-        </div>
-      ),
-    },
   ];
 
   const mergedColumns = columns.map((col) => {
@@ -437,7 +444,7 @@ const EnergyConsumptionTable = () => {
   return (
     <div className="energy-table-container" style={{ padding: "20px" }}>
       <Card style={{ maxWidth: "100%", margin: "0 auto" }}>
-        <p>Please fill the details for making your energy transition plan.</p>
+       {/*<p>Please fill the details for making your energy transition plan.</p> */}
         <Tooltip title="Help">
           <Button
             shape="circle"
@@ -450,38 +457,77 @@ const EnergyConsumptionTable = () => {
           Energy Consumption Data (12 Months)
         </Title>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+        {/* <div style={{ display: "flex", alignItems: "center", gap: "15px" }}> */}
+          <Row>
+            <Col span={6}>
   <Tooltip title="Add details manually">
-    <Button>Add Details</Button>
+    <Button onClick={() => handleButtonClick("details")}
+                disabled={activeButton && activeButton !== "details"}>
+      {showTable ? "Hide Details" : "Add Details"}
+    </Button>
   </Tooltip>
+  </Col>
   
-  <Tooltip title="Upload a CSV file">
-    <Upload>
-      <Button>Upload CSV file</Button>
+  <Col span={6}>
+  
+    <Upload beforeUpload={handleCSVUpload}>
+      <span>
+      <Tooltip title="Download a CSV file format">
+      <Button icon={<DownloadOutlined  />} onClick={handleDownloadTemplate} style={{marginRight:'10px'}} disabled={activeButton && activeButton !== "csv"}></Button>
+      </Tooltip>
+      <Tooltip title="Upload a CSV file">
+      <Button onClick={() => handleButtonClick("csv")}
+                    disabled={activeButton && activeButton !== "csv"}>Upload CSV file</Button>
+      </Tooltip>
+      </span>
     </Upload>
-  </Tooltip>
-  
-  <Tooltip title="Upload an image file">
-    <Upload>
-      <Button>Upload Image</Button>
-    </Upload>
-  </Tooltip>
-  
-  <Tooltip title="Upload a SCADA file">
-    {/* <Upload> */}
-      <Button onClick={handleContinue}>Upload SCADA file</Button>
-    {/* </Upload> */}
-  </Tooltip>
-</div>
 
-        <Table
-          dataSource={dataSource}
-          columns={mergedColumns}
-          pagination={false}
-          bordered
-          size="small"
-          tableLayout="fixed"
-        />
+  </Col>
+  
+  <Col span={6}>
+  <Tooltip title="Upload an image file(It will take 24 hours to reflect your consumption unit)">
+    <Upload>
+      <Button onClick={() => handleButtonClick("bill")}
+                    disabled={activeButton && activeButton !== "bill"}>Upload Bill</Button>
+    </Upload>
+  </Tooltip>
+  {activeButton === "bill" && fileUploaded && (
+              <div style={{ marginTop: "10px" }}>
+                <span>Uploaded File: {uploadedFileName}</span>
+              </div>
+            )}
+  </Col>
+  
+  <Col span={6}>
+  <Tooltip title="Upload a SCADA file">
+    <Upload
+      showUploadList={false}
+      beforeUpload={handleScadaUpload}
+    >
+      <Button onClick={() => handleButtonClick("scada")}
+                    disabled={activeButton && activeButton !== "scada"}>Upload SCADA file</Button>
+    </Upload>
+    {activeButton === "scada" && fileUploaded && (
+                <div style={{ marginTop: "10px" }}>
+                  <span>Uploaded File: {uploadedFileName}</span>
+                </div>
+              )}
+  </Tooltip>
+  </Col>
+  </Row>
+{/* </div> */}
+
+        {showTable && (
+          <Table
+            dataSource={dataSource}
+            columns={mergedColumns}
+            pagination={false}
+            bordered
+            size="small"
+            tableLayout="fixed"
+            style={{ marginTop: "20px" }}
+          />
+        )}
 
         <div
           style={{
@@ -555,6 +601,7 @@ const EnergyConsumptionTable = () => {
             </Button>
           )}
         </div>
+        <button onClick={handleSkip}>Skip</button>
       </Modal>
       <Modal
         title="Welcome"

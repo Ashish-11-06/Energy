@@ -64,6 +64,7 @@ navigate('consumer/chat-page')
 
   // Conditional rendering to ensure data is available
   const annualSaving = annualSavingResponse ? annualSavingResponse.annual_savings : null;
+  const averageSavings = annualSavingResponse ? annualSavingResponse.average_savings : null;
   const reReplacement = annualSavingResponse ? annualSavingResponse.re_replacement : null;
 
 //console.log('RE replacement', reReplacement);
@@ -113,9 +114,9 @@ navigate('consumer/chat-page')
                 </Card>
 
                 <Card bordered={false} className="custom-card">
-                  <span><Text className="custom-label" style={{marginRight:'3%'}}>Average Savings (INR):</Text>
+                  <span><Text className="custom-label" style={{marginRight:'3%'}}>Average Savings(for your industry):</Text>
                   {/* <div className="amount-box"> */}
-                    {/* <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? annualSaving.toLocaleString() : "0"}</Text> Dynamic annual saving */}
+                    <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? averageSavings.toLocaleString() : "0"}</Text> Dynamic annual saving
                   {/* </div> */}
                   </span>
                 </Card>

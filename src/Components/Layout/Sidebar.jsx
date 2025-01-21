@@ -24,7 +24,7 @@ const { Sider } = Layout;
 const consumerMenuItems = [
   { label: 'Dashboard', key: '/consumer/dashboard', icon: <DashboardOutlined /> },
   { label: 'Requirement', key: '/consumer/requirement', icon: <FormOutlined /> },
-  // { label: 'What We Offer', key: '/consumer/what-we-offer', icon: <AppstoreAddOutlined /> },
+  { label: 'What We Offer', key: '/consumer/what-we-offer', icon: <AppstoreAddOutlined /> },
   { label: 'Transaction Window', key: '/consumer/transaction-page', icon: <MessageOutlined /> },
   { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
   { label:'Offer Sent', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined /> },
