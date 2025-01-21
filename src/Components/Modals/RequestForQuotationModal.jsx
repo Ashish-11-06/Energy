@@ -94,6 +94,7 @@ const RequestForQuotationModal = ({
         width={800}
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
+       <p><strong> Offer Tariff (INR/MW): </strong>{data.perUnitCost}</p>
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
           Standard Terms Sheet
         </Title>
@@ -140,7 +141,7 @@ const RequestForQuotationModal = ({
               />
             </Typography.Paragraph>
           </Col>
-          <Col span={12}>
+          {/* <Col span={12}>
             <Typography.Paragraph>
               <strong>Offer Tariff (INR/Mw):</strong>
               <InputNumber
@@ -150,7 +151,7 @@ const RequestForQuotationModal = ({
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
-          </Col>
+          </Col> */}
           <Col span={12}>
             <Typography.Paragraph>
               <strong>Minimum Supply Obligation (million units):</strong>
@@ -176,7 +177,9 @@ const RequestForQuotationModal = ({
               </Select>
             </Typography.Paragraph>
           </Col>
-          <Col span={12}>
+         
+        </Row>
+        <Col span={12}>
             <Typography.Paragraph>
               <strong>Payment Security Days:</strong>
               <InputNumber
@@ -187,7 +190,7 @@ const RequestForQuotationModal = ({
               />
             </Typography.Paragraph>
           </Col>
-          <Col span={12}>
+        <Col span={12}>
             <Button
               block
               onClick={handleChatWithExpert}
@@ -196,12 +199,12 @@ const RequestForQuotationModal = ({
                 border: `1px solid #E6E8F1`,
                 color: "#001529",
                 fontSize: "14px",
+                marginTop:'6%'
               }}
             >
               Chat with Expert
             </Button>
           </Col>
-        </Row>
 
         <Row justify="end" style={{ marginTop: "20px" }}>
           <Button

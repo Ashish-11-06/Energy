@@ -256,6 +256,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             </Col>
           )}
 
+
           <Col span={12}>
             <Form.Item
               label={renderLabelWithTooltip(
@@ -277,7 +278,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             </Form.Item>
           </Col>
 
-         
+        
          
 
             <Col span={12}>
@@ -304,7 +305,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
                 />
               </Form.Item>
             </Col>
-        
+         
         </Row>
 
         <Form.Item style={{ textAlign: "center" }}>

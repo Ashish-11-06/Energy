@@ -188,7 +188,7 @@ const WhatWeOffer = () => {
                         style={{ padding: '10px 20px', fontSize: '1rem', borderColor: '#E6E8F1' }}
                         onClick={handleContinue}
                     >
-                        Continue
+                       Start Your Journey
                     </Button>
                 </div>
             </div>

@@ -163,6 +163,16 @@ const CombinationPattern = () => {
       key: "cod",
       render: (text) => dayjs(text).format('DD-MM-YYYY'),
     },
+    {
+      title: "Select",
+      key: "select",
+      render: (text, record) => (
+        <Radio
+          checked={selectedRequirement?.id === record.id} // Ensure only one record is selected
+          onChange={() => handleRowClick(record)} // Pass the entire record
+        />
+      ),
+    },
   ];
 
   // Chart data for consumption patterns

@@ -94,16 +94,18 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                     <span className="icon-label" style={{ fontSize: "12px" }}>
                       {step.label}
                     </span>
-                    <div
-                      className={`icon-circle ${index <= currentStepIndex ? 'completed' : ''}`}
-                      style={{
-                        marginRight: index === steps.length - 1 ? "0" : "50px",
-                        marginLeft: index === 0 ? "0" : "50px",
-                        transform: index === steps.length - 1 ? "translateX(20px)" : "none", // Adjust the last circle to the right
-                      }}
-                    >
-                      {step.icon}
-                    </div>
+                    <Link to={step.path}>
+                      <div
+                        className={`icon-circle ${index <= currentStepIndex ? 'completed' : ''}`}
+                        style={{
+                          marginRight: index === steps.length - 1 ? "0" : "50px",
+                          marginLeft: index === 0 ? "0" : "50px",
+                          transform: index === steps.length - 1 ? "translateX(20px)" : "none", // Adjust the last circle to the right
+                        }}
+                      >
+                        {step.icon}
+                      </div>
+                    </Link>
                   </div>
                 ))}
               </div>

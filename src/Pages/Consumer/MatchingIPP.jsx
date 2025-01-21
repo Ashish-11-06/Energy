@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Spin, Alert, Row, Button, Radio,Modal, Tooltip, } from "antd";
+import { Table, Spin, Alert, Row, Button, Radio, Modal, Tooltip, message } from "antd";
 import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSlice";
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
@@ -150,20 +150,22 @@ const MatchingIPP = () => {
           justifyContent: "center",
         }}
       >
-         {/* <Tooltip title={!selectedRow ? 'Please select a matching IPP first' : ''}> */}
-        <Button
-          type="primary"
-          onClick={handleContinue}
-          disabled={!selectedRow} // Disable button until a row is selected
-          style={{
-            pointerEvents: selectedRow ? "auto" : "none",
-            opacity: selectedRow ? 1 : 0.5,
-            cursor: selectedRow ? "pointer" : "not-allowed",
-          }}
-        >
-          Continue
-        </Button>
-        {/* </Tooltip> */}
+        <Tooltip title={!selectedRow ? 'Please select a matching IPP first' : ''} placement="top">
+          <div>
+            <Button
+              type="primary"
+              onClick={handleContinue}
+              disabled={!selectedRow} // Disable button until a row is selected
+              style={{
+                pointerEvents: selectedRow ? "auto" : "none",
+                opacity: selectedRow ? 1 : 0.5,
+                cursor: selectedRow ? "pointer" : "not-allowed",
+              }}
+            >
+              Continue
+            </Button>
+          </div>
+        </Tooltip>
       </Row>
       <Modal
         title="Welcome"
