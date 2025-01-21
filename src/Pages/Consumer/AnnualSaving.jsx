@@ -116,7 +116,7 @@ navigate('consumer/chat-page')
                 <Card bordered={false} className="custom-card">
                   <span><Text className="custom-label" style={{marginRight:'3%'}}>Average Savings(for your industry):</Text>
                   {/* <div className="amount-box"> */}
-                    <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? averageSavings.toLocaleString() : "0"}</Text> Dynamic annual saving
+                    <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? averageSavings.toLocaleString() : "0"}</Text>
                   {/* </div> */}
                   </span>
                 </Card>
