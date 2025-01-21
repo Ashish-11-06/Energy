@@ -5,21 +5,31 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchRequirements } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
+import { addNewRequirement } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
+
 import moment from 'moment';
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
 
 const RequirementsPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isInfoModalVisible, setIsInfoModalVisible] = useState(true); // State for info modal
+  const [selectedRequirement, setSelectedRequirement] = useState(null); // State to hold the selected requirement
+  const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [username, setUsername] = useState(''); // State for info modal
   const navigate = useNavigate();
+  const location = useLocation(); // Get location object
+  const newUser = location.state?.new_user; // Get new_user from location state
   const dispatch = useDispatch();
   const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
 
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
+    // console.log('item', item);
     return item ? JSON.parse(item) : '';
+  };
+
+  const setToLocalStorage = (key, value) => {
+    localStorage.setItem(key, JSON.stringify(value));
   };
 
   // Define columns for the table (Remove selection column)
@@ -36,10 +46,16 @@ const RequirementsPage = () => {
       key: 'state',
     },
     {
+      title: 'Consumption Unit(Site Name)',
+      dataIndex: 'consumption_unit',
+      key: 'consumption_unit',
+    },
+    {
       title: 'Industry',
       dataIndex: 'industry',
       key: 'industry',
     },
+  
     {
       title: 'Contracted Demand (MW)',
       dataIndex: 'contracted_demand',
@@ -75,6 +91,10 @@ const RequirementsPage = () => {
 
   const handleRowSelect = (record) => {
     setSelectedRowKeys([record.key]); // Only allow single selection
+    setSelectedRequirement(record); // Store the selected record
+    setToLocalStorage('selectedRequirementId', record.id); // Store the selected requirement ID in localStorage
+    message.success(`You selected record of state '${record.state}'`);
+    // console.log('record', record);
   };
 
   const showModal = () => {
@@ -85,31 +105,30 @@ const RequirementsPage = () => {
     setIsModalVisible(false);
   };
 
-  const handleSubmit = (values) => {
-    console.log('Form Values: ', values);
-    setRequirements([
-      ...requirements,
-      {
-        key: requirements.length + 1,
-        ...values,
-        procurement: values.procurement ? values.procurement : null,
-      },
-    ]);
-    setIsModalVisible(false);
-    message.success('Requirement added successfully!');
+  const handleSubmit = async (values) => {
+    try {
+      console.log('values',values);
+      
+      // Call the API to add the requirement
+      // const response = await consumerrequirementA.addNewRequirement(values);
+      // Dispatch the action to update Redux state
+      dispatch(addNewRequirement(values));
+      setIsModalVisible(false);
+      message.success('Requirement added successfully!');
+    } catch (error) {
+      console.log(error);
+      message.error('Failed to add requirement');
+      setIsInfoModalVisible(false);
+    }
   };
 
   const handleClearAll = () => {
-    setRequirements([]);
     setSelectedRowKeys([]); // Clear the selected row when clearing all requirements
     message.success('All requirements have been cleared!');
   };
 
   const handleContinue = () => {
-    if (selectedRowKeys.length === 1) {
-      const selectedRequirement = requirements.find(
-        (req) => req.key === selectedRowKeys[0]
-      );
+    if (selectedRequirement) {
       navigate('/consumer/matching-ipp', { state: { selectedRequirement } }); // Pass the selected requirement to the next page
     } else {
       message.error('Please select a single requirement before continuing.');
@@ -122,15 +141,18 @@ const RequirementsPage = () => {
     if (user && user.user.company_representative) {
       setUsername(user.user.company_representative);
     }
-    // Show info modal when the page loads for the first time
-    setIsInfoModalVisible(true);
+
+    // Show info modal based on new_user value
+    if (newUser) {
+      setIsInfoModalVisible(true);
+    }
 
     // Fetch requirements if not present in the state
     if (requirements.length === 0) {
       const id = user.user.id;
       dispatch(fetchRequirements(id));
     }
-  }, [dispatch, requirements.length]);
+  }, [dispatch, requirements.length, newUser]);
 
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);
@@ -157,6 +179,7 @@ const RequirementsPage = () => {
         title="Welcome"
         open={isInfoModalVisible}
         onOk={handleInfoModalOk}
+        onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
         okText="Got it"
         footer={[
           <Button key="submit" type="primary" onClick={handleInfoModalOk}>
@@ -165,6 +188,7 @@ const RequirementsPage = () => {
         ]}
       >
         <p>Hi {username},</p>
+       
         <p>Welcome to the EXG. Please follow these steps to proceed:</p>
         <ol>
           <li>Add your requirements by clicking the "Add Requirement +" button.</li>
@@ -196,14 +220,16 @@ const RequirementsPage = () => {
           </Button>
         </Col>
         <Col>
-          <Button
-            type="default"
-            onClick={handleContinue}
-            style={{ width: 160 }}
-            disabled={selectedRowKeys.length !== 1} // Disable "Continue" if no row is selected or more than one row is selected
-          >
-            Continue
-          </Button>
+          <Tooltip title={!selectedRequirement ? 'Please select a consumption unit first' : ''}>
+            <Button
+              type="default"
+              onClick={handleContinue}
+              style={{ width: 160 }}
+              disabled={!selectedRequirement} // Disable "Continue" if no row is selected
+            >
+              Continue
+            </Button>
+          </Tooltip>
         </Col>
       </Row>
 
@@ -213,22 +239,7 @@ const RequirementsPage = () => {
         onCancel={handleCancel}
         onSubmit={handleSubmit}
       />
-      {/* CSS Styles */}
-      {/* <style>
-        {`
-          .selected-row{
-            background-color: rgba(102, 152, 0, 0.36) !important;
-            color: white;
-          }
-        `}
-        {`
-          .selected-row: hover{
-            background-color: rgba(102, 152, 0, 0.36) !important;
-            color: white;
-          }
-        `}
-        
-      </style> */}
+     
     </div>
   );
 };
