@@ -33,6 +33,10 @@ const WhatWeOffer = () => {
     navigate('/consumer/requirement');
   };
 
+  const formatNumberWithCommas = (number) => {
+    return number.toLocaleString('en-IN');
+  };
+
   if (!data) {
     return (
       <Row justify="center" align="middle" style={{ height: "100vh" }}>
@@ -192,7 +196,7 @@ const WhatWeOffer = () => {
           <div style={{ textAlign: 'center', marginTop: '50px' }}>
             <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Did You Know?</h2>
             <p style={{ fontSize: '1.5rem', marginBottom: '30px' }}>
-              The total amount consumers have saved <span style={{ fontWeight: 'bold', color: '#669800' }}>{data.amount_saved_annually} INR annually!</span>
+              The total amount consumers have saved <span style={{ fontWeight: 'bold', color: '#669800' }}>INR {formatNumberWithCommas(data.amount_saved_annually)} annually!</span>
             </p>
           </div>
         )}
