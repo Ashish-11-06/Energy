@@ -7,8 +7,8 @@ const { Title, Text } = Typography;
 const IPPModal = ({ visible, ipp, combination, reIndex, onClose, onRequestForQuotation }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
-  console.log('combination',combination);
-
+  console.log('date',ipp.greatest_cod  );
+ipp.greatest_cod
 // console.log(annual_demand_met);
 
   const showQuotationModal = () => {

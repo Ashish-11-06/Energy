@@ -133,6 +133,7 @@ const MatchingIPP = () => {
           columns={columns}
           dataSource={Array.isArray(matchingIPP) ? matchingIPP : []}
           rowKey={(record) => record.user || record.id || Math.random()}
+          bordered
           pagination={false}
           onRow={(record) => ({
             onClick: () => handleRowClick(record), // Handle row click to set selected row

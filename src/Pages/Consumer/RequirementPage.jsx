@@ -49,6 +49,7 @@ const RequirementsPage = () => {
       title: 'Consumption Unit(Site Name)',
       dataIndex: 'consumption_unit',
       key: 'consumption_unit',
+      render: (text) => text || "NA",
     },
     {
       title: 'Industry',

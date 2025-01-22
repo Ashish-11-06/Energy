@@ -111,7 +111,7 @@ const CombinationPattern = () => {
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
         const batteryCapacity = combination["Optimal Battery Capacity (MW)"] || 0;
     console.log('format',combination);
-    const annual_demand_met=combination["annual_demand_met"];
+    const annual_demand_met=combination["annual_demand_met"] || "NA";
     console.log(annual_demand_met);
     
     
@@ -127,9 +127,9 @@ const CombinationPattern = () => {
             { name: "Battery", capacity: `${batteryCapacity} MW` },
           ],
           OACost: combination["OA_cost"] && !isNaN(combination["OA_cost"]) ? combination["OA_cost"].toFixed(2) : "N/A",
-          totalCost: combination["Total Cost"] && !isNaN(combination["Total Cost"]) ? combination["Total Cost"].toFixed(2) : "N/A",
+          totalCost: combination["Final Cost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
 
-          totalCapacity: `${(windCapacity + solarCapacity + batteryCapacity).toFixed(2)} MW`,
+          totalCapacity: `${(windCapacity + solarCapacity + batteryCapacity).toFixed(2)}`,
           perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
           finalCost: combination["FinalCost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
           cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
@@ -285,7 +285,7 @@ const CombinationPattern = () => {
       key: "reReplacement",
     },
     {
-      title: "Total Capacity",
+      title: "Total Capacity (MW)",
       dataIndex: "totalCapacity",
       key: "totalCapacity",
     },
@@ -414,21 +414,24 @@ const CombinationPattern = () => {
 
         {/* Combination Table */}
         <Col span={24}>
-          <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-            Optimized Combinations
-          </Title>
+        
           <div style={{ marginBottom: "20px" }}>
-            <Text>RE Replacement Value</Text>
+            <Text>RE Replacement Value: {sliderValue}%</Text> {/* Display slider value */}
             <Slider
               min={0}
               max={100}
               onChange={handleSliderChange}
               value={sliderValue}
+              tooltipVisible={!isIPPModalVisible && !isModalVisible} // Hide tooltip when modal is visible
             />
             <Button type="primary" onClick={handleOptimizeClick} style={{ marginLeft: "10px" }}>
               Optimize
             </Button>
+            <br /><br />
             <p>(You can change your RE Replacement from above bar.If you want to proceed then please select a combination)</p>
+            <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
+            Optimized Combinations
+          </Title>
           </div>
           {isTableLoading ? (
             <>
