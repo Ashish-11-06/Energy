@@ -203,14 +203,14 @@ const WhatWeOffer = () => {
 
         <div style={{ textAlign: 'center', marginTop: '30px' }}>
           <h6 style={{ fontSize: '1.4rem', color: '#9A8406', marginBottom: '20px' }}>
-            Start Your Journey With Us
+            Start Your Transition Journey
           </h6>
           <Button
             type="default"
             style={{ padding: '10px 20px', fontSize: '1rem', borderColor: '#E6E8F1' }}
             onClick={handleContinue}
           >
-            Start Your Journey
+            Proceed {`>>`}
           </Button>
         </div>
       </div>

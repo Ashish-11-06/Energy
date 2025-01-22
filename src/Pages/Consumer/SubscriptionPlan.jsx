@@ -8,6 +8,7 @@ const { Title, Text } = Typography;
 const SubscriptionPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isQuotationVisible, setIsQuotationVisible] = useState(false);
+  const [isProformaVisible, setIsProformaVisible] = useState(false); // State for proforma modal
   const navigate = useNavigate(); // Hook for navigation
 
   const handleSelectPlan = (plan) => {
@@ -24,20 +25,13 @@ const SubscriptionPlans = () => {
     if (selectedPlan === 'basic') {
       return (
         <div>
-          <p><strong>Plan:</strong> Basic Plan [dummy] invoice will be shown</p>
-          <p><strong>Price:</strong> $9.99 / month</p>
-          <p><strong>Details:</strong></p>
-          <ul>
-            <li>1 User</li>
-            <li>5GB Storage</li>
-            <li>Basic Support</li>
-          </ul>
-          <p><strong>Terms and Conditions:</strong></p>
-          <ul>
-            <li>Monthly billing cycle.</li>
-            <li>No refund policy.</li>
-            <li>Subject to availability.</li>
-          </ul>
+          please provide additional details for generating proforma invoice - company name, company address, GSTIN no
+          <br />
+          remove download quotation button 
+          <br />
+          provide additional details 
+          <br />
+          notification triggered to Mail
         </div>
       );
     } else if (selectedPlan === 'standard') {
@@ -61,6 +55,14 @@ const SubscriptionPlans = () => {
     }
   };
 
+  const handleGenerateProforma = () => {
+    setIsProformaVisible(true); // Show the proforma modal
+  };
+
+  const closeProforma = () => {
+    setIsProformaVisible(false);
+  };
+
   // Handle payment done and navigate to the new page
   const handlePaymentDone = () => {
     // Navigate to the energy-consumption-table page after payment is done
@@ -69,7 +71,7 @@ const SubscriptionPlans = () => {
 
   return (
     <div className="subscription-plans-container">
-      <Title level={2}>Choose Your Subscription Plan</Title>
+      <Title level={2}>Choose Your Annual Subscription Plan</Title>
       <Row gutter={[16, 16]} justify="center">
         {/* Basic Plan */}
         <Col xs={24} sm={12} md={8}>
@@ -85,11 +87,11 @@ const SubscriptionPlans = () => {
               </Button>,
             ]}
           >
-            <Text className="price">$9.99 / month</Text>
+            <Text className="price">50,000 INR</Text>
             <ul>
-              <li>1 User</li>
-              <li>5GB Storage</li>
-              <li>Basic Support</li>
+              <li>Matching IPP +</li>
+              <li>Requirements +</li>
+              <li>Transaction window</li>
             </ul>
           </Card>
         </Col>
@@ -108,11 +110,11 @@ const SubscriptionPlans = () => {
               </Button>,
             ]}
           >
-            <Text className="price">$19.99 / month</Text>
+            <Text className="price">2,00,000 INR</Text>
             <ul>
-              <li>5 Users</li>
-              <li>50GB Storage</li>
-              <li>Priority Support</li>
+            <li>Dashboard</li>
+              <li>Advisory Support</li>
+              <li>PowerX subscription</li>
             </ul>
           </Card>
         </Col>
@@ -121,15 +123,12 @@ const SubscriptionPlans = () => {
       {/* Quotation View */}
       {isQuotationVisible && (
         <Modal
-          title="Quotation"
+          title="Generate proforma invoice"
           open={isQuotationVisible}
           onCancel={closeQuotation}
           footer={[
-            <Button key="button">
-              download quotation
-            </Button>,
-            <Button key="button" onClick={handlePaymentDone}>
-              [dummy] payment done
+            <Button key="button" onClick={handleGenerateProforma}>
+              Generate Proforma
             </Button>,
           ]}
           width={600}
@@ -137,6 +136,22 @@ const SubscriptionPlans = () => {
           {renderQuotation()}
         </Modal>
       )}
+
+      {/* Proforma Modal */}
+      <Modal
+        title="Proforma Invoice"
+        open={isProformaVisible}
+        onCancel={closeProforma}
+        footer={[
+          <Button key="button" onClick={handlePaymentDone}>
+            Proceed to Payment
+          </Button>,
+        ]}
+        width={600}
+      >
+        <p>This is  proforma invoice.</p>
+        <p>Please proceed to payment to complete your subscription.</p>
+      </Modal>
     </div>
   );
 };

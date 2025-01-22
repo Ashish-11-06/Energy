@@ -110,7 +110,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
           <Col span={12}>
             <Form.Item
               label={renderLabelWithTooltip(
-                "Consumption Unit(Site name)",
+                "Consumption Unit (Site name)",
                 "Name of the consumption unit where the electricity is being consumed."
               )}
               name="consumption_unit"
@@ -261,7 +261,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             <Form.Item
               label={renderLabelWithTooltip(
                 "Contracted Demand (in MW)",
-                "Contracted demand/sanctioned load as per your electricity bill"
+                "Contracted demand / Sanctioned load as per your electricity bill"
               )}
               name="contractedDemand"
               rules={[
@@ -285,7 +285,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
               <Form.Item
                 label={renderLabelWithTooltip(
                   "Expected Procurement Date",
-                  "Select the date from which you need energy power."
+                  "Select the date from which you need RE power."
                 )}
                 name="procurement"
                 rules={[
@@ -317,6 +317,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             Continue
           </Button>
         </Form.Item>
+        Add new input annual electricity consumption MWh
       </Form>
     </Modal>
   );

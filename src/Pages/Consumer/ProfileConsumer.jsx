@@ -76,6 +76,7 @@ const ProfilePage = () => {
               Edit Profile
             </Button>
           </Row>
+          plan name and plan validity
         </Card>
 
         {/* Modal for Editing User Details */}

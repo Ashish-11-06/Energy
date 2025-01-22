@@ -122,8 +122,9 @@ const CombinationPattern = () => {
           annual_demand_met,
          
           technology: [
-            { name: "Wind", capacity: `${windCapacity} MW `},
             { name: "Solar", capacity: `${solarCapacity} MW` },
+            { name: "Wind", capacity: `${windCapacity} MW `},
+           
             { name: "Battery", capacity: `${batteryCapacity} MW` },
           ],
           OACost: combination["OA_cost"] && !isNaN(combination["OA_cost"]) ? combination["OA_cost"].toFixed(2) : "N/A",
@@ -248,6 +249,9 @@ const CombinationPattern = () => {
     }
   };
 
+  const sliderStyle = {
+    height: '20px', // Increase the thickness of the slider
+  };
 
   const columns = [
     {
@@ -256,9 +260,10 @@ const CombinationPattern = () => {
       key: "srNo",
     },
     {
-      title: "IPP Pseudo Name",
+      title: "IPP ID",
       dataIndex: "combination",
       key: "combination",
+      width: 190,
     },
     {
       title: "Generator's Connectivity",
@@ -269,6 +274,7 @@ const CombinationPattern = () => {
       title: "Technology",
       dataIndex: "technology",
       key: "technology",
+      width: 200,
       render: (technologies) => (
         <div>
           {technologies.map((tech, index) => (
@@ -280,7 +286,7 @@ const CombinationPattern = () => {
       ),
     },
     {
-      title: "RE Replacement %",
+      title: "% RE Replacement",
       dataIndex: "reReplacement",
       key: "reReplacement",
     },
@@ -309,6 +315,7 @@ const CombinationPattern = () => {
       title: "COD",
       dataIndex: "cod",
       key: "cod",
+      width: 150,
       render: (text) => dayjs(text).format('DD-MM-YYYY'),
     },
     {
@@ -319,7 +326,9 @@ const CombinationPattern = () => {
               text === "Already Sent" ? (
                 "Already Sent"
               ) : (
-                <button onClick={() => handleRowClick(record)}>
+                <button
+               
+                onClick={() => handleRowClick(record)}>
                   Initiate Quotation
                 </button>
               )
@@ -344,21 +353,26 @@ const CombinationPattern = () => {
     labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
     datasets: [
       {
+        type: 'bar',
         label: "Consumption (MWh)",
         data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
-        borderColor: "#4CAF50",
-        fill: false,
+        backgroundColor: "#4CAF50",
+        barThickness: 10, // Set bar thickness
       },
       {
+        type: 'line',
         label: "Consumption during Peak hours(MWh)",
         data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.peak_consumption) : [], // Safely check if it's an array
         borderColor: "#FF5733",
+        borderWidth: 5, // Increase line thickness
         fill: false,
       },
       {
+        type: 'line',
         label: "Consumption during Off-Peak hours(MWh)",
         data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption) : [], // Safely check if it's an array
         borderColor: "#337AFF",
+        borderWidth: 5, // Increase line thickness
         fill: false,
       },
     ],
@@ -373,6 +387,11 @@ const CombinationPattern = () => {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    scales: {
+      y: {
+        min: 15, // Start the scale from 15
+      },
+    },
   };
 
   console.log(dataSource);
@@ -385,7 +404,7 @@ const CombinationPattern = () => {
         {/* Static Data Line Chart */}
         <Col span={24} style={{ textAlign: "center" }}>
           <Title level={4} style={{ color: "#001529" }}>
-            Consumption Pattern
+           Monthly Consumption Pattern
           </Title>
         </Col>
         {/* <Tooltip title="Help">
@@ -420,10 +439,13 @@ const CombinationPattern = () => {
             <Slider
               min={0}
               max={100}
+              
               onChange={handleSliderChange}
               value={sliderValue}
               tooltipVisible={!isIPPModalVisible && !isModalVisible} // Hide tooltip when modal is visible
-            />
+              trackStyle={{ height: 20 }} // Increase the thickness of the slider line
+              handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
+            />
             <Button type="primary" onClick={handleOptimizeClick} style={{ marginLeft: "10px" }}>
               Optimize
             </Button>

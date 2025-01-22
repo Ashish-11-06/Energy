@@ -71,7 +71,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
   return (
     <Modal
       open={open}
-      title="Register"
+      title={<span style={{ fontSize: '1.6rem' }}>Register</span>} // Enlarge the title
       footer={null}
       onCancel={handleCancel}
       width={600}
@@ -86,7 +86,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
           <Col span={24}>
             <Form.Item
               name="user_category"
-              label="Select User Category"
+              label="Select Category"
               rules={[{ required: true, message: "Please select a user category!" }]}
               labelCol={{ span: 10 }}
               wrapperCol={{ span: 10 }}
@@ -94,9 +94,10 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
               <Radio.Group
                 onChange={(e) => setUserCategory(e.target.value)}
                 value={userCategory}
+                style={{ fontSize: '1.2rem' }} // Increase font size
               >
-                <Radio value="Consumer">Consumer</Radio>
-                <Radio value="Generator">Generator</Radio>
+                <Radio value="Consumer" style={{ fontSize: '1.2rem' }}>Consumer</Radio>
+                <Radio value="Generator" style={{ fontSize: '1.2rem' }}>Generator</Radio>
               </Radio.Group>
             </Form.Item>
           </Col>

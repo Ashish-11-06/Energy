@@ -206,7 +206,7 @@ const RequestForQuotationModal = ({
                 marginTop:'6%'
               }}
             >
-              Chat with Expert
+              Need Assistance ?
             </Button>
           </Col>
 

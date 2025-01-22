@@ -35,6 +35,7 @@ const consumerMenuItems = [
   { label: 'Annual Saving', key: '/consumer/annual-saving', icon: <WalletOutlined /> },
   { label: 'Subscription Plan', key: '/consumer/subscription-plan', icon: <TeamOutlined /> },
   { label: 'Profile', key: '/consumer/profile', icon: <UserOutlined /> },
+  { label: 'profile Invoices', key: '/consumer/profile' },
 ];
 
 const generatorMenuItems = [

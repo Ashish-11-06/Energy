@@ -114,7 +114,7 @@ navigate('consumer/chat-page')
                 </Card>
 
                 <Card bordered={false} className="custom-card" style={{ width: '100%', maxWidth: '600px' }}>
-                  <span><Text className="custom-label" style={{marginRight:'3%'}}>Average Savings(for your industry):</Text>
+                  <span><Text className="custom-label" style={{marginRight:'3%'}}>Average Savings (For your Industry Category):</Text>
                   {/* <div className="amount-box"> */}
                     <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? averageSavings.toLocaleString() : "0"}</Text>
                   {/* </div> */}
@@ -134,8 +134,11 @@ navigate('consumer/chat-page')
                     Download Report
                   </Button>
                   <Button type="default"  onClick={handleChatWithExpert} >
-                    Chatbot
+                    Need Assistance ?
                   </Button>
+
+                  subscription journey is remaining
+                  {`(to get quotation from IPP)`}
                 </Space>
               </Space>
             </div>
@@ -156,7 +159,7 @@ navigate('consumer/chat-page')
           onClick={handleContinue}
         >
           {/* Subscribe */}
-          continue
+          Continue
         </Button>
       </Tooltip>
 

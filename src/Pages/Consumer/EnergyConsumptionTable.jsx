@@ -443,6 +443,12 @@ const EnergyConsumptionTable = () => {
         />
       ),
     },
+    {
+      title: 
+        "Upload Bill (open new)",
+     
+      // ),
+    },
   ];
 
   const mergedColumns = columns.map((col) => {
@@ -478,12 +484,15 @@ const EnergyConsumptionTable = () => {
           Energy Consumption Data (12 Months)
         </Title>
 
+       Provide / Upload / Amend your energy consumption data for the last 12 months. <br />
+        <div><br /></div>
+
         {/* <div style={{ display: "flex", alignItems: "center", gap: "15px" }}> */}
         <Row>
           <Col span={6}>
             <Tooltip title="Add details manually">
               <Button onClick={handleToggleDetails}>
-                {showTable ? "Add Details" : "Add Details"}
+                {showTable ? "Add Details +" : "Add Details"}
               </Button>
             </Tooltip>
           </Col>
@@ -491,6 +500,13 @@ const EnergyConsumptionTable = () => {
           <Col span={6}>
             <Upload beforeUpload={handleCSVUpload}>
               <span>
+                
+                <Tooltip title="Upload a CSV file">
+                  <Button onClick={() => handleButtonClick("csv")}>
+                   ^ Upload CSV file 
+                  </Button>
+                </Tooltip>
+                
                 <Tooltip title="Download a CSV file format">
                   <Button
                     icon={<DownloadOutlined />}
@@ -498,17 +514,12 @@ const EnergyConsumptionTable = () => {
                     style={{ marginRight: "10px" }}
                   ></Button>
                 </Tooltip>
-                <Tooltip title="Upload a CSV file">
-                  <Button onClick={() => handleButtonClick("csv")}>
-                    Upload CSV file
-                  </Button>
-                </Tooltip>
               </span>
             </Upload>
           </Col>
 
           <Col span={6}>
-            <Tooltip title="Upload an image file(It will take 24 hours to reflect your consumption unit)">
+            <Tooltip title="Upload your monthly electricity bill">
               <Upload>
                 <Button
                   onClick={() => handleButtonClick("bill")}
@@ -560,6 +571,7 @@ const EnergyConsumptionTable = () => {
                 marginTop: "20px",
               }}
             >
+               show notification here
               <Button
                 type="primary"
                 onClick={handleSave}
@@ -569,6 +581,7 @@ const EnergyConsumptionTable = () => {
               >
                 Save
               </Button>
+             
             </div>
           </>
         )}

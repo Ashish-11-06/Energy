@@ -55,7 +55,7 @@ const MatchingIPP = () => {
   const columns = [
  
     {
-      title: "IPP Pseudo Name",
+      title: "IPP ID",
       dataIndex: "user__username",
       key: "user__username",
     },
@@ -151,7 +151,7 @@ const MatchingIPP = () => {
           justifyContent: "center",
         }}
       >
-        <Tooltip title={!selectedRow ? 'Please select a matching IPP first' : ''} placement="top">
+        <Tooltip title={!selectedRow ? 'Please select a matching IPP' : ''} placement="top">
           <div>
             <Button
               type="primary"
@@ -182,7 +182,7 @@ const MatchingIPP = () => {
       >
         <p></p>
        
-        <p>This is a broad estimation of matching IPPs. For more refined results, please add additional details.</p>
+        <p>This is a general estimate of the matched IPPs. To achieve better results, please provide more details.</p>
         
       </Modal>
     </main>
