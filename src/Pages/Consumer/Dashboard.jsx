@@ -18,7 +18,7 @@ const Dashboard = () => {
         const response = await DashboardApi.getConsumerDashboardData(userId);
         const data = response.data;
         setConsumerDetails({
-          energyPurchased: data.energy_purchased_from || 0,
+          // energyPurchased: data.energy_purchased_from || 0,
           demandSent: data.total_demands || 0,
           offerReceived: data.offers_received || 0,
           transactionsDone: data.transactions_done || 0,
@@ -41,12 +41,11 @@ const Dashboard = () => {
   }, []);
 
   const barData = {
-    labels: ['Energy Purchased', 'Demand Sent', 'Offer Received', 'Transactions Done'],
+    labels: [ 'Demand Sent', 'Offer Received', 'Transactions Done'],
     datasets: [
       {
         label: 'Consumer Details',
         data: [
-          consumerDetails.energyPurchased,
           consumerDetails.demandSent,
           consumerDetails.offerReceived,
           consumerDetails.transactionsDone,
