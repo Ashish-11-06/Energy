@@ -21,9 +21,10 @@ export const registerUser = createAsyncThunk(
         return rejectWithValue('Unexpected response structure');
       }
     } catch (error) {
+      console.log('error',error);
       // Handle errors if the request fails
       return rejectWithValue(
-        error.response?.data?.message || 'Failed to register user'
+        error.response?.data?.error || 'Failed to register user'
       );
     }
   }
