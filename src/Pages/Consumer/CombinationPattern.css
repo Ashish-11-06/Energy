@@ -1,0 +1,17 @@
+.css-dev-only-do-not-override-oqfneu .ant-slider .ant-slider-handle::after {
+    height: 100%;
+    width: 100%;
+}
+
+:where(.css-dev-only-do-not-override-oqfneu).ant-slider-horizontal .ant-slider-rail {
+    width: 100%;
+    height: 19px;
+}
+
+:where(.css-dev-only-do-not-override-oqfneu).ant-slider .ant-slider-dot {
+    display: none;
+}
+
+:where(.css-dev-only-do-not-override-oqfneu).ant-slider .ant-slider-mark-text {
+margin-top: 2%;
+}

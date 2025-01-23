@@ -1,140 +1,129 @@
-import React, { useState } from "react";
-import { Card, Modal } from "antd";
-import { Line, Bar } from "react-chartjs-2";
-import styled from "styled-components";
-import {
-  BulbOutlined,
-  ToolOutlined,
-  MailOutlined,
-  SwapOutlined,
-  AreaChartOutlined,
-  FileTextOutlined,
-  HomeOutlined,
-  GlobalOutlined,
-} from "@ant-design/icons";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import NavbarWithProgressBar from "./NavbarWithProgressBar";
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-
-const profileData = {
-  name: "John Doe",
-  role: "Energy Consumer",
-  email: "johndoe@example.com",
-  avatar: "https://i.pravatar.cc/150?img=4",
-  stats: {
-    purchasedFrom: 12,
-    offered: 25,
-    offersReceived: 15,
-    transactionsDone: 8,
-    totalDemands: 20,
-  },
-};
-
-const isSubscribed = true;
-const totalDemands = 1200;
-const completedDemands = 800;
-
-const statsData = [
-  { title: "Energy purchased from", value: profileData.stats.purchasedFrom, icon: <BulbOutlined /> },
-  { title: "Demands sent", value: profileData.stats.offered, icon: <ToolOutlined /> },
-  { title: "Offer received", value: profileData.stats.offersReceived, icon: <MailOutlined /> },
-  { title: "Transactions done", value: profileData.stats.transactionsDone, icon: <SwapOutlined /> },
-  { title: "Your total demands", value: profileData.stats.totalDemands, icon: <AreaChartOutlined /> },
-  { title: "Subscription Plan", value: isSubscribed ? "Yes" : "No", icon: <FileTextOutlined /> },
-  {
-    title: "Total States",
-    value: 6,
-    icon: <GlobalOutlined />,
-    details: ["State 1", "State 2", "State 3", "State 4", "State 5", "State 6"],
-  },
-];
-
-// Styled component for the stats grid
-const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  
-`;
-
-// Styled card for individual stat
-const StatCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-`;
-
-const StatData = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalDetails, setModalDetails] = useState([]);
-
-  const handleViewClick = (details) => {
-    setModalDetails(details);
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  return (
-    <>
-      <StatsGrid>
-        {statsData.map((stat, index) => (
-          <StatCard key={index}>
-            <div style={{ fontSize: "30px", marginBottom: "10px" }}>{stat.icon}</div>
-            <h3 style={{ fontSize: "24px", margin: "0" }}>{stat.value}</h3>
-            <p style={{ fontSize: "14px", color: "#555" }}>{stat.title}</p>
-            {stat.details && (
-              <button
-                onClick={() => handleViewClick(stat.details)}
-                style={{
-                  marginTop: "10px",
-                  padding: "8px 16px",
-                  borderRadius: "5px",
-                  border: "none",
-                  backgroundColor: "#007BFF",
-                  color: "white",
-                  cursor: "pointer",
-                }}
-              >
-                View Details
-              </button>
-            )}
-          </StatCard>
-        ))}
-      </StatsGrid>
-      <Modal title="Details" visible={isModalVisible} onCancel={handleCancel} footer={null}>
-        <ul>
-          {modalDetails.map((detail, i) => (
-            <li key={i}>{detail}</li>
-          ))}
-        </ul>
-      </Modal>
-    </>
-  );
-};
+import React, { useEffect, useState } from "react";
+import { Row, Col, Card, Statistic } from "antd";
+import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined, DatabaseOutlined, ProfileOutlined, ThunderboltOutlined, CrownOutlined } from "@ant-design/icons";
+import { Bar } from 'react-chartjs-2';
+import 'chart.js/auto';
+import DashboardApi from "../../Redux/api/dashboard";
 
 const Dashboard = () => {
+  const [consumerDetails, setConsumerDetails] = useState({});
+  const [platformDetails, setPlatformDetails] = useState({});
+
+  const user = JSON.parse(localStorage.getItem("user")).user;
+  const userId = user.id;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await DashboardApi.getConsumerDashboardData(userId);
+        const data = response.data;
+        setConsumerDetails({
+          energyPurchased: data.energy_purchased_from || 0,
+          demandSent: data.total_demands || 0,
+          offerReceived: data.offers_received || 0,
+          transactionsDone: data.transactions_done || 0,
+          totalDemands: data.total_demands || 0,
+          totalConsumptionUnits: data.total_consumption_units || 0,
+          subscriptionPlan: data.subscription_plan || "N/A",
+          totalStates: data.unique_states_count || 0,
+        });
+        setPlatformDetails({
+          totalIPPs: data.total_ipps || 0,
+          totalCapacity: data.total_capacity || 0,
+          statesCovered: data.unique_states_count || 0,
+        });
+      } catch (error) {
+        console.error("Error fetching dashboard data", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const barData = {
+    labels: ['Energy Purchased', 'Demand Sent', 'Offer Received', 'Transactions Done'],
+    datasets: [
+      {
+        label: 'Consumer Details',
+        data: [
+          consumerDetails.energyPurchased,
+          consumerDetails.demandSent,
+          consumerDetails.offerReceived,
+          consumerDetails.transactionsDone,
+        ],
+        backgroundColor: ['#3f8600', '#3f8600', '#cf1322', '#3f8600'],
+      },
+    ],
+  };
+
   return (
-    <div>
-      <StatData />
+    <div style={{ padding: "30px" }}>
+      <Row gutter={[16, 16]} style={{ height: "400px" }}>
+        {/* Consumer Details */}
+        <Col span={12}>
+          <Card 
+           title="Transaction Details"
+          style={{ backgroundColor: "white", height: "100%" }}>
+            <div style={{ height: "100%" }}>
+              <Bar data={barData} options={{ maintainAspectRatio: false }} />
+            </div>
+          </Card>
+        </Col>
+      
+        {/* Profile Details */}
+        <Col span={12}>
+          <Card
+            title="Profile Details"
+            bordered={false}
+            style={{ backgroundColor: "white", height: "100%" }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
+                  <Statistic title="Total Demands" value={consumerDetails.totalDemands} prefix={<ProfileOutlined />} valueStyle={{ color: "#3f8600" }} />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
+                  <Statistic title="Total Consumption Units" value={consumerDetails.totalConsumptionUnits} prefix={<ThunderboltOutlined />} valueStyle={{ color: "#cf1322" }} />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
+                  <Statistic title="Subscription Plan" value={consumerDetails.subscriptionPlan} prefix={<CrownOutlined />} valueStyle={{ color: "#3f8600" }} />
+                </Card.Grid>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        {/* Platform Details */}
+        <Col span={12}>
+          <Card
+            title="Platform Details"
+            bordered={false}
+            style={{ backgroundColor: "white", height: "100%" }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center" }}>
+                  <Statistic title="Total IPPs" value={platformDetails.totalIPPs} prefix={<UserOutlined />} valueStyle={{ color: "#3f8600" }} />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center" }}>
+                  <Statistic title="Total Capacity Available" value={platformDetails.totalCapacity} prefix={<DatabaseOutlined />} valueStyle={{ color: "#cf1322" }} />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center"}}>
+                  <Statistic title="Number of States Covered" value={platformDetails.statesCovered} valueStyle={{ color: "#3f8600" }} />
+                </Card.Grid>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };

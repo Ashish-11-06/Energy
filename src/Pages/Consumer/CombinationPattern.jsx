@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Typography, Row, Col, Spin, message, Progress, Slider, Button,Card } from "antd";
+import { Table, Typography, Row, Col, Spin, message, Progress, Slider, Button, Card } from "antd";
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import IPPModal from "./Modal/IPPModal";
 import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
+import { fetchOptimizedCombinationsXHR } from "../../Utils/xhrUtils";
+import "./CombinationPattern.css"; // Import the custom CSS file
 
 const { Title, Text } = Typography;
 
@@ -46,8 +48,7 @@ const CombinationPattern = () => {
     (state) => state.optimizedCapacity.status
   );
 
-// console.log('comn',combinationData);
-
+  // console.log('comn', combinationData);
 
   useEffect(() => {
     const fetchPatterns = async () => {
@@ -64,40 +65,39 @@ const CombinationPattern = () => {
       try {
         setIsTableLoading(true);
         setFetchingCombinations(true);
-        if (optimizedCombinationsStatus === "succeeded" && optimizedCombinations) {
-          formatAndSetCombinations(optimizedCombinations);
-        } else {
-          const modalData = {
-            requirement_id: selectedDemandId,
-            optimize_capacity_user: user.user_category,
-          };
+        setProgress(0); // Reset progress when starting a new fetch
 
-          try {
-            const combi = await dispatch(fetchOptimizedCombinations(modalData));
-            const combinations = combi.payload;
-            console.log('aaaaaaaaaaaaaaaaaa');
-            
-            console.log('combinationnnnnnnnnn',combinations);
-            
-            setCombinationData(combi.payload);
-            formatAndSetCombinations(combinations);
-            console.log('at the end of the try block');
-          } catch (error) {
-            console.error('Error in dispatch:', error);
-            throw error;
+        const modalData = {
+          requirement_id: selectedDemandId,
+          optimize_capacity_user: user.user_category,
+        };
+
+        fetchOptimizedCombinationsXHR(
+          modalData,
+          (percentComplete) => setProgress(percentComplete), // Update progress
+          (response) => {
+            setCombinationData(response);
+            formatAndSetCombinations(response);
+            setIsTableLoading(false);
+            setFetchingCombinations(false);
+          },
+          (errorMessage) => {
+            message.error(errorMessage);
+            setIsTableLoading(false);
+            setFetchingCombinations(false);
           }
-        }
+        );
+         // Scroll to the bottom of the page
+         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       } catch (error) {
         console.error('Error in loadCombinations:', error);
         message.error("Failed to fetch combinations.");
-      } finally {
-        setFetchingCombinations(false);
         setIsTableLoading(false);
+        setFetchingCombinations(false);
       }
     };
 
-   console.log(combinationData);
-   
+    console.log(combinationData);
 
     const formatAndSetCombinations = (combinations, reReplacementValue) => {
       if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
@@ -105,26 +105,25 @@ const CombinationPattern = () => {
         setDataSource([]);
         return;
       }
-    
+
       const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => {
         const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
         const batteryCapacity = combination["Optimal Battery Capacity (MW)"] || 0;
-    console.log('format',combination);
-    const annual_demand_met=combination["annual_demand_met"] || "NA";
-    console.log(annual_demand_met);
-    
-    
+        console.log('format', combination);
+        const annual_demand_met = combination["annual_demand_met"] || "NA";
+        console.log(annual_demand_met);
+
         return {
           key: index + 1,
           srNo: index + 1,
           combination: key,
           annual_demand_met,
-         
+
           technology: [
             { name: "Solar", capacity: `${solarCapacity} MW` },
-            { name: "Wind", capacity: `${windCapacity} MW `},
-           
+            { name: "Wind", capacity: `${windCapacity} MW ` },
+
             { name: "Battery", capacity: `${batteryCapacity} MW` },
           ],
           OACost: combination["OA_cost"] && !isNaN(combination["OA_cost"]) ? combination["OA_cost"].toFixed(2) : "N/A",
@@ -140,8 +139,8 @@ const CombinationPattern = () => {
             : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>,
         };
       });
-    
-    
+
+      // console.log('tech',tech);
       console.log('formatting com');
       setDataSource(formattedCombinations);
     };
@@ -192,14 +191,14 @@ const CombinationPattern = () => {
   }, [isTableLoading]);
 
   const handleRowClick = (record) => {
-    
+
     setSelectedRow(record); // Record comes from the latest dataSource
     setIsIPPModalVisible(true);
   };
-  
+
   const re_index = combinationData.re_index || "NA";
   console.log(re_index);
-  
+
   const handleIPPCancel = () => {
     setIsIPPModalVisible(false);
   };
@@ -229,13 +228,15 @@ const CombinationPattern = () => {
       };
 
       try {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         const combi = await dispatch(fetchOptimizedCombinations(modalData));
         const combinations = combi.payload;
 
-        
-        
         // Reformat combinations based on the latest slider value
         formatAndSetCombinations(combinations, sliderValue);
+
+       
+       
       } catch (error) {
         //console.error('Error in dispatch:', error);
         throw error;
@@ -246,11 +247,18 @@ const CombinationPattern = () => {
     } finally {
       setFetchingCombinations(false);
       setIsTableLoading(false);
+       // Scroll to the bottom of the page
+       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
   };
 
   const sliderStyle = {
     height: '20px', // Increase the thickness of the slider
+  };
+
+  const marks = {
+    0: '0%',
+    100: '100%',
   };
 
   const columns = [
@@ -310,7 +318,7 @@ const CombinationPattern = () => {
       dataIndex: "OACost",
       key: "OACost",
     },
-   
+
     {
       title: "COD",
       dataIndex: "cod",
@@ -319,21 +327,22 @@ const CombinationPattern = () => {
       render: (text) => dayjs(text).format('DD-MM-YYYY'),
     },
     {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            render: (text, record) => (
-              text === "Already Sent" ? (
-                "Already Sent"
-              ) : (
-                <button
-               
-                onClick={() => handleRowClick(record)}>
-                  Initiate Quotation
-                </button>
-              )
-            ),
-          },
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (text, record) => (
+        text === "Already Sent" ? (
+          "Already Sent"
+        ) : (
+          <button
+            style={{ padding: "2px 2px" }} // Minimize button size
+            onClick={() => handleRowClick(record)}
+          >
+            Initiate Quotation
+          </button>
+        )
+      ),
+    },
   ];
 
   // Chart data for consumption patterns
@@ -383,8 +392,6 @@ const CombinationPattern = () => {
   }, [consumptionPatterns]);
 
   console.log(consumptionPatterns);
-  
-
 
   const chartOptions = {
     responsive: true,
@@ -409,14 +416,14 @@ const CombinationPattern = () => {
 
 
         {/* Static Data Line Chart */}
-        <Card style={{width:'100%'}}>
-        <Col span={24} style={{ textAlign: "center" }}>
-          <Title level={4} style={{ color: "#001529" }}>
-           Monthly Consumption Pattern
-          </Title>
-        </Col>
-        
-        {/* <Tooltip title="Help">
+        <Card style={{ width: '100%' }}>
+          <Col span={24} style={{ textAlign: "center" }}>
+            <Title level={4} style={{ color: "#001529" }}>
+              Monthly Consumption Pattern
+            </Title>
+          </Col>
+
+          {/* <Tooltip title="Help">
           <Button
             shape="circle"
             icon={<QuestionCircleOutlined />}
@@ -425,118 +432,116 @@ const CombinationPattern = () => {
           />
         </Tooltip> */}
 
-        <Col span={24} style={{ marginBottom: "20px" }}>
-          <div
-            style={{
-              position: "relative",
-              width: "80%",
-              height: "300px",
-              margin: "0 auto",
-            }}
-          >
-            <Line data={lineChartData} options={chartOptions} />
-          </div>
-        </Col>
+          <Col span={24} style={{ marginBottom: "20px" }}>
+            <div
+              style={{
+                position: "relative",
+                width: "80%",
+                height: "300px",
+                margin: "0 auto",
+              }}
+            >
+              <Line data={lineChartData} options={chartOptions} />
+            </div>
+          </Col>
         </Card>
 
 
 
         {/* Combination Table */}
         <Col span={24}>
-        
+
           <div style={{ marginBottom: "20px" }}>
             <Card>
-            <Text>RE Replacement Value: {sliderValue}%</Text> {/* Display slider value */}
-            <span>
-            <Slider
-              min={0}
-              max={100}
-              style={{width:'80%'}}
-              onChange={handleSliderChange}
-              value={sliderValue}
-              tooltipVisible={!isIPPModalVisible && !isModalVisible} // Hide tooltip when modal is visible
-              trackStyle={{ height: 20 }} // Increase the thickness of the slider line
-              handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
-            />
-            <Button type="primary" onClick={handleOptimizeClick} style={{ marginLeft: "90%  " }}>
-              Optimize
-            </Button>
-            </span>
-            <br /><br />
-            <p>(You can change your RE Replacement from above bar.If you want to proceed then please select a combination)</p>
+              <Text>RE Replacement Value: {sliderValue}%</Text> {/* Display slider value */}
+              <span>
+                <Slider
+                  min={0}
+                  max={100}
+                  marks={marks} // Add marks to the slider
+                  style={{ width: '80%' }}
+                  onChange={handleSliderChange}
+                  value={sliderValue}
+                  tooltipVisible={!isIPPModalVisible && !isModalVisible} // Hide tooltip when modal is visible
+                  trackStyle={{ height: 20 }} // Increase the thickness of the slider line
+                  handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
+                />
+                <Button type="primary" onClick={handleOptimizeClick} style={{ marginLeft: "90%", transform: "translateY(-46px)" }}>
+                  Optimize
+                </Button>
+              </span>
+              <br />
+              <p>(You can change your RE Replacement from above bar.If you want to proceed then please select a combination)</p>
             </Card>
 
-         
+
           </div>
           <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-            Optimized Combinations
-          </Title>
-          {isTableLoading ? (
-            <>
-              <div style={{ textAlign: "center", padding: "10px", width: "100%" }}>
-                <Spin size="large" />
-              </div>
+              Optimized Combinations
+            </Title>
+            {isTableLoading ? (
+              <>
+                <div style={{ textAlign: "center", padding: "10px", width: "100%" }}>
+                  <Spin size="large" />
+                </div>
+                <div
+                  style={{
+                    padding: "20px",
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    backgroundColor: "#f0f0f0",
+                    borderRadius: "8px",
+                    border: "1px solid #ddd",
+                    color: "#333",
+                    textAlign: "center",
+                  }}
+                >
+                  Please wait while we are showing you a best matching IPP...
+                </div>
+                {/* <Progress percent={progress} /> */}
+              </>
+            ) : dataSource.length > 0 ? (
+              <Table
+                dataSource={dataSource}
+                columns={columns}
+                pagination={false}
+                bordered
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E6E8F1",
+                  overflowX: "auto",
+                }}
+                scroll={{ x: true }}
+              />
+            ) : (
               <div
                 style={{
                   padding: "20px",
                   fontSize: "18px",
                   fontWeight: "bold",
-                  backgroundColor: "#f0f0f0",
+                  backgroundColor: "#f8d7da",
                   borderRadius: "8px",
-                  border: "1px solid #ddd",
-                  color: "#333",
+                  border: "1px solid #f5c6cb",
+                  color: "#721c24",
                   textAlign: "center",
                 }}
               >
-                <Progress percent={progress} strokeColor="#4CAF50" />
-                Please wait while we are showing you a best matching IPP...
-              </div>
-            </>
-          ) : dataSource.length > 0 ? (
-            <Table
-              dataSource={dataSource}
-              columns={columns}
-              pagination={false}
-              bordered
-              style={{
-                backgroundColor: "#FFFFFF",
-                border: "1px solid #E6E8F1",
-                overflowX: "auto",
-              }}
-              // onRow={(record) => ({
-              //   onClick: () => handleRowClick(record),
-              // })}
-              scroll={{ x: true }}
-            />
-          ) : (
-            <div
-              style={{
-                padding: "20px",
-                fontSize: "18px",
-                fontWeight: "bold",
-                backgroundColor: "#f8d7da",
-                borderRadius: "8px",
-                border: "1px solid #f5c6cb",
-                color: "#721c24",
-                textAlign: "center",
-              }}
-            >
-              No optimized combinations available at the moment. Please try again later.
+                No optimized combinations available at the moment. Please try again later.
 
-            </div>
-          )}
+              </div>
+            )}
           </Card>
-          
+
         </Col>
-      
+
 
         {/* IPP Modal */}
         {isIPPModalVisible && (
           <IPPModal
             visible={isIPPModalVisible}
             // reReplacement={sliderValue} // Pass the latest slider value
-            ipp={selectedRow} 
+            ipp={selectedRow}
             combination={combinationData}
             // combination={combinationData}         // Ensure selectedRow is updated
             reIndex={re_index} // Pass re_index to the modal
@@ -561,5 +566,4 @@ const CombinationPattern = () => {
 };
 
 export default CombinationPattern;
-
 

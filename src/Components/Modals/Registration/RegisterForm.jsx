@@ -89,7 +89,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
               label="Select Category"
               rules={[{ required: true, message: "Please select a user category!" }]}
               labelCol={{ span: 10 }}
-              wrapperCol={{ span: 10 }}
+              wrapperCol={{ span: 14 }} // Adjust wrapperCol to align radio buttons
             >
               <Radio.Group
                 onChange={(e) => setUserCategory(e.target.value)}
