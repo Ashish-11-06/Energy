@@ -13,6 +13,9 @@ export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onE
   xhr.onload = () => {
     if (xhr.status === 200) {
       const response = JSON.parse(xhr.responseText);
+      // Only set progress to 100% after processing the response
+      onLoad(response);
+      onProgress(100); // Set progress to 100% after response is processed
       onLoad(response);
     } else {
       onError("Failed to fetch combinations.");
