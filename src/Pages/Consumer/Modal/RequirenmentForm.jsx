@@ -33,6 +33,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
       voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
       procurement_date: values.procurement.format('YYYY-MM-DD'), // Change format to YYYY-MM-DD for submission
       consumption_unit: values.consumption_unit,
+      annual_consumption: values.annualConsumption, // Add annual consumption to formatted values
     };
     if (onSubmit) {
       onSubmit(formattedValues);
@@ -278,8 +279,21 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             </Form.Item>
           </Col>
 
-        
-         
+          <Col span={12}>
+            <Form.Item
+              label={renderLabelWithTooltip(
+                "Annual Electricity Consumption (in MWh)",
+                "Enter the annual electricity consumption in megawatt-hours."
+              )}
+              name="annualConsumption"
+              rules={[{ required: true, message: "Please enter the annual electricity consumption!" }]}
+            >
+              <Input
+                type="number"
+                placeholder="Enter annual electricity consumption in MWh"
+              />
+            </Form.Item>
+          </Col>
 
             <Col span={12}>
               <Form.Item
