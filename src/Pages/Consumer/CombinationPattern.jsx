@@ -87,6 +87,8 @@ const CombinationPattern = () => {
             setFetchingCombinations(false);
           }
         );
+         // Scroll to the bottom of the page
+         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       } catch (error) {
         console.error('Error in loadCombinations:', error);
         message.error("Failed to fetch combinations.");
@@ -226,11 +228,15 @@ const CombinationPattern = () => {
       };
 
       try {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         const combi = await dispatch(fetchOptimizedCombinations(modalData));
         const combinations = combi.payload;
 
         // Reformat combinations based on the latest slider value
         formatAndSetCombinations(combinations, sliderValue);
+
+       
+       
       } catch (error) {
         //console.error('Error in dispatch:', error);
         throw error;
@@ -241,6 +247,8 @@ const CombinationPattern = () => {
     } finally {
       setFetchingCombinations(false);
       setIsTableLoading(false);
+       // Scroll to the bottom of the page
+       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
   };
 
