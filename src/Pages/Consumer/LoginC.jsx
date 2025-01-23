@@ -103,15 +103,15 @@ console.log('user_category',user_category);
           <Form.Item
             label="Email"
             name="email"
-            rules={[{ required: true, message: "Please input your email!" }]}
+            rules={[{ required: true, message: "Please provide your email address!" }]}
           >
             <Input placeholder="Enter your email" />
           </Form.Item>
-
+        
           <Form.Item
             label="Password"
             name="password"
-            rules={[{ required: true, message: "Please input your password!" }]}
+            rules={[{ required: true, message: "Please provide your password!" }]}
           >
             <Input.Password placeholder="Enter your password" />
           </Form.Item>
@@ -131,6 +131,7 @@ console.log('user_category',user_category);
                 color: "#007bff",
                 textDecoration: "none",
                 cursor: "pointer",
+               
               }}
               onMouseOver={(e) => (e.target.style.color = "#0056b3")}
               onMouseOut={(e) => (e.target.style.color = "#007bff")}

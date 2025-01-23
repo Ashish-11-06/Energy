@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FetchAnnualSaving } from "../../Redux/Slices/Consumer/AnnualSavingSlice";
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Typography, Card, Space,Modal, Tooltip,  } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Typography, Card, Space, Modal, Tooltip, Col, Row } from "antd";
 const { Title, Text } = Typography;
 
 const AnnualSvg = () => {
@@ -18,20 +18,20 @@ const AnnualSvg = () => {
   const location = useLocation();
   const { requirementId } = location.state || {}; // Destructure state to get `requirementId`
 
- // console.log(requirementId, "requirementId");
+  // console.log(requirementId, "requirementId");
 
   // Fetch annual saving data
-    const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
-  
-    const handleChatWithExpert =()=> {
-navigate('consumer/chat-page')
-    }
-    const handleInfoModalOk = () => {
-      setIsInfoModalVisible(false);
-    };
-    const showInfoModal = () => {
-      setIsInfoModalVisible(true);
-    };
+  const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
+
+  const handleChatWithExpert = () => {
+    navigate("/consumer/chat-page");
+  };
+  const handleInfoModalOk = () => {
+    setIsInfoModalVisible(false);
+  };
+  const showInfoModal = () => {
+    setIsInfoModalVisible(true);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,22 +56,36 @@ navigate('consumer/chat-page')
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <Spin tip="Loading..." />
       </div>
     );
   }
 
   // Conditional rendering to ensure data is available
-  const annualSaving = annualSavingResponse ? annualSavingResponse.annual_savings : null;
-  const averageSavings = annualSavingResponse ? annualSavingResponse.average_savings : null;
-  const reReplacement = annualSavingResponse ? annualSavingResponse.re_replacement : null;
+  const annualSaving = annualSavingResponse
+    ? annualSavingResponse.annual_savings
+    : null;
+  const averageSavings = annualSavingResponse
+    ? annualSavingResponse.average_savings
+    : null;
+  const reReplacement = annualSavingResponse
+    ? annualSavingResponse.re_replacement
+    : null;
 
-//console.log('RE replacement', reReplacement);
-
+  //console.log('RE replacement', reReplacement);
 
   const handleContinue = () => {
-    navigate("/consumer/energy-consumption-table", { state: { requirementId, reReplacement } });
+    navigate("/consumer/energy-consumption-table", {
+      state: { requirementId, reReplacement },
+    });
   };
 
   return (
@@ -85,13 +99,24 @@ navigate('consumer/chat-page')
         height: "100%",
       }}
     >
-      <div style={{ backgroundColor: "#F5F6FB", padding: "20px", border: "2px solid #6698005c", borderRadius: "5px" }}>
+      <div
+        style={{
+          backgroundColor: "#F5F6FB",
+          padding: "20px",
+          border: "2px solid #6698005c",
+          borderRadius: "5px",
+        }}
+      >
         {error ? (
           <div style={{ color: "red" }}>Error: {error}</div>
         ) : (
           <>
             <div className="annual-saving-container">
-              <Title level={3} className="text-center">
+              <Title
+                level={3}
+                className="text-center"
+                style={{ marginLeft: "40%" ,marginBottom:'3%'}}
+              >
                 Annual Savings
               </Title>
 
@@ -105,40 +130,44 @@ navigate('consumer/chat-page')
       </Tooltip> */}
 
               <Space direction="vertical" size="large" className="w-100">
-                <Card bordered={false} className="custom-card" style={{ width: '100%', maxWidth: '600px' }}>
-                  <span><Text className="custom-label" style={{marginRight:'3%'}}>Potential Savings (INR):</Text>
-                  {/* <div className="amount-box"> */}
-                    <Text className="amount" style={{fontSize:'20px'}}>{annualSaving ? annualSaving.toLocaleString() : "0"}</Text> {/* Dynamic annual saving */}
-                  {/* </div> */}
-                  </span>
-                </Card>
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <Text strong> Potential Savings (INR):</Text>
+                  </Col>
+                  <Col span={12}>
+                    <Text style={{ fontSize: "20px" }}>
+                      {annualSaving ? annualSaving.toLocaleString() : "0"}
+                    </Text>
+                  </Col>
+                  <Col span={12}>
+                    <Text strong>
+                      Average Savings (For your Industry Category):
+                    </Text>
+                  </Col>
+                  <Col span={12}>
+                    <Text style={{ fontSize: "20px" }}>
+                      ₹{annualSaving ? averageSavings.toLocaleString() : "0"}
+                    </Text>
+                  </Col>
+                  <Col span={12}>
+                    <Text strong>Potential RE Replacement:</Text>
+                  </Col>
+                  <Col span={12}>
+                    <Text style={{ fontSize: "20px" }}>
+                      {reReplacement ? reReplacement : "0"}%
+                    </Text>
+                  </Col>
+                </Row>
 
-                <Card bordered={false} className="custom-card" style={{ width: '100%', maxWidth: '600px' }}>
-                  <span><Text className="custom-label" style={{marginRight:'3%'}}>Average Savings (For your Industry Category):</Text>
-                  {/* <div className="amount-box"> */}
-                    <Text className="amount" style={{fontSize:'20px'}}>₹{annualSaving ? averageSavings.toLocaleString() : "0"}</Text>
-                  {/* </div> */}
-                  </span>
-                </Card>
-
-                <Card bordered={false} className="custom-card" style={{ width: '100%', maxWidth: '600px' }}>
-                  <span><Text className="custom-label" style={{marginRight:'3%'}}>Potential RE Replacement:</Text>
-                  {/* <div className="amount-box"> */}
-                    <Text className="amount" style={{fontSize:'20px'}}>{reReplacement ? reReplacement : "0"}%</Text> {/* Dynamic RE replacement */}
-                  {/* </div> */}
-                  </span>
-                </Card>
-
-                <Space wrap className="actions">
+                <Space wrap className="actions" >
                   <Button type="primary" /* onClick={handleDownloadReport} */>
                     Download Report
                   </Button>
-                  <Button type="default"  onClick={handleChatWithExpert} >
+                  <Button type="default" onClick={handleChatWithExpert} style={{marginLeft:'600px'}}>
                     Need Assistance ?
                   </Button>
-
-                  subscription journey is remaining
-                  {`(to get quotation from IPP)`}
+                  {/* subscription journey is remaining
+                  {`(to get quotation from IPP)`} */}
                 </Space>
               </Space>
             </div>
@@ -187,7 +216,6 @@ navigate('consumer/chat-page')
         </ol>
         <p>Thank you!</p>
       </Modal> */}
-
     </main>
   );
 };

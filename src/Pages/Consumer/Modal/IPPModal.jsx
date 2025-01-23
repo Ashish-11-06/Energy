@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Typography, Row, Col, Button, Card } from "antd";
+import { Modal, Typography, Row, Col, Button, Card, Table } from "antd";
 import RequestForQuotationModal from "../../../Components/Modals/RequestForQuotationModal";
 
 const { Title, Text } = Typography;
@@ -7,15 +7,57 @@ const { Title, Text } = Typography;
 const IPPModal = ({ visible, ipp, combination, reIndex, onClose, onRequestForQuotation }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
-  console.log('date',ipp.greatest_cod  );
-ipp.greatest_cod
-// console.log(annual_demand_met);
-
   const showQuotationModal = () => {
     setIsQuotationModalVisible(true);
     onRequestForQuotation();
   };
   const handleQuotationCancel = () => setIsQuotationModalVisible(false);
+
+  const dataSource = [
+    { key: '1', label: 'RE Index', value: reIndex },
+    { key: '3', label: 'Potential RE Replacement', value: ipp?.reReplacement },
+    { key: '4', label: 'Per Unit Cost (INR/KWh)', value: ipp?.perUnitCost },
+    { key: '5', label: 'OA Cost (INR/KWh)', value: ipp?.OACost },
+    { key: '6', label: 'Total Cost (INR/KWh)', value: ipp?.totalCost },
+  ];
+
+  const columns = [
+    {
+      title: 'Label',
+      dataIndex: 'label',
+      key: 'label',
+    },
+    {
+      title: 'Value',
+      dataIndex: 'value',
+      key: 'value',
+    },
+  ];
+
+  const technologyData = Object.keys(combination).map((key, index) => ({
+    key: index,
+    battery: `Battery Capacity (MW): ${combination[key]["Optimal Battery Capacity (MW)"]} State: ${combination[key].state?.["Battery"] || "N/A"}`,
+    solar: `Solar Capacity (MW): ${combination[key]["Optimal Solar Capacity (MW)"]} State: ${combination[key].state?.["Solar"] || "N/A"}`,
+    wind: `Wind Capacity (MW): ${combination[key]["Optimal Wind Capacity (MW)"]} State: ${combination[key].state?.["Wind_1"] || "N/A"}`,
+  }));
+
+  const technologyColumns = [
+    {
+      title: 'Battery',
+      dataIndex: 'battery',
+      key: 'battery',
+    },
+    {
+      title: 'Solar',
+      dataIndex: 'solar',
+      key: 'solar',
+    },
+    {
+      title: 'Wind',
+      dataIndex: 'wind',
+      key: 'wind',
+    },
+  ];
 
   return (
     <div>
@@ -46,37 +88,41 @@ ipp.greatest_cod
               <Title level={5} style={{ color: "#9A8406", marginBottom: "20px", textAlign: "center" }}>
                 IPP Project Details
               </Title>
-              <div style={{ borderBottom: "1px solid #E6E8F1", marginBottom: "20px" }} />
-              <Text style={{ fontSize: "16px", lineHeight: "1.6" }}>
-                <ul>
-                <li><strong>RE Index:</strong> {reIndex} <br /></li>
-                <li><strong>Available Capacity:</strong> {ipp?.capacity} <br /></li>
-                <li><strong>Potential RE Replacement:</strong> {ipp?.reReplacement} <br /></li>
-                <li><strong>Per Unit Cost(INR/KWh):</strong> {ipp?.perUnitCost} <br /></li>
-                <li> <strong>OA Cost(INR/KWh):</strong>{ipp?.OACost}  <br /></li>
-                <li> <strong>Total Cost(INR/KWh):</strong>{ipp?.totalCost}<br /></li>
 
-                <li><strong>Technology:</strong></li>
-                
-                
-                <ol>
-                  {Object.keys(combination).map((key, index) => (
-                    <div key={index} style={{ marginBottom: "10px" }}>
-                      <li>Battery Capacity (MW): {combination[key]["Optimal Battery Capacity (MW)"]}<br></br> State: {combination[key].state?.["Battery"] || "N/A"}</li> 
-                      <li>Solar Capacity (MW): {combination[key]["Optimal Solar Capacity (MW)"]}  <br></br> State: {combination[key].state?.["Solar"] || "N/A"}</li>
-                      <li>Wind Capacity (MW): {combination[key]["Optimal Wind Capacity (MW)"]} <br></br>State: {combination[key].state?.["Wind_1"] || "N/A"}</li>
-                    </div>
-                  ))}
-                </ol>
-                </ul>
-              </Text>
+              <Row justify="center" gutter={[16, 16]}>
+                <Col span={12}>
+                  <Text strong>RE Index</Text>
+                </Col>
+                <Col span={12}>
+                  <Text>{reIndex}</Text>
+                </Col>
+                <Col span={12}>
+                  <Text strong>Potential RE Replacement:</Text>
+                </Col>
+                <Col span={12}>
+                  <Text>{ipp?.reReplacement}</Text>
+                </Col>
+                <Col span={12}>
+                  <Text strong>Per Unit Cost (INR/KWh):</Text>
+                </Col>
+                <Col span={12}>
+                  <Text>{ipp?.perUnitCost}</Text>
+                </Col>
+                <Col span={12}>
+                  <Text strong>OA Cost (INR/KWh):</Text>
+                </Col>
+                <Col span={12}>
+                  <Text>{ipp?.OACost}</Text>
+                </Col>
+                <Col span={12}>
+                  <Text strong>Total Cost (INR/KWh):</Text>
+                </Col>
+                <Col span={12}>
+                  <Text>{ipp?.totalCost}</Text>
+                </Col>
+              </Row>
+
               <div style={{ borderTop: "1px solid #E6E8F1", margin: "20px 0" }} />
-              {/* <Title level={5} style={{ color: "#9A8406", marginBottom: "10px" }}>
-                About Project
-              </Title>
-              <Text style={{ fontSize: "14px", lineHeight: "1.6" }}>
-                This IPP project focuses on renewable energy with scalable capacity and sustainable development. The project is aimed at providing reliable and eco-friendly power solutions, paving the way for a greener future.
-              </Text> */}
             </Card>
           </Col>
 

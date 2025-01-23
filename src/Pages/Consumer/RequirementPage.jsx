@@ -172,7 +172,7 @@ const RequirementsPage = () => {
           shape="circle"
           icon={<QuestionCircleOutlined />}
           onClick={showInfoModal}
-          style={{ position: 'absolute', top: 120, right: 30 }}
+          style={{ position: 'absolute', top: 80, right: 30 }}
         />
       </Tooltip>
 

@@ -98,7 +98,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       >
         <div style={{ width: "100%", maxWidth: "1500px", margin: "0 auto" }}>
           {showProgress && (
-            <div className="navbar">
+            <div className="navbar " style={{marginBottom:'20px'}}>
               <div className="progress-container" style={{ width: "100%" }}>
                 <div className="horizontal-line" style={{ '--progress-width': `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
                 <div className="progress-icons" style={{ display: "flex", justifyContent: "space-between" }}>

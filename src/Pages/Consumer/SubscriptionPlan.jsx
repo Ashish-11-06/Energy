@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Button, Row, Col, Typography, Modal } from 'antd';
+import { Card, Button, Row, Col, Typography, Modal, Form, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import '../SubscriptionPlan.css';
 
@@ -9,6 +9,7 @@ const SubscriptionPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isQuotationVisible, setIsQuotationVisible] = useState(false);
   const [isProformaVisible, setIsProformaVisible] = useState(false); // State for proforma modal
+  const [form] = Form.useForm(); // Form instance for validation
   const navigate = useNavigate(); // Hook for navigation
 
   const handleSelectPlan = (plan) => {
@@ -21,42 +22,63 @@ const SubscriptionPlans = () => {
     setSelectedPlan(null);
   };
 
-  const renderQuotation = () => {
-    if (selectedPlan === 'basic') {
-      return (
-        <div>
-          please provide additional details for generating proforma invoice - company name, company address, GSTIN no
-          <br />
-          remove download quotation button 
-          <br />
-          provide additional details 
-          <br />
-          notification triggered to Mail
-        </div>
-      );
-    } else if (selectedPlan === 'standard') {
-      return (
-        <div>
-          <p><strong>Plan:</strong> Standard Plan [dummy] invoice will be shown</p>
-          <p><strong>Price:</strong> $19.99 / month</p>
-          <p><strong>Details:</strong></p>
-          <ul>
-            <li>5 Users</li>
-            <li>50GB Storage</li>
-            <li>Priority Support</li>
-          </ul>
-          <p><strong>Terms and Conditions:</strong></p>
-          <ul>
-            <li>Monthly billing cycle.</li>
-            <li>Subject to terms of service.</li>
-          </ul>
-        </div>
-      );
-    }
-  };
+  const renderQuotation = () => (
+    <Form form={form} layout="vertical">
+      <Row>
+      <Col span={12}>
+      <Form.Item
+        label="Company Name"
+        name="companyName"
+        rules={[{ required: true, message: 'Please enter your company name' }]}
+      >
+        <Input />
+      </Form.Item>
+      </Col>
+      <Col span={12}>
+      <Form.Item style={{marginLeft:'2%'}}
+        label="GSTIN Number"
+        name="gstinNumber"
+        rules={[
+          { required: true, message: 'Please enter your GSTIN number' },
+          { pattern: /^[0-3][0-9][A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/, message: 'Please enter a valid GSTIN number' }
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      </Col>
+      <Col span={12}>
+      <Form.Item
+        label="Company Address"
+        name="companyAddress"
+        rules={[{ required: true, message: 'Please enter your company address' }]}
+       
+      >
+        
+        <Input.TextArea rows={2} /> {/* Increased height by using TextArea with 4 rows */}
+      </Form.Item>
+      </Col>
+     
+      </Row>
+      <p>
+        please provide additional details for generating proforma invoice - company name, company address, GSTIN no
+        <br />
+        remove download quotation button 
+        <br />
+        provide additional details 
+        <br />
+        notification triggered to Mail
+      </p>
+    </Form>
+
+  );
 
   const handleGenerateProforma = () => {
-    setIsProformaVisible(true); // Show the proforma modal
+    form.validateFields().then((values) => {
+      console.log('Form values:', values);
+      setIsProformaVisible(true); // Show the proforma modal
+    }).catch((errorInfo) => {
+      console.log('Validation failed:', errorInfo);
+    });
   };
 
   const closeProforma = () => {
@@ -71,7 +93,7 @@ const SubscriptionPlans = () => {
 
   return (
     <div className="subscription-plans-container">
-      <Title level={2}>Choose Your Annual Subscription Plan</Title>
+      <Title level={2} style={{marginTop:'5%',marginBottom:'5%'}}>Choose Your Annual Subscription Plan</Title>
       <Row gutter={[16, 16]} justify="center">
         {/* Basic Plan */}
         <Col xs={24} sm={12} md={8}>
@@ -112,7 +134,7 @@ const SubscriptionPlans = () => {
           >
             <Text className="price">2,00,000 INR</Text>
             <ul>
-            <li>Dashboard</li>
+              <li>Dashboard</li>
               <li>Advisory Support</li>
               <li>PowerX subscription</li>
             </ul>
@@ -149,7 +171,7 @@ const SubscriptionPlans = () => {
         ]}
         width={600}
       >
-        <p>This is  proforma invoice.</p>
+        <p>This is a proforma invoice.</p>
         <p>Please proceed to payment to complete your subscription.</p>
       </Modal>
     </div>

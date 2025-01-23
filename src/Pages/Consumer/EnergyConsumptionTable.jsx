@@ -57,6 +57,7 @@ const EnergyConsumptionTable = () => {
   const [showTable, setShowTable] = useState(false); // State to control table visibility
   const [activeButton, setActiveButton] = useState(null); // State to control active button
   const [isActionCompleted, setIsActionCompleted] = useState(false); // State to track if any action is completed
+  const [showFileUploadTable, setShowFileUploadTable] = useState(false); // State to control file upload table visibility
 
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);
@@ -66,10 +67,10 @@ const EnergyConsumptionTable = () => {
   };
 
   const handleDownloadTemplate = () => {
-    // Logic to download the Excel template
+    // Logic to download the CSV template
     const link = document.createElement("a");
-    link.href = "/path/to/your/template.xlsx"; // Update with the actual path to your template
-    link.download = "template.xlsx";
+    link.href = "/src/assets/csvFormat.csv"; // Update with the actual path to your template
+    link.download = "template.csv";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -107,7 +108,7 @@ const EnergyConsumptionTable = () => {
 
   const handleCSVUpload = async (file) => {
     // Validate the CSV file format
-    const isValidFormat = file.name.endsWith(".xlsx");
+    const isValidFormat = file.name.endsWith(".csv");
     if (!isValidFormat) {
       message.error("Please upload a valid CSV file.");
       return false;
@@ -169,6 +170,7 @@ const EnergyConsumptionTable = () => {
   const [loading, setLoading] = useState(false);
   const [fileUploaded, setFileUploaded] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState("");
+  const [uploadMonthlyFile, setUploadMonthlyFile] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -227,6 +229,14 @@ const EnergyConsumptionTable = () => {
     }
   };
 
+  const handleToggleFileUploadTable = () => {
+    setShowFileUploadTable(
+      (prevShowFileUploadTable) => !prevShowFileUploadTable
+    );
+    setActiveButton("bill");
+    setIsActionCompleted(true); // Mark action as completed
+  };
+
   const handleFileUpload = async (file, key) => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => key === item.key);
@@ -242,6 +252,7 @@ const EnergyConsumptionTable = () => {
       });
       setDataSource(newData);
       message.success(`${file.name} uploaded successfully`);
+      setUploadMonthlyFile(file.name);
       setIsActionCompleted(true); // Mark action as completed
 
       // Convert file to Base64
@@ -300,12 +311,13 @@ const EnergyConsumptionTable = () => {
 
       console.log("resssss", response);
 
-      message.success("Monthly data added successfully!");
       // Show the modal after saving data
     } catch (error) {
-      message.error("Failed to add monthly data");
+      // ...existing code...
     } finally {
       setLoading(false);
+      message.success("Monthly data added successfully!");
+      message.error("Failed to add monthly data");
     }
   };
 
@@ -376,7 +388,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-          disabled={record.fileUploaded !== null}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -397,7 +409,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-          disabled={record.fileUploaded !== null}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -418,7 +430,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-          disabled={record.fileUploaded !== null}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -439,15 +451,37 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-          disabled={record.fileUploaded !== null}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
+  ];
+
+  const fileUploadColumns = [
     {
-      title: 
-        "Upload Bill (open new)",
-     
-      // ),
+      title: "Month",
+      dataIndex: "month",
+      key: "month",
+    },
+    {
+      title: "Upload File",
+      dataIndex: "fileUpload",
+      key: "fileUpload",
+      render: (_, record) => (
+        <div>
+          <Upload
+            beforeUpload={(file) => handleFileUpload(file, record.key)}
+            showUploadList={false}
+          >
+            <Button icon={<UploadOutlined />}></Button>
+          </Upload>
+          {record.fileUploaded && (
+            <div style={{ marginTop: "10px" }}>
+              <span>Uploaded File: {record.fileUploaded}</span>
+            </div>
+          )}
+        </div>
+      ),
     },
   ];
 
@@ -483,51 +517,49 @@ const EnergyConsumptionTable = () => {
         <Title level={3} style={{ textAlign: "center", marginTop: "10px" }}>
           Energy Consumption Data (12 Months)
         </Title>
-
-       Provide / Upload / Amend your energy consumption data for the last 12 months. <br />
-        <div><br /></div>
-
+<p>Provide / Upload / Amend your energy consumption data for the last 12 months.</p>
         {/* <div style={{ display: "flex", alignItems: "center", gap: "15px" }}> */}
         <Row>
           <Col span={6}>
             <Tooltip title="Add details manually">
               <Button onClick={handleToggleDetails}>
-                {showTable ? "Add Details +" : "Add Details"}
+                {showTable ? "Add Details +" : "Add Details +"}
               </Button>
             </Tooltip>
           </Col>
 
           <Col span={6}>
-            <Upload beforeUpload={handleCSVUpload}>
-              <span>
-                
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Upload beforeUpload={handleCSVUpload}>
                 <Tooltip title="Upload a CSV file">
-                  <Button onClick={() => handleButtonClick("csv")}>
-                   ^ Upload CSV file 
+                  <Button
+                    onClick={() => handleButtonClick("csv")}
+                    style={{ padding: "5px" }}
+                    icon={<UploadOutlined style={{ marginTop: "5px" }} />}
+                  >
+                    Upload CSV file
                   </Button>
                 </Tooltip>
-                
-                <Tooltip title="Download a CSV file format">
-                  <Button
-                    icon={<DownloadOutlined />}
-                    onClick={handleDownloadTemplate}
-                    style={{ marginRight: "10px" }}
-                  ></Button>
-                </Tooltip>
-              </span>
-            </Upload>
+              </Upload>
+              <Tooltip title="Download a CSV file">
+                <Button
+                  icon={<DownloadOutlined />}
+                  onClick={handleDownloadTemplate}
+                  style={{ marginLeft: "10px" }}
+                ></Button>
+              </Tooltip>
+            </div>
           </Col>
 
           <Col span={6}>
-            <Tooltip title="Upload your monthly electricity bill">
-              <Upload>
-                <Button
-                  onClick={() => handleButtonClick("bill")}
-                  style={{ marginLeft: "50px" }}
-                >
-                  Upload Bill
-                </Button>
-              </Upload>
+            <Tooltip title="Upload monthly bill (It will take 24 hours to reflect your consumption unit)">
+              <Button
+                onClick={handleToggleFileUploadTable}
+                style={{ marginLeft: "50px", padding: "5px" }}
+                icon={<UploadOutlined style={{ marginTop: "5px" }} />}
+              >
+                Upload Bill
+              </Button>
             </Tooltip>
             {activeButton === "bill" && fileUploaded && (
               <div style={{ marginTop: "10px" }}>
@@ -539,7 +571,11 @@ const EnergyConsumptionTable = () => {
           <Col span={6}>
             <Tooltip title="Upload a SCADA file">
               <Upload showUploadList={false} beforeUpload={handleScadaUpload}>
-                <Button onClick={() => handleButtonClick("scada")}>
+                <Button
+                  onClick={() => handleButtonClick("scada")}
+                  style={{ padding: "5px" }}
+                  icon={<UploadOutlined style={{ marginTop: "5px" }} />}
+                >
                   Upload SCADA file
                 </Button>
               </Upload>
@@ -557,7 +593,7 @@ const EnergyConsumptionTable = () => {
           <>
             <Table
               dataSource={dataSource}
-              columns={mergedColumns}
+              columns={columns}
               pagination={false}
               bordered
               size="small"
@@ -571,7 +607,6 @@ const EnergyConsumptionTable = () => {
                 marginTop: "20px",
               }}
             >
-               show notification here
               <Button
                 type="primary"
                 onClick={handleSave}
@@ -581,10 +616,22 @@ const EnergyConsumptionTable = () => {
               >
                 Save
               </Button>
-             
             </div>
           </>
         )}
+
+        {showFileUploadTable && (
+          <Table
+            dataSource={dataSource}
+            columns={fileUploadColumns}
+            pagination={false}
+            bordered
+            size="small"
+            tableLayout="fixed"
+            style={{ marginTop: "20px" }}
+          />
+        )}
+
         <Tooltip
           title={
             !isActionCompleted
@@ -668,7 +715,6 @@ const EnergyConsumptionTable = () => {
         <p>Hi</p>
 
         <p>Please follow these steps to proceed:</p>
-       
       </Modal>
     </div>
   );
