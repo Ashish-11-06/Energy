@@ -26,7 +26,7 @@
   top: 50%;
   left: 0;
   right: 0;
-  height: 1px; /* Reduced line thickness */
+  height: 4px; /* Reduced line thickness */
   /* background-color: #d9d9d9;  */
   z-index: 1;
   border-radius: 5px; /* Optional for rounded edges */
@@ -59,19 +59,21 @@
 }
 
 .icon-circle {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
+  background-color: #fff;
   /* background-color: #fff; */
   border: 2px solid #d9d9d9;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 24px;
   color: #555;
   position: relative;
   z-index: 3;
   top: -30px; /* Adjust to place the circle on the line */
+  margin-bottom: 5px;
 }
 
 .icon-container:not(:first-child) .icon-circle {
@@ -107,9 +109,9 @@
   }
 
   .icon-circle {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
     top: -25px; /* Adjust for smaller screens */
   }
 
