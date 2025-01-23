@@ -122,7 +122,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               textAlign: 'center',
               fontSize: '18px',
               backgroundColor: '#6698005c',
-              height: '100px',
+              height: '70px',
             }}
           >
             Menu

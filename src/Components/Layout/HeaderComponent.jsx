@@ -93,18 +93,18 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
           alignItems: "center",
           justifyContent: "center", // Center align the content for better aesthetics
           width: "100%", // Ensure it spans the full width of the parent
-          height: "100%",
+          height: "70%",
         }}
       >
         <div style={{ width: "100%", maxWidth: "1500px", margin: "0 auto" }}>
           {showProgress && (
             <div className="navbar">
-              <div className="progress-container" style={{ width: "100%" }}>
-                <div className="horizontal-line" style={{ '--progress-width': `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
-                <div className="progress-icons" style={{ display: "flex", justifyContent: "space-between" }}>
+              <div className="progress-container" style={{ width: "100%", height: "30px" }}>
+                <div className="horizontal-line" style={{ '--progress-width': `${(currentStepIndex / (steps.length - 1)) * 100}%`, height: "4px" }}></div>
+                <div className="progress-icons" style={{ display: "flex", justifyContent: "space-between", marginTop: "-3%" }}>
                   {steps.map((step, index) => (
                     <div className="icon-container" key={index} style={{ flex: 1, textAlign: "center" }}>
-                      <span className="icon-label" style={{ fontSize: "10px" }}>
+                      <span className="icon-label" style={{ fontSize: "8px" }}>
                         {step.label}
                       </span>
                       <Link to={step.path}>
@@ -113,9 +113,11 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                           style={{
                             margin: "0 auto",
                             transform: index === steps.length - 1 ? "translateX(10px)" : "none", // Adjust the last circle to the right
+                            width: "16px",
+                            height: "16px",
                           }}
                         >
-                          {React.cloneElement(step.icon, { style: { fontSize: '16px' } })}
+                          {React.cloneElement(step.icon, { style: { fontSize: '12px' } })}
                         </div>
                       </Link>
                     </div>
