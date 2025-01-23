@@ -78,7 +78,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
       open={isVisible}
       onCancel={onCancel}
       footer={null}
-      width={800}
+      width={900}
     >
       <Form form={form} onFinish={handleSubmit}>
         <Row gutter={16}>
@@ -285,7 +285,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
                 "Annual Electricity Consumption (in MWh)",
                 "Enter the annual electricity consumption in megawatt-hours."
               )}
-              name="annualConsumption"
+              name="annual_electricity_consumption"
               rules={[{ required: true, message: "Please enter the annual electricity consumption!" }]}
             >
               <Input

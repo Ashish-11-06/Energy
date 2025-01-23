@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Typography, Row, Col, Spin, message, Progress, Slider, Button } from "antd";
+import { Table, Typography, Row, Col, Spin, message, Progress, Slider, Button,Card } from "antd";
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import IPPModal from "./Modal/IPPModal";
 import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
+import { fetchOptimizedCombinationsXHR } from "../../Utils/xhrUtils";
 
 const { Title, Text } = Typography;
 
@@ -64,35 +65,32 @@ const CombinationPattern = () => {
       try {
         setIsTableLoading(true);
         setFetchingCombinations(true);
-        if (optimizedCombinationsStatus === "succeeded" && optimizedCombinations) {
-          formatAndSetCombinations(optimizedCombinations);
-        } else {
-          const modalData = {
-            requirement_id: selectedDemandId,
-            optimize_capacity_user: user.user_category,
-          };
 
-          try {
-            const combi = await dispatch(fetchOptimizedCombinations(modalData));
-            const combinations = combi.payload;
-            console.log('aaaaaaaaaaaaaaaaaa');
-            
-            console.log('combinationnnnnnnnnn',combinations);
-            
-            setCombinationData(combi.payload);
-            formatAndSetCombinations(combinations);
-            console.log('at the end of the try block');
-          } catch (error) {
-            console.error('Error in dispatch:', error);
-            throw error;
+        const modalData = {
+          requirement_id: selectedDemandId,
+          optimize_capacity_user: user.user_category,
+        };
+
+        fetchOptimizedCombinationsXHR(
+          modalData,
+          () => {}, // Remove progress update
+          (response) => {
+            setCombinationData(response);
+            formatAndSetCombinations(response);
+            setIsTableLoading(false);
+            setFetchingCombinations(false);
+          },
+          (errorMessage) => {
+            message.error(errorMessage);
+            setIsTableLoading(false);
+            setFetchingCombinations(false);
           }
-        }
+        );
       } catch (error) {
         console.error('Error in loadCombinations:', error);
         message.error("Failed to fetch combinations.");
-      } finally {
-        setFetchingCombinations(false);
         setIsTableLoading(false);
+        setFetchingCombinations(false);
       }
     };
 
@@ -129,19 +127,19 @@ const CombinationPattern = () => {
           ],
           OACost: combination["OA_cost"] && !isNaN(combination["OA_cost"]) ? combination["OA_cost"].toFixed(2) : "N/A",
           totalCost: combination["Final Cost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
-
           totalCapacity: `${(windCapacity + solarCapacity + batteryCapacity).toFixed(2)}`,
           perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
           finalCost: combination["FinalCost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
           cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
           reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "NA", // updated to handle null or undefined values
           connectivity: combination.connectivity,
-          status: combination.sent_from_you === 1
+          status: combination.status === "Request already sent"
             ? "Request already sent"
             : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>,
         };
       });
     
+      // console.log('tech',tech);
       console.log('formatting com');
       setDataSource(formattedCombinations);
     };
@@ -319,21 +317,22 @@ const CombinationPattern = () => {
       render: (text) => dayjs(text).format('DD-MM-YYYY'),
     },
     {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            render: (text, record) => (
-              text === "Already Sent" ? (
-                "Already Sent"
-              ) : (
-                <button
-               
-                onClick={() => handleRowClick(record)}>
-                  Initiate Quotation
-                </button>
-              )
-            ),
-          },
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (text, record) => (
+        text === "Already Sent" ? (
+          "Already Sent"
+        ) : (
+          <button
+            style={{ padding: "2px 2px"}} // Minimize button size
+            onClick={() => handleRowClick(record)}
+          >
+            Initiate Quotation
+          </button>
+        )
+      ),
+    },
   ];
 
   // Chart data for consumption patterns
@@ -382,6 +381,8 @@ const CombinationPattern = () => {
     //console.log(consumptionPatterns, "consumptionPatterns");
   }, [consumptionPatterns]);
 
+  console.log(consumptionPatterns);
+  
 
 
   const chartOptions = {
@@ -389,7 +390,12 @@ const CombinationPattern = () => {
     maintainAspectRatio: false,
     scales: {
       y: {
-        min: 15, // Start the scale from 15
+        min: 0, // Start the scale from 15
+      },
+    },
+    plugins: {
+      legend: {
+        position: 'bottom', // Move the legend to the bottom
       },
     },
   };
@@ -402,11 +408,13 @@ const CombinationPattern = () => {
 
 
         {/* Static Data Line Chart */}
+        <Card style={{width:'100%'}}>
         <Col span={24} style={{ textAlign: "center" }}>
           <Title level={4} style={{ color: "#001529" }}>
            Monthly Consumption Pattern
           </Title>
         </Col>
+        
         {/* <Tooltip title="Help">
           <Button
             shape="circle"
@@ -428,6 +436,7 @@ const CombinationPattern = () => {
             <Line data={lineChartData} options={chartOptions} />
           </div>
         </Col>
+        </Card>
 
 
 
@@ -435,26 +444,33 @@ const CombinationPattern = () => {
         <Col span={24}>
         
           <div style={{ marginBottom: "20px" }}>
+            <Card>
             <Text>RE Replacement Value: {sliderValue}%</Text> {/* Display slider value */}
+            <span>
             <Slider
               min={0}
               max={100}
-              
+              style={{width:'80%'}}
               onChange={handleSliderChange}
               value={sliderValue}
               tooltipVisible={!isIPPModalVisible && !isModalVisible} // Hide tooltip when modal is visible
               trackStyle={{ height: 20 }} // Increase the thickness of the slider line
               handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
-            />
-            <Button type="primary" onClick={handleOptimizeClick} style={{ marginLeft: "10px" }}>
+            />
+            <Button type="primary" onClick={handleOptimizeClick} style={{ marginLeft: "90%  " }}>
               Optimize
             </Button>
-            <br /><br />
+            </span>
+            <br />
             <p>(You can change your RE Replacement from above bar.If you want to proceed then please select a combination)</p>
+            </Card>
+
+         
+          </div>
+          <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
             Optimized Combinations
           </Title>
-          </div>
           {isTableLoading ? (
             <>
               <div style={{ textAlign: "center", padding: "10px", width: "100%" }}>
@@ -472,7 +488,6 @@ const CombinationPattern = () => {
                   textAlign: "center",
                 }}
               >
-                <Progress percent={progress} strokeColor="#4CAF50" />
                 Please wait while we are showing you a best matching IPP...
               </div>
             </>
@@ -487,9 +502,6 @@ const CombinationPattern = () => {
                 border: "1px solid #E6E8F1",
                 overflowX: "auto",
               }}
-              // onRow={(record) => ({
-              //   onClick: () => handleRowClick(record),
-              // })}
               scroll={{ x: true }}
             />
           ) : (
@@ -509,7 +521,10 @@ const CombinationPattern = () => {
 
             </div>
           )}
+          </Card>
+          
         </Col>
+      
 
         {/* IPP Modal */}
         {isIPPModalVisible && (
@@ -541,5 +556,4 @@ const CombinationPattern = () => {
 };
 
 export default CombinationPattern;
-
 

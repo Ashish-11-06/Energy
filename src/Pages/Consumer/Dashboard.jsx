@@ -1,26 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Card, Statistic } from "antd";
 import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined, DatabaseOutlined, ProfileOutlined, ThunderboltOutlined, CrownOutlined } from "@ant-design/icons";
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
+import DashboardApi from "../../Redux/api/dashboard";
 
 const Dashboard = () => {
-  const consumerDetails = {
-    energyPurchased: 15000,
-    demandSent: 20000,
-    offerReceived: 18000,
-    transactionsDone: 100,
-    totalDemands: 500,
-    totalConsumptionUnits: 12000,
-    subscriptionPlan: "Premium",
-    totalStates: 10,
-  };
+  const [consumerDetails, setConsumerDetails] = useState({});
+  const [platformDetails, setPlatformDetails] = useState({});
 
-  const platformDetails = {
-    totalIPPs: 50,
-    totalCapacity: 100000,
-    statesCovered: 15,
-  };
+  const user = JSON.parse(localStorage.getItem("user")).user;
+  const userId = user.id;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await DashboardApi.getConsumerDashboardData(userId);
+        const data = response.data;
+        setConsumerDetails({
+          energyPurchased: data.energy_purchased_from || 0,
+          demandSent: data.total_demands || 0,
+          offerReceived: data.offers_received || 0,
+          transactionsDone: data.transactions_done || 0,
+          totalDemands: data.total_demands || 0,
+          totalConsumptionUnits: data.total_consumption_units || 0,
+          subscriptionPlan: data.subscription_plan || "N/A",
+          totalStates: data.unique_states_count || 0,
+        });
+        setPlatformDetails({
+          totalIPPs: data.total_ipps || 0,
+          totalCapacity: data.total_capacity || 0,
+          statesCovered: data.unique_states_count || 0,
+        });
+      } catch (error) {
+        console.error("Error fetching dashboard data", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const barData = {
     labels: ['Energy Purchased', 'Demand Sent', 'Offer Received', 'Transactions Done'],
