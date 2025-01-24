@@ -50,9 +50,8 @@ const CombinationPattern = () => {
       console.log(annual_demand_met);
       console.log('status', combination.terms_sheet_sent)
 
-
       return {
-        
+
         key: index + 1,
         srNo: index + 1,
         combination: key,
@@ -61,7 +60,6 @@ const CombinationPattern = () => {
         technology: [
           { name: "Solar", capacity: `${solarCapacity} MW` },
           { name: "Wind", capacity: `${windCapacity} MW ` },
-
           { name: "Battery", capacity: `${batteryCapacity} MW` },
         ],
         OACost: combination["OA_cost"] && !isNaN(combination["OA_cost"]) ? combination["OA_cost"].toFixed(2) : "N/A",
@@ -72,12 +70,12 @@ const CombinationPattern = () => {
         cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
         reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "NA", // updated to handle null or undefined values
         connectivity: combination.connectivity,
-        
+
         status: combination.terms_sheet_sent
           ? "already sent"
           : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>,
       };
-   
+
     });
 
     // console.log('tech',tech);
@@ -127,19 +125,31 @@ const CombinationPattern = () => {
           modalData,
           (percentComplete) => setProgress(percentComplete), // Update progress
           (response) => {
+            // If no error, process the response
+            if (response?.error) {
+              message.error(response.error); // Display error message
+              setIsTableLoading(false);
+              setFetchingCombinations(false);
+              throw new Error(response.error);
+            }
+        
+            // Success actions
             setCombinationData(response);
             formatAndSetCombinations(response);
             setIsTableLoading(false);
             setFetchingCombinations(false);
           },
           (errorMessage) => {
+            // Handle network or other fetch errors
             message.error(errorMessage);
             setIsTableLoading(false);
             setFetchingCombinations(false);
+            throw new Error(errorMessage);
           }
         );
-         // Scroll to the bottom of the page
-         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        
+        // Scroll to the bottom of the page
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       } catch (error) {
         console.error('Error in loadCombinations:', error);
         message.error("Failed to fetch combinations.");
@@ -243,7 +253,7 @@ const CombinationPattern = () => {
         setFetchingCombinations(false);
         setIsTableLoading(false);
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-       
+
       } catch (error) {
         //console.error('Error in dispatch:', error);
         throw error;
@@ -251,14 +261,14 @@ const CombinationPattern = () => {
     } catch (error) {
       console.error('Error in handleOptimizeClick:', error);
       message.error("Failed to fetch combinations.");
-     
+
     } finally {
-     
+
       setFetchingCombinations(false);
       setIsTableLoading(false);
 
-       // Scroll to the bottom of the page
-       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      // Scroll to the bottom of the page
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
   };
 
@@ -283,6 +293,35 @@ const CombinationPattern = () => {
       dataIndex: "combination",
       key: "combination",
       width: 200,
+      render: (text) => {
+        // Extract the parts using split()
+        const parts = text.split('-');
+        if (parts.length === 4) {
+          // Extract the desired parts
+          const a = parts[0];
+          const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
+          const c = parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1);
+          const d = parts[3].charAt(0) + parts[3].charAt(parts[3].length - 1);
+          // Construct the new string
+          return a + b + c + d;
+        } if (parts.length === 3) {
+          // Extract the desired parts
+          const a = parts[0];
+          const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
+          const c = parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1);
+          // Construct the new string
+          return a + b + c;
+        } if (parts.length === 2) {
+          // Extract the desired parts
+          const a = parts[0];
+          const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1); // Extract first and last characters
+          // Construct the new string
+          return a + b;
+        } else {
+          // Handle cases where the combination doesn't have the expected format
+          return text; // Or return an empty string, or handle the error as needed
+        }
+      }
     },
     {
       title: "Generator's Connectivity",
