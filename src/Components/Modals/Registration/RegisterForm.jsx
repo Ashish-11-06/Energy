@@ -14,6 +14,21 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
     setUserCategory(user_category);
   }, [user_category]);
 
+  const restrictedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com', 'icloud.com', 'zoho.com', 'protonmail.com', 'mail.com', 'yandex.com', 'gmx.com'];
+
+  const validateCompanyEmail = (_, value) => {
+    if (!value) {
+      return Promise.reject(new Error('Please provide your email address!'));
+    }
+
+    const domain = value.split('@')[1]; // Extract the domain from the email
+    if (restrictedDomains.includes(domain)) {
+      return Promise.reject(new Error('Only company emails are allowed!'));
+    }
+
+    return Promise.resolve();
+  };
+
   const requestOtp = () => {
     form
       .validateFields()
@@ -129,7 +144,10 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
             <Form.Item
               name="email"
               label="Email"
-              rules={[{ required: true, message: "Please input the email!", type: "email" }]}
+              rules={[
+                { required: true, message: "Please input the email!", type: "email" },
+                { validator: validateCompanyEmail },
+              ]}
             >
               <Input />
             </Form.Item>
