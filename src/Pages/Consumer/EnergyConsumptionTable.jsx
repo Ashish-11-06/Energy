@@ -78,6 +78,7 @@ const EnergyConsumptionTable = () => {
 
   const handleToggleDetails = () => {
     setShowTable((prevShowTable) => !prevShowTable);
+    setShowFileUploadTable(false); // Close file upload table
     setActiveButton("details");
     setIsActionCompleted(true); // Mark action as completed
   };
@@ -230,9 +231,8 @@ const EnergyConsumptionTable = () => {
   };
 
   const handleToggleFileUploadTable = () => {
-    setShowFileUploadTable(
-      (prevShowFileUploadTable) => !prevShowFileUploadTable
-    );
+    setShowFileUploadTable((prevShowFileUploadTable) => !prevShowFileUploadTable);
+    setShowTable(false); // Close details table
     setActiveButton("bill");
     setIsActionCompleted(true); // Mark action as completed
   };

@@ -100,7 +100,7 @@ const Login = () => {
           <Form.Item
             label="Email"
             name="email"
-            rules={[{ required: true, message: 'Please input your email!' }]}
+            rules={[{ required: true, message: 'Please provide your email address!' }]}
           >
             <Input placeholder="Enter your email" />
           </Form.Item>
@@ -108,7 +108,7 @@ const Login = () => {
           <Form.Item
             label="Password"
             name="password"
-            rules={[{ required: true, message: 'Please input your password!' }]}
+            rules={[{ required: true, message: 'Please provide your password! ' }]}
           >
             <Input.Password placeholder="Enter your password" />
           </Form.Item>
@@ -133,13 +133,28 @@ const Login = () => {
 
         <div className="register-link">
           <p>
-            <a onClick={handleForgotPassword}>Forgot Password?</a>
+            <a
+              onClick={handleForgotPassword}
+              style={{
+                cursor: "pointer",
+              }}
+            >
+              Forgot Password?
+            </a>
           </p>
         </div>
 
         <div className="register-link">
           <p>
-            Don't have an account? <a onClick={showModal}>Create account</a>
+            Don't have an account?{" "}
+            <a
+              onClick={showModal}
+              style={{
+                cursor: "pointer",
+              }}
+            >
+              Create account
+            </a>
           </p>
         </div>
       </div>

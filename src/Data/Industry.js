@@ -1,14 +1,27 @@
 const industries = [
-  "Pharmaceutical",
-  "Steel",
-  "Cement",
-  "Textile",
-  "Automobile",
-  "Food & Beverage",
+ 
+  "Retail",
   "Energy",
-  "IT & Software",
-  "Construction",
-  "Retail"
+  "Materials",
+  "Industrials",
+  "Consumer Discretionary",
+  "Consumer Staples",
+  "Health Care",
+  "Financials",
+  "Information Technology",
+  "Communication Services",
+  "Utilities",
+  "Real Estate"
 ];
 
 export default industries;
+
+// "Pharmaceutical",
+// "Steel",
+// "Cement",
+// "Textile",
+// "Automobile",
+// "Food & Beverage",
+// "Energy",
+// "IT & Software",
+// "Construction",
