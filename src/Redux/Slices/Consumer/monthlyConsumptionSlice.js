@@ -11,6 +11,7 @@ export const addConsumption = createAsyncThunk(
       const response = await monthlyConsumptionApi.monthlyconsumptionData(monthlyData);
       return response.data;
     } catch (error) {
+      console.log(error);
       // Handle errors
       return rejectWithValue(error.response?.data?.error || 'Failed to add monthly consumption data');
     }

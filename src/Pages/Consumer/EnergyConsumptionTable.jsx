@@ -58,6 +58,8 @@ const EnergyConsumptionTable = () => {
   const [activeButton, setActiveButton] = useState(null); // State to control active button
   const [isActionCompleted, setIsActionCompleted] = useState(false); // State to track if any action is completed
   const [showFileUploadTable, setShowFileUploadTable] = useState(false); // State to control file upload table visibility
+  const [saveSuccess, setSaveSuccess] = useState(false); // State to track save success
+  const [saveError, setSaveError] = useState(false); // State to track save error
 
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);
@@ -116,12 +118,30 @@ const EnergyConsumptionTable = () => {
     }
 
     message.success(`${file.name} uploaded successfully`);
+    setUploadedFileName(file.name); // Set the latest uploaded file name
     setIsActionCompleted(true); // Mark action as completed
 
     // Convert file to Base64
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+
+      // Parse CSV data and update dataSource
+      const csvData = atob(base64File);
+      const parsedData = csvData.split("\n").map((row) => row.split(","));
+      const updatedDataSource = dataSource.map((item, index) => {
+        const row = parsedData[index + 1]; // Skip header row
+        return row
+          ? {
+              ...item,
+              monthlyConsumption: parseFloat(row[1]),
+              peakConsumption: parseFloat(row[2]),
+              offPeakConsumption: parseFloat(row[3]),
+              monthlyBill: parseFloat(row[4]),
+            }
+          : item;
+      });
+      setDataSource(updatedDataSource);
 
       // Dispatch the uploadCSV thunk
       await dispatch(
@@ -307,19 +327,54 @@ const EnergyConsumptionTable = () => {
       // Call the API to add the requirement
       console.log(values);
 
-      const response = await dispatch(addConsumption(values));
+      const response = await dispatch(addConsumption(values)).unwrap();
 
       console.log("resssss", response);
 
+      message.success({
+        content: "Monthly data added successfully!",
+        style: {
+          position: "absolute",
+          bottom: "0px",
+          marginTop:'90%',
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 9999,
+        },
+      });
+
       // Show the modal after saving data
+      setSaveSuccess(true); // Set save success to true
+      setSaveError(false); // Reset save error
     } catch (error) {
       // ...existing code...
+      message.error("Failed to add monthly data");
+      setSaveError(true); // Set save error to true
     } finally {
       setLoading(false);
-      message.success("Monthly data added successfully!");
-      message.error("Failed to add monthly data");
+      // message.success("Monthly data added successfully!");
+     
+
     }
   };
+
+  useEffect(() => {
+    if (saveSuccess) {
+      const timer = setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000); // Hide success message after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [saveSuccess]);
+
+  useEffect(() => {
+    if (saveError) {
+      const timer = setTimeout(() => {
+        setSaveError(false);
+      }, 3000); // Hide error message after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [saveError]);
 
   const handleFillBelow = (dataIndex) => {
     const newData = [...dataSource];
@@ -530,7 +585,7 @@ const EnergyConsumptionTable = () => {
 
           <Col span={6}>
             <div style={{ display: "flex", alignItems: "center" }}>
-              <Upload beforeUpload={handleCSVUpload}>
+              <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
                 <Tooltip title="Upload a CSV file">
                   <Button
                     onClick={() => handleButtonClick("csv")}
@@ -549,10 +604,15 @@ const EnergyConsumptionTable = () => {
                 ></Button>
               </Tooltip>
             </div>
+            {activeButton === "csv" && uploadedFileName && (
+              <div style={{ marginTop: "10px" }}>
+                <span>Uploaded File: {uploadedFileName}</span>
+              </div>
+            )}
           </Col>
 
           <Col span={6}>
-            <Tooltip title="Upload monthly bill (It will take 24 hours to reflect your consumption unit)">
+            <Tooltip title="Upload your monthly electricity bill">
               <Button
                 onClick={handleToggleFileUploadTable}
                 style={{ marginLeft: "50px", padding: "5px" }}
@@ -602,11 +662,22 @@ const EnergyConsumptionTable = () => {
             />
             <div
               style={{
-                display: "flex",
-                justifyContent: "flex-end",
+               
                 marginTop: "20px",
+                transform: 'translateX(-108px)',
+                marginLeft: '88%',
               }}
             >
+              {saveSuccess && (
+                <span style={{ color: "green", marginLeft: "10px" }}>
+                  Data saved successfully!
+                </span>
+              )}
+              {saveError && (
+                <span style={{ color: "red", marginLeft: "10px" }}>
+                  Failed to save data!
+                </span>
+              )}
               <Button
                 type="primary"
                 onClick={handleSave}
@@ -616,6 +687,7 @@ const EnergyConsumptionTable = () => {
               >
                 Save
               </Button>
+              
             </div>
           </>
         )}
@@ -631,7 +703,6 @@ const EnergyConsumptionTable = () => {
             style={{ marginTop: "20px" }}
           />
         )}
-
         <Tooltip
           title={
             !isActionCompleted
@@ -644,7 +715,7 @@ const EnergyConsumptionTable = () => {
             type="primary"
             onClick={handleContinue}
             disabled={!isActionCompleted} // Enable only if an action is completed
-            style={{ marginLeft: "90%", marginTop: "5%" }}
+            style={{ marginLeft: "86%" }}
           >
             Continue
           </Button>

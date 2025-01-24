@@ -1,0 +1,429 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": { "name": "Andhra Pradesh" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [81.7841, 17.7275],
+              [81.8122, 17.9294],
+              [82.0282, 17.9354],
+              [82.0765, 17.7083],
+              [81.7841, 17.7275]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Arunachal Pradesh" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [93.535, 27.149],
+              [93.550, 27.200],
+              [93.678, 27.250],
+              [93.675, 27.149],
+              [93.535, 27.149]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Assam" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [92.919, 26.051],
+              [92.923, 26.112],
+              [93.041, 26.150],
+              [92.920, 26.051],
+              [92.919, 26.051]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Bihar" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [85.1365, 25.6022],
+              [85.1371, 25.7203],
+              [85.1795, 25.7532],
+              [85.1365, 25.6022]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Chhattisgarh" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [81.0787, 20.0169],
+              [81.2358, 20.0507],
+              [81.3511, 19.9706],
+              [81.0787, 20.0169]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Goa" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [73.8042, 15.2993],
+              [73.8283, 15.2951],
+              [73.8183, 15.2789],
+              [73.8042, 15.2993]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Gujarat" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [72.6291, 23.0225],
+              [72.6291, 23.0636],
+              [72.7351, 23.0913],
+              [72.6291, 23.0225]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Haryana" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [76.8538, 29.0588],
+              [76.8564, 29.1232],
+              [77.0104, 29.1211],
+              [76.8538, 29.0588]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Himachal Pradesh" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [77.2652, 32.0729],
+              [77.2658, 32.1747],
+              [77.3441, 32.2024],
+              [77.2652, 32.0729]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Jharkhand" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [85.3137, 23.8527],
+              [85.4451, 23.8755],
+              [85.4783, 23.7766],
+              [85.3137, 23.8527]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Karnataka" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [75.3305, 15.8013],
+              [75.4635, 15.8643],
+              [75.5318, 15.7597],
+              [75.3305, 15.8013]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Kerala" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [76.0427, 8.3429],
+              [76.0601, 8.4603],
+              [76.1146, 8.4899],
+              [76.0427, 8.3429]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Madhya Pradesh" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [77.1025, 23.0417],
+              [77.1986, 23.1113],
+              [77.2211, 22.9931],
+              [77.1025, 23.0417]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Maharashtra" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [73.6757, 18.5204],
+              [73.7612, 18.5434],
+              [73.8196, 18.4619],
+              [73.6757, 18.5204]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Manipur" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [93.848, 24.4436],
+              [93.8703, 24.4923],
+              [93.9515, 24.4803],
+              [93.848, 24.4436]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Meghalaya" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [91.4048, 25.7574],
+              [91.4694, 25.8336],
+              [91.5549, 25.7737],
+              [91.4048, 25.7574]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Mizoram" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [92.749, 23.1641],
+              [92.8211, 23.1459],
+              [92.9075, 23.1715],
+              [92.749, 23.1641]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Nagaland" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [94.045, 26.0978],
+              [94.1476, 26.1823],
+              [94.1779, 26.0655],
+              [94.045, 26.0978]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Odisha" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [85.831, 19.7966],
+              [85.934, 19.8699],
+              [86.053, 19.8276],
+              [85.831, 19.7966]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Punjab" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [75.7498, 31.1495],
+              [75.8019, 31.2249],
+              [75.9476, 31.1999],
+              [75.7498, 31.1495]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Rajasthan" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [74.3328, 26.6958],
+              [74.4433, 26.7477],
+              [74.5806, 26.6874],
+              [74.3328, 26.6958]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Sikkim" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [88.5711, 27.0225],
+              [88.6003, 27.0724],
+              [88.6442, 27.0763],
+              [88.5711, 27.0225]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Tamil Nadu" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [80.2597, 13.0827],
+              [80.3523, 13.2159],
+              [80.4561, 13.1468],
+              [80.2597, 13.0827]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Telangana" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [78.475, 17.3627],
+              [78.6325, 17.4362],
+              [78.7551, 17.3061],
+              [78.475, 17.3627]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Tripura" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [91.9781, 23.6491],
+              [91.9978, 23.7258],
+              [92.0895, 23.6967],
+              [91.9781, 23.6491]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Uttar Pradesh" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [78.4177, 27.1743],
+              [78.5322, 27.2223],
+              [78.6621, 27.1547],
+              [78.4177, 27.1743]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "Uttarakhand" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [78.2277, 30.3991],
+              [78.3399, 30.4797],
+              [78.3932, 30.3547],
+              [78.2277, 30.3991]
+            ]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "name": "West Bengal" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [88.247, 22.9868],
+              [88.3087, 23.0566],
+              [88.4105, 23.0162],
+              [88.247, 22.9868]
+            ]
+          ]
+        }
+      }
+    ]
+  }
+  
