@@ -663,18 +663,19 @@ const EnergyConsumptionTable = () => {
             <div
               style={{
                
-                marginTop: "20px",
+                marginTop: "30px",
                 transform: 'translateX(-108px)',
-                marginLeft: '88%',
+                marginLeft: '86%',
+                marginBottom: '-40px'
               }}
             >
               {saveSuccess && (
-                <span style={{ color: "green", marginLeft: "10px" }}>
+                <span style={{ color: "green"}}>
                   Data saved successfully!
                 </span>
               )}
               {saveError && (
-                <span style={{ color: "red", marginLeft: "10px" }}>
+                <span style={{ color: "red"}}>
                   Failed to save data!
                 </span>
               )}
@@ -715,7 +716,7 @@ const EnergyConsumptionTable = () => {
             type="primary"
             onClick={handleContinue}
             disabled={!isActionCompleted} // Enable only if an action is completed
-            style={{ marginLeft: "86%" }}
+            style={{ marginLeft: "86%" , marginTop: "8px"}}
           >
             Continue
           </Button>

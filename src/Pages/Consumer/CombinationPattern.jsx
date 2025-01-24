@@ -34,6 +34,57 @@ const CombinationPattern = () => {
 
   const user = JSON.parse(localStorage.getItem('user')).user;
 
+  const formatAndSetCombinations = (combinations, reReplacementValue) => {
+    if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
+      console.log('hiiiiiiii');
+      setDataSource([]);
+      return;
+    }
+
+    const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => {
+      const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
+      const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
+      const batteryCapacity = combination["Optimal Battery Capacity (MW)"] || 0;
+      console.log('format', combination);
+      const annual_demand_met = combination["annual_demand_met"] || "NA";
+      console.log(annual_demand_met);
+      console.log('status', combination.terms_sheet_sent)
+
+
+      return {
+        
+        key: index + 1,
+        srNo: index + 1,
+        combination: key,
+        annual_demand_met,
+
+        technology: [
+          { name: "Solar", capacity: `${solarCapacity} MW` },
+          { name: "Wind", capacity: `${windCapacity} MW ` },
+
+          { name: "Battery", capacity: `${batteryCapacity} MW` },
+        ],
+        OACost: combination["OA_cost"] && !isNaN(combination["OA_cost"]) ? combination["OA_cost"].toFixed(2) : "N/A",
+        totalCost: combination["Final Cost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
+        totalCapacity: `${(windCapacity + solarCapacity + batteryCapacity).toFixed(2)}`,
+        perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
+        finalCost: combination["FinalCost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
+        cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
+        reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "NA", // updated to handle null or undefined values
+        connectivity: combination.connectivity,
+        
+        status: combination.terms_sheet_sent
+          ? "already sent"
+          : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>,
+      };
+   
+    });
+
+    // console.log('tech',tech);
+    console.log('formatting com');
+    setDataSource(formattedCombinations);
+  };
+
   // Redux selectors
   const consumptionPatterns = useSelector(
     (state) => state.consumptionPattern?.patterns || []
@@ -98,52 +149,6 @@ const CombinationPattern = () => {
     };
 
     console.log(combinationData);
-
-    const formatAndSetCombinations = (combinations, reReplacementValue) => {
-      if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
-        console.log('hiiiiiiii');
-        setDataSource([]);
-        return;
-      }
-
-      const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => {
-        const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
-        const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
-        const batteryCapacity = combination["Optimal Battery Capacity (MW)"] || 0;
-        console.log('format', combination);
-        const annual_demand_met = combination["annual_demand_met"] || "NA";
-        console.log(annual_demand_met);
-
-        return {
-          key: index + 1,
-          srNo: index + 1,
-          combination: key,
-          annual_demand_met,
-
-          technology: [
-            { name: "Solar", capacity: `${solarCapacity} MW` },
-            { name: "Wind", capacity: `${windCapacity} MW ` },
-
-            { name: "Battery", capacity: `${batteryCapacity} MW` },
-          ],
-          OACost: combination["OA_cost"] && !isNaN(combination["OA_cost"]) ? combination["OA_cost"].toFixed(2) : "N/A",
-          totalCost: combination["Final Cost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
-          totalCapacity: `${(windCapacity + solarCapacity + batteryCapacity).toFixed(2)}`,
-          perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
-          finalCost: combination["FinalCost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
-          cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
-          reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "NA", // updated to handle null or undefined values
-          connectivity: combination.connectivity,
-          status: combination.status === "Request already sent"
-            ? "Request already sent"
-            : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>,
-        };
-      });
-
-      // console.log('tech',tech);
-      console.log('formatting com');
-      setDataSource(formattedCombinations);
-    };
 
     fetchPatterns();
     loadCombinations();
@@ -229,24 +234,26 @@ const CombinationPattern = () => {
 
       try {
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        const combi = await dispatch(fetchOptimizedCombinations(modalData));
-        const combinations = combi.payload;
+        const combinations = await dispatch(fetchOptimizedCombinations(modalData)).unwrap();
+
+        console.log(combinations, "combinations");
 
         // Reformat combinations based on the latest slider value
         formatAndSetCombinations(combinations, sliderValue);
-
-       
+        setFetchingCombinations(false);
+        setIsTableLoading(false);
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
        
       } catch (error) {
         //console.error('Error in dispatch:', error);
         throw error;
       }
     } catch (error) {
-      //console.error('Error in handleOptimizeClick:', error);
+      console.error('Error in handleOptimizeClick:', error);
       message.error("Failed to fetch combinations.");
     } finally {
-      setFetchingCombinations(false);
-      setIsTableLoading(false);
+     
+
        // Scroll to the bottom of the page
        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
@@ -266,17 +273,19 @@ const CombinationPattern = () => {
       title: "Sr. No.",
       dataIndex: "srNo",
       key: "srNo",
+      width: 10,
     },
     {
       title: "IPP ID",
       dataIndex: "combination",
       key: "combination",
-      width: 190,
+      width: 200,
     },
     {
       title: "Generator's Connectivity",
       dataIndex: "connectivity",
       key: "connectivity",
+      // width: 150,
     },
     {
       title: "Technology",
@@ -297,28 +306,32 @@ const CombinationPattern = () => {
       title: "% RE Replacement",
       dataIndex: "reReplacement",
       key: "reReplacement",
+      width: 100,
     },
     {
       title: "Total Capacity (MW)",
       dataIndex: "totalCapacity",
       key: "totalCapacity",
+      // width: 150,
     },
     {
       title: "Per Unit Cost (INR/KWh)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
+      // width: 150,
     },
     {
       title: "Total Cost (INR/KWh)",
       dataIndex: "totalCost",
       key: "totalCost",
+      // width: 150,
     },
     {
       title: "OA Cost (INR/KWh)",
       dataIndex: "OACost",
       key: "OACost",
+      // width: 150,
     },
-
     {
       title: "COD",
       dataIndex: "cod",
@@ -330,18 +343,19 @@ const CombinationPattern = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (text, record) => (
-        text === "Already Sent" ? (
-          "Already Sent"
-        ) : (
-          <button
-            style={{ padding: "2px 2px" }} // Minimize button size
-            onClick={() => handleRowClick(record)}
-          >
-            Initiate Quotation
-          </button>
-        )
-      ),
+      width: 150,
+      // render: (text, record) => (
+      //   text === "Already Sent" ? (
+      //     "Already Sent"
+      //   ) : (
+      //     <button
+      //       style={{ padding: "2px 2px" }} // Minimize button size
+      //       onClick={() => handleRowClick(record)}
+      //     >
+      //       Initiate Quotation
+      //     </button>
+      //   )
+      // ),
     },
   ];
 
@@ -471,7 +485,7 @@ const CombinationPattern = () => {
                 </Button>
               </span>
               <br />
-              <p>(You can change your RE Replacement from above bar.If you want to proceed then please select a combination)</p>
+              <p>( You can change your RE Replacement from above bar. )</p>
             </Card>
 
 
