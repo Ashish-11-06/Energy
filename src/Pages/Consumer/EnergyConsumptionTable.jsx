@@ -119,12 +119,30 @@ const EnergyConsumptionTable = () => {
 
     message.success(`${file.name} uploaded successfully`);
     setUploadedFileName(file.name); // Set the latest uploaded file name
+    setUploadedFileName(file.name); // Set the latest uploaded file name
     setIsActionCompleted(true); // Mark action as completed
 
     // Convert file to Base64
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+
+      // Parse CSV data and update dataSource
+      const csvData = atob(base64File);
+      const parsedData = csvData.split("\n").map((row) => row.split(","));
+      const updatedDataSource = dataSource.map((item, index) => {
+        const row = parsedData[index + 1]; // Skip header row
+        return row
+          ? {
+              ...item,
+              monthlyConsumption: parseFloat(row[1]),
+              peakConsumption: parseFloat(row[2]),
+              offPeakConsumption: parseFloat(row[3]),
+              monthlyBill: parseFloat(row[4]),
+            }
+          : item;
+      });
+      setDataSource(updatedDataSource);
 
       // Parse CSV data and update dataSource
       const csvData = atob(base64File);
@@ -586,6 +604,7 @@ const EnergyConsumptionTable = () => {
           <Col span={6}>
             <div style={{ display: "flex", alignItems: "center" }}>
               <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
+              <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
                 <Tooltip title="Upload a CSV file">
                   <Button
                     onClick={() => handleButtonClick("csv")}
@@ -609,9 +628,15 @@ const EnergyConsumptionTable = () => {
                 <span>Uploaded File: {uploadedFileName}</span>
               </div>
             )}
+            {activeButton === "csv" && uploadedFileName && (
+              <div style={{ marginTop: "10px" }}>
+                <span>Uploaded File: {uploadedFileName}</span>
+              </div>
+            )}
           </Col>
 
           <Col span={6}>
+            <Tooltip title="Upload your monthly electricity bill">
             <Tooltip title="Upload your monthly electricity bill">
               <Button
                 onClick={handleToggleFileUploadTable}

@@ -5,11 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import CountUp from 'react-countup';
 import whatWeOffer from '../../Redux/api/whatWeOffer';
 import { useDispatch } from 'react-redux';
+import TermsAndConditionModal from './Modal/TermsAndConditionModal';
+
 
 const WhatWeOffer = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [data, setData] = useState(null); // State to store the fetched data
+const [isModal,setIsModal] =useState(false);
 
   const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category = user.user_category;
@@ -30,7 +33,8 @@ const WhatWeOffer = () => {
   }, [dispatch]);
 
   const handleContinue = () => {
-    navigate('/consumer/requirement');
+    setIsModal(true);
+   // navigate('/consumer/requirement');
   };
 
   const formatNumberWithCommas = (number) => {
@@ -214,6 +218,7 @@ const WhatWeOffer = () => {
           </Button>
         </div>
       </div>
+      <TermsAndConditionModal visible={isModal} onCancel={() => setIsModal(false)} />
     </div>
   );
 };

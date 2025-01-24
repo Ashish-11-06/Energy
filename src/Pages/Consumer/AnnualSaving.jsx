@@ -132,11 +132,11 @@ const AnnualSvg = () => {
               <Space direction="vertical" size="large" className="w-100">
                 <Row gutter={[16, 16]}>
                   <Col span={12}>
-                    <Text strong> Potential Savings (INR):</Text>
+                    <Text strong> Potential Savings :</Text>
                   </Col>
                   <Col span={12}>
                     <Text style={{ fontSize: "20px" }}>
-                      {annualSaving ? annualSaving.toLocaleString() : "0"}
+                      {annualSaving ? annualSaving.toLocaleString() : "0"} INR
                     </Text>
                   </Col>
                   <Col span={12}>
@@ -146,7 +146,7 @@ const AnnualSvg = () => {
                   </Col>
                   <Col span={12}>
                     <Text style={{ fontSize: "20px" }}>
-                      ₹{annualSaving ? averageSavings.toLocaleString() : "0"}
+                     {annualSaving ? averageSavings.toLocaleString() : "0"}  INR 
                     </Text>
                   </Col>
                   <Col span={12}>

@@ -21,6 +21,10 @@ const IPPModal = ({ visible, ipp, combination, reIndex, onClose, onRequestForQuo
     { key: '6', label: 'Total Cost (INR/KWh)', value: ipp?.totalCost },
   ];
 
+const annualDemand=ipp?.annualDemand;
+console.log('annual deman',annualDemand);
+
+
   const columns = [
     {
       title: 'Label',

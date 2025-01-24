@@ -4,6 +4,7 @@ import Sidebar from './Sidebar';
 import DrawerMenu from './DrawerMenu';
 import HeaderComponent from './HeaderComponent';
 import { Outlet } from 'react-router-dom';
+import MainHeader from './MainHeader';
 
 const { Header, Content } = Layout;
 
@@ -59,8 +60,9 @@ const LayoutComponent = () => {
           style={{
             // padding: '0 16px',
             // display: 'flex',
-            // alignItems: 'center',
+            alignItems: 'center',
             backgroundColor: 'white',
+              //  backgroundColor:'#F5F6FB',
             position: 'sticky',
             top: 0,
             zIndex: 1000, // Ensure header is above sidebar and content
@@ -72,6 +74,11 @@ const LayoutComponent = () => {
             drawerVisible={drawerVisible}
             toggleDrawer={toggleDrawer}
           />
+          {/* <MainHeader 
+           isMobile={isMobile}
+           drawerVisible={drawerVisible}
+           toggleDrawer={toggleDrawer}
+          /> */}
         </Header>
 
         {/* Content */}

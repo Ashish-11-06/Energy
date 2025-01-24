@@ -1,6 +1,7 @@
 .navbar {
   padding: 20px;
 
+
 }
 
 .progress-icons {
@@ -18,7 +19,7 @@
   flex-direction: column;
   align-items: center;
   margin-top: 20px;
-  width: 100%;
+  width: 80%;
 }
 
 .horizontal-line {
@@ -27,7 +28,7 @@
   left: 0;
   right: 0;
   height: 4px; /* Reduced line thickness */
-  /* background-color: #d9d9d9;  */
+   background-color: #d9d9d9;  
   z-index: 1;
   border-radius: 5px; /* Optional for rounded edges */
   overflow: hidden; /* Ensure the fill effect stays within the line */
@@ -64,6 +65,7 @@
   background-color: #fff;
   /* background-color: #fff; */
   border: 2px solid #d9d9d9;
+  /* background-color: #76d34e, */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -98,7 +100,7 @@
 }
 
 .horizontal-line.completed::before {
-  width: 100%; /* Fill the line as you navigate */
+  width: 80%; /* Fill the line as you navigate */
 }
 
 /* Responsiveness */

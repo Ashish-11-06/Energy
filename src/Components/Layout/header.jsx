@@ -39,6 +39,7 @@ const username = 'consumer';
           top: 0,
           width: '100%',
           zIndex: 10,
+          backgroundColor:'black'
         }}
       >
        

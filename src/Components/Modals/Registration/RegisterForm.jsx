@@ -71,7 +71,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
   return (
     <Modal
       open={open}
-      title={<span style={{ fontSize: '1.6rem' }}>Register</span>} // Enlarge the title
+      title={<span style={{ fontSize: '1.6rem',justifyContent:'center',marginLeft:'40%' }}>Register</span>} // Enlarge the title
       footer={null}
       onCancel={handleCancel}
       width={600}
