@@ -251,8 +251,11 @@ const CombinationPattern = () => {
     } catch (error) {
       console.error('Error in handleOptimizeClick:', error);
       message.error("Failed to fetch combinations.");
+     
     } finally {
      
+      setFetchingCombinations(false);
+      setIsTableLoading(false);
 
        // Scroll to the bottom of the page
        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
