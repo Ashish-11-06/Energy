@@ -1,0 +1,8 @@
+.custom-row td {
+    padding: 4px; /* Adjust this value to reduce the padding */
+  }
+  
+  .ant-table-cell {
+    padding: 4px !important; /* Force override Ant Design styles */
+  }
+  

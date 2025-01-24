@@ -57,7 +57,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     <Header
       className="header-component"
       style={{
-        backgroundColor: "transparent" /* Ensure no background color */,
+        backgroundColor: '#6698005c',
         padding: "0 16px",
         // display: "flex",
         flexDirection: "column",
@@ -66,7 +66,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
         position: "sticky",
         top: 0,
         zIndex: 1000,
-        height: isMobile ? "auto" : "80px",
+        height: isMobile ? "70px" : "70px",
         // border: '2px solid red'
       }}
     >

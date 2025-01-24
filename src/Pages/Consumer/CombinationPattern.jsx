@@ -132,7 +132,7 @@ const CombinationPattern = () => {
               setFetchingCombinations(false);
               throw new Error(response.error);
             }
-        
+
             // Success actions
             setCombinationData(response);
             formatAndSetCombinations(response);
@@ -147,7 +147,7 @@ const CombinationPattern = () => {
             throw new Error(errorMessage);
           }
         );
-        
+
         // Scroll to the bottom of the page
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       } catch (error) {
@@ -563,12 +563,15 @@ const CombinationPattern = () => {
                 columns={columns}
                 pagination={false}
                 bordered
+                size="small" // Adjust table size
                 style={{
                   backgroundColor: "#FFFFFF",
                   border: "1px solid #E6E8F1",
                   overflowX: "auto",
+                  padding: '5px 10px'
                 }}
                 scroll={{ x: true }}
+                rowClassName={() => "custom-row"} // Add a custom row class
               />
             ) : (
               <div

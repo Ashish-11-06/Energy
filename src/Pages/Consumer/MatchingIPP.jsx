@@ -53,7 +53,7 @@ const MatchingIPP = () => {
   };
 
   const columns = [
- 
+
     {
       title: "IPP ID",
       dataIndex: "user__username",
@@ -75,7 +75,7 @@ const MatchingIPP = () => {
       render: (text, record) => (
         <Radio
           onChange={(e) => handleRadioChange(e, record)} // Pass the entire record
-         // checked={selectedRow?.id === record.id} // Ensure the selection logic matches
+        // checked={selectedRow?.id === record.id} // Ensure the selection logic matches
         />
       ),
     },
@@ -121,14 +121,15 @@ const MatchingIPP = () => {
     >
       <Row style={{ width: "100%" }}>
         <h2>Matching IPP Details</h2>
-           <Tooltip title="Help">
-                <Button
-                  shape="circle"
-                  icon={<QuestionCircleOutlined />}
-                  onClick={showInfoModal}
-                  style={{ position: 'absolute', top: 120, right: 30 }}
-                />
-              </Tooltip>
+        <Tooltip title="Help">
+          <Button
+            shape="circle"
+            icon={<QuestionCircleOutlined />}
+            onClick={showInfoModal}
+            style={{ position: 'absolute', top: 120, right: 30 }}
+          />
+        </Tooltip>
+
         <Table
           columns={columns}
           dataSource={Array.isArray(matchingIPP) ? matchingIPP : []}
@@ -141,7 +142,12 @@ const MatchingIPP = () => {
           locale={{
             emptyText: "No Matching IPPs found",
           }}
-          style={{ marginTop: "5%", width: "60%" }}
+       
+          style={{
+            marginTop: "5%",
+            width: "60%",
+            padding: "5px 5px",
+          }}
         />
       </Row>
       <Row
@@ -181,9 +187,9 @@ const MatchingIPP = () => {
         ]}
       >
         <p></p>
-       
+
         <p>This is a general estimate of the matched IPPs. To achieve better results, please provide more details.</p>
-        
+
       </Modal>
     </main>
   );

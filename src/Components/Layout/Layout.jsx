@@ -57,10 +57,10 @@ const LayoutComponent = () => {
         {/* Header */}
         <Header
           style={{
-            padding: '0 16px',
+            // padding: '0 16px',
             // display: 'flex',
-            alignItems: 'center',
-            backgroundColor: '#6698005c',
+            // alignItems: 'center',
+            backgroundColor: 'white',
             position: 'sticky',
             top: 0,
             zIndex: 1000, // Ensure header is above sidebar and content

@@ -27,7 +27,7 @@ const ProfilePage = () => {
       <Col xs={24} sm={18} md={12} lg={10}>
         <Card bordered={true} style={{ borderRadius: "8px" }}>
           <Row justify="center" style={{ marginBottom: "20px" }}>
-            <Avatar size={100} src="https://i.pravatar.cc/150?img=4" />
+            <Avatar size={100} src="/src/assets/profile.jpg"  />
           </Row>
           <Title level={3} style={{ textAlign: "center", marginBottom: "20px" }}>
             User Profile
@@ -69,6 +69,12 @@ const ProfilePage = () => {
             <Col span={12}>
               <Text>{userData.user_category}</Text>
             </Col>
+            <Col span={12}>
+              <Text strong>Subscription Plan:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>- to -</Text>
+            </Col>
             
           </Row>
           <Row justify="center" style={{ marginTop: "20px" }}>
@@ -76,7 +82,6 @@ const ProfilePage = () => {
               Edit Profile
             </Button>
           </Row>
-          plan name and plan validity
         </Card>
 
         {/* Modal for Editing User Details */}

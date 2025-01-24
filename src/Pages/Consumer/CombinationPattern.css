@@ -13,10 +13,5 @@
 }
 
 :where(.css-dev-only-do-not-override-oqfneu).ant-slider .ant-slider-mark-text {
-margin-top: 2%;
-}
-:where(.css-dev-only-do-not-override-oqfneu).ant-table-wrapper .ant-table-cell, :where(.css-dev-only-do-not-override-oqfneu).ant-table-wrapper .ant-table-thead>tr>th, :where(.css-dev-only-do-not-override-oqfneu).ant-table-wrapper .ant-table-tbody>tr>th, :where(.css-dev-only-do-not-override-oqfneu).ant-table-wrapper .ant-table-tbody>tr>td, :where(.css-dev-only-do-not-override-oqfneu).ant-table-wrapper tfoot>tr>th, :where(.css-dev-only-do-not-override-oqfneu).ant-table-wrapper tfoot>tr>td {
-    position: relative;
-    padding: 5px 10px;
-    overflow-wrap: break-word;
+    margin-top: 2%;
 }

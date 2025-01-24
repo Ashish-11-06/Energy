@@ -5,7 +5,7 @@ import LayoutComponent from './Components/Layout/Layout';
 import WhatWeOffer from './Pages/Consumer/WhatWeOffer';
 import MatchingIPP from './Pages/Consumer/MatchingIPP';
 import ChatWithExpert from './Pages/Consumer/ChatWithExpert';
-import ConsumptionPattern from './Pages/Consumer/CombinationPattern';
+import CombinationPatternC from './Pages/Consumer/CombinationPattern';
 import IppProjectDetails from './Pages/Consumer/IPPProjectDetails';
 // import RequirementsPage from './Pages/Consumer/requirementPage';
 import AnnualSvg from './Pages/Consumer/AnnualSaving';
@@ -72,7 +72,7 @@ function App() {
                   <Route path="matching-ipp" element={<MatchingIPP />} />
                   <Route path="chat-page" element={<ChatWithExpert />} />                
                   <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
-                  <Route path="consumption-pattern" element={<ConsumptionPattern />} />
+                  <Route path="consumption-pattern" element={<CombinationPatternC />} />
                   <Route path="project-details" element={<IppProjectDetails />} />
                   <Route path="requirement" element={<RequirementsPage />} />
                   <Route path="annual-saving" element={<AnnualSvg />} />
