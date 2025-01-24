@@ -3,7 +3,6 @@ import { Card, Row, Col, Typography, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchNotificationById } from "../../Redux/Slices/Consumer/notificationSlice.js";
-
 const { Title, Text } = Typography;
 
 const Notification = () => {

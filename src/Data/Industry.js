@@ -1,5 +1,4 @@
 const industries = [
- 
   "Retail",
   "Energy",
   "Materials",

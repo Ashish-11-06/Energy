@@ -1,14 +1,15 @@
-import React from "react";
-import { Button } from "antd";
+import React, { useState, useEffect } from 'react';
+import { Button, Avatar, Tooltip } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import {
   UserOutlined,
   HomeOutlined,
   BookOutlined,
   FileTextOutlined,
   WalletOutlined,
+  MessageOutlined
 } from "@ant-design/icons";
 import "./HeaderComponent.css"; // Add custom styles for header component
 
@@ -17,6 +18,28 @@ const { Header } = Layout;
 const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const navigate = useNavigate(); // Add useNavigate hook
+  let username = ''; // Use let instead of const
+
+  const getFromLocalStorage = (key) => {
+    const item = localStorage.getItem(key);
+    // console.log('item', item);
+    return item ? JSON.parse(item) : '';
+  };
+
+  const user = getFromLocalStorage('user');
+  if (user && user.user.company_representative) {
+    username = user.user.company_representative;
+  }
+
+  const handleProfileClick = () => {
+    navigate(currentPath.startsWith('/consumer') ? '/consumer/profile' : '/generator/profile');
+  };
+
+  const handleChatClick =() => {
+    navigate(currentPath.startsWith('/consumer') ? '/consumer/chat-page' : '/generator/chat-page');
+
+  }
 
   const consumerSteps = [
     { path: '/consumer/requirement', label: 'Requirements', icon: <UserOutlined /> },
@@ -57,16 +80,19 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     <Header
       className="header-component"
       style={{
-        backgroundColor: "transparent" /* Ensure no background color */,
+        backgroundColor: '#6698005c',
         padding: "0 16px",
+      
         // display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         position: "sticky",
+        marginLeft:'-16px',
+        marginRight:'-16px',
         top: 0,
         zIndex: 1000,
-        height: isMobile ? "auto" : "80px",
+        height: isMobile ? "70px" : "70px",
         // border: '2px solid red'
       }}
     >
@@ -99,7 +125,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
         <div style={{ width: "100%", maxWidth: "1500px", margin: "0 auto" }}>
           {showProgress && (
             <div className="navbar " style={{marginBottom:'20px'}}>
-              <div className="progress-container" style={{ width: "100%" }}>
+              <div className="progress-container" style={{ width: "80%" }}>
                 <div className="horizontal-line" style={{ '--progress-width': `${(currentStepIndex / (steps.length - 1)) * 100}%` }}></div>
                 <div className="progress-icons" style={{ display: "flex", justifyContent: "space-between" }}>
                   {steps.map((step, index) => (
@@ -125,6 +151,53 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
             </div>
           )}
         </div>
+        {/* Profile Icon */}
+        <span>
+          <Tooltip title={username}>
+            <Avatar
+              size="large"
+              icon={<UserOutlined style={{ color: 'black', borderColor: 'black', padding: '5px', alignItems: 'center',height:'25px',width:'25px' }} />}
+              style={{
+                position: "absolute",
+                right: 24,
+                top: 18,
+                marginRight: '50px',
+                zIndex: 1001,
+                backgroundColor: "white",
+                borderColor:'black',
+                cursor: "pointer",
+                height: '30px',
+                width: '30px',
+                padding: '10px'
+              }}
+              onClick={handleProfileClick}
+            />
+          </Tooltip>
+
+          <Tooltip title="Need Assistance?">
+            <MessageOutlined
+              style={{
+                position: "absolute",
+                right: 8,
+                top: 18,
+                marginRight: '20px',
+                zIndex: 1001,
+                backgroundColor: "white",
+                cursor: "pointer",
+                height: '30px',
+                width: '30px',
+                padding: '5px',
+                borderRadius: '50%',
+                border: '1px solid black',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onClick={handleChatClick}
+            />
+          </Tooltip>
+        </span>
+       
       </div>
     </Header>
   );

@@ -27,7 +27,7 @@ const ProfilePage = () => {
       <Col xs={24} sm={18} md={12} lg={10}>
         <Card bordered={true} style={{ borderRadius: "8px" }}>
           <Row justify="center" style={{ marginBottom: "20px" }}>
-            <Avatar size={100} src="https://i.pravatar.cc/150?img=4" />
+            <Avatar size={100} src="/src/assets/profile.jpg"  />
           </Row>
           <Title level={3} style={{ textAlign: "center", marginBottom: "20px" }}>
             User Profile

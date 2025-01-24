@@ -29,12 +29,12 @@ const consumerMenuItems = [
   { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
   { label:'Offer Sent', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined /> },
   { label: 'Offer Recieved', key: '/consumer/offer-recieved-from-ipp', icon: <AppstoreAddOutlined /> },
-  { label: 'Chatbot', key: '/consumer/chat-page', icon: <MessageOutlined /> },
+  // { label: 'Chatbot', key: '/consumer/chat-page', icon: <MessageOutlined /> },
   { label: 'Energy Consumption Table', key: '/consumer/energy-consumption-table', icon: <TableOutlined /> },
   { label: 'Consumption Pattern', key: '/consumer/consumption-pattern', icon: <AreaChartOutlined /> },
   { label: 'Annual Saving', key: '/consumer/annual-saving', icon: <WalletOutlined /> },
   { label: 'Subscription Plan', key: '/consumer/subscription-plan', icon: <TeamOutlined /> },
-  { label: 'Profile', key: '/consumer/profile', icon: <UserOutlined /> },
+  // { label: 'Profile', key: '/consumer/profile', icon: <UserOutlined /> },
   { label: 'profile Invoices', key: '/consumer/profile' },
 ];
 

@@ -2,16 +2,22 @@ import React, { useState } from 'react';
 import { Card, Button, Row, Col, Typography, Modal, Form, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import '../SubscriptionPlan.css';
+import proformaInvoice from '../../assets/proforma_invoice.png';
 
 const { Title, Text } = Typography;
 
 const SubscriptionPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isQuotationVisible, setIsQuotationVisible] = useState(false);
+  const [isPaymentVisible,setIsPaymentVisible]=useState(false);
   const [isProformaVisible, setIsProformaVisible] = useState(false); // State for proforma modal
   const [form] = Form.useForm(); // Form instance for validation
   const navigate = useNavigate(); // Hook for navigation
+  const companyData = localStorage.getItem("company");
+  const company = companyData ? JSON.parse(companyData).company : null;
 
+  
+  
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
     setIsQuotationVisible(true); // Show the quotation view after selection
@@ -29,6 +35,7 @@ const SubscriptionPlans = () => {
       <Form.Item
         label="Company Name"
         name="companyName"
+        valuePropName='company'
         rules={[{ required: true, message: 'Please enter your company name' }]}
       >
         <Input />
@@ -50,7 +57,7 @@ const SubscriptionPlans = () => {
       <Form.Item
         label="Company Address"
         name="companyAddress"
-        rules={[{ required: true, message: 'Please enter your company address' }]}
+        // rules={[{ required: true, message: 'Please enter your company address' }]}
        
       >
         
@@ -80,9 +87,21 @@ const SubscriptionPlans = () => {
       console.log('Validation failed:', errorInfo);
     });
   };
+  const handlePayment = () => {
+    navigate('/consumer/energy-consumption-table')
+    // form.validateFields().then((values) => {
+    //   console.log('Form values:', values);
+    //   setIsPaymentVisible(true); // Show the proforma modal
+    // }).catch((errorInfo) => {
+    //   console.log('Validation failed:', errorInfo);
+    // });
+  };
 
   const closeProforma = () => {
     setIsProformaVisible(false);
+  };
+  const closePayment = () => {
+    setIsPaymentVisible(false);
   };
 
   // Handle payment done and navigate to the new page
@@ -96,7 +115,9 @@ const SubscriptionPlans = () => {
       <Title level={2} style={{marginTop:'5%',marginBottom:'5%'}}>Choose Your Annual Subscription Plan</Title>
       <Row gutter={[16, 16]} justify="center">
         {/* Basic Plan */}
-        <Col xs={24} sm={12} md={8}>
+     
+        <Col xs={24} sm={8} md={8}>
+        
           <Card
             title="EXT Lite Plan"
             bordered
@@ -119,7 +140,7 @@ const SubscriptionPlans = () => {
         </Col>
 
         {/* Standard Plan */}
-        <Col xs={24} sm={12} md={8}>
+        <Col xs={24} sm={8} md={8}>
           <Card
             title="EXT Pro Plan"
             bordered
@@ -140,6 +161,29 @@ const SubscriptionPlans = () => {
             </ul>
           </Card>
         </Col>
+
+        <Col xs={24} sm={8} md={8}>
+        
+        <Card
+          title="Trial Plan"
+          bordered
+          hoverable
+          className={selectedPlan === 'basic' ? 'selected-plan' : ''}
+          // onClick={() => handleSelectPlan('basic')}
+          actions={[
+            <Button type="primary" block size="small" style={{ width: '160px' }}>
+              Select Plan
+            </Button>,
+          ]}
+        >
+          <Text className="price">Free</Text>
+          <ul>
+            <li>Trial</li>
+            <li>Trial</li>
+            <li> Trial</li>
+          </ul>
+        </Card>
+      </Col>
       </Row>
 
       {/* Quotation View */}
@@ -165,14 +209,30 @@ const SubscriptionPlans = () => {
         open={isProformaVisible}
         onCancel={closeProforma}
         footer={[
-          <Button key="button" onClick={handlePaymentDone}>
+          <Button key="button" onClick={handlePayment}>
             Proceed to Payment
           </Button>,
         ]}
         width={600}
       >
         <p>This is a proforma invoice.</p>
+        <img src={proformaInvoice} alt="" style={{height:'500px',width:'500px',marginLeft:'5%'}}/>
         <p>Please proceed to payment to complete your subscription.</p>
+      </Modal>
+
+      <Modal
+      title="Proceed to Payment"
+      open={isPaymentVisible}
+      onCancel={closePayment}
+      footer={[
+        <Button key="button" onClick={handlePayment} >
+          Pay
+        </Button>
+      ]}
+      width={600}
+      >
+        This is dummy Payment
+
       </Modal>
     </div>
   );

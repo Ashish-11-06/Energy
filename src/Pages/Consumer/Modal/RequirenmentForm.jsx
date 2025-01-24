@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect,useSelector } from "react";
 import {
   Modal,
   Form,
@@ -13,7 +13,10 @@ import {
 import { InfoCircleOutlined } from "@ant-design/icons";
 import states from "../../../Data/States";
 import industries from "../../../Data/Industry";
+import { useDispatch } from "react-redux";
 import dayjs from 'dayjs';
+import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
+
 
 const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [form] = Form.useForm();
@@ -21,6 +24,13 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [isCustomVoltage, setIsCustomVoltage] = useState(false); // Flag to toggle custom voltage input visibility
   const [customIndustry, setCustomIndustry] = useState(""); // State to hold custom industry input
   const [isCustomIndustry, setIsCustomIndustry] = useState(false); // Flag to toggle custom industry input visibility
+const [isState,setIsState]=useState([]);
+//const states = useSelector((state) => state.consumer.states);
+  const dispatch = useDispatch();
+
+// useEffect(() => {
+//   dispatch(fetchState());
+// }, [dispatch]);
 
   const handleSubmit = (values) => {
     const user = JSON.parse(localStorage.getItem('user')).user;
@@ -33,7 +43,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
       voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
       procurement_date: values.procurement.format('YYYY-MM-DD'), // Change format to YYYY-MM-DD for submission
       consumption_unit: values.consumption_unit,
-      annual_consumption: values.annualConsumption, // Add annual consumption to formatted values
+      annual_electricity_consumption: values.annual_electricity_consumption, // Add annual consumption to formatted values
     };
     if (onSubmit) {
       onSubmit(formattedValues);
@@ -44,6 +54,21 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
     setCustomIndustry(""); // Reset custom industry field
     setIsCustomIndustry(false); // Reset custom industry flag
   };
+
+ useEffect(() => {
+      // Dispatch action to fetch notifications based on the retrieved requirement id
+      dispatch(fetchState())
+        .then(response => {
+          // Assuming the response contains the notifications array
+          setIsState(response.payload); // Adjust based on your actual response structure
+          console.log(isState);
+          
+        })
+        .catch(error => {
+          console.error("Error fetching states:", error);
+        });
+   
+  }, [dispatch]);
 
   const renderLabelWithTooltip = (label, tooltip) => (
     <span>
@@ -91,15 +116,9 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
               name="state"
               rules={[{ required: true, message: "Please select your state!" }]}
             >
-              <Select
-                showSearch
-                placeholder="Select your state"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().includes(input.toLowerCase())
-                }
-              >
-                {states.map((state, index) => (
+              
+              <Select placeholder="Select your state" showSearch>
+                {isState && isState.map((state, index) => (
                   <Select.Option key={index} value={state}>
                     {state}
                   </Select.Option>
@@ -331,7 +350,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
             Continue
           </Button>
         </Form.Item>
-        Add new input annual electricity consumption MWh
+       
       </Form>
     </Modal>
   );

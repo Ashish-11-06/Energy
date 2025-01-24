@@ -37,6 +37,10 @@ const RequestForQuotationModal = ({
   const [windCapacity, setWindCapacity] = useState(30);
   const [essCapacity, setEssCapacity] = useState(20);
 
+  const annualDemand=(data?.annualDemand)/1000;
+
+  console.log('annual deman',annualDemand);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

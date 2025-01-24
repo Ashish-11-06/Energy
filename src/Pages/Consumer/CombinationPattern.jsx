@@ -130,6 +130,8 @@ const CombinationPattern = () => {
           totalCost: combination["Final Cost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
           totalCapacity: `${(windCapacity + solarCapacity + batteryCapacity).toFixed(2)}`,
           perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
+          annualDemand: combination["Annual Demand Met"] && !isNaN(combination["Annual Demand Met"]) ? combination["Annual Demand Met"].toFixed(2) : "N/A",
+
           finalCost: combination["FinalCost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
           cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
           reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "NA", // updated to handle null or undefined values

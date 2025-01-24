@@ -28,8 +28,8 @@ const Dashboard = () => {
           totalStates: data.unique_states_count || 0,
         });
         setPlatformDetails({
-          totalIPPs: data.total_ipps || 0,
-          totalCapacity: data.total_capacity || 0,
+          totalIPPs: data.total_portfolios || 0,
+          totalCapacity: data.total_available_capacity || 0,
           statesCovered: data.unique_states_count || 0,
         });
       } catch (error) {
@@ -77,21 +77,21 @@ const Dashboard = () => {
             style={{ backgroundColor: "white", height: "100%" }}
           >
             <Row gutter={[16, 16]}>
-              <Col span={8}>
+              <Col span={12}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
                   <Statistic title="Total Demands" value={consumerDetails.totalDemands} prefix={<ProfileOutlined />} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
               </Col>
-              <Col span={8}>
+              <Col span={12}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
                   <Statistic title="Total Consumption Units" value={consumerDetails.totalConsumptionUnits} prefix={<ThunderboltOutlined />} valueStyle={{ color: "#cf1322" }} />
                 </Card.Grid>
               </Col>
-              <Col span={8}>
+              {/* <Col span={8}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
                   <Statistic title="Subscription Plan" value={consumerDetails.subscriptionPlan} prefix={<CrownOutlined />} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
-              </Col>
+              </Col> */}
             </Row>
           </Card>
         </Col>
