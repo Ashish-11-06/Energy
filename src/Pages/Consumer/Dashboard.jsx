@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Card, Statistic } from "antd";
-import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined, DatabaseOutlined, ProfileOutlined, ThunderboltOutlined, CrownOutlined } from "@ant-design/icons";
+import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined, DatabaseOutlined, ProfileOutlined, ThunderboltOutlined,SendOutlined , CrownOutlined } from "@ant-design/icons";
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import DashboardApi from "../../Redux/api/dashboard";
@@ -22,6 +22,8 @@ const Dashboard = () => {
           demandSent: data.total_demands || 0,
           offerReceived: data.offers_received || 0,
           transactionsDone: data.transactions_done || 0,
+          offersSent: data.offers_sent || 0,
+
           totalDemands: data.total_demands || 0,
           totalConsumptionUnits: data.total_consumption_units || 0,
           subscriptionPlan: data.subscription_plan || "N/A",
@@ -49,6 +51,8 @@ const Dashboard = () => {
           consumerDetails.demandSent,
           consumerDetails.offerReceived,
           consumerDetails.transactionsDone,
+        //  consumerDetails.offersSent,
+
         ],
         backgroundColor: ['#3f8600', '#3f8600', '#cf1322', '#3f8600'],
       },
@@ -77,14 +81,19 @@ const Dashboard = () => {
             style={{ backgroundColor: "white", height: "100%" }}
           >
             <Row gutter={[16, 16]}>
-              <Col span={12}>
+              <Col span={8}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
                   <Statistic title="Total Demands" value={consumerDetails.totalDemands} prefix={<ProfileOutlined />} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
               </Col>
-              <Col span={12}>
+              <Col span={8}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
                   <Statistic title="Total Consumption Units" value={consumerDetails.totalConsumptionUnits} prefix={<ThunderboltOutlined />} valueStyle={{ color: "#cf1322" }} />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
+                  <Statistic title="Total Offer Sent" value={consumerDetails.offersSent} prefix={<SendOutlined  />} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
               </Col>
               {/* <Col span={8}>

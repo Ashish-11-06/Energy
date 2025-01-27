@@ -16,7 +16,8 @@ import industries from "../../../Data/Industry";
 import { useDispatch } from "react-redux";
 import dayjs from 'dayjs';
 import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
-
+import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
+fetchIndustry
 
 const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [form] = Form.useForm();
@@ -24,8 +25,9 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [isCustomVoltage, setIsCustomVoltage] = useState(false); // Flag to toggle custom voltage input visibility
   const [customIndustry, setCustomIndustry] = useState(""); // State to hold custom industry input
   const [isCustomIndustry, setIsCustomIndustry] = useState(false); // Flag to toggle custom industry input visibility
-const [isState,setIsState]=useState([]);
-//const states = useSelector((state) => state.consumer.states);
+ const [isState,setIsState]=useState([]);
+ const [isIndustry,setIsIndustry]=useState([]);
+// const states = useSelector((state) => state.consumer.states);
   const dispatch = useDispatch();
 
 // useEffect(() => {
@@ -55,20 +57,30 @@ const [isState,setIsState]=useState([]);
     setIsCustomIndustry(false); // Reset custom industry flag
   };
 
- useEffect(() => {
-      // Dispatch action to fetch notifications based on the retrieved requirement id
-      dispatch(fetchState())
-        .then(response => {
-          // Assuming the response contains the notifications array
-          setIsState(response.payload); // Adjust based on your actual response structure
-          console.log(isState);
-          
-        })
-        .catch(error => {
-          console.error("Error fetching states:", error);
-        });
-   
+  useEffect(() => {
+    dispatch(fetchState())
+      .then(response => {
+        // console.log(response.payload);
+        
+        setIsState(response.payload);
+        //console.log(isState);
+      })
+      .catch(error => {
+        console.error("Error fetching states:", error);
+      });
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchIndustry())
+      .then(response => {    
+        setIsIndustry(response.payload);
+        //console.log(isState);
+      })
+      .catch(error => {
+        console.error("Error fetching industry:", error);
+      });
+  }, [dispatch]);
+  
 
   const renderLabelWithTooltip = (label, tooltip) => (
     <span>
@@ -169,7 +181,7 @@ const [isState,setIsState]=useState([]);
                   option.children.toLowerCase().includes(input.toLowerCase())
                 }
               >
-                {industries.map((industry, index) => (
+                {isIndustry.map((industry, index) => (
                   <Select.Option key={index} value={industry}>
                     {industry}
                   </Select.Option>

@@ -69,12 +69,6 @@ const ProfilePage = () => {
             <Col span={12}>
               <Text>{userData.user_category}</Text>
             </Col>
-            <Col span={12}>
-              <Text strong>Subscription Plan:</Text>
-            </Col>
-            <Col span={12}>
-              <Text>- to -</Text>
-            </Col>
             
           </Row>
           <Row justify="center" style={{ marginTop: "20px" }}>
@@ -82,6 +76,7 @@ const ProfilePage = () => {
               Edit Profile
             </Button>
           </Row>
+          plan name and plan validity
         </Card>
 
         {/* Modal for Editing User Details */}

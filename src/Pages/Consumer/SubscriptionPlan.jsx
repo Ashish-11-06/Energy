@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Card, Button, Row, Col, Typography, Modal, Form, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import '../SubscriptionPlan.css';
 import proformaInvoice from '../../assets/proforma_invoice.png';
+import { useDispatch } from "react-redux";
+import { fetchPerformaById } from '../../Redux/Slices/Consumer/performaInvoiceSlice';
 
 const { Title, Text } = Typography;
 
@@ -11,13 +13,18 @@ const SubscriptionPlans = () => {
   const [isQuotationVisible, setIsQuotationVisible] = useState(false);
   const [isPaymentVisible,setIsPaymentVisible]=useState(false);
   const [isProformaVisible, setIsProformaVisible] = useState(false); // State for proforma modal
+  const [performa,setPerformaResponse]=useState(null);
   const [form] = Form.useForm(); // Form instance for validation
   const navigate = useNavigate(); // Hook for navigation
-  const companyData = localStorage.getItem("company");
-  const company = companyData ? JSON.parse(companyData).company : null;
+  const { requirementId } = location.state || {};
+const dispatch = useDispatch();
+  const userData = useState(JSON.parse(localStorage.getItem("user")).user);
+
 
   
+  const  companyName= userData[0]?.company || ''; 
   
+  const [company,setCompany]=useState(companyName);
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
     setIsQuotationVisible(true); // Show the quotation view after selection
@@ -28,17 +35,44 @@ const SubscriptionPlans = () => {
     setSelectedPlan(null);
   };
 
+
+
+  useEffect(() => {
+    const fetchPerforma= async () => {
+      setLoading(true);
+      try {
+        // Make sure to pass `requirementId` and `userId` properly
+        const response = await dispatch(
+          fetchPerformaById({ requirementId })
+        ).unwrap();
+        setPerformaResponse(response);
+        setError(null);
+      } catch (err) {
+        setError(err.message || "Failed to fetch report.");
+        message.error(err.message || "Failed to fetch report.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (requirementId) {
+      fetchPerforma();
+    }
+  }, [dispatch, requirementId]);
+
+
   const renderQuotation = () => (
     <Form form={form} layout="vertical">
       <Row>
       <Col span={12}>
       <Form.Item
         label="Company Name"
-        name="companyName"
-        valuePropName='company'
+        name="company"
+        // valuePropName='company'
+        dataIndex="company"
         rules={[{ required: true, message: 'Please enter your company name' }]}
       >
-        <Input />
+        <Input value={companyName} />
       </Form.Item>
       </Col>
       <Col span={12}>
@@ -47,7 +81,7 @@ const SubscriptionPlans = () => {
         name="gstinNumber"
         rules={[
           { required: true, message: 'Please enter your GSTIN number' },
-          { pattern: /^[0-3][0-9][A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/, message: 'Please enter a valid GSTIN number' }
+          // { pattern: /^[0-3][0-9][A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/, message: 'Please enter a valid GSTIN number' }
         ]}
       >
         <Input />

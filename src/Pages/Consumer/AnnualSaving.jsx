@@ -6,7 +6,9 @@ import { useDispatch } from "react-redux";
 import { FetchAnnualSaving } from "../../Redux/Slices/Consumer/AnnualSavingSlice";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Typography, Card, Space, Modal, Tooltip, Col, Row } from "antd";
+import { fetchReport } from "../../Redux/Slices/Consumer/downloadReportSlice";
 const { Title, Text } = Typography;
+import { jsPDF } from "jspdf";
 
 const AnnualSvg = () => {
   const [loading, setLoading] = useState(false); // Loading state
@@ -14,9 +16,17 @@ const AnnualSvg = () => {
   const [error, setError] = useState(null); // State for error handling
   const navigate = useNavigate(); // Hook for navigation
   const dispatch = useDispatch(); // Dispatch function from Redux
+  const [reportResponse, setReportResponse] = useState(null);
 
   const location = useLocation();
   const { requirementId } = location.state || {}; // Destructure state to get `requirementId`
+  // const {reqId}=location.state || {};
+  const userData = useState(JSON.parse(localStorage.getItem("user")).user);
+  console.log(userData[0]?.id);
+  const userId = userData[0]?.id;
+
+  // const {userId}=location.id || {};
+  // console.log(userId);
 
   // console.log(requirementId, "requirementId");
 
@@ -53,6 +63,132 @@ const AnnualSvg = () => {
 
     fetchData();
   }, [dispatch, requirementId]);
+
+  useEffect(() => {
+    const fetchReportData = async () => {
+      setLoading(true);
+      try {
+        // Make sure to pass `requirementId` and `userId` properly
+        const response = await dispatch(
+          fetchReport({ requirementId, userId })
+        ).unwrap();
+        setReportResponse(response);
+        setError(null);
+      } catch (err) {
+        setError(err.message || "Failed to fetch report.");
+        message.error(err.message || "Failed to fetch report.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (requirementId && userId) {
+      fetchReportData();
+    }
+  }, [dispatch, requirementId, userId]);
+
+  const generatePDF = (reportData) => {
+    const doc = new jsPDF();
+  
+    // Title
+    doc.setFontSize(18);
+    doc.text("Annual Savings Report", 14, 22);
+  
+    // Content
+    doc.setFontSize(12);
+    doc.text(
+      `Consumer Company Name: ${reportData.consumer_company_name}`,
+      14,
+      30
+    );
+    doc.text(`Consumption Unit: ${reportData.consumption_unit_name}`, 14, 40);
+    doc.text(`Connected Voltage: ${reportData.connected_voltage} kV`, 14, 50);
+    doc.text(`Tariff Category: ${reportData.tariff_category}`, 14, 60);
+    doc.text(
+      `Annual Electricity Consumption: ${reportData.annual_electricity_consumption} kWh`,
+      14,
+      70
+    );
+    doc.text(`Contracted Demand: ${reportData.contracted_demand} kW`, 14, 80);
+    doc.text(
+      `Electricity Tariff: ₹${reportData.electricity_tariff}/kWh`,
+      14,
+      90
+    );
+    doc.text(
+      `Potential RE Tariff: ₹${reportData.potential_re_tariff}/kWh`,
+      14,
+      100
+    );
+    doc.text(`ISTS Charges: ₹${reportData.ISTS_charges}/kWh`, 14, 110);
+    doc.text(`State Charges: ₹${reportData.state_charges}/kWh`, 14, 120);
+    doc.text(
+      `Per Unit Savings Potential: ₹${reportData.per_unit_savings_potential}`,
+      14,
+      130
+    );
+    doc.text(
+      `Potential RE Replacement: ${reportData.potential_re_replacement}%`,
+      14,
+      140
+    );
+    doc.text(
+      `Total Savings: ₹${reportData.total_savings.toLocaleString()}`,
+      14,
+      150
+    );
+    doc.text(
+      `Group Captive Requirements: You can hold 26% equity in the project and consumer electricity under `,
+      14,
+      165
+    );
+    doc.text(
+      `group captive route in Open Access. You pay the required ISTS and State charges without
+      `,
+      14,
+      175
+    );
+    doc.text(
+      `Cross Subsidy surcharge and Additional Surcharge 
+      `,
+      14,
+      185
+    );
+  
+    // Set font to bold for the last text
+    doc.setFont('helvetica', 'bold');
+    doc.text(
+      `This savings is based on average available industry offers on the platform, to start your energy `,
+      14,
+      205
+    );
+    doc.setFont('helvetica', 'bold');
+    doc.text(
+      `transition and to know your exact savings, subscribe to EXG Global – EXT platform. `,
+      14,
+      215
+    );
+  
+    // Trigger the download
+    doc.save("annual_savings_report.pdf");
+  };
+  
+
+  // Handle download report
+  const handleDownloadReport = () => {
+    console.log("download");
+
+    if (!reportResponse) {
+      message.error("No report data available.");
+      return;
+    }
+
+    try {
+      generatePDF(reportResponse); // Pass the report data to generate the PDF
+    } catch (error) {
+      message.error("Failed to generate report.");
+    }
+  };
 
   if (loading) {
     return (
@@ -115,7 +251,7 @@ const AnnualSvg = () => {
               <Title
                 level={3}
                 className="text-center"
-                style={{ marginLeft: "40%" ,marginBottom:'3%'}}
+                style={{ marginLeft: "40%", marginBottom: "3%" }}
               >
                 Annual Savings
               </Title>
@@ -146,7 +282,7 @@ const AnnualSvg = () => {
                   </Col>
                   <Col span={12}>
                     <Text style={{ fontSize: "20px" }}>
-                     {annualSaving ? averageSavings.toLocaleString() : "0"}  INR 
+                      {annualSaving ? averageSavings.toLocaleString() : "0"} INR
                     </Text>
                   </Col>
                   <Col span={12}>
@@ -159,11 +295,15 @@ const AnnualSvg = () => {
                   </Col>
                 </Row>
 
-                <Space wrap className="actions" >
-                  <Button type="primary" /* onClick={handleDownloadReport} */>
+                <Space wrap className="actions">
+                  <Button type="primary" onClick={handleDownloadReport}>
                     Download Report
                   </Button>
-                  <Button type="default" onClick={handleChatWithExpert} style={{marginLeft:'600px'}}>
+                  <Button
+                    type="default"
+                    onClick={handleChatWithExpert}
+                    style={{ marginLeft: "600px" }}
+                  >
                     Need Assistance ?
                   </Button>
                   {/* subscription journey is remaining
