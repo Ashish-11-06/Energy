@@ -3,16 +3,14 @@ import { Modal, Form, Input, Button, Row, Col, message, Radio } from "antd";
 import { useDispatch } from "react-redux";
 import { registerUser, verifyOtp } from "../../../Redux/Slices/Consumer/registerSlice";
 
-const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
+const RegisterForm = ({ open, onCancel, onCreate }) => {
   const [form] = Form.useForm();
   const [otpRequested, setOtpRequested] = useState(false);
-  const [userCategory, setUserCategory] = useState(user_category);
   const [userId, setUserId] = useState();
+  const [user_category, setUserCategory] = useState(""); // Define user_category state
+  const [loading, setLoading] = useState(false); // Add loading state
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    setUserCategory(user_category);
-  }, [user_category]);
 
   const restrictedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com', 'icloud.com', 'zoho.com', 'protonmail.com', 'mail.com', 'yandex.com', 'gmx.com'];
 
@@ -30,10 +28,11 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
   };
 
   const requestOtp = () => {
+    setLoading(true); // Set loading to true when request starts
     form
       .validateFields()
       .then((values) => {
-        const payload = { ...values, user_category: userCategory };
+        const payload = { ...values, user_category: user_category };
         dispatch(registerUser(payload))
           .unwrap()
           .then((response) => {
@@ -41,13 +40,16 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
             setUserId(response.user_id); // Assuming the response contains a `user_id` field
             message.success("OTP has been sent to your email and mobile!");
             setOtpRequested(true);
+            setLoading(false); // Set loading to false when request completes
           })
           .catch((error) => {
             message.error(`Failed to request OTP: ${error}`);
+            setLoading(false); // Set loading to false when request fails
           });
       })
       .catch((info) => {
         console.log("Validate Failed:", info);
+        setLoading(false); // Set loading to false when validation fails
       });
 
   };
@@ -58,6 +60,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
   };
 
   const handleVerifyOtp = () => {
+    setLoading(true); // Set loading to true when request starts
     form
       .validateFields(["email_otp", "mobile_otp"])
       .then((values) => {
@@ -73,13 +76,16 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
           .then(() => {
             message.success("OTP verified successfully!");
             onCreate(values);
+            setLoading(false); // Set loading to false when request completes
           })
           .catch((error) => {
             message.error(`OTP verification failed: ${error}`);
+            setLoading(false); // Set loading to false when request fails
           });
       })
       .catch((info) => {
         console.log("Validate Failed:", info);
+        setLoading(false); // Set loading to false when validation fails
       });
   };
 
@@ -108,7 +114,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
             >
               <Radio.Group
                 onChange={(e) => setUserCategory(e.target.value)}
-                value={userCategory}
+                value={user_category}
                 style={{ fontSize: '1.2rem' }} // Increase font size
               >
                 <Radio value="Consumer" style={{ fontSize: '1.2rem' }}>Consumer</Radio>
@@ -156,7 +162,10 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
             <Form.Item
               name="mobile"
               label="Mobile"
-              rules={[{ required: true, message: "Please input the mobile number!" }]}
+              rules={[
+                { required: true, message: "Please input the mobile number!" },
+                { pattern: /^[0-9]{10}$/, message: "Mobile number must be 10 digits!" }, // Add validation for mobile number
+              ]}
             >
               <Input />
             </Form.Item>
@@ -167,7 +176,7 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
           <Col span={12}>
             <Form.Item
               label="New Password"
-              name="newPassword"
+              name="password"
               rules={[
                 { required: true, message: 'Please input your new password!' },
                 { min: 6, message: 'Password must be at least 6 characters long.' },
@@ -182,12 +191,12 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
             <Form.Item
               label="Confirm New Password"
               name="confirmPassword"
-              dependencies={['newPassword']}
+              dependencies={['password']}
               rules={[
                 { required: true, message: 'Please confirm your new password!' },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    if (!value || getFieldValue('newPassword') === value) {
+                    if (!value || getFieldValue('password') === value) {
                       return Promise.resolve();
                     }
                     return Promise.reject(new Error('Passwords do not match!'));
@@ -227,11 +236,11 @@ const RegisterForm = ({ open, onCancel, onCreate, type, user_category }) => {
         <Row gutter={16}>
           <Col span={24}>
             {!otpRequested ? (
-              <Button type="primary" onClick={requestOtp} block>
+              <Button type="primary" onClick={requestOtp} block loading={loading}>
                 Request OTP
               </Button>
             ) : (
-              <Button type="primary" onClick={handleVerifyOtp} block>
+              <Button type="primary" onClick={handleVerifyOtp} block loading={loading}>
                 Verify OTP
               </Button>
             )}
