@@ -60,7 +60,7 @@ const CombinationPattern = () => {
         technology: [
           { name: "Solar", capacity: `${solarCapacity} MW` },
           { name: "Wind", capacity: `${windCapacity} MW ` },
-          { name: "Battery", capacity: `${batteryCapacity} MW` },
+          { name: "ESS", capacity: `${batteryCapacity} MWh` },
         ],
         OACost: combination["OA_cost"] && !isNaN(combination["OA_cost"]) ? combination["OA_cost"].toFixed(2) : "N/A",
         totalCost: combination["Final Cost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
@@ -70,10 +70,11 @@ const CombinationPattern = () => {
         cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
         reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "NA", // updated to handle null or undefined values
         connectivity: combination.connectivity,
+        states: combination.state,
 
         status: combination.terms_sheet_sent
-          ? "already sent"
-          : <button onClick={() => initiateQuotation(combination)}>Initiate Quotation</button>,
+          ? "Already Sent"
+          : "Send Quotation",
       };
 
     });
@@ -119,6 +120,7 @@ const CombinationPattern = () => {
         const modalData = {
           requirement_id: selectedDemandId,
           optimize_capacity_user: user.user_category,
+          user_id: user.id,
         };
 
         fetchOptimizedCombinationsXHR(
@@ -212,7 +214,7 @@ const CombinationPattern = () => {
   };
 
   const re_index = combinationData.re_index || "NA";
-  console.log(re_index);
+  // console.log(re_index);
 
   const handleIPPCancel = () => {
     setIsIPPModalVisible(false);
@@ -292,7 +294,7 @@ const CombinationPattern = () => {
       title: "IPP ID",
       dataIndex: "combination",
       key: "combination",
-      width: 200,
+      width: 120,
       render: (text) => {
         // Extract the parts using split()
         const parts = text.split('-');
@@ -333,7 +335,7 @@ const CombinationPattern = () => {
       title: "Technology",
       dataIndex: "technology",
       key: "technology",
-      width: 200,
+      width: 150,
       render: (technologies) => (
         <div>
           {technologies.map((tech, index) => (
@@ -348,7 +350,7 @@ const CombinationPattern = () => {
       title: "% RE Replacement",
       dataIndex: "reReplacement",
       key: "reReplacement",
-      width: 100,
+      // width: 100,
     },
     {
       title: "Total Capacity (MW)",
@@ -378,26 +380,26 @@ const CombinationPattern = () => {
       title: "COD",
       dataIndex: "cod",
       key: "cod",
-      width: 150,
+      width: 120,
       render: (text) => dayjs(text).format('DD-MM-YYYY'),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      width: 150,
-      // render: (text, record) => (
-      //   text === "Already Sent" ? (
-      //     "Already Sent"
-      //   ) : (
-      //     <button
-      //       style={{ padding: "2px 2px" }} // Minimize button size
-      //       onClick={() => handleRowClick(record)}
-      //     >
-      //       Initiate Quotation
-      //     </button>
-      //   )
-      // ),
+      // width: 150,
+      render: (text, record) => (
+        text === "Already Sent" ? (
+          "Already Sent"
+        ) : (
+          <button
+            style={{ padding: "2px 2px" }} // Minimize button size
+            onClick={() => handleRowClick(record)}
+          >
+            Initiate Quotation
+          </button>
+        )
+      ),
     },
   ];
 
@@ -568,7 +570,7 @@ const CombinationPattern = () => {
                   backgroundColor: "#FFFFFF",
                   border: "1px solid #E6E8F1",
                   overflowX: "auto",
-                  padding: '5px 10px'
+                  // padding: '5px 10px'
                 }}
                 scroll={{ x: true }}
                 rowClassName={() => "custom-row"} // Add a custom row class

@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select, message } from 'antd';
+import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select, message, Tooltip } from 'antd'; // Import Tooltip
 import dayjs from 'dayjs';
-import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector
-import { addProject } from '../../../Redux/Slices/Generator/portfolioSlice'; // Import addProject action
+import { useDispatch, useSelector } from 'react-redux';
+import { addProject } from '../../../Redux/Slices/Generator/portfolioSlice';
 import states from '../../../Data/States';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const AddPortfolioModal = ({ visible, onClose, user }) => {
-  const [form] = Form.useForm(); // Ant Design form instance
-  const [unit, setUnit] = useState('MW'); // State to manage the unit dynamically
-  const dispatch = useDispatch(); // Get the dispatch function
-  const { status, error } = useSelector((state) => state.portfolio); // Select status and error from the Redux store
-  const [loading, setLoading] = useState(false); // State for loading indicator
+  const [form] = Form.useForm();
+  const [unit, setUnit] = useState('MW');
+  const dispatch = useDispatch();
+  const { status, error } = useSelector((state) => state.portfolio);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (status === 'failed' && error) {
-      // console.log('Error:', error); // Log the error
-      message.error(error); // Show error message if the status is failed
+      message.error(error);
     }
   }, [status, error]);
 
@@ -24,31 +24,29 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
       if (values.cod) {
         values.cod = dayjs(values.cod).format('YYYY-MM-DD');
       }
-      values.user = user.id; // Add user_id to the values object
-      setLoading(true); // Set loading state to true during the request
-      dispatch(addProject(values)) // Dispatch addProject action
-        .unwrap() // Use unwrap to get result or catch error
+      values.user = user.id;
+      setLoading(true);
+      dispatch(addProject(values))
+        .unwrap()
         .then(() => {
-          setLoading(false); // Reset loading state after successful action
-          form.resetFields(); // Reset the form after submission
-          onClose(); // Close the modal
-          message.success('Project added successfully!'); // Show success message
+          setLoading(false);
+          form.resetFields();
+          onClose();
+          message.success('Project added successfully!');
         })
         .catch((err) => {
-          setLoading(false); // Reset loading state after failure
-          message.error(err.message || 'Failed to add project. Please try again.'); // Show specific error message
+          setLoading(false);
+          message.error(err.message || 'Failed to add project. Please try again.');
         });
     }).catch((info) => {
       console.log('Validate Failed:', info);
     });
   };
 
-  // Disable past dates and today
   const disablePastDates = (current) => {
     return current && current < dayjs().endOf('day');
   };
 
-  // Handle technology type change
   const handleTechnologyChange = (value) => {
     if (value === 'ess') {
       setUnit('MWh');
@@ -60,15 +58,23 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
   return (
     <Modal
       title="Add New Project Entry"
-      open={visible} // Controlled by the parent component
-      onCancel={onClose} // Close the modal when canceling
-      footer={null} // Remove default footer
+      open={visible}
+      onCancel={onClose}
+      footer={null}
+      width={700}
     >
       <Form form={form} layout="vertical" name="addPortfolioForm">
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              label="Technology"
+              label={
+                <span>
+                  Technology&nbsp;
+                  <Tooltip title="Select the type of energy technology used for the project.">
+                  <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                  </Tooltip>
+                </span>
+              }
               name="energy_type"
               rules={[{ required: true, message: 'Please select type!' }]} >
               <Select placeholder="Select Type" onChange={handleTechnologyChange}>
@@ -81,7 +87,14 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
 
           <Col span={12}>
             <Form.Item
-              label="State"
+              label={
+                <span>
+                  State&nbsp;
+                  <Tooltip title="Select the state where the project is located.">
+                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                  </Tooltip>
+                </span>
+              }
               name="state"
               rules={[{ required: true, message: 'Please select state!' }]} >
               <Select placeholder="Select State">
@@ -96,7 +109,14 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
 
           <Col span={12}>
             <Form.Item
-              label="Connectivity"
+              label={
+                <span>
+                  Connectivity&nbsp;
+                  <Tooltip title="Select the type of connectivity for the project.">
+                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                  </Tooltip>
+                </span>
+              }
               name="connectivity"
               rules={[{ required: true, message: 'Please select connectivity type!' }]} >
               <Select placeholder="Select Connectivity">
@@ -111,13 +131,20 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              label={`Total Install Capacity (in ${unit})`}
+              label={
+                <span>
+                  Total Install Capacity (in {unit})&nbsp;
+                  <Tooltip title="Enter the total installed capacity of the project in megawatts.">
+                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                  </Tooltip>
+                </span>
+              }
               name="total_install_capacity"
               rules={[{ required: true, message: 'Please input energy capacity!' }, { type: 'number', message: 'Please enter a valid number!' }]} >
               <InputNumber
                 style={{ width: '100%' }}
                 placeholder={`Energy Capacity in ${unit}`}
-                min={0} // Optionally, set a minimum value (0 for no negative capacity)
+                min={0}
                 onKeyDown={(e) => {
                   if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
                     e.preventDefault();
@@ -129,13 +156,20 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
 
           <Col span={12}>
             <Form.Item
-              label={`Total Available Capacity (in ${unit})`}
+              label={
+                <span>
+                  Total Available Capacity (in {unit})&nbsp;
+                  <Tooltip title="Enter the total available capacity of the project in megawatts.">
+                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                  </Tooltip>
+                </span>
+              }
               name="available_capacity"
               rules={[{ required: true, message: 'Please input energy capacity!' }, { type: 'number', message: 'Please enter a valid number!' }]} >
               <InputNumber
                 style={{ width: '100%' }}
                 placeholder={`Energy Capacity in ${unit}`}
-                min={0} // Optionally, set a minimum value (0 for no negative capacity)
+                min={0}
                 onKeyDown={(e) => {
                   if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
                     e.preventDefault();
@@ -149,12 +183,19 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item
-              label="COD (Commercial Operation Date)"
+              label={
+                <span>
+                  COD (Commercial Operation Date)&nbsp;
+                  <Tooltip title="Select the date when the project will start commercial operations.">
+                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                  </Tooltip>
+                </span>
+              }
               name="cod"
               rules={[{ required: true, message: 'Please select COD!' }]} >
               <DatePicker
                 style={{ width: '100%' }}
-                disabledDate={disablePastDates} // Disable past dates and today
+                disabledDate={disablePastDates}
               />
             </Form.Item>
           </Col>
@@ -165,7 +206,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
             type="primary"
             onClick={handleSubmit}
             style={{ width: '100%' }}
-            loading={loading} // Show loading indicator
+            loading={loading}
           >
             Add Entry
           </Button>

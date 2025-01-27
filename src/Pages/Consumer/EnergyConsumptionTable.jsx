@@ -19,6 +19,10 @@ import {
   InfoCircleOutlined,
   DownOutlined,
   DownloadOutlined,
+  FileAddOutlined,
+  FileExcelOutlined,
+  FileImageOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
@@ -434,6 +438,7 @@ const EnergyConsumptionTable = () => {
       ),
       dataIndex: "monthlyConsumption",
       key: "monthlyConsumption",
+      width: 250,
       editable: true,
       render: (_, record) => (
         <InputNumber
@@ -476,6 +481,7 @@ const EnergyConsumptionTable = () => {
       ),
       dataIndex: "offPeakConsumption",
       key: "offPeakConsumption",
+      with: 300,
       editable: true,
       render: (_, record) => (
         <InputNumber
@@ -498,6 +504,7 @@ const EnergyConsumptionTable = () => {
       dataIndex: "monthlyBill",
       key: "monthlyBill",
       editable: true,
+      width: 180,
       render: (_, record) => (
         <InputNumber
           value={record.monthlyBill}
@@ -557,18 +564,82 @@ const EnergyConsumptionTable = () => {
     };
   });
 
+  const renderSixMonthTables = () => {
+    const firstHalf = dataSource.slice(0, 6);
+    const secondHalf = dataSource.slice(6, 12);
+
+    return (
+      <Row gutter={16}>
+        <Col span={12}>
+          <Table
+            dataSource={firstHalf}
+            columns={columns}
+            pagination={false}
+            bordered
+            size="small"
+            tableLayout="fixed"
+            style={{ marginTop: "20px" }}
+          />
+        </Col>
+        <Col span={12}>
+          <Table
+            dataSource={secondHalf}
+            columns={columns}
+            pagination={false}
+            bordered
+            size="small"
+            tableLayout="fixed"
+            style={{ marginTop: "20px" }}
+          />
+        </Col>
+      </Row>
+    );
+  };
+
+  const renderSixMonthFileUploadTables = () => {
+    const firstHalf = dataSource.slice(0, 6);
+    const secondHalf = dataSource.slice(6, 12);
+
+    return (
+      <Row gutter={16}>
+        <Col span={12}>
+          <Table
+            dataSource={firstHalf}
+            columns={fileUploadColumns}
+            pagination={false}
+            bordered
+            size="small"
+            tableLayout="fixed"
+            style={{ marginTop: "20px" }}
+          />
+        </Col>
+        <Col span={12}>
+          <Table
+            dataSource={secondHalf}
+            columns={fileUploadColumns}
+            pagination={false}
+            bordered
+            size="small"
+            tableLayout="fixed"
+            style={{ marginTop: "20px" }}
+          />
+        </Col>
+      </Row>
+    );
+  };
+
   return (
     <div className="energy-table-container" style={{ padding: "20px" }}>
       <Card style={{ maxWidth: "100%", margin: "0 auto" }}>
         {/*<p>Please fill the details for making your energy transition plan.</p> */}
-        <Tooltip title="Help">
+        {/* <Tooltip title="Help">
           <Button
             shape="circle"
             icon={<QuestionCircleOutlined />}
             onClick={showInfoModal}
             style={{ position: "absolute", marginLeft: "95%", right: 30 }}
           />
-        </Tooltip>
+        </Tooltip> */}
         <Title level={3} style={{ textAlign: "center", marginTop: "10px" }}>
           Energy Consumption Data (12 Months)
         </Title>
@@ -577,8 +648,8 @@ const EnergyConsumptionTable = () => {
         <Row>
           <Col span={6}>
             <Tooltip title="Add details manually">
-              <Button onClick={handleToggleDetails}>
-                {showTable ? "Add Details +" : "Add Details +"}
+              <Button onClick={handleToggleDetails} icon={<FileAddOutlined />}>
+                {showTable ? "Add Details " : "Add Details "}
               </Button>
             </Tooltip>
           </Col>
@@ -590,7 +661,7 @@ const EnergyConsumptionTable = () => {
                   <Button
                     onClick={() => handleButtonClick("csv")}
                     style={{ padding: "5px" }}
-                    icon={<UploadOutlined style={{ marginTop: "5px" }} />}
+                    icon={<FileExcelOutlined style={{ marginTop: "5px" }} />}
                   >
                     Upload CSV file
                   </Button>
@@ -616,7 +687,7 @@ const EnergyConsumptionTable = () => {
               <Button
                 onClick={handleToggleFileUploadTable}
                 style={{ marginLeft: "50px", padding: "5px" }}
-                icon={<UploadOutlined style={{ marginTop: "5px" }} />}
+                icon={<FileTextOutlined style={{ marginTop: "5px" }} />}
               >
                 Upload Bill
               </Button>
@@ -634,7 +705,7 @@ const EnergyConsumptionTable = () => {
                 <Button
                   onClick={() => handleButtonClick("scada")}
                   style={{ padding: "5px" }}
-                  icon={<UploadOutlined style={{ marginTop: "5px" }} />}
+                  icon={<FileImageOutlined style={{ marginTop: "5px" }} />}
                 >
                   Upload SCADA file
                 </Button>
@@ -679,36 +750,27 @@ const EnergyConsumptionTable = () => {
                   Failed to save data!
                 </span>
               )}
-              <Button
-                type="primary"
-                onClick={handleSave}
-                disabled={!allFieldsFilled}
-                loading={loading}
-                style={{ marginRight: "10px" }}
-              >
-                Save
-              </Button>
-              
+              <Tooltip title="Save the entered/updated data">
+                <Button
+                  type="primary"
+                  onClick={handleSave}
+                  disabled={!allFieldsFilled}
+                  loading={loading}
+                  style={{ marginRight: "10px" }}
+                >
+                  Save
+                </Button>
+              </Tooltip>
             </div>
           </>
         )}
 
-        {showFileUploadTable && (
-          <Table
-            dataSource={dataSource}
-            columns={fileUploadColumns}
-            pagination={false}
-            bordered
-            size="small"
-            tableLayout="fixed"
-            style={{ marginTop: "20px" }}
-          />
-        )}
+        {showFileUploadTable && renderSixMonthFileUploadTables()}
         <Tooltip
           title={
             !isActionCompleted
               ? "Please fill the details or upload any file"
-              : ""
+              : "Proceed to the next step"
           }
           placement="top"
         >
@@ -718,7 +780,7 @@ const EnergyConsumptionTable = () => {
             disabled={!isActionCompleted} // Enable only if an action is completed
             style={{ marginLeft: "86%" , marginTop: "8px"}}
           >
-            Continue
+            Continue {`>>`}
           </Button>
         </Tooltip>
       </Card>

@@ -44,6 +44,7 @@ import TransactionMainPage from './Pages/Consumer/TransactionMainPage';
 import TransactionMainPageGen from './Pages/Generator/TransactionMainPageGen';
 import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
 import RequirementsPage from './Pages/Consumer/RequirementPage';
+import InvoicePage from './Pages/InvoicePage';
 
 
 
@@ -84,6 +85,7 @@ function App() {
                   <Route path="notification" element={<Notification />} />
                   <Route path="transaction-window/:transactionId" element={<TransactionWindow />} />
                   <Route path="transaction-page" element={<TransactionMainPage />} />
+                  <Route path="invoice" element={<InvoicePage />} />
 
 
                 </Routes>
@@ -116,6 +118,7 @@ function App() {
             <Route path="notificationgen" element={<NotificationGenerator  />} />
             <Route path='transaction' element={<TransactionMainPageGen />}/>
             <Route path="transaction-window/:transactionId" element={<TransactionWindowGen />} />
+            <Route path="invoice" element={<InvoicePage />} />
 
             
           </Route>

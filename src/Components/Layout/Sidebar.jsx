@@ -23,19 +23,20 @@ const { Sider } = Layout;
 // Define menu items for consumer and generator
 const consumerMenuItems = [
   { label: 'Dashboard', key: '/consumer/dashboard', icon: <DashboardOutlined /> },
-  { label: 'Requirement', key: '/consumer/requirement', icon: <FormOutlined /> },
-  { label: 'What We Offer', key: '/consumer/what-we-offer', icon: <AppstoreAddOutlined /> },
+  { label: 'Consumption Units', key: '/consumer/requirement', icon: <FormOutlined /> },
+  // { label: 'What We Offer', key: '/consumer/what-we-offer', icon: <AppstoreAddOutlined /> },
   { label: 'Transaction Window', key: '/consumer/transaction-page', icon: <MessageOutlined /> },
-  { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
+  // { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
   { label:'Offer Sent', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined /> },
   { label: 'Offer Recieved', key: '/consumer/offer-recieved-from-ipp', icon: <AppstoreAddOutlined /> },
   // { label: 'Chatbot', key: '/consumer/chat-page', icon: <MessageOutlined /> },
   // { label: 'Energy Consumption Table', key: '/consumer/energy-consumption-table', icon: <TableOutlined /> },
   // { label: 'Consumption Pattern', key: '/consumer/consumption-pattern', icon: <AreaChartOutlined /> },
-  { label: 'Annual Saving', key: '/consumer/annual-saving', icon: <WalletOutlined /> },
+  // { label: 'Annual Saving', key: '/consumer/annual-saving', icon: <WalletOutlined /> },
   { label: 'Subscription Plan', key: '/consumer/subscription-plan', icon: <TeamOutlined /> },
-  // { label: 'Profile', key: '/consumer/profile', icon: <UserOutlined /> },
-  { label: 'profile Invoices', key: '/consumer/profile' },
+  { label: 'Invoice', key: '/consumer/invoice', icon: <FileTextOutlined /> },
+  { label: 'Profile', key: '/consumer/profile', icon: <UserOutlined /> },
+  
 ];
 
 const generatorMenuItems = [

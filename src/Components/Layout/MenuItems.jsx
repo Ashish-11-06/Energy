@@ -21,7 +21,7 @@ import {
 export const consumerMenuItems = [
   { key: '3', icon: <DashboardOutlined />, label: <Link to="/consumer/dashboard">Dashboard</Link> },
   { key: '4', icon: <AppstoreAddOutlined />, label: <Link to="/consumer/what-we-offer">What We Offer</Link> },
-  { key: '5', icon: <SolutionOutlined />, label: <Link to="/consumer/matching-ipp">Matching IPP</Link> },
+  // { key: '5', icon: <SolutionOutlined />, label: <Link to="/consumer/matching-ipp">Matching IPP</Link> },
   { key: '6', icon: <MessageOutlined />, label: <Link to="/consumer/chat-page">Chat with Expert</Link> },
   { key: '7', icon: <FormOutlined />, label: <Link to="/consumer/energy-consumption-form">Energy Consumption Form</Link> },
   { key: '8', icon: <TableOutlined />, label: <Link to="/consumer/energy-consumption-table">Energy Consumption Table</Link> },
