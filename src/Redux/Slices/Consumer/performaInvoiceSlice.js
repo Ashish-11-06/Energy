@@ -26,12 +26,13 @@ export const createPerformaById = createAsyncThunk(
     try {
       const response = await performaInvoiceApi.createPerforma(id, performaData);
       console.log("API Response:", response); 
-      if (response.status === 201 && response.data) { 
-        return response.data;
-      }
-      throw new Error("Failed to create performa invoice");
+      // if (response.status === 201 && response.data) { 
+      //   return response.data.data;
+      // }
+      // throw new Error("Failed to create performa invoice");
+      return response.data.data;
     } catch (error) {
-     // console.error("API Error:", error.response?.data || error.message); 
+     console.error("API Error:", error.response?.data || error.message); 
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   }

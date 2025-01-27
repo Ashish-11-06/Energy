@@ -10,6 +10,22 @@ import {
   Input,
   message,
 } from "antd";
+import {
+  DashboardOutlined,
+  AppstoreAddOutlined,
+  SolutionOutlined,
+  MessageOutlined,
+  FormOutlined,
+  TableOutlined,
+  AreaChartOutlined,
+  WalletOutlined,
+  TeamOutlined,
+  ControlOutlined,
+  FileTextOutlined,
+  UserOutlined,
+  NotificationOutlined,
+} from "@ant-design/icons";
+import addReq from "../../assets/addReq.jpeg";
 import { useNavigate } from "react-router-dom";
 import "../SubscriptionPlan.css";
 import proformaInvoice from "../../assets/proforma_invoice.png";
@@ -27,20 +43,17 @@ const SubscriptionPlans = () => {
   const [isPaymentVisible, setIsPaymentVisible] = useState(false);
   const [isProformaVisible, setIsProformaVisible] = useState(false); // State for proforma modal
   const [performa, setPerformaResponse] = useState(null);
-
+  const [form] = Form.useForm();
+  const [formError, setFormError] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [gstinNumber, setGstinNumber] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
 
-  const [form] = Form.useForm(); // Form instance for validation
   const navigate = useNavigate(); // Hook for navigation
   const dispatch = useDispatch();
   const userData = useState(JSON.parse(localStorage.getItem("user")).user);
-  //console.log(userData[0]?.id);
   const userId = userData[0]?.id;
 
-  // const [company, setCompany] = useState(company);
-  // company= userData[0]?.company || '';
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
     setIsQuotationVisible(true); // Show the quotation view after selection
@@ -55,14 +68,10 @@ const SubscriptionPlans = () => {
     const fetchPerforma = async () => {
       try {
         const response = await dispatch(fetchPerformaById(userId)).unwrap();
-        console.log("Fetched Performa:", response);
         setPerformaResponse(response);
-
-        // Set the form values based on the fetched performa data
         setCompanyName(response.company_name);
         setGstinNumber(response.gst_number);
         setCompanyAddress(response.company_address);
-
         setError(null);
       } catch (err) {
         message.error(err || "Failed to fetch performa.");
@@ -72,7 +81,6 @@ const SubscriptionPlans = () => {
     fetchPerforma();
   }, [dispatch, userId]);
 
-  // Handle form submit
   const handleCreatePerforma = async () => {
     const performaData = {
       company_name: companyName,
@@ -81,19 +89,39 @@ const SubscriptionPlans = () => {
       subscription: 3,
       due_date: "2025-01-25",
     };
-
+  
     try {
-      const response = await dispatch(
-        createPerformaById({ id: userId, performaData })
-      ).unwrap();
+      const response = await dispatch(createPerformaById({ id: userId, performaData })).unwrap();
       console.log("Created Performa:", response);
+      
+      // Show success message
+      message.success("Performa invoice generated successfully!")
+  
+      setIsProformaVisible(true);
+      setIsQuotationVisible(false);
     } catch (error) {
       console.error("Failed to create performa:", error);
+      
+      // Show error message
+      message.error("Failed to generate Performa invoice. Please try again.")
     }
   };
 
+  const handleSubmit = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        setFormError(""); // Reset any error message if the form is valid
+        handleCreatePerforma(values);
+        // isPaymentVisible(true)
+      })
+      .catch((errorInfo) => {
+        console.log(errorInfo);
+        setFormError("");
+      });
+  };
+
   const renderQuotation = () => (
-    // <Form form={form} layout="vertical">
     <Form form={form} onFinish={handleCreatePerforma}>
       <Row>
         <Col span={12}>
@@ -101,7 +129,7 @@ const SubscriptionPlans = () => {
             label="Company Name"
             name="companyName"
             rules={[
-              { required: true, message: "Please enter your company name" },
+              { required: true, message: "Please provide your company name" },
             ]}
           >
             <Input
@@ -113,11 +141,10 @@ const SubscriptionPlans = () => {
 
         <Col span={12}>
           <Form.Item
-            style={{ marginLeft: "2%" }}
             label="GSTIN Number"
             name="gstinNumber"
             rules={[
-              { required: true, message: "Please enter your GSTIN number" },
+              { required: true, message: "Please provide your GSTIN number" },
             ]}
           >
             <Input
@@ -127,8 +154,17 @@ const SubscriptionPlans = () => {
           </Form.Item>
         </Col>
 
-        <Col span={12}>
-          <Form.Item label="Company Address" name="companyAddress">
+        <Col span={24}>
+          <Form.Item
+            label="Company Address"
+            name="companyAddress"
+            rules={[
+              {
+                required: true,
+                message: "Please provide your company address",
+              },
+            ]}
+          >
             <Input.TextArea
               rows={2}
               value={companyAddress}
@@ -137,40 +173,28 @@ const SubscriptionPlans = () => {
           </Form.Item>
         </Col>
       </Row>
-      <p>
-        please provide additional details for generating proforma invoice -
-        company name, company address, GSTIN no
-        <br />
-        remove download quotation button
-        <br />
-        provide additional details
-        <br />
-        notification triggered to Mail
-      </p>
-    </Form>
 
-    // </Form>
+      {formError && (
+        <Text type="danger" style={{ marginBottom: 20 }}>
+          {formError}
+        </Text>
+      )}
+    </Form>
   );
 
   const handleGenerateProforma = () => {
     form
       .validateFields()
       .then((values) => {
-        console.log("Form values:", values);
         setIsProformaVisible(true); // Show the proforma modal
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
       });
   };
+
   const handlePayment = () => {
     navigate("/consumer/energy-consumption-table");
-    // form.validateFields().then((values) => {
-    //   console.log('Form values:', values);
-    //   setIsPaymentVisible(true); // Show the proforma modal
-    // }).catch((errorInfo) => {
-    //   console.log('Validation failed:', errorInfo);
-    // });
   };
 
   const closeProforma = () => {
@@ -180,9 +204,7 @@ const SubscriptionPlans = () => {
     setIsPaymentVisible(false);
   };
 
-  // Handle payment done and navigate to the new page
   const handlePaymentDone = () => {
-    // Navigate to the energy-consumption-table page after payment is done
     navigate("/consumer/energy-consumption-table");
   };
 
@@ -192,135 +214,11 @@ const SubscriptionPlans = () => {
         Choose Your Annual Subscription Plan
       </Title>
       <Row gutter={[16, 16]} justify="center">
-        {/* Basic Plan */}
-
-        <Col xs={24} sm={8} md={8}>
-        <Card   hoverable 
-          // style={{padding:'5px'}}
-          className={selectedPlan === "basic" ? "selected-plan" : ""}
-          onClick={() => handleSelectPlan("basic")}
-          actions={[
-            <Button
-              type="primary"
-              block
-              size="small"
-              style={{ width: "160px" }}
-            >
-              Select Plan
-            </Button>,
-          ]}
-        >
-        <div style={{backgroundColor:'#669800 ',marginBottom:'0',marginTop:'-25px',marginLeft:'-25px',marginRight:'-25px',borderTopLeftRadius:'10px',borderTopRightRadius:'10px'}}>
-            <p style={{padding:'5px'}}><span style={{marginTop:'10px',color:'white',fontSize:'22px',fontWeight:'bold'}}>EXT Lite Plan</span></p>
-            <hr />
-          </div>
-          <Text className="price">50,000 INR</Text>
-            <ul>
-              <li>Matching IPP +</li>
-              <li>Requirements +</li>
-              <li>Transaction window</li>
-            </ul>
-  
-        </Card>
-        </Col>
-
-
-        <Col xs={24} sm={8} md={8}>
-        <Card   hoverable 
-          // style={{padding:'5px'}}
-          className={selectedPlan === "basic" ? "selected-plan" : ""}
-          onClick={() => handleSelectPlan("basic")}
-          actions={[
-            <Button
-              type="primary"
-              block
-              size="small"
-              style={{ width: "160px" }}
-            >
-              Select Plan
-            </Button>,
-          ]}
-        >
-        <div style={{backgroundColor:'#669800 ',marginBottom:'0',marginTop:'-25px',marginLeft:'-25px',marginRight:'-25px',borderTopLeftRadius:'10px',borderTopRightRadius:'10px'}}>
-            <p style={{padding:'5px'}}><span style={{marginTop:'10px',color:'white',fontSize:'22px',fontWeight:'bold'}}>EXT Pro Plan</span></p>
-            <hr />
-          </div>
-          <Text className="price">2,00,000 INR</Text>
-            <ul>
-            <li>Dashboard</li>
-              <li>Advisory Support</li>
-              <li>PowerX subscription</li>
-            </ul>
-  
-        </Card>
-        </Col>
-
-
-        {/* <Col xs={24} sm={8} md={8}>
+        <Col xs={24} sm={8} md={8} style={{ height: "800px" }}>
           <Card
-            title="EXT Pro Plan"
-            bordered
-            hoverable
-            className={selectedPlan === "standard" ? "selected-plan" : ""}
-            onClick={() => handleSelectPlan("standard")}
-            actions={[
-              <Button
-                type="primary"
-                block
-                size="small"
-                style={{ width: "160px" }}
-              >
-                Select Plan
-              </Button>,
-            ]}
-          >
-            <Text className="price">2,00,000 INR</Text>
-            <ul>
-              <li>Dashboard</li>
-              <li>Advisory Support</li>
-              <li>PowerX subscription</li>
-            </ul>
-          </Card>
-        </Col> */}
-
-
-<Col xs={24} sm={8} md={8}>
-        <Card   hoverable 
-          // style={{padding:'5px'}}
-          className={selectedPlan === "basic" ? "selected-plan" : ""}
-          onClick={() => handleSelectPlan("basic")}
-          actions={[
-            <Button
-              type="primary"
-              block
-              size="small"
-              style={{ width: "160px" }}
-            >
-              Select Plan
-            </Button>,
-          ]}
-        >
-        <div style={{backgroundColor:'#669800 ',marginBottom:'0',marginTop:'-25px',marginLeft:'-25px',marginRight:'-25px',borderTopLeftRadius:'10px',borderTopRightRadius:'10px'}}>
-            <p style={{padding:'5px'}}><span style={{marginTop:'10px',color:'white',fontSize:'22px',fontWeight:'bold'}}>Trial Plan</span></p>
-            <hr />
-          </div>
-          <Text className="price">Free</Text>
-            <ul>
-            <li>Trial</li>
-              <li>Trial</li>
-              <li>Trial</li>
-            </ul>
-  
-        </Card>
-        </Col>
-
-        {/* <Col xs={24} sm={8} md={8}>
-          <Card
-            title="Trial Plan"
-            bordered
             hoverable
             className={selectedPlan === "basic" ? "selected-plan" : ""}
-            // onClick={() => handleSelectPlan('basic')}
+            onClick={() => handleSelectPlan("basic")}
             actions={[
               <Button
                 type="primary"
@@ -332,34 +230,247 @@ const SubscriptionPlans = () => {
               </Button>,
             ]}
           >
-            <Text className="price">Free</Text>
-            <ul>
-              <li>Trial</li>
-              <li>Trial</li>
-              <li> Trial</li>
+            <div
+              style={{
+                backgroundColor: "#669800 ",
+                marginBottom: "0",
+                marginTop: "-25px",
+                marginLeft: "-25px",
+                marginRight: "-25px",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
+            >
+              <p style={{ padding: "5px" }}>
+                <span
+                  style={{
+                    marginTop: "10px",
+                    color: "white",
+                    fontSize: "22px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  EXT Lite Plan
+                </span>
+              </p>
+              <hr />
+            </div>
+            <div>
+            <Text className="price">50,000 INR</Text>
+            <ul
+              style={{ display: "flex", flexDirection: "column", padding: 0,marginLeft:'30%' }}
+            >
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <FormOutlined style={{ marginRight: "10px" ,color:'green' ,color:'#669800'}} /> Matching IPP +
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <AppstoreAddOutlined style={{ marginRight: "10px" ,color:'#669800' }} />{" "}
+                Requirements +
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <FormOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Transaction
+                window
+              </li>
+            </ul>
+            </div>
+          </Card>
+        </Col>
+
+        <Col xs={24} sm={8} md={8}>
+          <Card
+            hoverable
+            className={selectedPlan === "basic" ? "selected-plan" : ""}
+            onClick={() => handleSelectPlan("basic")}
+            actions={[
+              <Button
+                type="primary"
+                block
+                size="small"
+                style={{ width: "160px" }}
+              >
+                Select Plan
+              </Button>,
+            ]}
+          >
+            <div
+              style={{
+                backgroundColor: "#669800 ",
+                marginBottom: "0",
+                marginTop: "-25px",
+                marginLeft: "-25px",
+                marginRight: "-25px",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
+            >
+              <p style={{ padding: "5px" }}>
+                <span
+                  style={{
+                    marginTop: "10px",
+                    color: "white",
+                    fontSize: "22px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  EXT Pro Plan
+                </span>
+              </p>
+              <hr />
+            </div>
+            <Text className="price">2,00,000 INR</Text>
+            <ul
+              style={{ display: "flex", flexDirection: "column", padding: 0 ,marginLeft:'30%'}}
+            >
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <DashboardOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Dashboard
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <AppstoreAddOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Advisory
+                Support
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <SolutionOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> PowerX
+                subscription
+              </li>
             </ul>
           </Card>
-        </Col> */}
+        </Col>
+
+        <Col xs={24} sm={8} md={8}>
+          <Card
+            hoverable
+            className={selectedPlan === "basic" ? "selected-plan" : ""}
+            onClick={() => handleSelectPlan("basic")}
+            actions={[
+              <Button
+                type="primary"
+                block
+                size="small"
+                style={{ width: "160px" }}
+              >
+                Select Plan
+              </Button>,
+            ]}
+          >
+            <div
+              style={{
+                backgroundColor: "#669800 ",
+                marginBottom: "0",
+                marginTop: "-25px",
+                marginLeft: "-25px",
+                marginRight: "-25px",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
+            >
+              <p style={{ padding: "5px" }}>
+                <span
+                  style={{
+                    marginTop: "10px",
+                    color: "white",
+                    fontSize: "22px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Trial Plan
+                </span>
+              </p>
+              <hr />
+            </div>
+            <Text className="price">Free</Text>
+            <ul
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: 0,
+                marginLeft: "40%",
+              }}
+            >
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <NotificationOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Trial
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <NotificationOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Trial
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <NotificationOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Trial
+              </li>
+            </ul>
+          </Card>
+        </Col>
       </Row>
 
-      {/* Quotation View */}
       {isQuotationVisible && (
         <Modal
           title="Generate proforma invoice"
           open={isQuotationVisible}
           onCancel={closeQuotation}
           footer={[
-            <Button key="button" onClick={handleCreatePerforma}>
-              Generate Proforma
+            <Button type="primary" htmlType="submit" onClick={handleSubmit}>
+              Generate Performa
             </Button>,
           ]}
           width={600}
         >
+          <p>(Please provide additional details)</p>
           {renderQuotation()}
         </Modal>
       )}
 
-      {/* Proforma Modal */}
       <Modal
         title="Proforma Invoice"
         open={isProformaVisible}
