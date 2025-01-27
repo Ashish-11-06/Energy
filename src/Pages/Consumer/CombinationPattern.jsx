@@ -120,6 +120,7 @@ const CombinationPattern = () => {
         const modalData = {
           requirement_id: selectedDemandId,
           optimize_capacity_user: user.user_category,
+          user_id: user.id,
         };
 
         fetchOptimizedCombinationsXHR(
@@ -162,7 +163,7 @@ const CombinationPattern = () => {
     console.log(combinationData);
 
     fetchPatterns();
-    // loadCombinations();
+    loadCombinations();
   }, [dispatch, selectedDemandId, reReplacement]);
 
   // console.log(combinationData, "combinationData");

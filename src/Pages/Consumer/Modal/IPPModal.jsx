@@ -5,7 +5,7 @@ import moment from 'moment';
 
 const { Title, Text } = Typography;
 
-const IPPModal = ({ visible, ipp, combination, reIndex, onClose, onRequestForQuotation }) => {
+const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
   console.log('ipp', ipp);
@@ -36,19 +36,6 @@ console.log('annual deman',annualDemand);
     Wind: 'Wind_1',
     ESS: 'ESS_1',
   };
-
-  const columns = [
-    {
-      title: 'Label',
-      dataIndex: 'label',
-      key: 'label',
-    },
-    {
-      title: 'Value',
-      dataIndex: 'value',
-      key: 'value',
-    },
-  ];
 
   const technologyData = ipp?.technology.map((tech, index) => ({
     key: index,

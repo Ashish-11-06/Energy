@@ -9,6 +9,7 @@ import { Typography, Card, Space, Modal, Tooltip, Col, Row } from "antd";
 import { fetchReport } from "../../Redux/Slices/Consumer/downloadReportSlice";
 const { Title, Text } = Typography;
 import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 const AnnualSvg = () => {
   const [loading, setLoading] = useState(false); // Loading state

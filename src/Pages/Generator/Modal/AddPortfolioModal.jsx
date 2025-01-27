@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { addProject } from '../../../Redux/Slices/Generator/portfolioSlice';
 import states from '../../../Data/States';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const AddPortfolioModal = ({ visible, onClose, user }) => {
   const [form] = Form.useForm();
@@ -70,7 +71,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
                 <span>
                   Technology&nbsp;
                   <Tooltip title="Select the type of energy technology used for the project.">
-                    <i className="info-icon">i</i>
+                  <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
@@ -90,7 +91,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
                 <span>
                   State&nbsp;
                   <Tooltip title="Select the state where the project is located.">
-                    <i className="info-icon">i</i>
+                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
@@ -112,7 +113,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
                 <span>
                   Connectivity&nbsp;
                   <Tooltip title="Select the type of connectivity for the project.">
-                    <i className="info-icon">i</i>
+                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
@@ -133,8 +134,8 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
               label={
                 <span>
                   Total Install Capacity (in {unit})&nbsp;
-                  <Tooltip title="Enter the total installed capacity of the project in the selected unit.">
-                    <i className="info-icon">i</i>
+                  <Tooltip title="Enter the total installed capacity of the project in megawatts.">
+                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
@@ -158,8 +159,8 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
               label={
                 <span>
                   Total Available Capacity (in {unit})&nbsp;
-                  <Tooltip title="Enter the total available capacity of the project in the selected unit.">
-                    <i className="info-icon">i</i>
+                  <Tooltip title="Enter the total available capacity of the project in megawatts.">
+                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
@@ -186,7 +187,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
                 <span>
                   COD (Commercial Operation Date)&nbsp;
                   <Tooltip title="Select the date when the project will start commercial operations.">
-                    <i className="info-icon">i</i>
+                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
