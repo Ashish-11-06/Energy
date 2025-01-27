@@ -11,4 +11,7 @@
     border-radius: 8px;
   }
   
-  
+  :where(.css-dev-only-do-not-override-oqfneu).ant-btn >span:not(:only-child) {
+    display: inline-flex;
+    align-self: center;
+}

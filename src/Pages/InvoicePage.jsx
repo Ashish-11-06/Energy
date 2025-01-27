@@ -55,7 +55,11 @@ const InvoicePage = () => {
   return (
     <div className="invoice-page">
       <h1>Invoices</h1>
-      <Table dataSource={invoices} columns={columns} rowKey="id" />
+      <Table
+      style={{ marginTop: 16, 
+        padding: "20px",
+      }}
+      dataSource={invoices} columns={columns} rowKey="id" />
     </div>
   );
 };
