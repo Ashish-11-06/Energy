@@ -366,6 +366,12 @@ const CombinationPattern = () => {
       // width: 150,
     },
     {
+      title: "OA Cost (INR/KWh)",
+      dataIndex: "OACost",
+      key: "OACost",
+      // width: 150,
+    },
+    {
       title: "Total Cost (INR/KWh)",
       dataIndex: "totalCost",
       key: "totalCost",

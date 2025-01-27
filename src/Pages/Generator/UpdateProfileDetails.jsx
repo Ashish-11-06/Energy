@@ -121,7 +121,7 @@ const UpdateProfileDetails = () => {
 
   return (
     <div style={{ padding: "20px", fontFamily: "Inter, sans-serif" }}>
-      <Title level={2} style={{ color: "#669800" }}>Update Profile Details</Title>
+      <Title level={2} >Look For Additional Details</Title>
       <Paragraph>
       Please Update all profile details of your projects to optimize the capacity.
       </Paragraph>

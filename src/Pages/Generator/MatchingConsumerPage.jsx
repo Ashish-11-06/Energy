@@ -59,7 +59,7 @@ const MatchingConsumerPage = () => {
 
     if (searchText) {
       filtered = filtered.filter(consumer =>
-        consumer.state.toLowerCase().includes(searchText.toLowerCase()) ||
+        // consumer.state.toLowerCase().includes(searchText.toLowerCase()) ||
         consumer.industry.toLowerCase().includes(searchText.toLowerCase())
       );
     }
@@ -145,7 +145,7 @@ const MatchingConsumerPage = () => {
       <h2>Potential Consumer</h2>
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
         <Search
-          placeholder="Search by state or industry"
+          placeholder="Search by industry"
           onSearch={handleSearch}
           onChange={(e) => handleSearch(e.target.value)}
           style={{ width: 200 }}

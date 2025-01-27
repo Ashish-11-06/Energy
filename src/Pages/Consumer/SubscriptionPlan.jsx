@@ -25,7 +25,7 @@ import {
   UserOutlined,
   NotificationOutlined,
 } from "@ant-design/icons";
-
+import req from "../../assets/req.png";
 import { useNavigate } from "react-router-dom";
 import "../SubscriptionPlan.css";
 import proformaInvoice from "../../assets/proforma_invoice.png";
@@ -267,7 +267,7 @@ const SubscriptionPlans = () => {
                   marginBottom: "10px",
                 }}
               >
-                <FormOutlined style={{ marginRight: "10px" ,color:'green' ,color:'#669800'}} /> Matching IPP +
+                <FormOutlined style={{ marginRight: "10px"  ,color:'#669800'}} /> Matching IPP +
               </li>
               <li
                 style={{
@@ -276,7 +276,8 @@ const SubscriptionPlans = () => {
                   marginBottom: "10px",
                 }}
               >
-                <AppstoreAddOutlined style={{ marginRight: "10px" ,color:'#669800' }} />{" "}
+                {/* <AppstoreAddOutlined style={{ marginRight: "10px" ,color:'#669800' }} />{" "} */}
+                <img src={req} alt="" style={{height:'15px',width:'15px',  marginRight:'10px'}}/>{"  "}
                 Requirements +
               </li>
               <li

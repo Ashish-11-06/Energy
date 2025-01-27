@@ -511,13 +511,14 @@ const CombinationPattern = () => {
 
           <div style={{ marginBottom: "20px" }}>
             <Card>
-              <Text>RE Replacement Value: {sliderValue}%</Text> {/* Display slider value */}
+             <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>( Scroll the below bar for different RE combination  )</p></span> {/* Display slider value */}
               <span>
                 <Slider
                   min={0}
                   max={100}
                   marks={marks} // Add marks to the slider
-                  style={{ width: '80%' }}
+                  style={{ width: '80%' ,marginLeft:'5%'}}
+                
                   onChange={handleSliderChange}
                   value={sliderValue}
                   tooltipVisible={!isIPPModalVisible && !isModalVisible} // Hide tooltip when modal is visible
@@ -529,7 +530,7 @@ const CombinationPattern = () => {
                 </Button>
               </span>
               <br />
-              <p>( You can change your RE Replacement from above bar. )</p>
+              
             </Card>
 
 

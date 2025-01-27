@@ -10,7 +10,12 @@ import { fetchReport } from "../../Redux/Slices/Consumer/downloadReportSlice";
 const { Title, Text } = Typography;
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-
+import {
+  FileExcelOutlined,
+  MessageOutlined,
+  FileTextOutlined
+} from "@ant-design/icons";
+import chat from '../../assets/chat.png';
 const AnnualSvg = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const [annualSavingResponse, setAnnualSavingResponse] = useState(null); // State for annual saving response
@@ -284,7 +289,7 @@ const AnnualSvg = () => {
                   </Col>
                   <Col span={12}>
                     <Text style={{ fontSize: "20px" }}>
-                      {annualSaving ? annualSaving.toLocaleString() : "0"} INR
+                      {annualSaving ? annualSaving.toLocaleString() : "0"} <span style={{fontSize:'16px'}}>INR</span>
                     </Text>
                   </Col>
                   <Col span={12}>
@@ -294,7 +299,7 @@ const AnnualSvg = () => {
                   </Col>
                   <Col span={12}>
                     <Text style={{ fontSize: "20px" }}>
-                      {annualSaving ? averageSavings.toLocaleString() : "0"} INR
+                      {annualSaving ? averageSavings.toLocaleString() : "0"} <span style={{fontSize:'16px'}}>INR</span>
                     </Text>
                   </Col>
                   <Col span={12}>
@@ -308,14 +313,17 @@ const AnnualSvg = () => {
                 </Row>
 
                 <Space wrap className="actions">
-                  <Button type="primary" onClick={handleDownloadReport}>
+                  <Button type="primary" onClick={handleDownloadReport}  icon={<FileTextOutlined style={{ marginTop: "5px" }}/>}>
                     Download Report
                   </Button>
                   <Button
                     type="default"
                     onClick={handleChatWithExpert}
                     style={{ marginLeft: "600px" }}
+                    // icon={<MessageOutlined/>}
+                    
                   >
+                    <img src={chat} alt="" style={{width:'15px',height:'15px'}}/>
                     Need Assistance ?
                   </Button>
                   {/* subscription journey is remaining
