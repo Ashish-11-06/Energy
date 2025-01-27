@@ -30,14 +30,14 @@ const Login = () => {
         
         if (user.user_category === 'Generator') {
           if (user.is_new_user) {
-            navigate('/generator/portfolio', { state: { isNewUser: user.is_new_user } });
+            navigate('/generator/what-we-offer', { state: { isNewUser: user.is_new_user } });
           } else {
             navigate('/generator/dashboard');
           }
         } else if (user.user_category === 'Consumer') {
           if (user.is_new_user) {
             console.log('New user:', user.is_new_user);
-            navigate('/consumer/requirement', { state: { isNewUser: user.is_new_user } });
+            navigate('/consumer/what-we-offer', { state: { isNewUser: user.is_new_user } });
           } else {
             
             console.log('New user:', user.is_new_user);
