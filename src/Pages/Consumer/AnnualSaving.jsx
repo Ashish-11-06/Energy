@@ -9,6 +9,7 @@ import { Typography, Card, Space, Modal, Tooltip, Col, Row } from "antd";
 import { fetchReport } from "../../Redux/Slices/Consumer/downloadReportSlice";
 const { Title, Text } = Typography;
 import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 const AnnualSvg = () => {
   const [loading, setLoading] = useState(false); // Loading state
@@ -25,19 +26,9 @@ const AnnualSvg = () => {
   console.log(userData[0]?.id);
   const userId = userData[0]?.id;
 
-  // const {userId}=location.id || {};
-  // console.log(userId);
-
-  // console.log(requirementId, "requirementId");
-
-  // Fetch annual saving data
-  const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
 
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
-  };
-  const handleInfoModalOk = () => {
-    setIsInfoModalVisible(false);
   };
   const showInfoModal = () => {
     setIsInfoModalVisible(true);
@@ -92,86 +83,106 @@ const AnnualSvg = () => {
   
     // Title
     doc.setFontSize(18);
-    doc.text("Annual Savings Report", 14, 22);
+    doc.text("Annual Savings Report", 105, 20, { align: "center" });
   
-    // Content
+    // Background Section
     doc.setFontSize(12);
+    doc.text("Background", 14, 30);
+    doc.setFontSize(10);
+    doc.text(reportData.consumer_company_name, 14, 40);
     doc.text(
-      `Consumer Company Name: ${reportData.consumer_company_name}`,
+      `${reportData.consumption_unit_name}, ${reportData.state}`,
       14,
-      30
+      50
     );
-    doc.text(`Consumption Unit: ${reportData.consumption_unit_name}`, 14, 40);
-    doc.text(`Connected Voltage: ${reportData.connected_voltage} kV`, 14, 50);
-    doc.text(`Tariff Category: ${reportData.tariff_category}`, 14, 60);
     doc.text(
-      `Annual Electricity Consumption: ${reportData.annual_electricity_consumption} kWh`,
+      `Connected Voltage: ${reportData.connected_voltage} kV, ${reportData.tariff_category}`,
+      14,
+      60
+    );
+    doc.text(
+      `Annual Electricity Consumption: ${reportData.annual_electricity_consumption} MWh`,
       14,
       70
     );
-    doc.text(`Contracted Demand: ${reportData.contracted_demand} kW`, 14, 80);
+    doc.text(`Contracted Demand: ${reportData.contracted_demand} MW`, 14, 80);
+  
+    // Analysis Section Header
+    doc.setFontSize(12);
+    doc.text("Analysis", 14, 95);
+  
+    // Table Column Headers
+    const tableColumnHeaders = ["Particulars", "Units", "Value"];
+    const tableRows = [
+      [
+        "Your Electricity Tariff (Energy charge as per regulations)",
+        "INR/kWh",
+        reportData.electricity_tariff,
+      ],
+      ["Potential RE Tariff Available (A)", "INR/kWh", reportData.potential_re_tariff],
+      ["ISTS Charges (B)", "INR/kWh", reportData.ISTS_charges],
+      ["State Charges (C)", "INR/kWh", reportData.state_charges],
+      [
+        "Per Unit Savings Potential (A - B - C)",
+        "INR/kWh",
+        reportData.per_unit_savings_potential,
+      ],
+      [
+        "Potential RE Replacement",
+        "%",
+        reportData.potential_re_replacement,
+      ],
+      [
+        "Total Savings",
+        "INR crore",
+        reportData.total_savings,
+      ],
+    ];
+  
+    // Draw Table
+    doc.autoTable({
+      startY: 100,
+      head: [tableColumnHeaders],
+      body: tableRows,
+      styles: { fontSize: 10, cellPadding: 2 },
+    });
+  
+    // Group Captive Requirements Section
+    let finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(10);
     doc.text(
-      `Electricity Tariff: ₹${reportData.electricity_tariff}/kWh`,
+      "Group Captive Requirements: You can hold 26% equity in the project and consume electricity under",
       14,
-      90
+      finalY
     );
     doc.text(
-      `Potential RE Tariff: ₹${reportData.potential_re_tariff}/kWh`,
+      "group captive route in Open Access. You pay the required ISTS and State charges without",
       14,
-      100
-    );
-    doc.text(`ISTS Charges: ₹${reportData.ISTS_charges}/kWh`, 14, 110);
-    doc.text(`State Charges: ₹${reportData.state_charges}/kWh`, 14, 120);
-    doc.text(
-      `Per Unit Savings Potential: ₹${reportData.per_unit_savings_potential}`,
-      14,
-      130
+      finalY + 10
     );
     doc.text(
-      `Potential RE Replacement: ${reportData.potential_re_replacement}%`,
+      "Cross Subsidy surcharge and Additional Surcharge.",
       14,
-      140
-    );
-    doc.text(
-      `Total Savings: ₹${reportData.total_savings.toLocaleString()}`,
-      14,
-      150
-    );
-    doc.text(
-      `Group Captive Requirements: You can hold 26% equity in the project and consumer electricity under `,
-      14,
-      165
-    );
-    doc.text(
-      `group captive route in Open Access. You pay the required ISTS and State charges without
-      `,
-      14,
-      175
-    );
-    doc.text(
-      `Cross Subsidy surcharge and Additional Surcharge 
-      `,
-      14,
-      185
+      finalY + 20
     );
   
-    // Set font to bold for the last text
-    doc.setFont('helvetica', 'bold');
+    // Final Notes
+    doc.setFont("helvetica", "bold");
     doc.text(
-      `This savings is based on average available industry offers on the platform, to start your energy `,
+      "This savings is based on average available industry offers on the platform. To start your energy",
       14,
-      205
+      finalY + 40
     );
-    doc.setFont('helvetica', 'bold');
     doc.text(
-      `transition and to know your exact savings, subscribe to EXG Global – EXT platform. `,
+      "transition and to know your exact savings, subscribe to EXG Global – EXT platform.",
       14,
-      215
+      finalY + 50
     );
   
-    // Trigger the download
+    // Save the PDF
     doc.save("annual_savings_report.pdf");
   };
+  
   
 
   // Handle download report
@@ -186,6 +197,7 @@ const AnnualSvg = () => {
     try {
       generatePDF(reportResponse); // Pass the report data to generate the PDF
     } catch (error) {
+      console.log(error);
       message.error("Failed to generate report.");
     }
   };

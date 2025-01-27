@@ -36,8 +36,11 @@ const Login = () => {
           }
         } else if (user.user_category === 'Consumer') {
           if (user.is_new_user) {
+            console.log('New user:', user.is_new_user);
             navigate('/consumer/requirement', { state: { isNewUser: user.is_new_user } });
           } else {
+            
+            console.log('New user:', user.is_new_user);
             navigate('/consumer/dashboard');
           }
         }

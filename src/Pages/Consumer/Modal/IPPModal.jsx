@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Modal, Typography, Row, Col, Button, Card, Table } from "antd";
 import RequestForQuotationModal from "../../../Components/Modals/RequestForQuotationModal";
+import moment from 'moment';
 
 const { Title, Text } = Typography;
 
 const IPPModal = ({ visible, ipp, combination, reIndex, onClose, onRequestForQuotation }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
+  console.log('ipp', ipp);
+  
   const showQuotationModal = () => {
     setIsQuotationModalVisible(true);
     onRequestForQuotation();
@@ -15,15 +18,24 @@ const IPPModal = ({ visible, ipp, combination, reIndex, onClose, onRequestForQuo
 
   const dataSource = [
     { key: '1', label: 'RE Index', value: reIndex },
+    { key: '2', label: 'Annual Demand Met', value: ipp?.annual_demand_met },
     { key: '3', label: 'Potential RE Replacement', value: ipp?.reReplacement },
     { key: '4', label: 'Per Unit Cost (INR/KWh)', value: ipp?.perUnitCost },
     { key: '5', label: 'OA Cost (INR/KWh)', value: ipp?.OACost },
     { key: '6', label: 'Total Cost (INR/KWh)', value: ipp?.totalCost },
+    { key: '7', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : '', },
+    { key: '8', label: 'Connectivity', value: ipp?.connectivity },
+    { key: '9', label: 'Total Capacity (MW)', value: ipp?.totalCapacity },
   ];
 
 const annualDemand=ipp?.annualDemand;
 console.log('annual deman',annualDemand);
 
+  const stateMapping = {
+    Solar: 'Solar_1',
+    Wind: 'Wind_1',
+    ESS: 'ESS_1',
+  };
 
   const columns = [
     {
@@ -38,28 +50,28 @@ console.log('annual deman',annualDemand);
     },
   ];
 
-  const technologyData = Object.keys(combination).map((key, index) => ({
+  const technologyData = ipp?.technology.map((tech, index) => ({
     key: index,
-    battery: `Battery Capacity (MW): ${combination[key]["Optimal Battery Capacity (MW)"]} State: ${combination[key].state?.["Battery"] || "N/A"}`,
-    solar: `Solar Capacity (MW): ${combination[key]["Optimal Solar Capacity (MW)"]} State: ${combination[key].state?.["Solar"] || "N/A"}`,
-    wind: `Wind Capacity (MW): ${combination[key]["Optimal Wind Capacity (MW)"]} State: ${combination[key].state?.["Wind_1"] || "N/A"}`,
+    name: tech.name,
+    capacity: tech.capacity,
+    state: ipp?.states?.[stateMapping[tech.name]] || "N/A",
   }));
 
   const technologyColumns = [
     {
-      title: 'Battery',
-      dataIndex: 'battery',
-      key: 'battery',
+      title: 'Technology',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
-      title: 'Solar',
-      dataIndex: 'solar',
-      key: 'solar',
+      title: 'Capacity',
+      dataIndex: 'capacity',
+      key: 'capacity',
     },
     {
-      title: 'Wind',
-      dataIndex: 'wind',
-      key: 'wind',
+      title: 'State',
+      dataIndex: 'state',
+      key: 'state',
     },
   ];
 
@@ -70,10 +82,10 @@ console.log('annual deman',annualDemand);
         open={visible}
         onCancel={onClose}
         footer={null}
-        width={500}
+        width={700}
         centered
         style={{
-          borderRadius: "8px",
+          borderRadius: "1px",
           fontFamily: "'Inter', sans-serif",
         }}
       >
@@ -84,49 +96,41 @@ console.log('annual deman',annualDemand);
                 backgroundColor: "#FFFFFF",
                 color: "#001529",
                 borderRadius: "8px",
-                padding: "20px",
+                padding: "2px",
                 border: "1px solid #E6E8F1",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
               }}
             >
-              <Title level={5} style={{ color: "#9A8406", marginBottom: "20px", textAlign: "center" }}>
+              <Title level={5} style={{ color: "#9A8406", marginBottom: "5px", textAlign: "center" }}>
                 IPP Project Details
               </Title>
 
               <Row justify="center" gutter={[16, 16]}>
-                <Col span={12}>
-                  <Text strong>RE Index</Text>
-                </Col>
-                <Col span={12}>
-                  <Text>{reIndex}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>Potential RE Replacement:</Text>
-                </Col>
-                <Col span={12}>
-                  <Text>{ipp?.reReplacement}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>Per Unit Cost (INR/KWh):</Text>
-                </Col>
-                <Col span={12}>
-                  <Text>{ipp?.perUnitCost}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>OA Cost (INR/KWh):</Text>
-                </Col>
-                <Col span={12}>
-                  <Text>{ipp?.OACost}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>Total Cost (INR/KWh):</Text>
-                </Col>
-                <Col span={12}>
-                  <Text>{ipp?.totalCost}</Text>
-                </Col>
+                {dataSource.map(item => (
+                  <React.Fragment key={item.key}>
+                    <Col span={12}>
+                      <Text strong>{item.label}</Text>
+                    </Col>
+                    <Col span={12}>
+                      <Text>: {item.value}</Text>
+                    </Col>
+                  </React.Fragment>
+                ))}
               </Row>
 
               <div style={{ borderTop: "1px solid #E6E8F1", margin: "20px 0" }} />
+
+              <Title level={5} style={{ color: "#9A8406", marginBottom: "5px", textAlign: "center" }}>
+                Technologies
+              </Title>
+              <Table
+                dataSource={technologyData}
+                columns={technologyColumns}
+                pagination={false}
+                bordered
+                size="small"
+                // style={{ marginBottom: "2px" }}
+              />
             </Card>
           </Col>
 
@@ -138,11 +142,11 @@ console.log('annual deman',annualDemand);
                 backgroundColor: "#669800",
                 borderColor: "#669800",
                 fontSize: "16px",
-                padding: "10px 40px",
+                padding: "2px 2px",
                 borderRadius: "8px",
                 width: "100%",
                 maxWidth: "300px",
-                margin: "20px auto 0",
+                margin: "2px auto 0",
               }}
             >
               Request for Quotation

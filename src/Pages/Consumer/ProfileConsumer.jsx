@@ -30,7 +30,7 @@ const ProfilePage = () => {
             <Avatar size={100} src="/src/assets/profile.jpg"  />
           </Row>
           <Title level={3} style={{ textAlign: "center", marginBottom: "20px" }}>
-            User Profile
+            Profile
           </Title>
           <Row gutter={[16, 16]}>
             <Col span={12}>
@@ -69,6 +69,18 @@ const ProfilePage = () => {
             <Col span={12}>
               <Text>{userData.user_category}</Text>
             </Col>
+            <Col span={12}>
+              <Text strong>Sunscription plan:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>plan name</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Plan validity:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>- to -</Text>
+            </Col>
             
           </Row>
           <Row justify="center" style={{ marginTop: "20px" }}>
@@ -76,7 +88,6 @@ const ProfilePage = () => {
               Edit Profile
             </Button>
           </Row>
-          plan name and plan validity
         </Card>
 
         {/* Modal for Editing User Details */}

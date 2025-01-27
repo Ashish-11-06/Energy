@@ -93,7 +93,7 @@ const CombinationPattern = () => {
           technology: [
             { name: 'Wind', capacity: `${combination["Optimal Wind Capacity (MW)"]} MW` },
             { name: 'Solar', capacity: `${combination["Optimal Solar Capacity (MW)"]} MW` },
-            { name: 'Battery', capacity: `${combination["Optimal Battery Capacity (MW)"]} MW` },
+            { name: 'ESS', capacity: `${combination["Optimal Battery Capacity (MW)"]} MW` },
           ],
           totalCapacity: `${(
             combination["Optimal Wind Capacity (MW)"] + 

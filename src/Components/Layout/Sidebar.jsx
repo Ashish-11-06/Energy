@@ -26,7 +26,7 @@ const consumerMenuItems = [
   { label: 'Requirement', key: '/consumer/requirement', icon: <FormOutlined /> },
   { label: 'What We Offer', key: '/consumer/what-we-offer', icon: <AppstoreAddOutlined /> },
   { label: 'Transaction Window', key: '/consumer/transaction-page', icon: <MessageOutlined /> },
-  { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
+  // { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <SolutionOutlined /> },
   { label:'Offer Sent', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined /> },
   { label: 'Offer Recieved', key: '/consumer/offer-recieved-from-ipp', icon: <AppstoreAddOutlined /> },
   // { label: 'Chatbot', key: '/consumer/chat-page', icon: <MessageOutlined /> },

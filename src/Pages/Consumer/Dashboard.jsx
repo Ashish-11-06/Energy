@@ -25,7 +25,7 @@ const Dashboard = () => {
           offersSent: data.offers_sent || 0,
 
           totalDemands: data.total_demands || 0,
-          totalConsumptionUnits: data.total_consumption_units || 0,
+          totalConsumptionUnits: data.consumption_units || 0,
           subscriptionPlan: data.subscription_plan || "N/A",
           totalStates: data.unique_states_count || 0,
         });
@@ -43,7 +43,7 @@ const Dashboard = () => {
   }, []);
 
   const barData = {
-    labels: [ 'Demand Sent', 'Offer Received', 'Transactions Done'],
+    labels: [ 'Demand', 'Offer Received', 'Transactions Done'],
     datasets: [
       {
         label: 'Consumer Details',
