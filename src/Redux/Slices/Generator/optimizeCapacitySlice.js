@@ -6,8 +6,10 @@ export const fetchOptimizedCombinations = createAsyncThunk(
   'optimizedCapacity/fetchById',
   async (modalData, { rejectWithValue }) => {
     try {
+      console.log('aabbcc');
+      
       const response = await optimizeCapacityApi.getOptimizedCombination(modalData);
-      // console.log(`klkkklklk`, response)
+       console.log(`klkkklklk`, response)
       if (response && response.data) {
         if(response.data.error){
           return rejectWithValue(

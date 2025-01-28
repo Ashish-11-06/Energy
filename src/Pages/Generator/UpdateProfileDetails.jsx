@@ -20,10 +20,11 @@ const UpdateProfileDetails = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [Structuredprojects, setStructuredProjects] = useState([]);  // Local state for flattened projects
   const [form] = Form.useForm();
-
+  const location = useLocation();
+  const { selectedConsumer } = location.state || {};
   // Fetching projects from Redux store
   const { projects, status } = useSelector(state => state.portfolio);
-  const location = useLocation();
+  // const location = useLocation();
   const selectedDemandId = location.state?.selectedConsumer;
   
   useEffect(() => {
@@ -78,6 +79,9 @@ const UpdateProfileDetails = () => {
       key: 'updated',
       render: (text) => (
         <div style={{ textAlign: 'center' }}>
+       {console.log(`${text}`)
+       }
+          
           {text ? (
             <CheckCircleOutlined style={{ color: 'green', fontSize: '18px'}} />
           ) : (

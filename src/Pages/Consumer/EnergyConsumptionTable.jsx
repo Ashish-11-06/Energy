@@ -13,6 +13,7 @@ import {
   Modal,
   Row,
   Col,
+  Select,
 } from "antd";
 import {
   UploadOutlined,
@@ -121,17 +122,17 @@ const EnergyConsumptionTable = () => {
         message.error("Please upload a valid CSV file.");
         return false;
       }
-  
+
       // Display a success message for file selection
       message.success(`${file.name} uploaded successfully`);
       setUploadedFileName(file.name); // Set the latest uploaded file name
-  
+
       // Convert file to Base64
       const reader = new FileReader();
       reader.onloadend = async () => {
         try {
           const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
-  
+
           // Parse CSV data and update dataSource
           const csvData = atob(base64File);
           const parsedData = csvData.split("\n").map((row) => row.split(","));
@@ -147,30 +148,35 @@ const EnergyConsumptionTable = () => {
                 }
               : item;
           });
-  
+
           setDataSource(updatedDataSource);
-  
+
           // Dispatch the uploadCSV thunk and wait for the result
-          await dispatch(uploadCSV({ requirement_id: requirementId, file: base64File }));
-  
+          await dispatch(
+            uploadCSV({ requirement_id: requirementId, file: base64File })
+          );
+
           // Mark action as completed only if upload succeeds
           setIsActionCompleted(true);
           handleToggleDetails();
         } catch (error) {
           console.error("Error processing the file:", error);
-          message.error("An error occurred while processing the file. Please try again.");
+          message.error(
+            "An error occurred while processing the file. Please try again."
+          );
         }
       };
-  
+
       reader.readAsDataURL(file); // Read the file as a Base64 string
       return false; // Prevent automatic upload
     } catch (error) {
       console.error("Error uploading the file:", error);
-      message.error("An error occurred during the upload process. Please try again.");
+      message.error(
+        "An error occurred during the upload process. Please try again."
+      );
       return false;
     }
   };
-  
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
@@ -229,12 +235,12 @@ const EnergyConsumptionTable = () => {
         const data = monthlyData.find((data) => data.month === item.month);
         return data
           ? {
-            ...item,
-            monthlyConsumption: data.monthly_consumption,
-            peakConsumption: data.peak_consumption,
-            offPeakConsumption: data.off_peak_consumption,
-            monthlyBill: data.monthly_bill_amount,
-          }
+              ...item,
+              monthlyConsumption: data.monthly_consumption,
+              peakConsumption: data.peak_consumption,
+              offPeakConsumption: data.off_peak_consumption,
+              monthlyBill: data.monthly_bill_amount,
+            }
           : item;
       });
       setDataSource(updatedDataSource);
@@ -270,7 +276,9 @@ const EnergyConsumptionTable = () => {
   };
 
   const handleToggleFileUploadTable = () => {
-    setShowFileUploadTable((prevShowFileUploadTable) => !prevShowFileUploadTable);
+    setShowFileUploadTable(
+      (prevShowFileUploadTable) => !prevShowFileUploadTable
+    );
     setShowTable(false); // Close details table
     setActiveButton("bill");
     setIsActionCompleted(true); // Mark action as completed
@@ -326,6 +334,10 @@ const EnergyConsumptionTable = () => {
     });
   };
 
+  const handleYearChange = (year) => {
+    console.log("Selected Year:", year);
+  };
+
   const handleSave = async () => {
     if (!allFieldsFilled) {
       message.error("All fields are required");
@@ -355,7 +367,7 @@ const EnergyConsumptionTable = () => {
         style: {
           position: "absolute",
           bottom: "0px",
-          marginTop: '90%',
+          marginTop: "90%",
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 9999,
@@ -372,8 +384,6 @@ const EnergyConsumptionTable = () => {
     } finally {
       setLoading(false);
       // message.success("Monthly data added successfully!");
-
-
     }
   };
 
@@ -404,6 +414,10 @@ const EnergyConsumptionTable = () => {
       }
     });
     setDataSource(newData);
+  };
+
+  const generateYears = () => {
+    return Array.from({ length: 30000 - 2000 + 1 }, (_, i) => 2000 + i);
   };
 
   const handleImageUpload = async (file) => {
@@ -463,7 +477,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-        // disabled={record.fileUploaded !== null}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -484,7 +498,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-        // disabled={record.fileUploaded !== null}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -506,7 +520,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-        // disabled={record.fileUploaded !== null}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -528,7 +542,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-        // disabled={record.fileUploaded !== null}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -658,9 +672,29 @@ const EnergyConsumptionTable = () => {
         <Title level={3} style={{ textAlign: "center", marginTop: "10px" }}>
           Energy Consumption Data (12 Months)
         </Title>
-        <p>Provide / Upload / Amend your energy consumption data for the last 12 months.</p>
+        <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+  <p style={{ margin: 0 }}>
+    Provide / Upload / Amend your energy consumption data for the last 12 months.
+  </p>
+  <p style={{ margin: 0 }}>
+    {generateYears() && (
+      <Select
+        style={{ width: 120 }}
+        placeholder="Select Year"
+        onChange={handleYearChange}
+      >
+        {generateYears().map((year) => (
+          <Select.Option key={year} value={year}>
+            {year}
+          </Select.Option>
+        ))}
+      </Select>
+    )}
+  </p>
+</span>
+
         {/* <div style={{ display: "flex", alignItems: "center", gap: "15px" }}> */}
-        <Row>
+        <Row style={{marginTop:'3%'}}>
           <Col span={6}>
             <Tooltip title="Add details manually">
               <Button onClick={handleToggleDetails} icon={<FileAddOutlined />}>
@@ -734,7 +768,6 @@ const EnergyConsumptionTable = () => {
           </Col>
         </Row>
         {/* </div> */}
-
         {showTable && (
           <>
             <Table
@@ -748,22 +781,17 @@ const EnergyConsumptionTable = () => {
             />
             <div
               style={{
-
                 marginTop: "30px",
-                transform: 'translateX(-108px)',
-                marginLeft: '86%',
-                marginBottom: '-40px'
+                transform: "translateX(-108px)",
+                marginLeft: "86%",
+                marginBottom: "-40px",
               }}
             >
               {saveSuccess && (
-                <span style={{ color: "green" }}>
-                  Data saved successfully!
-                </span>
+                <span style={{ color: "green" }}>Data saved successfully!</span>
               )}
               {saveError && (
-                <span style={{ color: "red" }}>
-                  Failed to save data!
-                </span>
+                <span style={{ color: "red" }}>Failed to save data!</span>
               )}
               <Tooltip title="Save the entered/updated data">
                 <Button
@@ -779,7 +807,6 @@ const EnergyConsumptionTable = () => {
             </div>
           </>
         )}
-
         {showFileUploadTable && renderSixMonthFileUploadTables()}
         <Tooltip
           title={

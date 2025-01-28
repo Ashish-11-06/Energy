@@ -16,13 +16,6 @@ import {
   SolutionOutlined,
   MessageOutlined,
   FormOutlined,
-  TableOutlined,
-  AreaChartOutlined,
-  WalletOutlined,
-  TeamOutlined,
-  ControlOutlined,
-  FileTextOutlined,
-  UserOutlined,
   NotificationOutlined,
 } from "@ant-design/icons";
 import req from "../../assets/req.png";
