@@ -114,48 +114,63 @@ const EnergyConsumptionTable = () => {
   };
 
   const handleCSVUpload = async (file) => {
-    // Validate the CSV file format
-    const isValidFormat = file.name.endsWith(".csv");
-    if (!isValidFormat) {
-      message.error("Please upload a valid CSV file.");
+    try {
+      // Validate the CSV file format
+      const isValidFormat = file.name.endsWith(".csv");
+      if (!isValidFormat) {
+        message.error("Please upload a valid CSV file.");
+        return false;
+      }
+  
+      // Display a success message for file selection
+      message.success(`${file.name} uploaded successfully`);
+      setUploadedFileName(file.name); // Set the latest uploaded file name
+  
+      // Convert file to Base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+  
+          // Parse CSV data and update dataSource
+          const csvData = atob(base64File);
+          const parsedData = csvData.split("\n").map((row) => row.split(","));
+          const updatedDataSource = dataSource.map((item, index) => {
+            const row = parsedData[index + 1]; // Skip header row
+            return row
+              ? {
+                  ...item,
+                  monthlyConsumption: parseFloat(row[1]),
+                  peakConsumption: parseFloat(row[2]),
+                  offPeakConsumption: parseFloat(row[3]),
+                  monthlyBill: parseFloat(row[4]),
+                }
+              : item;
+          });
+  
+          setDataSource(updatedDataSource);
+  
+          // Dispatch the uploadCSV thunk and wait for the result
+          await dispatch(uploadCSV({ requirement_id: requirementId, file: base64File }));
+  
+          // Mark action as completed only if upload succeeds
+          setIsActionCompleted(true);
+          handleToggleDetails();
+        } catch (error) {
+          console.error("Error processing the file:", error);
+          message.error("An error occurred while processing the file. Please try again.");
+        }
+      };
+  
+      reader.readAsDataURL(file); // Read the file as a Base64 string
+      return false; // Prevent automatic upload
+    } catch (error) {
+      console.error("Error uploading the file:", error);
+      message.error("An error occurred during the upload process. Please try again.");
       return false;
     }
-
-    message.success(`${file.name} uploaded successfully`);
-    setUploadedFileName(file.name); // Set the latest uploaded file name
-    setIsActionCompleted(true); // Mark action as completed
-
-    // Convert file to Base64
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
-
-      // Parse CSV data and update dataSource
-      const csvData = atob(base64File);
-      const parsedData = csvData.split("\n").map((row) => row.split(","));
-      const updatedDataSource = dataSource.map((item, index) => {
-        const row = parsedData[index + 1]; // Skip header row
-        return row
-          ? {
-              ...item,
-              monthlyConsumption: parseFloat(row[1]),
-              peakConsumption: parseFloat(row[2]),
-              offPeakConsumption: parseFloat(row[3]),
-              monthlyBill: parseFloat(row[4]),
-            }
-          : item;
-      });
-      setDataSource(updatedDataSource);
-
-      // Dispatch the uploadCSV thunk
-      await dispatch(
-        uploadCSV({ requirement_id: requirementId, file: base64File })
-      );
-    };
-    reader.readAsDataURL(file); // Read the file as a Base64 string
-
-    return false; // Prevent automatic upload
   };
+  
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
@@ -214,12 +229,12 @@ const EnergyConsumptionTable = () => {
         const data = monthlyData.find((data) => data.month === item.month);
         return data
           ? {
-              ...item,
-              monthlyConsumption: data.monthly_consumption,
-              peakConsumption: data.peak_consumption,
-              offPeakConsumption: data.off_peak_consumption,
-              monthlyBill: data.monthly_bill_amount,
-            }
+            ...item,
+            monthlyConsumption: data.monthly_consumption,
+            peakConsumption: data.peak_consumption,
+            offPeakConsumption: data.off_peak_consumption,
+            monthlyBill: data.monthly_bill_amount,
+          }
           : item;
       });
       setDataSource(updatedDataSource);
@@ -340,7 +355,7 @@ const EnergyConsumptionTable = () => {
         style: {
           position: "absolute",
           bottom: "0px",
-          marginTop:'90%',
+          marginTop: '90%',
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 9999,
@@ -357,7 +372,7 @@ const EnergyConsumptionTable = () => {
     } finally {
       setLoading(false);
       // message.success("Monthly data added successfully!");
-     
+
 
     }
   };
@@ -448,7 +463,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-          // disabled={record.fileUploaded !== null}
+        // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -469,7 +484,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-          // disabled={record.fileUploaded !== null}
+        // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -491,7 +506,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-          // disabled={record.fileUploaded !== null}
+        // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -513,7 +528,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
-          // disabled={record.fileUploaded !== null}
+        // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -643,7 +658,7 @@ const EnergyConsumptionTable = () => {
         <Title level={3} style={{ textAlign: "center", marginTop: "10px" }}>
           Energy Consumption Data (12 Months)
         </Title>
-<p>Provide / Upload / Amend your energy consumption data for the last 12 months.</p>
+        <p>Provide / Upload / Amend your energy consumption data for the last 12 months.</p>
         {/* <div style={{ display: "flex", alignItems: "center", gap: "15px" }}> */}
         <Row>
           <Col span={6}>
@@ -733,7 +748,7 @@ const EnergyConsumptionTable = () => {
             />
             <div
               style={{
-               
+
                 marginTop: "30px",
                 transform: 'translateX(-108px)',
                 marginLeft: '86%',
@@ -741,12 +756,12 @@ const EnergyConsumptionTable = () => {
               }}
             >
               {saveSuccess && (
-                <span style={{ color: "green"}}>
+                <span style={{ color: "green" }}>
                   Data saved successfully!
                 </span>
               )}
               {saveError && (
-                <span style={{ color: "red"}}>
+                <span style={{ color: "red" }}>
                   Failed to save data!
                 </span>
               )}
@@ -778,7 +793,7 @@ const EnergyConsumptionTable = () => {
             type="primary"
             onClick={handleContinue}
             disabled={!isActionCompleted} // Enable only if an action is completed
-            style={{ marginLeft: "86%" , marginTop: "8px"}}
+            style={{ marginLeft: "86%", marginTop: "8px" }}
           >
             Continue {`>>`}
           </Button>
