@@ -113,9 +113,9 @@ const GenerationPortfolio = () => {
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <Title level={2} style={{ textAlign: 'center' }}>
+        <h2 level={2} >
           Available Generation Portfolio
-        </Title>
+        </h2>
 
         <Table
           dataSource={Structuredprojects.map((project, index) => ({ ...project, key: index }))}

@@ -28,9 +28,7 @@ const RequirementsPage = () => {
     return item ? JSON.parse(item) : '';
   };
 
-  const setToLocalStorage = (key, value) => {
-    localStorage.setItem(key, JSON.stringify(value));
-  };
+
 
   // Define columns for the table (Remove selection column)
   const columns = [
@@ -93,7 +91,8 @@ const RequirementsPage = () => {
   const handleRowSelect = (record) => {
     setSelectedRowKeys([record.key]); // Only allow single selection
     setSelectedRequirement(record); // Store the selected record
-    setToLocalStorage('selectedRequirementId', record.id); // Store the selected requirement ID in localStorage
+    
+    // localStorage.setItem('selectedRequirementId', JSON.stringify(record.id));
     message.success(`You selected record of state '${record.state}'`);
     // console.log('record', record);
   };
@@ -130,7 +129,10 @@ const RequirementsPage = () => {
 
   const handleContinue = () => {
     if (selectedRequirement) {
-      navigate('/consumer/matching-ipp', { state: { selectedRequirement } }); // Pass the selected requirement to the next page
+      navigate('/consumer/matching-ipp'); // Pass the selected requirement to the next page
+      // console.log(selectedRequirement);
+      localStorage.setItem('selectedRequirementId',selectedRequirement.id);
+
     } else {
       message.error('Please select a single requirement before continuing.');
     }
@@ -165,7 +167,7 @@ const RequirementsPage = () => {
 
   return (
     <div style={{ padding: 20 }}>
-      <h2 style={{ textAlign: 'center' }}>Consumption Unit</h2>
+      <h2 >Consumption Unit</h2>
 
       <Tooltip title="Help">
         <Button

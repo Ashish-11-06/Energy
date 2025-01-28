@@ -26,7 +26,7 @@ const CombinationPattern = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  const selectedDemandId = state?.requirementId;
+  const selectedDemandId = localStorage.getItem('selectedRequirementId');
   const reReplacement = state?.reReplacement;
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 
@@ -121,7 +121,7 @@ const CombinationPattern = () => {
         setProgress(0); // Reset progress when starting a new fetch
 
         const modalData = {
-          requirement_id: selectedDemandId,
+          requirement_id: +selectedDemandId,
           optimize_capacity_user: user.user_category,
           user_id: user.id,
         };

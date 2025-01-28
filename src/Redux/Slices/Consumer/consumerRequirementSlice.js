@@ -14,6 +14,7 @@ export const fetchRequirements = createAsyncThunk(
     async (id, { rejectWithValue }) => {
         try {
             const response = await consumerrequirementApi.getAllrequirementsById(id); // Assuming API call to fetch requirements by id
+     
             return response.data;
         } catch (error) {
             // In case of an error, return the error message

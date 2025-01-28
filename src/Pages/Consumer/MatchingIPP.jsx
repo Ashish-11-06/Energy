@@ -18,7 +18,8 @@ const MatchingIPP = () => {
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
 
   useEffect(() => {
-    const requirementId = location.state?.selectedRequirement?.id;
+    // const requirementId = location.state?.selectedRequirement?.id;
+    const requirementId = localStorage.getItem('selectedRequirementId');
     if (requirementId) {
       dispatch(fetchMatchingIPPById(requirementId));
     } else {

@@ -17,8 +17,8 @@ const AnnualSvg = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
-  const { requirementId } = location.state || {};
-
+  // const { requirementId } = location.state || {};
+  const requirementId = localStorage.getItem('selectedRequirementId');
   // console.log(requirementId);
 
   const User = JSON.parse(localStorage.getItem('user'));
