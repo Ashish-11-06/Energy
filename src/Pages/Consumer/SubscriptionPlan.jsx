@@ -267,7 +267,7 @@ const SubscriptionPlans = () => {
                   marginBottom: "10px",
                 }}
               >
-                <FormOutlined style={{ marginRight: "10px"  ,color:'#669800'}} /> Matching IPP +
+                <FormOutlined style={{ marginRight: "10px", color: '#669800' }} /> Matching IPP +
               </li>
               <li
                 style={{

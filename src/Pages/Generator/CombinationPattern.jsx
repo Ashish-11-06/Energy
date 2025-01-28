@@ -519,12 +519,14 @@ const CombinationPattern = () => {
           <div style={{ marginBottom: "20px" }}>
             <Card>
               <Text>RE Replacement Value: {sliderValue}%</Text> {/* Display slider value */}
+              <br />
+              <p>( You can change your RE Replacement from below bar. )</p>
               <span>
                 <Slider
                   min={0}
                   max={100}
                   marks={marks} // Add marks to the slider
-                  style={{ width: '80%' }}
+                  style={{ width: '80%',marginLeft:'5%' }}
                   onChange={handleSliderChange}
                   value={sliderValue}
                   tooltipVisible={!isIPPModalVisible && !isModalVisible} // Hide tooltip when modal is visible
@@ -536,14 +538,14 @@ const CombinationPattern = () => {
                 </Button>
               </span>
               <br />
-              <p>( You can change your RE Replacement from above bar. )</p>
+              {/* <p>( You can change your RE Replacement from above bar. )</p> */}
             </Card>
 
 
           </div>
           <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-              Optimized Combinations
+              Look for Consumers
             </Title>
             {isTableLoading ? (
               <>

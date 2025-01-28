@@ -170,6 +170,7 @@ const RequirementsPage = () => {
       <Tooltip title="Help">
         <Button
           shape="circle"
+        
           icon={<QuestionCircleOutlined />}
           onClick={showInfoModal}
           style={{ position: 'absolute', top: 80, right: 30 }}

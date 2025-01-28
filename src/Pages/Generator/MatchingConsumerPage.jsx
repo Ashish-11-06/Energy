@@ -59,11 +59,11 @@ const MatchingConsumerPage = () => {
 
     if (searchText) {
       filtered = filtered.filter(consumer =>
-        // consumer.state.toLowerCase().includes(searchText.toLowerCase()) ||
+         
         consumer.industry.toLowerCase().includes(searchText.toLowerCase())
       );
     }
-
+// consumer.state.toLowerCase().includes(searchText.toLowerCase()) ||
     if (filterState) {
       filtered = filtered.filter(consumer => consumer.state === filterState);
     }
@@ -74,7 +74,7 @@ const MatchingConsumerPage = () => {
   // Define the columns for the table
   const columns = [
     {
-      title: 'Consumer',
+      title: 'Consumer ID',
       dataIndex: 'user__username',
       key: 'user__username', // Use a unique key for each row
       render: (text) => text,
@@ -145,7 +145,7 @@ const MatchingConsumerPage = () => {
       <h2>Potential Consumer</h2>
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
         <Search
-          placeholder="Search by industry"
+          placeholder="Search by Industry"
           onSearch={handleSearch}
           onChange={(e) => handleSearch(e.target.value)}
           style={{ width: 200 }}

@@ -91,11 +91,18 @@ const UpdateProfileDetails = () => {
       key: 'action',
       width: 100,
       render: (text, record) => (
-        <Button type="primary" onClick={() => handleUpdate(record)} style={{ width: '120px' }}>
-          Update
-        </Button>
+        text ? (
+          <Button type="primary" onClick={() => handleUpdate(record)} style={{ width: '120px' }}>
+            Update
+          </Button>
+        ) : (
+          <Button type="primary" onClick={() => handleUpdate(record)} style={{ width: '120px' }}>
+            Edit
+          </Button>
+        )
       ),
-    },
+    }
+    
   ];
 
   const handleUpdate = (record) => {
