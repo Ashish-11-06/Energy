@@ -9,6 +9,9 @@ import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfil
 import { useLocation } from 'react-router-dom';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
+import { templateDownload } from '../../Redux/Slices/Generator/templateDownloadSlice';
+
+
 const { Title, Paragraph } = Typography;
 
 const UpdateProfileDetails = () => {
@@ -26,7 +29,7 @@ const UpdateProfileDetails = () => {
   const { projects, status } = useSelector(state => state.portfolio);
   // const location = useLocation();
   const selectedDemandId = location.state?.selectedConsumer;
-  
+
   useEffect(() => {
     console.log('Selected demand:', selectedDemandId);
   }, [selectedDemandId]);
@@ -47,6 +50,30 @@ const UpdateProfileDetails = () => {
     }
   }, [projects.Solar, projects.Wind, projects.ESS]);
 
+
+  useEffect(() => {
+    const template = async () => {
+      const templateData = {
+        user_id: user.id,
+        solar_template_downloaded:false,
+        wind_template_downloaded:true
+      };
+  
+      try {
+        const response = await dispatch(templateDownload(templateData));
+        console.log("Response:", response);
+        message.success("Template downloaded successfully!");
+      } catch (error) {
+        console.error("Error:", error);
+        message.error("Failed to download the template.");
+      }
+    };
+  
+    template();
+  }, [dispatch,user.id]);
+
+
+  
   // Table columns
   const columns = [
     {
@@ -79,9 +106,6 @@ const UpdateProfileDetails = () => {
       key: 'updated',
       render: (text) => (
         <div style={{ textAlign: 'center' }}>
-       {console.log(`${text}`)
-       }
-          
           {text ? (
             <CheckCircleOutlined style={{ color: 'green', fontSize: '18px'}} />
           ) : (
@@ -95,7 +119,8 @@ const UpdateProfileDetails = () => {
       key: 'action',
       width: 100,
       render: (text, record) => (
-        text ? (
+       <div>
+       { text ? (
           <Button type="primary" onClick={() => handleUpdate(record)} style={{ width: '120px' }}>
             Update
           </Button>
@@ -104,6 +129,8 @@ const UpdateProfileDetails = () => {
             Edit
           </Button>
         )
+      }
+      </div>
       ),
     }
     

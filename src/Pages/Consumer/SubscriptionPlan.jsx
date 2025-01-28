@@ -27,7 +27,8 @@ import {
   createPerformaById,
   fetchPerformaById,
 } from "../../Redux/Slices/Consumer/performaInvoiceSlice";
-
+import dash from '../../assets/dashboard.png';
+import transaction from '../../assets/transaction.png';
 const { Title, Text } = Typography;
 
 const SubscriptionPlans = () => {
@@ -280,7 +281,7 @@ const SubscriptionPlans = () => {
                   marginBottom: "10px",
                 }}
               >
-                <FormOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Transaction
+                <img src={transaction} alt="" style={{ width: '20px', height: '20px',marginRight:'4%' }}/>Transaction
                 window
               </li>
             </ul>
@@ -340,7 +341,7 @@ const SubscriptionPlans = () => {
                   marginBottom: "10px",
                 }}
               >
-                <DashboardOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Dashboard
+               <img src={dash} alt="" style={{ width: '20px', height: '20px' ,marginRight:'4%'}} /> Dashboard
               </li>
               <li
                 style={{
