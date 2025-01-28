@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addProject } from '../../../Redux/Slices/Generator/portfolioSlice';
 import states from '../../../Data/States';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { fetchState } from '../../../Redux/Slices/Consumer/stateSlice';
 
 const AddPortfolioModal = ({ visible, onClose, user }) => {
   const [form] = Form.useForm();
@@ -12,6 +13,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
   const dispatch = useDispatch();
   const { status, error } = useSelector((state) => state.portfolio);
   const [loading, setLoading] = useState(false);
+   const [isState,setIsState]=useState([]);
 
   useEffect(() => {
     if (status === 'failed' && error) {
@@ -42,6 +44,20 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
       console.log('Validate Failed:', info);
     });
   };
+
+
+  useEffect(() => {
+    dispatch(fetchState())
+      .then(response => {
+        // console.log(response.payload);
+        
+        setIsState(response.payload);
+        //console.log(isState);
+      })
+      .catch(error => {
+        console.error("Error fetching states:", error);
+      });
+  }, [dispatch]);
 
   const disablePastDates = (current) => {
     return current && current < dayjs().endOf('day');
@@ -98,7 +114,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
               name="state"
               rules={[{ required: true, message: 'Please select state!' }]} >
               <Select placeholder="Select State">
-                {states.map((state) => (
+                {isState.map((state) => (
                   <Select.Option key={state} value={state}>
                     {state}
                   </Select.Option>

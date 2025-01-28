@@ -6,25 +6,20 @@ import {
   DashboardOutlined,
   AppstoreAddOutlined,
   SolutionOutlined,
-  MessageOutlined,
-  FormOutlined,
-  TableOutlined,
-  AreaChartOutlined,
-  WalletOutlined,
+ 
   TeamOutlined,
-  ControlOutlined,
   FileTextOutlined,
-  UserOutlined,
-  NotificationOutlined,
+ 
 } from '@ant-design/icons';
-import dash from '../../assets/dashboard.jpeg';
-import transaction from '../../assets/transaction.jpeg';
-import subscription from '../../assets/subscription.jpeg';
-import consumption from '../../assets/consumption-unit.jpeg';
-import invoice from '../../assets/invoice.jpeg';
-import profile from '../../assets/profile1.jpeg';
+import dash from '../../assets/dashboard.png';
+import transaction from '../../assets/transaction.png';
+import subscription from '../../assets/subscription.png';
+import consumption from '../../assets/consumption.png';
+import invoice from '../../assets/invoice.png';
+import profile from '../../assets/profile.png';
 import chat from '../../assets/chat.png';
 import notification from '../../assets/notification.png';
+import offerSend from '../../assets/offerSend.png';
 
 
 
@@ -35,7 +30,7 @@ const consumerMenuItems = [
   { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
   { label: 'Consumption Units', key: '/consumer/requirement',icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
   { label: 'Transaction Window', key: '/consumer/transaction-page',  icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }}/>},
-  { label: 'Offer Sent', key: '/consumer/requested-ipp', icon: <AppstoreAddOutlined /> },
+  { label: 'Offer Sent', key: '/consumer/requested-ipp', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }}/> },
   { label: 'Offer Received', key: '/consumer/offer-recieved-from-ipp', icon: <AppstoreAddOutlined /> },
   { label: 'Subscription Plan', key: '/consumer/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }}/> },
   { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }}/> },

@@ -12,8 +12,8 @@ import {
   MessageOutlined,
 } from "@ant-design/icons";
 import "./HeaderComponent.css"; // Add custom styles for header component
-import chat from "../../assets/need-assistance.jpeg";
-import userImage from "../../assets/profile1.jpeg";
+import chat from "../../assets/need.png";
+import userImage from "../../assets/profile.png";
 const { Header } = Layout;
 
 const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
@@ -238,13 +238,14 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       top: 18,
       marginRight: "50px",
       zIndex: 1001,
-      backgroundColor: "white",
+       backgroundColor: "white",
       cursor: "pointer",
       height: "30px",
+      padding:'5px',
       width: "30px",
       borderRadius: "50%", // Ensures a circular shape
       objectFit: "cover", // Scales image to fill the circle properly
-      border: "1px solid green",
+       border: "1px solid green",
     }}
     onClick={handleProfileClick}
   />
@@ -262,13 +263,13 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                 top: 18,
                 marginRight: "20px",
                 zIndex: 1001,
-                backgroundColor: "white",
+                 backgroundColor: "white",
                 cursor: "pointer",
                 height: "30px",
                 width: "30px",
-                // padding: '5px',
+                 padding: '5px',
                 borderRadius: "50%",
-                border: "1px solid green",
+                 border: "1px solid green",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
