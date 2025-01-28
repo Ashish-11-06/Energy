@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FetchAnnualSaving } from "../../Redux/Slices/Consumer/AnnualSavingSlice";
-import { fetchReport } from "../../Redux/Slices/Consumer/downloadReportSlice";
 import { FileTextOutlined } from "@ant-design/icons";
 import chat from '../../assets/chat.png';
 import { generatePDF, createPdfContent } from './utils'; // Import from utils.js
@@ -19,6 +18,8 @@ const AnnualSvg = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const { requirementId } = location.state || {};
+
+  // console.log(requirementId);
 
   const User = JSON.parse(localStorage.getItem('user'));
   const userId = User.id;
@@ -46,16 +47,14 @@ const AnnualSvg = () => {
   }, [dispatch, requirementId]);
 
   const handleContinue = () => {
+    console.log('akjdkfjlajlfkjal');
     navigate("/consumer/energy-consumption-table", { state: { requirementId, reReplacement: annualSavingResponse?.re_replacement } });
   };
 
   return (
     <Spin spinning={loading} tip="Loading...">
-    <main style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", flexDirection: "column", height: "90vh", position: "relative",
-  //    background: `radial-gradient(circle, #669800 20%, transparent 20%)`,
-  // backgroundSize: '10px 10px',
-  }}>
-      <div style={{ backgroundColor: "#F5F6FB", padding: "20px", border: "2px solid #6698005c", borderRadius: "5px", position: "relative", zIndex: 1, boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", width: "90%" }}>
+    <main style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", flexDirection: "column", height: "90vh", position: "relative", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
+      <div style={{ backgroundColor: "#F5F6FB", padding: "20px", border: "2px solid #6698005c", borderRadius: "5px", position: "relative"}}>
         {error ? (
           <div style={{ color: "red", fontSize: "16px" }}>Error: {error}</div>
         ) : (
@@ -104,24 +103,28 @@ const AnnualSvg = () => {
           </div>
         )}
       </div>
+  <div>
+ {/* Continue Button */}
+ <Tooltip title="To further explore, subscribe to our plan">
+  <Button
+    type="primary"
+    style={{
+      marginTop: "20px",
+      backgroundColor: "#669800",
+      borderColor: "#669800",
+      fontSize: "20px",
+      padding: "0 40px",
+      zIndex: 1, // Ensure the button is above other elements
+      position: 'relative', // Ensure positioning is correct
+    }}
+    onClick={handleContinue}
+  >
+    Continue
+  </Button>
+</Tooltip>
   
-      {/* Continue Button */}
-      <Tooltip title="To further explore, subscribe to our plan">
-        <Button
-          type="primary"
-          style={{
-            marginTop: "20px",
-            backgroundColor: "#669800",
-            borderColor: "#669800",
-            fontSize: "20px",
-            padding: "0 40px"
-          }}
-          onClick={handleContinue}
-        >
-          Continue
-        </Button>
-      </Tooltip>
-  
+  </div>
+     
       {/* Background Structure */}
       <div style={{
         position: "absolute",

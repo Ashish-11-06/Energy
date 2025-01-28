@@ -53,7 +53,12 @@ const MatchingIPP = () => {
   };
 
   const columns = [
-
+    {
+      title: 'Sr. No',
+      dataIndex: 'srNo', // or any unique key you prefer for the row
+      render: (text, record, index) => index + 1, // This will display the serial number
+      
+  },
     {
       title: "IPP ID",
       dataIndex: "user__username",

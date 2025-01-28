@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import IPPModal from "../Consumer/Modal/IPPModal";
 import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
 import { fetchOptimizedCombinationsXHR } from "../../Utils/xhrUtils";
-// import "./CombinationPattern.css"; // Import the custom CSS file
+import "./CombinationPattern.css"; // Import the custom CSS file
 
 const { Title, Text } = Typography;
 
@@ -426,7 +426,7 @@ const CombinationPattern = () => {
         type: 'bar',
         label: "Consumption (MWh)",
         data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
-        backgroundColor: "#4CAF50",
+        backgroundColor: "#669800",
         barThickness: 10, // Set bar thickness
       },
       {
@@ -514,7 +514,7 @@ const CombinationPattern = () => {
 
           <div style={{ marginBottom: "20px" }}>
             <Card>
-              <Text>RE Replacement Value: {sliderValue}%</Text> {/* Display slider value */}
+              {/* <Text>RE Replacement Value: {sliderValue}%</Text> Display slider value */}
               <br />
               <p>( You can change your RE Replacement from below bar. )</p>
               <span>

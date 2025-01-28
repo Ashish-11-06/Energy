@@ -669,28 +669,42 @@ const EnergyConsumptionTable = () => {
             style={{ position: "absolute", marginLeft: "95%", right: 30 }}
           />
         </Tooltip> */}
-        <Title level={3} style={{ textAlign: "center", marginTop: "10px" }}>
-          Energy Consumption Data (12 Months)
-        </Title>
+        <span>
+  <Row justify="center" align="middle" style={{ width: '100%' }}>
+    <Col xs={24} sm={12} md={12} style={{ display: 'flex', justifyContent: 'center' }}>
+      <h2 style={{ textAlign: "center", marginTop: "10px", transform: 'translateX(120px)' }}>
+        Energy Consumption Data (12 Months)
+      </h2>
+    </Col>
+    <Col xs={24} sm={12} md={12} style={{ display: 'flex', justifyContent: 'center' }}>
+      {generateYears() && (
+        <Select
+          style={{
+            width: 150,
+            border: "1px solid #669800",
+            borderRadius: "5px",
+            transform: 'translateX(-20px)',
+          }}
+          placeholder="Select Year"
+          onChange={handleYearChange}
+        >
+          {generateYears().map((year) => (
+            <Select.Option key={year} value={year}>
+              {year}
+            </Select.Option>
+          ))}
+        </Select>
+      )}
+    </Col>
+  </Row>
+</span>
+        
+       
         <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
   <p style={{ margin: 0 }}>
-    Provide / Upload / Amend your energy consumption data for the last 12 months.
+   {`(`} Provide / Upload / Amend your energy consumption data for the last 12 months. {`)`}
   </p>
-  <p style={{ margin: 0 }}>
-    {generateYears() && (
-      <Select
-        style={{ width: 120 }}
-        placeholder="Select Year"
-        onChange={handleYearChange}
-      >
-        {generateYears().map((year) => (
-          <Select.Option key={year} value={year}>
-            {year}
-          </Select.Option>
-        ))}
-      </Select>
-    )}
-  </p>
+  
 </span>
 
         {/* <div style={{ display: "flex", alignItems: "center", gap: "15px" }}> */}

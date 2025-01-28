@@ -1,0 +1,8 @@
+:where(.css-dev-only-do-not-override-oqfneu).ant-slider-tooltip .ant-tooltip-inner {
+    min-width: unset;
+    background: #669800;
+
+}
+:where(.css-dev-only-do-not-override-oqfneu).ant-tooltip .ant-tooltip-arrow:before {
+    background: #669800;
+}

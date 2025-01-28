@@ -427,7 +427,7 @@ const CombinationPattern = () => {
         type: 'bar',
         label: "Consumption (MWh)",
         data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
-        backgroundColor: "#4CAF50",
+        backgroundColor: "#669800",
         barThickness: 10, // Set bar thickness
       },
       {
@@ -515,7 +515,7 @@ const CombinationPattern = () => {
 
           <div style={{ marginBottom: "20px" }}>
             <Card>
-             <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>( Scroll the below bar for different RE combination  )</p></span> {/* Display slider value */}
+             {/* <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>( Scroll the below bar for different RE combination  )</p></span> Display slider value */}
               <span>
                 <Slider
                   min={0}

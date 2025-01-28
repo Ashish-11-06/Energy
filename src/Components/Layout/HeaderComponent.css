@@ -41,7 +41,8 @@
   left: 0;
   height: 100%;
   width: var(--progress-width, 0); /* Use CSS variable for dynamic width */
-  background-color: #52c41a;
+  background-color: #669800
+  ;
   transition: width 0.5s ease; /* Smooth transition effect */
 }
 
@@ -84,8 +85,10 @@
 
 /* Completed step styling */
 .icon-circle.completed {
-  border-color: #52c41a;
-  color: #52c41a;
+  border-color: #669800
+  ;
+  color: #669800
+  ;
 }
 
 .step-line {
@@ -96,7 +99,8 @@
 }
 
 .step-line.completed {
-  background-color: #52c41a;
+  background-color: #669800
+  ;
 }
 
 .horizontal-line.completed::before {
