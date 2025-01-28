@@ -377,12 +377,7 @@ const CombinationPattern = () => {
       key: "totalCost",
       // width: 150,
     },
-    {
-      title: "OA Cost (INR/KWh)",
-      dataIndex: "OACost",
-      key: "OACost",
-      // width: 150,
-    },
+   
     {
       title: "COD",
       dataIndex: "cod",
@@ -396,6 +391,7 @@ const CombinationPattern = () => {
       key: "status",
       // width: 150,
       render: (text, record) => (
+       
         text === "Already Sent" ? (
           "Already Sent"
         ) : (
@@ -636,4 +632,3 @@ const CombinationPattern = () => {
 };
 
 export default CombinationPattern;
-

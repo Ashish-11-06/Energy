@@ -103,8 +103,11 @@ const CombinationPattern = () => {
   useEffect(() => {
     const fetchPatterns = async () => {
       try {
+
         if (!consumptionPatterns.length && consumptionPatternStatus === "idle" || consumptionPatternStatus === "failed") {
-          await dispatch(fetchConsumptionPattern(selectedDemandId));
+          const response =await dispatch(fetchConsumptionPattern(selectedDemandId));
+          console.log(response);
+          
         }
       } catch (error) {
         message.error("Failed to fetch consumption patterns.");
@@ -365,17 +368,18 @@ const CombinationPattern = () => {
       // width: 150,
     },
     {
-      title: "Total Cost (INR/KWh)",
-      dataIndex: "totalCost",
-      key: "totalCost",
-      // width: 150,
-    },
-    {
       title: "OA Cost (INR/KWh)",
       dataIndex: "OACost",
       key: "OACost",
       // width: 150,
     },
+    {
+      title: "Total Cost (INR/KWh)",
+      dataIndex: "totalCost",
+      key: "totalCost",
+      // width: 150,
+    },
+  
     {
       title: "COD",
       dataIndex: "cod",

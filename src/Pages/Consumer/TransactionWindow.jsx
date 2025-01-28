@@ -20,6 +20,7 @@ import {
 } from '../../Redux/api/webSocketService.js';
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import time from '../../assets/time.png'
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
@@ -178,7 +179,11 @@ const TransactionWindow = () => {
               <Col span={8}><strong>Payment Security Type:</strong> {termSheetDetail.paymentType}</Col>
             </Row>
             <Row justify="center" style={{ marginTop: "24px", marginLeft:'80%'}}>
-              <Countdown title="Time Remaining" value={deadline} />
+            <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+  <img src={time} alt="" style={{ height: '30px', width: '30px' }} />
+  <Countdown title="Time Remaining" value={deadline} />
+</span>
+
             </Row>
             <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
             {sortedIppData.map((item) => (

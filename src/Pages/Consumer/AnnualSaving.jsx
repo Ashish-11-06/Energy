@@ -15,7 +15,7 @@ import {
   MessageOutlined,
   FileTextOutlined
 } from "@ant-design/icons";
-import chat from '../../assets/chat.png';
+import chat from '../../assets/need-assistance.jpeg';
 const AnnualSvg = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const [annualSavingResponse, setAnnualSavingResponse] = useState(null); // State for annual saving response
@@ -236,7 +236,7 @@ const AnnualSvg = () => {
   //console.log('RE replacement', reReplacement);
 
   const handleContinue = () => {
-    navigate("/consumer/energy-consumption-table", {
+    navigate("/consumer/subscription-plan", {
       state: { requirementId, reReplacement },
     });
   };
@@ -323,7 +323,7 @@ const AnnualSvg = () => {
                     // icon={<MessageOutlined/>}
                     
                   >
-                    <img src={chat} alt="" style={{width:'15px',height:'15px'}}/>
+                    <img src={chat} alt="" style={{width:'27px',height:'27px'}}/>
                     Need Assistance ?
                   </Button>
                   {/* subscription journey is remaining

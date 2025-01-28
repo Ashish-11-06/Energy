@@ -59,7 +59,7 @@ const MatchingConsumerPage = () => {
 
     if (searchText) {
       filtered = filtered.filter(consumer =>
-         
+        consumer.state.toLowerCase().includes(searchText.toLowerCase()) ||
         consumer.industry.toLowerCase().includes(searchText.toLowerCase())
       );
     }
@@ -134,7 +134,9 @@ const MatchingConsumerPage = () => {
   const handleNextClick = () => {
     if (selectedConsumer) {
       // Navigate to the next page (e.g., /next-page)
-      navigate('/generator/update-profile-details', { state: { selectedConsumer } }); // Pass selected consumer as state
+      console.log(selectedConsumer);
+      
+      navigate('/generator/subscription-plan', { state: { selectedConsumer } }); // Pass selected consumer as state
     } else {
       message.error('Please select a consumer before proceeding.');
     }
@@ -145,7 +147,7 @@ const MatchingConsumerPage = () => {
       <h2>Potential Consumer</h2>
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
         <Search
-          placeholder="Search by Industry"
+          placeholder="Search "
           onSearch={handleSearch}
           onChange={(e) => handleSearch(e.target.value)}
           style={{ width: 200 }}
