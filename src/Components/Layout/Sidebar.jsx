@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Menu, Button, Drawer, message } from 'antd';
+import { Layout, Menu, Button, Drawer } from 'antd';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import {
   DashboardOutlined,
   AppstoreAddOutlined,
   SolutionOutlined,
- 
   TeamOutlined,
   FileTextOutlined,
- 
 } from '@ant-design/icons';
 import dash from '../../assets/dashboard.png';
 import transaction from '../../assets/transaction.png';
@@ -21,67 +19,44 @@ import chat from '../../assets/chat.png';
 import notification from '../../assets/notification.png';
 import offerSend from '../../assets/offerSend.png';
 
-
-
 const { Sider } = Layout;
-
-// Define menu items for consumer and generator
-const consumerMenuItems = [
-  { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
-  { label: 'Consumption Units', key: '/consumer/requirement',icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
-  { label: 'Transaction Window', key: '/consumer/transaction-page',  icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }}/>},
-  { label: 'Offer Sent', key: '/consumer/requested-ipp', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }}/> },
-  { label: 'Offer Received', key: '/consumer/offer-recieved-from-ipp', icon: <AppstoreAddOutlined /> },
-  { label: 'Subscription Plan', key: '/consumer/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }}/> },
-  { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }}/> },
-  { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }}/>},
-];
-
-const generatorMenuItems = [
-  { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} />},
-  { label: 'Portfolio', key: '/generator/portfolio', icon: <SolutionOutlined /> },
-  { label: 'Transaction Window', key: '/generator/transaction', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }}/> },
-  { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
-  { label: 'proposed offers', key: '/generator/requested-ipp-gen', icon: <AppstoreAddOutlined /> },
-  { label: 'consumer requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
-  // { label: 'Energy Optimization', key: '/generator/energy-optimization', icon: <ControlOutlined /> },
-  { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
-  { label: 'Subscription Plan', key: '/generator/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }}/> },
-  { label: 'Chatbot', key: '/generator/chat-page', icon: <img src={chat} alt="" style={{ width: '20px', height: '20px' }}/> },
-  { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }}/> },
-];
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [selectedKey, setSelectedKey] = useState(location.pathname);
 
-  const [showNotification, setShowNotification] = useState(false);
+  const consumerMenuItems = [
+    { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Transaction Window', key: '/consumer/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Offer Sent', key: '/consumer/requested-ipp', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Offer Received', key: '/consumer/offer-recieved-from-ipp', icon: <AppstoreAddOutlined /> },
+    { label: 'Subscription Plan', key: '/consumer/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
+  ];
+
+  const generatorMenuItems = [
+    { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Portfolio', key: '/generator/portfolio', icon: <SolutionOutlined /> },
+    { label: 'Transaction Window', key: '/generator/transaction', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
+    { label: 'Proposed Offers', key: '/generator/requested-ipp-gen', icon: <AppstoreAddOutlined /> },
+    { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
+    { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
+    { label: 'Subscription Plan', key: '/generator/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Chatbot', key: '/generator/chat-page', icon: <img src={chat} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
+  ];
+
   const menuType = location.pathname.startsWith('/consumer') ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
 
-  // Show notifications dynamically between 2 PM and 3 PM IST
   useEffect(() => {
-    const now = new Date();
-    const options = { timeZone: 'Asia/Kolkata' };
-    const istTime = now.toLocaleString('en-US', options);
-    const istDate = new Date(istTime);
-    const hours = istDate.getHours();
-
-    if (hours === 12) {
-      setShowNotification(true);
-    } else {
-      setShowNotification(false);
-    }
-  }, [menuType]);
-
-  // Add notifications dynamically if required
-  const menuWithNotification = showNotification
-    ? [
-        ...menuItems.slice(0, 2),
-        { label: 'Notification', key: menuType === 'consumer' ? '/consumer/notification' : '/generator/notificationgen',icon: <img src={notification} alt="" style={{ width: '20px', height: '20px' }}/> },
-        ...menuItems.slice(2),
-      ]
-    : menuItems;
+    // Update selectedKey whenever the location changes
+    setSelectedKey(location.pathname);
+  }, [location.pathname]);
 
   const [isDrawerVisible, setDrawerVisible] = useState(false);
 
@@ -111,7 +86,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
             zIndex: 100,
             overflowY: 'auto',
           }}
-          trigger={null} // Remove the default trigger
+          trigger={null}
         >
           <div
             className="logo"
@@ -126,8 +101,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           >
             Menu
           </div>
-          <Menu mode="inline">
-            {menuWithNotification.map((item) => (
+          <Menu mode="inline" selectedKeys={[selectedKey]}>
+            {menuItems.map((item) => (
               <Menu.Item key={item.key} icon={item.icon}>
                 <Link to={item.key}>{item.label}</Link>
               </Menu.Item>
@@ -158,8 +133,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               backgroundColor: '#f5f6fb',
             }}
           >
-            <Menu mode="inline">
-              {menuWithNotification.map((item) => (
+            <Menu mode="inline" selectedKeys={[selectedKey]}>
+              {menuItems.map((item) => (
                 <Menu.Item
                   key={item.key}
                   icon={item.icon}

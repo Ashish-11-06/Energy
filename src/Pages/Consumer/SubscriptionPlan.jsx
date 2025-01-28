@@ -79,7 +79,7 @@ const SubscriptionPlans = () => {
       company_name: companyName,
       company_address: companyAddress,
       gst_number: gstinNumber,
-      subscription: 3,
+      subscription: selectedPlan, // Use selected plan dynamically
       due_date: "2025-01-25",
     };
   
@@ -138,6 +138,10 @@ const SubscriptionPlans = () => {
             name="gstinNumber"
             rules={[
               { required: true, message: "Please provide your GSTIN number" },
+              {
+                pattern: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                message: "Please provide a valid GSTIN number",
+              },
             ]}
           >
             <Input
@@ -207,11 +211,11 @@ const SubscriptionPlans = () => {
         Choose Your Annual Subscription Plan
       </Title>
       <Row gutter={[16, 16]} justify="center">
-        <Col xs={24} sm={8} md={8} style={{ height: "800px" }}>
+        <Col xs={24} sm={8} md={8} >
           <Card
             hoverable
             className={selectedPlan === "basic" ? "selected-plan" : ""}
-            onClick={() => handleSelectPlan("basic")}
+            onClick={() => handleSelectPlan(1)}
             actions={[
               <Button
                 type="primary"
@@ -292,7 +296,7 @@ const SubscriptionPlans = () => {
           <Card
             hoverable
             className={selectedPlan === "basic" ? "selected-plan" : ""}
-            onClick={() => handleSelectPlan("basic")}
+            onClick={() => handleSelectPlan(2)}
             actions={[
               <Button
                 type="primary"
@@ -370,7 +374,7 @@ const SubscriptionPlans = () => {
           <Card
             hoverable
             className={selectedPlan === "basic" ? "selected-plan" : ""}
-            onClick={() => handleSelectPlan("basic")}
+            onClick={() => handleSelectPlan(3)}
             actions={[
               <Button
                 type="primary"
