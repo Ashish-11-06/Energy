@@ -72,7 +72,6 @@ const EnergyConsumptionTable = () => {
   const showInfoModal = () => {
     setIsInfoModalVisible(true);
   };
-
   const handleDownloadTemplate = () => {
     // Logic to download the CSV template
     const link = document.createElement("a");
@@ -661,14 +660,14 @@ const EnergyConsumptionTable = () => {
     <div className="energy-table-container" style={{ padding: "20px" }}>
       <Card style={{ maxWidth: "100%", margin: "0 auto" }}>
         {/*<p>Please fill the details for making your energy transition plan.</p> */}
-        {/* <Tooltip title="Help">
+        <Tooltip title="Help">
           <Button
             shape="circle"
             icon={<QuestionCircleOutlined />}
-            onClick={showInfoModal}
+            onClick={showInfoModal}   
             style={{ position: "absolute", marginLeft: "95%", right: 30 }}
           />
-        </Tooltip> */}
+        </Tooltip>
         <span>
   <Row justify="center" align="middle" style={{ width: '100%' }}>
     <Col xs={24} sm={12} md={12} style={{ display: 'flex', justifyContent: 'center' }}>
@@ -905,6 +904,15 @@ const EnergyConsumptionTable = () => {
         <p>Hi</p>
 
         <p>Please follow these steps to proceed:</p>
+        <ol>
+       <li> <strong>Add Details:</strong> Click the "Add Details" button to open a table where you can enter the data month by month.</li>
+
+<li><strong>Upload CSV File:</strong> Download the CSV template, fill it with the required information, and upload the completed file in the specified format.</li>
+
+<li><strong>Upload Bill:</strong> Upload monthly bills for all 12 months.</li>
+
+<li><strong>Upload SCADA File:</strong> For more accurate data, you can upload a SCADA file with 15-minute interval dumps.</li>
+</ol>
       </Modal>
     </div>
   );

@@ -31,7 +31,7 @@ const UpdateProfileDetails = () => {
   const selectedDemandId = location.state?.selectedConsumer;
 
   useEffect(() => {
-    console.log('Selected demand:', selectedDemandId);
+    // console.log('Selected demand:', selectedDemandId);
   }, [selectedDemandId]);
   
   useEffect(() => {
@@ -47,32 +47,36 @@ const UpdateProfileDetails = () => {
         ...(projects.ESS || []).map(project => ({ ...project, type: 'ESS' }))
       ];
       setStructuredProjects(flatProjects);  // Update local state with flattened data
+     
+      
     }
   }, [projects.Solar, projects.Wind, projects.ESS]);
 
-
-  useEffect(() => {
-    const template = async () => {
-      const templateData = {
-        user_id: user.id,
-        solar_template_downloaded:false,
-        wind_template_downloaded:true
-      };
+  // console.log(Structuredprojects);
   
-      try {
-        const response = await dispatch(templateDownload(templateData));
-        console.log("Response:", response);
-        message.success("Template downloaded successfully!");
-      } catch (error) {
-        console.error("Error:", error);
-        message.error("Failed to download the template.");
-      }
-    };
-  
-    template();
-  }, [dispatch,user.id]);
 
+  // useEffect(() => {
+  //   if (!user?.id) return; // Ensure user.id is available
 
+  //   const downloadTemplate = async () => {
+  //     const templateData = {
+  //       user_id: user.id,
+  //       solar_template_downloaded: true,  // Corrected boolean values
+  //       wind_template_downloaded: true,   // Corrected boolean values
+  //     };
+
+  //     try {
+  //       const response = await dispatch(templateDownload(templateData)).unwrap();
+  //       console.log("Response:", response);
+  //       message.success("Template downloaded successfully!");
+  //     } catch (error) {
+  //       console.error("Error:", error);
+  //       message.error("Failed to download the template.");
+  //     }
+  //   };
+
+  //   downloadTemplate();
+  // }, [dispatch, user?.id]);
   
   // Table columns
   const columns = [

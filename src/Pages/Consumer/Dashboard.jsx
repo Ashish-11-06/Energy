@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Card, Statistic } from "antd";
-import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined, DatabaseOutlined, ProfileOutlined, ThunderboltOutlined,SendOutlined , CrownOutlined } from "@ant-design/icons";
+import {  DatabaseOutlined, ProfileOutlined } from "@ant-design/icons";
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import DashboardApi from "../../Redux/api/dashboard";
+import consumption from '../../assets/cons-unit.png';
+import offerSend from '../../assets/offerSend.png';
+import state from '../../assets/state.jpg';
+import totalIPP from '../../assets/totalIPP.png';
 
 const Dashboard = () => {
   const [consumerDetails, setConsumerDetails] = useState({});
@@ -84,16 +88,17 @@ const Dashboard = () => {
               <Col span={8}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
                   <Statistic title="Total Demands" value={consumerDetails.totalDemands} prefix={<ProfileOutlined />} valueStyle={{ color: "#3f8600" }} />
+             
                 </Card.Grid>
               </Col>
               <Col span={8}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
-                  <Statistic title="Total Consumption Units" value={consumerDetails.totalConsumptionUnits} prefix={<ThunderboltOutlined />} valueStyle={{ color: "#cf1322" }} />
+                  <Statistic title="Total Consumption Units" value={consumerDetails.totalConsumptionUnits} prefix={<img src={consumption} alt="" style={{ width: '20px', height: '20px' }}/>} valueStyle={{ color: "#cf1322" }} />
                 </Card.Grid>
               </Col>
               <Col span={8}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
-                  <Statistic title="Total Offer Sent" value={consumerDetails.offersSent} prefix={<SendOutlined  />} valueStyle={{ color: "#3f8600" }} />
+                  <Statistic title="Total Offer Sent" value={consumerDetails.offersSent} prefix={<img src={offerSend} alt="" style={{ width: '20px', height: '20px' }}/>} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
               </Col>
               {/* <Col span={8}>
@@ -115,7 +120,7 @@ const Dashboard = () => {
             <Row gutter={[16, 16]}>
               <Col span={8}>
                 <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center" }}>
-                  <Statistic title="Total IPPs" value={platformDetails.totalIPPs} prefix={<UserOutlined />} valueStyle={{ color: "#3f8600" }} />
+                  <Statistic title="Total IPPs" value={platformDetails.totalIPPs} prefix={<img src={totalIPP} alt="" style={{ width: '20px', height: '20px' }}/>} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
               </Col>
               <Col span={8}>
@@ -125,7 +130,7 @@ const Dashboard = () => {
               </Col>
               <Col span={8}>
                 <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center"}}>
-                  <Statistic title="Number of States Covered" value={platformDetails.statesCovered} valueStyle={{ color: "#3f8600" }} />
+                  <Statistic title="Number of States Covered" value={platformDetails.statesCovered} valueStyle={{ color: "#3f8600" }}  prefix={<img src={state} alt="" style={{ width: '20px', height: '20px' }}/>} />
                 </Card.Grid>
               </Col>
             </Row>

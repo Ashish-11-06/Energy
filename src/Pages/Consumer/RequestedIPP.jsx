@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { requestedIPPs } from '../../Redux/Slices/Consumer/RequestedIPPSlice';
 import { addStatus } from '../../Redux/Slices/Generator/TermsAndConditionsSlice';
 import TermSheet from '../../Components/Modals/TermSheet';
+import ProgressBar from '../ProgressBar';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -76,6 +77,15 @@ const RequestedIPP = () => {
     }
   };
 
+  const [progress, setProgress] = useState(20);
+  const breakpoints = [
+    { value: 20, title: "Step 1" },
+    { value: 40, title: "Step 2" },
+    { value: 60, title: "Step 3" },
+    { value: 80, title: "Step 4" },
+    { value: 100, title: "Complete" },
+  ];
+
   const filteredData = ippData.filter((record) => {
     const statusMatch = statusFilter ? record.consumer_status === statusFilter : true;
     const searchMatch =
@@ -142,6 +152,11 @@ const RequestedIPP = () => {
 
   return (
     <div style={{ padding: '20px' }}>
+          <div>
+      <ProgressBar progress={progress} breakpoints={breakpoints} />
+
+      <button onClick={() => setProgress(progress + 20)}>Increase Progress</button>
+    </div>
       <Col span={24} style={{ textAlign: 'center' }}>
         <Title level={3} style={{ color: '#001529' }}>
           Your Requested IPPs

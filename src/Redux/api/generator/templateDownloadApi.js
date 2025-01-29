@@ -1,12 +1,9 @@
 import axiosInstance from "../axiosInstance";
 
 const templateDownloadApi = {
-  // Fetch all projects by ID
-  templateDownload: (termsData) => {
-    return axiosInstance.post(`/energy/template-downloaded`, templateData);
+  templateDownload: (templateData) => {
+    return axiosInstance.post("/energy/template-downloaded", templateData); // Corrected variable name
   },
-
-
 };
 
 export default templateDownloadApi;

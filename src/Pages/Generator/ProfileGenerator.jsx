@@ -1,280 +1,105 @@
 import React, { useState } from "react";
-import { Card, Row, Col, Typography, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Card, Row, Col, Typography, Avatar, Button } from "antd";
+import EditProfileModal from "./Modal/EditProfileModal"; // Import the modal component
 
-const { Text } = Typography;
-
-// Mock data for the energy generator profile
-const initialGeneratorData = {
-  companyName: "Energy Solutions Inc.",
-  generatorModel: "G-2000",
-  location: "New York, USA",
-  address: "456 Energy Rd, New York, NY",
-  capacity: "2000 kW",
-  status: "Active",
-};
+const { Title, Text } = Typography;
 
 const ProfileGenerator = () => {
-  const [generatorData] = useState(initialGeneratorData);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem("user")).user);
+
+  const handleEditToggle = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleSave = (values) => {
+    setUserData(values);
+    setIsModalVisible(false);
+    localStorage.setItem("user", JSON.stringify({ user: values }));
+  };
 
   return (
-    <div style={styles.container}>
-      <Card
-        style={styles.card}
-        title="Energy Generator Profile"
-      >
-        <Row
-          justify="center"
-          align="middle"
-          style={styles.row}
-        >
-          <Col span={24} style={styles.col}>
-            <Link to="/generator/profile/user">
-              <Button type="primary" style={styles.button}>
-                User Profile
-              </Button>
-            </Link>
-          </Col>
-          <Col span={24} style={styles.col}>
-            <Link to="/generator/portfolio">
-              <Button type="primary" style={styles.button}>
-                Portfolio
-              </Button>
-            </Link>
-          </Col>
-        </Row>
-      </Card>
-    </div>
+    <Row justify="center" style={{ marginTop: "50px" }}>
+      <Col xs={24} sm={18} md={12} lg={10}>
+        <Card bordered={true} style={{ borderRadius: "8px" }}>
+          <Row justify="center" style={{ marginBottom: "20px" }}>
+            <Avatar size={70} src="/src/assets/profile1.jpeg"  />
+          </Row>
+          <Title level={3} style={{ textAlign: "center", marginBottom: "20px" }}>
+            Profile
+          </Title>
+          <Row gutter={[16, 16]}>
+            <Col span={12}>
+              <Text strong>CIN Number:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData?.cin_number ? userData.cin_number : "NA"}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Company:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.company}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Representative:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.company_representative}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Email:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.email}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Mobile:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.mobile}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>User Category:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>{userData.user_category}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Sunscription plan:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>plan name</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>Plan validity:</Text>
+            </Col>
+            <Col span={12}>
+              <Text>- to -</Text>
+            </Col>
+            
+          </Row>
+          <Row justify="center" style={{ marginTop: "20px" }}>
+            <Button type="primary" onClick={handleEditToggle}>
+              Edit Profile
+            </Button>
+          </Row>
+        </Card>
+
+        {/* Modal for Editing User Details */}
+        <EditProfileModal
+          isVisible={isModalVisible}
+          onCancel={handleCancel}
+          onSave={handleSave}
+          initialValues={userData}
+        />
+      </Col>
+    </Row>
   );
 };
 
-const styles = {
-  container: {
-    padding: "20px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    backgroundColor: "#f5f5f5",
-  },
-  card: {
-    borderRadius: "10px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    width: "400px",
-    padding: "20px",
-  },
-  row: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-  },
-  col: {
-    marginBottom: "10px", // Add space between the buttons
-  },
-  button: {
-    width: "100%",
-    padding: "10px",
-    fontSize: "16px",
-    borderRadius: "5px",
-  },
-};
-
 export default ProfileGenerator;
-
-
-
-
-
-
-// import React, { useState } from "react";
-// import { Card, Row, Col, Typography, Input, Button, Form, Modal, Divider } from "antd";
-// import { EditOutlined } from "@ant-design/icons";
-
-// const { Title, Text } = Typography;
-
-// // Mock data for the energy generator profile
-// const initialGeneratorData = {
-//   companyName: "Energy Solutions Inc.",
-//   generatorModel: "G-2000",
-//   location: "New York, USA",
-//   address: "456 Energy Rd, New York, NY",
-//   capacity: "2000 kW",
-//   status: "Active",
-// };
-
-// const ProfileGenerator = () => {
-//   const [generatorData, setGeneratorData] = useState(initialGeneratorData);
-//   const [isEditing, setIsEditing] = useState(false);
-//   const [isModalVisible, setIsModalVisible] = useState(false);
-//   const [form] = Form.useForm();
-
-//   const handleEditToggle = () => {
-//     setIsEditing((prev) => !prev);
-//     if (isEditing) {
-//       // Reset form fields if canceled
-//       form.resetFields();
-//     }
-//   };
-
-//   const handleSave = (values) => {
-//     setGeneratorData(values);
-//     setIsEditing(false);
-//     setIsModalVisible(false);
-//   };
-
-//   const handleEditModal = () => {
-//     setIsModalVisible(true);
-//   };
-
-//   const handleCancelModal = () => {
-//     setIsModalVisible(false);
-//   };
-
-//   return (
-//     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-//       <Card
-//         style={{ borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}
-//         title="Energy Generator Profile"
-//       >
-//         <Row gutter={[16, 16]}>
-//           <Col span={12}>
-//             <Text strong>Company Name:</Text>
-//             <p>{generatorData.companyName}</p>
-//           </Col>
-//           <Col span={12}>
-//             <Text strong>Generator Model:</Text>
-//             <p>{generatorData.generatorModel}</p>
-//           </Col>
-//         </Row>
-
-//         <Row gutter={[16, 16]}>
-//           <Col span={12}>
-//             <Text strong>Location:</Text>
-//             <p>{generatorData.location}</p>
-//           </Col>
-//           <Col span={12}>
-//             <Text strong>Capacity:</Text>
-//             <p>{generatorData.capacity}</p>
-//           </Col>
-//         </Row>
-
-//         <Row gutter={[16, 16]}>
-//           <Col span={12}>
-//             <Text strong>Status:</Text>
-//             <p>{generatorData.status}</p>
-//           </Col>
-//           <Col span={12}>
-//             <Text strong>Address:</Text>
-//             <p>{generatorData.address}</p>
-//           </Col>
-//         </Row>
-
-//         <Divider />
-
-//         <Row justify="end">
-//           <Button
-           
-//             onClick={handleEditModal}
-//             type="primary"
-//             style={{ marginRight: "10px" }}
-//           >
-//             Edit Profile
-//           </Button>
-//         </Row>
-//       </Card>
-
-//       {/* Modal for editing profile */}
-//       <Modal
-//         title="Edit Generator Profile"
-//         visible={isModalVisible}
-//         onCancel={handleCancelModal}
-//         footer={[
-//           <Button key="cancel" onClick={handleCancelModal}>
-//             Cancel
-//           </Button>,
-//           <Button
-//             key="submit"
-//             type="primary"
-//             onClick={() => form.submit()}
-//           >
-//             Save Changes
-//           </Button>,
-//         ]}
-//         width={600}
-//       >
-//         <Form
-//           form={form}
-//           onFinish={handleSave}
-//           initialValues={generatorData}
-//         >
-//           <Row gutter={[16, 16]}>
-//             <Col span={12}>
-//               <Form.Item
-//                 label="Company Name"
-//                 name="companyName"
-//                 rules={[{ required: true, message: "Please input the company name!" }]}
-//               >
-//                 <Input />
-//               </Form.Item>
-//             </Col>
-//             <Col span={12}>
-//               <Form.Item
-//                 label="Generator Model"
-//                 name="generatorModel"
-//                 rules={[{ required: true, message: "Please input the generator model!" }]}
-//               >
-//                 <Input />
-//               </Form.Item>
-//             </Col>
-//           </Row>
-
-//           <Row gutter={[16, 16]}>
-//             <Col span={12}>
-//               <Form.Item
-//                 label="Location"
-//                 name="location"
-//                 rules={[{ required: true, message: "Please input the location!" }]}
-//               >
-//                 <Input />
-//               </Form.Item>
-//             </Col>
-//             <Col span={12}>
-//               <Form.Item
-//                 label="Capacity"
-//                 name="capacity"
-//                 rules={[{ required: true, message: "Please input the capacity!" }]}
-//               >
-//                 <Input />
-//               </Form.Item>
-//             </Col>
-//           </Row>
-
-//           <Row gutter={[16, 16]}>
-//             <Col span={12}>
-//               <Form.Item
-//                 label="Status"
-//                 name="status"
-//                 rules={[{ required: true, message: "Please input the status!" }]}
-//               >
-//                 <Input />
-//               </Form.Item>
-//             </Col>
-//             <Col span={12}>
-//               <Form.Item
-//                 label="Address"
-//                 name="address"
-//                 rules={[{ required: true, message: "Please input the address!" }]}
-//               >
-//                 <Input />
-//               </Form.Item>
-//             </Col>
-//           </Row>
-//         </Form>
-//       </Modal>
-//     </div>
-//   );
-// };
-
-// export default ProfileGenerator;
