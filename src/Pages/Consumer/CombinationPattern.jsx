@@ -294,7 +294,7 @@ const CombinationPattern = () => {
       width: 10,
     },
     {
-      title: "IPP ID",
+      title: "Combination ID",
       dataIndex: "combination",
       key: "combination",
       width: 120,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Col, Row, Typography, Select, Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
-import { requestedIPPs } from '../../Redux/Slices/Consumer/RequestedIPPSlice';
+import { getOffers } from '../../Redux/Slices/Consumer/offersSlice';
 import { addStatus } from '../../Redux/Slices/Generator/TermsAndConditionsSlice';
 import TermSheet from '../../Components/Modals/TermSheet';
 import ProgressBar from '../ProgressBar';
@@ -24,7 +24,7 @@ const RequestedIPP = () => {
   useEffect(() => {
     const fetchIPPData = async () => {
       try {
-        const response = await dispatch(requestedIPPs(user));
+        const response = await dispatch(getOffers(user));
         if (response?.payload?.length > 0) {
           setIppData(response.payload);
         } else {

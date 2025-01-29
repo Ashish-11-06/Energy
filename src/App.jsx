@@ -32,7 +32,7 @@ import PortfolioGen from './Pages/Generator/PortfolioGen';
 import Offer from './Pages/Consumer/Offer';
 import RequestedIPP from './Pages/Consumer/RequestedIPP';
 import RequestedIPPOfGen from './Pages/Generator/RequestedIPPOfGen';
-import OfferRecieved from './Pages/Consumer/OfferRecievedFromIPP';
+import OfferRecieved from './Pages/Consumer/Offers';
 import OfferRecievedFromCons from './Pages/Generator/OfferRecievedFromCons';
 //import NavbarWithProgressBar from './Pages/Consumer/NavbarWithProgressBar';
 import Notification from './Pages/Consumer/Notification';
@@ -59,9 +59,11 @@ function App() {
 
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
+       
 
         {/* Routes with shared layout */}
         <Route element={<LayoutComponent />}>
+        <Route path="offers" element={<OfferRecieved />} />
           {/* Consumer Routes */}
           <Route
             path="/consumer/*"
@@ -82,7 +84,7 @@ function App() {
                   <Route path="profile" element={<ProfileConsumer />} />
                   <Route path="offer" element={<Offer />} />
                   <Route path="requested-ipp" element={<RequestedIPP />} />
-                  <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
+                 
                   <Route path="notification" element={<Notification />} />
                   <Route path="transaction-window/:transactionId" element={<TransactionWindow />} />
                   <Route path="transaction-page" element={<TransactionMainPage />} />

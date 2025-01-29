@@ -17,13 +17,14 @@ const TermsAndConditionModal = ({ visible, onCancel }) => {
   return (
     <Modal
       title="Terms and Conditions"
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       footer={[
         <Button key="close" type="primary" onClick={onCancel}>
           Close
         </Button>,
       ]}
+      width={800}
     >
       <div style={{ maxHeight: "400px", overflowY: "auto" }}>
         <h3>Introduction</h3>

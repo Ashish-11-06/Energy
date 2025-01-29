@@ -186,6 +186,10 @@ console.log(response);
             name="gstinNumber"
             rules={[
               { required: true, message: "Please provide your GSTIN number" },
+              {
+                pattern: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                message: "Please provide a valid GSTIN number",
+              },
             ]}
           >
             <Input
