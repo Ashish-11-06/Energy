@@ -32,7 +32,7 @@ import PortfolioGen from './Pages/Generator/PortfolioGen';
 import Offer from './Pages/Consumer/Offer';
 import RequestedIPP from './Pages/Consumer/RequestedIPP';
 import RequestedIPPOfGen from './Pages/Generator/RequestedIPPOfGen';
-import OfferRecieved from './Pages/Consumer/OfferRecievedFromIPP';
+import OfferRecieved from './Pages/Consumer/Offers';
 import OfferRecievedFromCons from './Pages/Generator/OfferRecievedFromCons';
 //import NavbarWithProgressBar from './Pages/Consumer/NavbarWithProgressBar';
 import Notification from './Pages/Consumer/Notification';

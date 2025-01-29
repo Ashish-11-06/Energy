@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Col, Row, Typography, Select, Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
-import { requestedIPPs } from '../../Redux/Slices/Consumer/RequestedIPPSlice';
+import { getOffers } from '../../Redux/Slices/Consumer/offersSlice';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -24,7 +24,7 @@ const OfferRecievedFromCons = () => {
             id: user.id,
             user_category: "Consumer"
         }
-        const response = await dispatch(requestedIPPs(data));
+        const response = await dispatch(getOffers(data));
         if (response?.payload?.length > 0) {
           setIppData(response.payload);
         } else {
