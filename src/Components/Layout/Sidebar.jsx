@@ -26,12 +26,16 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState(location.pathname);
 
+  const user = JSON.parse(localStorage.getItem('user')).user;
+  const user_category = user.user_category;
+
+
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Transaction Window', key: '/consumer/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Offer Sent', key: '/consumer/requested-ipp', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Offer Received', key: '/consumer/offer-recieved-from-ipp', icon: <AppstoreAddOutlined /> },
+    { label: 'Offer Received', key: '/offers', icon: <AppstoreAddOutlined /> },
     { label: 'Subscription Plan', key: '/consumer/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
@@ -50,7 +54,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
-  const menuType = location.pathname.startsWith('/consumer') ? 'consumer' : 'generator';
+  const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
 
   useEffect(() => {

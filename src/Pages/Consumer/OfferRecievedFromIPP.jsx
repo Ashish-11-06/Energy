@@ -7,7 +7,7 @@ import TermsDetailModal from '../../Components/Modals/termsDetailModal'; // Adju
 const { Title } = Typography;
 const { Option } = Select;
 
-const OfferRecievedFromCons = () => {
+const Offers = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
@@ -182,4 +182,4 @@ const OfferRecievedFromCons = () => {
   );
 };
 
-export default OfferRecievedFromCons;
+export default Offers;
