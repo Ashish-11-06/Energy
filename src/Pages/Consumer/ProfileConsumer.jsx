@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Card, Row, Col, Typography, Avatar, Button } from "antd";
 import EditProfileModal from "./Modal/EditProfileModal"; // Import the modal component
-
+import dayjs from 'dayjs';
 const { Title, Text } = Typography;
 
 const ProfilePage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [userData, setUserData] = useState(JSON.parse(localStorage.getItem("user")).user);
-
+  const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+  const start_date = dayjs(subscriptionPlan.start_date).format('DD/MM/YYYY');  
+  const end_date = dayjs(subscriptionPlan.end_date).format('DD/MM/YYYY');  
   const handleEditToggle = () => {
     setIsModalVisible(true);
   };
@@ -73,13 +75,13 @@ const ProfilePage = () => {
               <Text strong>Sunscription plan:</Text>
             </Col>
             <Col span={12}>
-              <Text>plan name</Text>
+              <Text>EXG {subscriptionPlan.subscription_type} Plan</Text>
             </Col>
             <Col span={12}>
               <Text strong>Plan validity:</Text>
             </Col>
             <Col span={12}>
-              <Text>- to -</Text>
+              <Text>{start_date} <span style={{fontWeight:'bold'}}>To </span>{end_date}</Text>
             </Col>
             
           </Row>

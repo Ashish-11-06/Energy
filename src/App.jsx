@@ -45,6 +45,7 @@ import TransactionMainPageGen from './Pages/Generator/TransactionMainPageGen';
 import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
 import RequirementsPage from './Pages/Consumer/RequirementPage';
 import InvoicePage from './Pages/InvoicePage';
+import ProgressBar from './Pages/ProgressBar';
 
 
 
@@ -88,6 +89,7 @@ function App() {
                   <Route path="transaction-window/:transactionId" element={<TransactionWindow />} />
                   <Route path="transaction-page" element={<TransactionMainPage />} />
                   <Route path="invoice" element={<InvoicePage />} />
+                 
 
 
                 </Routes>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Radio, Button, message, Input, Select, Modal } from 'antd';
+import { Table, Radio, Button, message, Input, Select, Modal,Row,Col } from 'antd';
 import { EyeOutlined } from '@ant-design/icons'; // Import the Eye icon
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector hooks
 import { fetchMatchingConsumersById } from '../../Redux/Slices/Generator/matchingConsumerSlice'; // Import the action to fetch data
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are imported
+import { Typography } from 'antd';
+
 
 const { Search } = Input;
 const { Option } = Select;
@@ -14,6 +16,7 @@ const MatchingConsumerPage = () => {
   const navigate = useNavigate(); // Initialize navigate hook
   
   const user = (JSON.parse(localStorage.getItem('user'))).user;
+  const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
 
   const [selectedConsumer, setSelectedConsumer] = useState(null); // Track the selected consumer
   const [searchText, setSearchText] = useState(''); // For search functionality
@@ -23,6 +26,15 @@ const MatchingConsumerPage = () => {
   
   // Access matching consumers data and status from the Redux store
   const { Matchingconsumers, status, error } = useSelector((state) => state.matchingConsumer);
+
+    const dataSource = [
+      {key:'1',label:<strong>RE Index</strong>, value:modalConsumerDetails?.REindex},
+      { key: '2', label: <strong>Consumer</strong>, value: modalConsumerDetails?.user__username},
+      { key: '3', label: <strong>State</strong>, value: modalConsumerDetails?.state },
+      { key: '4', label: <strong>Demand</strong>, value: modalConsumerDetails?.total_contracted_demand },
+      { key: '5', label: <strong>Industry</strong>, value: modalConsumerDetails?.industry },
+    
+    ];
   
   if (status === 'idle') {
     const userId = user.id; // Replace with actual user ID (you can get it from localStorage or another source)
@@ -135,9 +147,12 @@ const MatchingConsumerPage = () => {
     if (selectedConsumer) {
       // Navigate to the next page (e.g., /next-page)
       console.log(selectedConsumer);
-      
-      navigate('/generator/subscription-plan', { state: { selectedConsumer } }); // Pass selected consumer as state
-    } else {
+      if(subscriptionPlan.status === 'active') {
+        navigate('/generator/update-profile-details', { state: { selectedConsumer } }); // Pass selected consumer as state
+      } else {
+        navigate('/generator/subscription-plan');
+      }
+      } else {
       message.error('Please select a consumer before proceeding.');
     }
   };
@@ -167,6 +182,7 @@ const MatchingConsumerPage = () => {
   columns={columns}
   dataSource={filteredConsumers}
   pagination={false}
+  loading={status === 'loading'}
   bordered
   rowKey="id" // Use a unique field (e.g., consumer.id) for the row key
 />
@@ -174,6 +190,7 @@ const MatchingConsumerPage = () => {
 
 
       {/* Button to show selected consumer */}
+      
       <Button
         type="primary"
         style={{
@@ -194,7 +211,7 @@ const MatchingConsumerPage = () => {
         title="Consumer Details"
         open={isModalVisible}
         onCancel={handleModalCancel}
-        footer={null}
+        footer={null} 
         width={600}
         centered
       >
@@ -209,7 +226,7 @@ const MatchingConsumerPage = () => {
             backgroundColor: '#f9f9f9',
           }}
         >
-          <p style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px' }}>
+          {/* <p style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '10px' }}>
             <strong>RE Index:</strong>
           </p>
           <p style={{ fontSize: '14px', marginBottom: '8px' }}>
@@ -223,7 +240,20 @@ const MatchingConsumerPage = () => {
           </p>
           <p style={{ fontSize: '14px', marginBottom: '8px' }}>
             <strong>Industry:</strong> {modalConsumerDetails?.industry}
-          </p>
+          </p> */}
+
+          <Row justify="center" gutter={[16, 16]}>
+                {dataSource.map(item => (
+                  <React.Fragment key={item.key}>
+                    <Col span={12}>
+                      <p strong>{item.label}</p>
+                    </Col>
+                    <Col span={12}>
+                      <p>: {item.value}</p>
+                    </Col>
+                  </React.Fragment>
+                ))}
+              </Row>
         </div>
       </Modal>
     </div>

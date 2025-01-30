@@ -16,30 +16,36 @@ import {
   ProfileOutlined,
   ThunderboltOutlined
 } from '@ant-design/icons';
+import dash from '../../assets/dashboard.png';
+import transaction from '../../assets/transaction.png';
+import subscription from '../../assets/subscription.png';
+import consumption from '../../assets/consumption.png';
+import invoice from '../../assets/invoice.png';
+import profile from '../../assets/profile.png';
+import chat from '../../assets/chat.png';
+import notification from '../../assets/notification.png';
+import offerSend from '../../assets/offerSend.png';
+
 
 // Define menu items for consumer and generator with icons
 export const consumerMenuItems = [
-  { key: '3', icon: <DashboardOutlined />, label: <Link to="/consumer/dashboard">Dashboard</Link> },
-  { key: '4', icon: <AppstoreAddOutlined />, label: <Link to="/consumer/what-we-offer">What We Offer</Link> },
-  // { key: '5', icon: <SolutionOutlined />, label: <Link to="/consumer/matching-ipp">Matching IPP</Link> },
-  { key: '6', icon: <MessageOutlined />, label: <Link to="/consumer/chat-page">Chat with Expert</Link> },
-  { key: '7', icon: <FormOutlined />, label: <Link to="/consumer/energy-consumption-form">Energy Consumption Form</Link> },
-  { key: '8', icon: <TableOutlined />, label: <Link to="/consumer/energy-consumption-table">Energy Consumption Table</Link> },
-  { key: '9', icon: <AreaChartOutlined />, label: <Link to="/consumer/consumption-pattern">Consumption Pattern</Link> },
-  { key: '10', icon: <WalletOutlined />, label: <Link to="/consumer/annual-saving">Annual Saving</Link> },
-  { key: '11', icon: <FormOutlined />, label: <Link to="/consumer/requirement">Requirenment</Link> },
-  { key: '12', icon: <TeamOutlined />, label: <Link to="/consumer/subscription-plan">Subscription Plan</Link> },
-  { key: '13', icon: <UserOutlined />, label: <Link to="/consumer/profile">Profile</Link> }
+  { key: '3', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} />, label: <Link to="/consumer/dashboard">Dashboard</Link> },
+  { key: '11', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} />, label: <Link to="/consumer/requirement">Consumption Unit</Link> },
+  { key: '11', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }}/> , label: <Link to="/consumer/transaction-page">Transaction Window</Link> },
+  { key: '11', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }}/> , label: <Link to="/consumer/requested-ipp">Offer Send</Link> },
+  { key: '12', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/consumer/subscription-plan">Subscription Plan</Link> },
+  { key: '12', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/consumer/invoice">Invoice</Link> },
+  { key: '13', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/consumer/profile">Profile</Link> }
 ];
 
 export const generatorMenuItems = [
-  { key: '14', icon: <DashboardOutlined />, label: <Link to="/generator/dashboard">Dashboard</Link> },
-  { key: '15', icon: <AppstoreAddOutlined />, label: <Link to="/generator/what-we-offer">What We Offer</Link> },
+  { key: '14', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} />, label: <Link to="/generator/dashboard">Dashboard</Link> },
   { key: '16', icon: <SolutionOutlined />, label: <Link to="/generator/portfolio">Portfolio</Link> },
+  { key: '16', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/portfolio">Transaction Window</Link> },
   { key: '17', icon: <TeamOutlined />, label: <Link to="/generator/matching-consumer">Matching Consumer</Link> },
   { key: '18', icon: <ControlOutlined />, label: <Link to="/generator/energy-optimization">Energy Optimization</Link> },
   { key: '19', icon: <FileTextOutlined />, label: <Link to="/generator/update-profile-details">Update Profile Details</Link> },
-  { key: '20', icon: <WalletOutlined />, label: <Link to="/generator/subscription-plan">Subscription Plan</Link> },
-  { key: '21', icon: <MessageOutlined />, label: <Link to="/generator/chat-page">Chat with Expert</Link> },
-  { key: '22', icon: <ThunderboltOutlined />, label: <Link to="/generator/profile">Profile</Link> }
+  { key: '20', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/subscription-plan">Subscription Plan</Link> },
+  { key: '21', icon: <img src={chat} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/chat-page">Chatbot</Link> },
+  { key: '22', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/profile">Profile</Link> }
 ];

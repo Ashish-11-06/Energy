@@ -72,7 +72,6 @@ const EnergyConsumptionTable = () => {
   const showInfoModal = () => {
     setIsInfoModalVisible(true);
   };
-
   const handleDownloadTemplate = () => {
     // Logic to download the CSV template
     const link = document.createElement("a");
@@ -661,54 +660,76 @@ const EnergyConsumptionTable = () => {
     <div className="energy-table-container" style={{ padding: "20px" }}>
       <Card style={{ maxWidth: "100%", margin: "0 auto" }}>
         {/*<p>Please fill the details for making your energy transition plan.</p> */}
-        {/* <Tooltip title="Help">
+        <Tooltip title="Help">
           <Button
             shape="circle"
             icon={<QuestionCircleOutlined />}
             onClick={showInfoModal}
             style={{ position: "absolute", marginLeft: "95%", right: 30 }}
           />
-        </Tooltip> */}
+        </Tooltip>
         <span>
-  <Row justify="center" align="middle" style={{ width: '100%' }}>
-    <Col xs={24} sm={12} md={12} style={{ display: 'flex', justifyContent: 'center' }}>
-      <h2 style={{ textAlign: "center", marginTop: "10px", transform: 'translateX(120px)' }}>
-        Energy Consumption Data (12 Months)
-      </h2>
-    </Col>
-    <Col xs={24} sm={12} md={12} style={{ display: 'flex', justifyContent: 'center' }}>
-      {generateYears() && (
-        <Select
+          <Row justify="center" align="middle" style={{ width: "100%" }}>
+            <Col
+              xs={24}
+              sm={12}
+              md={12}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              <h2
+                style={{
+                  textAlign: "center",
+                  marginTop: "10px",
+                  transform: "translateX(120px)",
+                }}
+              >
+                Energy Consumption Data (12 Months)
+              </h2>
+            </Col>
+            <Col
+              xs={24}
+              sm={12}
+              md={12}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              {generateYears() && (
+                <Select
+                  style={{
+                    width: 150,
+                    border: "1px solid #669800",
+                    borderRadius: "5px",
+                    transform: "translateX(-20px)",
+                  }}
+                  placeholder="Select Year"
+                  onChange={handleYearChange}
+                >
+                  {generateYears().map((year) => (
+                    <Select.Option key={year} value={year}>
+                      {year}
+                    </Select.Option>
+                  ))}
+                </Select>
+              )}
+            </Col>
+          </Row>
+        </span>
+
+        <span
           style={{
-            width: 150,
-            border: "1px solid #669800",
-            borderRadius: "5px",
-            transform: 'translateX(-20px)',
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
           }}
-          placeholder="Select Year"
-          onChange={handleYearChange}
         >
-          {generateYears().map((year) => (
-            <Select.Option key={year} value={year}>
-              {year}
-            </Select.Option>
-          ))}
-        </Select>
-      )}
-    </Col>
-  </Row>
-</span>
-        
-       
-        <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-  <p style={{ margin: 0 }}>
-   {`(`} Provide / Upload / Amend your energy consumption data for the last 12 months. {`)`}
-  </p>
-  
-</span>
+          <p style={{ margin: 0 }}>
+            {`(`} Provide / Upload / Amend your energy consumption data for the
+            last 12 months. {`)`}
+          </p>
+        </span>
 
         {/* <div style={{ display: "flex", alignItems: "center", gap: "15px" }}> */}
-        <Row style={{marginTop:'3%'}}>
+        <Row style={{ marginTop: "3%" }}>
           <Col span={6}>
             <Tooltip title="Add details manually">
               <Button onClick={handleToggleDetails} icon={<FileAddOutlined />}>
@@ -905,6 +926,29 @@ const EnergyConsumptionTable = () => {
         <p>Hi</p>
 
         <p>Please follow these steps to proceed:</p>
+        <ol>
+          <li>
+            {" "}
+            <strong>Add Details:</strong> Click the "Add Details" button to open
+            a table where you can enter the data manually
+          </li>
+
+          <li>
+            <strong>Upload CSV File:</strong> Download the CSV template, fill it
+            with the required information, and upload the completed file in the
+            specified format.
+          </li>
+
+          <li>
+            <strong>Upload Bill:</strong> Upload monthly bills for all 12
+            months.
+          </li>
+
+          <li>
+            <strong>Upload SCADA File:</strong> For more accurate data, you can
+            upload a SCADA file with 15-minute interval dumps.
+          </li>
+        </ol>
       </Modal>
     </div>
   );

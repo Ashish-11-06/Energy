@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Form, Input, Button, Radio, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -7,6 +7,9 @@ import './Login.css';
 import RegisterForm from '../Modals/Registration/RegisterForm';
 import { loginUser } from "../../Redux/Slices/loginSlice";
 import ForgotPassword from '../Modals/ForgotPassword';  // Import the ForgotPassword component
+import { fetchSubscriptionValidity } from '../../Redux/Slices/Consumer/subscriptionEnrollSlice';
+
+
 
 const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -15,45 +18,58 @@ const Login = () => {
   const [userType, setUserType] = useState('consumer');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [subscriptionPlanValidity,setSubscriptionPlanValidity]=useState([]);
 
-  const onFinish = async (values) => {
-    setLoading(true);
-    try {
-      const loginData = { ...values };
-      console.log(values);
-
-      const resultAction = await dispatch(loginUser(loginData));
-
-      if (loginUser.fulfilled.match(resultAction)) {
-        message.success('Login successful!');
-        const user = resultAction.payload.user;
-        
-        if (user.user_category === 'Generator') {
-          if (user.is_new_user) {
-            navigate('/generator/what-we-offer', { state: { isNewUser: user.is_new_user } });
-          } else {
-            navigate('/generator/dashboard');
+    const onFinish = async (values) => {
+      setLoading(true);
+      try {
+        const loginData = { ...values };
+        console.log(values);
+    
+        const resultAction = await dispatch(loginUser(loginData));
+    
+        if (loginUser.fulfilled.match(resultAction)) {
+          message.success('Login successful!');
+    
+          // Extract user from payload
+          const user = resultAction.payload.user; // FIX: Ensure `user` is defined
+          const id = user.id; // Get the user ID
+          console.log(id);
+    
+          // Fetch subscription validity
+          const response = await dispatch(fetchSubscriptionValidity(id));
+          setSubscriptionPlanValidity(response.payload);
+          console.log(response.payload);
+    
+          localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
+    
+          // Navigate based on user type and new user status
+          if (user.user_category === 'Generator') {
+            if (user.is_new_user) {
+              navigate('/generator/what-we-offer', { state: { isNewUser: user.is_new_user } });
+            } else {
+              navigate('/generator/dashboard');
+            }
+          } else if (user.user_category === 'Consumer') {
+            if (user.is_new_user) {
+              console.log('New user:', user.is_new_user);
+              navigate('/consumer/what-we-offer', { state: { isNewUser: user.is_new_user } });
+            } else {
+              console.log('New user:', user.is_new_user);
+              navigate('/consumer/dashboard');
+            }
           }
-        } else if (user.user_category === 'Consumer') {
-          if (user.is_new_user) {
-            console.log('New user:', user.is_new_user);
-            navigate('/consumer/what-we-offer', { state: { isNewUser: user.is_new_user } });
-          } else {
-            
-            console.log('New user:', user.is_new_user);
-            navigate('/consumer/dashboard');
-          }
+        } else {
+          message.error(resultAction.payload || 'Login failed. Please try again.');
         }
-      } else {
-        message.error(resultAction.payload || 'Login failed. Please try again.');
+      } catch (error) {
+        console.error('Login error:', error);
+        message.error('An error occurred during login. Please try again.');
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Login error:', error);
-      message.error('An error occurred during login. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    
 
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
@@ -88,6 +104,7 @@ const Login = () => {
     message.success('Password reset link has been sent to your email!');
     closeForgotPasswordModal();  // Close the modal after the action
   };
+
 
   return (
     <div className="login-container">

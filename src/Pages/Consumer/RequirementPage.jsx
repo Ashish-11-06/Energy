@@ -6,7 +6,6 @@ import 'antd/dist/reset.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchRequirements } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
 import { addNewRequirement } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
-
 import moment from 'moment';
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
 
@@ -22,6 +21,7 @@ const RequirementsPage = () => {
   const dispatch = useDispatch();
   const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
 
+  const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
     // console.log('item', item);
@@ -54,7 +54,6 @@ const RequirementsPage = () => {
       dataIndex: 'industry',
       key: 'industry',
     },
-  
     {
       title: 'Contracted Demand (MW)',
       dataIndex: 'contracted_demand',
@@ -81,12 +80,39 @@ const RequirementsPage = () => {
       key: "select",
       render: (text, record) => (
         <Radio
-          checked={selectedRequirement?.id === record.id} // Ensure only one record is selected
-          onChange={() => handleRowSelect(record)} // Pass the entire record
+          checked={selectedRequirement?.id === record.id}
+          onChange={() => handleRowSelect(record)}
         />
       ),
     },
   ];
+  
+  // Insert "Add Details" before the "Select" column if subscription is active
+  if (subscriptionPlan?.status === 'active') {
+    const addDetailsColumn = {
+      title: "Add Consumption Details",
+      key: "addDetails",
+      render: (text, record) => (
+        <Button type="primary" onClick={() => handleAddDetails(record)}>
+          Add
+        </Button>
+      ),
+    };
+  
+    // Find the index of "Select" column and insert before it
+    const selectColumnIndex = columns.findIndex(col => col.key === "select");
+    if (selectColumnIndex !== -1) {
+      columns.splice(selectColumnIndex, 0, addDetailsColumn);
+    }
+  }
+  
+
+const handleAddDetails =() => {
+  console.log('add button clicked');
+  localStorage.setItem('selectedRequirementId',selectedRequirement.id);
+ navigate('/consumer/energy-consumption-table');
+
+}
 
   const handleRowSelect = (record) => {
     setSelectedRowKeys([record.key]); // Only allow single selection
@@ -209,6 +235,7 @@ const RequirementsPage = () => {
         dataSource={requirements}
         pagination={false}
         bordered
+        loading={status === 'loading'}
         // onRow={(record) => ({
         //   onClick: () => handleRowSelect(record), // Make entire row clickable
         // })}

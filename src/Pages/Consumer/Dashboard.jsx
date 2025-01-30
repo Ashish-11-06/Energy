@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Card, Statistic } from "antd";
-import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined, DatabaseOutlined, ProfileOutlined, ThunderboltOutlined,SendOutlined , CrownOutlined } from "@ant-design/icons";
-import { Bar } from 'react-chartjs-2';
-import 'chart.js/auto';
+import { DatabaseOutlined, ProfileOutlined } from "@ant-design/icons";
+import { Bar } from "react-chartjs-2";
+import "chart.js/auto";
 import DashboardApi from "../../Redux/api/dashboard";
+
+import offerSend from "../../assets/offerSend.png";
+import state from "../../assets/state.jpg";
+import totalIPP from "../../assets/totalIPP.png";
+import availableCapacity from '../../assets/capacity.png';
+import demands from '../../assets/capacityAvailable.png';
+import consumption from '../../assets/consumption.png';
+
 
 const Dashboard = () => {
   const [consumerDetails, setConsumerDetails] = useState({});
@@ -43,18 +51,17 @@ const Dashboard = () => {
   }, []);
 
   const barData = {
-    labels: [ 'Demand', 'Offer Received', 'Transactions Done'],
+    labels: ["Demand", "Offer Received", "Transactions Done"],
     datasets: [
       {
-        label: 'Consumer Details',
+        label: "Consumer Details",
         data: [
           consumerDetails.demandSent,
           consumerDetails.offerReceived,
           consumerDetails.transactionsDone,
-        //  consumerDetails.offersSent,
-
+          //  consumerDetails.offersSent,
         ],
-        backgroundColor: ['#3f8600', '#3f8600', '#cf1322', '#3f8600'],
+        backgroundColor: ["#3f8600", "#3f8600", "#cf1322", "#3f8600"],
       },
     ],
   };
@@ -64,15 +71,16 @@ const Dashboard = () => {
       <Row gutter={[16, 16]} style={{ height: "400px" }}>
         {/* Consumer Details */}
         <Col span={12}>
-          <Card 
-           title="Transaction Details"
-          style={{ backgroundColor: "white", height: "100%" }}>
+          <Card
+            title="Transaction Details"
+            style={{ backgroundColor: "white", height: "100%" }}
+          >
             <div style={{ height: "100%" }}>
               <Bar data={barData} options={{ maintainAspectRatio: false }} />
             </div>
           </Card>
         </Col>
-      
+
         {/* Profile Details */}
         <Col span={12}>
           <Card
@@ -82,20 +90,116 @@ const Dashboard = () => {
           >
             <Row gutter={[16, 16]}>
               <Col span={8}>
-                <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
-                  <Statistic title="Total Demands" value={consumerDetails.totalDemands} prefix={<ProfileOutlined />} valueStyle={{ color: "#3f8600" }} />
+                <Card.Grid
+                  style={{
+                    width: "100%",
+                    textAlign: "center",
+                    height: "135px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Statistic
+                    title="Total Demands"
+                    value={consumerDetails.totalDemands}
+                    prefix={ <img
+                      src={demands}
+                      alt=""
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        marginRight: "5px",
+
+                      }}
+                    />}
+                    valueStyle={{
+                      color: "#3f8600",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    suffix={
+                      <span style={{ fontSize: "20px", marginLeft: "5px" }}>
+                        MW
+                      </span>
+                    }
+                  />
                 </Card.Grid>
               </Col>
+
               <Col span={8}>
-                <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
-                  <Statistic title="Total Consumption Units" value={consumerDetails.totalConsumptionUnits} prefix={<ThunderboltOutlined />} valueStyle={{ color: "#cf1322" }} />
+                <Card.Grid
+                  style={{
+                    width: "100%",
+                    textAlign: "center",
+                    height: "135px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Statistic
+                    title="Total Consumption Units"
+                    value={consumerDetails.totalConsumptionUnits}
+                    prefix={
+                      <img
+                        src={consumption}
+                        alt=""
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    valueStyle={{
+                      color: "#3f8600",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    suffix={
+                      <span style={{ fontSize: "20px", marginLeft: "5px" }}>
+                        kWh
+                      </span>
+                    }
+                  />
                 </Card.Grid>
               </Col>
+
               <Col span={8}>
-                <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
-                  <Statistic title="Total Offer Sent" value={consumerDetails.offersSent} prefix={<SendOutlined  />} valueStyle={{ color: "#3f8600" }} />
+                <Card.Grid
+                  style={{
+                    width: "100%",
+                    textAlign: "center",
+                    height: "135px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Statistic
+                    title="Total Offer Sent"
+                    value={consumerDetails.offersSent}
+                    prefix={
+                      <img
+                        src={offerSend}
+                        alt=""
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    valueStyle={{
+                      color: "#3f8600",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  />
                 </Card.Grid>
               </Col>
+
               {/* <Col span={8}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
                   <Statistic title="Subscription Plan" value={consumerDetails.subscriptionPlan} prefix={<CrownOutlined />} valueStyle={{ color: "#3f8600" }} />
@@ -114,18 +218,107 @@ const Dashboard = () => {
           >
             <Row gutter={[16, 16]}>
               <Col span={8}>
-                <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center" }}>
-                  <Statistic title="Total IPPs" value={platformDetails.totalIPPs} prefix={<UserOutlined />} valueStyle={{ color: "#3f8600" }} />
+                <Card.Grid
+                  style={{
+                    width: "100%",
+                    height: "135px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Statistic
+                    title="Total IPPs"
+                    value={platformDetails.totalIPPs}
+                    prefix={
+                      <img
+                        src={totalIPP}
+                        alt=""
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    valueStyle={{
+                      color: "#3f8600",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  />
                 </Card.Grid>
               </Col>
+
               <Col span={8}>
-                <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center" }}>
-                  <Statistic title="Total Capacity Available" value={platformDetails.totalCapacity} prefix={<DatabaseOutlined />} valueStyle={{ color: "#cf1322" }} />
+                <Card.Grid
+                  style={{
+                    width: "100%",
+                    height: "135px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Statistic
+                    title="Total Capacity Available"
+                    value={platformDetails.totalCapacity}
+                    prefix={
+                      <img
+                        src={availableCapacity}
+                        alt=""
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    suffix={
+                      <span style={{ fontSize: "16px", marginLeft: "5px" }}>
+                        MW
+                      </span>
+                    }
+                    valueStyle={{
+                      color: "#3f8600",
+                      display: "flex",
+                      alignItems: "center",
+                      fontSize:'17px'
+                    }}
+                  />
                 </Card.Grid>
               </Col>
+
               <Col span={8}>
-                <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center"}}>
-                  <Statistic title="Number of States Covered" value={platformDetails.statesCovered} valueStyle={{ color: "#3f8600" }} />
+                <Card.Grid
+                  style={{
+                    width: "100%",
+                    height: "135px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Statistic
+                    title="Number of States Covered"
+                    value={platformDetails.statesCovered}
+                    prefix={
+                      <img
+                        src={state}
+                        alt=""
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    valueStyle={{
+                      color: "#3f8600",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  />
                 </Card.Grid>
               </Col>
             </Row>
