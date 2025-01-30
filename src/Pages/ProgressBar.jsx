@@ -1,14 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import "./ProgressBar.css"; // Ensure CSS styling
 
-const ProgressBar = ({ progress: initialProgress = 0, breakpoints = [] }) => {
-  const [progress, setProgress] = useState(initialProgress);
-
-  // Handle click on breakpoint to set the progress
-  const handleBreakpointClick = (value) => {
-    setProgress(value); // Update progress to the clicked breakpoint value
-  };
-
+const ProgressBar = ({ progress, breakpoints, onProgressChange }) => {
   return (
     <div className="progress-container">
       <div className="progress-bar">
@@ -20,12 +13,10 @@ const ProgressBar = ({ progress: initialProgress = 0, breakpoints = [] }) => {
             <div
               className={`breakpoint ${progress >= bp.value ? "active" : ""}`}
               style={{ left: `${bp.value}%` }}
-              onClick={() => handleBreakpointClick(bp.value)} // Click handler
+              onClick={() => onProgressChange(bp.value)} // Update progress when clicked
             >
               ●
-              <span className="breakpoint-title" style={{ marginBottom: "30px", color: "red" }}>
-                {bp.title}
-              </span>
+              <span className="breakpoint-title">{bp.title}</span>
             </div>
           </div>
         ))}

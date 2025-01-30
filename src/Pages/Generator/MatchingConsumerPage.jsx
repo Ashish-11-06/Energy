@@ -16,6 +16,7 @@ const MatchingConsumerPage = () => {
   const navigate = useNavigate(); // Initialize navigate hook
   
   const user = (JSON.parse(localStorage.getItem('user'))).user;
+  const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
 
   const [selectedConsumer, setSelectedConsumer] = useState(null); // Track the selected consumer
   const [searchText, setSearchText] = useState(''); // For search functionality
@@ -146,9 +147,12 @@ const MatchingConsumerPage = () => {
     if (selectedConsumer) {
       // Navigate to the next page (e.g., /next-page)
       console.log(selectedConsumer);
-      
-      navigate('/generator/subscription-plan', { state: { selectedConsumer } }); // Pass selected consumer as state
-    } else {
+      if(subscriptionPlan.status === 'active') {
+        navigate('/generator/update-profile-details', { state: { selectedConsumer } }); // Pass selected consumer as state
+      } else {
+        navigate('/generator/subscription-plan');
+      }
+      } else {
       message.error('Please select a consumer before proceeding.');
     }
   };
@@ -186,6 +190,7 @@ const MatchingConsumerPage = () => {
 
 
       {/* Button to show selected consumer */}
+      
       <Button
         type="primary"
         style={{
@@ -206,7 +211,7 @@ const MatchingConsumerPage = () => {
         title="Consumer Details"
         open={isModalVisible}
         onCancel={handleModalCancel}
-        footer={null}
+        footer={null} 
         width={600}
         centered
       >

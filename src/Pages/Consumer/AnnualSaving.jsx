@@ -20,10 +20,12 @@ const AnnualSvg = () => {
   // const { requirementId } = location.state || {};
   const requirementId = localStorage.getItem('selectedRequirementId');
   // console.log(requirementId);
-
+  const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const User = JSON.parse(localStorage.getItem('user'));
   const userId = User.id;
 
+  // console.log(subscriptionPlan.status);
+  
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
   };
@@ -48,7 +50,12 @@ const AnnualSvg = () => {
 
   const handleContinue = () => {
     console.log('akjdkfjlajlfkjal');
-    navigate("/consumer/energy-consumption-table", { state: { requirementId, reReplacement: annualSavingResponse?.re_replacement } });
+    if(subscriptionPlan.status === 'active') {
+     
+      navigate("/consumer/energy-consumption-table", { state: { requirementId, reReplacement: annualSavingResponse?.re_replacement } });
+    } else {
+      navigate('/consumer/subscription-plan')
+    }
   };
 
   return (
@@ -105,23 +112,44 @@ const AnnualSvg = () => {
       </div>
   <div>
  {/* Continue Button */}
- <Tooltip title="To further explore, subscribe to our plan">
-  <Button
-    type="primary"
-    style={{
-      marginTop: "20px",
-      backgroundColor: "#669800",
-      borderColor: "#669800",
-      fontSize: "20px",
-      padding: "0 40px",
-      zIndex: 1, // Ensure the button is above other elements
-      position: 'relative', // Ensure positioning is correct
-    }}
-    onClick={handleContinue}
-  >
-    Continue
-  </Button>
-</Tooltip>
+ {subscriptionPlan.status === 'active' ? (
+  <Tooltip title="Please click to proceed">
+    <Button
+      type="primary"
+      style={{
+        marginTop: "20px",
+        backgroundColor: "#669800",
+        borderColor: "#669800",
+        fontSize: "20px",
+        padding: "0 40px",
+        zIndex: 1, // Ensure the button is above other elements
+        position: 'relative', // Ensure positioning is correct
+      }}
+      onClick={handleContinue}
+    >
+      Continue
+    </Button>
+  </Tooltip>
+) : (
+  <Tooltip title="To further explore, subscribe to our plan">
+    <Button
+      type="primary"
+      style={{
+        marginTop: "20px",
+        backgroundColor: "#669800",
+        borderColor: "#669800",
+        fontSize: "20px",
+        padding: "0 40px",
+        zIndex: 1, // Ensure the button is above other elements
+        position: 'relative', // Ensure positioning is correct
+      }}
+      onClick={handleContinue}
+    >
+      Continue
+    </Button>
+  </Tooltip>
+)}
+
   
   </div>
      

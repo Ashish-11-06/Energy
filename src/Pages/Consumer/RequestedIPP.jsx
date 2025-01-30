@@ -21,6 +21,8 @@ const RequestedIPP = () => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem('user')).user;
 
+
+
   useEffect(() => {
     const fetchIPPData = async () => {
       try {
@@ -76,7 +78,6 @@ const RequestedIPP = () => {
       message.error('Failed to update status');
     }
   };
-
   const [progress, setProgress] = useState(20);
   const breakpoints = [
     { value: 20, title: "Step 1" },
@@ -85,6 +86,19 @@ const RequestedIPP = () => {
     { value: 80, title: "Step 4" },
     { value: 100, title: "Complete" },
   ];
+
+  // Function to update progress when clicking breakpoints
+  const handleProgressChange = (newProgress) => {
+    setProgress(newProgress);
+  };
+
+  // Function to increase progress using the button
+  const handleProgress = () => {
+    console.log("clicked");
+    if (progress < 100) {
+      setProgress(progress + 20); // Increase progress
+    }
+  };
 
   const filteredData = ippData.filter((record) => {
     const statusMatch = statusFilter ? record.consumer_status === statusFilter : true;
@@ -152,10 +166,13 @@ const RequestedIPP = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-          <div>
-      <ProgressBar progress={progress} breakpoints={breakpoints} />
-
-      <button onClick={() => setProgress(progress + 20)}>Increase Progress</button>
+       <div>
+      <ProgressBar
+        progress={progress}
+        breakpoints={breakpoints}
+        onProgressChange={handleProgressChange}
+      />
+      <button onClick={handleProgress}>Increase Progress</button>
     </div>
       <Col span={24} style={{ textAlign: 'center' }}>
         <Title level={3} style={{ color: '#001529' }}>

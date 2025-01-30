@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import {
-  Card,
-  Button,
-  Row,
-  Col,
-  Typography,
+  Card,Button, Row,Col,Typography,
   Modal,
   Form,
   Input,
   message,
+  Spin
 } from "antd";
 import {
   FormOutlined,
@@ -30,7 +27,7 @@ import trial from '../../assets/trial.png';
 import powerX from '../../assets/powerX.png';
 import advice from '../../assets/advice.png';
 import { fetchSubscriptionPlan } from "../../Redux/Slices/Generator/availableSubscriptionPlanG";
-import { subscriptionEnroll } from "../../Redux/Slices/Consumer/subscriptionEnrollSlice";
+import { subscriptionEnroll,fetchSubscriptionValidity } from "../../Redux/Slices/Consumer/subscriptionEnrollSlice";
 const { Title, Text } = Typography;
 
 const SubscriptionPlanG = () => {
@@ -43,6 +40,9 @@ const SubscriptionPlanG = () => {
   const [formError, setFormError] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [subscriptionPlan,setSubscriptionPlan]=useState([]);
+  const [loading,setLoading]=useState(false);
+  // const [subscriptionPlanValidity,setSubscriptionPlanValidity]=useState([]);
+
 
   const [gstinNumber, setGstinNumber] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
@@ -81,18 +81,35 @@ console.log(response);
   };
 
    useEffect(() => {
+    setLoading(true);
      dispatch(fetchSubscriptionPlan())
        .then(response => {    
          setSubscriptionPlan(response.payload);
+         setLoading(false);
          //console.log(isState);
        })
        .catch(error => {
-         console.error("Error fetching industry:", error);
+         console.error("Error fetching subscription:", error);
        });
    }, [dispatch]);
    
    console.log(subscriptionPlan);
    
+
+  // useEffect(()=> {
+  //   const id=userId;
+  //   dispatch(fetchSubscriptionValidity(id))
+  //   .then(response => {    
+  //     setSubscriptionPlanValidity(response.payload);
+  //      console.log(response.payload);
+
+  //      localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
+  //   })
+  //   .catch(error => {
+  //     console.error("Error fetching industry:", error);
+  //   });
+  // },[dispatch]);
+
 
   useEffect(() => {
     const fetchPerforma = async () => {
@@ -249,100 +266,102 @@ console.log(response);
       <Title level={2} style={{ marginTop: "5%", marginBottom: "5%" }}>
         Choose Your Annual Subscription Plan
       </Title>
-       <Row gutter={[16, 16]} justify="center">
-       {subscriptionPlan.map((plan) => (
-         <Col xs={24} sm={8} md={8} >
-         <Card
-   hoverable
-   className={selectedPlanId === plan.id ? 'selected-plan' : ''}
-   onClick={() => handleSelectPlan(plan.id)}
-   actions={[
-     <Button
-       type="primary"
-       onClick={() => handleId(plan.id)}
-       block
-       size="small"
-       style={{ width: '160px' }}
-     >
-       {selectedPlanId === plan.id ? 'Subscribed' : 'Select Plan'} {/* Change button text */}
-     </Button>,
-   ]}
- >
-   <div
-     style={{
-       backgroundColor: '#669800',
-       marginBottom: '0',
-       marginTop: '-25px',
-       marginLeft: '-25px',
-       marginRight: '-25px',
-       borderTopLeftRadius: '10px',
-       borderTopRightRadius: '10px',
-     }}
-   >
-     <p style={{ padding: '5px' }}>
-       <span
-         style={{
-           marginTop: '10px',
-           color: 'white',
-           fontSize: '22px',
-           fontWeight: 'bold',
-         }}
-       >
-         EXT {plan.subscription_type} Plan
-       </span>
-     </p>
-     <hr />
-   </div>
-   <Text className="price">{plan.price} <p style={{ fontSize: '18px' }}>INR</p></Text>
-   <p><strong>Duration:</strong> {plan.duration_in_days} days</p>
-   <ul
-     style={{ display: 'flex', flexDirection: 'column', padding: 0, marginLeft: '30%' }}
-   >
-     {plan.subscription_type === 'LITE' && (
-       <>
-         <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-           <FormOutlined style={{ marginRight: '10px', color: '#669800' }} /> Matching IPP +
-         </li>
-         <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-           <img src={req} alt="" style={{ height: '15px', width: '15px', marginRight: '10px' }} /> Requirements +
-         </li>
-         <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-           <img src={transaction} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Transaction window
-         </li>
-       </>
-     )}
-     {plan.subscription_type === 'PRO' && (
-       <>
-         <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-           <img src={dash} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Dashboard
-         </li>
-         <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-           <img src={advice} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Advisory Support
-         </li>
-         <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-           <img src={powerX} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> PowerX subscription
-         </li>
-       </>
-     )}
-     {plan.subscription_type === 'FREE' && (
-       <>
-         <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-           <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-         </li>
-         <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-           <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-         </li>
-         <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-           <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-         </li>
-       </>
-     )}
-   </ul>
- </Card>
- 
-         </Col>
-       ))}
-     </Row>
+      <Row gutter={[16, 16]} justify="center">
+  {loading ? ( // Show loader if loading is true
+    <Spin size="large" />
+  ) : (
+    subscriptionPlan.map((plan) => (
+      <Col key={plan.id} xs={24} sm={8} md={8}>
+        <Card
+          hoverable
+          className={selectedPlanId === plan.id ? 'selected-plan' : ''}
+          onClick={() => handleSelectPlan(plan.id)}
+          actions={[
+            <Button
+              type="primary"
+              onClick={() => handleId(plan.id)}
+              block
+              size="small"
+              style={{ width: '160px' }}
+            >
+              Select Plan
+              {/* {!subscriptionPlanValidity ? 'Select plan' : 'Subscribed'} */}
+            </Button>,
+          ]}
+        >
+          <div
+            style={{
+              backgroundColor: '#669800',
+              marginBottom: '0',
+              marginTop: '-25px',
+              marginLeft: '-25px',
+              marginRight: '-25px',
+              borderTopLeftRadius: '10px',
+              borderTopRightRadius: '10px',
+            }}
+          >
+            <p style={{ padding: '5px' }}>
+              <span
+                style={{
+                  marginTop: '10px',
+                  color: 'white',
+                  fontSize: '22px',
+                  fontWeight: 'bold',
+                }}
+              >
+                EXT {plan.subscription_type} Plan
+              </span>
+            </p>
+            <hr />
+          </div>
+          <Text className="price">{plan.price} <p style={{ fontSize: '18px' }}>INR</p></Text>
+          <p><strong>Duration:</strong> {plan.duration_in_days} days</p>
+          <ul style={{ display: 'flex', flexDirection: 'column', padding: 0, marginLeft: '30%' }}>
+            {plan.subscription_type === 'LITE' && (
+              <>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <FormOutlined style={{ marginRight: '10px', color: '#669800' }} /> Matching IPP +
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={req} alt="" style={{ height: '15px', width: '15px', marginRight: '10px' }} /> Requirements +
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={transaction} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Transaction window
+                </li>
+              </>
+            )}
+            {plan.subscription_type === 'PRO' && (
+              <>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={dash} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Dashboard
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={advice} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Advisory Support
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={powerX} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> PowerX subscription
+                </li>
+              </>
+            )}
+            {plan.subscription_type === 'FREE' && (
+              <>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
+                </li>
+              </>
+            )}
+          </ul>
+        </Card>
+      </Col>
+    ))
+  )}
+</Row>
 
       {isQuotationVisible && (
         <Modal
