@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, Statistic, Button, message, Spin } from 'antd';
 import { ThunderboltOutlined, DashboardOutlined, ApartmentOutlined, UserOutlined, LineChartOutlined } from '@ant-design/icons';
+import map from '../../assets/map.png';
 import { useNavigate } from 'react-router-dom';
 import CountUp from 'react-countup';
 import whatWeOffer from '../../Redux/api/whatWeOffer';
@@ -188,7 +189,8 @@ const [isModal,setIsModal] =useState(false);
             >
               <Statistic
                 value={data.unique_state_count}
-                prefix={<ApartmentOutlined />}
+                // prefix={<ApartmentOutlined />}
+                prefix={<img src={map} alt="map" className="map" style={{ width: 40, height: 40 }} />}
                 valueStyle={{ color: '#1890ff' }}
                 formatter={() => <CountUp start={0} end={data.unique_state_count} duration={3} />}
               />

@@ -7,6 +7,7 @@ import './Login.css';
 import RegisterForm from '../Modals/Registration/RegisterForm';
 import { loginUser } from "../../Redux/Slices/loginSlice";
 import ForgotPassword from '../Modals/ForgotPassword';  // Import the ForgotPassword component
+import EXGLogo from '../../assets/EXG.png';  // Import the logo image
 
 const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -91,6 +92,9 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      <div className="logo-container">
+        <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
+      </div>
       <div className="login-box">
         <h2 className="login-title">Login</h2>
         <Form

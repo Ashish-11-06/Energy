@@ -3,6 +3,7 @@ import { Button, Radio, Space, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
 import video from '../assets/vecteezy_solar-panels-and-wind-turbines-green-energy-concept_6299246.mp4';
+// import logo from '../assets/EXG.png'; // Import the logo image
 import { useDispatch } from 'react-redux';
 import { setLoginType } from '../Redux/actions';
 import LoginComponent from '../Components/Login/login';
@@ -37,6 +38,11 @@ const LandingPage = () => {
       <div className="video-container">
         <video className="background-video" src={video} autoPlay muted loop />
         
+        {/* Logo at the top left */}
+        {/* <div className="logo-container">
+          <img src={logo} alt="Logo" className="logo" />
+        </div> */}
+
         {/* Key Features on Left Side */}
         <div className="key-features">
           <h2>Key Features</h2>

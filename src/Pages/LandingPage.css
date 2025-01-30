@@ -74,3 +74,14 @@
 .cta-button {
   margin-top: 20px;
 }
+
+.logo-container {
+  position: absolute;
+  top: 20px;
+  right: 20px; /* Change left to right */
+}
+
+.logo {
+  width: 150px; /* Adjust the size as needed */
+  height: 100;
+}

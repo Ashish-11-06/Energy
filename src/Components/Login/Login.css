@@ -11,6 +11,22 @@
     font-family: 'Inter', sans-serif; /* Use the installed Inter font */
 }
 
+.logo-container {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+}
+
+/* .logo {
+  width: 150px; /* Adjust the size as needed 
+  height: 100
+} */
+
+.exg-logo {
+  width: 150px;
+  height: 90px;
+}
+
 .login-box {
     background-color: #FFFFFF; /* White background for the form */
     padding: 40px;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 import {
   Card,
   Button,
@@ -27,6 +28,8 @@ import {
   createPerformaById,
   fetchPerformaById,
 } from "../../Redux/Slices/Consumer/performaInvoiceSlice";
+import SubscriptionModal from "./Modal/SubscriptionModal"; // Import SubscriptionModal
+import { createRazorpayOrder, completeRazorpayPayment } from "../../Redux/Slices/Consumer/paymentSlice"; // Import payment actions
 
 const { Title, Text } = Typography;
 
@@ -41,15 +44,22 @@ const SubscriptionPlans = () => {
   const [companyName, setCompanyName] = useState("");
   const [gstinNumber, setGstinNumber] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
+  const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false); // State for subscription modal
 
   const navigate = useNavigate(); // Hook for navigation
   const dispatch = useDispatch();
   const userData = useState(JSON.parse(localStorage.getItem("user")).user);
   const userId = userData[0]?.id;
+  const Razorpay = useRazorpay();
+  const [orderId, setOrderId] = useState(null); // State to store order ID
 
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
-    setIsQuotationVisible(true); // Show the quotation view after selection
+    setIsQuotationVisible(true); // Show the quotation modal after selection
+  };
+
+  const closeSubscriptionModal = () => {
+    setIsSubscriptionModalVisible(false);
   };
 
   const closeQuotation = () => {
@@ -179,20 +189,85 @@ const SubscriptionPlans = () => {
     </Form>
   );
 
-  const handleGenerateProforma = () => {
+  const handleGenerateProforma = async () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
+        setFormError(""); // Reset any error message if the form is valid
+        await handleCreatePerforma(values);
         setIsProformaVisible(true); // Show the proforma modal
+        setIsQuotationVisible(false);
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
+        setFormError("Please fill in all required fields.");
       });
   };
 
-  const handlePayment = () => {
-    navigate("/consumer/energy-consumption-table");
-  };
+  const handlePayment = async () => {
+    try {
+      const amount = selectedPlan === 1 ? 50000 : selectedPlan === 2 ? 200000 : 0;  // Adjust plan amount here
+      const orderResponse = await dispatch(createRazorpayOrder({ amount, currency: "INR" })).unwrap();
+      console.log("Order response:", orderResponse);
+
+      if (orderResponse?.data?.id) {
+        const options = {
+          key: "rzp_test_bVfC0PJsvP9OUR",  
+          amount: orderResponse.data.amount,  // Ensure this is the correct amount
+          currency: orderResponse.data.currency, 
+          name: "Energy Exchange",
+          description: `Subscription Payment for Plan ${selectedPlan}`,
+          order_id: orderResponse.data.id, 
+          handler: async (response) => {
+            const paymentData = {
+              user: userId, // Include userId in payment data
+              order_id: orderResponse.data.id,
+              payment_id: response.razorpay_payment_id,
+              signature: response.razorpay_signature,
+              amount: orderResponse.data.amount, // Include amount in payment data
+            };
+
+            console.log("Payment data to send:", paymentData); // Log payment data
+
+            try {
+              const completeResponse = await dispatch(completeRazorpayPayment(paymentData)).unwrap();
+              console.log("Complete payment response:", completeResponse); // Log response
+              if (completeResponse.success) {
+                message.success("Payment successful! Subscription activated.");
+                setIsProformaVisible(false); // Close the proforma modal
+                navigate("/consumer/energy-consumption-table");
+              } else {
+                message.error("Payment completion failed.");
+              }
+            } catch (error) {
+              console.error("Error completing payment:", error); // Log error
+              message.error("Payment completion failed.");
+            }
+          },
+          prefill: {
+            name: userData?.name || "User",
+            email: userData?.email || "user@example.com",
+            contact: userData?.phone || "9999999999",
+          },
+          theme: { color: "#669800" },
+        };
+
+        // Use the razorpay instance from useRazorpay
+        if (window.Razorpay) {
+          const rzp = new window.Razorpay(options);
+          rzp.open();
+      } else {
+          console.error('Razorpay script not loaded');
+      }
+      
+      }
+    } catch (error) {
+      console.error("Payment Error:", error);
+      message.error("Payment initiation failed. Please try again.");
+    }
+};
+
+  
 
   const closeProforma = () => {
     setIsProformaVisible(false);
@@ -458,7 +533,7 @@ const SubscriptionPlans = () => {
           open={isQuotationVisible}
           onCancel={closeQuotation}
           footer={[
-            <Button type="primary" htmlType="submit" onClick={handleSubmit}>
+            <Button type="primary" htmlType="submit" onClick={handleGenerateProforma}>
               Generate Performa
             </Button>,
           ]}
@@ -483,7 +558,7 @@ const SubscriptionPlans = () => {
         <p>This is a proforma invoice.</p>
         <img
           src={proformaInvoice}
-          alt=""
+          alt="Proforma Invoice"
           style={{ height: "500px", width: "500px", marginLeft: "5%" }}
         />
         <p>Please proceed to payment to complete your subscription.</p>
@@ -502,6 +577,14 @@ const SubscriptionPlans = () => {
       >
         This is dummy Payment
       </Modal>
+
+      {isSubscriptionModalVisible && (
+        <SubscriptionModal
+          visible={isSubscriptionModalVisible}
+          plan={selectedPlan}
+          onClose={closeSubscriptionModal}
+        />
+      )}
     </div>
   );
 };

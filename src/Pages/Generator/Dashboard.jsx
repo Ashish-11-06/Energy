@@ -1,133 +1,133 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Card, Statistic } from "antd";
-import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
+import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined, DatabaseOutlined, ProfileOutlined, ThunderboltOutlined, SendOutlined, CrownOutlined } from "@ant-design/icons";
+import { Bar } from 'react-chartjs-2';
+import 'chart.js/auto';
+import DashboardApi from "../../Redux/api/dashboard";
 
 const Dashboard = () => {
-  const generatorDetails = {
-    totalEnergySold: 25000,
-    energyOffered: 30000,
-    offerReceived: 28000,
-    transactionsDone: 150,
-  };
+  const [generatorDetails, setGeneratorDetails] = useState({});
+  const [profileDetails, setProfileDetails] = useState({});
+  const [platformDetails, setPlatformDetails] = useState({});
 
-  const profileDetails = {
-    solar: 500,
-    wind: 300,
-    ESS: 150,
-  };
+  const user = JSON.parse(localStorage.getItem("user")).user;
+  const userId = user.id;
 
-  const platformDetails = {
-    totalConsumers: 2000,
-    totalDemands: 800,
-    totalStates: 15,
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await DashboardApi.getGeneratorDashboardData(userId);
+        const data = response.data;
+        setGeneratorDetails({
+          totalEnergySold: data.total_energy_sold || 0,
+          totalSolarEnergyOffered: data.total_solar_energy_offered || 0,
+          totalWindEnergyOffered: data.total_wind_energy_offered || 0,
+          totalEssEnergyOffered: data.total_ess_energy_offered || 0,
+          offerReceived: data.total_offer_received || 0,
+          transactionsDone: data.transactions_done || 0,
+        });
+        setProfileDetails({
+          solar: data.solar_portfolios || 0,
+          wind: data.wind_portfolios || 0,
+          ESS: data.ess_portfolios || 0,
+        });
+        setPlatformDetails({
+          totalConsumers: data.total_consumers || 0,
+          totalDemands: data.total_contracted_demand || 0,
+          totalStates: data.unique_state_count || 0,
+        });
+      } catch (error) {
+        console.error("Error fetching dashboard data", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const barData = {
+    labels: ['Solar Energy Offered', 'Wind Energy Offered', 'ESS Energy Offered', 'Offer Received', 'Transactions Done'],
+    datasets: [
+      {
+        label: 'Generator Details',
+        data: [
+          generatorDetails.totalSolarEnergyOffered,
+          generatorDetails.totalWindEnergyOffered,
+          generatorDetails.totalEssEnergyOffered,
+          generatorDetails.offerReceived,
+          generatorDetails.transactionsDone,
+        ],
+        backgroundColor: ['#3f8600', '#3f8600', '#3f8600', '#cf1322', '#3f8600'],
+      },
+    ],
   };
 
   return (
     <div style={{ padding: "30px" }}>
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} style={{ height: "400px" }}>
         {/* Generator Details */}
-        <Col span={6}>
-          <Card style={{ backgroundColor: "white" }}>
-            <Statistic
-              title="Total Energy Sold"
-              value={generatorDetails.totalEnergySold}
-              prefix={<ArrowUpOutlined />}
-              valueStyle={{ color: "#3f8600" }}
-            />
+        <Col span={12}>
+          <Card 
+           title="Transaction Details"
+          style={{ backgroundColor: "white", height: "100%" }}>
+            <div style={{ height: "100%" }}>
+              <Bar data={barData} options={{ maintainAspectRatio: false }} />
+            </div>
           </Card>
         </Col>
-        <Col span={6}>
-          <Card style={{ backgroundColor: "white" }}>
-            <Statistic
-              title="Energy Offered"
-              value={generatorDetails.energyOffered}
-              prefix={<ArrowUpOutlined />}
-              valueStyle={{ color: "#3f8600" }}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card style={{ backgroundColor: "white" }}>
-            <Statistic
-              title="Offer Received"
-              value={generatorDetails.offerReceived}
-              prefix={<ArrowDownOutlined />}
-              valueStyle={{ color: "#cf1322" }}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card style={{ backgroundColor: "white" }}>
-            <Statistic
-              title="Transactions Done"
-              value={generatorDetails.transactionsDone}
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-        {/* Combined Block for Profile and Platform Details */}
-      {/* Profile Details Sub-Block */}
-<Col span={12}>
-  <Card
-    title="Profile Details"
-    bordered={false}
-    style={{ backgroundColor: "white", height: "250px" }}
-  >
-    <Row gutter={[16, 16]}>
-      {/* Solar Profile Column */}
-      <Col span={8}>
-        <Card.Grid style={{ width: "100%", textAlign: "center",height:'135px' }}>
-          <Statistic title="Solar Profiles" value={profileDetails.solar} />
-        </Card.Grid>
-      </Col>
-      {/* Wind Profile Column */}
-      <Col span={8}>
-        <Card.Grid style={{ width: "100%", textAlign: "center",height:'135px' }}>
-          <Statistic title="Wind Profiles" value={profileDetails.wind} />
-        </Card.Grid>
-      </Col>
-      {/* ESS Profile Column */}
-      <Col span={8}>
       
-        <Card.Grid style={{ width: "100%", textAlign: "center",height:'135px' }}>
-          <Statistic title="ESS Profiles" value={profileDetails.ESS} />
-        </Card.Grid>
-      </Col>
-    </Row>
-  </Card>
-</Col>
+        {/* Profile Details */}
+        <Col span={12}>
+          <Card
+            title="Profile Details"
+            bordered={false}
+            style={{ backgroundColor: "white", height: "100%" }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
+                  <Statistic title="Solar Profiles" value={profileDetails.solar} prefix={<ProfileOutlined />} valueStyle={{ color: "#3f8600" }} />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
+                  <Statistic title="Wind Profiles" value={profileDetails.wind} prefix={<ThunderboltOutlined />} valueStyle={{ color: "#cf1322" }} />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
+                  <Statistic title="ESS Profiles" value={profileDetails.ESS} prefix={<SendOutlined  />} valueStyle={{ color: "#3f8600" }} />
+                </Card.Grid>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
 
-{/* Platform Details Sub-Block */}
-<Col span={12}>
-  <Card
-    title="Platform Details"
-    bordered={false}
-    style={{ backgroundColor: "white", height: "250px" }}
-  >
-    <Row gutter={[16, 16]}>
-      <Col span={8} style={{height:'250px'}}>
-        <Card.Grid style={{ width: "100%", textAlign: "center" }}>
-          <Statistic title="Total Consumers" value={platformDetails.totalConsumers} />
-        </Card.Grid>
-      </Col>
-      {/* Wind Profile Column */}
-      <Col span={8}>
-        <Card.Grid style={{ width: "100%", textAlign: "center" }}>
-          <Statistic title="Total Demands" value={platformDetails.totalDemands} />
-        </Card.Grid>
-      </Col>
-      {/* ESS Profile Column */}
-      <Col span={8}>
-        <Card.Grid style={{ width: "100%", textAlign: "center",height:'135px' }}>
-          <Statistic title="Total States" value={platformDetails.totalStates} />
-        </Card.Grid>
-      </Col>
-    </Row>
-  </Card>
-</Col>
-
+        {/* Platform Details */}
+        <Col span={12}>
+          <Card
+            title="Platform Details"
+            bordered={false}
+            style={{ backgroundColor: "white", height: "100%" }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center" }}>
+                  <Statistic title="Total Consumers" value={platformDetails.totalConsumers} prefix={<UserOutlined />} valueStyle={{ color: "#3f8600" }} />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center" }}>
+                  <Statistic title="Total Demands" value={platformDetails.totalDemands} prefix={<DatabaseOutlined />} valueStyle={{ color: "#cf1322" }} />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center"}}>
+                  <Statistic title="Total States" value={platformDetails.totalStates} valueStyle={{ color: "#3f8600" }} />
+                </Card.Grid>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
       </Row>
     </div>
   );
