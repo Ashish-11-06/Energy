@@ -7,7 +7,7 @@ export const addTermsAndConditions = createAsyncThunk(
   async (termsData, { rejectWithValue }) => {
     console.log(`klkkklklk`)
     try {
-        console.log(`klkkklklk`, termsData)
+      console.log(`klkkklklk`, termsData)
       const response = await termsAndConditionsApi.addTermsAndConditions(termsData);
       console.log(`klkkklklk`, response)
       return response.data; // Assuming the API returns data in `response.data`
@@ -27,23 +27,33 @@ export const updateTermsAndConditions = createAsyncThunk(
     try {
       console.log('Updating terms and conditions:', termsData, userId, termSheetId);
       const response = await termsAndConditionsApi.updateTermsAndConditions(userId, termSheetId, termsData);
+      
       console.log('API Response:', response);
+      
+      // Ensure response.data contains the correct data
+      if (!response || !response.data) {
+        throw new Error('No data received from the API');
+      }
+
       return response.data; // Assuming the API returns data in response.data
     } catch (error) {
       console.error('Error updating terms and conditions:', error);
+      
+      // Improved error handling: You can log the error response if available
       return rejectWithValue(
-        error.response?.data?.error || 'Failed to update terms and conditions'
+        error?.response?.data?.error || error.message || 'Failed to update terms and conditions'
       );
     }
   }
 );
 
-export const addStatus= createAsyncThunk(
+
+export const addStatus = createAsyncThunk(
   'termsAndConditions/postStatus',
   async (termsData, { rejectWithValue }) => {
     console.log(`klkkklklk`)
     try {
-        console.log(`klkkklklk`, termsData)
+      console.log(`klkkklklk`, termsData)
       const response = await termsAndConditionsApi.addStatus(termsData);
       console.log(`klkkklklk`, response)
       return response.data; // Assuming the API returns data in `response.data`

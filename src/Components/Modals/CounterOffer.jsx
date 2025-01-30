@@ -2,7 +2,7 @@ import moment from "moment"; // Ensure moment is imported
 import { Modal, Button, Typography, Row, Col, DatePicker, Select, InputNumber, message } from "antd";
 import React, { useState } from "react"; // Import useState along with React
 import { useDispatch } from "react-redux";
-import { addTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
+import { updateTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -10,7 +10,6 @@ const { Option } = Select;
 const TermsDetailModal = ({
   visible,
   onCancel,
-  type,
   data,
   selectedDemandId,
 }) => {
@@ -20,32 +19,36 @@ const TermsDetailModal = ({
   const [contractedEnergy, setContractedEnergy] = useState(20);
   const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
   const [paymentSecurityDays, setPaymentSecurityDays] = useState(30);
-  const [offerTariff, setOfferTariff] = useState(3.5);
-  const [solarCapacity, setSolarCapacity] = useState(50);
-  const [windCapacity, setWindCapacity] = useState(30);
-  const [essCapacity, setEssCapacity] = useState(20);
 
   const dispatch = useDispatch();
 
   // Initialize the commencement date using moment
-  const [commencementDate, setCommencementDate] = useState(
-    data.cod ? moment(data.cod, "YYYY-MM-DD") : moment("2024-08-31", "YYYY-MM-DD")
-  );
+  const [commencementDate, setCommencementDate] = useState(() => {
+    const date = data.commencement_of_supply || data.cod;
+    return date ? moment(date, "YYYY-MM-DD").format("DD-MM-YYYY") : "";
+  });  
+
+  const user = JSON.parse(localStorage.getItem("user")).user; // Get the user from local storage
+const userId = user.id;
 
   // Handle the DatePicker change event
   const handleDateChange = (date) => {
     setCommencementDate(date);
   };
 
+  console.log(commencementDate);
   // Handle form submission
   const handleContinue = async () => {
+
+    const termSheetId = data.id;
+
     const termsData = {
-      from_whom: "user_category",
+      // from_whom: user.user_category,
       requirement_id: selectedDemandId,
-      combination: data.combination,
+      combination: data.combination.combination || data.combination,
       term_of_ppa: ppaTerm,
       lock_in_period: lockInPeriod,
-      commencement_of_supply: commencementDate.format("YYYY-MM-DD"), // Format date using moment
+      commencement_of_supply: commencementDate ? moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD") : null,      // Format date using moment
       contracted_energy: contractedEnergy,
       minimum_supply_obligation: minimumSupply,
       payment_security_type: paymentSecurityType,
@@ -53,8 +56,9 @@ const TermsDetailModal = ({
     };
 
     try {
+      console.log('Updating terms and conditions:', termsData, userId, termSheetId);
       // Dispatching the action to add Terms and Conditions
-      await dispatch(addTermsAndConditions(termsData)).unwrap();
+      await dispatch(updateTermsAndConditions({ userId, termSheetId, termsData })).unwrap();
       message.success("Terms and Conditions added successfully.");
       onCancel(); // Close the modal
     } catch (error) {
@@ -101,7 +105,13 @@ const TermsDetailModal = ({
           <Typography.Paragraph>
             <strong>Commencement of Supply:</strong>
             <DatePicker
-              value={commencementDate} // Use moment date here
+ placeholder={
+    data.cod || data.commencement_of_supply
+      ? moment(data.cod || data.commencement_of_supply, "YYYY-MM-DD").format("DD-MM-YYYY")
+      : "Select Date"
+  } 
+            format="DD-MM-YYYY" // Format the date
+              // value={commencementDate} // Use moment date here
               onChange={handleDateChange} // Update the state on date change
               style={{ width: "100%" }}
             />

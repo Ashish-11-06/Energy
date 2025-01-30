@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Col, Row, Typography, Select, Input, Modal, message } from "antd";
 import { useDispatch } from "react-redux";
 import { getOffers } from "../../Redux/Slices/Consumer/offersSlice";
-import TermsDetailModal from "../../Components/Modals/termsDetailModal"; // Adjust the path as needed
+import TermsDetailModal from "../../Components/Modals/CounterOffer"; // Adjust the path as needed
 import moment from "moment";
 
 const { Title } = Typography;
@@ -47,6 +47,7 @@ const Offers = () => {
   }, [dispatch, user.id]);
 
   const showModal = (record) => {
+    console.log(record);
     setModalContent(record);
     setIsModalVisible(true);
   };
@@ -83,21 +84,33 @@ const Offers = () => {
   };
 
   const filteredData = Array.isArray(ippData)
-    ? ippData.filter((record) => {
+  ? ippData.filter((record) => {
       const statusMatch = statusFilter ? record.consumer_status === statusFilter : true;
-      const searchMatch =
-        record.id.toString().includes(searchText) ||
-        record.requirement.rq_state.toLowerCase().includes(searchText.toLowerCase()) ||
-        record.requirement.rq_industry.toLowerCase().includes(searchText.toLowerCase()) ||
-        record.requirement.rq_contracted_demand.toString().includes(searchText) ||
-        record.requirement.rq_tariff_category.toLowerCase().includes(searchText.toLowerCase());
+      const searchMatch = searchText
+        ? Object.values(record)
+            .some(value =>
+              value &&
+              value.toString().toLowerCase().includes(searchText.toLowerCase())
+            ) ||
+          Object.values(record.requirement || {})
+            .some(value =>
+              value &&
+              value.toString().toLowerCase().includes(searchText.toLowerCase())
+            ) ||
+            Object.values(record.combination || {})
+            .some(value =>
+              value &&
+              value.toString().toLowerCase().includes(searchText.toLowerCase())
+            )
+        : true;
 
       return statusMatch && searchMatch;
     })
-    : [];
+  : [];
 
 
-  console.log(filteredData);
+
+    console.log(filteredData);
 
   const columns = [
     {
@@ -115,19 +128,19 @@ const Offers = () => {
           const parts = text.split("-");
           if (parts.length === 4) {
             return parts[0] + parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1) +
-              parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1) +
-              parts[3].charAt(0) + parts[3].charAt(parts[3].length - 1);
-          }
+                   parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1) +
+                   parts[3].charAt(0) + parts[3].charAt(parts[3].length - 1);
+          } 
           if (parts.length === 3) {
             return parts[0] + parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1) +
-              parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1);
-          }
+                   parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1);
+          } 
           if (parts.length === 2) {
             return parts[0] + parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
           }
           return text; // Default case
         };
-
+    
         return (
           <Typography.Link onClick={() => showCombinationModal(text)}>
             {transformCombination(text.combination)}
@@ -156,27 +169,27 @@ const Offers = () => {
       title: "Contracted Demand (MW)",
       dataIndex: "requirement",
       key: "contractedDemand",
-      render: (text) =>
-        <Typography.Link onClick={() => showRequirementModal(text)}>
-          {text.rq_contracted_demand}
-        </Typography.Link>,
+      render: (text) => 
+      <Typography.Link onClick={() => showRequirementModal(text)}>
+      {text.rq_contracted_demand}
+    </Typography.Link>,
     },
     {
       title: "Lock-in Period (Months)",
       dataIndex: "lock_in_period",
       key: "lock_in_period",
-    },
+    },  
     {
       title: "term_of_ppa (Years)",
       dataIndex: "term_of_ppa",
       key: "term_of_ppa",
-    },
+    },  
     {
       title: "Commencement Date",
       dataIndex: "commencement_of_supply",
       key: "commencement_of_supply",
       render: (text) => moment(text).format("DD-MM-YYYY"),
-    },
+    },  
     // {
     //   title: "Tariff Category",
     //   dataIndex: "requirement",
@@ -289,9 +302,9 @@ const Offers = () => {
           <div>
             <p><strong>Demand ID:</strong> {RequirementContent.rq_id}</p>
             <p><strong>Industry:</strong> {RequirementContent.rq_industry}</p><p>
-              <strong>Procurement Date:</strong>{" "}
-              {moment(RequirementContent.rq_procurement_date).format("DD-MM-YYYY")}
-            </p>
+  <strong>Procurement Date:</strong>{" "}
+  {moment(RequirementContent.rq_procurement_date).format("DD-MM-YYYY")}
+</p>
             <p><strong>Site Name:</strong> {RequirementContent.rq_site}</p>
             <p><strong>State:</strong> {RequirementContent.rq_state}</p>
             <p><strong>Tarrif Category:</strong> {RequirementContent.rq_tariff_category}</p>
