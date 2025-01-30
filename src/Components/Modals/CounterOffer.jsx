@@ -45,7 +45,7 @@ const userId = user.id;
     const termsData = {
       // from_whom: user.user_category,
       requirement_id: selectedDemandId,
-      combination: data.combination.combination || data.combination,
+      // combination: data.combination.combination || data.combination,
       term_of_ppa: ppaTerm,
       lock_in_period: lockInPeriod,
       commencement_of_supply: commencementDate ? moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD") : null,      // Format date using moment
