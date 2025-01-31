@@ -61,7 +61,7 @@ const Dashboard = () => {
           consumerDetails.transactionsDone,
           //  consumerDetails.offersSent,
         ],
-        backgroundColor: ["#3f8600", "#3f8600", "#cf1322", "#3f8600"],
+        backgroundColor: ["#669800", "#669800", "#669800", "#669800"],
       },
     ],
   };

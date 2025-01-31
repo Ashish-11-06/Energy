@@ -21,6 +21,16 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const currentPath = location.pathname;
   const navigate = useNavigate(); // Add useNavigate hook
   let username = ""; // Use let instead of const
+  const subscriptionValidity = localStorage.getItem("subscriptionPlanValidity");
+  const subscription = subscriptionValidity.status;
+  const [subscriptionRequires, setSubscriptionRequires] = useState("");
+  useEffect(() => {
+    if (subscription === "active") {
+      setSubscriptionRequires(false);
+    } else {
+      setSubscriptionRequires(true);
+    }
+  }, [subscription]);
 
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
@@ -74,11 +84,13 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       path: "/consumer/energy-consumption-table",
       label: "Consumption Table",
       icon: <BookOutlined />,
+      requiresSubscription: subscriptionRequires,
     },
     {
       path: "/consumer/consumption-pattern",
       label: "Consumption Pattern",
       icon: <WalletOutlined />,
+      requiresSubscription: subscriptionRequires,
     },
   ];
 
@@ -102,11 +114,13 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       path: "/generator/update-profile-details",
       label: "Update Profile Details",
       icon: <FileTextOutlined />,
+      requiresSubscription: subscriptionRequires,
     },
     {
       path: "/generator/combination-pattern",
       label: "Optimized Combination",
       icon: <FileTextOutlined />,
+      requiresSubscription: subscriptionRequires,
     },
   ];
 
@@ -192,7 +206,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                   className="progress-icons"
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  {steps.map((step, index) => (
+                  {consumerSteps.map((step, index) => (
                     <div
                       className="icon-container"
                       key={index}
@@ -201,24 +215,43 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                       <span className="icon-label" style={{ fontSize: "10px" }}>
                         {step.label}
                       </span>
-                      <Link to={step.path}>
+
+                      {/* Check subscription before allowing navigation */}
+                      {step.requiresSubscription &&
+                      subscription !== "active" ? (
                         <div
-                          className={`icon-circle ${
-                            index <= currentStepIndex ? "completed" : ""
-                          }`}
+                          className="icon-circle disabled"
                           style={{
                             margin: "0 auto",
-                            transform:
-                              index === steps.length - 1
-                                ? "translateX(10px)"
-                                : "none", // Adjust the last circle to the right
+                            cursor: "not-allowed",
+                            opacity: 0.5,
                           }}
+                          title="Subscribe to access"
                         >
                           {React.cloneElement(step.icon, {
                             style: { fontSize: "16px" },
                           })}
                         </div>
-                      </Link>
+                      ) : (
+                        <Link to={step.path}>
+                          <div
+                            className={`icon-circle ${
+                              index <= currentStepIndex ? "completed" : ""
+                            }`}
+                            style={{
+                              margin: "0 auto",
+                              transform:
+                                index === steps.length - 1
+                                  ? "translateX(10px)"
+                                  : "none",
+                            }}
+                          >
+                            {React.cloneElement(step.icon, {
+                              style: { fontSize: "16px" },
+                            })}
+                          </div>
+                        </Link>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -226,32 +259,30 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
             </div>
           )}
         </div>
-        {/* Profile Icon */}
+        ;{/* Profile Icon */}
         <span>
-        <Tooltip title={username}>
-  <img
-    src={userImage} // User profile image
-    alt="User"
-    style={{
-      position: "absolute",
-      right: 24,
-      top: 18,
-      marginRight: "50px",
-      zIndex: 1001,
-       backgroundColor: "white",
-      cursor: "pointer",
-      height: "30px",
-      padding:'5px',
-      width: "30px",
-      borderRadius: "50%", // Ensures a circular shape
-      objectFit: "cover", // Scales image to fill the circle properly
-       border: "1px solid green",
-    }}
-    onClick={handleProfileClick}
-  />
-</Tooltip>
-
-
+          <Tooltip title={username}>
+            <img
+              src={userImage} // User profile image
+              alt="User"
+              style={{
+                position: "absolute",
+                right: 24,
+                top: 18,
+                marginRight: "50px",
+                zIndex: 1001,
+                backgroundColor: "white",
+                cursor: "pointer",
+                height: "30px",
+                padding: "5px",
+                width: "30px",
+                borderRadius: "50%", // Ensures a circular shape
+                objectFit: "cover", // Scales image to fill the circle properly
+                border: "1px solid green",
+              }}
+              onClick={handleProfileClick}
+            />
+          </Tooltip>
 
           <Tooltip title="Need Assistance?">
             <img
@@ -263,13 +294,13 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                 top: 18,
                 marginRight: "20px",
                 zIndex: 1001,
-                 backgroundColor: "white",
+                backgroundColor: "white",
                 cursor: "pointer",
                 height: "30px",
                 width: "30px",
-                 padding: '5px',
+                padding: "5px",
                 borderRadius: "50%",
-                 border: "1px solid green",
+                border: "1px solid green",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",

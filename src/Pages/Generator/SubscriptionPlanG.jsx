@@ -48,6 +48,7 @@ const SubscriptionPlanG = () => {
   const [companyAddress, setCompanyAddress] = useState("");
     const [selectedPlanId, setSelectedPlanId] = useState(null);
   
+    
   const location = useLocation();
   const { selectedConsumer } = location.state || {};
 

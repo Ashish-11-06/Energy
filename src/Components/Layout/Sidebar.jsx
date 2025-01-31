@@ -44,6 +44,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Portfolio', key: '/generator/portfolio', icon: <SolutionOutlined /> },
     { label: 'Transaction Window', key: '/generator/transaction', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
     { label: 'Proposed Offers', key: '/generator/requested-ipp-gen', icon: <AppstoreAddOutlined /> },
     { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },

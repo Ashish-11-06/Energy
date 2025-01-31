@@ -81,7 +81,7 @@ const RequirementsPage = () => {
       render: (text, record) => (
         <Radio
           checked={selectedRequirement?.id === record.id}
-          onChange={() => handleRowSelect(record)}
+          onChange={() => handleRowSelect(record)} 
         />
       ),
     },

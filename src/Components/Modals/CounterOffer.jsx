@@ -1,45 +1,105 @@
 import moment from "moment"; // Ensure moment is imported
-import { Modal, Button, Typography, Row, Col, DatePicker, Select, InputNumber, message } from "antd";
+import {
+  Modal,
+  Button,
+  Typography,
+  Row,
+  Col,
+  DatePicker,
+  Select,
+  InputNumber,
+  message,
+} from "antd";
 import React, { useState } from "react"; // Import useState along with React
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { updateTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
-
+import { addStatus } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
+import chat from "../../assets/need.png";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-const TermsDetailModal = ({
-  visible,
-  onCancel,
-  data,
-  selectedDemandId,
-}) => {
-  const [ppaTerm, setPpaTerm] = useState(20);
-  const [lockInPeriod, setLockInPeriod] = useState(10);
-  const [minimumSupply, setMinimumSupply] = useState(18);
-  const [contractedEnergy, setContractedEnergy] = useState(20);
-  const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
-  const [paymentSecurityDays, setPaymentSecurityDays] = useState(30);
-
+const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
+  console.log(data);
+  const [ppaTerm, setPpaTerm] = useState(data.term_of_ppa);
+  const [lockInPeriod, setLockInPeriod] = useState(data.lock_in_period);
+  const navigate = useNavigate();
+  const [minimumSupply, setMinimumSupply] = useState(
+    data.minimum_supply_obligation
+  );
+  const [contractedEnergy, setContractedEnergy] = useState(
+    data.contracted_energy
+  );
+  const [paymentSecurityType, setPaymentSecurityType] = useState(
+    data.payment_security_type
+  );
+  const [paymentSecurityDays, setPaymentSecurityDays] = useState(
+    data.payment_security_day
+  );
+  const [tarrifModal, setTarrifModal] = useState(false);
   const dispatch = useDispatch();
+  const [offerTariff, setOfferTariff] = useState(data.offer_tariff); // state for storing the tariff value
+
+  const user = JSON.parse(localStorage.getItem("user")).user;
+  const user_category = user.user_category;
 
   // Initialize the commencement date using moment
   const [commencementDate, setCommencementDate] = useState(() => {
     const date = data.commencement_of_supply || data.cod;
     return date ? moment(date, "YYYY-MM-DD").format("DD-MM-YYYY") : "";
-  });  
+  });
 
-  const user = JSON.parse(localStorage.getItem("user")).user; // Get the user from local storage
-const userId = user.id;
+  const userId = user.id;
 
   // Handle the DatePicker change event
   const handleDateChange = (date) => {
     setCommencementDate(date);
   };
 
+  const handleChatWithExpert = () => {
+    navigate("/consumer/chat-page");
+  };
+
+  const handleTarrif = () => {
+    console.log("modal");
+    setTarrifModal(true);
+  };
+
+  const onTarrifCancel = () => {
+    setTarrifModal(false);
+  };
+
+  const handleTarrifOk = (value) => {
+    setOfferTariff(value);
+    setTarrifModal(false);
+  };
+
+  console.log(data);
+
+  const handleStatusUpdate = async (action) => {
+    console.log(action);
+    console.log(user.id);
+    console.log(data.id); 
+    try {
+      const statusData = {
+        action: action,
+      };
+      const res=await dispatch(addStatus({ user_id: user.id, term_id: data.id, statusData }));
+    
+      message.success(`Status updated to ${action}`);
+      setIsModalVisible(false);
+    } catch (error) {
+      message.error("Failed to update status");
+    }
+  };
+
+  const handleTariffChange = (value) => {
+    setOfferTariff(value); // Update the offer tariff value in the state
+  };
+
   console.log(commencementDate);
   // Handle form submission
   const handleContinue = async () => {
-
     const termSheetId = data.id;
 
     const termsData = {
@@ -48,7 +108,9 @@ const userId = user.id;
       // combination: data.combination.combination || data.combination,
       term_of_ppa: ppaTerm,
       lock_in_period: lockInPeriod,
-      commencement_of_supply: commencementDate ? moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD") : null,      // Format date using moment
+      commencement_of_supply: commencementDate
+        ? moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD")
+        : null, // Format date using moment
       contracted_energy: contractedEnergy,
       minimum_supply_obligation: minimumSupply,
       payment_security_type: paymentSecurityType,
@@ -56,9 +118,16 @@ const userId = user.id;
     };
 
     try {
-      console.log('Updating terms and conditions:', termsData, userId, termSheetId);
+      console.log(
+        "Updating terms and conditions:",
+        termsData,
+        userId,
+        termSheetId
+      );
       // Dispatching the action to add Terms and Conditions
-      await dispatch(updateTermsAndConditions({ userId, termSheetId, termsData })).unwrap();
+      await dispatch(
+        updateTermsAndConditions({ userId, termSheetId, termsData })
+      ).unwrap();
       message.success("Terms and Conditions added successfully.");
       onCancel(); // Close the modal
     } catch (error) {
@@ -67,121 +136,142 @@ const userId = user.id;
   };
 
   return (
-    <Modal
-      title={<Text style={{ color: "#001529", fontSize: "18px" }}>Quotation</Text>}
-      visible={visible}
-      onCancel={onCancel}
-      footer={null}
-      width={800}
-      style={{ fontFamily: "'Inter', sans-serif" }}
-    >
-      <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
-        Standard Terms Sheet
-      </Title>
-      <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-        <Col span={12}>
-          <Typography.Paragraph>
-            <strong>Term of PPA (years):</strong>
-            <InputNumber
-              min={1}
-              value={ppaTerm}
-              onChange={(value) => setPpaTerm(value)}
-              style={{ width: "100%" }}
-            />
-          </Typography.Paragraph>
-        </Col>
-        <Col span={12}>
-          <Typography.Paragraph>
-            <strong>Lock-in Period (years):</strong>
-            <InputNumber
-              min={1}
-              value={lockInPeriod}
-              onChange={(value) => setLockInPeriod(value)}
-              style={{ width: "100%" }}
-            />
-          </Typography.Paragraph>
-        </Col>
-        <Col span={12}>
-          <Typography.Paragraph>
-            <strong>Commencement of Supply:</strong>
-            <DatePicker
- placeholder={
-    data.cod || data.commencement_of_supply
-      ? moment(data.cod || data.commencement_of_supply, "YYYY-MM-DD").format("DD-MM-YYYY")
-      : "Select Date"
-  } 
-            format="DD-MM-YYYY" // Format the date
-              // value={commencementDate} // Use moment date here
-              onChange={handleDateChange} // Update the state on date change
-              style={{ width: "100%" }}
-            />
-          </Typography.Paragraph>
-        </Col>
-        <Col span={12}>
-          <Typography.Paragraph>
-            <strong>Contracted Energy (million units):</strong>
-            <InputNumber
-              min={1}
-              value={contractedEnergy}
-              onChange={(value) => setContractedEnergy(value)}
-              style={{ width: "100%" }}
-            />
-          </Typography.Paragraph>
-        </Col>
-        <Col span={12}>
-          <Typography.Paragraph>
-            <strong>Minimum Supply Obligation (million units):</strong>
-            <InputNumber
-              min={1}
-              value={minimumSupply}
-              onChange={(value) => setMinimumSupply(value)}
-              style={{ width: "100%" }}
-            />
-          </Typography.Paragraph>
-        </Col>
-        <Col span={12}>
-          <Typography.Paragraph>
-            <strong>Payment Security Type:</strong>
-            <Select
-              value={paymentSecurityType}
-              onChange={(value) => setPaymentSecurityType(value)}
-              style={{ width: "100%" }}
-            >
-              <Option value="Bank Guarantee">Bank Guarantee</Option>
-              <Option value="Cash Deposit">Cash Deposit</Option>
-              <Option value="Letter of Credit">Letter of Credit</Option>
-            </Select>
-          </Typography.Paragraph>
-        </Col>
-        <Col span={12}>
-          <Typography.Paragraph>
-            <strong>Payment Security Days:</strong>
-            <InputNumber
-              min={1}
-              value={paymentSecurityDays}
-              onChange={(value) => setPaymentSecurityDays(value)}
-              style={{ width: "100%" }}
-            />
-          </Typography.Paragraph>
-        </Col>
-        <Col span={12}>
-          <Button
-            block
-            onClick={() => {}}
-            style={{
-              backgroundColor: "#FFFFFF",
-              border: `1px solid #E6E8F1`,
-              color: "#001529",
-              fontSize: "14px",
-            }}
-          >
-            Chat with Expert
+    <div>
+      <Modal
+        title={
+          <Text style={{ color: "#001529", fontSize: "18px" }}>Quotation</Text>
+        }
+        visible={visible}
+        onCancel={onCancel}
+        footer={null}
+        width={800}
+        style={{ fontFamily: "'Inter', sans-serif" }}
+      >
+        <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
+          <p style={{ margin: 0 }}>
+            Offer Tariff: {data.offer_tariff ? data.offer_tariff : "NA"}
+          </p>
+          <Button style={{ marginLeft: "auto" }} onClick={handleTarrif}>
+            Negotiate Tariff
           </Button>
-        </Col>
-      </Row>
+        </span>
 
-      <Row justify="end" style={{ marginTop: "20px" }}>
-        <Button
+        <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
+          Standard Terms Sheet
+        </Title>
+        <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong>Term of PPA (years):</strong>
+              <InputNumber
+                min={1}
+                value={ppaTerm}
+                onChange={(value) => setPpaTerm(value)}
+                style={{ width: "100%" }}
+              />
+            </Typography.Paragraph>
+          </Col>
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong>Lock-in Period (years):</strong>
+              <InputNumber
+                min={1}
+                value={lockInPeriod}
+                onChange={(value) => setLockInPeriod(value)}
+                style={{ width: "100%" }}
+              />
+            </Typography.Paragraph>
+          </Col>
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong>Commencement of Supply:</strong>
+              <DatePicker
+                placeholder={
+                  data.cod || data.commencement_of_supply
+                    ? moment(
+                        data.cod || data.commencement_of_supply,
+                        "YYYY-MM-DD"
+                      ).format("DD-MM-YYYY")
+                    : "Select Date"
+                }
+                format="DD-MM-YYYY" // Format the date
+                // value={commencementDate} // Use moment date here
+                onChange={handleDateChange} // Update the state on date change
+                style={{ width: "100%" }}
+              />
+            </Typography.Paragraph>
+          </Col>
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong>Contracted Energy (million units):</strong>
+              <InputNumber
+                min={1}
+                value={contractedEnergy}
+                onChange={(value) => setContractedEnergy(value)}
+                style={{ width: "100%" }}
+              />
+            </Typography.Paragraph>
+          </Col>
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong>Minimum Supply Obligation (million units):</strong>
+              <InputNumber
+                min={1}
+                value={minimumSupply}
+                onChange={(value) => setMinimumSupply(value)}
+                style={{ width: "100%" }}
+              />
+            </Typography.Paragraph>
+          </Col>
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong>Payment Security Type:</strong>
+              <Select
+                value={paymentSecurityType}
+                onChange={(value) => setPaymentSecurityType(value)}
+                style={{ width: "100%" }}
+              >
+                <Option value="Bank Guarantee">Bank Guarantee</Option>
+                <Option value="Cash Deposit">Cash Deposit</Option>
+                <Option value="Letter of Credit">Letter of Credit</Option>
+              </Select>
+            </Typography.Paragraph>
+          </Col>
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong>Payment Security Days:</strong>
+              <InputNumber
+                min={1}
+                value={paymentSecurityDays}
+                onChange={(value) => setPaymentSecurityDays(value)}
+                style={{ width: "100%" }}
+              />
+            </Typography.Paragraph>
+          </Col>
+          <Col span={12}>
+            <Button
+              block
+              onClick={handleChatWithExpert}
+              style={{
+                backgroundColor: "#FFFFFF",
+                border: `1px solid #E6E8F1`,
+                color: "#001529",
+                fontSize: "14px",
+              }}
+            >
+              <img
+                src={chat} // Use your imported chat image
+                alt="Chat"
+              style={{width:'15px',height:'15px'}}
+             
+              />
+              Need Assistance?
+            </Button>
+          </Col>
+        </Row>
+
+        <Row justify="end" style={{ marginTop: "20px" }}>
+          {/* <Button
           type="primary"
           style={{
             backgroundColor: "#669800",
@@ -192,10 +282,158 @@ const userId = user.id;
           onClick={handleContinue}
         >
           Continue
-        </Button>
-      </Row>
-    </Modal>
+        </Button> */}
+
+          {user_category === "Consumer" &&
+          data?.generator_status !== "Rejected" &&
+          data?.generator_status !== "Accepted" ? (
+            <>
+              {(data?.from_whom === "Consumer" &&
+                data?.count % 2 === 0 &&
+                data?.count < 4) ||
+              (data?.from_whom === "Generator" &&
+                data?.count % 2 === 1 &&
+                data?.count < 4) ? (
+                <>
+                  <Button onClick={() => handleStatusUpdate("Rejected")}>
+                    Reject
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => handleStatusUpdate("Accepted")}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    onClick={handleContinue}
+                  >
+                    Counter Offer
+                  </Button>
+                </>
+              ) : (
+                <p style={{ color: "#9A8406" }}>
+                  You have sent an offer to IPP. Please wait for their decision.
+                </p>
+              )}
+            </>
+          ) : null}
+
+          {user_category === "Generator" &&
+          data?.consumer_status !== "Rejected" &&
+          data?.consumer_status !== "Accepted" ? (
+            <>
+              {(data?.from_whom === "Generator" &&
+                data?.count % 2 === 0 &&
+                data?.count < 4) ||
+              (data?.from_whom === "Consumer" &&
+                data?.count % 2 === 1 &&
+                data?.count < 4) ? (
+                <>
+                  <Button onClick={() => handleStatusUpdate("Rejected")}>
+                    Reject
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => handleStatusUpdate("Accepted")}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    onClick={handleContinue}
+                  >
+                    Counter Offer
+                  </Button>
+                </>
+              ) : (
+                <p style={{ color: "#9A8406" }}>
+                  You have sent an offer to Consumer. Please wait for their
+                  decision.
+                </p>
+              )}
+            </>
+          ) : null}
+
+          {/* {user_category === "Consumer" ? (
+          data?.generator_status !== "Rejected" &&
+          data?.generator_status !== "Accepted" ? (
+            <>
+              {console.log("ippju")}
+              {data?.from_whom === "Consumer" &&
+              data?.count % 2 === 0 &&
+              data?.count < 4 ? (
+                <>
+                  <Button onClick={() => handleStatusUpdate("Rejected")}>
+                    Reject
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => handleStatusUpdate("Accepted")}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    onClick={handleContinue}
+                  >
+                    Counter Offer
+                  </Button>
+                </>
+              ) : (
+                <p>
+                  You have sent an offer to IPP. Please wait for their decision.
+                </p>
+              )}
+            </>
+          ) : null
+        ) : data?.consumer_status !== "Rejected" &&
+          data?.consumer_status !== "Accepted" ? (
+          <>
+            {console.log("ippju")}
+            {data?.from_whom === "Consumer" &&
+            data?.count % 2 === 0 &&
+            data?.count < 4 ? (
+              <>
+                <Button onClick={() => handleStatusUpdate("Rejected")}>
+                  Reject
+                </Button>
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  onClick={() => handleStatusUpdate("Accepted")}
+                >
+                  Accept
+                </Button>
+                <Button style={{ marginLeft: "10px" }} onClick={handleContinue}>
+                  Counter Offer
+                </Button>
+              </>
+            ) : (
+              <p>
+                You have sent an offer to IPP. Please wait for their decision.
+              </p>
+            )}
+          </>
+        ) : null} */}
+        </Row>
+        <Modal
+          title={"Negotiate Tariff"}
+          open={tarrifModal}
+          onCancel={onTarrifCancel} // The close (✖) icon will still work
+          footer={null} // Removes the Cancel and OK buttons
+        >
+          <InputNumber
+            style={{ width: "60%" }}
+            value={offerTariff}
+            onChange={handleTariffChange}
+          />
+          <Button onClick={handleTarrifOk} style={{ marginLeft: "5%" }}>
+            Send
+          </Button>
+        </Modal>
+      </Modal>
+    </div>
   );
 };
 
-export default TermsDetailModal;
+export default CounterOffer;

@@ -1,27 +1,45 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Col, Row, Typography, Select, Input, Modal, message } from "antd";
+import {
+  Table,
+  Button,
+  Col,
+  Row,
+  Typography,
+  Select,
+  Input,
+  Modal,
+  message,
+  Spin,
+} from "antd";
 import { useDispatch } from "react-redux";
 import { getOffers } from "../../Redux/Slices/Consumer/offersSlice";
 import TermsDetailModal from "../../Components/Modals/CounterOffer"; // Adjust the path as needed
 import moment from "moment";
+import { render } from "less";
+import DemandModal from "./Modal/DemandModal";
+import CombinationModal from "./Modal/CombinationModal";
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const Offers = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isCombinationModalVisible, setIsCombinationModalVisible] = useState(false);
-  const [isRequirementModalVisible, setIsRequirementModalVisible] = useState(false);
+  const [isCombinationModalVisible, setIsCombinationModalVisible] =
+    useState(false);
+  const [isRequirementModalVisible, setIsRequirementModalVisible] =
+    useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [combinationContent, setCombinationContent] = useState(null);
-  const [RequirementContent, setRequirementContent] = useState(null);
+  const [requirementContent, setRequirementContent] = useState(null);
   const [statusFilter, setStatusFilter] = useState("");
   const [searchText, setSearchText] = useState("");
   const [ippData, setIppData] = useState([]);
   const [error, setError] = useState(null);
+  const [loading,setLoader]=useState(false);
 
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
+  const user_category = user.user_category;
 
   useEffect(() => {
     const fetchIPPData = async () => {
@@ -30,9 +48,11 @@ const Offers = () => {
           id: user.id,
           user_category: "Generator",
         };
+        setLoader(true);
         const response = await dispatch(getOffers(data));
         if (response?.payload?.length > 0) {
           setIppData(response.payload);
+          setLoader(false);
         } else {
           setIppData([]);
           message.info("No data found");
@@ -45,6 +65,8 @@ const Offers = () => {
 
     fetchIPPData();
   }, [dispatch, user.id]);
+
+  console.log(ippData);
 
   const showModal = (record) => {
     console.log(record);
@@ -62,9 +84,12 @@ const Offers = () => {
     setIsCombinationModalVisible(true);
   };
   const showRequirementModal = (record) => {
+    console.log(record);
     setRequirementContent(record);
+    console.log(requirementContent);
     setIsRequirementModalVisible(true);
   };
+  // console.log(requirementContent);
 
   const handleCloseCombinationModal = () => {
     setIsCombinationModalVisible(false);
@@ -72,7 +97,7 @@ const Offers = () => {
   };
   const handleRequirementModalClose = () => {
     setIsRequirementModalVisible(false);
-    setRequirementContent(null);
+    // setRequirementContent(null);
   };
 
   const handleStatusChange = (value) => {
@@ -84,33 +109,42 @@ const Offers = () => {
   };
 
   const filteredData = Array.isArray(ippData)
-  ? ippData.filter((record) => {
-      const statusMatch = statusFilter ? record.consumer_status === statusFilter : true;
-      const searchMatch = searchText
-        ? Object.values(record)
-            .some(value =>
-              value &&
-              value.toString().toLowerCase().includes(searchText.toLowerCase())
+    ? ippData.filter((record) => {
+        const statusMatch = statusFilter
+          ? record.consumer_status === statusFilter
+          : true;
+        const searchMatch = searchText
+          ? Object.values(record).some(
+              (value) =>
+                value &&
+                value
+                  .toString()
+                  .toLowerCase()
+                  .includes(searchText.toLowerCase())
             ) ||
-          Object.values(record.requirement || {})
-            .some(value =>
-              value &&
-              value.toString().toLowerCase().includes(searchText.toLowerCase())
+            Object.values(record.requirement || {}).some(
+              (value) =>
+                value &&
+                value
+                  .toString()
+                  .toLowerCase()
+                  .includes(searchText.toLowerCase())
             ) ||
-            Object.values(record.combination || {})
-            .some(value =>
-              value &&
-              value.toString().toLowerCase().includes(searchText.toLowerCase())
+            Object.values(record.combination || {}).some(
+              (value) =>
+                value &&
+                value
+                  .toString()
+                  .toLowerCase()
+                  .includes(searchText.toLowerCase())
             )
-        : true;
+          : true;
 
-      return statusMatch && searchMatch;
-    })
-  : [];
+        return statusMatch && searchMatch;
+      })
+    : [];
 
-
-
-    console.log(filteredData);
+  console.log(filteredData);
 
   const columns = [
     {
@@ -127,20 +161,35 @@ const Offers = () => {
         const transformCombination = (text) => {
           const parts = text.split("-");
           if (parts.length === 4) {
-            return parts[0] + parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1) +
-                   parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1) +
-                   parts[3].charAt(0) + parts[3].charAt(parts[3].length - 1);
-          } 
+            return (
+              parts[0] +
+              parts[1].charAt(0) +
+              parts[1].charAt(parts[1].length - 1) +
+              parts[2].charAt(0) +
+              parts[2].charAt(parts[2].length - 1) +
+              parts[3].charAt(0) +
+              parts[3].charAt(parts[3].length - 1)
+            );
+          }
           if (parts.length === 3) {
-            return parts[0] + parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1) +
-                   parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1);
-          } 
+            return (
+              parts[0] +
+              parts[1].charAt(0) +
+              parts[1].charAt(parts[1].length - 1) +
+              parts[2].charAt(0) +
+              parts[2].charAt(parts[2].length - 1)
+            );
+          }
           if (parts.length === 2) {
-            return parts[0] + parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
+            return (
+              parts[0] +
+              parts[1].charAt(0) +
+              parts[1].charAt(parts[1].length - 1)
+            );
           }
           return text; // Default case
         };
-    
+
         return (
           <Typography.Link onClick={() => showCombinationModal(text)}>
             {transformCombination(text.combination)}
@@ -169,27 +218,29 @@ const Offers = () => {
       title: "Contracted Demand (MW)",
       dataIndex: "requirement",
       key: "contractedDemand",
-      render: (text) => 
-      <Typography.Link onClick={() => showRequirementModal(text)}>
-      {text.rq_contracted_demand}
-    </Typography.Link>,
+      render: (text) => (
+        <Typography.Link onClick={() => showRequirementModal(text)}>
+          {text.rq_contracted_demand}
+          {/* {console.log(text)} */}
+        </Typography.Link>
+      ),
     },
     {
       title: "Lock-in Period (Months)",
       dataIndex: "lock_in_period",
       key: "lock_in_period",
-    },  
+    },
     {
       title: "term_of_ppa (Years)",
       dataIndex: "term_of_ppa",
       key: "term_of_ppa",
-    },  
+    },
     {
       title: "Commencement Date",
       dataIndex: "commencement_of_supply",
       key: "commencement_of_supply",
       render: (text) => moment(text).format("DD-MM-YYYY"),
-    },  
+    },
     // {
     //   title: "Tariff Category",
     //   dataIndex: "requirement",
@@ -199,27 +250,62 @@ const Offers = () => {
     {
       title: "Status",
       key: "status",
-      dataIndex: "consumer_status",
+      render: (_, record) => {
+        return user_category === "Consumer"
+          ? record.consumer_status
+          : record.generator_status;
+      },
     },
     {
       title: "Action",
       key: "action",
-      render: (_, record) => (
-        <Button type="primary" onClick={() => showModal(record)}>
-          Counter Offer
-        </Button>
-      ),
+      render: (_, record) => {
+        return (
+          
+            record.count === 4  ? (
+              <Button type="primary" disabled>
+                Offer Closed
+              </Button>
+            ) : (
+          <Button type="primary" onClick={() => showModal(record)}>
+            Counter Offer
+          </Button>
+            )
+          
+          //   )
+          // ) : user_category === 'Generator' ? (
+          //   record.count === 1 && record.generator_status === 'Pending' ? (
+          //     <Button type="primary" disabled>
+          //       Counter Offer
+          //     </Button>
+          //   ) : (
+          //     <Button type="primary" onClick={() => showModal(record)}>
+          //       Counter Offer
+          //     </Button>
+          //   )
+          // ) : null // This covers the case when user_category is neither 'Consumer' nor 'Generator'
+        );
+      },
     },
   ];
 
   return (
     <div style={{ padding: "20px" }}>
       <Col span={24} style={{ marginLeft: "20px" }}>
-        <Title level={3} style={{ color: "#001529" }}>Offers</Title>
+        <Title level={3} style={{ color: "#001529" }}>
+          Offers
+        </Title>
         <h4>( Total offers received and sent from you. )</h4>
       </Col>
 
-      <Row gutter={16} style={{ marginBottom: "20px", justifyContent: "center", marginTop: "20px" }}>
+      <Row
+        gutter={16}
+        style={{
+          marginBottom: "20px",
+          justifyContent: "center",
+          marginTop: "20px",
+        }}
+      >
         <Col style={{ marginRight: "40%" }}>
           <Input
             placeholder="Search"
@@ -232,7 +318,11 @@ const Offers = () => {
           <Select
             placeholder="Filter by Status"
             onChange={handleStatusChange}
-            style={{ width: 200, border: "1px solid #6698005c", borderRadius: "5px" }}
+            style={{
+              width: 200,
+              border: "1px solid #6698005c",
+              borderRadius: "5px",
+            }}
             allowClear
           >
             <Option value="Pending">Pending</Option>
@@ -244,6 +334,10 @@ const Offers = () => {
 
       {error ? (
         <div style={{ color: "red", textAlign: "center" }}>{error}</div>
+      ) : loading ? ( // Show loader when data is being fetched
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <Spin size="large" />
+        </div>
       ) : ippData.length === 0 ? (
         <div style={{ textAlign: "center" }}>No Data Found</div>
       ) : (
@@ -251,6 +345,7 @@ const Offers = () => {
           dataSource={filteredData}
           columns={columns}
           bordered
+          loading={loading} // AntD's built-in loader
           pagination={false}
           style={{
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -272,7 +367,7 @@ const Offers = () => {
       )}
 
       {/* Combination Detail Modal */}
-      <Modal
+      {/* <Modal
         title="Combination Details"
         open={isCombinationModalVisible}
         onCancel={handleCloseCombinationModal}
@@ -281,7 +376,7 @@ const Offers = () => {
         {combinationContent && (
           <div>
             <p><strong>Combination ID:</strong> {combinationContent.combination}</p>
-            <p><strong>State:</strong> {combinationContent.state}</p>
+            <p><strong>State:</strong> {combinationContent.state.Solar_1} {combinationContent.state.Wind_1}</p>
             <p><strong>Solar:</strong> {combinationContent.optimal_solar_capacity} MW</p>
             <p><strong>Wind:</strong> {combinationContent.optimal_wind_capacity} MW</p>
             <p><strong>ESS:</strong> {combinationContent.optimal_battery_capacity} MW</p>
@@ -289,29 +384,22 @@ const Offers = () => {
             <p><strong>Per Unit Cost:</strong> {combinationContent.per_unit_cost}</p>
           </div>
         )}
-      </Modal>
+      </Modal> */}
 
       {/* Terms Detail Modal */}
-      <Modal
+      <DemandModal
         title="Demand Details"
         open={isRequirementModalVisible}
         onCancel={handleRequirementModalClose}
+        requirementContent={requirementContent}
         footer={null}
-      >
-        {RequirementContent && (
-          <div>
-            <p><strong>Demand ID:</strong> {RequirementContent.rq_id}</p>
-            <p><strong>Industry:</strong> {RequirementContent.rq_industry}</p><p>
-  <strong>Procurement Date:</strong>{" "}
-  {moment(RequirementContent.rq_procurement_date).format("DD-MM-YYYY")}
-</p>
-            <p><strong>Site Name:</strong> {RequirementContent.rq_site}</p>
-            <p><strong>State:</strong> {RequirementContent.rq_state}</p>
-            <p><strong>Tarrif Category:</strong> {RequirementContent.rq_tariff_category}</p>
-            <p><strong>Voltage Level:</strong> {RequirementContent.rq_voltage_level}</p>
-          </div>
-        )}
-      </Modal>
+      />
+      <CombinationModal
+        title="Combination Modal"
+        open={isCombinationModalVisible}
+        onCancel={handleCloseCombinationModal}
+        combinationContent={combinationContent}
+      />
     </div>
   );
 };
