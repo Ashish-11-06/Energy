@@ -250,6 +250,7 @@ const Offers = () => {
         <Table
           dataSource={filteredData}
           columns={columns}
+          
           bordered
           pagination={false}
           style={{

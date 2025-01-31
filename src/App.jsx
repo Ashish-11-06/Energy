@@ -86,7 +86,7 @@ function App() {
                   <Route path="requested-ipp" element={<RequestedIPP />} />
                  
                   <Route path="notification" element={<Notification />} />
-                  <Route path="transaction-window/:transactionId" element={<TransactionWindow />} />
+                  <Route path="transaction-window" element={<TransactionWindow />} />
                   <Route path="transaction-page" element={<TransactionMainPage />} />
                   <Route path="invoice" element={<InvoicePage />} />
                  
@@ -121,7 +121,7 @@ function App() {
             <Route path="combination" element={<OptimizeCombination  />} />
             <Route path="notificationgen" element={<NotificationGenerator  />} />
             <Route path='transaction' element={<TransactionMainPageGen />}/>
-            <Route path="transaction-window/:transactionId" element={<TransactionWindowGen />} />
+            <Route path="transaction-window" element={<TransactionWindowGen />} />
             <Route path="invoice" element={<InvoicePage />} />
 
             

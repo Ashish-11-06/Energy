@@ -14,6 +14,25 @@ body {
 
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  /* background: #6698005c;  Track color */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #669800; /* Thumb color (Ant Design primary color) */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9A8406; /* Thumb hover color */
+}
+
 
 
 
@@ -67,15 +86,15 @@ button:focus, .ant-btn:focus {
   }
   
   .ant-btn-primary {
-    background-color: #669800 !important; /* Primary button color */
-    border-color: #669800 !important; /* Border color */
+    background-color: #669800 ; /* Primary button color */
+    border-color: #669800 ; /* Border color */
     font-weight: 600 !important;
     transition: background-color 0.3s, border-color 0.3s !important;
   }
   
   .ant-btn-primary:hover, .ant-btn-primary:focus {
-    background-color: #5C8B00 !important; /* Darker green for button on hover */
-    border-color: #5C8B00 !important; /* Darker green border */
+    background-color: #5C8B00 ; /* Darker green for button on hover */
+    border-color: #5C8B00 ; /* Darker green border */
   }
   
   .ant-btn-primary:focus {

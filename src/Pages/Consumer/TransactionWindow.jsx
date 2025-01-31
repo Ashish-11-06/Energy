@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from 'react-router-dom';
 import {
   Card,
   Row,
@@ -16,16 +17,18 @@ import {
   connectWebSocket,
   subscribeToEvent,
   sendEvent,
-  disconnectWebSocket,
+  // disconnectWebSocket,
 } from '../../Redux/api/webSocketService.js';
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import time from '../../assets/time.png'
+import moment from "moment";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
 
 const TransactionWindow = () => {
+
   const { transactionId } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -34,41 +37,58 @@ const TransactionWindow = () => {
   const [offerValue, setOfferValue] = useState(null);
   const [sortedIppData, setSortedIppData] = useState([]);
   const contentRef = useRef();
+  const [socket, setSocket] = useState(null); // Add this line to define the socket variable
+
+  const location = useLocation();
 
   const navigate = useNavigate();
 
+  // const { state } = location;  // this should contain your passed record
+
+  // console.log(state);  // Check if the state is available here
+
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
-
-  const termSheetDetail = {
-    ppa: "20",
-    period: "10",
-    commencement: "2025-01-10",
-    energy: "20",
-    supply: "18",
-    payment: "30",
-    paymentType: "Bank Guarantee",
-  };
+  const record = location.state;
 
   useEffect(() => {
-    console.log("Connecting to WebSocket...");
-    connectWebSocket(user.id, transactionId);
+    console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
+    const newSocket = connectWebSocket(user.id, record.tariff_id);
+    setSocket(newSocket); // Set the socket state
 
-    subscribeToEvent("offerUpdate", (data) => {
-      console.log("Offer Update Received:", data);
-      message.info(`Offer updated: ${data.message}`);
-    });
+    const onOpenHandler = () => {
+      console.log("WebSocket Connected");
+      // Once the WebSocket is connected, subscribe to events
+      subscribeToEvent("offerUpdate", (data) => {
+        console.log("Offer Update Received:", data);
+        message.info(`Offer updated: ${data.message}`);
+      });
 
-    subscribeToEvent("negotiationResult", (data) => {
-      console.log("Negotiation Result Received:", data);
-      message.success(`Negotiation result: ${data.message}`);
-    });
+      subscribeToEvent("previous_offers", (data) => {
+        console.log("Previous Offers Received:", data);
+        if (data.offers && data.offers.length > 0) {
+          // Update sortedIppData with previous offer updates
+          const updatedIppData = sortedIppData.map((item) => {
+            const updatedOffer = data.offers.find(offer => offer.generator_username === item.ipp);
+            if (updatedOffer) {
+              return { ...item, perUnitCost: updatedOffer.updated_tariff };
+            }
+            return item;
+          });
+          setSortedIppData(updatedIppData);
+          message.success(`Received previous offers for IPP(s)`);
+        }
+      });
+    };
+
+    if (newSocket) {
+      newSocket.onopen = onOpenHandler;
+    }
 
     return () => {
-      console.log("Disconnecting WebSocket...");
-      disconnectWebSocket();
+      // disconnectWebSocket();
     };
-  }, [user.id, transactionId]);
+  }, [sortedIppData]);
 
   useEffect(() => {
     // Sort IPP data by ascending value of tariff offer
@@ -166,28 +186,27 @@ const TransactionWindow = () => {
               Term Sheet Details
             </Title>
             <Row gutter={[16, 16]}>
-              <Col span={8}><strong>Term of PPA (years): </strong>{termSheetDetail.ppa}</Col>
-              <Col span={8}><strong>Lock-in Period (years): </strong>{termSheetDetail.period}</Col>
-              <Col span={8}><strong>Commencement of Supply: </strong>{termSheetDetail.commencement}</Col>
+              <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
+              <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
+              <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-              <Col span={8}><strong>Contracted Energy (million units): </strong>{termSheetDetail.energy}</Col>
-              <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{termSheetDetail.supply}</Col>
-              <Col span={8}><strong>Payment Security (days):</strong>{termSheetDetail.payment}</Col>
+              <Col span={8}><strong>Contracted Energy (MW): </strong>{record.t_contracted_energy}</Col>
+              <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{record.t_minimum_supply_obligation}</Col>
+              <Col span={8}><strong>Payment Security (days):</strong>{record.t_payment_security_day}</Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-              <Col span={8}><strong>Payment Security Type:</strong> {termSheetDetail.paymentType}</Col>
+              <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
             </Row>
-            <Row justify="center" style={{ marginTop: "24px", marginLeft:'80%'}}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-  <img src={time} alt="" style={{ height: '30px', width: '30px' }} />
-  <Countdown title="Time Remaining" value={deadline} />
-</span>
-
+            <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <img src={time} alt="" style={{ height: '30px', width: '30px' }} />
+                <Countdown title="Time Remaining" value={deadline} />
+              </span>
             </Row>
             <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
-            {sortedIppData.map((item) => (
-              <Col span={24} key={item.key} style={{ marginTop: "16px" }}>
+            {sortedIppData.map((item, index) => (
+              <Col span={24} key={`${item.key}-${index}`} style={{ marginTop: "16px" }}>
                 <Card
                   bordered
                   style={{
@@ -210,7 +229,7 @@ const TransactionWindow = () => {
           </div>
           <br /><br />
           <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
-          <Button style={{marginLeft:'20px'}} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
+          <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
         </Card>
       </Row>
 
