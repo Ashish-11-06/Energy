@@ -13,8 +13,6 @@ import {
   Spin
 } from "antd";
 import moment from 'moment';
-
-const { Text,Title } = Typography;
 import {
   DashboardOutlined,
   AppstoreAddOutlined,
@@ -486,98 +484,3 @@ const handleId =(id) => {
 };
 
 export default SubscriptionPlans;
-
-
-
-
-
-
-
-// <Card
-// hoverable
-// className={selectedPlanId === plan.id ? 'selected-plan' : ''}
-// onClick={() => handleSelectPlan(plan.id)}
-
-// actions={[
-//   <Button
-//     type="primary"
-//     onClick={() => handleId(plan.id)}
-//     block
-//     size="small"
-//     style={{ width: '160px' }}
-//   >
-//     Select Plan
-//   </Button>,
-// ]}
-// >
-// <div
-//   style={{
-//     backgroundColor: '#669800',
-//     marginBottom: '0',
-//     marginTop: '-25px',
-//     marginLeft: '-25px',
-//     marginRight: '-25px',
-//     borderTopLeftRadius: '10px',
-//     borderTopRightRadius: '10px',
-//   }}
-// >
-//   <p style={{ padding: '5px' }}>
-//     <span
-//       style={{
-//         marginTop: '10px',
-//         color: 'white',
-//         fontSize: '22px',
-//         fontWeight: 'bold',
-//       }}
-//     >
-//       EXT {plan.subscription_type } Plan
-//     </span>
-//   </p>
-//   <hr />
-// </div>
-// <Text className="price">{plan.price} <p style={{ fontSize: '18px' }}>INR</p></Text>
-// <p><strong>Duration:</strong> {plan.duration_in_days} days</p>
-// <ul
-//   style={{ display: 'flex', flexDirection: 'column', padding: 0, marginLeft: '30%' }}
-// >
-//   {plan.subscription_type === 'LITE' && (
-//     <>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <FormOutlined style={{ marginRight: '10px', color: '#669800' }} /> Matching IPP +
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={req} alt="" style={{ height: '15px', width: '15px', marginRight: '10px' }} /> Requirements +
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={transaction} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Transaction window
-//       </li>
-//     </>
-//   )}
-//   {plan.subscription_type === 'PRO' && (
-//     <>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={dash} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Dashboard
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={advice} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Advisory Support
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={powerX} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> PowerX subscription
-//       </li>
-//     </>
-//   )}
-//   {plan.subscription_type === 'FREE' && (
-//     <>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-//       </li>
-//     </>
-//   )}
-// </ul>
-// </Card>
