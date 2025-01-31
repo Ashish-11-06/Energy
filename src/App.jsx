@@ -58,11 +58,9 @@ function App() {
 
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
-       
 
         {/* Routes with shared layout */}
         <Route element={<LayoutComponent />}>
-        <Route path="offers" element={<OfferRecieved />} />
           {/* Consumer Routes */}
           <Route
             path="/consumer/*"
@@ -83,7 +81,7 @@ function App() {
                   <Route path="profile" element={<ProfileConsumer />} />
                   <Route path="offer" element={<Offer />} />
                   <Route path="requested-ipp" element={<RequestedIPP />} />
-                 
+                  <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
                   <Route path="notification" element={<Notification />} />
                   <Route path="transaction-window/:transactionId" element={<TransactionWindow />} />
                   <Route path="transaction-page" element={<TransactionMainPage />} />
