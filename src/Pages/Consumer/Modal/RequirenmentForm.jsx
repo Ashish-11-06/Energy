@@ -17,7 +17,7 @@ import { useDispatch } from "react-redux";
 import dayjs from 'dayjs';
 import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
-fetchIndustry
+
 
 const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   const [form] = Form.useForm();

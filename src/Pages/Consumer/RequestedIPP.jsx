@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Col, Row, Typography, Select, Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
-import { requestedIPPs } from '../../Redux/Slices/Consumer/RequestedIPPSlice';
+import { getOffers } from '../../Redux/Slices/Consumer/offersSlice';
 import { addStatus } from '../../Redux/Slices/Generator/TermsAndConditionsSlice';
 import TermSheet from '../../Components/Modals/TermSheet';
+import ProgressBar from '../ProgressBar';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -20,10 +21,12 @@ const RequestedIPP = () => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem('user')).user;
 
+
+
   useEffect(() => {
     const fetchIPPData = async () => {
       try {
-        const response = await dispatch(requestedIPPs(user));
+        const response = await dispatch(getOffers(user));
         if (response?.payload?.length > 0) {
           setIppData(response.payload);
         } else {
@@ -73,6 +76,27 @@ const RequestedIPP = () => {
       setIsModalVisible(false);
     } catch (error) {
       message.error('Failed to update status');
+    }
+  };
+  const [progress, setProgress] = useState(20);
+  const breakpoints = [
+    { value: 20, title: "Step 1" },
+    { value: 40, title: "Step 2" },
+    { value: 60, title: "Step 3" },
+    { value: 80, title: "Step 4" },
+    { value: 100, title: "Complete" },
+  ];
+
+  // Function to update progress when clicking breakpoints
+  const handleProgressChange = (newProgress) => {
+    setProgress(newProgress);
+  };
+
+  // Function to increase progress using the button
+  const handleProgress = () => {
+    console.log("clicked");
+    if (progress < 100) {
+      setProgress(progress + 20); // Increase progress
     }
   };
 
@@ -142,6 +166,14 @@ const RequestedIPP = () => {
 
   return (
     <div style={{ padding: '20px' }}>
+       <div>
+      <ProgressBar
+        progress={progress}
+        breakpoints={breakpoints}
+        onProgressChange={handleProgressChange}
+      />
+      <button onClick={handleProgress}>Increase Progress</button>
+    </div>
       <Col span={24} style={{ textAlign: 'center' }}>
         <Title level={3} style={{ color: '#001529' }}>
           Your Requested IPPs

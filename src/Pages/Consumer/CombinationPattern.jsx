@@ -294,7 +294,7 @@ const CombinationPattern = () => {
       width: 10,
     },
     {
-      title: "IPP ID",
+      title: "Combination ID",
       dataIndex: "combination",
       key: "combination",
       width: 120,
@@ -515,6 +515,7 @@ const CombinationPattern = () => {
 
           <div style={{ marginBottom: "20px" }}>
             <Card>
+            <p>( Scroll the below bar for different RE combination  )</p>
              {/* <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>( Scroll the below bar for different RE combination  )</p></span> Display slider value */}
               <span>
                 <Slider

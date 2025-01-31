@@ -32,7 +32,7 @@ import PortfolioGen from './Pages/Generator/PortfolioGen';
 import Offer from './Pages/Consumer/Offer';
 import RequestedIPP from './Pages/Consumer/RequestedIPP';
 import RequestedIPPOfGen from './Pages/Generator/RequestedIPPOfGen';
-import OfferRecieved from './Pages/Consumer/OfferRecievedFromIPP';
+import OfferRecieved from './Pages/Consumer/Offers';
 import OfferRecievedFromCons from './Pages/Generator/OfferRecievedFromCons';
 //import NavbarWithProgressBar from './Pages/Consumer/NavbarWithProgressBar';
 import Notification from './Pages/Consumer/Notification';
@@ -45,6 +45,7 @@ import TransactionMainPageGen from './Pages/Generator/TransactionMainPageGen';
 import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
 import RequirementsPage from './Pages/Consumer/RequirementPage';
 import InvoicePage from './Pages/InvoicePage';
+import ProgressBar from './Pages/ProgressBar';
 
 
 
@@ -86,6 +87,7 @@ function App() {
                   <Route path="transaction-window/:transactionId" element={<TransactionWindow />} />
                   <Route path="transaction-page" element={<TransactionMainPage />} />
                   <Route path="invoice" element={<InvoicePage />} />
+                 
 
 
                 </Routes>
