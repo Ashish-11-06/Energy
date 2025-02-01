@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // Create Razorpay Order
 export const createRazorpayOrder = createAsyncThunk(
   "payment/createOrder",
-  async ({ amount, currency }, { rejectWithValue }) => {
+  async ({ amount, currency }, { rejectWithValue }) =>{
     try {
       const response = await fetch("http://192.168.1.47:8001/api/energy/create-order", {
         method: "POST",

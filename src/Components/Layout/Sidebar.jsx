@@ -102,7 +102,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           </div>
           <Menu mode="inline" selectedKeys={[selectedKey]}>
             {menuItems.map((item) => (
-              <Menu.Item key={item.key} icon={item.icon}>
+              <Menu.Item key={item.key} icon={item.icon} onClick={() => navigate(item.key)}>
                 <Link to={item.key}>{item.label}</Link>
               </Menu.Item>
             ))}

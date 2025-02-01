@@ -10,9 +10,7 @@ import {
   Form,
   Input,
   message,
-  Spin
 } from "antd";
-import moment from 'moment';
 import {
   DashboardOutlined,
   AppstoreAddOutlined,
@@ -86,41 +84,12 @@ const SubscriptionPlans = () => {
     fetchPerforma();
   }, [dispatch, userId]);
 
-  // useEffect(()=> {
-  //   const id=userId;
-  //   dispatch(fetchSubscriptionValidity(id))
-  //   .then(response => {    
-  //     setSubscriptionPlanValidity(response.payload);
-  //      console.log(response.payload);
-
-  //      localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
-  //   })
-  //   .catch(error => {
-  //     console.error("Error fetching industry:", error);
-  //   });
-  // },[dispatch]);
-
-  // console.log(subscriptionPlanValidity);
-  
-
-  useEffect(() => {
-    setLoading(true);
-    dispatch(fetchSubscriptionPlan())
-      .then(response => {    
-        setSubscriptionPlan(response.payload);
-      setLoading(false);
-      })
-      .catch(error => {
-        console.error("Error fetching subscription:", error);
-      });
-  }, [dispatch]);
-  
   const handleCreatePerforma = async () => {
     const performaData = {
       company_name: companyName,
       company_address: companyAddress,
       gst_number: gstinNumber,
-      subscription: selectedPlanId,
+      subscription: selectedPlan, // Use selected plan dynamically
       due_date: "2025-01-25",
     };
   
@@ -255,7 +224,8 @@ const SubscriptionPlans = () => {
               order_id: orderResponse.data.id,
               payment_id: response.razorpay_payment_id,
               signature: response.razorpay_signature,
-              amount: orderResponse.data.amount, // Include amount in payment data
+              amount: orderResponse.data.amount, 
+              subscription: selectedPlan 
             };
 
             console.log("Payment data to send:", paymentData); // Log payment data
@@ -311,115 +281,252 @@ const SubscriptionPlans = () => {
     navigate("/consumer/energy-consumption-table");
   };
 
-const handleId =(id) => {
- console.log('id',id);
- 
-}
-
   return (
     <div className="subscription-plans-container">
       <Title level={2} style={{ marginTop: "5%", marginBottom: "5%" }}>
         Choose Your Annual Subscription Plan
       </Title>
- 
-
-<Row gutter={[16, 16]} justify="center">
-  {loading ? ( // Show loader if loading is true
-    <Spin size="large" />
-  ) : (
-    subscriptionPlan.map((plan) => (
-      <Col key={plan.id} xs={24} sm={8} md={8}>
-        <Card
-          hoverable
-          className={selectedPlanId === plan.id ? 'selected-plan' : ''}
-          onClick={() => handleSelectPlan(plan.id)}
-          actions={[
-            <Button
-              type="primary"
-              onClick={() => handleId(plan.id)}
-              block
-              size="small"
-              style={{ width: '160px' }}
-            >
-              Select Plan
-              {/* {!subscriptionPlanValidity ? 'Select plan' : 'Subscribed'} */}
-            </Button>,
-          ]}
-        >
-          <div
-            style={{
-              backgroundColor: '#669800',
-              marginBottom: '0',
-              marginTop: '-25px',
-              marginLeft: '-25px',
-              marginRight: '-25px',
-              borderTopLeftRadius: '10px',
-              borderTopRightRadius: '10px',
-            }}
+      <Row gutter={[16, 16]} justify="center">
+        <Col xs={24} sm={8} md={8} >
+          <Card
+            hoverable
+            className={selectedPlan === "basic" ? "selected-plan" : ""}
+            onClick={() => handleSelectPlan(1)}
+            actions={[
+              <Button
+                type="primary"
+                block
+                size="small"
+                style={{ width: "160px" }}
+              >
+                Select Plan
+              </Button>,
+            ]}
           >
-            <p style={{ padding: '5px' }}>
-              <span
+            <div
+              style={{
+                backgroundColor: "#669800 ",
+                marginBottom: "0",
+                marginTop: "-25px",
+                marginLeft: "-25px",
+                marginRight: "-25px",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
+            >
+              <p style={{ padding: "5px" }}>
+                <span
+                  style={{
+                    marginTop: "10px",
+                    color: "white",
+                    fontSize: "22px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  EXT Lite Plan
+                </span>
+              </p>
+              <hr />
+            </div>
+            <div>
+            <Text className="price">50,000 INR</Text>
+            <ul
+              style={{ display: "flex", flexDirection: "column", padding: 0,marginLeft:'30%' }}
+            >
+              <li
                 style={{
-                  marginTop: '10px',
-                  color: 'white',
-                  fontSize: '22px',
-                  fontWeight: 'bold',
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
                 }}
               >
-                EXT {plan.subscription_type} Plan
-              </span>
-            </p>
-            <hr />
-          </div>
-          <Text className="price">{plan.price} <p style={{ fontSize: '18px' }}>INR</p></Text>
-          <p><strong>Duration:</strong> {plan.duration_in_days} days</p>
-          <ul style={{ display: 'flex', flexDirection: 'column', padding: 0, marginLeft: '30%' }}>
-            {plan.subscription_type === 'LITE' && (
-              <>
-                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                  <FormOutlined style={{ marginRight: '10px', color: '#669800' }} /> Matching IPP +
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                  <img src={req} alt="" style={{ height: '15px', width: '15px', marginRight: '10px' }} /> Requirements +
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                  <img src={transaction} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Transaction window
-                </li>
-              </>
-            )}
-            {plan.subscription_type === 'PRO' && (
-              <>
-                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                  <img src={dash} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Dashboard
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                  <img src={advice} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Advisory Support
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                  <img src={powerX} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> PowerX subscription
-                </li>
-              </>
-            )}
-            {plan.subscription_type === 'FREE' && (
-              <>
-                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                  <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                  <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-                </li>
-                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                  <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-                </li>
-              </>
-            )}
-          </ul>
-        </Card>
-      </Col>
-    ))
-  )}
-</Row>
+                <FormOutlined style={{ marginRight: "10px", color: '#669800' }} /> Matching IPP +
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                {/* <AppstoreAddOutlined style={{ marginRight: "10px" ,color:'#669800' }} />{" "} */}
+                <img src={req} alt="" style={{height:'15px',width:'15px',  marginRight:'10px'}}/>{"  "}
+                Requirements +
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <FormOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Transaction
+                window
+              </li>
+            </ul>
+            </div>
+          </Card>
+        </Col>
 
+        <Col xs={24} sm={8} md={8}>
+          <Card
+            hoverable
+            className={selectedPlan === "basic" ? "selected-plan" : ""}
+            onClick={() => handleSelectPlan(2)}
+            actions={[
+              <Button
+                type="primary"
+                block
+                size="small"
+                style={{ width: "160px" }}
+              >
+                Select Plan
+              </Button>,
+            ]}
+          >
+            <div
+              style={{
+                backgroundColor: "#669800 ",
+                marginBottom: "0",
+                marginTop: "-25px",
+                marginLeft: "-25px",
+                marginRight: "-25px",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
+            >
+              <p style={{ padding: "5px" }}>
+                <span
+                  style={{
+                    marginTop: "10px",
+                    color: "white",
+                    fontSize: "22px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  EXT Pro Plan
+                </span>
+              </p>
+              <hr />
+            </div>
+            <Text className="price">2,00,000 INR</Text>
+            <ul
+              style={{ display: "flex", flexDirection: "column", padding: 0 ,marginLeft:'30%'}}
+            >
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <DashboardOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Dashboard
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <AppstoreAddOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Advisory
+                Support
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <SolutionOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> PowerX
+                subscription
+              </li>
+            </ul>
+          </Card>
+        </Col>
+
+        <Col xs={24} sm={8} md={8}>
+          <Card
+            hoverable
+            className={selectedPlan === "basic" ? "selected-plan" : ""}
+            onClick={() => handleSelectPlan(3)}
+            actions={[
+              <Button
+                type="primary"
+                block
+                size="small"
+                style={{ width: "160px" }}
+              >
+                Select Plan
+              </Button>,
+            ]}
+          >
+            <div
+              style={{
+                backgroundColor: "#669800 ",
+                marginBottom: "0",
+                marginTop: "-25px",
+                marginLeft: "-25px",
+                marginRight: "-25px",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
+            >
+              <p style={{ padding: "5px" }}>
+                <span
+                  style={{
+                    marginTop: "10px",
+                    color: "white",
+                    fontSize: "22px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Trial Plan
+                </span>
+              </p>
+              <hr />
+            </div>
+            <Text className="price">Free</Text>
+            <ul
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: 0,
+                marginLeft: "40%",
+              }}
+            >
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <NotificationOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Trial
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <NotificationOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Trial
+              </li>
+              <li
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <NotificationOutlined style={{ marginRight: "10px" ,color:'#669800' }} /> Trial
+              </li>
+            </ul>
+          </Card>
+        </Col>
+      </Row>
 
       {isQuotationVisible && (
         <Modal
