@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Radio, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -8,8 +8,9 @@ import RegisterForm from '../Modals/Registration/RegisterForm';
 import { loginUser } from "../../Redux/Slices/loginSlice";
 import ForgotPassword from '../Modals/ForgotPassword';  // Import the ForgotPassword component
 import { fetchSubscriptionValidity } from '../../Redux/Slices/Consumer/subscriptionEnrollSlice';
+import { MailOutlined, LockOutlined } from '@ant-design/icons'; // Import icons
 
-
+import EXGLogo from '../../assets/EXG.png';  // Import the logo image
 
 const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -18,58 +19,54 @@ const Login = () => {
   const [userType, setUserType] = useState('consumer');
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [subscriptionPlanValidity,setSubscriptionPlanValidity]=useState([]);
+  const [subscriptionPlanValidity, setSubscriptionPlanValidity] = useState([]);
 
-    const onFinish = async (values) => {
-      setLoading(true);
-      try {
-        const loginData = { ...values };
-        console.log(values);
-    
-        const resultAction = await dispatch(loginUser(loginData));
-    
-        if (loginUser.fulfilled.match(resultAction)) {
-          message.success('Login successful!');
-    
-          // Extract user from payload
-          const user = resultAction.payload.user; // FIX: Ensure `user` is defined
-          const id = user.id; // Get the user ID
-          console.log(id);
-    
-          // Fetch subscription validity
-          const response = await dispatch(fetchSubscriptionValidity(id));
-          setSubscriptionPlanValidity(response.payload);
-          console.log(response.payload);
-    
-          localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
-    
-          // Navigate based on user type and new user status
-          if (user.user_category === 'Generator') {
-            if (user.is_new_user) {
-              navigate('/generator/what-we-offer', { state: { isNewUser: user.is_new_user } });
-            } else {
-              navigate('/generator/dashboard');
-            }
-          } else if (user.user_category === 'Consumer') {
-            if (user.is_new_user) {
-              console.log('New user:', user.is_new_user);
-              navigate('/consumer/what-we-offer', { state: { isNewUser: user.is_new_user } });
-            } else {
-              console.log('New user:', user.is_new_user);
-              navigate('/consumer/dashboard');
-            }
+  const onFinish = async (values) => {
+    setLoading(true);
+    try {
+      const loginData = { ...values };
+      console.log(values);
+
+      const resultAction = await dispatch(loginUser(loginData));
+
+      if (loginUser.fulfilled.match(resultAction)) {
+        message.success('Login successful!');
+
+        const user = resultAction.payload.user;
+        const id = user.id;
+        console.log(id);
+
+        const response = await dispatch(fetchSubscriptionValidity(id));
+        setSubscriptionPlanValidity(response.payload);
+        console.log(response.payload);
+
+        localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
+
+        if (user.user_category === 'Generator') {
+          if (user.is_new_user) {
+            navigate('/generator/what-we-offer', { state: { isNewUser: user.is_new_user } });
+          } else {
+            navigate('/generator/dashboard');
           }
-        } else {
-          message.error(resultAction.payload || 'Login failed. Please try again.');
+        } else if (user.user_category === 'Consumer') {
+          if (user.is_new_user) {
+            console.log('New user:', user.is_new_user);
+            navigate('/consumer/what-we-offer', { state: { isNewUser: user.is_new_user } });
+          } else {
+            console.log('New user:', user.is_new_user);
+            navigate('/consumer/dashboard');
+          }
         }
-      } catch (error) {
-        console.error('Login error:', error);
-        message.error('An error occurred during login. Please try again.');
-      } finally {
-        setLoading(false);
+      } else {
+        message.error(resultAction.payload || 'Login failed. Please try again.');
       }
-    };
-    
+    } catch (error) {
+      console.error('Login error:', error);
+      message.error('An error occurred during login. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
@@ -105,9 +102,11 @@ const Login = () => {
     closeForgotPasswordModal();  // Close the modal after the action
   };
 
-
   return (
     <div className="login-container">
+      <div className="logo-container">
+        <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
+      </div>
       <div className="login-box">
         <h2 className="login-title">Login</h2>
         <Form
@@ -122,7 +121,7 @@ const Login = () => {
             name="email"
             rules={[{ required: true, message: 'Please provide your email address!' }]}
           >
-            <Input placeholder="Enter your email" />
+            <Input prefix={<MailOutlined />} placeholder="Enter your email" />
           </Form.Item>
 
           <Form.Item
@@ -130,7 +129,7 @@ const Login = () => {
             name="password"
             rules={[{ required: true, message: 'Please provide your password! ' }]}
           >
-            <Input.Password placeholder="Enter your password" />
+            <Input.Password prefix={<LockOutlined />} placeholder="Enter your password" />
           </Form.Item>
 
           <Form.Item

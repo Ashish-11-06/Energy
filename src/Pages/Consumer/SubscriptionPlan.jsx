@@ -239,16 +239,22 @@ const handleFreeContinue=() => {
   );
 
   const handleGenerateProforma = async () => {
+  const handleGenerateProforma = async () => {
     form
       .validateFields()
       .then(async (values) => {
         setFormError(""); // Reset any error message if the form is valid
         await handleCreatePerforma(values);
+      .then(async (values) => {
+        setFormError(""); // Reset any error message if the form is valid
+        await handleCreatePerforma(values);
         setIsProformaVisible(true); // Show the proforma modal
+        setIsQuotationVisible(false);
         setIsQuotationVisible(false);
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
+        setFormError("Please fill in all required fields.");
         setFormError("Please fill in all required fields.");
       });
   };
@@ -620,6 +626,7 @@ const handleFreeContinue=() => {
         <img
           src={proformaInvoice}
           alt="Proforma Invoice"
+          alt="Proforma Invoice"
           style={{ height: "500px", width: "500px", marginLeft: "5%" }}
         />
         <p>Please proceed to payment to complete your subscription.</p>
@@ -638,6 +645,14 @@ const handleFreeContinue=() => {
       >
         This is dummy Payment
       </Modal>
+
+      {isSubscriptionModalVisible && (
+        <SubscriptionModal
+          visible={isSubscriptionModalVisible}
+          plan={selectedPlan}
+          onClose={closeSubscriptionModal}
+        />
+      )}
 
       {isSubscriptionModalVisible && (
         <SubscriptionModal
