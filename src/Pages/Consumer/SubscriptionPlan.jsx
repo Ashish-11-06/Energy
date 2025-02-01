@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
-import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 import {
   Card,
   Button,
