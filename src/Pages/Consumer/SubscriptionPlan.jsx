@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
+import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 import {
   Card,
   Button,
@@ -226,16 +227,22 @@ console.log(response);
   );
 
   const handleGenerateProforma = async () => {
+  const handleGenerateProforma = async () => {
     form
       .validateFields()
       .then(async (values) => {
         setFormError(""); // Reset any error message if the form is valid
         await handleCreatePerforma(values);
+      .then(async (values) => {
+        setFormError(""); // Reset any error message if the form is valid
+        await handleCreatePerforma(values);
         setIsProformaVisible(true); // Show the proforma modal
+        setIsQuotationVisible(false);
         setIsQuotationVisible(false);
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
+        setFormError("Please fill in all required fields.");
         setFormError("Please fill in all required fields.");
       });
   };
@@ -428,6 +435,7 @@ console.log(response);
           onCancel={closeQuotation}
           footer={[
             <Button type="primary" htmlType="submit" onClick={handleGenerateProforma}>
+            <Button type="primary" htmlType="submit" onClick={handleGenerateProforma}>
               Generate Performa
             </Button>,
           ]}
@@ -453,6 +461,7 @@ console.log(response);
         <img
           src={proformaInvoice}
           alt="Proforma Invoice"
+          alt="Proforma Invoice"
           style={{ height: "500px", width: "500px", marginLeft: "5%" }}
         />
         <p>Please proceed to payment to complete your subscription.</p>
@@ -471,6 +480,14 @@ console.log(response);
       >
         This is dummy Payment
       </Modal>
+
+      {isSubscriptionModalVisible && (
+        <SubscriptionModal
+          visible={isSubscriptionModalVisible}
+          plan={selectedPlan}
+          onClose={closeSubscriptionModal}
+        />
+      )}
 
       {isSubscriptionModalVisible && (
         <SubscriptionModal

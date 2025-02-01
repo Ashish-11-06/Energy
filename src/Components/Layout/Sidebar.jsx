@@ -26,10 +26,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState(location.pathname);
 
-  const user = JSON.parse(localStorage.getItem('user')).user;
-  const user_category = user.user_category;
-
-
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
@@ -54,7 +50,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
-  const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
+  const menuType = location.pathname.startsWith('/consumer') ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
 
   useEffect(() => {
@@ -107,7 +103,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           </div>
           <Menu mode="inline" selectedKeys={[selectedKey]}>
             {menuItems.map((item) => (
-              <Menu.Item key={item.key} icon={item.icon}>
+              <Menu.Item key={item.key} icon={item.icon} onClick={() => navigate(item.key)}>
                 <Link to={item.key}>{item.label}</Link>
               </Menu.Item>
             ))}

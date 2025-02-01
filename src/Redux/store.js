@@ -8,6 +8,7 @@ import consumptionPatternReducer from './Slices/Generator/ConsumptionPatternSlic
 import termsAndConditionsReducer from './Slices/Generator/TermsAndConditionsSlice'; // Import the termsAndConditionsReducer
 import matchingIPPSlice from './Slices/Consumer/matchingIPPSlice';
 import monthlyDataReducer from './Slices/Consumer/monthlyConsumptionSlice'
+import paymentReducer from './Slices/Consumer/paymentSlice'; // Import the paymentReducer
 
 export const store = configureStore({
   reducer: {
@@ -19,12 +20,13 @@ export const store = configureStore({
     consumptionPattern: consumptionPatternReducer, // Add consumptionPatternReducer to the store
     termsAndConditions: termsAndConditionsReducer, // Add termsAndConditionsReducer to the store
     matchingIPP: matchingIPPSlice,
-    monthlyData: monthlyDataReducer
+    monthlyData: monthlyDataReducer,
+    payment: paymentReducer 
 
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Disable serializable check for non-serializable valuesjkj
+      serializableCheck: false, // Disable serializable check for non-serializable values
     }),
 });
 
