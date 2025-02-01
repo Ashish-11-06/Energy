@@ -225,26 +225,26 @@ console.log(response);
     </Form>
   );
 
+ 
   const handleGenerateProforma = async () => {
-  const handleGenerateProforma = async () => {
-    form
-      .validateFields()
+    form.validateFields()
       .then(async (values) => {
         setFormError(""); // Reset any error message if the form is valid
-        await handleCreatePerforma(values);
-      .then(async (values) => {
-        setFormError(""); // Reset any error message if the form is valid
-        await handleCreatePerforma(values);
-        setIsProformaVisible(true); // Show the proforma modal
-        setIsQuotationVisible(false);
-        setIsQuotationVisible(false);
+        try {
+          await handleCreatePerforma(values);
+          setIsProformaVisible(true); // Show the proforma modal
+          setIsQuotationVisible(false);
+        } catch (error) {
+          console.log("Validation failed:", error);
+          setFormError("Please fill in all required fields.");
+        }
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
         setFormError("Please fill in all required fields.");
-        setFormError("Please fill in all required fields.");
       });
   };
+  
 
   const handlePayment = async () => {
     try {
@@ -427,23 +427,23 @@ console.log(response);
   )}
 </Row>
 
-      {isQuotationVisible && (
-        <Modal
-          title="Generate proforma invoice"
-          open={isQuotationVisible}
-          onCancel={closeQuotation}
-          footer={[
-            <Button type="primary" htmlType="submit" onClick={handleGenerateProforma}>
-            <Button type="primary" htmlType="submit" onClick={handleGenerateProforma}>
-              Generate Performa
-            </Button>,
-          ]}
-          width={600}
-        >
-          <p>(Please provide additional details)</p>
-          {renderQuotation()}
-        </Modal>
-      )}
+{isQuotationVisible && (
+  <Modal
+    title="Generate Proforma Invoice"
+    open={isQuotationVisible}
+    onCancel={closeQuotation}
+    footer={[
+      <Button key="generate" type="primary" htmlType="submit" onClick={handleGenerateProforma}>
+        Generate Proforma
+      </Button>,
+    ]}
+    width={600}
+  >
+    <p>(Please provide additional details)</p>
+    {renderQuotation()}
+  </Modal>
+)}
+
 
       <Modal
         title="Proforma Invoice"
@@ -459,7 +459,6 @@ console.log(response);
         <p>This is a proforma invoice.</p>
         <img
           src={proformaInvoice}
-          alt="Proforma Invoice"
           alt="Proforma Invoice"
           style={{ height: "500px", width: "500px", marginLeft: "5%" }}
         />
