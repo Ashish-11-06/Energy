@@ -1,15 +1,19 @@
 /* Ensure the body takes up the full height of the viewport */
 .landing-page {
-  display: flex;
+  position: relative;
   height: 100vh;
   width: 100%;
   overflow: hidden;
+  font-family: 'Inter', sans-serif;
 }
 
 .video-container {
   flex: 1; /* Takes up the remaining 50% of the width */
   position: relative;
   padding: 20px;
+  width: 60%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .background-video {
@@ -19,24 +23,34 @@
   width: 100%;
   height: 100%;
   object-fit: cover; /* Ensure video covers the full container */
-  filter: blur(8px); /* Optional: Apply blur effect to background video */
+  filter: blur(8px); /* Apply blur effect to background video */
   z-index: -1; /* Put the video behind the content */
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 128, 0, 0.5); /* Green color overlay */
+  z-index: -1;
 }
 
 .key-features {
   position: absolute;
-  top: 20%;
+  top: 10%;
   left: 10%;
-  color: rgb(0, 0, 0);
-  /* background-color: rgba(0, 0, 0, 0.6); */
+  color: #FFFFFF;
+  background: rgba(0, 0, 0, 0.5);
   padding: 20px;
   border-radius: 8px;
-  width: 250px;
+  max-width: 400px;
 }
 
 .key-features h2 {
   font-size: 24px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .key-features ul {
@@ -49,28 +63,251 @@
   margin-bottom: 10px;
 }
 
+.key-features a {
+  color: hsl(111, 87%, 30%);
+  text-decoration: none;
+}
+
+.key-features a:hover {
+  text-decoration: underline;
+}
+
+.content-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
 .text-content {
   position: absolute;
-  bottom: 20%;
-  left: 10%;
-  color: rgb(11, 0, 0);
+  bottom: 1%;
+  left: 18%;
+  color: #FFFFFF;
   text-align: left;
   z-index: 1;
 }
 
-.right-content-bg {
-  width: 50%; /* Right content takes up 50% of the width */
-  background-color: white; /* White background */
-  /* padding: 40px; */
+.text-content h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.text-content h2 {
+  font-size: 75px; /* Increase font size */
+  margin-bottom: 50px;
+  color: #FFFFFF; /* White color for key features */
+}
+
+.text-content ul {
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 300px;
+}
+
+.text-content li {
+  font-size: 25px;
+  margin-bottom: 10px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; /* Center the content */
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow on the left */
-  z-index: 1;
-  height: 100vh;
+  align-items: center;
+  color: #FFFFFF; /* White color for key features */
+}
+
+.text-content .icon {
+  color: #FFFFFF; /* White color for icons */
+  margin-right: 10px;
+}
+
+.text-content p {
+  font-size: 18px;
+  bottom: 10px;
+  margin-left: 300px;
+  color: #FFFFFF; /* White color for text */
+}
+
+.animated-text {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 2s steps(8, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #FFFFFF; /* White color for caret */
+  }
 }
 
 .cta-button {
   margin-top: 20px;
+}
+
+.logo-container {
+  position: absolute;
+  top: 10px;
+  left: 50px; /* Change left to right */
+}
+
+.exg-logo {
+  width: 150px; /* Adjust the size as needed */
+  height: auto;
+}
+
+.social-media-icons {
+  position: absolute;
+  bottom: 3%;
+  left: 15%;
+  transform: translateX(-50%); /* Center the social media icons */
+  display: flex;
+  gap: 15px;
+}
+
+.social-media-icons p{
+  transform: translateX(250%);
+  color: #227106;
+  font-size: 22px;
+}
+
+.social-media-icons a {
+  color: #227106; /* White color for social media icons */
+  font-size: 24px;
+  transition: color 0.3s;
+}
+
+.social-media-icons a:hover {
+  color: #d4d4d4; /* Light gray color on hover */
+}
+
+.login-box {
+  background-color: #FFFFFF; /* White background for the form */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 700px; /* Adjust width */
+  height: 600px; /* Adjust height */
+  border: 1px solid #E6E8F1;
+  position: absolute;
+  top: 50%;
+  right: 270px;
+  transform: translateY(-60%);
+}
+
+.login-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.extra-links {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.extra-links a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.extra-links a:hover {
+  text-decoration: underline;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 80px;
+  background-color: #FFFFFF; /* White color */
+  display: flex;
+  justify-content: center; /* Center the text */
+  align-items: center; /* Center the text */
+}
+
+.ant-form-item-label > label {
+  font-size: 20px; /* Increase font size for form item labels */
+}
+
+.ant-input, .ant-input-password, .ant-radio-group {
+  font-size: 20px; /* Increase font size for input fields and radio group */
+}
+
+@media (max-width: 768px) {
+  .text-content {
+    left: 10%;
+    bottom: 5%;
+  }
+
+  .text-content h2 {
+    font-size: 50px;
+  }
+
+  .text-content ul {
+    margin-bottom: 150px;
+  }
+
+  .text-content li {
+    font-size: 20px;
+  }
+
+  .login-box {
+    width: 90%;
+    height: auto;
+    position: static;
+    transform: none;
+    margin: 20px auto;
+  }
+
+  .social-media-icons {
+    left: 50%;
+    bottom: 10%;
+    transform: translateX(-50%);
+  }
+
+  .social-media-icons p {
+    transform: translateX(0);
+    text-align: center;
+  }
+
+  .logo-container {
+    top: 20px;
+    right: 20px;
+    left: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .text-content h2 {
+    font-size: 40px;
+  }
+
+  .text-content li {
+    font-size: 16px;
+  }
+
+  .login-box {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .social-media-icons {
+    bottom: 5%;
+  }
+
+  .social-media-icons p {
+    font-size: 18px;
+  }
 }

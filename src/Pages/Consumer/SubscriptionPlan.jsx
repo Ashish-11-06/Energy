@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 import {
   Card,
   Button,
@@ -8,12 +9,8 @@ import {
   Modal,
   Form,
   Input,
-  message,
-  Spin
+  message,Spin
 } from "antd";
-import moment from 'moment';
-
-const { Text,Title } = Typography;
 import {
   DashboardOutlined,
   AppstoreAddOutlined,
@@ -22,6 +19,7 @@ import {
   FormOutlined,
   NotificationOutlined,
 } from "@ant-design/icons";
+import moment from 'moment';
 import req from "../../assets/req.png";
 import { useNavigate } from "react-router-dom";
 import "../SubscriptionPlan.css";
@@ -31,15 +29,16 @@ import {
   createPerformaById,
   fetchPerformaById,
 } from "../../Redux/Slices/Consumer/performaInvoiceSlice";
+import SubscriptionModal from "./Modal/SubscriptionModal"; // Import SubscriptionModal
+import { createRazorpayOrder, completeRazorpayPayment } from "../../Redux/Slices/Consumer/paymentSlice"; // Import payment actions
+import { subscriptionEnroll } from "../../Redux/Slices/Consumer/subscriptionEnrollSlice";
+import { fetchSubscriptionPlan } from "../../Redux/Slices/Generator/availableSubscriptionPlanG";
 import dash from '../../assets/dashboard.png';
 import transaction from '../../assets/transaction.png';
 import trial from '../../assets/trial.png';
 import powerX from '../../assets/powerX.png';
-import advice from '../../assets/advice.png';
-import { fetchSubscriptionPlan } from "../../Redux/Slices/Consumer/availableSubscriptionSlice";
-import { fetchSubscriptionValidity, subscriptionEnroll } from "../../Redux/Slices/Consumer/subscriptionEnrollSlice";
-
-
+import advice from '../../assets/advice.png'; 
+const { Title, Text } = Typography;
 
 const SubscriptionPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -52,16 +51,18 @@ const SubscriptionPlans = () => {
   const [companyName, setCompanyName] = useState("");
   const [gstinNumber, setGstinNumber] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
-  const [subscriptionPlan,setSubscriptionPlan]=useState([]);
-  // const [subscriptionPlanValidity,setSubscriptionPlanValidity]=useState([]);
+  const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false); // State for subscription modal
+    const [selectedPlanId, setSelectedPlanId] = useState(null);
   const [loading,setLoading]=useState(false);
+  const [subscriptionPlan,setSubscriptionPlan]=useState([]);
 
-  const [selectedPlanId, setSelectedPlanId] = useState(null);
 
   const navigate = useNavigate(); // Hook for navigation
   const dispatch = useDispatch();
   const userData = useState(JSON.parse(localStorage.getItem("user")).user);
   const userId = userData[0]?.id;
+  const Razorpay = useRazorpay();
+  const [orderId, setOrderId] = useState(null); // State to store order ID
 
   const handleSelectPlan = (id) => {
     const currentDate = moment().format('YYYY-MM-DD');
@@ -76,6 +77,10 @@ const response=dispatch(subscriptionEnroll(subscriptionData));
 console.log(response);
 
     setIsQuotationVisible(true); // Show the quotation view after selection
+  };
+
+  const closeSubscriptionModal = () => {
+    setIsSubscriptionModalVisible(false);
   };
 
   const closeQuotation = () => {
@@ -100,41 +105,27 @@ console.log(response);
     fetchPerforma();
   }, [dispatch, userId]);
 
-  // useEffect(()=> {
-  //   const id=userId;
-  //   dispatch(fetchSubscriptionValidity(id))
-  //   .then(response => {    
-  //     setSubscriptionPlanValidity(response.payload);
-  //      console.log(response.payload);
+     useEffect(() => {
+      setLoading(true);
+       dispatch(fetchSubscriptionPlan())
+         .then(response => {    
+           setSubscriptionPlan(response.payload);
+           setLoading(false);
+           //console.log(isState);
+         })
+         .catch(error => {
+           console.error("Error fetching subscription:", error);
+         });
+     }, [dispatch]);
+     console.log(subscriptionPlan);
+     
 
-  //      localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
-  //   })
-  //   .catch(error => {
-  //     console.error("Error fetching industry:", error);
-  //   });
-  // },[dispatch]);
-
-  // console.log(subscriptionPlanValidity);
-  
-
-  useEffect(() => {
-    setLoading(true);
-    dispatch(fetchSubscriptionPlan())
-      .then(response => {    
-        setSubscriptionPlan(response.payload);
-      setLoading(false);
-      })
-      .catch(error => {
-        console.error("Error fetching subscription:", error);
-      });
-  }, [dispatch]);
-  
   const handleCreatePerforma = async () => {
     const performaData = {
       company_name: companyName,
       company_address: companyAddress,
       gst_number: gstinNumber,
-      subscription: selectedPlanId,
+      subscription: selectedPlanId, // Use selected plan dynamically
       due_date: "2025-01-25",
     };
   
@@ -234,20 +225,94 @@ console.log(response);
     </Form>
   );
 
-  const handleGenerateProforma = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        setIsProformaVisible(true); // Show the proforma modal
+ 
+  const handleGenerateProforma = async () => {
+    form.validateFields()
+      .then(async (values) => {
+        setFormError(""); // Reset any error message if the form is valid
+        try {
+          await handleCreatePerforma(values);
+          setIsProformaVisible(true); // Show the proforma modal
+          setIsQuotationVisible(false);
+        } catch (error) {
+          console.log("Validation failed:", error);
+          setFormError("Please fill in all required fields.");
+        }
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
+        setFormError("Please fill in all required fields.");
       });
   };
+  
 
-  const handlePayment = () => {
-    navigate("/consumer/energy-consumption-table");
-  };
+  const handlePayment = async () => {
+    try {
+      // console.log(selectedPlan.id);
+      
+      const amount = selectedPlanId === selectedPlanId ? 50000 : selectedPlanId === selectedPlanId ? 200000 : 0;  // Adjust plan amount here
+      const orderResponse = await dispatch(createRazorpayOrder({ amount, currency: "INR" })).unwrap();
+      console.log("Order response:", orderResponse);
+
+      if (orderResponse?.data?.id) {
+        const options = {
+          key: "rzp_test_bVfC0PJsvP9OUR",  
+          amount: orderResponse.data.amount,  // Ensure this is the correct amount
+          currency: orderResponse.data.currency, 
+          name: "Energy Exchange",
+          description: `Subscription Payment for Plan ${selectedPlan}`,
+          order_id: orderResponse.data.id, 
+          handler: async (response) => {
+            const paymentData = {
+              user: userId, // Include userId in payment data
+              order_id: orderResponse.data.id,
+              payment_id: response.razorpay_payment_id,
+              signature: response.razorpay_signature,
+              amount: orderResponse.data.amount, // Include amount in payment data
+              subscription_id:selectedPlanId
+            };
+
+            console.log("Payment data to send:", paymentData); // Log payment data
+
+            try {
+              const completeResponse = await dispatch(completeRazorpayPayment(paymentData)).unwrap();
+              console.log("Complete payment response:", completeResponse);    
+              if (completeResponse) {
+                message.success("Payment successful! Subscription activated.");
+                setIsProformaVisible(false); // Close the proforma modal
+                navigate("/consumer/energy-consumption-table");
+              } else {
+                message.error("Payment completion failed.");
+              }
+            } catch (error) {
+              console.error("Error completing payment:", error); // Log error
+              message.error("Payment completion failed.");
+            }
+          },
+          prefill: {
+            name: userData?.name || "User",
+            email: userData?.email || "user@example.com",
+            contact: userData?.phone || "9999999999",
+          },
+          theme: { color: "#669800" },
+        };
+
+        // Use the razorpay instance from useRazorpay
+        if (window.Razorpay) {
+          const rzp = new window.Razorpay(options);
+          rzp.open();
+      } else {
+          console.error('Razorpay script not loaded');
+      }
+      
+      }
+    } catch (error) {
+      console.error("Payment Error:", error);
+      message.error("Payment initiation failed. Please try again.");
+    }
+};
+
+  
 
   const closeProforma = () => {
     setIsProformaVisible(false);
@@ -260,19 +325,12 @@ console.log(response);
     navigate("/consumer/energy-consumption-table");
   };
 
-const handleId =(id) => {
- console.log('id',id);
- 
-}
-
   return (
     <div className="subscription-plans-container">
       <Title level={2} style={{ marginTop: "5%", marginBottom: "5%" }}>
         Choose Your Annual Subscription Plan
       </Title>
- 
-
-<Row gutter={[16, 16]} justify="center">
+      <Row gutter={[16, 16]} justify="center">
   {loading ? ( // Show loader if loading is true
     <Spin size="large" />
   ) : (
@@ -369,23 +427,23 @@ const handleId =(id) => {
   )}
 </Row>
 
+{isQuotationVisible && (
+  <Modal
+    title="Generate Proforma Invoice"
+    open={isQuotationVisible}
+    onCancel={closeQuotation}
+    footer={[
+      <Button key="generate" type="primary" htmlType="submit" onClick={handleGenerateProforma}>
+        Generate Proforma
+      </Button>,
+    ]}
+    width={600}
+  >
+    <p>(Please provide additional details)</p>
+    {renderQuotation()}
+  </Modal>
+)}
 
-      {isQuotationVisible && (
-        <Modal
-          title="Generate proforma invoice"
-          open={isQuotationVisible}
-          onCancel={closeQuotation}
-          footer={[
-            <Button type="primary" htmlType="submit" onClick={handleSubmit}>
-              Generate Performa
-            </Button>,
-          ]}
-          width={600}
-        >
-          <p>(Please provide additional details)</p>
-          {renderQuotation()}
-        </Modal>
-      )}
 
       <Modal
         title="Proforma Invoice"
@@ -401,7 +459,7 @@ const handleId =(id) => {
         <p>This is a proforma invoice.</p>
         <img
           src={proformaInvoice}
-          alt=""
+          alt="Proforma Invoice"
           style={{ height: "500px", width: "500px", marginLeft: "5%" }}
         />
         <p>Please proceed to payment to complete your subscription.</p>
@@ -420,103 +478,24 @@ const handleId =(id) => {
       >
         This is dummy Payment
       </Modal>
+
+      {isSubscriptionModalVisible && (
+        <SubscriptionModal
+          visible={isSubscriptionModalVisible}
+          plan={selectedPlan}
+          onClose={closeSubscriptionModal}
+        />
+      )}
+
+      {isSubscriptionModalVisible && (
+        <SubscriptionModal
+          visible={isSubscriptionModalVisible}
+          plan={selectedPlan}
+          onClose={closeSubscriptionModal}
+        />
+      )}
     </div>
   );
 };
 
 export default SubscriptionPlans;
-
-
-
-
-
-
-
-// <Card
-// hoverable
-// className={selectedPlanId === plan.id ? 'selected-plan' : ''}
-// onClick={() => handleSelectPlan(plan.id)}
-
-// actions={[
-//   <Button
-//     type="primary"
-//     onClick={() => handleId(plan.id)}
-//     block
-//     size="small"
-//     style={{ width: '160px' }}
-//   >
-//     Select Plan
-//   </Button>,
-// ]}
-// >
-// <div
-//   style={{
-//     backgroundColor: '#669800',
-//     marginBottom: '0',
-//     marginTop: '-25px',
-//     marginLeft: '-25px',
-//     marginRight: '-25px',
-//     borderTopLeftRadius: '10px',
-//     borderTopRightRadius: '10px',
-//   }}
-// >
-//   <p style={{ padding: '5px' }}>
-//     <span
-//       style={{
-//         marginTop: '10px',
-//         color: 'white',
-//         fontSize: '22px',
-//         fontWeight: 'bold',
-//       }}
-//     >
-//       EXT {plan.subscription_type } Plan
-//     </span>
-//   </p>
-//   <hr />
-// </div>
-// <Text className="price">{plan.price} <p style={{ fontSize: '18px' }}>INR</p></Text>
-// <p><strong>Duration:</strong> {plan.duration_in_days} days</p>
-// <ul
-//   style={{ display: 'flex', flexDirection: 'column', padding: 0, marginLeft: '30%' }}
-// >
-//   {plan.subscription_type === 'LITE' && (
-//     <>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <FormOutlined style={{ marginRight: '10px', color: '#669800' }} /> Matching IPP +
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={req} alt="" style={{ height: '15px', width: '15px', marginRight: '10px' }} /> Requirements +
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={transaction} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Transaction window
-//       </li>
-//     </>
-//   )}
-//   {plan.subscription_type === 'PRO' && (
-//     <>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={dash} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Dashboard
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={advice} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Advisory Support
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={powerX} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> PowerX subscription
-//       </li>
-//     </>
-//   )}
-//   {plan.subscription_type === 'FREE' && (
-//     <>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-//       </li>
-//       <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-//         <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
-//       </li>
-//     </>
-//   )}
-// </ul>
-// </Card>

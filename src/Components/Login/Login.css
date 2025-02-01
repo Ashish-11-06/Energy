@@ -1,4 +1,4 @@
-/* Login.css */
+Login.css
 
 /* Existing styles */
 .login-container {
@@ -9,6 +9,22 @@
     width: 100%;
     /* background-color: #F5F6FB; Page background color */
     font-family: 'Inter', sans-serif; /* Use the installed Inter font */
+}
+
+.logo-container {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+}
+
+/* .logo {
+  width: 150px; /* Adjust the size as needed 
+  height: 100
+} */
+
+.exg-logo {
+  width: 150px;
+  height: 90px;
 }
 
 .login-box {

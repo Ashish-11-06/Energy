@@ -220,3 +220,21 @@ button:focus, .ant-btn:focus {
     color: #FFFFFF !important;
   }
   
+
+  /* For WebKit Browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 8px;  /* Adjust the scrollbar width */
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Track color */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #669800; /* Scrollbar color (Ant Design primary blue) */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #669800; /* Scrollbar color on hover */
+}
