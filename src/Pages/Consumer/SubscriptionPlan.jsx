@@ -238,26 +238,26 @@ const handleFreeContinue=() => {
     </Form>
   );
 
+ 
   const handleGenerateProforma = async () => {
-  const handleGenerateProforma = async () => {
-    form
-      .validateFields()
+    form.validateFields()
       .then(async (values) => {
         setFormError(""); // Reset any error message if the form is valid
-        await handleCreatePerforma(values);
-      .then(async (values) => {
-        setFormError(""); // Reset any error message if the form is valid
-        await handleCreatePerforma(values);
-        setIsProformaVisible(true); // Show the proforma modal
-        setIsQuotationVisible(false);
-        setIsQuotationVisible(false);
+        try {
+          await handleCreatePerforma(values);
+          setIsProformaVisible(true); // Show the proforma modal
+          setIsQuotationVisible(false);
+        } catch (error) {
+          console.log("Validation failed:", error);
+          setFormError("Please fill in all required fields.");
+        }
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
         setFormError("Please fill in all required fields.");
-        setFormError("Please fill in all required fields.");
       });
   };
+  
 
   const handlePayment = async () => {
     try {
@@ -372,6 +372,7 @@ const handleFreeContinue=() => {
                   </Button>,
                 ]}
               >
+<<<<<<< HEAD
                 <div
                   style={{
                     backgroundColor: "#669800",
@@ -610,6 +611,79 @@ const handleFreeContinue=() => {
           {renderQuotation()}
         </Modal>
       )}
+=======
+                EXT {plan.subscription_type} Plan
+              </span>
+            </p>
+            <hr />
+          </div>
+          <Text className="price">{plan.price} <p style={{ fontSize: '18px' }}>INR</p></Text>
+          <p><strong>Duration:</strong> {plan.duration_in_days} days</p>
+          <ul style={{ display: 'flex', flexDirection: 'column', padding: 0, marginLeft: '30%' }}>
+            {plan.subscription_type === 'LITE' && (
+              <>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <FormOutlined style={{ marginRight: '10px', color: '#669800' }} /> Matching IPP +
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={req} alt="" style={{ height: '15px', width: '15px', marginRight: '10px' }} /> Requirements +
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={transaction} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Transaction window
+                </li>
+              </>
+            )}
+            {plan.subscription_type === 'PRO' && (
+              <>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={dash} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Dashboard
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={advice} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Advisory Support
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={powerX} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> PowerX subscription
+                </li>
+              </>
+            )}
+            {plan.subscription_type === 'FREE' && (
+              <>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
+                </li>
+              </>
+            )}
+          </ul>
+        </Card>
+      </Col>
+    ))
+  )}
+</Row>
+
+{isQuotationVisible && (
+  <Modal
+    title="Generate Proforma Invoice"
+    open={isQuotationVisible}
+    onCancel={closeQuotation}
+    footer={[
+      <Button key="generate" type="primary" htmlType="submit" onClick={handleGenerateProforma}>
+        Generate Proforma
+      </Button>,
+    ]}
+    width={600}
+  >
+    <p>(Please provide additional details)</p>
+    {renderQuotation()}
+  </Modal>
+)}
+
+>>>>>>> be4296f07a933e1837b03c20b7460f91a8dc1b96
 
       <Modal
         title="Proforma Invoice"
@@ -625,7 +699,6 @@ const handleFreeContinue=() => {
         <p>This is a proforma invoice.</p>
         <img
           src={proformaInvoice}
-          alt="Proforma Invoice"
           alt="Proforma Invoice"
           style={{ height: "500px", width: "500px", marginLeft: "5%" }}
         />
