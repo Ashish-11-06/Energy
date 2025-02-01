@@ -26,6 +26,10 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState(location.pathname);
 
+  const user = JSON.parse(localStorage.getItem('user')).user;
+  const user_category = user.user_category;
+
+
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
@@ -40,7 +44,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Portfolio', key: '/generator/portfolio', icon: <SolutionOutlined /> },
     { label: 'Transaction Window', key: '/generator/transaction', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
     { label: 'Proposed Offers', key: '/generator/requested-ipp-gen', icon: <AppstoreAddOutlined /> },
     { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
@@ -50,7 +53,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
-  const menuType = location.pathname.startsWith('/consumer') ? 'consumer' : 'generator';
+  const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
 
   useEffect(() => {
@@ -103,7 +106,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           </div>
           <Menu mode="inline" selectedKeys={[selectedKey]}>
             {menuItems.map((item) => (
-              <Menu.Item key={item.key} icon={item.icon} onClick={() => navigate(item.key)}>
+              <Menu.Item key={item.key} icon={item.icon}>
                 <Link to={item.key}>{item.label}</Link>
               </Menu.Item>
             ))}
