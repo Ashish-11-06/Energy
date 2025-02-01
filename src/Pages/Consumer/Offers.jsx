@@ -344,6 +344,7 @@ const Offers = () => {
         <Table
           dataSource={filteredData}
           columns={columns}
+          
           bordered
           loading={loading} // AntD's built-in loader
           pagination={false}

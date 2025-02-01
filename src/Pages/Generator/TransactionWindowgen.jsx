@@ -16,7 +16,7 @@ import {
   connectWebSocket,
   subscribeToEvent,
   sendEvent,
-  disconnectWebSocket,
+  // disconnectWebSocket,
 } from '../../Redux/api/webSocketService.js';
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
@@ -70,7 +70,7 @@ const TransactionWindowGen = () => {
 
     return () => {
       console.log("Disconnecting WebSocket...");
-      disconnectWebSocket();
+      // disconnectWebSocket();
     };
   }, [user.id, transactionId]);
 

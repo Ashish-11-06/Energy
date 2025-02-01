@@ -29,7 +29,6 @@ import ProfileConsumer from './Pages/Consumer/ProfileConsumer';
 import ProfileGenerator from './Pages/Generator/ProfileGenerator';
 import UserGen from './Pages/Generator/UserGen';
 import PortfolioGen from './Pages/Generator/PortfolioGen';
-import Offer from './Pages/Consumer/Offer';
 import RequestedIPP from './Pages/Consumer/RequestedIPP';
 import RequestedIPPOfGen from './Pages/Generator/RequestedIPPOfGen';
 import OfferRecieved from './Pages/Consumer/Offers';
@@ -46,6 +45,7 @@ import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
 import RequirementsPage from './Pages/Consumer/RequirementPage';
 import InvoicePage from './Pages/InvoicePage';
 import ProgressBar from './Pages/ProgressBar';
+import Offers from './Pages/Consumer/Offers';
 
 
 
@@ -59,9 +59,10 @@ function App() {
 
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
-
+       
         {/* Routes with shared layout */}
         <Route element={<LayoutComponent />}>
+        <Route path="offers" element={<OfferRecieved />} />
           {/* Consumer Routes */}
           <Route
             path="/consumer/*"
@@ -80,11 +81,11 @@ function App() {
                   <Route path="annual-saving" element={<AnnualSvg />} />
                   <Route path="subscription-plan" element={<SubscriptionPlans />} />
                   <Route path="profile" element={<ProfileConsumer />} />
-                  <Route path="offer" element={<Offer />} />
+                
                   <Route path="requested-ipp" element={<RequestedIPP />} />
                   <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
                   <Route path="notification" element={<Notification />} />
-                  <Route path="transaction-window/:transactionId" element={<TransactionWindow />} />
+                  <Route path="transaction-window" element={<TransactionWindow />} />
                   <Route path="transaction-page" element={<TransactionMainPage />} />
                   <Route path="invoice" element={<InvoicePage />} />
                  
@@ -119,7 +120,7 @@ function App() {
             <Route path="combination" element={<OptimizeCombination  />} />
             <Route path="notificationgen" element={<NotificationGenerator  />} />
             <Route path='transaction' element={<TransactionMainPageGen />}/>
-            <Route path="transaction-window/:transactionId" element={<TransactionWindowGen />} />
+            <Route path="transaction-window" element={<TransactionWindowGen />} />
             <Route path="invoice" element={<InvoicePage />} />
 
             
