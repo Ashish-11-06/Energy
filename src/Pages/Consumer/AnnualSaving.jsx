@@ -24,7 +24,9 @@ const AnnualSvg = () => {
   const User = JSON.parse(localStorage.getItem('user'));
   const userId = User.id;
 
-  // console.log(subscriptionPlan.status);
+  const status=subscriptionPlan.status;
+
+  console.log(subscriptionPlan.status);
   
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
@@ -50,7 +52,7 @@ const AnnualSvg = () => {
 
   const handleContinue = () => {
     console.log('akjdkfjlajlfkjal');
-    if(subscriptionPlan.status === 'active') {
+    if(status === 'active') {
      
       navigate("/consumer/energy-consumption-table", { state: { requirementId, reReplacement: annualSavingResponse?.re_replacement } });
     } else {
@@ -112,7 +114,7 @@ const AnnualSvg = () => {
       </div>
   <div>
  {/* Continue Button */}
- {subscriptionPlan.status === 'active' ? (
+ {status === 'active' ? (
   <Tooltip title="Please click to proceed">
     <Button
       type="primary"

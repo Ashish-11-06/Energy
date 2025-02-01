@@ -416,7 +416,7 @@ const EnergyConsumptionTable = () => {
   };
 
   const generateYears = () => {
-    return Array.from({ length: 30000 - 2000 + 1 }, (_, i) => 2000 + i);
+    return Array.from({ length: 30000 - 2000 + 1 }, (_, i) => 2025 + i);
   };
 
   const handleImageUpload = async (file) => {

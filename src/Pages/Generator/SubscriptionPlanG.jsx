@@ -26,7 +26,7 @@ import transaction from '../../assets/transaction.png';
 import trial from '../../assets/trial.png';
 import powerX from '../../assets/powerX.png';
 import advice from '../../assets/advice.png';
-import { fetchSubscriptionPlan } from "../../Redux/Slices/Generator/availableSubscriptionPlanG";
+import { fetchSubscriptionPlanG } from "../../Redux/Slices/Generator/availableSubscriptionPlanG";
 import { subscriptionEnroll,fetchSubscriptionValidity } from "../../Redux/Slices/Consumer/subscriptionEnrollSlice";
 const { Title, Text } = Typography;
 
@@ -83,7 +83,7 @@ console.log(response);
 
    useEffect(() => {
     setLoading(true);
-     dispatch(fetchSubscriptionPlan())
+     dispatch(fetchSubscriptionPlanG())
        .then(response => {    
          setSubscriptionPlan(response.payload);
          setLoading(false);

@@ -66,7 +66,7 @@ const Offers = () => {
     fetchIPPData();
   }, [dispatch, user.id]);
 
-  console.log(ippData);
+  // console.log(ippData);
 
   const showModal = (record) => {
     console.log(record);
@@ -262,7 +262,7 @@ const Offers = () => {
       render: (_, record) => {
         return (
           
-            record.count === 4  ? (
+            record.consumer_status === 'Accepted' || record.consumer_status === 'Rejected' ||  record.generator_status === 'Accepted' || record.generator_status === 'Rejected' ? (
               <Button type="primary" disabled>
                 Offer Closed
               </Button>
@@ -299,38 +299,53 @@ const Offers = () => {
       </Col>
 
       <Row
-        gutter={16}
-        style={{
-          marginBottom: "20px",
-          justifyContent: "center",
-          marginTop: "20px",
-        }}
-      >
-        <Col style={{ marginRight: "40%" }}>
-          <Input
-            placeholder="Search"
-            value={searchText}
-            onChange={handleSearchChange}
-            style={{ width: 200, border: "1px solid #6698005c" }}
-          />
-        </Col>
-        <Col>
-          <Select
-            placeholder="Filter by Status"
-            onChange={handleStatusChange}
-            style={{
-              width: 200,
-              border: "1px solid #6698005c",
-              borderRadius: "5px",
-            }}
-            allowClear
-          >
-            <Option value="Pending">Pending</Option>
-            <Option value="Accepted">Accepted</Option>
-            <Option value="Rejected">Rejected</Option>
-          </Select>
-        </Col>
-      </Row>
+  gutter={16}
+  style={{
+    marginBottom: "20px",
+    marginTop: "20px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    paddingLeft:'2.5%',
+    paddingRight:'2.5%'
+  }}
+>
+  <Col>
+    <Input
+      placeholder="Search"
+      value={searchText}
+      onChange={handleSearchChange}
+      style={{
+        width: 200,
+        border: "1px solid #6698005c",
+        borderRadius: "5px",
+        height: 30,
+        fontSize:'16px',
+        backgroundColor:'white'
+      }}
+    />
+  </Col>
+  <Col>
+    <Select
+      placeholder="Filter by Status"
+      onChange={handleStatusChange}
+      style={{
+        width: 200,
+        border: "1px solid #6698005c",
+        borderRadius: "5px",
+        height: 30,
+      }}
+      allowClear
+    >
+      <Option value="Pending">Pending</Option>
+      <Option value="Accepted">Accepted</Option>
+      <Option value="Rejected">Rejected</Option>
+      <Option value="Negotiated">Negotiated</Option>
+    </Select>
+  </Col>
+</Row>
+
 
       {error ? (
         <div style={{ color: "red", textAlign: "center" }}>{error}</div>

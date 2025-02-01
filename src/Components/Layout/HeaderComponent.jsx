@@ -21,8 +21,10 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const currentPath = location.pathname;
   const navigate = useNavigate(); // Add useNavigate hook
   let username = ""; // Use let instead of const
-  const subscriptionValidity = localStorage.getItem("subscriptionPlanValidity");
-  const subscription = subscriptionValidity.status;
+  const subscriptionValidity = JSON.parse(localStorage.getItem("subscriptionPlanValidity"));
+  const subscription = subscriptionValidity?.status;
+  // console.log(subscription);  
+  
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
   useEffect(() => {
     if (subscription === "active") {
@@ -38,14 +40,14 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     return item ? JSON.parse(item) : "";
   };
 
-  const user = getFromLocalStorage("user");
-  if (user && user.user.company_representative) {
-    username = user.user.company_representative;
+  const user = getFromLocalStorage("user").user;
+  if (user && user.company_representative) {
+    username = user.company_representative;
   }
 
   const handleProfileClick = () => {
     navigate(
-      currentPath.startsWith("/consumer")
+      (user.user_category  === 'Consumer'    )
         ? "/consumer/profile"
         : "/generator/profile"
     );
@@ -53,7 +55,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
 
   const handleChatClick = () => {
     navigate(
-      currentPath.startsWith("/consumer")
+      (user.user_category  === 'Consumer'    )
         ? "/consumer/chat-page"
         : "/generator/chat-page"
     );
@@ -124,12 +126,14 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     },
   ];
 
-  const steps = currentPath.startsWith("/consumer")
+
+  
+  const steps = (user.user_category  === 'Consumer'    )
     ? consumerSteps
     : generatorSteps;
 
   const currentStepIndex = steps.findIndex((step) => step.path === currentPath);
-
+  // console.log(user.user_category, steps);
   const showProgress = [
     "/consumer/requirement",
     "/consumer/matching-ipp",
@@ -206,7 +210,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                   className="progress-icons"
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  {consumerSteps.map((step, index) => (
+                  {steps.map((step, index) => (
                     <div
                       className="icon-container"
                       key={index}
@@ -259,7 +263,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
             </div>
           )}
         </div>
-        ;{/* Profile Icon */}
+        {/* Profile Icon */}
         <span>
           <Tooltip title={username}>
             <img

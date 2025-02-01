@@ -79,10 +79,12 @@ const RequirementsPage = () => {
       title: "Select",
       key: "select",
       render: (text, record) => (
+       <>
         <Radio
           checked={selectedRequirement?.id === record.id}
           onChange={() => handleRowSelect(record)} 
-        />
+        /> 
+        </>  
       ),
     },
   ];
@@ -107,17 +109,24 @@ const RequirementsPage = () => {
   }
   
 
-const handleAddDetails =() => {
-  console.log('add button clicked');
+  
+
+const handleAddDetails =(record) => {
+  // console.log('clicked');
+  
+setSelectedRequirement(record);
+  // console.log(selectedRequirement);
   localStorage.setItem('selectedRequirementId',selectedRequirement.id);
  navigate('/consumer/energy-consumption-table');
 
 }
 
   const handleRowSelect = (record) => {
+    console.log(record);
+    
     setSelectedRowKeys([record.key]); // Only allow single selection
     setSelectedRequirement(record); // Store the selected record
-    
+    console.log(selectedRequirement);  
     // localStorage.setItem('selectedRequirementId', JSON.stringify(record.id));
     message.success(`You selected record of state '${record.state}'`);
     // console.log('record', record);

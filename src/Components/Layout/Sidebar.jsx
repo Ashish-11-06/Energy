@@ -42,12 +42,12 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Portfolio', key: '/generator/portfolio', icon: <SolutionOutlined /> },
-    { label: 'Transaction Window', key: '/generator/transaction', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
-    { label: 'Proposed Offers', key: '/generator/requested-ipp-gen', icon: <AppstoreAddOutlined /> },
-    { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
-    { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
+    { label: 'Portfolio', key: '/generator/portfolio', icon: <SolutionOutlined style={{color:'#669800', fontWeight:'900', height:'30px',height:'30px'}}/> },
+    { label: 'Transaction Window', key: '/generator/transaction-window', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
+    { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
+    // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
     { label: 'Subscription Plan', key: '/generator/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Chatbot', key: '/generator/chat-page', icon: <img src={chat} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
