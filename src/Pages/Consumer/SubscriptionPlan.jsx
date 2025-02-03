@@ -33,12 +33,13 @@ import {
 import { subscriptionEnroll } from "../../Redux/Slices/Consumer/subscriptionEnrollSlice";
 import { fetchSubscriptionPlan } from "../../Redux/Slices/Consumer/availableSubscriptionSlice";
 import { fetchSubscriptionPlanG } from "../../Redux/Slices/Generator/availableSubscriptionPlanG";
-
+import jsPDF from "jspdf"; // Import jsPDF
 import dash from "../../assets/dashboard.png";
 import transaction from "../../assets/transaction.png";
 import trial from "../../assets/trial.png";
 import powerX from "../../assets/powerX.png";
 import advice from "../../assets/advice.png";
+
 const { Title, Text } = Typography;
 
 
@@ -58,6 +59,8 @@ const SubscriptionPlans = () => {
   const [loading, setLoading] = useState(false);
   const [subscriptionPlan, setSubscriptionPlan] = useState([]);
   const [isContinueDisabled, setIsContinueDisabled] = useState(true);
+  const [htmlContent, setHtmlContent] = useState(""); // State to hold HTML content for PDF
+
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -129,6 +132,224 @@ const SubscriptionPlans = () => {
         });
     }
   }, [dispatch]);
+
+  const handleGenerateProforma = async () => {
+    // Your existing logic to create the performa
+    // After successfully creating the performa, set the HTML content
+    const performaData = {
+      company_name: companyName,
+      company_address: companyAddress,
+      gst_number: gstinNumber,
+      subscription: selectedPlanId,
+      due_date: "2025-01-25",
+    };
+
+    try {
+      const response = await dispatch(
+        createPerformaById({ id: userId, performaData })
+      ).unwrap();
+      message.success("Performa invoice generated successfully!");
+      setHtmlContent(`
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background-color: #F5F6FB;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            border: 1px solid #E6E8F1;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+        h2 {
+            text-align: center;
+            color: #669800;
+        }
+        .header, .details, .payment-instructions, .bank-details {
+            border: 1px solid #E6E8F1;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .header h3, .details h3, .payment-instructions h3, .bank-details h3 {
+            color: #669800;
+        }
+        a {
+            color: #9A8406;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+        }
+        th, td {
+            border: 1px solid #E6E8F1;
+            padding: 8px;
+        }
+        th {
+            background-color: #669800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Proforma Invoice #102213</h2>
+        <div class="header" style="text-align: right;">
+            <h3>EXGGLOBAL</h3>
+            <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
+        </div>
+        <p style="text-align: left;">Invoice Date: <strong>Friday, December 1st, 2023</strong></p>
+        <p style="text-align: left;">Due Date: <strong>Monday, December 4th, 2023</strong></p>
+        
+        <div class="details">
+            <h3>Invoiced To:</h3>
+            <p><strong>STRATXG CONSULTING PRIVATE LIMITED</strong><br>
+               ATTN: Somdev Singh Arya<br>
+               201, 2nd floor, Sahil, Sher-e-Punjab, Andheri (E)<br>
+               Mumbai, Maharashtra, 400093, India<br>
+               GSTIN: 27ABCCS1178B1ZL</p>
+        </div>
+
+        <div class="details">
+            <h3>Details:</h3>
+            <table>
+                <tr>
+                    <th>Description</th>
+                    <th>Item Type</th>
+                    <th>SAC Code</th>
+                    <th>Total</th>
+                </tr>
+                <tr>
+                    <td>Microsoft 365 Business Basic - stratxg.com</td>
+                    <td>Upgrade</td>
+                    <td>-</td>
+                    <td>₹ 527</td>
+                </tr>
+                <tr>
+                    <td>Discount (DISC10 - 10.00%)</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>₹ -53</td>
+                </tr>
+                <tr>
+                    <td><strong>Sub Total</strong></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><strong>₹ 474</strong></td>
+                </tr>
+                <tr>
+                    <td>GST</td>
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <th>CGST (9.00%)</th>
+                                <th>SGST (9.00%)</th>
+                                <th>IGST</th>
+                            </tr>
+                            <tr>
+                                <td>₹ 43</td>
+                                <td>₹ 43</td>
+                                <td>-</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>₹ 86</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Amount Incl. GST</strong></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><strong>₹ 560</strong></td>
+                </tr>
+                <tr></tr>
+                    <td>Total Amount Incl. GST (in words)</td>
+                    <td colspan="3">Rupees five hundred sixty only</td>
+                </tr>
+                <tr>
+                    <td>Funds Applied</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>₹ 0</td>
+                </tr>
+                <tr>
+                    <td><strong>Balance</strong></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><strong>₹ 560</strong></td>
+                </tr>
+            </table>
+        </div>
+
+        <p><strong>Total Amount (in words):</strong> Rupees five hundred sixty only</p>
+        <p style="text-align:right"><strong>Authorized Signatory</strong></p>
+        <p style="font-size: 12px;">This is a computerized invoice. It does not require a signature.</p>
+        
+        <div class="payment-instructions">
+            <h3>Payment Instructions:</h3>
+            <ol>
+                <li>Non-payment within 7 days will result in suspension of the services automatically without notice.</li>
+                <li>Subject to Mumbai Jurisdiction.</li>
+                <li>The Client is bound to all the rules and regulation available at <a href="https://www.qualispace.com/legal/">https://www.qualispace.com/legal/</a></li>
+            </ol>
+            <p>[Our services does not fall under negative list of services.</p>
+        </div>
+
+        <div class="bank-details">
+            <table>
+                <tr>
+                    <th colspan="3" style="text-align: center;">*For Indian Customers Only</th>
+                </tr>
+                <tr style="background-color: #f8f9fa;">
+                    <th>Bank Details</th>
+                    <th>UPI ID</th>
+                    <th>Address</th>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Bank:</strong> ICICI Bank<br>
+                        <strong>Account:</strong> Qualispace Web Services Pvt Ltd.<br>
+                        <strong>Account no:</strong> 196805001050<br>
+                        <strong>Branch:</strong> Patlipada Branch<br>
+                        <strong>IFSC Code:</strong> ICIC0001968
+                    </td>
+                    <td>
+                        <img src="upi-placeholder.png" alt="UPI QR Code" style="width: 100px; height: 100px;">
+                    </td>
+                    <td>
+                        QualiSpace Webservices Pvt. Ltd.<br>
+                        602 Avior Corporate park<br>
+                        LBS Marg, Mulund West<br>
+                        Mumbai 400080<br>
+                        GSTIN: 27AAACQ4709P1ZZ<br>
+                        PAN: AAACQ4709P<br>
+                        Sales: 022 6142 6099<br>
+                        Technical Support: 022 6142 604
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+
+      `); // Set your HTML content here
+      setIsProformaVisible(true);
+      setIsQuotationVisible(false);
+    } catch (error) {
+      console.error("Failed to create performa:", error);
+      message.error("Failed to generate Performa invoice. Please try again.");
+    }
+  };
+
 
   const handleCreatePerforma = async () => {
     const performaData = {
@@ -222,22 +443,44 @@ const SubscriptionPlans = () => {
     </Form>
   );
 
-  const handleGenerateProforma = async () => {
-    form.validateFields()
-      .then(async (values) => {
-        setFormError(""); // Reset any error message if the form is valid
-        try {
-        const res=  await handleCreatePerforma(values);
-          setIsProformaVisible(true);
-          setIsQuotationVisible(false);
-          setIsContinueDisabled(false);
-        } catch (error) {
-          setFormError("Please fill in all required fields.");
-        }
-      })
-      .catch((errorInfo) => {
-        setFormError("Please fill in all required fields.");
-      });
+  // const handleGenerateProforma = async () => {
+  //   form.validateFields()
+  //     .then(async (values) => {
+  //       setFormError(""); // Reset any error message if the form is valid
+  //       try {
+  //       const res=  await handleCreatePerforma(values);
+  //         setIsProformaVisible(true);
+  //         setIsQuotationVisible(false);
+  //         setIsContinueDisabled(false);
+  //       } catch (error) {
+  //         setFormError("Please fill in all required fields.");
+  //       }
+  //     })
+  //     .catch((errorInfo) => {
+  //       setFormError("Please fill in all required fields.");
+  //     });
+  // };
+
+  const handleDownloadPDF = () => {
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth(); // Get page width for dynamic centering
+    const htmlElement = document.getElementById("proforma-content"); // Get the HTML element
+
+    if (htmlElement) {
+        pdf.html(htmlElement, {
+            callback: (doc) => {
+                doc.save("proforma_invoice.pdf");
+            },
+            x: 10, // Start x-position
+            y: 10, // Start y-position
+            width: pageWidth - 20, // Set width to fit the page with some margin
+            // autoPaging: true,  // jsPDF handles paging automatically now.
+        });
+    } else {
+        console.error("Element with ID 'proforma-content' not found.", error);
+        message.error("Failed to download PDF. Please try again.");
+    }
+
   };
 
   const handlePayment = async () => {
@@ -413,19 +656,21 @@ const SubscriptionPlans = () => {
           onCancel={closeQuotation}
           footer={[
             selectedPlan?.subscription_type === "LITE" || selectedPlan?.subscription_type === "PRO" ? (
+
               <Button key="generate" type="primary" onClick={handleGenerateProforma}>
                 Generate Proforma
               </Button>
             ) : (
               <>
-              <Button key="generate" type="primary" onClick={handleGenerateProforma}>
-                Generate Proforma
-              </Button>
-              
+                <Button key="generate" type="primary" onClick={handleGenerateProforma}>
+                  Generate Proforma
+                </Button>
+
               </>
             )
           ]}
           width={600}
+          height={600}
         >
           <p>(Please provide additional details)</p>
           {renderQuotation()}
@@ -435,31 +680,50 @@ const SubscriptionPlans = () => {
       <Modal
         title="Proforma Invoice"
         open={isProformaVisible}
+        
         onCancel={closeProforma}
         footer={[
-selectedPlan?.subscription_type === "LITE" || selectedPlan?.subscription_type === "PRO" ? (
-  <Button key="generate" type="primary" onClick={handlePayment}>
- Proceed to Payment
-  </Button>
-) : (
-  <>
-  <Button key="generate" type="primary" onClick={handleFreeContinue}>
-   Continue
-  </Button>
-  
-  </>
-)
+          selectedPlan?.subscription_type === "LITE" || selectedPlan?.subscription_type === "PRO" ? (
+
+
+            <>
+              <Button key="download" type="primary" onClick={handleDownloadPDF}>
+                Download PDF
+              </Button>
+              <Button key="generate" type="primary" onClick={handlePayment}>
+                Proceed to Payment
+              </Button>
+
+            </>
+          ) : (
+            <>
+              <Button key="generate" type="primary" onClick={handleFreeContinue}>
+                Continue
+              </Button>
+
+            </>
+          )
         ]}
-        width={600}
+        width={900}
+        height={800}
       >
-        <p>This is a proforma invoice.</p>
-        <img
-          src={proformaInvoice}
-          alt="Proforma Invoice"
-          style={{ height: "500px", width: "500px", marginLeft: "5%" }}
-        />
-        <p>Please proceed to payment to complete your subscription.</p>
+        {/* Replace this paragraph with the PDF content */}
+        <div>
+          {/* <h2>Proforma Invoice</h2> */}
+          <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+          <br /><br />
+          <div
+          style={
+            {
+              color: "#9A8406"
+            }
+          }
+          >Please proceed to payment to complete your subscription.</div
+          
+          >
+        </div>
       </Modal>
+
 
       {isSubscriptionModalVisible && (
         <SubscriptionModal
