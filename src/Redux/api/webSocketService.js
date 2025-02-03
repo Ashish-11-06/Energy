@@ -13,7 +13,7 @@ const FULL_URL = SOCKET_URL + SOCKET_PATH;
         socket = new WebSocket(FULL_URL + `?user_id=${user_id}&tariff_id=${tariff_id}`);
     
         socket.onopen = () => {
-            console.log('✅ Connected to WebSocket server:', FULL_URL);
+            // console.log('✅ Connected to WebSocket server:', FULL_URL);
         };
     
         socket.onclose = (event) => {
@@ -42,6 +42,7 @@ const FULL_URL = SOCKET_URL + SOCKET_PATH;
                 console.error('❌ Error parsing message:', error);
             }
         };
+        return socket;
     };
     
     export const subscribeToEvent = (event, callback) => {

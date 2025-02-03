@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 import { templateDownload } from '../../Redux/Slices/Generator/templateDownloadSlice';
+import { fetchState } from '../../Redux/Slices/Consumer/stateSlice';
 
 
 const { Title, Paragraph } = Typography;
@@ -52,6 +53,8 @@ const UpdateProfileDetails = () => {
     }
   }, [projects.Solar, projects.Wind, projects.ESS]);
 
+
+  
   // console.log(Structuredprojects);
   
 

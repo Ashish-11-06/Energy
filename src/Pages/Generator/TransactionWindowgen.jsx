@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from 'react-router-dom';
 import {
   Card,
   Row,
@@ -14,17 +15,19 @@ import { useParams, useNavigate } from "react-router-dom";
 import ippData from "../../Data/IPPData.js";
 import {
   connectWebSocket,
-  subscribeToEvent,
   sendEvent,
   // disconnectWebSocket,
 } from '../../Redux/api/webSocketService.js';
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import time from '../../assets/time.png'
+import moment from "moment";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
 
-const TransactionWindowGen = () => {
+const TransactionWindowgen = () => {
+
   const { transactionId } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -33,46 +36,84 @@ const TransactionWindowGen = () => {
   const [offerValue, setOfferValue] = useState(null);
   const [sortedIppData, setSortedIppData] = useState([]);
   const contentRef = useRef();
+  const [socket, setSocket] = useState(null); // Add this line to define the socket variable
+  const [messages, setMessages] = useState([]); // Store incoming messages
+
+  const location = useLocation();
 
   const navigate = useNavigate();
-  // Access user category
+
+  // const { state } = location;  // this should contain your passed record
+
+  // console.log(state);  // Check if the state is available here
+
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
-  console.log('user category', userCategory);
-  
+  const record = location.state;
 
-// console.log('transaction key', transactionId);
-
-
-  const termSheetDetail = {
-    ppa: "20",
-    period: "10",
-    commencement: "2025-01-10",
-    energy: "20",
-    supply: "18",
-    payment: "30",
-    paymentType: "Bank Guarantee",
-  };
+  const t = 13;
 
   useEffect(() => {
-    console.log("Connecting to WebSocket...");
-    connectWebSocket(user.id, transactionId);
+    // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
+    const newSocket = connectWebSocket(user.id, t);
+    setSocket(newSocket);
 
-    subscribeToEvent("offerUpdate", (data) => {
-      console.log("Offer Update Received:", data);
-      message.info(`Offer updated: ${data.message}`);
-    });
+    console.log(newSocket, socket);
 
-    subscribeToEvent("negotiationResult", (data) => {
-      console.log("Negotiation Result Received:", data);
-      message.success(`Negotiation result: ${data.message}`);
-    });
+    const onMessageHandler = (event) => {
+      console.log("📩 event jkjkjkjkjkjkjkjkjkj:", event);
+      try {
+
+        const data = JSON.parse(event.data); // Parse the JSON message
+        console.log("ll", data);
+
+        if (data.offers) {
+          console.log("data.offers", data.offers);
+          setMessages([data.offers]); // Append new message to state
+        } else {
+          const newOffers = data; // Assuming data is the new offers object
+          console.log("newOffers", newOffers);
+          setMessages(prevMessages => {
+            const updatedMessages = [...prevMessages]; // Start with a copy of the previous messages
+        
+            // Iterate over the keys in the new offers
+            for (const offerKey in newOffers) {
+                if (newOffers.hasOwnProperty(offerKey)) {
+                    // Check if the key already exists in any of the existing messages
+                    const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
+        
+                    if (existingMessageIndex !== -1) {
+                        // Update the existing message
+                        updatedMessages[existingMessageIndex][offerKey] = {
+                            ...updatedMessages[existingMessageIndex][offerKey],
+                            ...newOffers[offerKey],
+                        };
+                    } else {
+                        // If the key does not exist, you can choose to add it as a new message
+                        updatedMessages.push({ [offerKey]: newOffers[offerKey] });
+                    }
+                }
+            }
+        
+            return updatedMessages; // Return the updated messages array
+        });
+        }
+      } catch (error) {
+        console.error("❌ Error parsing message:", error);
+      }
+    };
+
+    if (newSocket) {
+      // console.log("Subscribing to messages...");
+      newSocket.onmessage = onMessageHandler;
+    }
 
     return () => {
-      console.log("Disconnecting WebSocket...");
       // disconnectWebSocket();
     };
-  }, [user.id, transactionId]);
+  }, []);
+
+  console.log(messages);
 
   useEffect(() => {
     // Sort IPP data by ascending value of tariff offer
@@ -80,21 +121,16 @@ const TransactionWindowGen = () => {
     setSortedIppData(sortedData);
   }, []);
 
-  const handleView = (record) => {
-    setModalContent(record);
-    setIsModalVisible(true);
+  const handleUser = (record) => {
+    if (userCategory === "consumer") {
+      message.success(`Offer sent to IPP ${record.ipp}`);
+    } else {
+      message.success(`Offer accepted of IPP ${record.ipp}`);
+    }
   };
-
-const handleOffer = (key) => {
-    message.success(`Offer sent to IPP ${key}`);
-}
 
   const handleCancel = () => {
     setIsModalVisible(false);
-  };
-
-  const handleAcceptButton = (id) => {
-    message.success(`Offer accepted of IPP ${id}`);
   };
 
   const handleRejectTransaction = () => {
@@ -154,6 +190,11 @@ const handleOffer = (key) => {
     }
   };
 
+const handleSendTariff =() => {
+  console.log('clicked');
+  
+}
+
   const handleOfferChange = (value) => {
     setOfferValue(value);
   };
@@ -174,53 +215,76 @@ const handleOffer = (key) => {
             <Title level={2} style={{ textAlign: "center" }}>
               Term Sheet Details
             </Title>
-            <Row gutter={[16, 16]}>
-              <Col span={8}><strong>Term of PPA (years): </strong>{termSheetDetail.ppa}</Col>
-              <Col span={8}><strong>Lock-in Period (years): </strong>{termSheetDetail.period}</Col>
-              <Col span={8}><strong>Commencement of Supply: </strong>{termSheetDetail.commencement}</Col>
+            {/* <Row gutter={[16, 16]}>
+              <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
+              <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
+              <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-              <Col span={8}><strong>Contracted Energy (million units): </strong>{termSheetDetail.energy}</Col>
-              <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{termSheetDetail.supply}</Col>
-              <Col span={8}><strong>Payment Security (days):</strong>{termSheetDetail.payment}</Col>
+              <Col span={8}><strong>Contracted Energy (MW): </strong>{record.t_contracted_energy}</Col>
+              <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{record.t_minimum_supply_obligation}</Col>
+              <Col span={8}><strong>Payment Security (days):</strong>{record.t_payment_security_day}</Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-              <Col span={8}><strong>Payment Security Type:</strong> {termSheetDetail.paymentType}</Col>
+              <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
             </Row>
-            <Row justify="center" style={{ marginTop: "24px", marginLeft:'80%'}}>
-              <Countdown title="Time Remaining" value={deadline} />
-            </Row>
-            <div style={{ marginTop: "24px" }}>Offers from Consumers:</div>
-            {sortedIppData.map((item) => (
-              <Col span={24} key={item.key} style={{ marginTop: "16px" }}>
-                <Card
-                  bordered
-                  style={{
-                    width: "100%",
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  <Row justify="space-between" align="middle">
-                    <span><strong>Consumer {item.ipp}</strong></span>
-                    <span><strong>Offer Tariff:</strong> {item.perUnitCost}</span>
-                    <span><strong>Time:</strong> {item.time}</span>
-                    <Button onClick={() => handleOffer(item.ipp)}>Send Offer</Button>
-                  </Row>
-                </Card>
-              </Col>
-            ))}
+            <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <img src={time} alt="" style={{ height: '30px', width: '30px' }} />
+                <Countdown title="Time Remaining" value={deadline} />
+              </span>
+            </Row> */}
+            <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
           </div>
+
+          <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
+            <Title level={3}>Offer tarrifs:</Title>
+            {messages.length === 0 ? (
+              <Text>No messages available.</Text>
+            ) : (
+              messages.length === 0 ? (
+                <Text>No messages available.</Text>
+              ) : (
+                messages.map((messageObject, index) => {
+                  // Iterate over each key in the messageObject
+                  return Object.keys(messageObject).map((msgKey) => {
+                      const msg = messageObject[msgKey]; // Access the message using the key
+          
+                      // Validate the message object
+                      if (msg && typeof msg === 'object') {
+                          return (
+                              <Card key={msg.id || index} style={{ marginBottom: "10px" }}>
+                                  <Text strong>Event: </Text> {msg.generator_username} <br />
+                                  <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/KWH <br />
+                                  <Text strong>Time: </Text> {moment(msg.timestamp).format("hh:mm A")}
+                              </Card>
+                          );
+                      } else {
+                          console.warn("Invalid message format:", messageObject);
+                          return null; // Return null if the message format is invalid
+                      }
+                  });
+              })
+              )
+            )}
+          </div>
+
           <br /><br />
-          {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button> */}
-          <Button style={{marginLeft:'20px'}} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
+
+          {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
+          <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button> */}
+       <Row style={{marginLeft:'60%'}}>
+        <InputNumber style={{backgroundColor:'white',width:'200px'}} placeholder="Enter tariff value"/>
+        <Button style={{marginLeft:'3%'}} onClick={handleSendTariff}>Send Tariff</Button>
+        </Row>
         </Card>
+
       </Row>
 
       {/* View Modal */}
       <Modal
         title="Project Details"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={handleCancel}
         footer={[<Button key="close" onClick={handleCancel}>Close</Button>]}>
         {modalContent && (
@@ -230,12 +294,12 @@ const handleOffer = (key) => {
             <Text>for offer tariff: {modalContent.perUnitCost}</Text>
             <br /><br />
             {userCategory === "consumer" ? (
-              <Button onClick={() => handleAccept(modalContent.key)} disabled={buttonsDisabled[modalContent.key]?.accept}>
-                Accept
-              </Button>
-            ) : (
               <Button onClick={() => handleSendOffer(modalContent.key)} disabled={buttonsDisabled[modalContent.key]?.negotiate}>
                 Send Offer
+              </Button>
+            ) : (
+              <Button onClick={() => handleAccept(modalContent.key)} disabled={buttonsDisabled[modalContent.key]?.accept}>
+                Accept
               </Button>
             )}
             <Button onClick={() => handleReject(modalContent.key)} style={{ marginLeft: "8px" }} disabled={buttonsDisabled[modalContent.key]?.reject}>
@@ -270,5 +334,4 @@ const handleOffer = (key) => {
   );
 };
 
-export default TransactionWindowGen;
-
+export default TransactionWindowgen;

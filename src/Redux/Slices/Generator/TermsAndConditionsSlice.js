@@ -59,7 +59,7 @@ export const addStatus = createAsyncThunk(
       return response.data; // Assuming the API returns data in `response.data`
     } catch (error) {
       // Handle errors
-      console.log(`klkkklklk`, error)
+      // console.log(`klkkklklk`, error)
       return rejectWithValue(
         error.response?.data?.error || 'Failed to add terms and conditions'
       );

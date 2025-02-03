@@ -9,7 +9,8 @@ import {
   Modal,
   Form,
   Input,
-  message,Spin
+  message,
+  Spin,
 } from "antd";
 import {
   DashboardOutlined,
@@ -19,7 +20,7 @@ import {
   FormOutlined,
   NotificationOutlined,
 } from "@ant-design/icons";
-import moment from 'moment';
+import moment from "moment";
 import req from "../../assets/req.png";
 import { useNavigate } from "react-router-dom";
 import "../SubscriptionPlan.css";
@@ -30,14 +31,20 @@ import {
   fetchPerformaById,
 } from "../../Redux/Slices/Consumer/performaInvoiceSlice";
 import SubscriptionModal from "./Modal/SubscriptionModal"; // Import SubscriptionModal
-import { createRazorpayOrder, completeRazorpayPayment } from "../../Redux/Slices/Consumer/paymentSlice"; // Import payment actions
+import {
+  createRazorpayOrder,
+  completeRazorpayPayment,
+} from "../../Redux/Slices/Consumer/paymentSlice"; // Import payment actions
 import { subscriptionEnroll } from "../../Redux/Slices/Consumer/subscriptionEnrollSlice";
-import { fetchSubscriptionPlan } from "../../Redux/Slices/Generator/availableSubscriptionPlanG";
-import dash from '../../assets/dashboard.png';
-import transaction from '../../assets/transaction.png';
-import trial from '../../assets/trial.png';
-import powerX from '../../assets/powerX.png';
-import advice from '../../assets/advice.png'; 
+import { fetchSubscriptionPlan } from "../../Redux/Slices/Consumer/availableSubscriptionSlice";
+import { fetchSubscriptionPlanG } from "../../Redux/Slices/Generator/availableSubscriptionPlanG";
+
+
+import dash from "../../assets/dashboard.png";
+import transaction from "../../assets/transaction.png";
+import trial from "../../assets/trial.png";
+import powerX from "../../assets/powerX.png";
+import advice from "../../assets/advice.png";
 const { Title, Text } = Typography;
 
 const SubscriptionPlans = () => {
@@ -51,30 +58,40 @@ const SubscriptionPlans = () => {
   const [companyName, setCompanyName] = useState("");
   const [gstinNumber, setGstinNumber] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
-  const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false); // State for subscription modal
-    const [selectedPlanId, setSelectedPlanId] = useState(null);
-  const [loading,setLoading]=useState(false);
-  const [subscriptionPlan,setSubscriptionPlan]=useState([]);
+  const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] =
+    useState(false); // State for subscription modal
+  const [selectedPlanId, setSelectedPlanId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [subscriptionPlan, setSubscriptionPlan] = useState([]);
+  const [isContinueDisabled, setIsContinueDisabled] = useState(true);
 
 
   const navigate = useNavigate(); // Hook for navigation
   const dispatch = useDispatch();
   const userData = useState(JSON.parse(localStorage.getItem("user")).user);
+  const user_category=userData[0]?.user_category;
+  // console.log(userData[0]?.user_category);
+  
   const userId = userData[0]?.id;
   const Razorpay = useRazorpay();
   const [orderId, setOrderId] = useState(null); // State to store order ID
 
-  const handleSelectPlan = (id) => {
-    const currentDate = moment().format('YYYY-MM-DD');
+  const handleSelectPlan = (id,plan) => {
+    setSelectedPlan(plan);
+    console.log(selectedPlan);
+    
+    console.log(selectedPlan?.subscription_type);
+    
+    const currentDate = moment().format("YYYY-MM-DD");
     setSelectedPlanId(id);
-    const subscriptionData ={
-      user:userId,
-      subscription:id,
-      start_date:currentDate
-    }
-console.log(id);
-const response=dispatch(subscriptionEnroll(subscriptionData));
-console.log(response);
+    const subscriptionData = {
+      user: userId,
+      subscription: id,
+      start_date: currentDate,
+    };
+    console.log(id);
+    const response = dispatch(subscriptionEnroll(subscriptionData));
+    console.log(response);
 
     setIsQuotationVisible(true); // Show the quotation view after selection
   };
@@ -85,8 +102,11 @@ console.log(response);
 
   const closeQuotation = () => {
     setIsQuotationVisible(false);
-    setSelectedPlan(null);
+    // setSelectedPlan(null);
   };
+const handleFreeContinue=() => {
+  navigate('/consumer/energy-consumption-table')
+}
 
   useEffect(() => {
     const fetchPerforma = async () => {
@@ -105,20 +125,32 @@ console.log(response);
     fetchPerforma();
   }, [dispatch, userId]);
 
-     useEffect(() => {
-      setLoading(true);
-       dispatch(fetchSubscriptionPlan())
-         .then(response => {    
-           setSubscriptionPlan(response.payload);
-           setLoading(false);
-           //console.log(isState);
-         })
-         .catch(error => {
-           console.error("Error fetching subscription:", error);
-         });
-     }, [dispatch]);
-     console.log(subscriptionPlan);
-     
+  useEffect(() => {
+    setLoading(true);
+    if (user_category=='Consumer') {
+      dispatch(fetchSubscriptionPlan())
+      .then((response) => {
+        setSubscriptionPlan(response.payload);
+        setLoading(false);
+        //console.log(isState);
+      })
+      .catch((error) => {
+        console.error("Error fetching subscription:", error);
+      });
+    } else {
+      dispatch(fetchSubscriptionPlanG())
+      .then((response) => {
+        setSubscriptionPlan(response.payload);
+        setLoading(false);
+        //console.log(isState);
+      })
+      .catch((error) => {
+        console.error("Error fetching subscription:", error);
+      });
+    }
+
+  }, [dispatch]);
+  // console.log(subscriptionPlan);
 
   const handleCreatePerforma = async () => {
     const performaData = {
@@ -128,21 +160,23 @@ console.log(response);
       subscription: selectedPlanId, // Use selected plan dynamically
       due_date: "2025-01-25",
     };
-  
+
     try {
-      const response = await dispatch(createPerformaById({ id: userId, performaData })).unwrap();
+      const response = await dispatch(
+        createPerformaById({ id: userId, performaData })
+      ).unwrap();
       console.log("Created Performa:", response);
-      
+
       // Show success message
-      message.success("Performa invoice generated successfully!")
-  
+      message.success("Performa invoice generated successfully!");
+
       setIsProformaVisible(true);
       setIsQuotationVisible(false);
     } catch (error) {
       console.error("Failed to create performa:", error);
-      
+
       // Show error message
-      message.error("Failed to generate Performa invoice. Please try again.")
+      message.error("Failed to generate Performa invoice. Please try again.");
     }
   };
 
@@ -185,7 +219,8 @@ console.log(response);
             rules={[
               { required: true, message: "Please provide your GSTIN number" },
               {
-                pattern: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                pattern:
+                  /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
                 message: "Please provide a valid GSTIN number",
               },
             ]}
@@ -234,6 +269,7 @@ console.log(response);
           await handleCreatePerforma(values);
           setIsProformaVisible(true); // Show the proforma modal
           setIsQuotationVisible(false);
+          setIsContinueDisabled(false);
         } catch (error) {
           console.log("Validation failed:", error);
           setFormError("Please fill in all required fields.");
@@ -249,19 +285,26 @@ console.log(response);
   const handlePayment = async () => {
     try {
       // console.log(selectedPlan.id);
-      
-      const amount = selectedPlanId === selectedPlanId ? 50000 : selectedPlanId === selectedPlanId ? 200000 : 0;  // Adjust plan amount here
-      const orderResponse = await dispatch(createRazorpayOrder({ amount, currency: "INR" })).unwrap();
+
+      const amount =
+        selectedPlanId === selectedPlanId
+          ? 50000
+          : selectedPlanId === selectedPlanId
+          ? 200000
+          : 0; // Adjust plan amount here
+      const orderResponse = await dispatch(
+        createRazorpayOrder({ amount, currency: "INR" })
+      ).unwrap();
       console.log("Order response:", orderResponse);
 
       if (orderResponse?.data?.id) {
         const options = {
-          key: "rzp_test_bVfC0PJsvP9OUR",  
-          amount: orderResponse.data.amount,  // Ensure this is the correct amount
-          currency: orderResponse.data.currency, 
+          key: "rzp_test_bVfC0PJsvP9OUR",
+          amount: orderResponse.data.amount, // Ensure this is the correct amount
+          currency: orderResponse.data.currency,
           name: "Energy Exchange",
           description: `Subscription Payment for Plan ${selectedPlan}`,
-          order_id: orderResponse.data.id, 
+          order_id: orderResponse.data.id,
           handler: async (response) => {
             const paymentData = {
               user: userId, // Include userId in payment data
@@ -269,14 +312,16 @@ console.log(response);
               payment_id: response.razorpay_payment_id,
               signature: response.razorpay_signature,
               amount: orderResponse.data.amount, // Include amount in payment data
-              subscription_id:selectedPlanId
+              subscription: selectedPlanId,
             };
 
             console.log("Payment data to send:", paymentData); // Log payment data
 
             try {
-              const completeResponse = await dispatch(completeRazorpayPayment(paymentData)).unwrap();
-              console.log("Complete payment response:", completeResponse);    
+              const completeResponse = await dispatch(
+                completeRazorpayPayment(paymentData)
+              ).unwrap();
+              console.log("Complete payment response:", completeResponse);
               if (completeResponse) {
                 message.success("Payment successful! Subscription activated.");
                 setIsProformaVisible(false); // Close the proforma modal
@@ -301,19 +346,18 @@ console.log(response);
         if (window.Razorpay) {
           const rzp = new window.Razorpay(options);
           rzp.open();
-      } else {
-          console.error('Razorpay script not loaded');
-      }
-      
+        } else {
+          console.error("Razorpay script not loaded");
+        }
       }
     } catch (error) {
       console.error("Payment Error:", error);
       message.error("Payment initiation failed. Please try again.");
     }
-};
+  };
+
 
   
-
   const closeProforma = () => {
     setIsProformaVisible(false);
   };
@@ -339,7 +383,7 @@ console.log(response);
         <Card
           hoverable
           className={selectedPlanId === plan.id ? 'selected-plan' : ''}
-          onClick={() => handleSelectPlan(plan.id)}
+          onClick={() => handleSelectPlan(plan.id,plan)}
           actions={[
             <Button
               type="primary"
@@ -433,9 +477,23 @@ console.log(response);
     open={isQuotationVisible}
     onCancel={closeQuotation}
     footer={[
-      <Button key="generate" type="primary" htmlType="submit" onClick={handleGenerateProforma}>
-        Generate Proforma
-      </Button>,
+      <>
+      {console.log(selectedPlan)
+      }
+      {selectedPlan?.subscription_type === "LITE" || selectedPlan?.subscription_type === "PRO" ? (
+        <Button key="generate" type="primary" htmlType="submit" onClick={handleGenerateProforma}>
+          Generate Proforma
+        </Button>
+      ) : (
+        <>
+          <Button key="generate" type="primary" htmlType="submit" onClick={handleFreeContinue}>
+           Continue
+          </Button>
+        
+        </>
+      )}
+    </>
+    
     ]}
     width={600}
   >
@@ -445,25 +503,34 @@ console.log(response);
 )}
 
 
-      <Modal
-        title="Proforma Invoice"
-        open={isProformaVisible}
-        onCancel={closeProforma}
-        footer={[
-          <Button key="button" onClick={handlePayment}>
-            Proceed to Payment
-          </Button>,
-        ]}
-        width={600}
-      >
-        <p>This is a proforma invoice.</p>
-        <img
-          src={proformaInvoice}
-          alt="Proforma Invoice"
-          style={{ height: "500px", width: "500px", marginLeft: "5%" }}
-        />
-        <p>Please proceed to payment to complete your subscription.</p>
-      </Modal>
+<Modal
+  title="Proforma Invoice"
+  open={isProformaVisible}
+  onCancel={closeProforma}
+  footer={[
+    
+    // selectedPlan.subscription_type === "LITE" || selectedPlan.subscription_type === "PRO" ? (
+      <Button key="button" onClick={handlePayment}>
+        Proceed to Payment
+      </Button>
+    // ) : (
+      // <Button key="button" disabled={isContinueDisabled} onClick={handleFreeContinue}>
+      //   Continue
+      // </Button>
+    // )
+  ]}
+  width={600}
+>
+  <p>This is a proforma invoice.</p>
+  <img
+    src={proformaInvoice}
+    alt="Proforma Invoice"
+    style={{ height: "500px", width: "500px", marginLeft: "5%" }}
+  />
+  <p>Please proceed to payment to complete your subscription.</p>
+</Modal>
+
+
 
       <Modal
         title="Proceed to Payment"
