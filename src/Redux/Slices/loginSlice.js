@@ -7,6 +7,8 @@ export const loginUser = createAsyncThunk('users/loginUser', async (credentials,
     // console.log('Dispatching loginUser with credentials:', credentials);
     try {
         const response = await userApi.logInUser(credentials);
+        localStorage.clear();
+
         // console.log('API response:', response);
         const loginUserResponse = response.data;
         localStorage.setItem('user', JSON.stringify(loginUserResponse));

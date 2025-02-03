@@ -163,9 +163,13 @@ let temp='';
           <p style={{ margin: 0 }}>
             Offer Tariff: {data.offer_tariff ? data.offer_tariff : "NA"}
           </p>
+          {!fromTransaction ?(
+            <>
           <Button style={{ marginLeft: "auto" }} onClick={handleTarrif}>
             Negotiate Tariff
           </Button>
+          </>
+          ): null}
         </span>
 
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
@@ -358,13 +362,16 @@ let temp='';
                 </>
               ) : (
                 <p style={{ color: "#9A8406" }}>
-                  You have sent an offer to IPP. Please wait for their decision.
+                  {!fromTransaction ? (
+                 <p> You have sent an offer to IPP. Please wait for their decision.</p>
+                ) :null}
                 </p>
               )}
             </>
           ) : null}
 
-          {user_category === "Generator" &&
+
+          {!fromTransaction && user_category === "Generator" &&
           data?.consumer_status !== "Rejected" &&
           data?.consumer_status !== "Accepted" ? (
             <>
@@ -424,68 +431,10 @@ let temp='';
                 </p>
               )}
             </>
-          ) : null}
+          ) : null} 
 
-          {/* {user_category === "Consumer" ? (
-          data?.generator_status !== "Rejected" &&
-          data?.generator_status !== "Accepted" ? (
-            <>
-              {console.log("ippju")}
-              {data?.from_whom === "Consumer" &&
-              data?.count % 2 === 0 &&
-              data?.count < 4 ? (
-                <>
-                  <Button onClick={() => handleStatusUpdate("Rejected")}>
-                    Reject
-                  </Button>
-                  <Button
-                    style={{ marginLeft: "10px" }}
-                    onClick={() => handleStatusUpdate("Accepted")}
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    style={{ marginLeft: "10px" }}
-                    onClick={handleContinue}
-                  >
-                    Counter Offer
-                  </Button>
-                </>
-              ) : (
-                <p>
-                  You have sent an offer to IPP. Please wait for their decision.
-                </p>
-              )}
-            </>
-          ) : null
-        ) : data?.consumer_status !== "Rejected" &&
-          data?.consumer_status !== "Accepted" ? (
-          <>
-            {console.log("ippju")}
-            {data?.from_whom === "Consumer" &&
-            data?.count % 2 === 0 &&
-            data?.count < 4 ? (
-              <>
-                <Button onClick={() => handleStatusUpdate("Rejected")}>
-                  Reject
-                </Button>
-                <Button
-                  style={{ marginLeft: "10px" }}
-                  onClick={() => handleStatusUpdate("Accepted")}
-                >
-                  Accept
-                </Button>
-                <Button style={{ marginLeft: "10px" }} onClick={handleContinue}>
-                  Counter Offer
-                </Button>
-              </>
-            ) : (
-              <p>
-                You have sent an offer to IPP. Please wait for their decision.
-              </p>
-            )}
-          </>
-        ) : null} */}
+
+      
         </Row>
         <Modal
           title={"Negotiate Tariff"}
