@@ -136,21 +136,43 @@ const TransactionWindow = () => {
   };
 
   const handleRejectTransaction = () => {
-    message.error(`Transaction ${transactionId} rejected`);
+    
+    const messageToSend = {
+      action: "reject",
+    };
+
+    // Send the message using the sendEvent function
+    sendEvent("rejectOffer", messageToSend);
+
+    message.error(`Transaction rejected`);
     navigate('/consumer/transaction-page');
   };
 
   const handleDownloadTransaction = async () => {
-    const input = contentRef.current;
-    const canvas = await html2canvas(input, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("transaction_details.pdf");
+    const input = document.getElementById("transaction-page"); // Ensure the entire page is captured
+    if (!input) {
+      message.error("Error: Unable to capture transaction details.");
+      return;
+    }
+  
+    try {
+      const canvas = await html2canvas(input, { scale: 2, useCORS: true });
+      const imgData = canvas.toDataURL("image/png");
+  
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("transaction_details.pdf");
+  
+      message.success("Transaction details downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      message.error("Failed to generate PDF.");
+    }
   };
+  
 
   const handleAccept = (key) => {
     message.success("Offer accepted");
@@ -218,7 +240,7 @@ const TransactionWindow = () => {
   };
 
   return (
-    <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
+    <div id="transaction-page" style={{ padding: "30px", backgroundColor: "" }}>
       <Row gutter={[16, 16]} justify="center">
         <Card
           style={{
@@ -276,7 +298,7 @@ const TransactionWindow = () => {
                             key={msg.id || index}
                             style={{
                               marginBottom: "10px",
-                              padding: "10px",
+                              // padding: "10px",
                               display: "flex",
                               flexDirection: "column",
                               justifyContent: "space-between",
