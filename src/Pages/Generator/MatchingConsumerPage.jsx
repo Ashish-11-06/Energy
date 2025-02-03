@@ -49,6 +49,8 @@ const MatchingConsumerPage = () => {
 
   // Handle radio button change for selecting a consumer
   const handleRadioChange = (e, key) => {
+    console.log(key);
+    localStorage.setItem('matchingConsumerId',key);
     setSelectedConsumer(key); // Set the selected consumer key
     // message.success(`You have selected consumer with Serial No: ${key}`);
   };

@@ -38,7 +38,8 @@ const CombinationPattern = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
-  const selectedDemandId = location.state?.selectedDemandId;
+  // const selectedDemandId = location.state?.selectedDemandId;
+ const selectedDemandId= localStorage.getItem('matchingConsumerId')
   const reReplacement = state?.reReplacement;
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 
@@ -588,8 +589,8 @@ const CombinationPattern = () => {
                   onChange={handleSliderChange}
                   value={sliderValue}
                   tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Control tooltip visibility
-                  track={{ style: { height: 20 } }} // Increase the thickness of the slider line
-                  handle={{ style: { height: 20, width: 20 } }} // Increase the size of the handle
+                  trackStyle={{ height: 20 }} // Increase the thickness of the slider line
+                  handleStyle={{ height: 20, width: 20 }}// Increase the size of the handle
                 />
                 <Button
                   type="primary"

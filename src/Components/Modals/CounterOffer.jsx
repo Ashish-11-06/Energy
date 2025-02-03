@@ -20,14 +20,15 @@ import chat from "../../assets/need.png";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
-  console.log(data);
+const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransaction }) => {
+  console.log(fromTransaction);
+  
+  // console.log(data);
   const [ppaTerm, setPpaTerm] = useState(data.term_of_ppa);
   const [lockInPeriod, setLockInPeriod] = useState(data.lock_in_period);
+  // const [commencementOfSupply,setCommencementOfSupply ] = useState(data.commencement_of_supply);
   const navigate = useNavigate();
-  const [minimumSupply, setMinimumSupply] = useState(
-    data.minimum_supply_obligation
-  );
+  const [minimumSupply, setMinimumSupply] = useState(data.minimum_supply_obligation);
   const [contractedEnergy, setContractedEnergy] = useState(
     data.contracted_energy
   );
@@ -81,7 +82,7 @@ let temp='';
     setTarrifModal(false);
   };
 
-  console.log(data);
+  // console.log(data);
 
   const handleStatusUpdate = async (action) => {
     console.log(action);
@@ -108,7 +109,7 @@ let temp='';
     setOfferTariff(value); // Update the offer tariff value in the state
   };
 
-  console.log(commencementDate);
+  // console.log(commencementDate);
   // Handle form submission
   const handleContinue = async () => {
     const termSheetId = data.id;
@@ -177,6 +178,7 @@ let temp='';
               <InputNumber
                 min={1}
                 value={ppaTerm}
+                disabled={fromTransaction}
                 onChange={(value) => setPpaTerm(value)}
                 style={{ width: "100%" }}
               />
@@ -188,6 +190,7 @@ let temp='';
               <InputNumber
                 min={1}
                 value={lockInPeriod}
+                disabled={fromTransaction}
                 onChange={(value) => setLockInPeriod(value)}
                 style={{ width: "100%" }}
               />
@@ -208,6 +211,7 @@ let temp='';
                 format="DD-MM-YYYY" // Format the date
                 // value={commencementDate} // Use moment date here
                 onChange={handleDateChange} // Update the state on date change
+                disabled={fromTransaction}
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -219,6 +223,7 @@ let temp='';
                 min={1}
                 value={contractedEnergy}
                 onChange={(value) => setContractedEnergy(value)}
+                disabled={fromTransaction}
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -230,6 +235,7 @@ let temp='';
                 min={1}
                 value={minimumSupply}
                 onChange={(value) => setMinimumSupply(value)}
+                disabled={fromTransaction}
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -239,6 +245,7 @@ let temp='';
               <strong>Payment Security Type:</strong>
               <Select
                 value={paymentSecurityType}
+                disabled={fromTransaction}
                 onChange={(value) => setPaymentSecurityType(value)}
                 style={{ width: "100%" }}
               >
@@ -254,6 +261,7 @@ let temp='';
               <InputNumber
                 min={1}
                 value={paymentSecurityDays}
+                disabled={fromTransaction}
                 onChange={(value) => setPaymentSecurityDays(value)}
                 style={{ width: "100%" }}
               />

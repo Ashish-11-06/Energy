@@ -580,16 +580,16 @@ const CombinationPattern = () => {
               {/* <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>( Scroll the below bar for different RE combination  )</p></span> Display slider value */}
               <span>
                 <Slider
-                min={0}
-                max={100}
-                marks={marks} // Add marks to the slider
-                style={{ width: '80%', marginLeft: '5%' }}
-                onChange={handleSliderChange}
-                value={sliderValue}
-                tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Control tooltip visibility
-                track={{ style: { height: 20 } }} // Increase the thickness of the slider line
-                handle={{ style: { height: 20, width: 20 } }} // Increase the size of the handle
-              />
+                  min={0}
+                  max={100}
+                  marks={marks} // Add marks to the slider
+                  style={{ width: "80%", marginLeft: "5%" }}
+                  onChange={handleSliderChange}
+                  value={sliderValue}
+                  tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Correct way to control tooltip visibility
+                  trackStyle={{ height: 20 }} // Increase the thickness of the slider line
+                  handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
+                />
 
                 <Button
                   type="primary"

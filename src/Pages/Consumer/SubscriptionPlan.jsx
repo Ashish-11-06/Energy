@@ -227,7 +227,7 @@ const SubscriptionPlans = () => {
       .then(async (values) => {
         setFormError(""); // Reset any error message if the form is valid
         try {
-          await handleCreatePerforma(values);
+        const res=  await handleCreatePerforma(values);
           setIsProformaVisible(true);
           setIsQuotationVisible(false);
           setIsContinueDisabled(false);
@@ -417,9 +417,12 @@ const SubscriptionPlans = () => {
                 Generate Proforma
               </Button>
             ) : (
-              <Button key="continue" type="primary" onClick={handleFreeContinue}>
-                Continue
+              <>
+              <Button key="generate" type="primary" onClick={handleGenerateProforma}>
+                Generate Proforma
               </Button>
+              
+              </>
             )
           ]}
           width={600}
@@ -434,9 +437,18 @@ const SubscriptionPlans = () => {
         open={isProformaVisible}
         onCancel={closeProforma}
         footer={[
-          <Button key="button" onClick={handlePayment}>
-            Proceed to Payment
-          </Button>
+selectedPlan?.subscription_type === "LITE" || selectedPlan?.subscription_type === "PRO" ? (
+  <Button key="generate" type="primary" onClick={handlePayment}>
+ Proceed to Payment
+  </Button>
+) : (
+  <>
+  <Button key="generate" type="primary" onClick={handleFreeContinue}>
+   Continue
+  </Button>
+  
+  </>
+)
         ]}
         width={600}
       >
