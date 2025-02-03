@@ -59,6 +59,11 @@ const SubscriptionPlans = () => {
   const [subscriptionPlan, setSubscriptionPlan] = useState([]);
   const [isContinueDisabled, setIsContinueDisabled] = useState(true);
 
+  const subscription=JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+  const alreadySubscribed=subscription.subscription_type;
+
+   console.log(subscription.subscription_type);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userData = useState(JSON.parse(localStorage.getItem("user")).user);
@@ -320,16 +325,19 @@ const SubscriptionPlans = () => {
               <Card
                 hoverable
                 className={selectedPlanId === plan.id ? 'selected-plan' : ''}
-                onClick={() => handleSelectPlan(plan.id, plan)}
+                onClick={() => {
+                  if (plan.subscription_type !== alreadySubscribed) {
+                    handleSelectPlan(plan.id, plan);
+                  }
+                }}
                 actions={[
-                  <Button
-                    type="primary"
-                    block
-                    size="small"
-                    style={{ width: '160px' }}
-                  >
-                    Select Plan
-                  </Button>,
+                  plan.subscription_type !== alreadySubscribed ? (
+                    <Button type="primary" block size="small" style={{ width: '160px' }}>
+                      Select Plan
+                    </Button>
+                  ) : (
+                    <Button disabled>Subscribed</Button>
+                  ),
                 ]}
               >
                 <div
@@ -357,8 +365,12 @@ const SubscriptionPlans = () => {
                   </p>
                   <hr />
                 </div>
-                <Text className="price">{plan.price} <p style={{ fontSize: '18px' }}>INR</p></Text>
-                <p><strong>Duration:</strong> {plan.duration_in_days} days</p>
+                <Text className="price">
+                  {plan.price} <p style={{ fontSize: '18px' }}>INR</p>
+                </Text>
+                <p>
+                  <strong>Duration:</strong> {plan.duration_in_days} days
+                </p>
                 <ul style={{ display: 'flex', flexDirection: 'column', padding: 0, marginLeft: '30%' }}>
                   {plan.subscription_type === 'LITE' && (
                     <>
@@ -403,7 +415,8 @@ const SubscriptionPlans = () => {
               </Card>
             </Col>
           ))
-        )}
+          )
+}
       </Row>
 
       {isQuotationVisible && (
