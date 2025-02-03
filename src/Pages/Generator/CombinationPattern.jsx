@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Table, Typography, Row, Col, Spin, message, Progress, Slider, Button, Card } from "antd";
+import {
+  Table,
+  Typography,
+  Row,
+  Col,
+  Spin,
+  message,
+  Progress,
+  Slider,
+  Button,
+  Card,
+} from "antd";
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 import { fetchOptimizedCombinations } from "../../Redux/Slices/Generator/optimizeCapacitySlice";
 import { fetchConsumptionPattern } from "../../Redux/Slices/Generator/ConsumptionPatternSlice";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import IPPModal from "../Consumer/Modal/IPPModal";
-import RequestForQuotationModal from '../../Components/Modals/RequestForQuotationModal';
+import RequestForQuotationModal from "../../Components/Modals/RequestForQuotationModal";
 import { fetchOptimizedCombinationsXHR } from "../../Utils/xhrUtils";
 import "./CombinationPattern.css"; // Import the custom CSS file
 
@@ -33,55 +44,83 @@ const CombinationPattern = () => {
 
   const dispatch = useDispatch();
 
-  const user = JSON.parse(localStorage.getItem('user')).user;
+  const user = JSON.parse(localStorage.getItem("user")).user;
+  // const user_category=user.user_category;
+  // console.log(user_category);
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
-    if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
-      console.log('hiiiiiiii');
+    if (
+      !combinations ||
+      typeof combinations !== "object" ||
+      !Object.keys(combinations).length
+    ) {
+      console.log("hiiiiiiii");
       setDataSource([]);
       return;
     }
 
-    const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => {
-      const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
-      const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
-      const batteryCapacity = combination["Optimal Battery Capacity (MW)"] || 0;
-      console.log('format', combination);
-      const annual_demand_met = combination["annual_demand_met"] || "NA";
-      console.log(annual_demand_met);
-      console.log('status', combination.terms_sheet_sent)
+    const formattedCombinations = Object.entries(combinations).map(
+      ([key, combination], index) => {
+        const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
+        const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
+        const batteryCapacity =
+          combination["Optimal Battery Capacity (MW)"] || 0;
+        console.log("format", combination);
+        const annual_demand_met = combination["annual_demand_met"] || "NA";
+        console.log(annual_demand_met);
+        console.log("status", combination.terms_sheet_sent);
 
-      return {
+        return {
+          key: index + 1,
+          srNo: index + 1,
+          combination: key,
+          annual_demand_met,
 
-        key: index + 1,
-        srNo: index + 1,
-        combination: key,
-        annual_demand_met,
+          technology: [
+            { name: "Solar", capacity: `${solarCapacity} MW` },
+            { name: "Wind", capacity: `${windCapacity} MW ` },
+            { name: "ESS", capacity: `${batteryCapacity} MWh` },
+          ],
+          OACost:
+            combination["OA_cost"] && !isNaN(combination["OA_cost"])
+              ? combination["OA_cost"].toFixed(2)
+              : "N/A",
+          totalCost:
+            combination["Final Cost"] && !isNaN(combination["Final Cost"])
+              ? combination["Final Cost"].toFixed(2)
+              : "N/A",
+          totalCapacity: `${(
+            windCapacity +
+            solarCapacity +
+            batteryCapacity
+          ).toFixed(2)}`,
+          perUnitCost:
+            combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"])
+              ? combination["Per Unit Cost"].toFixed(2)
+              : "N/A",
+          finalCost:
+            combination["FinalCost"] && !isNaN(combination["Final Cost"])
+              ? combination["Final Cost"].toFixed(2)
+              : "N/A",
+          cod: combination["greatest_cod"]
+            ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD")
+            : "N/A",
+          reReplacement:
+            reReplacementValue ||
+            combination["Annual Demand Offset"]?.toFixed(2) ||
+            "NA", // updated to handle null or undefined values
+          connectivity: combination.connectivity,
+          states: combination.state,
 
-        technology: [
-          { name: "Solar", capacity: `${solarCapacity} MW` },
-          { name: "Wind", capacity: `${windCapacity} MW ` },
-          { name: "ESS", capacity: `${batteryCapacity} MWh` },
-        ],
-        OACost: combination["OA_cost"] && !isNaN(combination["OA_cost"]) ? combination["OA_cost"].toFixed(2) : "N/A",
-        totalCost: combination["Final Cost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
-        totalCapacity: `${(windCapacity + solarCapacity + batteryCapacity).toFixed(2)}`,
-        perUnitCost: combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"]) ? combination["Per Unit Cost"].toFixed(2) : "N/A",
-        finalCost: combination["FinalCost"] && !isNaN(combination["Final Cost"]) ? combination["Final Cost"].toFixed(2) : "N/A",
-        cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD") : "N/A",
-        reReplacement: reReplacementValue || combination["Annual Demand Offset"]?.toFixed(2) || "NA", // updated to handle null or undefined values
-        connectivity: combination.connectivity,
-        states: combination.state,
-
-        status: combination.terms_sheet_sent
-          ? "Already Sent"
-          : "Send Quotation",
-      };
-
-    });
+          status: combination.terms_sheet_sent
+            ? "Already Sent"
+            : "Send Quotation",
+        };
+      }
+    );
 
     // console.log('tech',tech);
-    console.log('formatting com');
+    console.log("formatting com");
     setDataSource(formattedCombinations);
   };
 
@@ -104,7 +143,11 @@ const CombinationPattern = () => {
   useEffect(() => {
     const fetchPatterns = async () => {
       try {
-        if (!consumptionPatterns.length && consumptionPatternStatus === "idle" || consumptionPatternStatus === "failed") {
+        if (
+          (!consumptionPatterns.length &&
+            consumptionPatternStatus === "idle") ||
+          consumptionPatternStatus === "failed"
+        ) {
           await dispatch(fetchConsumptionPattern(selectedDemandId));
         }
       } catch (error) {
@@ -152,16 +195,19 @@ const CombinationPattern = () => {
         );
 
         // Scroll to the bottom of the page
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
       } catch (error) {
-        console.error('Error in loadCombinations:', error);
+        console.error("Error in loadCombinations:", error);
         message.error("Failed to fetch combinations.");
         setIsTableLoading(false);
         setFetchingCombinations(false);
       }
     };
 
-    console.log(combinationData);
+    // console.log(combinationData);
 
     fetchPatterns();
     loadCombinations();
@@ -209,7 +255,6 @@ const CombinationPattern = () => {
   }, [isTableLoading]);
 
   const handleRowClick = (record) => {
-
     setSelectedRow(record); // Record comes from the latest dataSource
     setIsIPPModalVisible(true);
   };
@@ -246,8 +291,13 @@ const CombinationPattern = () => {
       };
 
       try {
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        const combinations = await dispatch(fetchOptimizedCombinations(modalData)).unwrap();
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+        const combinations = await dispatch(
+          fetchOptimizedCombinations(modalData)
+        ).unwrap();
 
         console.log(combinations, "combinations");
 
@@ -255,33 +305,33 @@ const CombinationPattern = () => {
         formatAndSetCombinations(combinations, sliderValue);
         setFetchingCombinations(false);
         setIsTableLoading(false);
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
       } catch (error) {
         //console.error('Error in dispatch:', error);
         throw error;
       }
     } catch (error) {
-      console.error('Error in handleOptimizeClick:', error);
+      console.error("Error in handleOptimizeClick:", error);
       message.error("Failed to fetch combinations.");
-
     } finally {
-
       setFetchingCombinations(false);
       setIsTableLoading(false);
 
       // Scroll to the bottom of the page
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
   };
 
   const sliderStyle = {
-    height: '20px', // Increase the thickness of the slider
+    height: "20px", // Increase the thickness of the slider
   };
 
   const marks = {
-    0: '0%',
-    100: '100%',
+    0: "0%",
+    100: "100%",
   };
 
   const columns = [
@@ -298,7 +348,7 @@ const CombinationPattern = () => {
       width: 120,
       render: (text) => {
         // Extract the parts using split()
-        const parts = text.split('-');
+        const parts = text.split("-");
         if (parts.length === 4) {
           // Extract the desired parts
           const a = parts[0];
@@ -307,14 +357,16 @@ const CombinationPattern = () => {
           const d = parts[3].charAt(0) + parts[3].charAt(parts[3].length - 1);
           // Construct the new string
           return a + b + c + d;
-        } if (parts.length === 3) {
+        }
+        if (parts.length === 3) {
           // Extract the desired parts
           const a = parts[0];
           const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
           const c = parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1);
           // Construct the new string
           return a + b + c;
-        } if (parts.length === 2) {
+        }
+        if (parts.length === 2) {
           // Extract the desired parts
           const a = parts[0];
           const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1); // Extract first and last characters
@@ -324,7 +376,7 @@ const CombinationPattern = () => {
           // Handle cases where the combination doesn't have the expected format
           return text; // Or return an empty string, or handle the error as needed
         }
-      }
+      },
     },
     {
       title: "Generator's Connectivity",
@@ -377,21 +429,20 @@ const CombinationPattern = () => {
       key: "totalCost",
       // width: 150,
     },
-   
+
     {
       title: "COD",
       dataIndex: "cod",
       key: "cod",
       width: 120,
-      render: (text) => dayjs(text).format('DD-MM-YYYY'),
+      render: (text) => dayjs(text).format("DD-MM-YYYY"),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       // width: 150,
-      render: (text, record) => (
-       
+      render: (text, record) =>
         text === "Already Sent" ? (
           "Already Sent"
         ) : (
@@ -401,18 +452,21 @@ const CombinationPattern = () => {
           >
             Initiate Quotation
           </button>
-        )
-      ),
+        ),
     },
   ];
 
   // Chart data for consumption patterns
   const chartData = {
-    labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
+    labels: Array.isArray(consumptionPatterns)
+      ? consumptionPatterns.map((pattern) => pattern.month)
+      : [], // Safely check if it's an array
     datasets: [
       {
         label: "Consumption (MWh)",
-        data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
+        data: Array.isArray(consumptionPatterns)
+          ? consumptionPatterns.map((pattern) => pattern.consumption)
+          : [], // Safely check if it's an array
         backgroundColor: "#4CAF50",
         barThickness: 10, // Set bar thickness
       },
@@ -420,27 +474,35 @@ const CombinationPattern = () => {
   };
 
   const lineChartData = {
-    labels: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.month) : [], // Safely check if it's an array
+    labels: Array.isArray(consumptionPatterns)
+      ? consumptionPatterns.map((pattern) => pattern.month)
+      : [], // Safely check if it's an array
     datasets: [
       {
-        type: 'bar',
+        type: "bar",
         label: "Consumption (MWh)",
-        data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.consumption) : [], // Safely check if it's an array
+        data: Array.isArray(consumptionPatterns)
+          ? consumptionPatterns.map((pattern) => pattern.consumption)
+          : [], // Safely check if it's an array
         backgroundColor: "#669800",
         barThickness: 10, // Set bar thickness
       },
       {
-        type: 'line',
+        type: "line",
         label: "Consumption during Peak hours(MWh)",
-        data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.peak_consumption) : [], // Safely check if it's an array
+        data: Array.isArray(consumptionPatterns)
+          ? consumptionPatterns.map((pattern) => pattern.peak_consumption)
+          : [], // Safely check if it's an array
         borderColor: "#FF5733",
         borderWidth: 5, // Increase line thickness
         fill: false,
       },
       {
-        type: 'line',
+        type: "line",
         label: "Consumption during Off-Peak hours(MWh)",
-        data: Array.isArray(consumptionPatterns) ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption) : [], // Safely check if it's an array
+        data: Array.isArray(consumptionPatterns)
+          ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption)
+          : [], // Safely check if it's an array
         borderColor: "#337AFF",
         borderWidth: 5, // Increase line thickness
         fill: false,
@@ -452,7 +514,7 @@ const CombinationPattern = () => {
     //console.log(consumptionPatterns, "consumptionPatterns");
   }, [consumptionPatterns]);
 
-  console.log(consumptionPatterns);
+  // console.log(consumptionPatterns);
 
   const chartOptions = {
     responsive: true,
@@ -464,20 +526,23 @@ const CombinationPattern = () => {
     },
     plugins: {
       legend: {
-        position: 'bottom', // Move the legend to the bottom
+        position: "bottom", // Move the legend to the bottom
       },
     },
   };
 
-  console.log(dataSource);
+  // console.log(dataSource);
 
   return (
     <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif" }}>
-      <Row justify="center" align="middle" gutter={[16, 8]} style={{ height: "100%" }}>
-
-
+      <Row
+        justify="center"
+        align="middle"
+        gutter={[16, 8]}
+        style={{ height: "100%" }}
+      >
         {/* Static Data Line Chart */}
-        <Card style={{ width: '100%' }}>
+        <Card style={{ width: "100%" }}>
           <Col span={24} style={{ textAlign: "center" }}>
             <Title level={4} style={{ color: "#001529" }}>
               Monthly Consumption Pattern
@@ -507,11 +572,8 @@ const CombinationPattern = () => {
           </Col>
         </Card>
 
-
-
         {/* Combination Table */}
         <Col span={24}>
-
           <div style={{ marginBottom: "20px" }}>
             <Card>
               {/* <Text>RE Replacement Value: {sliderValue}%</Text> Display slider value */}
@@ -522,22 +584,24 @@ const CombinationPattern = () => {
                   min={0}
                   max={100}
                   marks={marks} // Add marks to the slider
-                  style={{ width: '80%',marginLeft:'5%' }}
+                  style={{ width: "80%", marginLeft: "5%" }}
                   onChange={handleSliderChange}
                   value={sliderValue}
-                  tooltipVisible={!isIPPModalVisible && !isModalVisible} // Hide tooltip when modal is visible
-                  trackStyle={{ height: 20 }} // Increase the thickness of the slider line
-                  handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
+                  tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Control tooltip visibility
+                  track={{ style: { height: 20 } }} // Increase the thickness of the slider line
+                  handle={{ style: { height: 20, width: 20 } }} // Increase the size of the handle
                 />
-                <Button type="primary" onClick={handleOptimizeClick} style={{ marginLeft: "90%", transform: "translateY(-46px)" }}>
+                <Button
+                  type="primary"
+                  onClick={handleOptimizeClick}
+                  style={{ marginLeft: "90%", transform: "translateY(-46px)" }}
+                >
                   Optimize
                 </Button>
               </span>
               <br />
               {/* <p>( You can change your RE Replacement from above bar. )</p> */}
             </Card>
-
-
           </div>
           <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
@@ -545,7 +609,13 @@ const CombinationPattern = () => {
             </Title>
             {isTableLoading ? (
               <>
-                <div style={{ textAlign: "center", padding: "10px", width: "100%" }}>
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "10px",
+                    width: "100%",
+                  }}
+                >
                   <Spin size="large" />
                 </div>
                 <div
@@ -593,14 +663,12 @@ const CombinationPattern = () => {
                   textAlign: "center",
                 }}
               >
-                No optimized combinations available at the moment. Please try again later.
-
+                No optimized combinations available at the moment. Please try
+                again later.
               </div>
             )}
           </Card>
-
         </Col>
-
 
         {/* IPP Modal */}
         {isIPPModalVisible && (

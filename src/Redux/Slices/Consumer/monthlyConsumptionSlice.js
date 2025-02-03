@@ -25,7 +25,7 @@ export const fetchMonthlyDataById = createAsyncThunk(
     try {
       // Make API call to fetch monthly consumption data
       const response = await monthlyConsumptionApi.getMonthlyConsumption(id);
-      console.log('monthly data in slice ',response.data);
+      // console.log('monthly data in slice ',response.data);
       
       return response.data;
 
@@ -71,7 +71,7 @@ const monthlyConsumptionSlice = createSlice({
       .addCase(fetchMonthlyDataById.fulfilled, (state, action) => {
         state.loading = false;  // Set loading to false after fetching successfully
         state.monthlyData = action.payload; // Update monthly data with fetched data
-        console.log(action.payload);
+        // console.log(action.payload);
       })
       .addCase(fetchMonthlyDataById.rejected, (state, action) => {
         state.loading = false;  // Set loading to false after failed fetch

@@ -383,7 +383,7 @@ let temp='';
                       </Button>
                     </Tooltip>
                   ) : data?.count === 3 ? (
-                    <Tooltip title={`This is your last chance to send offer ${temp} for this demand`}>
+                    <Tooltip title={`This is your last chance to send offer to ${temp} for this demand`}>
                       <Button
                         style={{ marginLeft: "10px" }}
                         onClick={handleContinue}

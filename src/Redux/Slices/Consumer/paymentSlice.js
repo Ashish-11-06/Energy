@@ -26,7 +26,7 @@ export const completeRazorpayPayment = createAsyncThunk(
   "payment/completePayment",
   async (paymentData, { rejectWithValue }) => {
     try {
-      console.log("Sending payment data:", paymentData); // Log payment data
+      // console.log("Sending payment data:", paymentData); // Log payment data
       const response = await fetch("http://192.168.1.47:8001/api/energy/payment-transaction-complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

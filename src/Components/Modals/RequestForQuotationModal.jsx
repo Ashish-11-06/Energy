@@ -45,6 +45,9 @@ const RequestForQuotationModal = ({
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
+const user_category=user.user_category;
+console.log(user_category);
+
 
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
@@ -223,9 +226,9 @@ const RequestForQuotationModal = ({
               fontSize: "16px",
               padding: "10px 20px",
             }}
-            onClick={type === "generator" ? handleContinue : handleSendToIPPs}
+            onClick={user_category === "Generator" ? handleContinue : handleSendToIPPs}
           >
-            {type === "generator" ? "Continue" : "Send to IPPs"}
+            {user_category === "Generator" ? "Send to Consumer" : "Send to IPPs"}
           </Button>
         </Row>
       </Modal>

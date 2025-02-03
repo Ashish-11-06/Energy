@@ -26,7 +26,7 @@ const AnnualSvg = () => {
 
   const status=subscriptionPlan.status;
 
-  console.log(subscriptionPlan.status);
+  // console.log(subscriptionPlan.status);
   
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
@@ -51,7 +51,7 @@ const AnnualSvg = () => {
   }, [dispatch, requirementId]);
 
   const handleContinue = () => {
-    console.log('akjdkfjlajlfkjal');
+    // console.log('akjdkfjlajlfkjal');
     if(status === 'active') {
      
       navigate("/consumer/energy-consumption-table", { state: { requirementId, reReplacement: annualSavingResponse?.re_replacement } });

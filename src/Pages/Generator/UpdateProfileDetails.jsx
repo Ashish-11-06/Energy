@@ -5,13 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice';
 import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfileForm';
-// import { render } from 'less';
 import { useLocation } from 'react-router-dom';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-
-import { templateDownload } from '../../Redux/Slices/Generator/templateDownloadSlice';
-import { fetchState } from '../../Redux/Slices/Consumer/stateSlice';
-
 
 const { Title, Paragraph } = Typography;
 
@@ -26,62 +21,24 @@ const UpdateProfileDetails = () => {
   const [form] = Form.useForm();
   const location = useLocation();
   const { selectedConsumer } = location.state || {};
-  // Fetching projects from Redux store
-  const { projects, status } = useSelector(state => state.portfolio);
-  // const location = useLocation();
-  const selectedDemandId = location.state?.selectedConsumer;
+  const { projects } = useSelector(state => state.portfolio);
 
-  useEffect(() => {
-    // console.log('Selected demand:', selectedDemandId);
-  }, [selectedDemandId]);
-  
   useEffect(() => {
     const id = user.id; 
     dispatch(getAllProjectsById(id));
-  }, [dispatch]);
+  }, [dispatch, user.id]);
 
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
       const flatProjects = [
-        ...(projects.Solar || []).map(project => ({ ...project, type: 'Solar' })),
-        ...(projects.Wind || []).map(project => ({ ...project, type: 'Wind' })),
-        ...(projects.ESS || []).map(project => ({ ...project, type: 'ESS' }))
+        ...(projects.Solar || []).map(project => ({ ...project, type: 'Solar', key: project.id })),
+        ...(projects.Wind || []).map(project => ({ ...project, type: 'Wind', key: project.id })),
+        ...(projects.ESS || []).map(project => ({ ...project, type: 'ESS', key: project.id }))
       ];
       setStructuredProjects(flatProjects);  // Update local state with flattened data
-     
-      
     }
   }, [projects.Solar, projects.Wind, projects.ESS]);
 
-
-  
-  // console.log(Structuredprojects);
-  
-
-  // useEffect(() => {
-  //   if (!user?.id) return; // Ensure user.id is available
-
-  //   const downloadTemplate = async () => {
-  //     const templateData = {
-  //       user_id: user.id,
-  //       solar_template_downloaded: true,  // Corrected boolean values
-  //       wind_template_downloaded: true,   // Corrected boolean values
-  //     };
-
-  //     try {
-  //       const response = await dispatch(templateDownload(templateData)).unwrap();
-  //       console.log("Response:", response);
-  //       message.success("Template downloaded successfully!");
-  //     } catch (error) {
-  //       console.error("Error:", error);
-  //       message.error("Failed to download the template.");
-  //     }
-  //   };
-
-  //   downloadTemplate();
-  // }, [dispatch, user?.id]);
-  
-  // Table columns
   const columns = [
     {
       title: 'Technology',
@@ -98,23 +55,17 @@ const UpdateProfileDetails = () => {
       dataIndex: 'available_capacity',
       key: 'capacity',
       render: (text) => {
-        // Check if the value is 'ESS' or not and render accordingly
-        if (text === 'ESS') {
-          return `${text} MWh`;
-        } else {
-          return `${text} MW`;
-        }
+        return text === 'ESS' ? `${text} MWh` : `${text} MW`;
       },
     },
-    
     {
       title: 'Updated',
       dataIndex: 'updated',
       key: 'updated',
-      render: (text) => (
+      render: (text, record) => (
         <div style={{ textAlign: 'center' }}>
           {text ? (
-            <CheckCircleOutlined style={{ color: 'green', fontSize: '18px'}} />
+            <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
           ) : (
             <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
           )}
@@ -126,25 +77,20 @@ const UpdateProfileDetails = () => {
       key: 'action',
       width: 100,
       render: (text, record) => (
-       <div>
-       { text ? (
-          <Button type="primary" onClick={() => handleUpdate(record)} style={{ width: '120px' }}>
-            Update
+        <div>
+          <Button
+            type="primary"
+            onClick={() => handleUpdate(record)}
+            style={{ width: '120px' }}
+          >
+            {text ? 'Update' : 'Edit'}
           </Button>
-        ) : (
-          <Button type="primary" onClick={() => handleUpdate(record)} style={{ width: '120px' }}>
-            Edit
-          </Button>
-        )
-      }
-      </div>
+        </div>
       ),
     }
-    
   ];
 
   const handleUpdate = (record) => {
-    console.log('Record:', record);
     setSelectedRecord(record);
     form.setFieldsValue({
       ...record,
@@ -161,20 +107,21 @@ const UpdateProfileDetails = () => {
   const allUpdated = Structuredprojects.every(item => item.updated);
 
   const handleProceed = () => {
-    navigate('/generator/combination-pattern', { state: { selectedDemandId } });
+    navigate('/generator/combination-pattern', { state: { selectedConsumer } });
   };
 
   return (
     <div style={{ padding: "20px", fontFamily: "Inter, sans-serif" }}>
       <h2>Look For Additional Details</h2>
       <Paragraph>
-      (Please Update all profile details of your projects to optimize the capacity.)
+        (Please Update all profile details of your projects to optimize the capacity.)
       </Paragraph>
       <Table
         columns={columns}
         dataSource={Structuredprojects}
         pagination={false}
         bordered
+        rowKey="key" // Use the unique key for each row
         style={{ marginTop: "20px" }}
       />
 
@@ -195,9 +142,10 @@ const UpdateProfileDetails = () => {
         cancelButtonProps={{ style: { display: 'none' } }}
       >
         <UpdateProfileForm 
-        project = {selectedRecord}
-        form={form} 
-        onCancel={handleCancel}/>
+          project={selectedRecord}
+          form={form} 
+          onCancel={handleCancel}
+        />
       </Modal>
     </div>
   );

@@ -44,7 +44,7 @@ const portfolioSlice = createSlice({
       })
       .addCase(getAllProjectsById.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        console.log("Fetched projects:", action.payload); // Log the fetched projects
+        // console.log("Fetched projects:", action.payload); // Log the fetched projects
         state.projects = action.payload;  // Assuming payload returns the correct structure
       })
       .addCase(getAllProjectsById.rejected, (state, action) => {

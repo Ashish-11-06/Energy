@@ -864,7 +864,7 @@ const EnergyConsumptionTable = () => {
 
       <Modal
         title="Upload SCADA File"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
