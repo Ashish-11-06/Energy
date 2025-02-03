@@ -57,7 +57,8 @@ const renderLabelWithTooltip = (label, tooltipText, onClick) => (
 
 const EnergyConsumptionTable = () => {
   const location = useLocation();
-  const { requirementId, reReplacement } = location.state || {}; // Destructure state to get `requirementId` and `annualSaving`
+  const { reReplacement } = location.state || {};
+  const requirementId =localStorage.getItem('selectedRequirementId') // Destructure state to get `requirementId` and `annualSaving`
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [showTable, setShowTable] = useState(false); // State to control table visibility
   const [activeButton, setActiveButton] = useState(null); // State to control active button

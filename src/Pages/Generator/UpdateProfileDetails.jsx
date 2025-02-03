@@ -20,8 +20,9 @@ const UpdateProfileDetails = () => {
   const [Structuredprojects, setStructuredProjects] = useState([]);  // Local state for flattened projects
   const [form] = Form.useForm();
   const location = useLocation();
-  const { selectedConsumer } = location.state || {};
+  // const { selectedConsumer } = location.state || {};
   const { projects } = useSelector(state => state.portfolio);
+const selectedConsumer=localStorage.getItem('matchingConsumerId');
 
   useEffect(() => {
     const id = user.id; 

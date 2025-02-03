@@ -43,7 +43,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Portfolio', key: '/generator/portfolio', icon: <SolutionOutlined style={{color:'#669800', fontWeight:'900', height:'30px',width:'30px'}}/> },
-    { label: 'Transaction Window', key: '/generator/transaction-window', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Transaction Window', key: '/consumer/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
     { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },

@@ -111,7 +111,7 @@ const TransactionWindow = () => {
     };
   }, []);
 
-  console.log(messages);
+  // console.log(messages);
 
   useEffect(() => {
     // Sort IPP data by ascending value of tariff offer
