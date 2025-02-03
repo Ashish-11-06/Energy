@@ -73,8 +73,8 @@ const LandingPage = () => {
                 navigate(user.is_new_user ? '/consumer/what-we-offer' : '/consumer/dashboard', { state: { isNewUser: user.is_new_user } });
             }
         } else {
-            console.error('Login failed:', resultAction.payload);
-            message.error(resultAction.payload?.message || 'Login failed. Please try again.');
+            // console.error('Login failedklaksdlfklaskdlk:', resultAction.payload);
+            message.error(resultAction.payload || 'Login failed. Please try again.');
         }
     } catch (error) {
         console.error('Login error:', error);
