@@ -146,7 +146,7 @@ const MatchingConsumerPage = () => {
   const handleNextClick = () => {
     if (selectedConsumer) {
       // Navigate to the next page (e.g., /next-page)
-      console.log(selectedConsumer);
+      // console.log(selectedConsumer);
       if(subscriptionPlan.status === 'active') {
         navigate('/generator/update-profile-details', { state: { selectedConsumer } }); // Pass selected consumer as state
       } else {
