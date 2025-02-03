@@ -38,10 +38,13 @@ const TransactionWindow = () => {
   const contentRef = useRef();
   const [socket, setSocket] = useState(null); // Add this line to define the socket variable
   const [messages, setMessages] = useState([]); // Store incoming messages
-
+  const [currentTime, setCurrentTime] = useState(Date.now()); // Track current time
+ 
   const location = useLocation();
 
   const navigate = useNavigate();
+  
+  const [deadline, setDeadline] = useState(null);
 
   // const { state } = location;  // this should contain your passed record
 
@@ -50,6 +53,14 @@ const TransactionWindow = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
@@ -73,28 +84,28 @@ const TransactionWindow = () => {
           console.log("newOffers", newOffers);
           setMessages(prevMessages => {
             const updatedMessages = [...prevMessages]; // Start with a copy of the previous messages
-        
+
             // Iterate over the keys in the new offers
             for (const offerKey in newOffers) {
-                if (newOffers.hasOwnProperty(offerKey)) {
-                    // Check if the key already exists in any of the existing messages
-                    const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
-        
-                    if (existingMessageIndex !== -1) {
-                        // Update the existing message
-                        updatedMessages[existingMessageIndex][offerKey] = {
-                            ...updatedMessages[existingMessageIndex][offerKey],
-                            ...newOffers[offerKey],
-                        };
-                    } else {
-                        // If the key does not exist, you can choose to add it as a new message
-                        updatedMessages.push({ [offerKey]: newOffers[offerKey] });
-                    }
+              if (newOffers.hasOwnProperty(offerKey)) {
+                // Check if the key already exists in any of the existing messages
+                const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
+
+                if (existingMessageIndex !== -1) {
+                  // Update the existing message
+                  updatedMessages[existingMessageIndex][offerKey] = {
+                    ...updatedMessages[existingMessageIndex][offerKey],
+                    ...newOffers[offerKey],
+                  };
+                } else {
+                  // If the key does not exist, you can choose to add it as a new message
+                  updatedMessages.push({ [offerKey]: newOffers[offerKey] });
                 }
+              }
             }
-        
+
             return updatedMessages; // Return the updated messages array
-        });
+          });
         }
       } catch (error) {
         console.error("❌ Error parsing message:", error);
@@ -111,7 +122,7 @@ const TransactionWindow = () => {
     };
   }, []);
 
-  console.log(messages);
+  // console.log(messages);
 
   useEffect(() => {
     // Sort IPP data by ascending value of tariff offer
@@ -119,13 +130,6 @@ const TransactionWindow = () => {
     setSortedIppData(sortedData);
   }, []);
 
-  const handleUser = (record) => {
-    if (userCategory === "consumer") {
-      message.success(`Offer sent to IPP ${record.ipp}`);
-    } else {
-      message.success(`Offer accepted of IPP ${record.ipp}`);
-    }
-  };
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -192,7 +196,26 @@ const TransactionWindow = () => {
     setOfferValue(value);
   };
 
-  const deadline = Date.now() + 3600 * 1000; // 1 hour from now
+  useEffect(() => {
+    const calculatedDeadline = Date.now() + 60 * 1000; // 1 minute from now
+    setDeadline(calculatedDeadline);
+  }, []); // Runs only once on mount
+
+  const handleAcceptOffer = (msg) => {
+    // Construct the message object
+
+    console.log(msg);
+    const messageToSend = {
+      action: "select_generator",
+      selected_generator_id: msg.generator_id // Assuming msg.id contains the generator ID
+    };
+
+    // Send the message using the sendEvent function
+    sendEvent("acceptOffer", messageToSend);
+
+    // Optionally, you can also show a success message
+    message.success("Offer accepted for generator ID: " + msg.id);
+  };
 
   return (
     <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
@@ -241,23 +264,54 @@ const TransactionWindow = () => {
                 messages.map((messageObject, index) => {
                   // Iterate over each key in the messageObject
                   return Object.keys(messageObject).map((msgKey) => {
-                      const msg = messageObject[msgKey]; // Access the message using the key
-          
-                      // Validate the message object
-                      if (msg && typeof msg === 'object') {
-                          return (
-                              <Card key={msg.id || index} style={{ marginBottom: "10px" }}>
-                                  <Text strong>Event: </Text> {msg.generator_username} <br />
-                                  <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/KWH <br />
-                                  <Text strong>Time: </Text> {msg.updated_at}
-                              </Card>
-                          );
-                      } else {
-                          console.warn("Invalid message format:", messageObject);
-                          return null; // Return null if the message format is invalid
-                      }
+                    const msg = messageObject[msgKey]; // Access the message using the key
+
+                    // Validate the message object
+                    if (msg && typeof msg === 'object') {
+                      return (
+
+
+                        <div>
+                          <Card
+                            key={msg.id || index}
+                            style={{
+                              marginBottom: "10px",
+                              padding: "10px",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "space-between",
+                              alignItems: "flex-start" // Aligns text to start
+                            }}
+                          >
+                            <div>
+                              <Text strong>Event: </Text> {msg.generator_username} <br />
+                              <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/KWH <br />
+                              <Text strong>Time: </Text> {moment(msg.timestamp).format("hh:mm A")}
+                            </div>
+
+
+                          </Card>
+                          <div style={{
+                            width: "98%", display: "flex", justifyContent: "flex-end",
+                            transform: 'translateY(-60px)',
+                            marginTop: "10px"
+                          }}>
+                            {/* Show Accept Offer button only if the deadline has passed */}
+                          {currentTime >= deadline && (
+                            <Button type="primary" onClick={() => handleAcceptOffer(msg)}>
+                              Accept Offer
+                            </Button>
+                          )}
+                          </div>
+                        </div>
+
+                      );
+                    } else {
+                      console.warn("Invalid message format:", messageObject);
+                      return null; // Return null if the message format is invalid
+                    }
                   });
-              })
+                })
               )
             )}
           </div>

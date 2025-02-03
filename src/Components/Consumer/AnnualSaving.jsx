@@ -8,6 +8,8 @@ const AnnualSaving = (data) => {
   const [showReport, setShowReport] = useState(false);
 
   const handleDownloadReport = () => {
+
+    // console.log('dd');
     // Data to be downloaded
     const reportData = data;
 

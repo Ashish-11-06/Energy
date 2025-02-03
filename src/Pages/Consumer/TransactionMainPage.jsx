@@ -4,13 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { fetchTransactions } from '../../Redux/Slices/Transaction/transactionWindowSlice';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
+import CounterOffer from '../../Components/Modals/CounterOffer';
+import DemandModal from './Modal/DemandModal';
 
 const { Title } = Typography;
 
 const TransactionMainPage = () => {
   const [transactions, setTransactions] = useState([]);
   const [RequirementContent, setRequirementContent] = useState(null);
-    const [isRequirementModalVisible, setIsRequirementModalVisible] = useState(false);
+  const [isRequirementModalVisible, setIsRequirementModalVisible] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+const [modalContent, setModalContent] = useState(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,11 +24,33 @@ const TransactionMainPage = () => {
 
   const showRequirementModal = (record) => {
     setRequirementContent(record);
+    // console.log(RequirementContent);
+
     setIsRequirementModalVisible(true);
   };
   const handleRequirementModalClose = () => {
     setIsRequirementModalVisible(false);
     setRequirementContent(null);
+  };
+
+  const handleTermSheet=(record) => {
+    // console.log(record);
+    const modalContent={
+      term_of_ppa:record.t_term_of_ppa,
+      lock_in_period:record.t_lock_in_period,
+      commencement_of_supply:record.t_commencement_of_supply,
+      contracted_energy:record.t_contracted_energy,
+      minimum_supply_obligation:record.t_minimum_supply_obligation,
+      payment_security_type:record.t_payment_security_type,
+      payment_security_day:record.t_payment_security_day
+    }
+    setModalContent(modalContent);
+    setIsModalVisible(true);
+  }
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setModalContent(null);
   };
 
   useEffect(() => {
@@ -41,6 +67,9 @@ const TransactionMainPage = () => {
 
     fetchData();
   }, [dispatch, userId]);
+
+// console.log(RequirementContent);
+
 
   const columns = [
     {
@@ -60,8 +89,10 @@ const TransactionMainPage = () => {
       dataIndex: 'rq_contracted_demand',
       key: 'rq_contracted_demand',
       width: 150,
-      render: (text) =>
-        <Typography.Link onClick={() => showRequirementModal(text)}>
+      render: (text,record) =>
+        <Typography.Link onClick={() => showRequirementModal(record)}>
+          {/* {console.log(record)} */}
+          
           {text}
         </Typography.Link>,
     },
@@ -95,7 +126,7 @@ const TransactionMainPage = () => {
     type="primary" 
     style={{ backgroundColor: "#669800", borderColor: "#669800", width: "150px" }} 
     onClick={() => {
-      console.log('Navigating with state:', record);
+      // console.log('Navigating with state:', record);
       navigate(`/consumer/transaction-window`, { state: record     });
     }}
   >
@@ -106,19 +137,22 @@ const TransactionMainPage = () => {
   <Button 
     type="primary" 
     style={{ backgroundColor: "#88B04B", borderColor: "#88B04B", width: "150px" }} 
-    onClick={() => navigate(`/consumer/transaction-window/${record.key}`)}
+    onClick={() => {
+      // console.log('Navigating with state:', record);
+      handleTermSheet(record)
+    }}
   >
     View Termsheet
   </Button>
   <br /><br />
 
-  <Button 
+  {/* <Button 
     type="primary" 
     style={{ backgroundColor: "#A7C957", borderColor: "#A7C957", width: "150px" }} 
-    onClick={() => navigate(`/consumer/transaction-window/${record.key}`)}
+    onClick={() => navigate(/consumer/transaction-window/${record.key})}
   >
      View Demand  
-  </Button>
+  </Button> */}
 
       </>
       
@@ -155,26 +189,23 @@ const TransactionMainPage = () => {
           }}
         />
       )}
-       <Modal
+
+      {modalContent && (
+        <CounterOffer
+          visible={isModalVisible}
+          data={modalContent}
+          onCancel={handleCloseModal}
+          fromTransaction={true}
+        />
+      )}
+
+<DemandModal
         title="Demand Details"
         open={isRequirementModalVisible}
         onCancel={handleRequirementModalClose}
+        requirementContent={RequirementContent}
         footer={null}
-      >
-        {RequirementContent && (
-          <div>
-            <p><strong>Demand ID:</strong> {RequirementContent.rq_id}</p>
-            <p><strong>Industry:</strong> {RequirementContent.rq_industry}</p><p>
-  <strong>Procurement Date:</strong>{" "}
-  {moment(RequirementContent.rq_procurement_date).format("DD-MM-YYYY")}
-</p>
-            <p><strong>Site Name:</strong> {RequirementContent.rq_site}</p>
-            <p><strong>State:</strong> {RequirementContent.rq_state}</p>
-            <p><strong>Tarrif Category:</strong> {RequirementContent.rq_tariff_category}</p>
-            <p><strong>Voltage Level:</strong> {RequirementContent.rq_voltage_level}</p>
-          </div>
-        )}
-      </Modal>
+      />
     </div>
   );
 };
