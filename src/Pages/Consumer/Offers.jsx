@@ -36,6 +36,7 @@ const Offers = () => {
   const [ippData, setIppData] = useState([]);
   const [error, setError] = useState(null);
   const [loading,setLoader]=useState(false);
+  const [ refresh, setRefresh] = useState(false);
 
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
@@ -64,7 +65,9 @@ const Offers = () => {
     };
 
     fetchIPPData();
-  }, [dispatch, user.id]);
+    setRefresh(false);
+  }, [dispatch, user.id, refresh]);
+
 
   // console.log(ippData);
 
@@ -77,6 +80,7 @@ const Offers = () => {
   const handleCloseModal = () => {
     setIsModalVisible(false);
     setModalContent(null);
+    setRefresh(true);
   };
 
   const showCombinationModal = (record) => {
