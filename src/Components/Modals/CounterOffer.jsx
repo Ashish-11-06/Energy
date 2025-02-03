@@ -96,7 +96,7 @@ let temp='';
       );
 
       message.success(`Status updated to ${action}`);
-      setIsModalVisible(false);
+      onCancel();
     } catch (error) {
       console.log(error);
       
