@@ -5,7 +5,7 @@ export const createRazorpayOrder = createAsyncThunk(
   "payment/createOrder",
   async ({ amount, currency }, { rejectWithValue }) =>{
     try {
-      const response = await fetch("http://192.168.1.47:8001/api/energy/create-order", {
+      const response = await fetch("http://192.168.1.35:8001/api/energy/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json"},
         body: JSON.stringify({ amount, currency }), 

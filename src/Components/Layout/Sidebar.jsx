@@ -49,7 +49,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
     // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
     { label: 'Subscription Plan', key: '/generator/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Chatbot', key: '/generator/chat-page', icon: <img src={chat} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // { label: 'Chatbot', key: '/generator/chat-page', icon: <img src={chat} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 

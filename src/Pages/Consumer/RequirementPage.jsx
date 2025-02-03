@@ -114,9 +114,9 @@ const RequirementsPage = () => {
 const handleAddDetails =(record) => {
   // console.log('clicked');
   
-setSelectedRequirement(record);
+// setSelectedRequirement(record);
   // console.log(selectedRequirement);
-  localStorage.setItem('selectedRequirementId',selectedRequirement.id);
+  localStorage.setItem('selectedRequirementId',record.id);
  navigate('/consumer/energy-consumption-table');
 
 }

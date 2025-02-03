@@ -129,7 +129,7 @@ const AnnualSvg = () => {
       }}
       onClick={handleContinue}
     >
-      Continue
+     Continue {`>>`}
     </Button>
   </Tooltip>
 ) : (
