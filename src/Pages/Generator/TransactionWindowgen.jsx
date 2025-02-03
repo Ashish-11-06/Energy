@@ -39,6 +39,12 @@ const TransactionWindowgen = () => {
   const [socket, setSocket] = useState(null); // Add this line to define the socket variable
   const [messages, setMessages] = useState([]); // Store incoming messages
 
+  const [tariffValue, setTariffValue] = useState(null);
+
+  const handleTariffChange = (value) => {
+    setTariffValue(value);
+  };
+
   const location = useLocation();
 
   const navigate = useNavigate();
@@ -113,7 +119,32 @@ const TransactionWindowgen = () => {
     };
   }, []);
 
-  console.log(messages);
+  // console.log(messages);
+
+    // Handler for sending the tariff value
+    const handleSendTariff = () => {
+      if (tariffValue !== null) {
+        // Show confirmation modal
+        Modal.confirm({
+          title: "Confirm Tariff Value",
+          content: `Are you sure you want to send the tariff value: ${tariffValue} INR/KWH?`,
+          onOk: () => {
+            console.log("Sending Tariff Value: ", tariffValue);
+            // Send the tariff value after confirmation
+            const messageToSend = {
+              updated_tariff: tariffValue,
+            };
+            sendEvent(messageToSend);
+          },
+          onCancel: () => {
+            console.log("Tariff value sending cancelled");
+          },
+        });
+      } else {
+        console.error("Please enter a valid tariff value");
+      }
+    };
+    
 
   useEffect(() => {
     // Sort IPP data by ascending value of tariff offer
@@ -138,17 +169,6 @@ const TransactionWindowgen = () => {
     navigate('/consumer/transaction-page');
   };
 
-  const handleDownloadTransaction = async () => {
-    const input = contentRef.current;
-    const canvas = await html2canvas(input, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("transaction_details.pdf");
-  };
 
   const handleAccept = (key) => {
     message.success("Offer accepted");
@@ -190,11 +210,6 @@ const TransactionWindowgen = () => {
     }
   };
 
-const handleSendTariff =() => {
-  console.log('clicked');
-  
-}
-
   const handleOfferChange = (value) => {
     setOfferValue(value);
   };
@@ -202,7 +217,7 @@ const handleSendTariff =() => {
   const deadline = Date.now() + 3600 * 1000; // 1 hour from now
 
   return (
-    <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
+    <div style={{ padding: "30px", }}>
       <Row gutter={[16, 16]} justify="center">
         <Card
           style={{
@@ -215,7 +230,7 @@ const handleSendTariff =() => {
             <Title level={2} style={{ textAlign: "center" }}>
               Term Sheet Details
             </Title>
-            {/* <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]}>
               <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
               <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
               <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
@@ -233,7 +248,14 @@ const handleSendTariff =() => {
                 <img src={time} alt="" style={{ height: '30px', width: '30px' }} />
                 <Countdown title="Time Remaining" value={deadline} />
               </span>
-            </Row> */}
+            </Row>
+            <div style={{ color: '#9A8406',
+          marginRight: '10px'
+          }}>
+            
+            You can submit/update tariffs within the specified time frame. After one hour, the consumer will decide which offer to select.
+</div>
+
             <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
           </div>
 
@@ -273,10 +295,26 @@ const handleSendTariff =() => {
 
           {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button> */}
-       <Row style={{marginLeft:'60%'}}>
-        <InputNumber style={{backgroundColor:'white',width:'200px'}} placeholder="Enter tariff value"/>
-        <Button style={{marginLeft:'3%'}} onClick={handleSendTariff}>Send Tariff</Button>
-        </Row>
+         <Row style={{ marginLeft: '60%' }}>
+         <div style={{ color: '#9A8406',
+          marginRight: '10px'
+          }}>
+    tariff is in INR/KWH
+</div>
+      <InputNumber
+        style={{ backgroundColor: 'white', width: '100px' }}
+        placeholder="Enter tariff value"
+        value={tariffValue}
+        onChange={handleTariffChange}
+      />
+      <Button
+        style={{ marginLeft: '3%' }}
+        onClick={handleSendTariff}
+        disabled={tariffValue === null || tariffValue <= 0}
+      >
+        Send Tariff
+      </Button>
+    </Row>
         </Card>
 
       </Row>

@@ -69,18 +69,13 @@ const FULL_URL = SOCKET_URL + SOCKET_PATH;
     };
     
 
-export const sendEvent = (event, data) => {
+export const sendEvent = (data) => {
     if (!socket) {
         console.error('Socket not initialized. Call connectWebSocket first.');
         return;
     }
 
-    const message = {
-        event: event,
-        payload: data
-    };
-
-    socket.send(JSON.stringify(message));
+    socket.send(JSON.stringify(data));
 };
 
 // Optional: Add WebSocket disconnect functionality

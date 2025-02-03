@@ -126,8 +126,12 @@ const [modalContent, setModalContent] = useState(null);
     type="primary" 
     style={{ backgroundColor: "#669800", borderColor: "#669800", width: "150px" }} 
     onClick={() => {
-      // console.log('Navigating with state:', record);
-      navigate(`/consumer/transaction-window`, { state: record     });
+      const user = JSON.parse(localStorage.getItem("user")).user;
+      const path = user.user_category === "Generator"
+        ? "/generator/transaction-window"
+        : "/consumer/transaction-window";
+    
+      navigate(path, { state: record });
     }}
   >
   Open Window
