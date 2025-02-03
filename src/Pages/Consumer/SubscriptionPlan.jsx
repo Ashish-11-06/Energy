@@ -26,6 +26,8 @@ import {
   fetchPerformaById,
 } from "../../Redux/Slices/Consumer/performaInvoiceSlice";
 import SubscriptionModal from "./Modal/SubscriptionModal"; // Import SubscriptionModal
+
+import html2canvas from 'html2canvas'; // Import html2canvas
 import {
   createRazorpayOrder,
   completeRazorpayPayment,
@@ -206,8 +208,8 @@ const SubscriptionPlans = () => {
             <h3>EXGGLOBAL</h3>
             <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
         </div>
-        <p style="text-align: left;">Invoice Date: <strong>Friday, December 1st, 2023</strong></p>
-        <p style="text-align: left;">Due Date: <strong>Monday, December 4th, 2023</strong></p>
+        <p style="text-align: left;">Invoice Date: <strong>03-02-2024</strong></p>
+        <p style="text-align: left;">Due Date: <strong>--</strong></p>
         
         <div class="details">
             <h3>Invoiced To:</h3>
@@ -461,27 +463,45 @@ const SubscriptionPlans = () => {
   //     });
   // };
 
-  const handleDownloadPDF = () => {
-    const pdf = new jsPDF("p", "mm", "a4");
-    const pageWidth = pdf.internal.pageSize.getWidth(); // Get page width for dynamic centering
-    const htmlElement = document.getElementById("proforma-content"); // Get the HTML element
+  const handleDownloadPDF = async () => {
+    const container = document.querySelector('.container'); // Select the main container
 
-    if (htmlElement) {
-        pdf.html(htmlElement, {
-            callback: (doc) => {
-                doc.save("proforma_invoice.pdf");
-            },
-            x: 10, // Start x-position
-            y: 10, // Start y-position
-            width: pageWidth - 20, // Set width to fit the page with some margin
-            // autoPaging: true,  // jsPDF handles paging automatically now.
-        });
-    } else {
-        console.error("Element with ID 'proforma-content' not found.", error);
-        message.error("Failed to download PDF. Please try again.");
+    if (!container) {
+        console.error("Container element not found.");
+        return;
     }
 
-  };
+    try {
+        const canvas = await html2canvas(container, {
+            scale: 2, // Increase scale for better resolution (adjust as needed)
+            useCORS: true, // Important for images from different domains
+        });
+
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const width = pdf.internal.pageSize.getWidth();
+        const height = pdf.internal.pageSize.getHeight();
+
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+
+        // Calculate scaling to fit canvas within A4
+        const scaleFactor = Math.min(width / canvasWidth, height / canvasHeight);
+
+        const scaledWidth = canvasWidth * scaleFactor;
+        const scaledHeight = canvasHeight * scaleFactor;
+
+        const xPos = (width - scaledWidth) / 2; // Center horizontally
+        const yPos = 10; // Start with some top margin
+
+        pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', xPos, yPos, scaledWidth, scaledHeight); // Use JPEG for better compression
+
+        pdf.save('proforma_invoice.pdf');
+    } catch (error) {
+        console.error("Error generating PDF:", error);
+        message.error("Failed to generate PDF. Please try again.");
+    }
+};
+
 
   const handlePayment = async () => {
     try {
@@ -712,15 +732,7 @@ const SubscriptionPlans = () => {
           {/* <h2>Proforma Invoice</h2> */}
           <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
           <br /><br />
-          <div
-          style={
-            {
-              color: "#9A8406"
-            }
-          }
-          >Please proceed to payment to complete your subscription.</div
-          
-          >
+          <div>Please proceed to payment to complete your subscription.</div>
         </div>
       </Modal>
 
