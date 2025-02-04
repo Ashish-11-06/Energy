@@ -74,16 +74,16 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
 
         // Check if the project_type is 'Solar' and update the solar_template_downloaded
         if (project_type === "Solar") {
-          userData.solar_template_downloaded = false;
+          user.solar_template_downloaded = false;
         }
 
         // Add wind_template_downloaded only if the project_type is 'Wind'
         if (project_type === "Wind") {
-          userData.wind_template_downloaded = false;
+          user.wind_template_downloaded = false;
         }
 
         // Save the updated user data back to localStorage
-        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("user", JSON.stringify(user));
       })
       .catch((error) => {
         console.error("Error:", error);
