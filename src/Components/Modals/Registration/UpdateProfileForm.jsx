@@ -279,7 +279,7 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
             label="COD"
             rules={[{ required: true, message: "Please input the COD!" }]}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker format={'DD/MM/YYYY'} style={{ width: "100%" }} />
           </Form.Item>
         </Col>
         {type !== "ESS" && (
