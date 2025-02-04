@@ -1,313 +1,310 @@
-/* Ensure the body takes up the full height of the viewport */
+/* Global Styles */
 .landing-page {
   position: relative;
   height: 100vh;
-  width: 100%;
+  width: 100vw;
   overflow: hidden;
   font-family: 'Inter', sans-serif;
-}
-
-.video-container {
-  flex: 1; /* Takes up the remaining 50% of the width */
-  position: relative;
-  padding: 20px;
-  width: 60%;
-  height: 100%;
-  overflow: hidden;
 }
 
 .background-video {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Ensure video covers the full container */
-  filter: blur(8px); /* Apply blur effect to background video */
-  z-index: -1; /* Put the video behind the content */
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  filter: blur(8px);
+  z-index: -1;
 }
 
 .overlay {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 128, 0, 0.5); /* Green color overlay */
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 128, 0, 0.5);
   z-index: -1;
-}
-
-.key-features {
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  color: #FFFFFF;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 400px;
-}
-
-.key-features h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.key-features ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.key-features li {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-
-.key-features a {
-  color: hsl(111, 87%, 30%);
-  text-decoration: none;
-}
-
-.key-features a:hover {
-  text-decoration: underline;
 }
 
 .content-container {
   position: relative;
   z-index: 1;
   display: flex;
-  height: 100%;
-  width: 100%;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5vw;
 }
 
 .text-content {
-  position: absolute;
-  bottom: 1%;
-  left: 18%;
+  width: 40vw;
+  max-width: 600px;
   color: #FFFFFF;
   text-align: left;
   z-index: 1;
-}
-
-.text-content h1 {
-  font-size: 48px;
-  margin-bottom: 10px;
+  padding: 2vw;
+  margin-left: 20px; /* Add left margin */
 }
 
 .text-content h2 {
-  font-size: 75px; /* Increase font size */
-  margin-bottom: 50px;
-  color: #FFFFFF; /* White color for key features */
+  font-size: 2.5vw;
+  margin-bottom: 5%;
 }
 
 .text-content ul {
   list-style-type: none;
   padding: 0;
-  margin-bottom: 300px;
+  margin-bottom: 5%;
 }
 
 .text-content li {
-  font-size: 25px;
+  font-size: 1.5vw;
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-  color: #FFFFFF; /* White color for key features */
+  color: #FFFFFF;
 }
 
-.text-content .icon {
-  color: #FFFFFF; /* White color for icons */
-  margin-right: 10px;
-}
-
-.text-content p {
-  font-size: 18px;
-  bottom: 10px;
-  margin-left: 300px;
-  color: #FFFFFF; /* White color for text */
-}
-
-.animated-text {
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  animation: typing 2s steps(8, end), blink-caret 0.75s step-end infinite;
-}
-
-@keyframes typing {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
-}
-
-@keyframes blink-caret {
-  from,
-  to {
-    border-color: transparent;
-  }
-  50% {
-    border-color: #FFFFFF; /* White color for caret */
-  }
-}
-
-.cta-button {
-  margin-top: 20px;
+.login-box {
+  background-color: #FFFFFF;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 30vw;
+  height: 50vh;
+  min-height: 250px;
+  max-width: 400px;
+  border: 1px solid #E6E8F1;
+  position: relative;
+  box-sizing: border-box;
+  text-align: center;
+  margin-right: 10vw; /* Add right margin */
 }
 
 .logo-container {
   position: absolute;
   top: 10px;
-  left: 50px; /* Change left to right */
+  left: 10px;
+  width: 5vw;
+  height: 5vw;
 }
 
 .exg-logo {
-  width: 150px; /* Adjust the size as needed */
-  height: auto;
+  width: 100%;
+  height: 100%;
 }
 
 .social-media-icons {
   position: absolute;
   bottom: 3%;
-  left: 15%;
-  transform: translateX(-50%); /* Center the social media icons */
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: 15px;
-}
-
-.social-media-icons p{
-  transform: translateX(250%);
-  color: #227106;
-  font-size: 22px;
-}
-
-.social-media-icons a {
-  color: #227106; /* White color for social media icons */
-  font-size: 24px;
-  transition: color 0.3s;
-}
-
-.social-media-icons a:hover {
-  color: #d4d4d4; /* Light gray color on hover */
-}
-
-.login-box {
-  background-color: #FFFFFF; /* White background for the form */
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  width: 700px; /* Adjust width */
-  height: 600px; /* Adjust height */
-  border: 1px solid #E6E8F1;
-  position: absolute;
-  top: 50%;
-  right: 270px;
-  transform: translateY(-60%);
-}
-
-.login-title {
-  font-size: 24px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.extra-links {
-  text-align: center;
-  margin-top: 10px;
-}
-
-.extra-links a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.extra-links a:hover {
-  text-decoration: underline;
 }
 
 .footer {
   position: absolute;
   bottom: 0;
-  width: 100%;
-  height: 80px;
-  background-color: #FFFFFF; /* White color */
+  width: 100vw;
+  height: 10vh;
+  background-color: #FFFFFF;
   display: flex;
-  justify-content: center; /* Center the text */
-  align-items: center; /* Center the text */
+  justify-content: center;
+  align-items: center;
 }
 
-.ant-form-item-label > label {
-  font-size: 20px; /* Increase font size for form item labels */
-}
+/* Mobile Devices (up to 360px wide, e.g., smaller phones) */
+@media (max-width: 360px) {
+  .content-container {
+    flex-direction: column;
+    padding: 5vw;
+  }
 
-.ant-input, .ant-input-password, .ant-radio-group {
-  font-size: 20px; /* Increase font size for input fields and radio group */
-}
-
-@media (max-width: 768px) {
   .text-content {
-    left: 10%;
-    bottom: 5%;
-  }
-
-  .text-content h2 {
-    font-size: 50px;
-  }
-
-  .text-content ul {
-    margin-bottom: 150px;
-  }
-
-  .text-content li {
-    font-size: 20px;
+    width: 80vw;
+    text-align: center;
+    font-size: 5vw;
   }
 
   .login-box {
-    width: 90%;
+    width: 90vw;
+    max-width: 320px;
     height: auto;
-    position: static;
-    transform: none;
-    margin: 20px auto;
+    margin-top: 20px; /* Ensure login box is under key features */
+  }
+}
+
+/* Small Mobile Devices (up to 480px wide, e.g., large smartphones) */
+@media (max-width: 480px) {
+  .content-container {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .social-media-icons {
-    left: 50%;
-    bottom: 10%;
-    transform: translateX(-50%);
-  }
-
-  .social-media-icons p {
-    transform: translateX(0);
+  .text-content {
+    width: 80vw;
+    font-size: 4vw;
     text-align: center;
   }
 
-  .logo-container {
-    top: 20px;
-    right: 20px;
-    left: auto;
+  .login-box {
+    width: 90vw;
+    max-width: 350px;
+    height: auto;
+    margin-top: 20px; /* Ensure login box is under key features */
   }
 }
 
-@media (max-width: 480px) {
-  .text-content h2 {
-    font-size: 40px;
+/* Tablets and Small Laptops (up to 768px wide) */
+@media (max-width: 768px) {
+  .content-container {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .text-content li {
-    font-size: 16px;
+  .text-content {
+    width: 70vw;
+    font-size: 4.5vw; /* Increase font size for tablets */
+    text-align: left; /* Left align animated text */
   }
 
   .login-box {
-    width: 100%;
-    padding: 10px;
+    width: 80vw;
+    max-width: 400px;
+    height: auto;
+    margin-top: 20px; /* Ensure login box is under key features */
+  }
+}
+
+/* Medium Laptops / Desktops (up to 1024px wide) */
+@media (max-width: 1024px) {
+  .content-container {
+    flex-direction: row;
+    padding: 5vw;
   }
 
-  .social-media-icons {
-    bottom: 5%;
+  .text-content {
+    width: 50vw;
+    font-size: 2.5vw;
   }
 
-  .social-media-icons p {
-    font-size: 18px;
+  .login-box {
+    width: 40vw;
+    max-width: 350px;
+  }
+}
+
+/* Desktops and Laptops (1024px - 1440px wide) */
+@media (min-width: 1024px) and (max-width: 1440px) {
+  .content-container {
+    flex-direction: row;
+    padding: 4vw;
+  }
+
+  .text-content {
+    width: 35vw;
+    font-size: 2.2vw;
+  }
+
+  .login-box {
+    width: 30vw;
+    max-width: 400px;
+    height: 500px;
+  }
+}
+
+/* Large Screens (1440px - 2560px wide, large desktop screens) */
+@media (min-width: 1440px) and (max-width: 2560px) {
+  .content-container {
+    flex-direction: row;
+    padding: 3vw;
+  }
+
+  .text-content {
+    width: 30vw;
+    font-size: 1.8vw;
+  }
+
+  .text-content ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .text-content li {
+    flex: 1 1 auto;
+    white-space: nowrap;
+  }
+
+  .login-box {
+    width: 35vw; /* Increased width */
+    height: 60vh; /* Increased height */
+    max-width: 600px;
+  }
+}
+
+/* Extra Large Screens (2560px - 3840px wide, large desktop to 4K) */
+@media (min-width: 2560px) and (max-width: 3840px) {
+  .content-container {
+    flex-direction: row;
+    padding: 3vw;
+  }
+
+  .text-content {
+    width: 25vw;
+    font-size: 1.6vw;
+  }
+
+  .text-content ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .text-content li {
+    flex: 1 1 auto;
+    white-space: nowrap;
+  }
+
+  .login-box {
+    width: 40vw; 
+    height: 40vh; 
+    max-width: 500vw;
+    margin-right: 10vw;
+  }
+}
+
+/* 4K Screens and Beyond (3840px wide and larger) */
+@media (min-width: 3840px) {
+  .content-container {
+    flex-direction: row;
+    padding: 2vw;
+  }
+
+  .text-content {
+    width: 20vw;
+    font-size: 1.5vw;
+  }
+
+  .text-content ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .text-content li {
+    flex: 1 1 auto;
+    white-space: nowrap;
+  }
+
+  .login-box {
+    width: 35vw; /* Increased width */
+    height: 60vh; /* Increased height */
+    max-width: none;
   }
 }

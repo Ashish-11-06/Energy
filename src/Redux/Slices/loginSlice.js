@@ -1,4 +1,3 @@
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import userApi from '../api/userApi';
 
@@ -26,7 +25,7 @@ export const logoutUser = createAsyncThunk('users/logoutUser', async () => {
 const userSlice = createSlice({
     name: 'users',
     initialState: {
-        user: JSON.parse(localStorage.getItem('user')) || null,
+        user: null,
         isAuthenticated: !!localStorage.getItem('user'),
         loading: false,
         error: null,

@@ -1,4 +1,5 @@
 @import 'nprogress/nprogress.css';
+@import "tailwindcss";
 
 body {
   font-family: 'Inter', sans-serif;

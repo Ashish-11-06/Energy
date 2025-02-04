@@ -18,7 +18,7 @@ const Login = () => {
     const credentials = { 
       email: values.email,
       password: values.password,
-      role: role, // Include the selected role
+      user_type: role, // Include the selected role
     }
 
     try {

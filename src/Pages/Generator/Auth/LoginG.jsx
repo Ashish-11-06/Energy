@@ -16,8 +16,8 @@ const LoginG = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      // Dispatch the loginUser async thunk and wait for its result
-      const resultAction = await dispatch(loginUser(values));
+      const loginData = { ...values, user_type: 'Generator' }; // Add user_type to loginData
+      const resultAction = await dispatch(loginUser(loginData));
      
       // Check if the login was successful
       if (loginUser.fulfilled.match(resultAction)) {

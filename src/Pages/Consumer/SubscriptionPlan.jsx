@@ -52,7 +52,7 @@ const SubscriptionPlans = () => {
   const [gstinNumber, setGstinNumber] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
   const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false); // State for subscription modal
-    const [selectedPlanId, setSelectedPlanId] = useState(null);
+  const [selectedPlanId, setSelectedPlanId] = useState(null);
   const [loading,setLoading]=useState(false);
   const [subscriptionPlan,setSubscriptionPlan]=useState([]);
 
