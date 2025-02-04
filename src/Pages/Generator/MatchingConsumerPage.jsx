@@ -28,7 +28,7 @@ const MatchingConsumerPage = () => {
   const { Matchingconsumers, status, error } = useSelector((state) => state.matchingConsumer);
 
     const dataSource = [
-      {key:'1',label:<strong>RE Index</strong>, value:modalConsumerDetails?.REindex},
+      {key:'1',label:<strong>RE Index</strong>, value:modalConsumerDetails?.REindex || 'A2'},
       { key: '2', label: <strong>Consumer</strong>, value: modalConsumerDetails?.user__username},
       { key: '3', label: <strong>State</strong>, value: modalConsumerDetails?.state },
       { key: '4', label: <strong>Demand</strong>, value: modalConsumerDetails?.total_contracted_demand },
@@ -99,7 +99,7 @@ const MatchingConsumerPage = () => {
       key: 'state',
     },
     {
-      title: 'Demand',
+      title: 'Demand (MW)',
       dataIndex: 'total_contracted_demand',
       key: 'demand',
     },
@@ -164,12 +164,12 @@ const MatchingConsumerPage = () => {
       <h2>Potential Consumer</h2>
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
         <Search
-          placeholder="Search "
+          placeholder="Search by state/industry"
           onSearch={handleSearch}
           onChange={(e) => handleSearch(e.target.value)}
           style={{ width: 200,height:'35px' }}
         />
-        <Select
+        {/* <Select
           placeholder="Filter by state"
           onChange={handleStateFilterChange}
           allowClear
@@ -178,7 +178,7 @@ const MatchingConsumerPage = () => {
           <Option value="Karnataka">Karnataka</Option>
           <Option value="Maharashtra">Maharashtra</Option>
           <Option value="Rajasthan">Rajasthan</Option>
-        </Select>
+        </Select> */}
       </div>
       <Table
   columns={columns}
@@ -197,8 +197,8 @@ const MatchingConsumerPage = () => {
         type="primary"
         style={{
           marginTop: '20px',
-          backgroundColor: selectedConsumer ? '#4CAF50' : '#8C8C8C', // Green if selected, gray otherwise
-          borderColor: selectedConsumer ? '#4CAF50' : '#8C8C8C', // Match button color with background
+          backgroundColor: selectedConsumer ? '' : '#8C8C8C', // Green if selected, gray otherwise
+          borderColor: selectedConsumer ? '' : '#8C8C8C', // Match button color with background
           color: '#fff',
           float: 'right',
         }}

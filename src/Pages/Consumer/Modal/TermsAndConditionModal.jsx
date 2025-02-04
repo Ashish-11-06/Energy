@@ -19,10 +19,9 @@ const TermsAndConditionModal = ({ visible, onCancel }) => {
       title="Terms and Conditions"
       open={visible}
       onCancel={onCancel}
+      cancelButtonProps={false}
       footer={[
-        <Button key="close" type="primary" onClick={onCancel}>
-          Close
-        </Button>,
+       
       ]}
       width={800}
     >
@@ -32,7 +31,7 @@ const TermsAndConditionModal = ({ visible, onCancel }) => {
           <p>Terms of Use</p>
           <br />
           <p>
-            This eProcurement Portal is designed, developed, and hosted by EXG,
+            This eProcurement Portal is designed, developed, and hosted by EXT,
             in consultation with [Relevant Organization/Department], to ensure a
             seamless and efficient procurement process{" "}
           </p>
@@ -40,7 +39,7 @@ const TermsAndConditionModal = ({ visible, onCancel }) => {
           <p>
             Though all efforts have been made to ensure the accuracy and
             correctness of the content on this Portal, the same should not be
-            construed as a statement of law or used for any legal purposes. EXG
+            construed as a statement of law or used for any legal purposes. EXT
             accepts no responsibility in relation to the accuracy, completeness,
             usefulness, or otherwise of the contents. Users are advised to
             verify/check any information with the relevant authorities and/or
@@ -62,25 +61,25 @@ const TermsAndConditionModal = ({ visible, onCancel }) => {
           messages. Contains software viruses or any other computer code
           designed to disrupt or limit the functionality of any system.
           Threatens the unity, integrity, defense, security, or sovereignty of
-          any country or public order. If any user violates these terms, EXG
+          any country or public order. If any user violates these terms, EXT
           Energy reserves the right to immediately block access without notice
           upon verification of the violation. Disclaimer All efforts have been
           made to ensure the accuracy and correctness of the content on this
-          portal. However, EXG Energy does not guarantee the completeness or
+          portal. However, EXT Energy does not guarantee the completeness or
           reliability of the information. Users should verify details with the
-          relevant authorities before acting upon them. EXG Energy is not
+          relevant authorities before acting upon them. EXT Energy is not
           responsible for any loss or damage resulting from the use of this
           portal. Copyright Policy The content published on this portal is
-          primarily owned by EXG Energy. Users may reproduce material only with
+          primarily owned by EXT Energy. Users may reproduce material only with
           prior permission and must acknowledge the source. However, any
           third-party content is subject to copyright, and permission must be
-          obtained from the respective copyright holders. Privacy Policy EXG
+          obtained from the respective copyright holders. Privacy Policy EXT
           Energy does not collect personal information without user consent. Any
           personal data provided will be securely stored and not shared with
           third parties. The company logs visitor data such as IP addresses,
           browser type, and visit duration but does not link this information to
           individual users. Hyperlinking Policy External links on this portal
-          are provided for user convenience. EXG Energy is not responsible for
+          are provided for user convenience. EXT Energy is not responsible for
           the content of linked websites and does not endorse any views
           expressed on them. For further inquiries, please contact:
           <br />
@@ -103,7 +102,11 @@ const TermsAndConditionModal = ({ visible, onCancel }) => {
           project partner."
         </p>
         <div>
-          <label>
+         
+        </div>
+        
+      </div>
+      <label>
             <input
               type="checkbox"
               checked={isChecked}
@@ -114,8 +117,6 @@ const TermsAndConditionModal = ({ visible, onCancel }) => {
               Accept terms and conditions
             </span>
           </label>
-        </div>
-      </div>
       <Tooltip title={!isChecked ? "Please accept terms and condition" : ""}>
         <Button onClick={handleContinue} disabled={!isChecked} type="primary">
           Continue
