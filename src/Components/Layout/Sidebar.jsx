@@ -27,7 +27,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const [selectedKey, setSelectedKey] = useState(location.pathname);
 
   const user = JSON.parse(localStorage.getItem('user')).user;
-  const user_category = user.user_category;
+  const user_category = user?.user_category;
 
 
   const consumerMenuItems = [

@@ -27,7 +27,7 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
 
-  const project_type = project.type;
+  const project_type = project.type;      
   const solar_template_downloaded = user.solar_template_downloaded;
   const wind_template_downloaded = user.wind_template_downloaded;
 
@@ -51,7 +51,22 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
 
     setIsTemplateDownloaded(true);
     message.success("Template downloaded successfully!");
+// let user = JSON.parse(localStorage.getItem("user")).user;
 
+// user.user = {
+//   id: 6,
+//   user_category: "Consumer",
+//   email: "newemail@example.com",
+//   mobile: "9876543210",
+//   company: "NewCompany",
+//   company_representative: "John Doe",
+//   cin_number: "ABC12345",
+//   designation: "Manager",
+//   verified_at: "2025-02-01T10:00:00+05:30",
+//   is_new_user: true,
+//   solar_template_downloaded: true,
+//   wind_template_downloaded: false
+// };
     // Update template download status
     const templateData = {
       user_id: user.id,
@@ -72,18 +87,27 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
       .then((response) => {
         console.log("Template download info:", response);
 
-        // Check if the project_type is 'Solar' and update the solar_template_downloaded
-        if (project_type === "Solar") {
-          user.solar_template_downloaded = false;
-        }
+      // Retrieve user data from localStorage
+let userData = JSON.parse(localStorage.getItem("user"));
 
-        // Add wind_template_downloaded only if the project_type is 'Wind'
-        if (project_type === "Wind") {
-          user.wind_template_downloaded = false;
-        }
+// Ensure userData and userData.user exist
+if (userData && userData.user) {
+  // Check if the project_type is 'Solar' and update the solar_template_downloaded
+  if (project_type === "Solar") {
+    userData.user.solar_template_downloaded = true;
+  }
 
-        // Save the updated user data back to localStorage
-        localStorage.setItem("user", JSON.stringify(user));
+  // Check if the project_type is 'Wind' and update the wind_template_downloaded
+  if (project_type === "Wind") {
+    userData.user.wind_template_downloaded = true;
+  }
+
+  // Save the updated user data back to localStorage
+  localStorage.setItem("user", JSON.stringify(userData));
+} else {
+  console.error("User data is missing or corrupted in localStorage");
+}
+
       })
       .catch((error) => {
         console.error("Error:", error);
