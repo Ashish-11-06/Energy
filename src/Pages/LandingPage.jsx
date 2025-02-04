@@ -68,9 +68,9 @@ const LandingPage = () => {
             localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
 
             if (user.user_category === 'Generator') {
-                navigate(user.is_new_user ? '/generator/what-we-offer' : '/generator/dashboard', { state: { isNewUser: user.is_new_user } });
+                navigate(user.is_new_user ? '/what-we-offer' : '/generator/dashboard', { state: { isNewUser: user.is_new_user } });
             } else if (user.user_category === 'Consumer') {
-                navigate(user.is_new_user ? '/consumer/what-we-offer' : '/consumer/dashboard', { state: { isNewUser: user.is_new_user } });
+                navigate(user.is_new_user ? '/what-we-offer' : '/consumer/dashboard', { state: { isNewUser: user.is_new_user } });
             }
         } else {
             // console.error('Login failedklaksdlfklaskdlk:', resultAction.payload);

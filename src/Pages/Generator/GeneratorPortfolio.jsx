@@ -25,6 +25,8 @@ const GenerationPortfolio = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+const subscribed=JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+const alreadysubscribed=subscribed?.status;
 
   const { status, projects } = useSelector((state) => state.portfolio);
 
@@ -114,37 +116,43 @@ const GenerationPortfolio = () => {
       key: 'cod',
       render: (text) => moment(text).format('DD-MM-YYYY'),  // Format date to DD-MM-YYYY
     },
-    {
-      title: 'Updated',
-      dataIndex: 'updated',
-      key: 'updated',
-      render: (text, record) => (
-        <div style={{ textAlign: 'center' }}>
-          {text ? (
-            <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
-          ) : (
-            <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
-          )}
-        </div>
-      ),
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      width: 100,
-      render: (text, record) => (
-        <div>
-          <Button
-            type="primary"
-            onClick={() => handleUpdate(record)}
-            style={{ width: '120px' }}
-          >
-            {text ? 'Update' : 'Edit'}
-          </Button>
-        </div>
-      ),
-    }
   ];
+
+  // if (alreadysubscribed) {
+  //   columns.push(
+  //     {
+  //       title: 'Updated',
+  //       dataIndex: 'updated',
+  //       key: 'updated',
+  //       render: (text) => (
+  //         <div style={{ textAlign: 'center' }}>
+  //           {text ? (
+  //             <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
+  //           ) : (
+  //             <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
+  //           )}
+  //         </div>
+  //       ),
+  //     },
+  //     {
+  //       title: 'Action',
+  //       key: 'action',
+  //       width: 100,
+  //       render: (text, record) => (
+  //         <div>
+  //           <Button
+  //             type="primary"
+  //             onClick={() => handleUpdate(record)}
+  //             style={{ width: '120px' }}
+  //           >
+
+  //             {record.updated ? 'Edit' : 'Update'}
+  //           </Button>
+  //         </div>
+  //       ),
+  //     }
+  //   );
+  // }
 
   const handleAddEntry = (newEntry) => {
     // Handle adding new entries by dispatching an action

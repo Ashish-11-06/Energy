@@ -63,6 +63,8 @@ function App() {
         {/* Routes with shared layout */}
         <Route element={<LayoutComponent />}>
         <Route path="offers" element={<OfferRecieved />} />
+        
+        <Route path="what-we-offer" element={<WhatWeOffer />} />
           {/* Consumer Routes */}
           <Route
             path="/consumer/*"
@@ -71,7 +73,6 @@ function App() {
                 {/* Include the NavbarWithProgressBar here */}
                 <Routes>
                   <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="what-we-offer" element={<WhatWeOffer />} />
                   <Route path="matching-ipp" element={<MatchingIPP />} />
                   <Route path="chat-page" element={<ChatWithExpert />} />                
                   <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />

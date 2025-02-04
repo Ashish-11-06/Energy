@@ -84,7 +84,7 @@ const selectedConsumer=localStorage.getItem('matchingConsumerId');
             onClick={() => handleUpdate(record)}
             style={{ width: '120px' }}
           >
-            {text ? 'Update' : 'Edit'}
+            {record.updated ? 'Edit' : 'Update'}
           </Button>
         </div>
       ),
