@@ -9,6 +9,7 @@ import demands from '../../assets/capacityAvailable.png';
 import state from "../../assets/state.png";
 import solar from '../../assets/solar.avif';
 import battery from '../../assets/battery.webp';
+import wind from '../../assets/wind.jpg';
 
 
 const Dashboard = () => {
@@ -96,7 +97,15 @@ const Dashboard = () => {
               </Col>
               <Col span={8}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
-                  <Statistic title="Wind Profiles" value={profileDetails.wind} prefix={<ThunderboltOutlined />} valueStyle={{ color: "#cf1322" }} />
+                  <Statistic title="Wind Profiles" value={profileDetails.wind} prefix={<img
+                                          src={wind}
+                                          alt=""
+                                          style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "5px",
+                                          }}
+                                        />} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
               </Col>
               <Col span={8}>

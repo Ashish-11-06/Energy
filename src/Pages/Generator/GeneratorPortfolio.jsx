@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Typography, Modal } from 'antd';
+import { Table, Button, Typography, Modal,Form } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
+import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
+import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfileForm';
+
 import AddPortfolioModal from './Modal/AddPortfolioModal';
 import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice';
 import moment from 'moment';  // Import moment
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
@@ -14,6 +18,9 @@ const GenerationPortfolio = () => {
   const [isNewUserModalVisible, setIsNewUserModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
   const [Structuredprojects, setStructuredProjects] = useState([]);  // Local state for flattened projects
+  const [form] = Form.useForm();
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,6 +41,26 @@ const GenerationPortfolio = () => {
       setUserName('Guest');
     }
   }, []);
+
+  const handleUpdate = (record) => {
+    try {
+      setSelectedRecord(record);
+      form.setFieldsValue({
+        ...record,
+        cod: dayjs(record.cod), // Ensure the date is in a valid format
+      });
+      setIsUpdateModalVisible(true);
+    } catch (error) {
+      console.log(error);
+    }
+   
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setIsUpdateModalVisible(false);
+    form.resetFields();
+  };
 
   // useEffect(() => {
     if (status === 'idle') {
@@ -87,6 +114,36 @@ const GenerationPortfolio = () => {
       key: 'cod',
       render: (text) => moment(text).format('DD-MM-YYYY'),  // Format date to DD-MM-YYYY
     },
+    {
+      title: 'Updated',
+      dataIndex: 'updated',
+      key: 'updated',
+      render: (text, record) => (
+        <div style={{ textAlign: 'center' }}>
+          {text ? (
+            <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
+          ) : (
+            <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
+          )}
+        </div>
+      ),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      width: 100,
+      render: (text, record) => (
+        <div>
+          <Button
+            type="primary"
+            onClick={() => handleUpdate(record)}
+            style={{ width: '120px' }}
+          >
+            {text ? 'Update' : 'Edit'}
+          </Button>
+        </div>
+      ),
+    }
   ];
 
   const handleAddEntry = (newEntry) => {
@@ -166,6 +223,20 @@ const GenerationPortfolio = () => {
           <li>Select a consumer and optimize your best combination for the selected consumer.</li>
           <li>Track your progress in the dashboard.</li>
         </ol>
+      </Modal>
+           <Modal
+              title="Update Profile"
+              open={isUpdateModalVisible}
+              onCancel={handleCancel}
+              width={700}
+              okButtonProps={{ style: { display: 'none' } }}
+              cancelButtonProps={{ style: { display: 'none' } }}
+            >
+              <UpdateProfileForm 
+          project={selectedRecord}
+          form={form} 
+          onCancel={handleCancel}
+        />
       </Modal>
     </div>
   );

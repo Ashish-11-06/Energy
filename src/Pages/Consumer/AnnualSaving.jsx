@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FetchAnnualSaving } from "../../Redux/Slices/Consumer/AnnualSavingSlice";
 import { FileTextOutlined } from "@ant-design/icons";
-import chat from '../../assets/chat.png';
+import chat from '../../assets/chatAnnual.png';
 import { generatePDF, createPdfContent } from './utils'; // Import from utils.js
 
 const { Title, Text } = Typography;

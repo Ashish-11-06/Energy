@@ -666,7 +666,7 @@ const EnergyConsumptionTable = () => {
             shape="circle"
             icon={<QuestionCircleOutlined />}
             onClick={showInfoModal}
-            style={{ position: "absolute", marginLeft: "95%", right: 30 }}
+            style={{ position: "absolute", marginLeft: "95%", right: 30,zIndex:1000 }}
           />
         </Tooltip>
         <span>

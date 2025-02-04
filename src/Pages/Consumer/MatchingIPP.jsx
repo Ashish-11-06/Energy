@@ -135,7 +135,7 @@ const MatchingIPP = () => {
             shape="circle"
             icon={<QuestionCircleOutlined />}
             onClick={showInfoModal}
-            style={{ position: 'absolute', top: 120, right: 30 }}
+            style={{ position: 'absolute', top: 120, right: 30,zIndex:1000 }}
           />
         </Tooltip>
 

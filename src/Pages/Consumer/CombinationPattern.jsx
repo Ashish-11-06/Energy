@@ -51,7 +51,7 @@ const CombinationPattern = () => {
       typeof combinations !== "object" ||
       !Object.keys(combinations).length
     ) {
-      console.log("hiiiiiiii");
+      // console.log("hiiiiiiii");
       setDataSource([]);
       return;
     }
@@ -62,10 +62,10 @@ const CombinationPattern = () => {
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
         const batteryCapacity =
           combination["Optimal Battery Capacity (MW)"] || 0;
-        console.log("format", combination);
+        // console.log("format", combination);
         const annual_demand_met = combination["annual_demand_met"] || "NA";
-        console.log(annual_demand_met);
-        console.log("status", combination.terms_sheet_sent);
+        // console.log(annual_demand_met);
+        // console.log("status", combination.terms_sheet_sent);
 
         return {
           key: index + 1,
@@ -117,7 +117,7 @@ const CombinationPattern = () => {
     );
 
     // console.log('tech',tech);
-    console.log("formatting com");
+    // console.log("formatting com");
     setDataSource(formattedCombinations);
   };
 
@@ -200,7 +200,7 @@ const CombinationPattern = () => {
           behavior: "smooth",
         });
       } catch (error) {
-        console.error("Error in loadCombinations:", error);
+        // console.error("Error in loadCombinations:", error);
         message.error("Failed to fetch combinations.");
         setIsTableLoading(false);
         setFetchingCombinations(false);
@@ -299,7 +299,7 @@ const CombinationPattern = () => {
           fetchOptimizedCombinations(modalData)
         ).unwrap();
 
-        console.log(combinations, "combinations");
+        // console.log(combinations, "combinations");
 
         // Reformat combinations based on the latest slider value
         formatAndSetCombinations(combinations, sliderValue);
@@ -514,7 +514,7 @@ const CombinationPattern = () => {
     //console.log(consumptionPatterns, "consumptionPatterns");
   }, [consumptionPatterns]);
 
-  console.log(consumptionPatterns);
+  // console.log(consumptionPatterns);
 
   const chartOptions = {
     responsive: true,
@@ -531,7 +531,7 @@ const CombinationPattern = () => {
     },
   };
 
-  console.log(dataSource);
+  // console.log(dataSource);
 
   return (
     <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif" }}>

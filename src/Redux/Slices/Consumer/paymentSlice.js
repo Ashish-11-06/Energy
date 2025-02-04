@@ -36,7 +36,9 @@ export const completeRazorpayPayment = createAsyncThunk(
       const data = await response.json();
       if (!response.ok) {
         console.error("Error response:", data); // Log error response
-        throw new Error(data.message || 'Failed to complete payment');
+        const error=data.error?.non_field_errors[0];
+        console.log(error);
+        return rejectWithValue(error);
       }
 
       return data;

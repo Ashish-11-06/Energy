@@ -1,13 +1,33 @@
-import React from 'react';
-import { Table, Tag, Button } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Table, Tag, Button,message, Spin } from 'antd';
 import './InvoicePage.css';
+import { fetchPerformaById } from '../Redux/Slices/Consumer/performaInvoiceSlice';
+import { useDispatch } from "react-redux";
+import ProformaInvoiceModal from './Consumer/Modal/ProformaInvoiceModal';
 
-const invoices = [
-  { id: 1, date: '2023-01-01', amount: '100', status: 'Paid' },
-  { id: 2, date: '2023-02-01', amount: '150', status: 'Pending' },
-  { id: 3, date: '2023-03-01', amount: '200', status: 'Paid' },
-  // Add more invoices as needed
-];
+
+
+
+
+
+const InvoicePage = () => {
+  const [invoice,setInvoice]=useState([]);
+  const [isProformaVisible,setIsProformaVisible]=useState(false);
+const [selectedPlan,setSelectedPlan]=useState();
+const [subscription_type,setSubscriptionType]=useState();
+const [loading,setLoading]=useState(false);
+    const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem("user")).user;
+const userId=user.id;
+
+const viewInvoice = (id) => {
+  // Implement the logic to view the invoice details
+  setIsProformaVisible(true);
+  console.log(`Viewing invoice ${id}`);
+};
+const closeProforma = () => {
+  setIsProformaVisible(false);
+};
 
 const columns = [
   {
@@ -16,24 +36,35 @@ const columns = [
     key: 'id',
   },
   {
-    title: 'Date',
-    dataIndex: 'date',
-    key: 'date',
+    title: 'Company Name',
+    dataIndex: 'company_name',
+    key: 'company_name',
   },
   {
-    title: 'Amount (INR)',
-    dataIndex: 'amount',
-    key: 'amount',
+    title: 'Company Address',
+    dataIndex: 'company_address',
+    key: 'company_address',
+  },
+
+  {
+    title: 'Issue Date',
+    dataIndex: 'issue_date',
+    key: 'issue_date',
+  },
+  {
+    title: 'Due Date',
+    dataIndex: 'due_date',
+    key: 'due_date',
   },
   {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    render: status => (
-      <Tag color={status === 'Paid' ? 'green' : 'volcano'}>
-        {status.toUpperCase()}
-      </Tag>
-    ),
+    // render: status => (
+    //   <Tag color={status === 'Paid' ? 'green' : 'volcano'}>
+    //     {status.toUpperCase()}
+    //   </Tag>
+    // ),
   },
   {
     title: 'Actions',
@@ -46,21 +77,56 @@ const columns = [
   },
 ];
 
-const viewInvoice = (id) => {
-  // Implement the logic to view the invoice details
-  console.log(`Viewing invoice ${id}`);
-};
+  useEffect(() => {
+    const fetchPerforma = async () => {
+      setLoading(true);
+      try {
+        const response = await dispatch(fetchPerformaById(userId)).unwrap();
+        setInvoice([response]);
+        console.log(response);
+         setSelectedPlan(response.subscription);
+         setSubscriptionType(response.subscription.subscripton_type)
+setLoading(false);
+        
+      } catch (err) {
+        console.log(err);
+        message.error(err.message || "Failed to fetch performa.");
+      }
+    };
 
-const InvoicePage = () => {
+    fetchPerforma();
+  }, [dispatch, userId]);
+console.log(selectedPlan);
+
+
   return (
-    <div className="invoice-page">
+    <>
+      <div className="invoice-page">
       <h1>Invoices</h1>
-      <Table
-      style={{ marginTop: 16, 
-        padding: "20px",
-      }}
-      dataSource={invoices} columns={columns} rowKey="id" />
+      {loading ? (
+  <Spin spinning={loading} tip="Loading..." />
+) : (
+  <Table
+    style={{ marginTop: 16, padding: "20px" }}
+    dataSource={Array.isArray(invoice) ? invoice : []} // Ensuring it's an array
+    columns={columns}
+    rowKey="id"
+  />
+)}
+
+      
     </div>
+
+    <ProformaInvoiceModal
+        title="Proforma Invoice"
+        open={isProformaVisible}    
+        onCancel={closeProforma}
+        selectedPlan={selectedPlan}
+        subscripton_type={subscription_type}
+        selectedPlanId={selectedPlan?.id}
+      />
+    </>
+  
   );
 };
 

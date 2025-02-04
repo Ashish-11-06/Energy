@@ -12,9 +12,7 @@ import {
   message,
   Spin,
 } from "antd";
-import {
-  FormOutlined,
-} from "@ant-design/icons";
+import { FormOutlined } from "@ant-design/icons";
 import moment from "moment";
 import req from "../../assets/req.png";
 import { useNavigate } from "react-router-dom";
@@ -26,8 +24,9 @@ import {
   fetchPerformaById,
 } from "../../Redux/Slices/Consumer/performaInvoiceSlice";
 import SubscriptionModal from "./Modal/SubscriptionModal"; // Import SubscriptionModal
+import ProformaInvoiceModal from "./Modal/ProformaInvoiceModal";
 
-import html2canvas from 'html2canvas'; // Import html2canvas
+import html2canvas from "html2canvas"; // Import html2canvas
 import {
   createRazorpayOrder,
   completeRazorpayPayment,
@@ -44,7 +43,6 @@ import advice from "../../assets/advice.png";
 
 const { Title, Text } = Typography;
 
-
 const SubscriptionPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isQuotationVisible, setIsQuotationVisible] = useState(false);
@@ -56,18 +54,20 @@ const SubscriptionPlans = () => {
   const [companyName, setCompanyName] = useState("");
   const [gstinNumber, setGstinNumber] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
-  const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false);
+  const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] =
+    useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [subscriptionPlan, setSubscriptionPlan] = useState([]);
   const [isContinueDisabled, setIsContinueDisabled] = useState(true);
   const [htmlContent, setHtmlContent] = useState(""); // State to hold HTML content for PDF
 
+  const subscription = JSON.parse(
+    localStorage.getItem("subscriptionPlanValidity")
+  );
+  const alreadySubscribed = subscription.subscription_type;
 
-  const subscription=JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
-  const alreadySubscribed=subscription.subscription_type;
-
-   console.log(subscription.subscription_type);
+  // console.log(subscription.subscription_type);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -95,7 +95,7 @@ const SubscriptionPlans = () => {
   };
 
   const handleFreeContinue = () => {
-    navigate('/consumer/energy-consumption-table');
+    navigate("/consumer/energy-consumption-table");
   };
 
   useEffect(() => {
@@ -117,7 +117,7 @@ const SubscriptionPlans = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (user_category === 'Consumer') {
+    if (user_category === "Consumer") {
       dispatch(fetchSubscriptionPlan())
         .then((response) => {
           setSubscriptionPlan(response.payload);
@@ -357,7 +357,6 @@ const SubscriptionPlans = () => {
     }
   };
 
-
   const handleCreatePerforma = async () => {
     const performaData = {
       company_name: companyName,
@@ -399,7 +398,9 @@ const SubscriptionPlans = () => {
           <Form.Item
             label="Company Name"
             name="companyName"
-            rules={[{ required: true, message: "Please provide your company name" }]}
+            rules={[
+              { required: true, message: "Please provide your company name" },
+            ]}
           >
             <Input
               value={companyName}
@@ -415,7 +416,8 @@ const SubscriptionPlans = () => {
             rules={[
               { required: true, message: "Please provide your GSTIN number" },
               {
-                pattern: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                pattern:
+                  /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
                 message: "Please provide a valid GSTIN number",
               },
             ]}
@@ -431,7 +433,12 @@ const SubscriptionPlans = () => {
           <Form.Item
             label="Company Address"
             name="companyAddress"
-            rules={[{ required: true, message: "Please provide your company address" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please provide your company address",
+              },
+            ]}
           >
             <Input.TextArea
               rows={2}
@@ -469,44 +476,50 @@ const SubscriptionPlans = () => {
   // };
 
   const handleDownloadPDF = async () => {
-    const container = document.querySelector('.container'); // Select the main container
+    const container = document.querySelector(".container"); // Select the main container
 
     if (!container) {
-        console.error("Container element not found.");
-        return;
+      console.error("Container element not found.");
+      return;
     }
 
     try {
-        const canvas = await html2canvas(container, {
-            scale: 2, // Increase scale for better resolution (adjust as needed)
-            useCORS: true, // Important for images from different domains
-        });
+      const canvas = await html2canvas(container, {
+        scale: 2, // Increase scale for better resolution (adjust as needed)
+        useCORS: true, // Important for images from different domains
+      });
 
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const width = pdf.internal.pageSize.getWidth();
-        const height = pdf.internal.pageSize.getHeight();
+      const pdf = new jsPDF("p", "mm", "a4");
+      const width = pdf.internal.pageSize.getWidth();
+      const height = pdf.internal.pageSize.getHeight();
 
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
 
-        // Calculate scaling to fit canvas within A4
-        const scaleFactor = Math.min(width / canvasWidth, height / canvasHeight);
+      // Calculate scaling to fit canvas within A4
+      const scaleFactor = Math.min(width / canvasWidth, height / canvasHeight);
 
-        const scaledWidth = canvasWidth * scaleFactor;
-        const scaledHeight = canvasHeight * scaleFactor;
+      const scaledWidth = canvasWidth * scaleFactor;
+      const scaledHeight = canvasHeight * scaleFactor;
 
-        const xPos = (width - scaledWidth) / 2; // Center horizontally
-        const yPos = 10; // Start with some top margin
+      const xPos = (width - scaledWidth) / 2; // Center horizontally
+      const yPos = 10; // Start with some top margin
 
-        pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', xPos, yPos, scaledWidth, scaledHeight); // Use JPEG for better compression
+      pdf.addImage(
+        canvas.toDataURL("image/jpeg", 1.0),
+        "JPEG",
+        xPos,
+        yPos,
+        scaledWidth,
+        scaledHeight
+      ); // Use JPEG for better compression
 
-        pdf.save('proforma_invoice.pdf');
+      pdf.save("proforma_invoice.pdf");
     } catch (error) {
-        console.error("Error generating PDF:", error);
-        message.error("Failed to generate PDF. Please try again.");
+      console.error("Error generating PDF:", error);
+      message.error("Failed to generate PDF. Please try again.");
     }
-};
-
+  };
 
   const handlePayment = async () => {
     try {
@@ -587,7 +600,7 @@ const SubscriptionPlans = () => {
             <Col key={plan.id} xs={24} sm={8} md={8}>
               <Card
                 hoverable
-                className={selectedPlanId === plan.id ? 'selected-plan' : ''}
+                className={selectedPlanId === plan.id ? "selected-plan" : ""}
                 onClick={() => {
                   if (plan.subscription_type !== alreadySubscribed) {
                     handleSelectPlan(plan.id, plan);
@@ -595,7 +608,12 @@ const SubscriptionPlans = () => {
                 }}
                 actions={[
                   plan.subscription_type !== alreadySubscribed ? (
-                    <Button type="primary" block size="small" style={{ width: '160px' }}>
+                    <Button
+                      type="primary"
+                      block
+                      size="small"
+                      style={{ width: "160px" }}
+                    >
                       Select Plan
                     </Button>
                   ) : (
@@ -605,22 +623,22 @@ const SubscriptionPlans = () => {
               >
                 <div
                   style={{
-                    backgroundColor: '#669800',
-                    marginBottom: '0',
-                    marginTop: '-25px',
-                    marginLeft: '-25px',
-                    marginRight: '-25px',
-                    borderTopLeftRadius: '10px',
-                    borderTopRightRadius: '10px',
+                    backgroundColor: "#669800",
+                    marginBottom: "0",
+                    marginTop: "-25px",
+                    marginLeft: "-25px",
+                    marginRight: "-25px",
+                    borderTopLeftRadius: "10px",
+                    borderTopRightRadius: "10px",
                   }}
                 >
-                  <p style={{ padding: '5px' }}>
+                  <p style={{ padding: "5px" }}>
                     <span
                       style={{
-                        marginTop: '10px',
-                        color: 'white',
-                        fontSize: '22px',
-                        fontWeight: 'bold',
+                        marginTop: "10px",
+                        color: "white",
+                        fontSize: "22px",
+                        fontWeight: "bold",
                       }}
                     >
                       EXT {plan.subscription_type} Plan
@@ -629,48 +647,184 @@ const SubscriptionPlans = () => {
                   <hr />
                 </div>
                 <Text className="price">
-                  {plan.price} <p style={{ fontSize: '18px' }}>INR</p>
+                  {plan.price} <p style={{ fontSize: "18px" }}>INR</p>
                 </Text>
                 <p>
                   <strong>Duration:</strong> {plan.duration_in_days} days
                 </p>
-                <ul style={{ display: 'flex', flexDirection: 'column', padding: 0, marginLeft: '30%' }}>
-                  {plan.subscription_type === 'LITE' && (
+                <ul
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    padding: 0,
+                    marginLeft: "30%",
+                  }}
+                >
+                  {plan.subscription_type === "LITE" && (
                     <>
-                      <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <FormOutlined style={{ marginRight: '10px', color: '#669800' }} /> Matching IPP +
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <FormOutlined
+                          style={{ marginRight: "10px", color: "#669800" }}
+                        />{" "}
+                        Matching IPP +
                       </li>
-                      <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <img src={req} alt="" style={{ height: '15px', width: '15px', marginRight: '10px' }} /> Requirements +
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <img
+                          src={req}
+                          alt=""
+                          style={{
+                            height: "15px",
+                            width: "15px",
+                            marginRight: "10px",
+                          }}
+                        />{" "}
+                        Requirements +
                       </li>
-                      <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <img src={transaction} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Transaction window
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <img
+                          src={transaction}
+                          alt=""
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            marginRight: "4%",
+                          }}
+                        />{" "}
+                        Transaction window
                       </li>
                     </>
                   )}
-                  {plan.subscription_type === 'PRO' && (
+                  {plan.subscription_type === "PRO" && (
                     <>
-                      <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <img src={dash} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Dashboard
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <img
+                          src={dash}
+                          alt=""
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            marginRight: "4%",
+                          }}
+                        />{" "}
+                        Dashboard
                       </li>
-                      <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <img src={advice} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Advisory Support
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <img
+                          src={advice}
+                          alt=""
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            marginRight: "4%",
+                          }}
+                        />{" "}
+                        Advisory Support
                       </li>
-                      <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <img src={powerX} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> PowerX subscription
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <img
+                          src={powerX}
+                          alt=""
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            marginRight: "4%",
+                          }}
+                        />{" "}
+                        PowerX subscription
                       </li>
                     </>
                   )}
-                  {plan.subscription_type === 'FREE' && (
+                  {plan.subscription_type === "FREE" && (
                     <>
-                      <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <img
+                          src={trial}
+                          alt=""
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            marginRight: "4%",
+                          }}
+                        />{" "}
+                        Trial
                       </li>
-                      <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <img
+                          src={trial}
+                          alt=""
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            marginRight: "4%",
+                          }}
+                        />{" "}
+                        Trial
                       </li>
-                      <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                        <img src={trial} alt="" style={{ width: '20px', height: '20px', marginRight: '4%' }} /> Trial
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <img
+                          src={trial}
+                          alt=""
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            marginRight: "4%",
+                          }}
+                        />{" "}
+                        Trial
                       </li>
                     </>
                   )}
@@ -678,8 +832,7 @@ const SubscriptionPlans = () => {
               </Card>
             </Col>
           ))
-          )
-}
+        )}
       </Row>
 
       {isQuotationVisible && (
@@ -688,19 +841,26 @@ const SubscriptionPlans = () => {
           open={isQuotationVisible}
           onCancel={closeQuotation}
           footer={[
-            selectedPlan?.subscription_type === "LITE" || selectedPlan?.subscription_type === "PRO" ? (
-
-              <Button key="generate" type="primary" onClick={handleGenerateProforma}>
+            selectedPlan?.subscription_type === "LITE" ||
+            selectedPlan?.subscription_type === "PRO" ? (
+              <Button
+                key="generate"
+                type="primary"
+                onClick={handleGenerateProforma}
+              >
                 Generate Proforma
               </Button>
             ) : (
               <>
-                <Button key="generate" type="primary" onClick={handleGenerateProforma}>
+                <Button
+                  key="generate"
+                  type="primary"
+                  onClick={handleGenerateProforma}
+                >
                   Generate Proforma
                 </Button>
-
               </>
-            )
+            ),
           ]}
           width={600}
           height={600}
@@ -710,45 +870,17 @@ const SubscriptionPlans = () => {
         </Modal>
       )}
 
-      <Modal
+      <ProformaInvoiceModal
         title="Proforma Invoice"
         open={isProformaVisible}
-        
         onCancel={closeProforma}
-        footer={[
-          selectedPlan?.subscription_type === "LITE" || selectedPlan?.subscription_type === "PRO" ? (
-
-
-            <>
-              <Button key="download" type="primary" onClick={handleDownloadPDF}>
-                Download PDF
-              </Button>
-              <Button key="generate" type="primary" onClick={handlePayment}>
-                Proceed to Payment
-              </Button>
-
-            </>
-          ) : (
-            <>
-              <Button key="generate" type="primary" onClick={handleFreeContinue}>
-                Continue
-              </Button>
-
-            </>
-          )
-        ]}
-        width={900}
-        height={800}
-      >
-        {/* Replace this paragraph with the PDF content */}
-        <div>
-          {/* <h2>Proforma Invoice</h2> */}
-          <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
-          <br /><br />
-          <div>Please proceed to payment to complete your subscription.</div>
-        </div>
-      </Modal>
-
+        handleDownloadPDF={handleDownloadPDF}
+        handlePayment={handlePayment}
+        handleFreeContinue={handleFreeContinue}
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+        selectedPlan={selectedPlan}
+        selectedPlanId={selectedPlanId}
+      />
 
       {isSubscriptionModalVisible && (
         <SubscriptionModal
