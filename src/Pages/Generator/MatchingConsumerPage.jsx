@@ -130,7 +130,7 @@ const MatchingConsumerPage = () => {
         onChange={(e) => handleRadioChange(e, record.id)} // Use a unique identifier (e.g., record.id)
         checked={selectedConsumer === record.id} // Ensure the selection logic matches
       />
-      
+     
       ),
     },
   ];
@@ -164,7 +164,7 @@ const MatchingConsumerPage = () => {
       <h2>Potential Consumer</h2>
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
         <Search
-          placeholder="Search by state/industry"
+          placeholder="Search"
           onSearch={handleSearch}
           onChange={(e) => handleSearch(e.target.value)}
           style={{ width: 200,height:'35px' }}

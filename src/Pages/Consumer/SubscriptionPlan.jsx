@@ -672,7 +672,11 @@ const SubscriptionPlans = () => {
                         <FormOutlined
                           style={{ marginRight: "10px", color: "#669800" }}
                         />{" "}
-                        Matching IPP +
+                        {/* Matching IPP */}
+                        {user_category=='Consumer' ?  (
+                        <p>Matching IPP +</p>
+                        ) : ( <p>Matching Consumer</p>)
+                      }
                       </li>
                       <li
                         style={{
@@ -833,6 +837,7 @@ const SubscriptionPlans = () => {
             </Col>
           ))
         )}
+        
       </Row>
 
       {isQuotationVisible && (
