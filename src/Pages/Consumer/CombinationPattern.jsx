@@ -26,6 +26,7 @@ import "./CombinationPattern.css"; // Import the custom CSS file
 const { Title, Text } = Typography;
 
 const CombinationPattern = () => {
+  //COMBINATION PATTERN SCROLLBAR
   const [isTableLoading, setIsTableLoading] = useState(true);
   const [isIPPModalVisible, setIsIPPModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);

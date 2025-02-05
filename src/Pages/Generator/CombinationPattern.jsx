@@ -26,6 +26,7 @@ import "./CombinationPattern.css"; // Import the custom CSS file
 const { Title, Text } = Typography;
 
 const CombinationPattern = () => {
+    //COMBINATION PATTERN SCROLLBAR
   const [isTableLoading, setIsTableLoading] = useState(true);
   const [isIPPModalVisible, setIsIPPModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -55,7 +56,7 @@ const CombinationPattern = () => {
       typeof combinations !== "object" ||
       !Object.keys(combinations).length
     ) {
-      console.log("hiiiiiiii");
+      // console.log("hiiiiiiii");
       setDataSource([]);
       return;
     }
@@ -605,9 +606,9 @@ const CombinationPattern = () => {
             </Card>
           </div>
           <Card>
-            <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
+            {/* <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
               Look for Consumers
-            </Title>
+            </Title> */}
             {isTableLoading ? (
               <>
                 <div
