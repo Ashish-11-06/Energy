@@ -221,6 +221,8 @@ button:focus, .ant-btn:focus {
   }
   
 
+
+  /* Scrollbar css */
   /* For WebKit Browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
   width: 8px;  /* Adjust the scrollbar width */
