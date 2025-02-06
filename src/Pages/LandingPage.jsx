@@ -32,14 +32,14 @@ const LandingPage = () => {
     setAnimatedText(''); 
   
     const interval = setInterval(() => {
-      if (index < text.length) {
+      if (index <= text.length-1) {
         setAnimatedText((prev) => prev + text.charAt(index)); 
         index++;
       } else {
         clearInterval(interval); 
       }
     }, 200);
-  
+    
     return () => clearInterval(interval); 
   }, []);
 
