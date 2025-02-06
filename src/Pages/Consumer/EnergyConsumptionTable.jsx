@@ -25,7 +25,7 @@ import {
   FileImageOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
-import { useLocation, useNavigate } from "react-router-dom";
+import { data, useLocation, useNavigate } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 
 import {
@@ -66,6 +66,14 @@ const EnergyConsumptionTable = () => {
   const [showFileUploadTable, setShowFileUploadTable] = useState(false); // State to control file upload table visibility
   const [saveSuccess, setSaveSuccess] = useState(false); // State to track save success
   const [saveError, setSaveError] = useState(false); // State to track save error
+
+  const user = JSON.parse(localStorage.getItem("user")).user;
+
+  const currentYear = new Date().getFullYear(); // Get the current year
+  const lastYear = currentYear - 1; // Calculate the last year
+  const lastYearCurrentYear = `${lastYear}-${currentYear.toString().slice(-2)}`
+
+  console.log(user.role);
 
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);
@@ -453,6 +461,52 @@ const EnergyConsumptionTable = () => {
     return false; // Prevent automatic upload
   };
 
+  const vcolumns = [
+    {
+      title: "Month",
+      dataIndex: "month",
+      key: "month",
+    },
+    {
+      title: renderLabelWithTooltip(
+        "Monthly Consumption (MWh)",
+        "Total energy consumed during the month in megawatt-hours.",
+      ),
+      dataIndex: "monthlyConsumption",
+      key: "monthlyConsumption",
+      // width: 250,
+    },
+    {
+      title: renderLabelWithTooltip(
+        "Peak Consumption (MWh)",
+        "Energy consumption during peak hours in megawatt-hours.",
+      ),
+      dataIndex: "peakConsumption",
+      key: "peakConsumption",
+    },
+    {
+      title: renderLabelWithTooltip(
+        "Off-Peak Consumption (MWh)",
+        "Energy consumption during off-peak hours in megawatt-hours.",
+          ),
+      dataIndex: "offPeakConsumption",
+      key: "offPeakConsumption",
+      with: 300,
+      editable: true,
+      },
+    {
+      title: renderLabelWithTooltip(
+        "Monthly Bill (INR)",
+        "The total cost of energy consumed during the month.",
+           ),
+      dataIndex: "monthlyBill",
+      key: "monthlyBill",
+      editable: true,
+      width: 180,
+   },
+  ];
+
+
   const columns = [
     {
       title: "Month",
@@ -681,10 +735,10 @@ const EnergyConsumptionTable = () => {
                 style={{
                   textAlign: "center",
                   marginTop: "10px",
-                  transform: "translateX(120px)",
+                  transform: "translateX(235px)",
                 }}
               >
-                Energy Consumption Data (12 Months)
+                Energy Consumption Data (12 Months) {lastYearCurrentYear}
               </h2>
             </Col>
             <Col
@@ -693,7 +747,7 @@ const EnergyConsumptionTable = () => {
               md={12}
               style={{ display: "flex", justifyContent: "center" }}
             >
-              {generateYears() && (
+              {/* {generateYears() && (
                 <Select
                   style={{
                     width: 150,
@@ -710,17 +764,21 @@ const EnergyConsumptionTable = () => {
                     </Select.Option>
                   ))}
                 </Select>
-              )}
+              )} */}
+             
             </Col>
           </Row>
         </span>
 
+
+        { (user.role !== "view") ? (<>
         <span
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
+            // display: "flex",
+            // justifyContent: "space-between",
+            // alignItems: "center",
+            // width: "100%",
+            marginLeft: "210"
           }}
         >
           <p style={{ margin: 0 }}>
@@ -728,9 +786,8 @@ const EnergyConsumptionTable = () => {
             last 12 months. {`)`}
           </p>
         </span>
-
-        {/* <div style={{ display: "flex", alignItems: "center", gap: "15px" }}> */}
-        <Row style={{ marginTop: "3%" }}>
+        
+         <Row style={{ marginTop: "3%" }}>
           <Col span={6}>
             <Tooltip title="Add details manually">
               <Button onClick={handleToggleDetails} icon={<FileAddOutlined />}>
@@ -803,6 +860,30 @@ const EnergyConsumptionTable = () => {
             </Tooltip>
           </Col>
         </Row>
+      </>  
+      )
+        : (
+          <>
+         
+          <Table
+            dataSource={dataSource}
+            columns={vcolumns}
+            pagination={false}
+            bordered
+            size="small"
+            tableLayout="fixed"
+            
+            style={{ marginTop: "20px",
+            
+             }}
+          />
+         
+         
+          </>
+        )
+        }
+
+
         {/* </div> */}
         {showTable && (
           <>
@@ -843,8 +924,14 @@ const EnergyConsumptionTable = () => {
             </div>
           </>
         )}
+
         {showFileUploadTable && renderSixMonthFileUploadTables()}
-        <Tooltip
+
+
+
+        { (user.role !== "view") ? (
+          <>
+           <Tooltip
           title={
             !isActionCompleted
               ? "Please fill the details or upload any file"
@@ -861,6 +948,30 @@ const EnergyConsumptionTable = () => {
             Continue {`>>`}
           </Button>
         </Tooltip>
+          </>
+        ):(
+          <>
+           <Tooltip
+          title={
+            !dataSource
+              ? "consumptions are not availble to proceed"
+              : "Proceed to the next step"
+          }
+          placement="top"
+        >
+          <Button
+            type="primary"
+            onClick={handleContinue}
+            disabled={!dataSource} // Enable only if an action is completed
+            style={{ marginLeft: "86%", marginTop: "8px" }}
+          >
+            Continue {`>>`}
+          </Button>
+        </Tooltip>
+          </>
+        )}
+
+       
       </Card>
 
       <Modal
