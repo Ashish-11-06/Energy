@@ -1,17 +1,43 @@
-.css-dev-only-do-not-override-oqfneu .ant-slider .ant-slider-handle::after {
+.ant-slider .ant-slider-handle::after .ant-slider-handle:hover::after .ant-slider-handle:focus::after{
+    height: 100%;
+    width: 100%;
+}
+.ant-slider .ant-slider-handle::before .ant-slider-handle:hover::before{
     height: 100%;
     width: 100%;
 }
 
-:where(.css-dev-only-do-not-override-oqfneu).ant-slider-horizontal .ant-slider-rail {
+.ant-slider-horizontal .ant-slider-rail {
     width: 100%;
     height: 19px;
 }
 
-:where(.css-dev-only-do-not-override-oqfneu).ant-slider .ant-slider-dot {
+.ant-slider .ant-slider-dot {
     display: none;
 }
 
-:where(.css-dev-only-do-not-override-oqfneu).ant-slider .ant-slider-mark-text {
+.ant-slider .ant-slider-mark-text {
     margin-top: 2%;
+}
+:where(.css-dev-only-do-not-override-4tx9o7).ant-slider .ant-slider-handle::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    width: 25px;
+    height: 25px;
+    background-color: #f8f8f8;
+    box-shadow: 0 0 0 2px #a8bf5c;
+    outline: 0px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: inset-inline-start 0.2s, inset-block-start 0.2s, width 0.2s, height 0.2s, box-shadow 0.2s, outline 0.2s;
+}
+:where(.css-dev-only-do-not-override-4tx9o7).ant-slider .ant-slider-handle:hover::after, :where(.css-dev-only-do-not-override-4tx9o7).ant-slider .ant-slider-handle:active::after, :where(.css-dev-only-do-not-override-4tx9o7).ant-slider .ant-slider-handle:focus::after {
+    box-shadow: 0 0 0 2.5px #669800;
+    outline: 6px solid rgba(102, 152, 0, 0.2);
+    width: 12px;
+    height: 12px;
+    inset-inline-start: -1px;
+    inset-block-start: -1px;
 }
