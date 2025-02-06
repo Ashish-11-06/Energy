@@ -21,7 +21,12 @@ const RequirementsPage = () => {
   const dispatch = useDispatch();
   const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
 
+
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+  const userData=JSON.parse(localStorage.getItem('user')).user;
+  // console.log(userData.role);
+  
+  const role=userData.role;
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
     // console.log('item', item);
@@ -97,7 +102,7 @@ const RequirementsPage = () => {
   
   
   // Insert "Add Details" before the "Select" column if subscription is active
-  if (subscriptionPlan?.status === 'active') {
+  if (subscriptionPlan?.status === 'active' && role!='view') {
     const addDetailsColumn = {
       title: "Add Consumption Details",
       key: "addDetails",
@@ -181,6 +186,8 @@ const handleAddDetails =(record) => {
   useEffect(() => {
     // Fetch username from local storage
     const user = getFromLocalStorage('user');
+    // console.log(user);
+    
     if (user && user.user.company_representative) {
       setUsername(user.user.company_representative);
     }
@@ -260,9 +267,11 @@ const handleAddDetails =(record) => {
 
       <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
         <Col>
+        {role!='view' ?(
           <Button type="primary" onClick={showModal} style={{ width: 160 }}>
             Add Requirement +
           </Button>
+        ):null}
         </Col>
         <Col>
           <Tooltip title={!selectedRequirement ? 'Please select a consumption unit' : ''}>

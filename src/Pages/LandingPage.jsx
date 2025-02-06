@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import { Button, message, Form, Input, Modal, Radio, App, Row,Col} from 'antd'; // Import App from antd
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
@@ -25,22 +25,23 @@ const LandingPage = () => {
   const [userType, setUserType] = useState('consumer');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const textRef = useRef(""); 
 
   useEffect(() => {
-    const text = 'EXT GLOBAL';
+    const text = "EXT GLOBAL";
     let index = 0;
-    setAnimatedText(''); 
-  
+    textRef.current = ""; // Reset ref text
     const interval = setInterval(() => {
-      if (index <= text.length-1) {
-        setAnimatedText((prev) => prev + text.charAt(index)); 
+      if (index < text.length) {
+        textRef.current += text.charAt(index); // Update ref value
+        setAnimatedText(textRef.current); // Update state
+      console.log(textRef.current);
         index++;
       } else {
-        clearInterval(interval); 
+        clearInterval(interval);
       }
     }, 200);
-    
-    return () => clearInterval(interval); 
+    return () => clearInterval(interval);
   }, []);
 
   const onFinish = async (values) => {
@@ -247,7 +248,7 @@ const LandingPage = () => {
 
         {/* Footer */}
         <div className="footer">
-       <a href='WWW.EXGGLOBAL.COM'  alt='EXG Global'>WWW.EXGGLOBAL.COM</a> 
+       <a href='WWW.EXGGLOBAL.COM' style={{zIndex:2000}}  alt='EXG Global'>WWW.EXGGLOBAL.COM</a> 
         </div>
 
         {/* Registration Modal */}

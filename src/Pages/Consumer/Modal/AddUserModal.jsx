@@ -53,9 +53,10 @@ const AddUserModal = ({ isVisible, onCancel, onSave, editableData, edit }) => {
           <Col span={12}>
             <Form.Item label="Role" name="role" rules={[{ required: true, message: "Please select role" }]}>
               <Select placeholder="Select role">
-                <Option value="admin">Admin</Option>
-                <Option value="user">User </Option>
-                <Option value="manager">Manager</Option>
+                <Option value="Admin">Admin</Option>
+                <Option value="Management">Management </Option>
+                <Option value="Edit">Edit</Option>
+               <Option value="View">View</Option>
               </Select>
             </Form.Item>
           </Col>
