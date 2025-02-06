@@ -45,6 +45,8 @@ const CombinationPattern = () => {
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
+  const role=user.role;
+
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
     if (
@@ -437,12 +439,14 @@ const CombinationPattern = () => {
       key: "cod",
       width: 120,
       render: (text) => dayjs(text).format("DD-MM-YYYY"),
-    },
-    {
+    },  
+  ];
+
+  if (role !== "view") {
+    columns.push({
       title: "Status",
       dataIndex: "status",
       key: "status",
-      // width: 150,
       render: (text, record) =>
         text === "Already Sent" ? (
           "Already Sent"
@@ -454,8 +458,8 @@ const CombinationPattern = () => {
             Initiate Quotation
           </button>
         ),
-    },
-  ];
+    });
+  }
 
   // Chart data for consumption patterns
   const chartData = {

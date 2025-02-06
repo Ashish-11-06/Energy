@@ -5,11 +5,6 @@ import { fetchPerformaById } from '../Redux/Slices/Consumer/performaInvoiceSlice
 import { useDispatch } from "react-redux";
 import ProformaInvoiceModal from './Consumer/Modal/ProformaInvoiceModal';
 
-
-
-
-
-
 const InvoicePage = () => {
   const [invoice,setInvoice]=useState([]);
   const [isProformaVisible,setIsProformaVisible]=useState(false);
@@ -111,6 +106,7 @@ console.log(selectedPlan);
     dataSource={Array.isArray(invoice) ? invoice : []} // Ensuring it's an array
     columns={columns}
     rowKey="id"
+    pagination={false}
   />
 )}
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Button, message, Form, Input, Modal, Radio, App } from 'antd'; // Import App from antd
+import React, { useState, useEffect,useRef } from 'react';
+import { Button, message, Form, Input, Modal, Radio, App, Row,Col} from 'antd'; // Import App from antd
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
 import video from '../assets/vecteezy_solar-panels-and-wind-turbines-green-energy-concept_6299246.mp4';
@@ -25,22 +25,23 @@ const LandingPage = () => {
   const [userType, setUserType] = useState('consumer');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const textRef = useRef(""); 
 
   useEffect(() => {
-    const text = 'EXT GLOBAL';
+    const text = "EXT GLOBAL";
     let index = 0;
-    setAnimatedText(''); 
-  
+    textRef.current = ""; // Reset ref text
     const interval = setInterval(() => {
       if (index < text.length) {
-        setAnimatedText((prev) => prev + text.charAt(index)); 
+        textRef.current += text.charAt(index); // Update ref value
+        setAnimatedText(textRef.current); // Update state
+      console.log(textRef.current);
         index++;
       } else {
-        clearInterval(interval); 
+        clearInterval(interval);
       }
     }, 200);
-  
-    return () => clearInterval(interval); 
+    return () => clearInterval(interval);
   }, []);
 
   const onFinish = async (values) => {
@@ -148,17 +149,24 @@ const LandingPage = () => {
           </div>
           <div className="text-content" style={{ marginLeft: '10px' }}>
             <h2 className="animated-text">{animatedText}</h2>
-            <ul>
-              <li><FaCheckCircle className="icon" /> Comprehensive energy marketplace</li>
-              <li><FaCheckCircle className="icon" /> Bridges the gap between energy </li>
-              <li> consumers and generators</li>
-              <li><FaCheckCircle className="icon" /> Enables informed decision-making</li>
-              <li><FaCheckCircle className="icon" /> Seamless transactions</li>
-              <li><FaCheckCircle className="icon" /> Optimizes energy usage</li>
-              <li><FaCheckCircle className="icon" /> Forecasts trading opportunities</li>
-              <li><FaCheckCircle className="icon" /> Streamlines billing processes</li>
-              <li><FaCheckCircle className="icon" /> Monitors energy generation projects</li>
+            <ul style={{marginLeft:'30%'}}>
+              {/* <Row>
+                <Col span={12}> */}
+              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Comprehensive energy marketplace</li>
+              <li style={{fontSize:'20px'}} ><FaCheckCircle className="icon" /> Bridges the gap between energy </li>
+              <li style={{fontSize:'20px'}}> consumers and generators</li>
+              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Enables informed decision-making</li>
+              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Seamless transactions</li>
+              {/* </Col>
+             <Col span={12}> */}
+              <li style={{fontSize:'20px'}} ><FaCheckCircle className="icon" /> Optimizes energy usage</li>
+              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Forecasts trading opportunities</li>
+              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Streamlines billing processes</li>
+              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Monitors energy generation projects</li>
+              {/* </Col>
+              </Row> */}
             </ul>
+
           </div>
 
           {/* Login Box */}
@@ -240,7 +248,7 @@ const LandingPage = () => {
 
         {/* Footer */}
         <div className="footer">
-          
+       <a href='WWW.EXGGLOBAL.COM' style={{zIndex:2000}}  alt='EXG Global'>WWW.EXGGLOBAL.COM</a> 
         </div>
 
         {/* Registration Modal */}
