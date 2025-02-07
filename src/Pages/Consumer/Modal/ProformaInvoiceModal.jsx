@@ -141,7 +141,6 @@ const handleDownloadPDF = async () => {
         body {
             font-family: 'Inter', Arial, sans-serif;
             background-color: #F5F6FB;
-            padding: 20px;
         }
         .container {
             max-width: 800px;

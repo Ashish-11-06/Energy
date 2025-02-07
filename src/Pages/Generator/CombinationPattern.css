@@ -6,6 +6,15 @@
 .ant-tooltip .ant-tooltip-arrow:before {
     background: #669800;
 }
+:where(.css-dev-only-do-not-override-4tx9o7).ant-slider .ant-slider-handle::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: -2px;
+    inset-block-start: -2px;
+    width: 28px;
+    height: 28px;
+    background-color: transparent;
+}
 /* 
 @keyframes flashTooltip {
     0% { transform: scale(1); background-color: #669800; }
