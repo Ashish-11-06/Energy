@@ -18,6 +18,8 @@ import profile from '../../assets/profile.png';
 import chat from '../../assets/chat.png';
 import notification from '../../assets/notification.png';
 import offerSend from '../../assets/offerSend.png';
+import notificationImg from '../../assets/notification.png';
+import portfolio from '../../assets/portfolio.png';
 
 const { Sider } = Layout;
 
@@ -37,20 +39,21 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Subscription Plan', key: '/consumer/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Notification', key: '/consumer/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Portfolio', key: '/generator/portfolio', icon: <SolutionOutlined style={{color:'#669800', fontWeight:'900', height:'30px',width:'30px'}}/> },
+    { label: 'Portfolio', key: '/generator/portfolio', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
     { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
     // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
     { label: 'Subscription Plan', key: '/generator/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    // { label: 'Chatbot', key: '/generator/chat-page', icon: <img src={chat} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },  
+    { label: 'Notification', key: '/generator/notificationgen', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 

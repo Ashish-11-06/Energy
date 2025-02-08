@@ -207,10 +207,9 @@ console.log('payment data',paymentData);
         <div class="details">
             <h3>Invoiced To:</h3>
             <p><strong>${selectedPlan?.company_name?? 'NA'}</strong><br>
-               ATTN: Somdev Singh Arya<br>
-               201, 2nd floor, Sahil, Sher-e-Punjab, Andheri (E)<br>
-               Mumbai, Maharashtra, 400093, India<br>
-               GSTIN: 27ABCCS1178B1ZL</p>
+              Address: ${selectedPlan?.company_address ?? 'NA'}<br>
+              GSTIN: ${selectedPlan?.gst_number ?? 'NA'}<br>
+           </p>
         </div>
 
         <div class="details">
@@ -226,19 +225,19 @@ console.log('payment data',paymentData);
                     <td>${selectedPlan?.subscription?.subscription_type ?? 'NA'}</td>
                     <td>Upgrade</td>
                     <td>-</td>
-                    <td>₹ 527</td>
+                    <td>₹ ${selectedPlan?.subscription?.price ?? 'NA'}</td>
                 </tr>
                 <tr>
                     <td>Discount (DISC10 - 10.00%)</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>₹ -53</td>
+                    <td>₹ ${selectedPlan?.subscription?.price * 0.10 ?? '0'}</td>
                 </tr>
                 <tr>
                     <td><strong>Sub Total</strong></td>
                     <td>-</td>
                     <td>-</td>
-                    <td><strong>₹ 474</strong></td>
+                    <td><strong>₹${selectedPlan?.subscription?.price - selectedPlan?.subscription?.price * 0.10 ?? '0'}</strong></td>
                 </tr>
                 <tr>
                     <td>GST</td>
@@ -256,13 +255,13 @@ console.log('payment data',paymentData);
                             </tr>
                         </table>
                     </td>
-                    <td>₹ 86</td>
+                    <td>${selectedPlan?.cgst+selectedPlan?.sgst+selectedPlan?.igst??'0'}</td>
                 </tr>
                 <tr>
                     <td><strong>Total Amount Incl. GST</strong></td>
                     <td>-</td>
                     <td>-</td>
-                    <td><strong>₹ 560</strong></td>
+                    <td><strong>${selectedPlan?.total_amount ?? '0'}</strong></td>
                 </tr>
                 <tr></tr>
                     <td>Total Amount Incl. GST (in words)</td>

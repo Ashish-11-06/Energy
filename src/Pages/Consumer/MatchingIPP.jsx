@@ -88,7 +88,7 @@ const MatchingIPP = () => {
          key: "select",
          render: (text, record) => (  
            <Radio
-             checked={selectedRow?.id === record.id}
+             checked={selectedRow === record}
              onChange={() => handleRowSelect(record)} 
            />
          ),

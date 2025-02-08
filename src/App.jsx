@@ -42,6 +42,7 @@ import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
 import RequirementsPage from './Pages/Consumer/RequirementPage';
 import InvoicePage from './Pages/InvoicePage';
 import { lastVisitedPage } from './Redux/Slices/Consumer/lastVisitedPageSlice';
+import EmailVerification from './Pages/EmailVerification';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -75,6 +76,7 @@ function App() {
 
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
+        <Route path="email" element={<EmailVerification />} />
 
         {/* Routes with shared layout */}
         <Route element={<LayoutComponent />}>
