@@ -18,8 +18,8 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
 
   const dataSource = [
     { key: '1', label: 'RE Index', value: reIndex },
-    { key: '2', label: 'Annual Demand Met', value: ipp?.annual_demand_met },
-    { key: '3', label: 'Potential RE Replacement', value: ipp?.reReplacement },
+    { key: '2', label: 'Contracted Energy (Million Unit)', value: ipp?.annual_demand_met },
+    { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement },
     { key: '4', label: 'Per Unit Cost (INR/KWh)', value: ipp?.perUnitCost },
     { key: '5', label: 'OA Cost (INR/KWh)', value: ipp?.OACost },
     { key: '6', label: 'Total Cost (INR/KWh)', value: ipp?.totalCost },
@@ -147,6 +147,7 @@ console.log('annual deman',annualDemand);
         visible={isQuotationModalVisible}
         onCancel={handleQuotationCancel}
         data={ipp}
+        fromIPP={true}
         selectedDemandId={ipp?.selectedDemandId}
         type="generator"
       />

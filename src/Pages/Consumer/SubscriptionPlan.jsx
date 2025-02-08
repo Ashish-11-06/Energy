@@ -79,6 +79,8 @@ const SubscriptionPlans = () => {
 
   const handleSelectPlan = (id, plan) => {
     setSelectedPlan(plan);
+    console.log(selectedPlan);
+    
     const currentDate = moment().format("YYYY-MM-DD");
     setSelectedPlanId(id);
     const subscriptionData = {
@@ -103,6 +105,8 @@ const SubscriptionPlans = () => {
       try {
         const response = await dispatch(fetchPerformaById(userId)).unwrap();
         setPerformaResponse(response);
+        console.log(response);
+        
         setCompanyName(response.company_name);
         setGstinNumber(response.gst_number);
         setCompanyAddress(response.company_address);
@@ -115,12 +119,15 @@ const SubscriptionPlans = () => {
     fetchPerforma();
   }, [dispatch, userId]);
 
+// console.log(performa);
+
+
   useEffect(() => {
     setLoading(true);
     if (user_category === "Consumer") {
       dispatch(fetchSubscriptionPlan())
         .then((response) => {
-          setSubscriptionPlan(response.payload);
+          setSubscriptionPlan(response.payload);       
           setLoading(false);
         })
         .catch((error) => {
@@ -309,40 +316,7 @@ const SubscriptionPlans = () => {
             <p>[Our services does not fall under negative list of services.</p>
         </div>
 
-        <div class="bank-details">
-            <table>
-                <tr>
-                    <th colspan="3" style="text-align: center;">*For Indian Customers Only</th>
-                </tr>
-                <tr style="background-color: #f8f9fa;">
-                    <th>Bank Details</th>
-                    <th>UPI ID</th>
-                    <th>Address</th>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>Bank:</strong> ICICI Bank<br>
-                        <strong>Account:</strong> Qualispace Web Services Pvt Ltd.<br>
-                        <strong>Account no:</strong> 196805001050<br>
-                        <strong>Branch:</strong> Patlipada Branch<br>
-                        <strong>IFSC Code:</strong> ICIC0001968
-                    </td>
-                    <td>
-                        <img src="upi-placeholder.png" alt="UPI QR Code" style="width: 100px; height: 100px;">
-                    </td>
-                    <td>
-                        QualiSpace Webservices Pvt. Ltd.<br>
-                        602 Avior Corporate park<br>
-                        LBS Marg, Mulund West<br>
-                        Mumbai 400080<br>
-                        GSTIN: 27AAACQ4709P1ZZ<br>
-                        PAN: AAACQ4709P<br>
-                        Sales: 022 6142 6099<br>
-                        Technical Support: 022 6142 604
-                    </td>
-                </tr>
-            </table>
-        </div>
+       
     </div>
 </body>
 </html>
@@ -883,8 +857,9 @@ const SubscriptionPlans = () => {
         handlePayment={handlePayment}
         handleFreeContinue={handleFreeContinue}
         dangerouslySetInnerHTML={{ __html: htmlContent }}
-        selectedPlan={selectedPlan}
+        selectedPlan={performa}
         selectedPlanId={selectedPlanId}
+        fromSubscription={true}
       />
 
       {isSubscriptionModalVisible && (
@@ -899,3 +874,39 @@ const SubscriptionPlans = () => {
 };
 
 export default SubscriptionPlans;
+
+
+// <div class="bank-details">
+// <table>
+//     <tr>
+//         <th colspan="3" style="text-align: center;">*For Indian Customers Only</th>
+//     </tr>
+//     <tr style="background-color: #f8f9fa;">
+//         <th>Bank Details</th>
+//         <th>UPI ID</th>
+//         <th>Address</th>
+//     </tr>
+//     <tr>
+//         <td>
+//             <strong>Bank:</strong> ICICI Bank<br>
+//             <strong>Account:</strong> Qualispace Web Services Pvt Ltd.<br>
+//             <strong>Account no:</strong> 196805001050<br>
+//             <strong>Branch:</strong> Patlipada Branch<br>
+//             <strong>IFSC Code:</strong> ICIC0001968
+//         </td>
+//         <td>
+//             <img src="upi-placeholder.png" alt="UPI QR Code" style="width: 100px; height: 100px;">
+//         </td>
+//         <td>
+//             QualiSpace Webservices Pvt. Ltd.<br>
+//             602 Avior Corporate park<br>
+//             LBS Marg, Mulund West<br>
+//             Mumbai 400080<br>
+//             GSTIN: 27AAACQ4709P1ZZ<br>
+//             PAN: AAACQ4709P<br>
+//             Sales: 022 6142 6099<br>
+//             Technical Support: 022 6142 604
+//         </td>
+//     </tr>
+// </table>
+// </div>

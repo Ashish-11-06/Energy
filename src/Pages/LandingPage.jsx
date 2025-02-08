@@ -20,6 +20,11 @@ const LandingPage = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [subscriptionPlanValidity, setSubscriptionPlanValidity] = useState([]);
 
+  const user=JSON.parse(localStorage.getItem('user')).user;
+ 
+  const lastVisitedPage=user.last_visited_page;
+  // console.log('user',lastVisitedPage);
+
   const [otpVerified, setOtpVerified] = useState(false);
   const [emailForReset, setEmailForReset] = useState("");
   const [userType, setUserType] = useState('consumer');
@@ -35,7 +40,7 @@ const LandingPage = () => {
       if (index < text.length) {
         textRef.current += text.charAt(index); // Update ref value
         setAnimatedText(textRef.current); // Update state
-      console.log(textRef.current);
+      // console.log(textRef.current);
         index++;
       } else {
         clearInterval(interval);
@@ -52,6 +57,7 @@ const LandingPage = () => {
 
         const resultAction = await dispatch(loginUser(loginData));
         // console.log("API Response:", resultAction);
+// console.log(lastVisitedPage);
 
         if (loginUser.fulfilled.match(resultAction)) {
             message.success('Login successful!');
@@ -69,10 +75,21 @@ const LandingPage = () => {
             localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
 
             if (user.user_category === 'Generator') {
-                navigate(user.is_new_user ? '/what-we-offer' : '/generator/dashboard', { state: { isNewUser: user.is_new_user } });
-            } else if (user.user_category === 'Consumer') {
-                navigate(user.is_new_user ? '/what-we-offer' : '/consumer/dashboard', { state: { isNewUser: user.is_new_user } });
-            }
+              navigate(
+                  user.is_new_user 
+                      ? '/what-we-offer' 
+                      : (lastVisitedPage === '/' ? '/generator/dashboard' : lastVisitedPage),
+                  { state: { isNewUser: user.is_new_user } }
+              );
+          } else if (user.user_category === 'Consumer') {
+              navigate(
+                  user.is_new_user 
+                      ? '/what-we-offer' 
+                      : (lastVisitedPage === '/' ? '/consumer/dashboard' : lastVisitedPage),
+                  { state: { isNewUser: user.is_new_user } }
+              );
+          }
+          
         } else {
             // console.error('Login failedklaksdlfklaskdlk:', resultAction.payload);
             message.error(resultAction.payload || 'Login failed. Please try again.');

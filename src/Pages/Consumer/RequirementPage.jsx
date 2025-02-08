@@ -8,6 +8,7 @@ import { fetchRequirements } from '../../Redux/Slices/Consumer/consumerRequireme
 import { addNewRequirement } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
 import moment from 'moment';
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
+import { lastVisitedPage } from '../../Redux/Slices/Consumer/lastVisitedPageSlice';
 
 const RequirementsPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -33,6 +34,16 @@ const RequirementsPage = () => {
     return item ? JSON.parse(item) : '';
   };
 
+// useEffect(()=>{
+//   const data={
+//     user_id:userData.id,
+//     selectedRequirementId:selectedRequirement?.id
+//   }
+// const res=dispatch(lastVisitedPage(data));
+// console.log(res);
+
+// },[selectedRequirement])
+// console.log(selectedRequirement.id);
 
 
   // Define columns for the table (Remove selection column)
@@ -135,12 +146,19 @@ const handleAddDetails =(record) => {
 
   const handleRowSelect = (record) => {
     setSelectedRowKeys([record.key]); // Only allow single selection
-    setSelectedRequirement(record); // Store the selected record
+    setSelectedRequirement(record); // Store the selected record 
+    const data={
+      user_id:userData.id,
+      selected_requirement_id:record.id
+    }
+  const res=dispatch(lastVisitedPage(data));
     message.success(`You selected record of state '${record.state}'`);
     // console.log(selectedRequirement);  
     // localStorage.setItem('selectedRequirementId', JSON.stringify(record.id));
     // console.log('record', record);
   };
+
+
 
   const showModal = () => {
     setIsModalVisible(true);

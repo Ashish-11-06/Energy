@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   Modal,
   Button,
@@ -24,12 +24,13 @@ const RequestForQuotationModal = ({
   onCancel,
   type,
   data,
+  fromIPP,
   selectedDemandId,
 }) => {
   const [ppaTerm, setPpaTerm] = useState(20);
   const [lockInPeriod, setLockInPeriod] = useState(10);
   const [minimumSupply, setMinimumSupply] = useState(18);
-  const [contractedEnergy, setContractedEnergy] = useState(20);
+  const [contractedEnergy, setContractedEnergy] = useState();
   const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
   const [paymentSecurityDays, setPaymentSecurityDays] = useState(30); // New state
   const [offerTariff, setOfferTariff] = useState(3.5);
@@ -38,6 +39,7 @@ const RequestForQuotationModal = ({
   const [essCapacity, setEssCapacity] = useState(20);
 
   const annualDemand=(data?.annualDemand)/1000;
+console.log('data',data);
 
   console.log('annual deman',annualDemand);
 
@@ -48,7 +50,9 @@ const RequestForQuotationModal = ({
 const user_category=user.user_category;
 console.log(user_category);
 
-
+useEffect(() => {
+setContractedEnergy(fromIPP ? (data?.annual_demand_met ?? 0) : (contractedEnergy ?? 0));
+}, [fromIPP]);
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
   };
@@ -60,17 +64,18 @@ console.log(user_category);
 
   const handleContinue = async () => {
     const termsData = {
-      from_whom: user.user_category,
-      requirement_id: selectedDemandId,
-      combination: data.combination,
-      term_of_ppa: ppaTerm,
-      lock_in_period: lockInPeriod,
-      commencement_of_supply: moment(data.cod).format("YYYY-MM-DD"), // Ensure date format is YYYY-MM-DD
-      contracted_energy: contractedEnergy,
-      minimum_supply_obligation: minimumSupply,
-      payment_security_type: paymentSecurityType,
-      payment_security_day: paymentSecurityDays, // Add to termsData
+      from_whom: user?.user_category || "",
+      requirement_id: selectedDemandId || "",
+      combination: data?.combination || "",
+      term_of_ppa: ppaTerm || "",
+      lock_in_period: lockInPeriod || "",
+      commencement_of_supply: data?.cod ? moment(data.cod).format("YYYY-MM-DD") : null, 
+      contracted_energy:contractedEnergy,
+      minimum_supply_obligation: minimumSupply || 0,
+      payment_security_type: paymentSecurityType || "",
+      payment_security_day: paymentSecurityDays || 0, 
     };
+    
     try {
       // Wait for the dispatch to resolve
       await dispatch(addTermsAndConditions(termsData)).unwrap(); // Use .unwrap() if using Redux Toolkit
@@ -226,7 +231,7 @@ console.log(user_category);
               fontSize: "16px",
               padding: "10px 20px",
             }}
-            onClick={user_category === "Generator" ? handleContinue : handleSendToIPPs}
+            onClick={handleContinue}
           >
             {user_category === "Generator" ? "Send to Consumer" : "Send to IPPs"}
           </Button>

@@ -36,7 +36,7 @@ export const fetchSubscriptionValidity = createAsyncThunk(
     try {
       const response = await subscriptionEnrollApi.subscriptionValidity(id); // Assuming GET request
       if (response && response.data) {
-          console.log(response.data);
+          // console.log(response.data);
         return response.data; // Successfully fetched subscription validity data
         
       } else {
