@@ -151,60 +151,60 @@ const ProfilePage = () => {
             </Title>
             <Row gutter={[16, 16]}>
               <Col span={12}>
-                <Text strong>CIN Number:</Text>
+                <Text strong>CIN Number</Text>
               </Col>
               <Col span={12}>
-                <Text>{userData.cin_number || "N/A"}</Text>
+                <Text> : {userData.cin_number || "N/A"}</Text>
               </Col>
               <Col span={12}>
-                <Text strong>Company:</Text>
+                <Text strong>Company</Text>
               </Col>
               <Col span={12}>
-                <Text>{userData.company || "N/A"}</Text>
+                <Text> : {userData.company || "N/A"}</Text>
               </Col>
               <Col span={12}>
-                <Text strong>Representative:</Text>
+                <Text strong>Representative</Text>
               </Col>
               <Col span={12}>
-                <Text>{userData.company_representative || "N/A"}</Text>
+                <Text> : {userData.company_representative || "N/A"}</Text>
               </Col>
               <Col span={12}>
-                <Text strong>Email:</Text>
+                <Text strong>Email</Text>
               </Col>
               <Col span={12}>
-                <Text>{userData.email || "N/A"}</Text>
+                <Text> : {userData.email || "N/A"}</Text>
               </Col>
               <Col span={12}>
-                <Text strong>Mobile:</Text>
+                <Text strong>Mobile</Text>
               </Col>
               <Col span={12}>
-                <Text>{userData.mobile || "N/A"}</Text>
+                <Text> : {userData.mobile || "N/A"}</Text>
               </Col>
               <Col span={12}>
-                <Text strong>User Category:</Text>
+                <Text strong>User Category</Text>
               </Col>
               <Col span={12}>
-                <Text>{userData.user_category || "N/A"}</Text>
+                <Text> : {userData.user_category || "N/A"}</Text>
               </Col>
               <Col span={12}>
-                <Text strong>Subscription plan:</Text>
+                <Text strong>Subscription plan</Text>
               </Col>
               <Col span={12}>
-                <Text>
+                <Text> : 
                   EXG {subscriptionPlan.subscription_type || "N/A"} Plan
                 </Text>
               </Col>
               <Col span={12}>
-                <Text strong>Plan validity:</Text>
+                <Text strong>Plan validity</Text>
               </Col>
               <Col span={12}>
                 <Text>
-                  {start_date} <span style={{ fontWeight: "bold" }}>To</span>{" "}
+                 : {start_date} <span style={{ fontWeight: "bold" }}>To</span>{" "}
                   {end_date}
                 </Text>
               </Col>
             </Row>
-            <Row justify="center" style={{ marginTop: "20px" }}>
+            <Row justify="center" style={{ marginTop: "20px", justifyContent: 'space-between'}}>
               <Button type="primary" onClick={handleEditToggle}>
                 Edit Profile
               </Button>
@@ -215,7 +215,7 @@ const ProfilePage = () => {
           </Card>
         </Col>
 
-        {role === "admin" ? (
+        {role === "Admin" ? (
           <Col span={12} xs={24} sm={12} md={12} lg={10}>
             <Card bordered style={{ borderRadius: "8px", minHeight: "530px" }}>
               <Title
