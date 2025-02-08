@@ -7,19 +7,25 @@ import {
     createRazorpayOrder,
     completeRazorpayPayment,
   } from '../../../Redux/Slices/Consumer/paymentSlice'; // Import payment actions
-const ProformaInvoiveModal = ({ open,onCancel,selectedPlan ,selectedPlanId }) => {
+const ProformaInvoiveModal = ({ open,onCancel,selectedPlan ,selectedPlanId,fromSubscription }) => {
     const userData =JSON.parse(localStorage.getItem("user")).user;
  const userId=userData?.id;
- console.log(userId);
+//  console.log(selectedPlan);
+//  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
+// //  console.log(selected_plan);
+//  const invoiceDetails=selectedPlan;
+
  
+ 
+
 //   const user = JSON.parse(localStorage.getItem("user")).user;
-//   console.log(user_category);
+//   console.log(user_category)ś;
 const dispatch=useDispatch();
 const handleDownloadPDF = async () => {
-    const container = document.querySelector(".container"); // Select the main container
+    const container = document.queryśSelector(".container"); // Select the main container
         if (!container) {
       console.error("Container element not found.");
-      return;
+      return;ś
     }
 
     try {
@@ -68,8 +74,10 @@ const handleDownloadPDF = async () => {
       ).unwrap();
 
       if (orderResponse?.data?.id) {
+        
         const options = {
           key: "rzp_test_bVfC0PJsvP9OUR",
+
           amount: orderResponse.data.amount,
           currency: orderResponse.data.currency,
           name: "Energy Exchange",
@@ -78,17 +86,21 @@ const handleDownloadPDF = async () => {
           handler: async (response) => {
             const paymentData = {
               user: userId,
+              invoice:selectedPlan.id,
               order_id: orderResponse.data.id,
               payment_id: response.razorpay_payment_id,
               signature: response.razorpay_signature,
               amount: orderResponse.data.amount,
               subscription: selectedPlanId,
             };
+console.log('payment data',paymentData);
 
             try {
               const completeResponse = await dispatch(
                 completeRazorpayPayment(paymentData)
               ).unwrap();
+              console.log(completeResponse);
+              
               if (completeResponse) {
                 message.success("Payment successful! Subscription activated.");
                 setIsProformaVisible(false);
@@ -141,6 +153,7 @@ const handleDownloadPDF = async () => {
         body {
             font-family: 'Inter', Arial, sans-serif;
             background-color: #F5F6FB;
+           
         }
         .container {
             max-width: 800px;
@@ -186,12 +199,14 @@ const handleDownloadPDF = async () => {
             <h3>EXGGLOBAL</h3>
             <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
         </div>
-        <p style="text-align: left;">Invoice Date: <strong>03-02-2024</strong></p>
-        <p style="text-align: left;">Due Date: <strong>--</strong></p>
-        
+<p style="text-align: left;">Invoice Date: <strong>${selectedPlan?.issue_date ?? 'NA'}</strong></p>
+<p style="text-align: left;">Due Date: <strong>${selectedPlan?.due_date ?? 'NA'}</strong></p>
+
+</strong></p>
+
         <div class="details">
             <h3>Invoiced To:</h3>
-            <p><strong>STRATXG CONSULTING PRIVATE LIMITED</strong><br>
+            <p><strong>${selectedPlan?.company_name?? 'NA'}</strong><br>
                ATTN: Somdev Singh Arya<br>
                201, 2nd floor, Sahil, Sher-e-Punjab, Andheri (E)<br>
                Mumbai, Maharashtra, 400093, India<br>
@@ -208,7 +223,7 @@ const handleDownloadPDF = async () => {
                     <th>Total</th>
                 </tr>
                 <tr>
-                    <td>Microsoft 365 Business Basic - stratxg.com</td>
+                    <td>${selectedPlan?.subscription?.subscription_type ?? 'NA'}</td>
                     <td>Upgrade</td>
                     <td>-</td>
                     <td>₹ 527</td>
@@ -235,9 +250,9 @@ const handleDownloadPDF = async () => {
                                 <th>IGST</th>
                             </tr>
                             <tr>
-                                <td>₹ 43</td>
-                                <td>₹ 43</td>
-                                <td>-</td>
+                                <td>${selectedPlan?.cgst?? '--'}</td>
+                                <td>${selectedPlan?.sgst?? '--'}</td>
+                                <td>${selectedPlan?.igst?? '--'}</td>
                             </tr>
                         </table>
                     </td>
@@ -277,45 +292,11 @@ const handleDownloadPDF = async () => {
             <ol>
                 <li>Non-payment within 7 days will result in suspension of the services automatically without notice.</li>
                 <li>Subject to Mumbai Jurisdiction.</li>
-                <li>The Client is bound to all the rules and regulation available at <a href="https://www.qualispace.com/legal/">https://www.qualispace.com/legal/</a></li>
             </ol>
-            <p>[Our services does not fall under negative list of services.</p>
+            <p>[Our services does not fall under negative list of services.]</p>
         </div>
 
-        <div class="bank-details">
-            <table>
-                <tr>
-                    <th colspan="3" style="text-align: center;">*For Indian Customers Only</th>
-                </tr>
-                <tr style="background-color: #f8f9fa;">
-                    <th>Bank Details</th>
-                    <th>UPI ID</th>
-                    <th>Address</th>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>Bank:</strong> ICICI Bank<br>
-                        <strong>Account:</strong> Qualispace Web Services Pvt Ltd.<br>
-                        <strong>Account no:</strong> 196805001050<br>
-                        <strong>Branch:</strong> Patlipada Branch<br>
-                        <strong>IFSC Code:</strong> ICIC0001968
-                    </td>
-                    <td>
-                        <img src="upi-placeholder.png" alt="UPI QR Code" style="width: 100px; height: 100px;">
-                    </td>
-                    <td>
-                        QualiSpace Webservices Pvt. Ltd.<br>
-                        602 Avior Corporate park<br>
-                        LBS Marg, Mulund West<br>
-                        Mumbai 400080<br>
-                        GSTIN: 27AAACQ4709P1ZZ<br>
-                        PAN: AAACQ4709P<br>
-                        Sales: 022 6142 6099<br>
-                        Technical Support: 022 6142 604
-                    </td>
-                </tr>
-            </table>
-        </div>
+        
     </div>
 </body>
 </html>
@@ -330,10 +311,12 @@ const handleDownloadPDF = async () => {
           
           onCancel={onCancel}
           footer={[
-            selectedPlan?.subscription_type === "LITE" || selectedPlan?.subscription_type === "PRO" ? (
+          
+            selectedPlan?.subscription?.subscription_type === "LITE" || selectedPlan?.subscription?.subscription_type === "PRO" ? (
   
   
               <>
+              
                 <Button key="download" type="primary" onClick={handleDownloadPDF}>
                   Download PDF
                 </Button>
@@ -366,3 +349,42 @@ const handleDownloadPDF = async () => {
 };
 
 export default ProformaInvoiveModal;
+
+
+{/* <li>The Client is bound to all the rules and regulation available at <a href="https://www.qualispace.com/legal/">https://www.qualispace.com/legal/</a></li> */}
+
+
+{/* <div class="bank-details">
+            <table>
+                <tr>
+                    <th colspan="3" style="text-align: center;">*For Indian Customers Only</th>
+                </tr>
+                <tr style="background-color: #f8f9fa;">
+                    <th>Bank Details</th>
+                    <th>UPI ID</th>
+                    <th>Address</th>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Bank:</strong> ICICI Bank<br>
+                        <strong>Account:</strong> Qualispace Web Services Pvt Ltd.<br>
+                        <strong>Account no:</strong> 196805001050<br>
+                        <strong>Branch:</strong> Patlipada Branch<br>
+                        <strong>IFSC Code:</strong> ICIC0001968
+                    </td>
+                    <td>
+                        <img src="upi-placeholder.png" alt="UPI QR Code" style="width: 100px; height: 100px;">
+                    </td>
+                    <td>
+                        QualiSpace Webservices Pvt. Ltd.<br>
+                        602 Avior Corporate park<br>
+                        LBS Marg, Mulund West<br>
+                        Mumbai 400080<br>
+                        GSTIN: 27AAACQ4709P1ZZ<br>
+                        PAN: AAACQ4709P<br>
+                        Sales: 022 6142 6099<br>
+                        Technical Support: 022 6142 604
+                    </td>
+                </tr>
+            </table>
+        </div> */}

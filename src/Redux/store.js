@@ -9,7 +9,8 @@ import termsAndConditionsReducer from './Slices/Generator/TermsAndConditionsSlic
 import matchingIPPSlice from './Slices/Consumer/matchingIPPSlice';
 import monthlyDataReducer from './Slices/Consumer/monthlyConsumptionSlice'
 import paymentReducer from './Slices/Consumer/paymentSlice'; // Import the paymentReducer
-
+import industry from'./Slices/Consumer/industrySlice';
+import state from './Slices/Consumer/stateSlice';
 export const store = configureStore({
   reducer: {
     login: loginReducer, // Add loginReducer to the store
@@ -21,8 +22,9 @@ export const store = configureStore({
     termsAndConditions: termsAndConditionsReducer, // Add termsAndConditionsReducer to the store
     matchingIPP: matchingIPPSlice,
     monthlyData: monthlyDataReducer,
-    payment: paymentReducer 
-
+    payment: paymentReducer,
+    industry:industry,
+    state:state
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

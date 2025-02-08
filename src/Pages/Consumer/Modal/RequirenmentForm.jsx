@@ -1,4 +1,4 @@
-import React, { useState,useEffect,useSelector } from "react";
+import React, { useState,useEffect } from "react";
 import {
   Modal,
   Form,
@@ -13,7 +13,7 @@ import {
 import { InfoCircleOutlined } from "@ant-design/icons";
 import states from "../../../Data/States";
 import industries from "../../../Data/Industry";
-import { useDispatch } from "react-redux";
+import { useDispatch ,useSelector} from "react-redux";
 import dayjs from 'dayjs';
 import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
@@ -29,10 +29,21 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
  const [isIndustry,setIsIndustry]=useState([]);
 // const states = useSelector((state) => state.consumer.states);
   const dispatch = useDispatch();
+const industryy=useSelector((state)=>state.industry.industry);
+const statee=useSelector((state)=>state.state.state);
+// console.log(industryy);
 
 // useEffect(() => {
 //   dispatch(fetchState());
 // }, [dispatch]);
+
+if(industryy.length<1) {
+  dispatch(fetchIndustry());
+}
+
+if(statee.length<1) {
+  dispatch(fetchState());
+}
 
   const handleSubmit = (values) => {
     const user = JSON.parse(localStorage.getItem('user')).user;
@@ -70,16 +81,16 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
       });
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(fetchIndustry())
-      .then(response => {    
-        setIsIndustry(response.payload);
-        //console.log(isState);
-      })
-      .catch(error => {
-        console.error("Error fetching industry:", error);
-      });
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchIndustry())
+  //     .then(response => {    
+  //     //  setIsIndustry(response.payload);
+  //       //console.log(isState);
+  //     })
+  //     .catch(error => {
+  //       console.error("Error fetching industry:", error);
+  //     });
+  // }, [dispatch]);
   
 
   const renderLabelWithTooltip = (label, tooltip) => (
@@ -130,7 +141,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
             >
               
               <Select placeholder="Select your state" showSearch>
-                {isState && isState.map((state, index) => (
+                {statee && statee.map((state, index) => (
                   <Select.Option key={index} value={state}>
                     {state}
                   </Select.Option>
@@ -181,7 +192,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
                   option.items.toLowerCase().includes(input.toLowerCase())
                 }
               >
-                {isIndustry.map((industry, index) => (
+                {industryy.map((industry, index) => (
                   <Select.Option key={index} value={industry}>
                     {industry}
                   </Select.Option>

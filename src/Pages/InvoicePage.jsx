@@ -79,7 +79,8 @@ const columns = [
         const response = await dispatch(fetchPerformaById(userId)).unwrap();
         setInvoice([response]);
         console.log(response);
-         setSelectedPlan(response.subscription);
+
+         setSelectedPlan(response);
          setSubscriptionType(response.subscription.subscripton_type)
 setLoading(false);
         
@@ -91,7 +92,9 @@ setLoading(false);
 
     fetchPerforma();
   }, [dispatch, userId]);
-console.log(selectedPlan);
+// console.log(selectedPlan);
+
+console.log(invoice);
 
 
   return (
@@ -120,6 +123,7 @@ console.log(selectedPlan);
         selectedPlan={selectedPlan}
         subscripton_type={subscription_type}
         selectedPlanId={selectedPlan?.id}
+        fromSubscription={false}
       />
     </>
   

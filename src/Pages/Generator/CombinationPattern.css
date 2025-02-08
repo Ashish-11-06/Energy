@@ -1,10 +1,14 @@
 .ant-slider-tooltip .ant-tooltip-inner {
     min-width: unset;
     background: #669800;
-
+    animation: flashTooltip 1s infinite alternate; /* Continuous flashing */
+    font-size: 18px; /* Increase font size */
+    font-weight: bold;
 }
-.ant-tooltip .ant-tooltip-arrow:before {
+
+:where(.css-dev-only-do-not-override-oqfneu).ant-tooltip .ant-tooltip-arrow:before {
     background: #669800;
+    animation: flashTooltip 0.8s infinite alternate; /* Continuous flashing for arrow */
 }
 :where(.css-dev-only-do-not-override-4tx9o7).ant-slider .ant-slider-handle::before {
     content: "";
@@ -21,13 +25,3 @@
     50% { transform: scale(1.3); background-color: #a2d000; }
     100% { transform: scale(1); background-color: #669800; }
 }
-
-:where(.css-dev-only-do-not-override-oqfneu).ant-slider-tooltip:hover .ant-tooltip-inner {
-    animation: flashTooltip 1s infinite alternate;
-    font-size: 18px; /* Increase font size */
-    /* font-weight: bold; */
-/* }
-
-:where(.css-dev-only-do-not-override-oqfneu).ant-tooltip:hover .ant-tooltip-arrow:before {
-    animation: flashTooltip 0.8s infinite alternate;
-} */ 

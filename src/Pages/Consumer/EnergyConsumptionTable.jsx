@@ -92,6 +92,7 @@ const EnergyConsumptionTable = () => {
   };
 
   const handleToggleDetails = () => {
+
     setShowTable((prevShowTable) => !prevShowTable);
     setShowFileUploadTable(false); // Close file upload table
     setActiveButton("details");
@@ -791,7 +792,7 @@ const EnergyConsumptionTable = () => {
           <Col span={6}>
             <Tooltip title="Add details manually">
               <Button onClick={handleToggleDetails} icon={<FileAddOutlined />}>
-                {showTable ? "Add Details " : "Add Details "}
+                {dataSource && showTable ? "Add Details " : "Add Details "}
               </Button>
             </Tooltip>
           </Col>
@@ -885,7 +886,7 @@ const EnergyConsumptionTable = () => {
 
 
         {/* </div> */}
-        {showTable && (
+        { showTable && (
           <>
             <Table
               dataSource={dataSource}
