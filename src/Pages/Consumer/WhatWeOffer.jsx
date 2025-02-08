@@ -81,7 +81,7 @@ const [isModal,setIsModal] =useState(false);
               <Col xs={24} sm={12} md={8} lg={8}>
                 <Card
                   hoverable
-                  title="Total IPPs"
+                  title="Total projects"
                   bordered={false}
                   style={{
                     width: '100%',

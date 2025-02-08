@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import AddUserModal from "./Modal/AddUserModal";
 import { render } from "less";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -27,6 +28,8 @@ const ProfilePage = () => {
   // Retrieve user data safely from localStorage
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
+
+ const navigate = useNavigate();
 
   const role = initialUserData.role;
   console.log(role);
@@ -87,6 +90,11 @@ const ProfilePage = () => {
     form.resetFields();
   };
 
+  const handleLogOut = () =>{
+    localStorage.removeItem("user");
+   navigate('/');
+  }
+
   const handleDelete = (key) => {
     const updatedDataSource = userDataSource.filter(
       (record) => record.key !== key
@@ -126,8 +134,10 @@ const ProfilePage = () => {
   ];
 
   return (
-    <Row justify="center" style={{ marginTop: "50px" }}>
-      <Row gutter={[16, 16]} justify="center">
+    <Row justify="center" style={{ marginTop: "50px", width: '100%' }}>
+      <Row gutter={[16, 16]} justify="center" style={{
+        width: '100%',
+      }}>
         <Col span={12} xs={24} sm={12} md={12} lg={10}>
           <Card bordered style={{ borderRadius: "8px", minHeight: "400px" }}>
             <Row justify="center" style={{ marginBottom: "20px" }}>
@@ -197,6 +207,9 @@ const ProfilePage = () => {
             <Row justify="center" style={{ marginTop: "20px" }}>
               <Button type="primary" onClick={handleEditToggle}>
                 Edit Profile
+              </Button>
+              <Button type="primary" onClick={handleLogOut}>
+                Log out
               </Button>
             </Row>
           </Card>

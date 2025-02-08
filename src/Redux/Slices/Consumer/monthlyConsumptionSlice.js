@@ -26,7 +26,7 @@ export const fetchMonthlyDataById = createAsyncThunk(
       // Make API call to fetch monthly consumption data
       const response = await monthlyConsumptionApi.getMonthlyConsumption(id);
       // console.log('monthly data in slice ',response.data);
-      
+    
       return response.data;
 
     } catch (error) {

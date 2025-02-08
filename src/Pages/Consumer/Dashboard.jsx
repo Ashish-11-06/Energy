@@ -228,7 +228,7 @@ const Dashboard = () => {
                   }}
                 >
                   <Statistic
-                    title="Total IPPs"
+                    title="Total projects"
                     value={platformDetails.totalIPPs}
                     prefix={
                       <img

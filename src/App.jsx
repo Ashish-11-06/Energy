@@ -120,7 +120,6 @@ function App() {
             <Route path="profile/portfolio" element={<PortfolioGen />} />
             <Route path="combination" element={<OptimizeCombination />} />
             <Route path="notificationgen" element={<NotificationGenerator />} />
-            <Route path="transaction" element={<TransactionMainPageGen />} />
             <Route path="transaction-window" element={<TransactionWindowGen />} />
             <Route path="invoice" element={<InvoicePage />} />
           </Route>

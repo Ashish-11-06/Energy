@@ -254,17 +254,17 @@ const TransactionWindow = () => {
               Term Sheet Details
             </Title>
             <Row gutter={[16, 16]}>
-              <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
-              <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
-              <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
+              <Col style={{ fontSize: 'larger'}} span={8}><strong>Term of PPA (years) :  {record.t_term_of_ppa}</strong> </Col>
+              <Col style={{ fontSize: 'larger'}} span={8}><strong>Lock-in Period (years) : {record.t_lock_in_period}</strong></Col>
+              <Col style={{ fontSize: 'larger'}} span={8}><strong>Commencement of Supply : {moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</strong></Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-              <Col span={8}><strong>Contracted Energy (MW): </strong>{record.t_contracted_energy}</Col>
-              <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{record.t_minimum_supply_obligation}</Col>
-              <Col span={8}><strong>Payment Security (days):</strong>{record.t_payment_security_day}</Col>
+              <Col style={{ fontSize: 'larger'}} span={8}><strong>Contracted Energy (MW) : {record.t_contracted_energy}</strong></Col>
+              <Col style={{ fontSize: 'larger'}} span={8}><strong>Minimum Supply Obligation (million units) : {record.t_minimum_supply_obligation}</strong></Col>
+              <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security (days) : {record.t_payment_security_day}</strong></Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-              <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
+              <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security Type : {record.t_payment_security_type}</strong> </Col>
             </Row>
             <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -272,7 +272,7 @@ const TransactionWindow = () => {
                 <Countdown title="Time Remaining" value={deadline} />
               </span>
             </Row>
-            <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
+            {/* <div style={{ marginTop: "24px" }}>Offers from IPPs:</div> */}
           </div>
 
           <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
@@ -306,9 +306,9 @@ const TransactionWindow = () => {
                             }}
                           >
                             <div>
-                              <Text strong>Event: </Text> {msg.generator_username} <br />
-                              <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/KWH <br />
-                              <Text strong>Time: </Text> {moment(msg.timestamp).format("hh:mm A")}
+                              <Text strong>IPP ID : <span style={{ fontSize: 'larger'}}> {msg.generator_username}</span> </Text> 
+                              <Text style={{margin: '150px'}} strong>Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406'}}>{msg.updated_tariff} INR/KWh </span></Text> 
+                              <Text strong>Time : <span style={{ fontSize: 'larger'}}>{moment(msg.timestamp).format("hh:mm A")}</span> </Text> 
                             </div>
 
 
