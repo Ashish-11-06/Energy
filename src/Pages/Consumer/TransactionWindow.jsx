@@ -254,17 +254,18 @@ const TransactionWindow = () => {
               Term Sheet Details
             </Title>
             <Row gutter={[16, 16]}>
-              <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
-              <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
-              <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
+              {console.log(record)}
+              <Col span={8}><strong>Term of PPA (years): </strong><span style={{fontSize:'16px'}}>{record.t_term_of_ppa}</span></Col>
+              <Col span={8}><strong>Lock-in Period (years): </strong><span style={{fontSize:'16px'}}>{record.t_lock_in_period}</span></Col>
+              <Col span={8}><strong>Commencement of Supply: </strong><span style={{fontSize:'16px'}}>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</span></Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-              <Col span={8}><strong>Contracted Energy (MW): </strong>{record.t_contracted_energy}</Col>
-              <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{record.t_minimum_supply_obligation}</Col>
-              <Col span={8}><strong>Payment Security (days):</strong>{record.t_payment_security_day}</Col>
+              <Col span={7}><strong>Contracted Energy (MW): </strong><span style={{fontSize:'16px'}}>{record.t_contracted_energy}</span></Col>
+              <Col span={10}><strong>Minimum Supply Obligation (million units): </strong><span style={{fontSize:'16px'}}>{record.t_minimum_supply_obligation}</span></Col>
+              <Col span={7}><strong>Payment Security (days):</strong><span style={{fontSize:'16px'}}>{record.t_payment_security_day}</span></Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-              <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
+              <Col span={8}><strong>Payment Security Type:</strong><span style={{fontSize:'16px'}}> {record.t_payment_security_type}</span></Col>
             </Row>
             <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

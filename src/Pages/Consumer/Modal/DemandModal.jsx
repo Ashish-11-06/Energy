@@ -42,8 +42,17 @@ const DemandModal = ({ open, onCancel, requirementContent }) => {
               <Text strong>Procurement Date</Text>
             </Col>
             <Col span={12}>
-              <Text>:  {requirementContent?.rq_procurement_date || "NA"}</Text>
-            </Col>
+            <Text>:{" "}  
+  {requirementContent?.rq_procurement_date
+    ? new Date(requirementContent.rq_procurement_date)
+        .toISOString()
+        .split("T")[0]
+        .split("-")
+        .reverse()
+        .join("-")
+    : "NA"}
+</Text>
+   </Col>
             {user_category === "Consumer" ? (
               <>
                 <Col span={12}>
@@ -67,7 +76,7 @@ const DemandModal = ({ open, onCancel, requirementContent }) => {
               <Text>:  {requirementContent?.rq_tariff_category || "NA"}</Text>
             </Col>
             <Col span={12}>
-              <Text strong>Voltage Level</Text>
+              <Text strong>Voltage Level (kV)</Text>
             </Col>
             <Col span={12}>
               <Text>:  {requirementContent?.rq_voltage_level || "NA"}</Text>

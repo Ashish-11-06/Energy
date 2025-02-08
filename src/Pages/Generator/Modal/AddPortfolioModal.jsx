@@ -101,27 +101,31 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
             </Form.Item>
           </Col>
 
-          <Col span={12}>
-            <Form.Item
-              label={
+
+
+           <Col span={12}>
+                    <Form.Item
+                       label={
                 <span>
                   State&nbsp;
-                  <Tooltip title="Select the state where the project is located.">
-                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                  <Tooltip title="State where the consumption unit is located or operates">
+                  <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
-              name="state"
-              rules={[{ required: true, message: 'Please select state!' }]} >
-              <Select placeholder="Select State">
-                {isState.map((state) => (
-                  <Select.Option key={state} value={state}>
-                    {state}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
+                      name="state"
+                      rules={[{ required: true, message: "Please select your state!" }]}
+                    >
+                      
+                      <Select placeholder="Select your state" showSearch>
+                        {isState && isState.map((state, index) => (
+                          <Select.Option key={index} value={state}>
+                            {state}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
 
           <Col span={12}>
             <Form.Item

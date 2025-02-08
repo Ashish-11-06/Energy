@@ -20,9 +20,9 @@ const LandingPage = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [subscriptionPlanValidity, setSubscriptionPlanValidity] = useState([]);
 
-  const user=JSON.parse(localStorage.getItem('user')).user;
+  const user=JSON.parse(localStorage.getItem('user'))?.user || null;
  
-  const lastVisitedPage=user.last_visited_page;
+  const lastVisitedPage = user?.last_visited_page || '/';
   // console.log('user',lastVisitedPage);
 
   const [otpVerified, setOtpVerified] = useState(false);
@@ -74,19 +74,19 @@ const LandingPage = () => {
             
             localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
 
-            if (user.user_category === 'Generator') {
+            if (user?.user_category === 'Generator') {
               navigate(
-                  user.is_new_user 
+                  user?.is_new_user 
                       ? '/what-we-offer' 
                       : (lastVisitedPage === '/' ? '/generator/dashboard' : lastVisitedPage),
-                  { state: { isNewUser: user.is_new_user } }
+                  { state: { isNewUser: user?.is_new_user } }
               );
-          } else if (user.user_category === 'Consumer') {
+          } else if (user?.user_category === 'Consumer') {
               navigate(
-                  user.is_new_user 
+                  user?.is_new_user 
                       ? '/what-we-offer' 
                       : (lastVisitedPage === '/' ? '/consumer/dashboard' : lastVisitedPage),
-                  { state: { isNewUser: user.is_new_user } }
+                  { state: { isNewUser: user?.is_new_user } }
               );
           }
           

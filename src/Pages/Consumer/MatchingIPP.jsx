@@ -11,7 +11,7 @@ const MatchingIPP = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [selectedRow, setSelectedRow] = useState(null); // Track selected row
+  const [selectedRow, setSelectedRow] = useState(null); // Ensure only one selection
   const { matchingIPP, status, error } = useSelector(
     (state) => state.matchingIPP
   );
@@ -38,12 +38,20 @@ const MatchingIPP = () => {
     setIsInfoModalVisible(true);
   };
 
-  const handleRadioChange = (e, record) => {
-    if (e.target.checked) {
-      setSelectedRow(record); // Set selected row when radio button is checked
-    }
+  const handleRadioChange = (id) => {
+    console.log("hhj");
+    
+    console.log(record);
+    setSelectedRow(id); // Set the selected record, replacing previous selection
+    
   };
-
+  
+  const handleRowSelect = (record) => {
+    console.log('ss',record);
+    
+    setSelectedRow(record); // Only allow single selection
+  }
+  console.log('selectedRow',selectedRow); 
   const handleContinue = () => {
     if (selectedRow) {
       const requirementId = location.state?.selectedRequirement?.id;
@@ -75,16 +83,16 @@ const MatchingIPP = () => {
       dataIndex: "available_capacity",
       key: "available_capacity",
     },
-    {
-      title: "Select",
-      key: "select",
-      render: (text, record) => (
-        <Radio
-          onChange={(e) => handleRadioChange(e, record)} // Pass the entire record
-        // checked={selectedRow?.id === record.id} // Ensure the selection logic matches
-        />
-      ),
-    },
+      {
+         title: "Select",
+         key: "select",
+         render: (text, record) => (  
+           <Radio
+             checked={selectedRow?.id === record.id}
+             onChange={() => handleRowSelect(record)} 
+           />
+         ),
+       }  
   ];
 
   if (status === "loading") {

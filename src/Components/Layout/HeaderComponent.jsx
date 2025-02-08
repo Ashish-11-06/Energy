@@ -77,11 +77,11 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       label: "Annual Saving",
       icon: <FileTextOutlined />,
     },
-    {
-      path: "/consumer/subscription-plan",
-      label: "Subscription",
-      icon: <FileTextOutlined />,
-    },
+    // {
+    //   path: "/consumer/subscription-plan",
+    //   label: "Subscription",
+    //   icon: <FileTextOutlined />,
+    // },
     {
       path: "/consumer/energy-consumption-table",
       label: "Consumption Table",
@@ -107,11 +107,11 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       label: "Matching consumer",
       icon: <HomeOutlined />,
     },
-    {
-      path: "/generator/subscription-plan",
-      label: "Subscription Plan",
-      icon: <BookOutlined />,
-    },
+    // {
+    //   path: "/generator/subscription-plan",
+    //   label: "Subscription Plan",
+    //   icon: <BookOutlined />,
+    // },
     {
       path: "/generator/update-profile-details",
       label: "Update Profile Details",

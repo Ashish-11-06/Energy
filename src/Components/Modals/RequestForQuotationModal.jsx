@@ -24,13 +24,13 @@ const RequestForQuotationModal = ({
   onCancel,
   type,
   data,
-  fromIPP,
+  fromModal,
   selectedDemandId,
 }) => {
   const [ppaTerm, setPpaTerm] = useState(20);
   const [lockInPeriod, setLockInPeriod] = useState(10);
   const [minimumSupply, setMinimumSupply] = useState(18);
-  const [contractedEnergy, setContractedEnergy] = useState();
+  const [contractedEnergy, setContractedEnergy] = useState(data?.annual_demand_met);
   const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
   const [paymentSecurityDays, setPaymentSecurityDays] = useState(30); // New state
   const [offerTariff, setOfferTariff] = useState(3.5);
@@ -39,20 +39,22 @@ const RequestForQuotationModal = ({
   const [essCapacity, setEssCapacity] = useState(20);
 
   const annualDemand=(data?.annualDemand)/1000;
-console.log('data',data);
+console.log('data',data?.annual_demand_met);
+console.log(fromModal);
 
-  console.log('annual deman',annualDemand);
+  // console.log('annual deman',annualDemand);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
 const user_category=user.user_category;
-console.log(user_category);
+console.log(data);
 
-useEffect(() => {
-setContractedEnergy(fromIPP ? (data?.annual_demand_met ?? 0) : (contractedEnergy ?? 0));
-}, [fromIPP]);
+// useEffect(() => {
+// setContractedEnergy(fromModal ? (data?.annual_demand_met ?? 0) : (contractedEnergy ?? 0));
+// }, [fromModal]);
+
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
   };
@@ -81,7 +83,11 @@ setContractedEnergy(fromIPP ? (data?.annual_demand_met ?? 0) : (contractedEnergy
       await dispatch(addTermsAndConditions(termsData)).unwrap(); // Use .unwrap() if using Redux Toolkit
       message.success({
         content: "Terms and Conditions added successfully.",
-        duration: 7, // Show for 7 seconds
+        duration: 6, // Show for 7 seconds
+      });
+      message.success({
+        content: "Now you can continue journey for this demand in the offers section.",
+        duration: 8, // Show for 7 seconds
       });
       onCancel(); // Close the modal
     } catch (error) {
@@ -147,16 +153,18 @@ setContractedEnergy(fromIPP ? (data?.annual_demand_met ?? 0) : (contractedEnergy
             </Typography.Paragraph>
           </Col>
           <Col span={12}>
-            <Typography.Paragraph>
-              <strong>Contracted Energy (million units):</strong>
-              <InputNumber
-                min={1}
-                value={contractedEnergy}
-                onChange={(value) => setContractedEnergy(value)}
-                style={{ width: "100%" }}
-              />
-            </Typography.Paragraph>
-          </Col>
+  <Typography.Paragraph>
+    <strong>Contracted Energy (million units):</strong>
+    <InputNumber
+      min={0.1} // Allows float values starting from 0.1
+      step={0.1} // Enables input of both integers and decimals
+      value={contractedEnergy}
+      onChange={(value) => setContractedEnergy(value)}
+      style={{ width: "100%" }}
+    />
+  </Typography.Paragraph>
+</Col>
+
           {/* <Col span={12}>
             <Typography.Paragraph>
               <strong>Offer Tariff (INR/Mw):</strong>

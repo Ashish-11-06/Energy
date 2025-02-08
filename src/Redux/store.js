@@ -10,7 +10,7 @@ import matchingIPPSlice from './Slices/Consumer/matchingIPPSlice';
 import monthlyDataReducer from './Slices/Consumer/monthlyConsumptionSlice'
 import paymentReducer from './Slices/Consumer/paymentSlice'; // Import the paymentReducer
 import industry from'./Slices/Consumer/industrySlice';
-import state from './Slices/Consumer/stateSlice';
+import states from './Slices/Consumer/stateSlice';
 export const store = configureStore({
   reducer: {
     login: loginReducer, // Add loginReducer to the store
@@ -24,7 +24,7 @@ export const store = configureStore({
     monthlyData: monthlyDataReducer,
     payment: paymentReducer,
     industry:industry,
-    state:state
+    states:states
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
