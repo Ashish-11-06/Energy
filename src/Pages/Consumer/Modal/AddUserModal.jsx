@@ -1,13 +1,27 @@
 import React from "react";
 import { Modal, Form, Input, Button, Row, Col, Select } from "antd";
+import { addSubUser } from "../../../Redux/Slices/Consumer/registerSlice";
+import { useDispatch } from "react-redux";
 
 const { Option } = Select;
 
 const AddUserModal = ({ isVisible, onCancel, onSave, editableData, edit }) => {
   const [form] = Form.useForm();
-  
+  const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem("user")).user;
+
+  console.log(user);
+
   const handleFinish = (values) => {
-    onSave(values); // Call the onSave function passed as a prop
+    const data = values;
+    const id = user.id;
+    try {
+      dispatch(addSubUser({ id, userData: data })); // Pass an object
+      onSave(values);
+    } catch (error) {
+      console.log(error);
+    }
+    // Call the onSave function passed as a prop
     form.resetFields(); // Reset the form fields after saving
   };
 
@@ -53,7 +67,6 @@ const AddUserModal = ({ isVisible, onCancel, onSave, editableData, edit }) => {
           <Col span={12}>
             <Form.Item label="Role" name="role" rules={[{ required: true, message: "Please select role" }]}>
               <Select placeholder="Select role">
-                <Option value="Admin">Admin</Option>
                 <Option value="Management">Management </Option>
                 <Option value="Edit">Edit</Option>
                <Option value="View">View</Option>

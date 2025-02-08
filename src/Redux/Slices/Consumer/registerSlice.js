@@ -30,6 +30,29 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const addSubUser = createAsyncThunk(
+  'User/CreateUser',
+  async ({ id, userData }, { rejectWithValue }) => {
+    console.log('hi from add sub user');
+    try {
+      const response = await registerApi.addSubUser(id, userData);
+      console.log('response', response);
+      
+      if (response?.data) {
+        if (response.data.error) {
+          return rejectWithValue(response.data.error || 'Failed to register user');
+        }
+        return response.data; // Successfully registered user
+      } else {
+        return rejectWithValue('Unexpected response structure');
+      }
+    } catch (error) {
+      console.log('error', error);
+      return rejectWithValue(error.response?.data?.error || 'Failed to add user');
+    }
+  }
+);
+
 // Async thunk to verify OTP
 export const verifyOtp = createAsyncThunk(
   'register/verifyOtp',
@@ -81,6 +104,18 @@ const registerSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(registerUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      .addCase(addSubUser.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(addSubUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload;
+      })
+      .addCase(addSubUser.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       })

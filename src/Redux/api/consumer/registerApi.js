@@ -8,6 +8,10 @@ const registerApi = {
   verifyOTP: (otp) => {
     return axiosInstance.post(`/accounts/verify-otp`, otp );
   },
+
+  addSubUser: (id, data) => {
+    return axiosInstance.post(`/accounts/add-sub-user/${id}`, data);
+},
 };
 
 export default registerApi;

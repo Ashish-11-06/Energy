@@ -106,31 +106,31 @@ const ProfilePage = () => {
     { title: "Username", dataIndex: "username", key: "username" },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Role", dataIndex: "role", key: "role" },
-    {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-      render: (_, record) => (
-        <>
-          <a
-            type="primary"
-            style={{ marginRight: 8 }}
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
-            Edit
-          </a>
-          <a
-            type="danger"
-            style={{ color: "red" }}
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record.key)}
-          >
-            Delete
-          </a>
-        </>
-      ),
-    },
+    // {
+    //   title: "Action",
+    //   dataIndex: "action",
+    //   key: "action",
+    //   render: (_, record) => (
+    //     <>
+    //       {/* <a
+    //         type="primary"
+    //         style={{ marginRight: 8 }}
+    //         icon={<EditOutlined />}
+    //         onClick={() => handleEdit(record)}
+    //       >
+    //         Edit
+    //       </a> */}
+    //       <a
+    //         type="danger"
+    //         style={{ color: "red" }}
+    //         icon={<DeleteOutlined />}
+    //         onClick={() => handleDelete(record.key)}
+    //       >
+    //         Delete
+    //       </a>
+    //     </>
+    //   ),
+    // },
   ];
 
   return (

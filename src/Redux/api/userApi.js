@@ -10,10 +10,12 @@ const userApi = {
     getAllusers: () => {
         return axiosInstance.get('/users/all');
     },
-    // rem
+    
     getUserById: (id) => {
         return axiosInstance.get(`/users/get/${id}`);
     },
+
+   
     
    
     
