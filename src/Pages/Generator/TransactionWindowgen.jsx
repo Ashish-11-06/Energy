@@ -166,7 +166,7 @@ const TransactionWindowgen = () => {
 
   const handleRejectTransaction = () => {
     message.error(`Transaction ${transactionId} rejected`);
-    navigate('/consumer/transaction-page');
+    navigate('/transaction-page');
   };
 
 

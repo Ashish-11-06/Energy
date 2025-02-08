@@ -80,6 +80,7 @@ function App() {
         <Route element={<LayoutComponent />}>
           <Route path="offers" element={<OfferRecieved />} />
           <Route path="what-we-offer" element={<WhatWeOffer />} />
+          <Route path="transaction-page" element={<TransactionMainPage />} />
 
           {/* Consumer Routes */}
           <Route path="/consumer/*">
@@ -97,7 +98,6 @@ function App() {
             <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
             <Route path="notification" element={<Notification />} />
             <Route path="transaction-window" element={<TransactionWindow />} />
-            <Route path="transaction-page" element={<TransactionMainPage />} />
             <Route path="invoice" element={<InvoicePage />} />
           </Route>
 

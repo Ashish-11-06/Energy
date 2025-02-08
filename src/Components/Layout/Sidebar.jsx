@@ -33,7 +33,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Transaction Window', key: '/consumer/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Subscription Plan', key: '/consumer/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
@@ -43,7 +43,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Portfolio', key: '/generator/portfolio', icon: <SolutionOutlined style={{color:'#669800', fontWeight:'900', height:'30px',width:'30px'}}/> },
-    { label: 'Transaction Window', key: '/consumer/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
     { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
