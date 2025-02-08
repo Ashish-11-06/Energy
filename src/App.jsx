@@ -46,9 +46,9 @@ import { lastVisitedPage } from './Redux/Slices/Consumer/lastVisitedPageSlice';
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
   const dispatch = useDispatch();
-const user=JSON.parse(localStorage.getItem('user')).user;
-//  console.log(requirementId);
- const userId=user.id;
+  const user = JSON.parse(localStorage.getItem('user'))?.user || null;
+  //  console.log(requirementId);
+ const userId=user?.id;
 
 
   useEffect(() => {

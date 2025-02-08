@@ -34,7 +34,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
               <Text>: {combinationContent?.combination || "NA"}</Text>
             </Col>
             <Col span={12}>
-              <Text strong>Optimal Solar Capacity</Text>
+              <Text strong>Solar Capacity (kWh)</Text>
             </Col>
             <Col span={12}>
               <Text>
@@ -43,7 +43,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
               </Text>
             </Col>
             <Col span={12}>
-              <Text strong>Optimal Wind Capacity</Text>
+              <Text strong>Wind Capacity (kWh)</Text>
             </Col>
             <Col span={12}>
             <Text>
@@ -54,7 +54,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
             {/* {user_category === "Consumer" ? (
               <> */}
             <Col span={12}>
-              <Text strong>Optimal Battery Capacity</Text>
+              <Text strong>Battery Capacity (kWh)</Text>
             </Col>
             <Col span={12}>
             <Text>
@@ -65,7 +65,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
             {/* </>
             ) : null} */}
             <Col span={12}>
-              <Text strong>Final Cost</Text>
+              <Text strong>Final Cost (INR/KWh)</Text>
             </Col>
             <Col span={12}>
               <Text>: {combinationContent?.final_cost || "NA"}</Text>
@@ -77,7 +77,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
               <Text>:  {combinationContent?.rq_tariff_category || "NA"}</Text>
             </Col> */}
             <Col span={12}>
-              <Text strong>Per Unit Cost</Text>
+              <Text strong>Per Unit Cost (INR/KWh)</Text>
             </Col>
             <Col span={12}>
               <Text>: {combinationContent?.per_unit_cost || "NA"}</Text>

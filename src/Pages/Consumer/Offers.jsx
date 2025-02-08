@@ -261,6 +261,12 @@ const Offers = () => {
       },
     },
     {
+      title: "Transaction Window Date",
+      dataIndex: "transaction_window_date",
+      key: "transaction_window_date",
+      render: (text) => moment(text).format("DD-MM-YYYY"),
+    },
+    {
       title: "Action",
       key: "action",
       render: (_, record) => {

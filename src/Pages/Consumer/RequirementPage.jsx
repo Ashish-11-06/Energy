@@ -85,7 +85,7 @@ const RequirementsPage = () => {
       key: 'tariffCategory',
     },
     {
-      title: 'Voltage Level',
+      title: 'Voltage Level (kV)',
       dataIndex: 'voltage_level',
       key: 'voltageLevel',
     },

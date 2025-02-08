@@ -22,6 +22,7 @@ const { Option } = Select;
 
 const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransaction }) => {
   console.log(fromTransaction);
+  console.log(data);
   
   // console.log(data);
   const [ppaTerm, setPpaTerm] = useState(data.term_of_ppa);
@@ -442,7 +443,7 @@ let temp='';
           onCancel={onTarrifCancel} // The close (✖) icon will still work
           footer={null} // Removes the Cancel and OK buttons
         >
-          <p>(If you negotiate the tariff, you can't change the terms and conditions)</p>
+          <p>{`(If you negotiate the tariff, you can't change the terms and conditions. It will accept automatically and offer tariff send to ${temp})`}</p>
           <InputNumber
             style={{ width: "60%" }}
             value={offerTariff}

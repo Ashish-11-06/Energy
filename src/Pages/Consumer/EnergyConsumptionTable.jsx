@@ -104,7 +104,7 @@ const EnergyConsumptionTable = () => {
     setFileUploaded(true);
     setUploadedFileName(file.name);
     setIsActionCompleted(true); // Mark action as completed
-
+    {dataSource && showTable }
     // Convert file to Base64
     const reader = new FileReader();
     reader.onloadend = async () => {
@@ -216,6 +216,7 @@ const EnergyConsumptionTable = () => {
     }))
   );
 
+  // console.log(dataSource);
   const monthlyData = useSelector(
     (state) => state.monthlyData?.monthlyData || []
   );
@@ -230,12 +231,27 @@ const EnergyConsumptionTable = () => {
   const navigate = useNavigate();
 
   // Fetch monthly data when requirementId changes
-  useEffect(() => {
+// Fetch monthly data when requirementId changes
+useEffect(() => {
+  const fetchData = async () => {
     if (requirementId) {
-      dispatch(fetchMonthlyDataById(requirementId));
+      try {
+        const response = await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
+        const temp = response.length;
+        console.log(temp);
+        if (temp < 0){
+          // console.log('helli');
+          
+          setShowTable(true);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
-  }, [requirementId, dispatch]);
+  };
 
+  fetchData();
+}, [requirementId, dispatch]);
   // Update dataSource when monthlyData is fetched
   useEffect(() => {
     //   console.log(monthlyData);

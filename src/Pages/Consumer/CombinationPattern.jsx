@@ -113,8 +113,8 @@ const CombinationPattern = () => {
           states: combination.state,
 
           status: combination.terms_sheet_sent
-            // ? "Already Sent"
-            // : "Send Quotation",
+            ? "Already Sent"
+            : "Send Quotation",
         };
       }
     );

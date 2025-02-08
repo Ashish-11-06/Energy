@@ -43,6 +43,10 @@ const SubscriptionPlanG = () => {
   const [loading,setLoading]=useState(false);
   // const [subscriptionPlanValidity,setSubscriptionPlanValidity]=useState([]);
 
+const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+// console.log(subscriptionPlanValidity);
+
+const alreadySubscribed = subscription.subscription_type;
 
   const [gstinNumber, setGstinNumber] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
@@ -52,7 +56,7 @@ const SubscriptionPlanG = () => {
   const location = useLocation();
   const { selectedConsumer } = location.state || {};
 
-  console.log(selectedConsumer); 
+  // console.log(selectedConsumer); 
   const navigate = useNavigate(); // Hook for navigation
   const dispatch = useDispatch();
   const userData = useState(JSON.parse(localStorage.getItem("user")).user);
@@ -278,17 +282,19 @@ console.log(response);
           className={selectedPlanId === plan.id ? 'selected-plan' : ''}
           onClick={() => handleSelectPlan(plan.id)}
           actions={[
-            <Button
-              type="primary"
-              onClick={() => handleId(plan.id)}
-              block
-              size="small"
-              style={{ width: '160px' }}
-            >
-              Select Plan
-              {/* {!subscriptionPlanValidity ? 'Select plan' : 'Subscribed'} */}
-            </Button>,
-          ]}
+                         plan.subscription_type !== alreadySubscribed ? (
+                           <Button
+                             type="primary"
+                             block
+                             size="small"
+                             style={{ width: "160px" }}
+                           >
+                             Select Plan
+                           </Button>
+                         ) : (
+                           <Button disabled>Subscribed</Button>
+                         ),
+                       ]}
         >
           <div
             style={{

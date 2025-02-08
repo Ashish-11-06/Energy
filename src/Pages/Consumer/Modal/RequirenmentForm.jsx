@@ -30,7 +30,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
 // const states = useSelector((state) => state.consumer.states);
   const dispatch = useDispatch();
 const industryy=useSelector((state)=>state.industry.industry);
-const statee=useSelector((state)=>state.state.state);
+const statee=useSelector((state)=>state.states.state);
 // console.log(industryy);
 
 // useEffect(() => {
@@ -141,7 +141,7 @@ if(statee.length<1) {
             >
               
               <Select placeholder="Select your state" showSearch>
-                {statee && statee.map((state, index) => (
+                {isState && isState.map((state, index) => (
                   <Select.Option key={index} value={state}>
                     {state}
                   </Select.Option>
