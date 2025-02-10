@@ -331,7 +331,7 @@ if (userData && userData.user) {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="efficiencyOfStorage"
+              name="efficiency_of_storage"
               label="Efficiency of Storage"
               rules={[
                 {
@@ -345,7 +345,7 @@ if (userData && userData.user) {
           </Col>
           <Col span={12}>
             <Form.Item
-              name="efficiencyOfDispatch"
+              name="efficiency_of_dispatch"
               label="Efficiency of Dispatch"
               rules={[
                 {

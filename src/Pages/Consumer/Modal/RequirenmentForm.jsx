@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Form,
@@ -13,11 +13,10 @@ import {
 import { InfoCircleOutlined } from "@ant-design/icons";
 import states from "../../../Data/States";
 import industries from "../../../Data/Industry";
-import { useDispatch ,useSelector} from "react-redux";
-import dayjs from 'dayjs';
+import { useDispatch, useSelector } from "react-redux";
+import dayjs from "dayjs";
 import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
-
 
 const requirementForm = ({ open, onCancel, onSubmit }) => {
   const [form] = Form.useForm();
@@ -25,36 +24,37 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
   const [isCustomVoltage, setIsCustomVoltage] = useState(false); // Flag to toggle custom voltage input visibility
   const [customIndustry, setCustomIndustry] = useState(""); // State to hold custom industry input
   const [isCustomIndustry, setIsCustomIndustry] = useState(false); // Flag to toggle custom industry input visibility
- const [isState,setIsState]=useState([]);
- const [isIndustry,setIsIndustry]=useState([]);
-// const states = useSelector((state) => state.consumer.states);
+  const [isState, setIsState] = useState([]);
+  const [isIndustry, setIsIndustry] = useState([]);
+  // const states = useSelector((state) => state.consumer.states);
   const dispatch = useDispatch();
-const industryy=useSelector((state)=>state.industry.industry);
-const statee=useSelector((state)=>state.states.states);
-//  console.log(statee);
+  const industryy = useSelector((state) => state.industry.industry);
+  const statee = useSelector((state) => state.states.states);
+  //  console.log(statee);
 
-// useEffect(() => {
-//   dispatch(fetchState());
-// }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchState());
+  // }, [dispatch]);
 
-if(industryy.length<1) {
-  dispatch(fetchIndustry());
-}
+  if (industryy.length < 1) {
+    dispatch(fetchIndustry());
+  }
 
-if(statee?.length<1) {
-  dispatch(fetchState());
-}
+  if (statee?.length < 1) {
+    dispatch(fetchState());
+  }
 
   const handleSubmit = (values) => {
-    const user = JSON.parse(localStorage.getItem('user')).user;
+    const user = JSON.parse(localStorage.getItem("user")).user;
     const formattedValues = {
       user: user.id,
       state: values.state,
       industry: values.industry === "other" ? customIndustry : values.industry,
       contracted_demand: values.contractedDemand,
       tariff_category: values.tariffCategory,
-      voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
-      procurement_date: values.procurement.format('YYYY-MM-DD'), // Change format to YYYY-MM-DD for submission
+      voltage_level:
+        values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
+      procurement_date: values.procurement.format("YYYY-MM-DD"), // Change format to YYYY-MM-DD for submission
       consumption_unit: values.consumption_unit,
       annual_electricity_consumption: values.annual_electricity_consumption, // Add annual consumption to formatted values
     };
@@ -70,20 +70,20 @@ if(statee?.length<1) {
 
   useEffect(() => {
     dispatch(fetchState())
-      .then(response => {
+      .then((response) => {
         // console.log(response.payload);
-        
+
         setIsState(response.payload);
         //console.log(isState);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching states:", error);
       });
   }, [dispatch]);
 
   // useEffect(() => {
   //   dispatch(fetchIndustry())
-  //     .then(response => {    
+  //     .then(response => {
   //     //  setIsIndustry(response.payload);
   //       //console.log(isState);
   //     })
@@ -91,7 +91,6 @@ if(statee?.length<1) {
   //       console.error("Error fetching industry:", error);
   //     });
   // }, [dispatch]);
-  
 
   const renderLabelWithTooltip = (label, tooltip) => (
     <span>
@@ -139,7 +138,6 @@ if(statee?.length<1) {
               name="state"
               rules={[{ required: true, message: "Please select your state!" }]}
             >
-              
               <Select placeholder="Select your state" showSearch>
                 {statee?.map((state, index) => (
                   <Select.Option key={index} value={state}>
@@ -159,16 +157,12 @@ if(statee?.length<1) {
               name="consumption_unit"
               rules={[
                 {
-                 
                   required: true,
                   message: "Please enter the consumption unit name!",
                 },
               ]}
             >
-              <Input
-                type="text"
-                placeholder="Enter consumption unit name"
-              />
+              <Input type="text" placeholder="Enter consumption unit name" />
             </Form.Item>
           </Col>
 
@@ -186,10 +180,10 @@ if(statee?.length<1) {
               <Select
                 placeholder="Select your industry"
                 showSearch
-                optionFilterProp="items"
+                optionFilterProp="children" 
                 onChange={handleIndustryChange}
                 filterOption={(input, option) =>
-                  option.items.toLowerCase().includes(input.toLowerCase())
+                  option.children.toLowerCase().includes(input.toLowerCase())
                 }
               >
                 {industryy.map((industry, index) => (
@@ -210,7 +204,12 @@ if(statee?.length<1) {
                   'Enter the custom industry if "Other" was selected.'
                 )}
                 name="customIndustry"
-                rules={[{ required: true, message: "Please enter a custom industry!" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter a custom industry!",
+                  },
+                ]}
               >
                 <Input
                   type="text"
@@ -299,7 +298,6 @@ if(statee?.length<1) {
             </Col>
           )}
 
-
           <Col span={12}>
             <Form.Item
               label={renderLabelWithTooltip(
@@ -328,7 +326,12 @@ if(statee?.length<1) {
                 "Enter the annual electricity consumption in megawatt-hours."
               )}
               name="annual_electricity_consumption"
-              rules={[{ required: true, message: "Please enter the annual electricity consumption!" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter the annual electricity consumption!",
+                },
+              ]}
             >
               <Input
                 type="number"
@@ -337,31 +340,30 @@ if(statee?.length<1) {
             </Form.Item>
           </Col>
 
-            <Col span={12}>
-              <Form.Item
-                label={renderLabelWithTooltip(
-                  "Expected Procurement Date",
-                  "Select the date from which you need RE power."
-                )}
-                name="procurement"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select a procurement date!",
-                  },
-                ]}
-              >
-                <DatePicker
-                  style={{ width: "100%" }}
-                  format="DD/MM/YYYY" // Set the display format to DD/MM/YYYY
-                  disabledDate={(current) => {
-                    // Disable today and all past dates
-                    return current && current <= new Date();
-                  }}
-                />
-              </Form.Item>
-            </Col>
-         
+          <Col span={12}>
+            <Form.Item
+              label={renderLabelWithTooltip(
+                "Expected Procurement Date",
+                "Select the date from which you need RE power."
+              )}
+              name="procurement"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select a procurement date!",
+                },
+              ]}
+            >
+              <DatePicker
+                style={{ width: "100%" }}
+                format="DD/MM/YYYY" // Set the display format to DD/MM/YYYY
+                disabledDate={(current) => {
+                  // Disable today and all past dates
+                  return current && current <= new Date();
+                }}
+              />
+            </Form.Item>
+          </Col>
         </Row>
 
         <Form.Item style={{ textAlign: "center" }}>
@@ -373,7 +375,6 @@ if(statee?.length<1) {
             Continue
           </Button>
         </Form.Item>
-       
       </Form>
     </Modal>
   );
