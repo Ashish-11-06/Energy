@@ -78,7 +78,8 @@ const AnnualSvg = () => {
                 </Col>
                 <Col span={12}>
                   <Text style={{ fontSize: '20px' }}>{` :  `} {` `}
-                    {annualSavingResponse ? annualSavingResponse.annual_savings.toLocaleString() : "0"} <span style={{ fontSize: '16px' }}>INR</span>
+                  {annualSavingResponse ? annualSavingResponse.annual_savings.toLocaleString('en-IN') : "0"} 
+<span style={{ fontSize: '16px' }}>{' '}INR</span>
                   </Text>
                 </Col>
                 <Col span={12}>
@@ -86,7 +87,7 @@ const AnnualSvg = () => {
                 </Col>
                 <Col span={12}>
                   <Text style={{ fontSize: '20px' }}>{` : `}
-                     {annualSavingResponse ? annualSavingResponse.average_savings.toLocaleString() : "0"} <span style={{ fontSize: '16px' }}>INR</span>
+                     {annualSavingResponse ? annualSavingResponse.average_savings.toLocaleString('en-IN') : "0"} <span style={{ fontSize: '16px' }}>INR</span>
                   </Text>
                 </Col>
                 <Col span={12}>

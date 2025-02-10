@@ -255,7 +255,7 @@ console.log('payment data',paymentData);
                             </tr>
                         </table>
                     </td>
-                    <td>${selectedPlan?.cgst+selectedPlan?.sgst+selectedPlan?.igst??'0'}</td>
+                    <td>${((selectedPlan?.cgst || 0) + (selectedPlan?.sgst || 0) + (selectedPlan?.igst || 0))}</td>
                 </tr>
                 <tr>
                     <td><strong>Total Amount Incl. GST</strong></td>
