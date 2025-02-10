@@ -56,7 +56,7 @@ const AnnualSvg = () => {
      
       navigate("/consumer/energy-consumption-table", { state: { requirementId, reReplacement: annualSavingResponse?.re_replacement } });
     } else {
-      navigate('/consumer/subscription-plan')
+      navigate('/subscription-plan')
     }
   };
 

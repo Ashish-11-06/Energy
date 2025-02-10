@@ -78,11 +78,14 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="email" element={<EmailVerification />} />
 
+
+
         {/* Routes with shared layout */}
+          <Route path="what-we-offer" element={<WhatWeOffer />} />
         <Route element={<LayoutComponent />}>
           <Route path="offers" element={<OfferRecieved />} />
-          <Route path="what-we-offer" element={<WhatWeOffer />} />
           <Route path="transaction-page" element={<TransactionMainPage />} />
+          <Route path="subscription-plan" element={<SubscriptionPlans />} />
 
           {/* Consumer Routes */}
           <Route path="/consumer/*">

@@ -8,8 +8,19 @@ const ProfileGenerator = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [userData, setUserData] = useState(JSON.parse(localStorage.getItem("user")).user);
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
-    const start_date = dayjs(subscriptionPlan.start_date).format('DD/MM/YYYY');  
-    const end_date = dayjs(subscriptionPlan.end_date).format('DD/MM/YYYY');  
+ 
+
+  const start_date = subscriptionPlan?.start_date
+    ? dayjs(subscriptionPlan.start_date).isValid()
+      ? dayjs(subscriptionPlan.start_date).format("DD/MM/YYYY")
+      : "N/A"
+    : "N/A";
+
+  const end_date = subscriptionPlan?.end_date
+    ? dayjs(subscriptionPlan.end_date).isValid()
+      ? dayjs(subscriptionPlan.end_date).format("DD/MM/YYYY")
+      : "N/A"
+    : "N/A";
 
   const handleEditToggle = () => {
     setIsModalVisible(true);
@@ -76,14 +87,26 @@ const ProfileGenerator = () => {
               <Text strong>Sunscription plan:</Text>
             </Col>
             <Col span={12}>
-              <Text>EXG {subscriptionPlan.subscription_type} Plan</Text>
-            </Col>
+            <Text>
+                  {" "}
+                  :
+                  {subscriptionPlan?.subscription_type
+                    ? `EXT ${subscriptionPlan.subscription_type} Plan`
+                    : "N/A"}
+                </Text>            </Col>
             <Col span={12}>
               <Text strong>Plan validity:</Text>
             </Col>
             <Col span={12}>
-            <Text>{start_date} <span style={{fontWeight:'bold'}}>To </span>{end_date}</Text>
-            </Col>
+            <Text>
+                  {start_date === "N/A" && end_date === "N/A"
+                    ? "N/A"
+                    : `${start_date} `}
+                  {start_date !== "N/A" && end_date !== "N/A" && (
+                    <span style={{ fontWeight: "bold" }}>To</span>
+                  )}
+                  {end_date !== "N/A" && ` ${end_date}`}
+                </Text>            </Col>
             
           </Row>
           <Row justify="center" style={{ marginTop: "20px" }}>

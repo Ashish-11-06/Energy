@@ -29,7 +29,7 @@ const ProfilePage = () => {
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
 
- const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const role = initialUserData.role;
   console.log(role);
@@ -39,11 +39,16 @@ const ProfilePage = () => {
   const storedPlan = localStorage.getItem("subscriptionPlanValidity");
   const subscriptionPlan = storedPlan ? JSON.parse(storedPlan) : {};
 
-  const start_date = subscriptionPlan.start_date
-    ? dayjs(subscriptionPlan.start_date).format("DD/MM/YYYY")
+  const start_date = subscriptionPlan?.start_date
+    ? dayjs(subscriptionPlan.start_date).isValid()
+      ? dayjs(subscriptionPlan.start_date).format("DD/MM/YYYY")
+      : "N/A"
     : "N/A";
-  const end_date = subscriptionPlan.end_date
-    ? dayjs(subscriptionPlan.end_date).format("DD/MM/YYYY")
+
+  const end_date = subscriptionPlan?.end_date
+    ? dayjs(subscriptionPlan.end_date).isValid()
+      ? dayjs(subscriptionPlan.end_date).format("DD/MM/YYYY")
+      : "N/A"
     : "N/A";
 
   // Initial users list
@@ -90,10 +95,10 @@ const ProfilePage = () => {
     form.resetFields();
   };
 
-  const handleLogOut = () =>{
+  const handleLogOut = () => {
     localStorage.removeItem("user");
-   navigate('/');
-  }
+    navigate("/");
+  };
 
   const handleDelete = (key) => {
     const updatedDataSource = userDataSource.filter(
@@ -134,10 +139,14 @@ const ProfilePage = () => {
   ];
 
   return (
-    <Row justify="center" style={{ marginTop: "50px", width: '100%' }}>
-      <Row gutter={[16, 16]} justify="center" style={{
-        width: '100%',
-      }}>
+    <Row justify="center" style={{ marginTop: "50px", width: "100%" }}>
+      <Row
+        gutter={[16, 16]}
+        justify="center"
+        style={{
+          width: "100%",
+        }}
+      >
         <Col span={12} xs={24} sm={12} md={12} lg={10}>
           <Card bordered style={{ borderRadius: "8px", minHeight: "400px" }}>
             <Row justify="center" style={{ marginBottom: "20px" }}>
@@ -190,8 +199,12 @@ const ProfilePage = () => {
                 <Text strong>Subscription plan</Text>
               </Col>
               <Col span={12}>
-                <Text> : 
-                  EXG {subscriptionPlan.subscription_type || "N/A"} Plan
+                <Text>
+                  {" "}
+                  :
+                  {subscriptionPlan?.subscription_type
+                    ? `EXT ${subscriptionPlan.subscription_type} Plan`
+                    : "N/A"}
                 </Text>
               </Col>
               <Col span={12}>
@@ -199,12 +212,20 @@ const ProfilePage = () => {
               </Col>
               <Col span={12}>
                 <Text>
-                 : {start_date} <span style={{ fontWeight: "bold" }}>To</span>{" "}
-                  {end_date}
+                  {start_date === "N/A" && end_date === "N/A"
+                    ? "N/A"
+                    : `${start_date} `}
+                  {start_date !== "N/A" && end_date !== "N/A" && (
+                    <span style={{ fontWeight: "bold" }}>To</span>
+                  )}
+                  {end_date !== "N/A" && ` ${end_date}`}
                 </Text>
               </Col>
             </Row>
-            <Row justify="center" style={{ marginTop: "20px", justifyContent: 'space-between'}}>
+            <Row
+              justify="center"
+              style={{ marginTop: "20px", justifyContent: "space-between" }}
+            >
               <Button type="primary" onClick={handleEditToggle}>
                 Edit Profile
               </Button>
