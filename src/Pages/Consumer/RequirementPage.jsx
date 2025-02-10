@@ -25,7 +25,8 @@ const RequirementsPage = () => {
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData=JSON.parse(localStorage.getItem('user')).user;
-  // console.log(userData.role);
+  // console.log(userData.is_new_user);
+  const is_new_user=userData.is_new_user;
   
   const role=userData.role;
   const getFromLocalStorage = (key) => {
@@ -211,7 +212,7 @@ const handleAddDetails =(record) => {
     }
 
     // Show info modal based on new_user value
-    if (newUser) {
+    if (is_new_user) {
       setIsInfoModalVisible(true);
     }
 
@@ -231,6 +232,7 @@ const handleAddDetails =(record) => {
   };
 
   return (
+    
     <div style={{ padding: 20 }}>
       <h2 >Consumption Unit</h2>
 

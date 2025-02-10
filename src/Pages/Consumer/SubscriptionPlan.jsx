@@ -586,12 +586,12 @@ const SubscriptionPlans = () => {
                       type="primary"
                       block
                       size="small"
-                      style={{ width: "160px" }}
+                      style={{ width: "160px", fontSize:'16px' }}
                     >
                       Select Plan
                     </Button>
                   ) : (
-                    <Button disabled>Subscribed</Button>
+                    <Button disabled style={{fontSize:'14px', height:'17px', width:'160px' }}>Subscribed</Button>
                   ),
                 ]}
               >
@@ -646,11 +646,11 @@ const SubscriptionPlans = () => {
                         <FormOutlined
                           style={{ marginRight: "10px", color: "#669800" }}
                         />{" "}
-                        {/* Matching IPP */}
-                        {user_category=='Consumer' ?  (
+                        Matching IPP
+                        {/* {user_category=='Consumer' ?  (
                         <p>Matching IPP +</p>
                         ) : ( <p>Matching Consumer</p>)
-                      }
+                      } */}
                       </li>
                       <li
                         style={{

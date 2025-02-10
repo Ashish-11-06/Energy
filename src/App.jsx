@@ -79,10 +79,14 @@ function App() {
         <Route path="email/:token" element={<EmailVerification />} />
           <Route path="what-we-offer" element={<WhatWeOffer />} />
 
+
+
         {/* Routes with shared layout */}
+          <Route path="what-we-offer" element={<WhatWeOffer />} />
         <Route element={<LayoutComponent />}>
           <Route path="offers" element={<OfferRecieved />} />
           <Route path="transaction-page" element={<TransactionMainPage />} />
+          <Route path="subscription-plan" element={<SubscriptionPlans />} />
 
           {/* Consumer Routes */}
           <Route path="/consumer/*">

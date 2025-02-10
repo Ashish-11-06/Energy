@@ -23,9 +23,10 @@ import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 const { Option } = Select;
 const { Title, Text } = Typography;
 
-const UpdateProfileForm = ({ form, project, onCancel }) => {
+const UpdateProfileForm = ({ form, project, onCancel,fromPortfolio }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
+console.log(fromPortfolio);
 
   const project_type = project.type;      
   const solar_template_downloaded = user.solar_template_downloaded;
@@ -186,6 +187,7 @@ if (userData && userData.user) {
 
     dispatch(updateProject(updatedValues));
     message.success("Form submitted successfully!");
+    localStorage.removeItem('matchingConsumerId');
     onCancel();
   };
 
@@ -222,21 +224,21 @@ if (userData && userData.user) {
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item
-            name="state"
-            label="State"
-            disabled
-            rules={[{ required: true, message: "Please input the state!" }]}
-          >
-            <Select placeholder="Select your state" showSearch disabled>
-              {isState &&
-                isState.map((state, index) => (
-                  <Select.Option key={index} value={state} >
-                    {state}
-                  </Select.Option>
-                ))}
-            </Select>
-          </Form.Item>
+        <Form.Item
+  name="state"
+  label="State"
+  rules={[{ required: true, message: "Please select the state!" }]}
+>
+  <Select placeholder="Select your state" showSearch disabled={!fromPortfolio}>
+    {isState &&
+      isState.map((state, index) => (
+        <Select.Option key={index} value={state}>
+          {state}
+        </Select.Option>
+      ))}
+  </Select>
+</Form.Item>
+
         </Col>
       </Row>
 
@@ -304,7 +306,7 @@ if (userData && userData.user) {
             label="COD"
             rules={[{ required: true, message: "Please input the COD!" }]}
           >
-            <DatePicker format={'DD/MM/YYYY'} style={{ width: "100%" }} disabled />
+            <DatePicker format={'DD/MM/YYYY'} style={{ width: "100%" }} disabled={!fromPortfolio} />
           </Form.Item>
         </Col>
         {type !== "ESS" && (
@@ -329,7 +331,7 @@ if (userData && userData.user) {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="efficiencyOfStorage"
+              name="efficiency_of_storage"
               label="Efficiency of Storage"
               rules={[
                 {
@@ -343,7 +345,7 @@ if (userData && userData.user) {
           </Col>
           <Col span={12}>
             <Form.Item
-              name="efficiencyOfDispatch"
+              name="efficiency_of_dispatch"
               label="Efficiency of Dispatch"
               rules={[
                 {
@@ -427,16 +429,26 @@ if (userData && userData.user) {
       <Row gutter={24} style={{ textAlign: "right" }}>
         <Col span={24}>
           <Form.Item>
-          {!fileData ? (
+          {!fileData && type!='ESS'  ? (
   <Tooltip title="Please fill all the details and upload the file in given format">
     <Button type="primary" htmlType="submit" disabled>
       Submit
     </Button>
   </Tooltip>
 ) : (
-  <Button type="primary" htmlType="submit">
+  // <>
+  // {!fileData && type==='ESS'? (
+  //     <Tooltip title="Please fill all the details">
+  // <Button type="primary" htmlType="submit" disabled>
+  //   Submlplplpplplit
+  // </Button>
+  // </Tooltip>
+  // ):(
+  <Button type="primary" htmlType="submit" >
     Submit
-  </Button>
+    </Button>
+  // )}
+  // </>
 )}
 
           </Form.Item>

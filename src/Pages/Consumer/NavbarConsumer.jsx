@@ -35,7 +35,7 @@ const NavbarConsumer = () => {
           <Link to="/consumer/annual-saving">Annual Savings</Link>
         </Menu.Item>
         <Menu.Item key="6" icon={<AppstoreAddOutlined />}>
-          <Link to="/consumer/subscription-plan">Subscription Plan</Link>
+          <Link to="/subscription-plan">Subscription Plan</Link>
         </Menu.Item>
         <Menu.Item key="logout" icon={<PoweroffOutlined />}>
           <Link to="/logout">Logout</Link>

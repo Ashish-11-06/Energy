@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Avatar, Tooltip } from "antd";
+import { Button, Tooltip } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -9,11 +9,11 @@ import {
   BookOutlined,
   FileTextOutlined,
   WalletOutlined,
-  MessageOutlined,
 } from "@ant-design/icons";
 import "./HeaderComponent.css"; // Add custom styles for header component
 import chat from "../../assets/need.png";
 import userImage from "../../assets/profile.png";
+
 const { Header } = Layout;
 
 const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
@@ -23,20 +23,20 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   let username = ""; // Use let instead of const
   const subscriptionValidity = JSON.parse(localStorage.getItem("subscriptionPlanValidity"));
   const subscription = subscriptionValidity?.status;
-  // console.log(subscription);  
-  
+  const matchingConsumerId = localStorage.getItem('matchingConsumerId');
+  const [matchingConsumer, setMatchingConsumer] = useState("");
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
+
   useEffect(() => {
-    if (subscription === "active") {
-      setSubscriptionRequires(false);
-    } else {
-      setSubscriptionRequires(true);
-    }
+    setSubscriptionRequires(subscription !== "active");
   }, [subscription]);
+
+  useEffect(() => {
+    setMatchingConsumer(!matchingConsumerId);
+  }, [matchingConsumerId]);
 
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
-    // console.log('item', item);
     return item ? JSON.parse(item) : "";
   };
 
@@ -47,7 +47,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
 
   const handleProfileClick = () => {
     navigate(
-      (user.user_category  === 'Consumer'    )
+      (user.user_category === 'Consumer')
         ? "/consumer/profile"
         : "/generator/profile"
     );
@@ -55,7 +55,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
 
   const handleChatClick = () => {
     navigate(
-      (user.user_category  === 'Consumer'    )
+      (user.user_category === 'Consumer')
         ? "/consumer/chat-page"
         : "/generator/chat-page"
     );
@@ -77,22 +77,19 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       label: "Annual Saving",
       icon: <FileTextOutlined />,
     },
-    // {
-    //   path: "/consumer/subscription-plan",
-    //   label: "Subscription",
-    //   icon: <FileTextOutlined />,
-    // },
     {
       path: "/consumer/energy-consumption-table",
       label: "Consumption Table",
       icon: <BookOutlined />,
       requiresSubscription: subscriptionRequires,
+      requiresMatchingConsumer: false,
     },
     {
       path: "/consumer/consumption-pattern",
       label: "Consumption Pattern",
       icon: <WalletOutlined />,
       requiresSubscription: subscriptionRequires,
+      requiresMatchingConsumer: false,
     },
   ];
 
@@ -107,43 +104,36 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       label: "Matching consumer",
       icon: <HomeOutlined />,
     },
-    // {
-    //   path: "/generator/subscription-plan",
-    //   label: "Subscription Plan",
-    //   icon: <BookOutlined />,
-    // },
     {
       path: "/generator/update-profile-details",
       label: "Update Profile Details",
       icon: <FileTextOutlined />,
       requiresSubscription: subscriptionRequires,
+      requiresMatchingConsumer: matchingConsumer,
     },
     {
       path: "/generator/combination-pattern",
       label: "Optimized Combination",
       icon: <FileTextOutlined />,
       requiresSubscription: subscriptionRequires,
+      requiresMatchingConsumer: matchingConsumer,
     },
   ];
 
-
-  
-  const steps = (user.user_category  === 'Consumer'    )
+  const steps = (user.user_category === 'Consumer')
     ? consumerSteps
     : generatorSteps;
 
   const currentStepIndex = steps.findIndex((step) => step.path === currentPath);
-  // console.log(user.user_category, steps);
   const showProgress = [
     "/consumer/requirement",
     "/consumer/matching-ipp",
     "/consumer/annual-saving",
-    "/consumer/subscription-plan",
+    "/subscription-plan",
     "/consumer/energy-consumption-table",
     "/consumer/consumption-pattern",
     "/generator/portfolio",
     "/generator/matching-consumer",
-    "/generator/subscription-plan",
     "/generator/update-profile-details",
     "/generator/combination-pattern",
   ].includes(currentPath);
@@ -154,8 +144,6 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       style={{
         backgroundColor: "#6698005c",
         padding: "0 16px",
-
-        // display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
@@ -165,7 +153,6 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
         top: 0,
         zIndex: 1000,
         height: isMobile ? "70px" : "70px",
-        // border: '2px solid red'
       }}
     >
       {/* Drawer button visible on mobile */}
@@ -189,14 +176,14 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
           flex: 1,
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "center", // Center align the content for better aesthetics
-          width: "100%", // Ensure it spans the full width of the parent
+          justifyContent: "center",
+          width: "100%",
           height: "100%",
         }}
       >
         <div style={{ width: "100%", maxWidth: "1500px", margin: "0 auto" }}>
           {showProgress && (
-            <div className="navbar " style={{ marginBottom: "20px" }}>
+            <div className="navbar" style={{ marginBottom: "20px" }}>
               <div className="progress-container" style={{ width: "80%" }}>
                 <div
                   className="horizontal-line"
@@ -210,54 +197,73 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                   className="progress-icons"
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  {steps.map((step, index) => (
-                    <div
-                      className="icon-container"
-                      key={index}
-                      style={{ flex: 1, textAlign: "center" }}
-                    >
-                      <span className="icon-label" style={{ fontSize: "10px" }}>
-                        {step.label}
-                      </span>
+                  {steps.map((step, index) => {
+                    const isDisabled = step.requiresSubscription && step.requiresMatchingConsumer && subscription !== "active";
+                    const isMatchingConsumerMissing = step.requiresMatchingConsumer && matchingConsumer;
 
-                      {/* Check subscription before allowing navigation */}
-                      {step.requiresSubscription &&
-                      subscription !== "active" ? (
-                        <div
-                          className="icon-circle disabled"
-                          style={{
-                            margin: "0 auto",
-                            cursor: "not-allowed",
-                            opacity: 0.5,
-                          }}
-                          title="Subscribe to access"
-                        >
-                          {React.cloneElement(step.icon, {
-                            style: { fontSize: "16px" },
-                          })}
-                        </div>
-                      ) : (
-                        <Link to={step.path}>
-                          <div
-                            className={`icon-circle ${
-                              index <= currentStepIndex ? "completed" : ""
-                            }`}
-                            style={{
-                              margin: "0 auto",
-                              transform:
-                                index === steps.length - 1
-                                  ? "translateX(10px)"
-                                  : "none",
-                            }}
-                          >
-                            {React.cloneElement(step.icon, {
-                              style: { fontSize: "16px" },
-                            })}
-                          </div>
-                        </Link>
-                      )}
-                    </div>
-                  ))}
+                    return (
+                      <div
+                        className="icon-container"
+                        key={index}
+                        style={{ flex: 1, textAlign: "center" }}
+                      >
+                        <span className="icon-label" style={{ fontSize: "10px" }}>
+                          {step.label}
+                        </span>
+
+                        {isMatchingConsumerMissing ? (
+                          <Tooltip title="Please select matching consumer first">
+                            <div
+                              className="icon-circle disabled"
+                              style={{
+                                margin: "0 auto",
+                                cursor: "not-allowed",
+                                opacity: 0.5,
+                              }}
+                            >
+                              {React.cloneElement(step.icon, {
+                                style: { fontSize: "16px" },
+                              })}
+                            </div>
+                          </Tooltip>
+                        ) : isDisabled ? (
+                          <Tooltip title="Subscribe to access">
+                            <div
+                              className="icon-circle disabled"
+                              style={{
+                                margin: "0 auto",
+                                cursor: "not-allowed",
+                                opacity: 0.5,
+                              }}
+                            >
+                              {React.cloneElement(step.icon, {
+                                style: { fontSize: "16px" },
+                              })}
+                            </div>
+                          </Tooltip>
+                        ) : (
+                          <Link to={step.path}>
+                            <div
+                              className={`icon-circle ${
+                                index <= currentStepIndex ? "completed" : ""
+                              }`}
+                              style={{
+                                margin: "0 auto",
+                                transform:
+                                  index === steps.length - 1
+                                    ? "translateX(10px)"
+                                    : "none",
+                              }}
+                            >
+                              {React.cloneElement(step.icon, {
+                                style: { fontSize: "16px" },
+                              })}
+                            </div>
+                          </Link>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -268,7 +274,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
           <Tooltip title={username}>
             <img
               src={userImage} // User profile image
-              alt="User"
+              alt="User "
               style={{
                 position: "absolute",
                 right: 24,

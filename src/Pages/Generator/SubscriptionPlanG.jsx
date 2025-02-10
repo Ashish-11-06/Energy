@@ -376,7 +376,7 @@ console.log(response);
           open={isQuotationVisible}
           onCancel={closeQuotation}
           footer={[
-            <Button type="primary" htmlType="submit" onClick={handleSubmit}>
+            <Button type="primary" htmlType="submit" onClick={handleGenerateProforma}>
               Generate Performa
             </Button>,
           ]}

@@ -118,41 +118,41 @@ const alreadysubscribed=subscribed?.status;
     },
   ];
 
-  // if (alreadysubscribed) {
-  //   columns.push(
-  //     {
-  //       title: 'Updated',
-  //       dataIndex: 'updated',
-  //       key: 'updated',
-  //       render: (text) => (
-  //         <div style={{ textAlign: 'center' }}>
-  //           {text ? (
-  //             <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
-  //           ) : (
-  //             <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
-  //           )}
-  //         </div>
-  //       ),
-  //     },
-  //     {
-  //       title: 'Action',
-  //       key: 'action',
-  //       width: 100,
-  //       render: (text, record) => (
-  //         <div>
-  //           <Button
-  //             type="primary"
-  //             onClick={() => handleUpdate(record)}
-  //             style={{ width: '120px' }}
-  //           >
+  if (alreadysubscribed) {
+    columns.push(
+      {
+        title: 'Updated',
+        dataIndex: 'updated',
+        key: 'updated',
+        render: (text) => (
+          <div style={{ textAlign: 'center' }}>
+            {text ? (
+              <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
+            ) : (
+              <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
+            )}
+          </div>
+        ),
+      },
+      {
+        title: 'Action',
+        key: 'action',
+        width: 100,
+        render: (text, record) => (
+          <div>
+            <Button
+              type="primary"
+              onClick={() => handleUpdate(record)}
+              style={{ width: '120px' }}
+            >
 
-  //             {record.updated ? 'Edit' : 'Update'}
-  //           </Button>
-  //         </div>
-  //       ),
-  //     }
-  //   );
-  // }
+              {record.updated ? 'Edit' : 'Update'}
+            </Button>
+          </div>
+        ),
+      }
+    );
+  }
 
   const handleAddEntry = (newEntry) => {
     // Handle adding new entries by dispatching an action
@@ -243,6 +243,7 @@ const alreadysubscribed=subscribed?.status;
               <UpdateProfileForm 
           project={selectedRecord}
           form={form} 
+          fromPortfolio={true}
           onCancel={handleCancel}
         />
       </Modal>
