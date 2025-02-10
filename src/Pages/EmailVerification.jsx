@@ -1,11 +1,35 @@
 import React from 'react';
 import { Input, Button, Typography, Form, message, Card } from 'antd';
+import { useDispatch } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { verifyUser } from '../Redux/Slices/userSlice';
 
 const { Text } = Typography;
 
 const EmailVerification = () => {
-  const onFinish = (values) => {
-    message.success('Form submitted successfully');
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { token } = useParams();
+
+
+  const onFinish = async (values) => {
+    if (!token) return; // Early return if no token
+  
+    const data = {
+      token: token,
+      password: values.password
+    };
+  
+    try {
+      const response = await dispatch(verifyUser(data)).unwrap();
+      console.log(response);
+      message.success(response.message || 'Email verified successfully', 8);
+      navigate('/');
+    } catch (err) {
+      console.error(err);
+      message.error(err?.message || err || 'Email verification failed', 5);
+    }
   };
 
   return (

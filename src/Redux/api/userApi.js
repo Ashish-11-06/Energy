@@ -1,3 +1,4 @@
+
 import axiosInstance from './axiosInstance';
 
 const userApi = {
@@ -13,6 +14,9 @@ const userApi = {
     
     getUserById: (id) => {
         return axiosInstance.get(`/users/get/${id}`);
+    },
+    verifyEmail: (data) => {
+        return axiosInstance.post(`/accounts/email/${data.token}`, data);
     },
 
    

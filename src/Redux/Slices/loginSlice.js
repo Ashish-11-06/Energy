@@ -6,9 +6,8 @@ import userApi from '../api/userApi';
 export const loginUser = createAsyncThunk('users/loginUser', async (credentials, { rejectWithValue }) => {
     // console.log('Dispatching loginUser with credentials:', credentials);
     try {
-        const response = await userApi.logInUser(credentials);
         localStorage.clear();
-
+        const response = await userApi.logInUser(credentials);
         // console.log('API response:', response);
         const loginUserResponse = response.data;
         localStorage.setItem('user', JSON.stringify(loginUserResponse));
@@ -21,6 +20,7 @@ export const loginUser = createAsyncThunk('users/loginUser', async (credentials,
 
 export const logoutUser = createAsyncThunk('users/logoutUser', async () => {
     localStorage.removeItem('user');
+    localStorage.clear();
     return {};
 });
 

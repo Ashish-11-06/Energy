@@ -53,19 +53,24 @@ const [isModal,setIsModal] =useState(false);
   return (
     <div
       style={{
-        padding: '20px 50px',
+        padding: '90px 100px',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         color: 'black',
+        height: '100vh',
+        background: 'linear-gradient(to right, rgba(168, 191, 92, 0.57), rgb(196 212 165 / 15%))',
+
       }}
     >
       <div
         style={{
           backgroundColor: '#F5F6FB',
           background: 'linear-gradient(to right, #F5F6FB ,#c4d4a5)',
-          padding: '40px',
+          padding: '60px',
           borderRadius: '10px',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          height: '70vh',
+          width: '100%'
         }}
       >
         <h1 style={{ textAlign: 'center', fontSize: '3rem', marginBottom: '30px', color: '#669800' }}>
@@ -220,7 +225,9 @@ const [isModal,setIsModal] =useState(false);
           </Button>
         </div>
       </div>
-      <TermsAndConditionModal visible={isModal} onCancel={() => setIsModal(false)} />
+      <TermsAndConditionModal visible={isModal} 
+      user_category = {user_category}
+      onCancel={() => setIsModal(false)} />
     </div>
   );
 };

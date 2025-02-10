@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, Button, Tooltip } from "antd";
 import { useNavigate } from "react-router-dom";
 
-const TermsAndConditionModal = ({ visible, onCancel }) => {
+const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
   const handleCheckboxChange = (e) => {
@@ -11,7 +11,7 @@ const TermsAndConditionModal = ({ visible, onCancel }) => {
 
   const handleContinue = () => {
     if (isChecked) {
-      navigate("/consumer/requirement");
+      user_category === 'Consumer'? navigate("/consumer/requirement") : navigate("/generator/portfolio");
     }
   };
   return (

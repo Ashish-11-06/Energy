@@ -68,12 +68,6 @@ const LandingPage = () => {
             if (!user) {
                 throw new Error("Invalid response from server");
             }
-            const response = await dispatch(fetchSubscriptionValidity(id));
-                    setSubscriptionPlanValidity(response.payload);
-                    // console.log(response.payload);
-            
-            localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
-
             if (user?.user_category === 'Generator') {
               navigate(
                   user?.is_new_user 
@@ -89,6 +83,12 @@ const LandingPage = () => {
                   { state: { isNewUser: user?.is_new_user } }
               );
           }
+
+            const response = await dispatch(fetchSubscriptionValidity(id));
+                    setSubscriptionPlanValidity(response.payload);
+                    // console.log(response.payload);
+            
+            localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
           
         } else {
             // console.error('Login failedklaksdlfklaskdlk:', resultAction.payload);
@@ -161,12 +161,10 @@ const LandingPage = () => {
         <div className="overlay" style={{ backgroundColor: 'rgba(3, 110, 11, 0.5)', backdropFilter: 'blur(5px)' }}></div>
 
         <div className="content-container">
-          <div className="logo-container">
-            <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
-          </div>
+         
           <div className="text-content" style={{ marginLeft: '10px' }}>
             <h2 className="animated-text">{animatedText}</h2>
-            <ul style={{marginLeft:'30%'}}>
+            <ul >
               {/* <Row>
                 <Col span={12}> */}
               <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Comprehensive energy marketplace</li>
@@ -186,8 +184,13 @@ const LandingPage = () => {
 
           </div>
 
+          <div className="logo-container">
+            <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
+          </div>
+          
           {/* Login Box */}
           <div className="login-box">
+            
             <h2 className="login-title"><UserOutlined /> Login</h2> 
             <Form
               name="login"

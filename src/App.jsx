@@ -76,12 +76,12 @@ function App() {
 
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="email" element={<EmailVerification />} />
+        <Route path="email/:token" element={<EmailVerification />} />
+          <Route path="what-we-offer" element={<WhatWeOffer />} />
 
         {/* Routes with shared layout */}
         <Route element={<LayoutComponent />}>
           <Route path="offers" element={<OfferRecieved />} />
-          <Route path="what-we-offer" element={<WhatWeOffer />} />
           <Route path="transaction-page" element={<TransactionMainPage />} />
 
           {/* Consumer Routes */}

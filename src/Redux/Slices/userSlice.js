@@ -15,6 +15,19 @@ export const registerUser = createAsyncThunk( 'registerUser/registerUser', async
         }
     }
 );
+export const verifyUser = createAsyncThunk( 'registerUser/verifyUser', async (data, { rejectWithValue }) => {
+        try {
+            // Call your API for user registration
+            const response = await userApi.verifyEmail(data); // Replace with your actual API call
+            console.log(response);
+            return response.data; // Return the response from the API (user data or token)
+        } catch (error) {
+            // Handle any error during the registration process
+            console.log(error.response.data.error);
+            return rejectWithValue(error.response.data.error ? error.response.data.error : 'Failed to verify Email');
+        }
+    }
+);
 
 // Register User Slice
 const registerUserSlice = createSlice({
@@ -32,25 +45,40 @@ const registerUserSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // Handle pending state
+            // Handle registerUser actions
             .addCase(registerUser.pending, (state) => {
                 state.status = 'loading';
                 state.loading = true;
                 state.error = null;
             })
-            // Handle fulfilled state
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.loading = false;
-                state.user = action.payload;  // Store the user data returned from the API
+                state.user = action.payload;
             })
-            // Handle rejected state
             .addCase(registerUser.rejected, (state, action) => {
                 state.status = 'failed';
                 state.loading = false;
-                state.error = action.payload || 'Registration failed';  // Store the error message
+                state.error = action.payload || 'Registration failed';
+            })
+    
+            // Handle verifyUser actions
+            .addCase(verifyUser.pending, (state) => {
+                state.status = 'loading';
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(verifyUser.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.loading = false;
+                state.user = { ...state.user, isVerified: true }; // Mark user as verified
+            })
+            .addCase(verifyUser.rejected, (state, action) => {
+                state.status = 'failed';
+                state.loading = false;
+                state.error = action.payload || 'Email verification failed';
             });
-    },
+    },    
 });
 
 // Action exports
