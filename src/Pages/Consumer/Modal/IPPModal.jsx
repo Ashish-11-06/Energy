@@ -8,8 +8,8 @@ const { Title, Text } = Typography;
 const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
-  console.log('ipp', ipp);
-  
+  console.log(ipp.states);
+
   const showQuotationModal = () => {
     setIsQuotationModalVisible(true);
     onRequestForQuotation();
@@ -18,63 +18,64 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
 
   const dataSource = [
     { key: '1', label: 'RE Index', value: reIndex },
-    { key: '2', label: 'Contracted Energy (million unit)', value: ipp?.annual_demand_met },
-    { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement },
-    { key: '4', label: 'Per Unit Cost (INR/KWh)', value: ipp?.perUnitCost },
-    { key: '5', label: 'OA Cost (INR/KWh)', value: ipp?.OACost },
-    { key: '6', label: 'Total Cost (INR/KWh)', value: ipp?.totalCost },
-    { key: '7', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : '', },
-    { key: '8', label: 'Connectivity', value: ipp?.connectivity },
-    { key: '9', label: 'Total Capacity (MW)', value: ipp?.totalCapacity },
+    { key: '2', label: 'Contracted Energy (million unit)', value: ipp?.annual_demand_met || 0 },
+    { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
+    { key: '4', label: 'Per Unit Cost (INR/KWh)', value: ipp?.perUnitCost || "N/A" },
+    { key: '5', label: 'OA Cost (INR/KWh)', value: ipp?.OACost || "N/A" },
+    { key: '6', label: 'Total Cost (INR/KWh)', value: ipp?.totalCost || "N/A" },
+    { key: '7', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
+    { key: '8', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
+    { key: '9', label: 'Total Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
   ];
 
-const annualDemand=ipp?.annualDemand;
-console.log('annual deman',annualDemand);
-
-  const stateMapping = {
-    Solar: 'Solar_1',
-    Wind: 'Wind_1',
-    ESS: 'ESS_1',
+  const mapToBaseType = (value) => {
+    if (!value) return null;
+    const baseTypes = {
+      Solajkjr: ['Solar_1', 'Solar_2', 'Solar_3'],
+      Wind: ['Wind_1', 'Wind_2', 'Wind_3'],
+      ESS: ['ESS_1', 'ESS_2', 'ESS_3'],
+    };
+    return Object.keys(baseTypes).find((key) => 
+      baseTypes[key].some((item) => item.startsWith(value.split('_')[0]))
+    ) || null;
   };
 
+  const getStateForTechnology = (techName) => {
+    if (!techName || !ipp?.states) return "N/A";
+    
+    // Find the first matching state key that starts with the technology name
+    const matchingStateKey = Object.keys(ipp.states).find((stateKey) =>
+      stateKey.startsWith(techName)
+    );
+  
+    return matchingStateKey ? ipp.states[matchingStateKey] : "N/A";
+  };
+  
   const technologyData = ipp?.technology.map((tech, index) => ({
     key: index,
     name: tech.name,
     capacity: tech.capacity,
-    state: ipp?.states?.[stateMapping[tech.name]] || "N/A",
+    state: getStateForTechnology(tech.name),
   }));
+  
+
+  console.log(ipp?.technology);
 
   const technologyColumns = [
-    {
-      title: 'Technology',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Capacity',
-      dataIndex: 'capacity',
-      key: 'capacity',
-    },
-    {
-      title: 'State',
-      dataIndex: 'state',
-      key: 'state',
-    },
+    { title: 'Technology', dataIndex: 'name', key: 'name' },
+    { title: 'Capacity', dataIndex: 'capacity', key: 'capacity' },
+    { title: 'State', dataIndex: 'state', key: 'state' },
   ];
 
   return (
     <div>
-      {/* Main Project Details Modal */}
       <Modal
         open={visible}
         onCancel={onClose}
         footer={null}
         width={700}
         centered
-        style={{
-          borderRadius: "1px",
-          fontFamily: "'Inter', sans-serif",
-        }}
+        style={{ borderRadius: "1px", fontFamily: "'Inter', sans-serif" }}
       >
         <Row justify="center" align="middle" gutter={[16, 16]}>
           <Col span={24}>
@@ -116,7 +117,6 @@ console.log('annual deman',annualDemand);
                 pagination={false}
                 bordered
                 size="small"
-                // style={{ marginBottom: "2px" }}
               />
             </Card>
           </Col>
@@ -124,7 +124,7 @@ console.log('annual deman',annualDemand);
           <Col span={24} style={{ textAlign: "center" }}>
             <Button
               type="primary"
-              onClick={showQuotationModal} // Show Request for Quotation Modal
+              onClick={showQuotationModal}
               style={{
                 backgroundColor: "#669800",
                 borderColor: "#669800",
@@ -142,7 +142,6 @@ console.log('annual deman',annualDemand);
         </Row>
       </Modal>
 
-      {/* Quotation Request Modal */}
       <RequestForQuotationModal
         visible={isQuotationModalVisible}
         onCancel={handleQuotationCancel}
