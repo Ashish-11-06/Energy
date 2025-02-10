@@ -114,9 +114,11 @@ const CombinationPattern = () => {
           connectivity: combination.connectivity,
           states: combination.state,
 
-          status: combination.terms_sheet_sent
-            ? "Already Sent"
-            : "Send Quotation",
+          status: combination?.terms_sheet_sent 
+          ? (combination?.sent_from_you === 1 ? "Already Sent" : "Already received") 
+          : "Send Quotation",
+                  
+        
         };
       }
     );

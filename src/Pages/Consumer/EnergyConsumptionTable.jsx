@@ -66,12 +66,14 @@ const EnergyConsumptionTable = () => {
   const [showFileUploadTable, setShowFileUploadTable] = useState(false); // State to control file upload table visibility
   const [saveSuccess, setSaveSuccess] = useState(false); // State to track save success
   const [saveError, setSaveError] = useState(false); // State to track save error
-
+const [temp,setTemp]=useState('');
   const user = JSON.parse(localStorage.getItem("user")).user;
 
   const currentYear = new Date().getFullYear(); // Get the current year
   const lastYear = currentYear - 1; // Calculate the last year
   const lastYearCurrentYear = `${lastYear}-${currentYear.toString().slice(-2)}`
+
+  console.log(isActionCompleted);
 
   console.log(user.role);
 
@@ -96,7 +98,7 @@ const EnergyConsumptionTable = () => {
     setShowTable((prevShowTable) => !prevShowTable);
     setShowFileUploadTable(false); // Close file upload table
     setActiveButton("details");
-    setIsActionCompleted(true); // Mark action as completed
+    // setIsActionCompleted(true); // Mark action as completed/
   };
 
   const handleScadaUpload = async (file) => {
@@ -122,6 +124,7 @@ const EnergyConsumptionTable = () => {
 
     return false; // Prevent automatic upload
   };
+
 
   const handleCSVUpload = async (file) => {
     try {
@@ -238,8 +241,9 @@ useEffect(() => {
       try {
         const response = await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
         const temp = response.length;
+        setTemp(response.length)
         console.log(temp);
-        if (temp < 0){
+        if (temp > 0){
           // console.log('helli');
           
           setShowTable(true);
@@ -250,7 +254,7 @@ useEffect(() => {
     }
   };
 
-  fetchData();
+  fetchData(); 
 }, [requirementId, dispatch]);
   // Update dataSource when monthlyData is fetched
   useEffect(() => {
@@ -956,14 +960,17 @@ useEffect(() => {
           }
           placement="top"
         >
+         
           <Button
             type="primary"
             onClick={handleContinue}
-            disabled={!isActionCompleted} // Enable only if an action is completed
+            disabled={monthlyData.length<1} // Enable only if an action is completed
             style={{ marginLeft: "86%", marginTop: "8px" }}
           >
-            Continue {`>>`}
+            Continue {`>`}
           </Button>
+     
+
         </Tooltip>
           </>
         ):(
@@ -976,14 +983,26 @@ useEffect(() => {
           }
           placement="top"
         >
+            {temp>0 ? (
           <Button
             type="primary"
             onClick={handleContinue}
-            disabled={!dataSource} // Enable only if an action is completed
+            // disabled={!dataSource} // Enable only if an action is completed
             style={{ marginLeft: "86%", marginTop: "8px" }}
           >
             Continue {`>>`}
           </Button>
+            ):(
+
+          <Button
+            type="primary"
+            onClick={handleContinue}
+            style={{ marginLeft: "86%", marginTop: "8px" }}
+            disabled={false}
+            >
+            Continue {`>>`}
+            </Button>
+            )}
         </Tooltip>
           </>
         )}
