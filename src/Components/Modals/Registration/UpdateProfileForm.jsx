@@ -225,12 +225,13 @@ if (userData && userData.user) {
           <Form.Item
             name="state"
             label="State"
+            disabled
             rules={[{ required: true, message: "Please input the state!" }]}
           >
-            <Select placeholder="Select your state" showSearch>
+            <Select placeholder="Select your state" showSearch disabled>
               {isState &&
                 isState.map((state, index) => (
-                  <Select.Option key={index} value={state}>
+                  <Select.Option key={index} value={state} >
                     {state}
                   </Select.Option>
                 ))}
@@ -303,7 +304,7 @@ if (userData && userData.user) {
             label="COD"
             rules={[{ required: true, message: "Please input the COD!" }]}
           >
-            <DatePicker format={'DD/MM/YYYY'} style={{ width: "100%" }} />
+            <DatePicker format={'DD/MM/YYYY'} style={{ width: "100%" }} disabled />
           </Form.Item>
         </Col>
         {type !== "ESS" && (

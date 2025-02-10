@@ -228,16 +228,16 @@ console.log('payment data',paymentData);
                     <td>₹ ${selectedPlan?.subscription?.price ?? 'NA'}</td>
                 </tr>
                 <tr>
-                    <td>Discount (DISC10 - 10.00%)</td>
+                    <td>Discount </td>
                     <td>-</td>
                     <td>-</td>
-                    <td>₹ ${selectedPlan?.subscription?.price * 0.10 ?? '0'}</td>
+                    <td>-</td>
                 </tr>
                 <tr>
                     <td><strong>Sub Total</strong></td>
                     <td>-</td>
                     <td>-</td>
-                    <td><strong>₹${selectedPlan?.subscription?.price - selectedPlan?.subscription?.price * 0.10 ?? '0'}</strong></td>
+                    <td><strong>₹ ${selectedPlan?.subscription?.price ?? '0'}</strong></td>
                 </tr>
                 <tr>
                     <td>GST</td>
@@ -277,7 +277,7 @@ console.log('payment data',paymentData);
                     <td><strong>Balance</strong></td>
                     <td>-</td>
                     <td>-</td>
-                    <td><strong>₹ 560</strong></td>
+                    <td><strong>₹ ${selectedPlan?.subscription?.price ?? '0'}</strong></td>
                 </tr>
             </table>
         </div>

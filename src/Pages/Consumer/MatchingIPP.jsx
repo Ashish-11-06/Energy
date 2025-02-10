@@ -51,7 +51,7 @@ const MatchingIPP = () => {
     
     setSelectedRow(record); // Only allow single selection
   }
-  console.log('selectedRow',selectedRow); 
+  // console.log('selectedRow',selectedRow); 
   const handleContinue = () => {
     if (selectedRow) {
       const requirementId = location.state?.selectedRequirement?.id;

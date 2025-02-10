@@ -159,7 +159,7 @@ const Dashboard = () => {
                     }}
                     suffix={
                       <span style={{ fontSize: "20px", marginLeft: "5px" }}>
-                        kWh
+                        
                       </span>
                     }
                   />
