@@ -954,7 +954,7 @@ useEffect(() => {
           <>
            <Tooltip
           title={
-            !isActionCompleted
+            monthlyData.length<1
               ? "Please fill the details or upload any file"
               : "Proceed to the next step"
           }
@@ -967,7 +967,7 @@ useEffect(() => {
             disabled={monthlyData.length<1} // Enable only if an action is completed
             style={{ marginLeft: "86%", marginTop: "8px" }}
           >
-            Continue {`>`}
+            Continue {`>>`}
           </Button>
      
 

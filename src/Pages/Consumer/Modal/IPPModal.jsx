@@ -8,7 +8,7 @@ const { Title, Text } = Typography;
 const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
-  console.log('ipp', ipp);
+  // console.log('ipp', ipp);
   
   const showQuotationModal = () => {
     setIsQuotationModalVisible(true);
@@ -16,9 +16,10 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
   };
   const handleQuotationCancel = () => setIsQuotationModalVisible(false);
 
+
   const dataSource = [
-    { key: '1', label: 'RE Index', value: reIndex },
-    { key: '2', label: 'Contracted Energy (million unit)', value: ipp?.annual_demand_met },
+    { key: '1', label: 'RE Index', value: reIndex ?? 0 },
+    { key: '2', label: 'Contracted Energy (million unit)', value: ipp?.annual_demand_met ?? 0 },
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement },
     { key: '4', label: 'Per Unit Cost (INR/KWh)', value: ipp?.perUnitCost },
     { key: '5', label: 'OA Cost (INR/KWh)', value: ipp?.OACost },
@@ -29,7 +30,7 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
   ];
 
 const annualDemand=ipp?.annualDemand;
-console.log('annual deman',annualDemand);
+// console.log('annual deman',annualDemand);
 
   const stateMapping = {
     Solar: 'Solar_1',
