@@ -145,7 +145,7 @@ const TransactionWindow = () => {
     sendEvent("rejectOffer", messageToSend);
 
     message.error(`Transaction rejected`);
-    navigate('/consumer/transaction-page');
+    navigate('/transaction-page');
   };
 
   const handleDownloadTransaction = async () => {

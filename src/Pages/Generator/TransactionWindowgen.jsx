@@ -81,28 +81,28 @@ const TransactionWindowgen = () => {
           console.log("newOffers", newOffers);
           setMessages(prevMessages => {
             const updatedMessages = [...prevMessages]; // Start with a copy of the previous messages
-        
+
             // Iterate over the keys in the new offers
             for (const offerKey in newOffers) {
-                if (newOffers.hasOwnProperty(offerKey)) {
-                    // Check if the key already exists in any of the existing messages
-                    const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
-        
-                    if (existingMessageIndex !== -1) {
-                        // Update the existing message
-                        updatedMessages[existingMessageIndex][offerKey] = {
-                            ...updatedMessages[existingMessageIndex][offerKey],
-                            ...newOffers[offerKey],
-                        };
-                    } else {
-                        // If the key does not exist, you can choose to add it as a new message
-                        updatedMessages.push({ [offerKey]: newOffers[offerKey] });
-                    }
+              if (newOffers.hasOwnProperty(offerKey)) {
+                // Check if the key already exists in any of the existing messages
+                const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
+
+                if (existingMessageIndex !== -1) {
+                  // Update the existing message
+                  updatedMessages[existingMessageIndex][offerKey] = {
+                    ...updatedMessages[existingMessageIndex][offerKey],
+                    ...newOffers[offerKey],
+                  };
+                } else {
+                  // If the key does not exist, you can choose to add it as a new message
+                  updatedMessages.push({ [offerKey]: newOffers[offerKey] });
                 }
+              }
             }
-        
+
             return updatedMessages; // Return the updated messages array
-        });
+          });
         }
       } catch (error) {
         console.error("❌ Error parsing message:", error);
@@ -121,30 +121,30 @@ const TransactionWindowgen = () => {
 
   // console.log(messages);
 
-    // Handler for sending the tariff value
-    const handleSendTariff = () => {
-      if (tariffValue !== null) {
-        // Show confirmation modal
-        Modal.confirm({
-          title: "Confirm Tariff Value",
-          content: `Are you sure you want to send the tariff value: ${tariffValue} INR/KWH?`,
-          onOk: () => {
-            console.log("Sending Tariff Value: ", tariffValue);
-            // Send the tariff value after confirmation
-            const messageToSend = {
-              updated_tariff: tariffValue,
-            };
-            sendEvent(messageToSend);
-          },
-          onCancel: () => {
-            console.log("Tariff value sending cancelled");
-          },
-        });
-      } else {
-        console.error("Please enter a valid tariff value");
-      }
-    };
-    
+  // Handler for sending the tariff value
+  const handleSendTariff = () => {
+    if (tariffValue !== null) {
+      // Show confirmation modal
+      Modal.confirm({
+        title: "Confirm Tariff Value",
+        content: `Are you sure you want to send the tariff value: ${tariffValue} INR/KWH?`,
+        onOk: () => {
+          console.log("Sending Tariff Value: ", tariffValue);
+          // Send the tariff value after confirmation
+          const messageToSend = {
+            updated_tariff: tariffValue,
+          };
+          sendEvent(messageToSend);
+        },
+        onCancel: () => {
+          console.log("Tariff value sending cancelled");
+        },
+      });
+    } else {
+      console.error("Please enter a valid tariff value");
+    }
+  };
+
 
   useEffect(() => {
     // Sort IPP data by ascending value of tariff offer
@@ -249,12 +249,13 @@ const TransactionWindowgen = () => {
                 <Countdown title="Time Remaining" value={deadline} />
               </span>
             </Row>
-            <div style={{ color: '#9A8406',
-          marginRight: '10px'
-          }}>
-            
-            You can submit/update tariffs within the specified time frame. After one hour, the consumer will decide which offer to select.
-</div>
+            <div style={{
+              color: '#9A8406',
+              marginRight: '10px'
+            }}>
+
+              You can submit/update tariffs within the specified time frame. After one hour, the consumer will decide which offer to select.
+            </div>
 
             <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
           </div>
@@ -270,23 +271,37 @@ const TransactionWindowgen = () => {
                 messages.map((messageObject, index) => {
                   // Iterate over each key in the messageObject
                   return Object.keys(messageObject).map((msgKey) => {
-                      const msg = messageObject[msgKey]; // Access the message using the key
-          
-                      // Validate the message object
-                      if (msg && typeof msg === 'object') {
-                          return (
-                              <Card key={msg.id || index} style={{ marginBottom: "10px" }}>
-                                  <Text strong>Event: </Text> {msg.generator_username} <br />
-                                  <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/KWH <br />
-                                  <Text strong>Time: </Text> {moment(msg.timestamp).format("hh:mm A")}
-                              </Card>
-                          );
-                      } else {
-                          console.warn("Invalid message format:", messageObject);
-                          return null; // Return null if the message format is invalid
-                      }
+                    const msg = messageObject[msgKey]; // Access the message using the key
+
+                    // Validate the message object
+                    if (msg && typeof msg === 'object') {
+                      return (
+                        <Card
+                          key={msg.id || index}
+                          style={{
+                            marginBottom: "10px",
+                            // padding: "10px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start" // Aligns text to start
+                          }}
+                        >
+                          <div>
+                            <Text strong>IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span> </Text>
+                            <Text style={{ margin: '150px' }} strong>Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span></Text>
+                            <Text strong>Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span> </Text>
+                          </div>
+
+
+                        </Card>
+                      );
+                    } else {
+                      console.warn("Invalid message format:", messageObject);
+                      return null; // Return null if the message format is invalid
+                    }
                   });
-              })
+                })
               )
             )}
           </div>
@@ -295,26 +310,27 @@ const TransactionWindowgen = () => {
 
           {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button> */}
-         <Row style={{ marginLeft: '60%' }}>
-         <div style={{ color: '#9A8406',
-          marginRight: '10px'
-          }}>
-    tariff is in INR/KWH
-</div>
-      <InputNumber
-        style={{ backgroundColor: 'white', width: '100px' }}
-        placeholder="Enter tariff value"
-        value={tariffValue}
-        onChange={handleTariffChange}
-      />
-      <Button
-        style={{ marginLeft: '3%' }}
-        onClick={handleSendTariff}
-        disabled={tariffValue === null || tariffValue <= 0}
-      >
-        Send Tariff
-      </Button>
-    </Row>
+          <Row style={{ marginLeft: '60%' }}>
+            <div style={{
+              color: '#9A8406',
+              marginRight: '10px'
+            }}>
+              tariff is in INR/KWH
+            </div>
+            <InputNumber
+              style={{ backgroundColor: 'white', width: '100px' }}
+              placeholder="Enter tariff value"
+              value={tariffValue}
+              onChange={handleTariffChange}
+            />
+            <Button
+              style={{ marginLeft: '3%' }}
+              onClick={handleSendTariff}
+              disabled={tariffValue === null || tariffValue <= 0}
+            >
+              Send Tariff
+            </Button>
+          </Row>
         </Card>
 
       </Row>
