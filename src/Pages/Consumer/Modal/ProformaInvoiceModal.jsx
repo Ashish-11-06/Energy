@@ -7,6 +7,7 @@ import {
     createRazorpayOrder,
     completeRazorpayPayment,
   } from '../../../Redux/Slices/Consumer/paymentSlice'; // Import payment actions
+import { useNavigate } from "react-router-dom";
 const ProformaInvoiveModal = ({ open,onCancel,selectedPlan ,selectedPlanId,fromSubscription }) => {
     const userData =JSON.parse(localStorage.getItem("user")).user;
  const userId=userData?.id;
@@ -15,6 +16,7 @@ const ProformaInvoiveModal = ({ open,onCancel,selectedPlan ,selectedPlanId,fromS
 // //  console.log(selected_plan);
 //  const invoiceDetails=selectedPlan;
 
+const navigate = useNavigate();
  
  
 
@@ -312,17 +314,18 @@ console.log('payment data',paymentData);
           footer={[
           
             selectedPlan?.subscription?.subscription_type === "LITE" || selectedPlan?.subscription?.subscription_type === "PRO" ? (
-  
-  
               <>
-              
+              {(selectedPlan?.payment_status === 'paid')?
+              (
                 <Button key="download" type="primary" onClick={handleDownloadPDF}>
                   Download PDF
                 </Button>
+              ):(
                 <Button key="generate" type="primary" onClick={handlePayment}>
-                  Proceed to Payment
-                </Button>
-  
+                Proceed to Payment
+              </Button>
+              )
+            }
               </>
             ) : (
               <>
