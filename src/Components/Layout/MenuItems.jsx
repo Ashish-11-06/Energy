@@ -41,7 +41,7 @@ export const consumerMenuItems = [
 export const generatorMenuItems = [
   { key: '8', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} />, label: <Link to="/generator/dashboard">Dashboard</Link> },
   { key: '9', icon: <SolutionOutlined style={{color:'#669800', fontWeight:'900', height:'30px',width:'30px'}}/>, label: <Link to="/generator/portfolio">Portfolio</Link> },
-  { key: '10', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/portfolio">Transaction Window</Link> },
+  { key: '10', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/transaction-page">Transaction Window</Link> },
   { key: '11', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }}/> , label: <Link to="/offers">Offers</Link> },
   // { key: '17', icon: <TeamOutlined />, label: <Link to="/generator/matching-consumer">Matching Consumer</Link> },
   // { key: '18', icon: <ControlOutlined />, label: <Link to="/generator/energy-optimization">Energy Optimization</Link> },

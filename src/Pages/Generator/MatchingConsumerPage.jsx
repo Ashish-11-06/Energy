@@ -158,7 +158,7 @@ const MatchingConsumerPage = () => {
       if(subscriptionPlan.status === 'active') {
         navigate('/generator/update-profile-details', { state: { selectedConsumer } }); // Pass selected consumer as state
       } else {
-        navigate('/generator/subscription-plan');
+        navigate('/subscription-plan');
       }
       } else {
       message.error('Please select a consumer before proceeding.');

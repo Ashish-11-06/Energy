@@ -338,7 +338,7 @@ let temp='';
                   </Button>
                   <Button
                     style={{ marginLeft: "10px" }}
-                    onClick={() => handleStatusUpdate("Accepted")}
+                    onClick={handleTarrif}
                   >
                     Accept
                   </Button>
@@ -458,7 +458,7 @@ let temp='';
           onCancel={onTarrifCancel} // The close (✖) icon will still work
           footer={null} // Removes the Cancel and OK buttons
         >
-          <p>{`(If you negotiate the tariff, you can't change the terms and conditions. It will accept automatically and offer tariff send to ${temp})`}</p>
+          <p>{`(If you negotiate the tariff, you can't change the terms and conditions. It will accept and offer tariff send to ${temp})`}</p>
           <InputNumber
             style={{ width: "60%" }}
             value={offerTariff}

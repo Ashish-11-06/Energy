@@ -16,6 +16,8 @@ import AddUserModal from "./Modal/AddUserModal";
 import { render } from "less";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Navigate, useNavigate } from "react-router-dom";
+import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
+import { useDispatch } from "react-redux";
 
 const { Title, Text } = Typography;
 
@@ -25,14 +27,20 @@ const ProfilePage = () => {
   const [editableData, setEditaleData] = useState("");
   const [editValue, setEditValue] = useState(false);
   const [form] = Form.useForm();
+    const dispatch = useDispatch();
+   const [userDataSource, setUserDataSource] = useState([]);
+
+  
   // Retrieve user data safely from localStorage
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
+const userId = initialUserData.id;
+console.log(userId);
 
   const navigate = useNavigate();
 
   const role = initialUserData.role;
-  console.log(role);
+  // console.log(role);
   const [userData, setUserData] = useState(initialUserData);
 
   // Retrieve subscription plan safely from localStorage
@@ -52,12 +60,24 @@ const ProfilePage = () => {
     : "N/A";
 
   // Initial users list
-  const [userDataSource, setUserDataSource] = useState([
-    { key: 1, username: "abc", email: "abc@gmail.com", role: "Admin" },
-    { key: 2, username: "def", email: "def@gmail.com", role: "Management" },
-    { key: 3, username: "ghi", email: "ghi@gmail.com", role: "Edit" },
-    { key: 4, username: "pqr", email: "pqr@gmail.com", role: "View" },
-  ]);
+  // const [userDataSource, setUserDataSource] = useState([
+  //   { key: 1, username: "abc", email: "abc@gmail.com", role: "Admin" },
+  //   { key: 2, username: "def", email: "def@gmail.com", role: "Management" },
+  //   { key: 3, username: "ghi", email: "ghi@gmail.com", role: "Edit" },
+  //   { key: 4, username: "pqr", email: "pqr@gmail.com", role: "View" },
+  // ]);
+
+useEffect(() => {
+  try{
+
+   const res= dispatch(fetchSubUserById(userId));
+   console.log(res);
+   setUserData(res);
+   } catch (error) {
+    console.error("Failed to fetch user data:", error);
+   
+  }
+}, [dispatch,userId]);
 
   const handleEditToggle = () => setIsModalVisible(true);
   const handleCancel = () => setIsModalVisible(false);
