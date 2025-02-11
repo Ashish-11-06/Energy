@@ -1,7 +1,7 @@
 let socket = null; // Explicitly initialize socket as null
 
-const SOCKET_URL = 'ws://127.0.0.1:8000';
-const SOCKET_PATH = '/api/energy/ws/negotiation/';
+const SOCKET_URL = 'ws://192.168.1.35:8001';
+const SOCKET_PATH = '/api/energy/ws/test-negotiation/';
 const FULL_URL = SOCKET_URL + SOCKET_PATH;
 
     export const connectWebSocket = (user_id, tariff_id) => {
