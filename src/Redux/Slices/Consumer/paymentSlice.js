@@ -5,7 +5,7 @@ export const createRazorpayOrder = createAsyncThunk(
   "payment/createOrder",
   async ({ amount, currency }, { rejectWithValue }) =>{
     try {
-      const response = await fetch("http://192.168.1.36:8001/api/energy/create-order", {
+      const response = await fetch("http://192.168.1.35:8001/api/energy/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json"},
         body: JSON.stringify({ amount, currency }), 
@@ -27,7 +27,7 @@ export const completeRazorpayPayment = createAsyncThunk(
   async (paymentData, { rejectWithValue }) => {
     try {
       console.log("Sending payment data:", paymentData); // Log payment data
-      const response = await fetch("http://192.168.1.36:8001/api/energy/payment-transaction-complete", {
+      const response = await fetch("http://192.168.1.35:8001/api/energy/payment-transaction-complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...paymentData, user: paymentData.user }), // Ensure user field is included

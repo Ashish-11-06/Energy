@@ -46,6 +46,8 @@ const CombinationPattern = () => {
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const role=user.role;
+  // console.log(user.id);
+  const user_id = user.id;
 
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
@@ -288,6 +290,7 @@ const CombinationPattern = () => {
       setFetchingCombinations(true);
 
       const modalData = {
+        user_id: user_id,
         requirement_id: selectedDemandId,
         optimize_capacity_user: user.user_category,
         re_replacement: sliderValue,

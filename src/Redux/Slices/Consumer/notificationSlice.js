@@ -6,9 +6,9 @@ import notificationApi from "../../api/consumer/notificationApi";
 // Async thunk for fetching data
 export const fetchNotificationById = createAsyncThunk(
   "notification/fetchById",
-  async (requirementId, { rejectWithValue }) => {
+  async (userId, { rejectWithValue }) => {
     try {
-      const response = await notificationApi.notification(requirementId);
+      const response = await notificationApi.notification(userId);
       if (response.status === 200 && response.data) {
         return response.data; // Ensure response contains valid data
       }
