@@ -162,6 +162,7 @@ const SubscriptionPlans = () => {
       const response = await dispatch(
         createPerformaById({ id: userId, performaData })
       ).unwrap();
+      setPerformaResponse(response);
       message.success("Performa invoice generated successfully!");
       setHtmlContent(`
         <!DOCTYPE html>

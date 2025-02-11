@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Typography,message } from "antd";
+import { Modal, Button, Typography, message } from "antd";
 import { useDispatch } from "react-redux";
 import html2canvas from "html2canvas";
-import jsPDF from "jspdf"; 
+import jsPDF from "jspdf";
 import {
-    createRazorpayOrder,
-    completeRazorpayPayment,
-  } from '../../../Redux/Slices/Consumer/paymentSlice'; // Import payment actions
+  createRazorpayOrder,
+  completeRazorpayPayment,
+} from '../../../Redux/Slices/Consumer/paymentSlice'; // Import payment actions
 import { useNavigate } from "react-router-dom";
-const ProformaInvoiveModal = ({ open,onCancel,selectedPlan ,selectedPlanId,fromSubscription }) => {
-    const userData =JSON.parse(localStorage.getItem("user")).user;
- const userId=userData?.id;
-//  console.log(selectedPlan);
-//  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
-// //  console.log(selected_plan);
-//  const invoiceDetails=selectedPlan;
+const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fromSubscription }) => {
+  const userData = JSON.parse(localStorage.getItem("user")).user;
+  const userId = userData?.id;
+  //  console.log(selectedPlan);
+  //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
+  // //  console.log(selected_plan);
+  //  const invoiceDetails=selectedPlan;
 
-const navigate = useNavigate();
- 
- 
+  const navigate = useNavigate();
 
-//   const user = JSON.parse(localStorage.getItem("user")).user;
-//   console.log(user_category)ś;
-const dispatch=useDispatch();
-const handleDownloadPDF = async () => {
+
+
+  //   const user = JSON.parse(localStorage.getItem("user")).user;
+  //   console.log(user_category)ś;
+  const dispatch = useDispatch();
+  const handleDownloadPDF = async () => {
     const container = document.queryśSelector(".container"); // Select the main container
-        if (!container) {
+    if (!container) {
       console.error("Container element not found.");
-      return;ś
+      return; ś
     }
 
     try {
@@ -76,7 +76,7 @@ const handleDownloadPDF = async () => {
       ).unwrap();
 
       if (orderResponse?.data?.id) {
-        
+
         const options = {
           key: "rzp_test_bVfC0PJsvP9OUR",
 
@@ -88,21 +88,21 @@ const handleDownloadPDF = async () => {
           handler: async (response) => {
             const paymentData = {
               user: userId,
-              invoice:selectedPlan.id,
+              invoice: selectedPlan.id,
               order_id: orderResponse.data.id,
               payment_id: response.razorpay_payment_id,
               signature: response.razorpay_signature,
               amount: orderResponse.data.amount,
               subscription: selectedPlanId,
             };
-console.log('payment data',paymentData);
+            console.log('payment data', paymentData);
 
             try {
               const completeResponse = await dispatch(
                 completeRazorpayPayment(paymentData)
               ).unwrap();
               console.log(completeResponse);
-              
+
               if (completeResponse) {
                 message.success("Payment successful! Subscription activated.");
                 setIsProformaVisible(false);
@@ -137,14 +137,17 @@ console.log('payment data',paymentData);
   };
 
   const handleFreeContinue = () => {
-    navigate("/consumer/energy-consumption-table");
+
+  userData?.user_category === 'Consumer' ?
+    navigate("/consumer/energy-consumption-table"):
+    navigate("/generator/update-profile-details")
   };
 
   const closeProforma = () => {
     setIsProformaVisible(false);
   };
 
-  const htmlContent=`
+  const htmlContent = `
         <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -196,7 +199,7 @@ console.log('payment data',paymentData);
 </head>
 <body>
     <div class="container">
-        <h2>Proforma Invoice #102213</h2>
+        <h2>${selectedPlan?.invoice_number}</h2>
         <div class="header" style="text-align: right;">
             <h3>EXGGLOBAL</h3>
             <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
@@ -208,7 +211,7 @@ console.log('payment data',paymentData);
 
         <div class="details">
             <h3>Invoiced To:</h3>
-            <p><strong>${selectedPlan?.company_name?? 'NA'}</strong><br>
+            <p><strong>${selectedPlan?.company_name ?? 'NA'}</strong><br>
               Address: ${selectedPlan?.company_address ?? 'NA'}<br>
               GSTIN: ${selectedPlan?.gst_number ?? 'NA'}<br>
            </p>
@@ -251,9 +254,9 @@ console.log('payment data',paymentData);
                                 <th>IGST</th>
                             </tr>
                             <tr>
-                                <td>${selectedPlan?.cgst?? '--'}</td>
-                                <td>${selectedPlan?.sgst?? '--'}</td>
-                                <td>${selectedPlan?.igst?? '--'}</td>
+                                <td>${selectedPlan?.cgst ?? '--'}</td>
+                                <td>${selectedPlan?.sgst ?? '--'}</td>
+                                <td>${selectedPlan?.igst ?? '--'}</td>
                             </tr>
                         </table>
                     </td>
@@ -306,54 +309,67 @@ console.log('payment data',paymentData);
       `
 
   return (
-  <Modal
-          title="Proforma Invoice"
-          open={open}
-          
-          onCancel={onCancel}
-          footer={[
-          
-            selectedPlan?.subscription?.subscription_type === "LITE" || selectedPlan?.subscription?.subscription_type === "PRO" ? (
-              <>
-              {(selectedPlan?.payment_status === 'paid')?
+    <Modal
+      title="Proforma Invoice"
+      open={open}
+
+      onCancel={onCancel}
+      footer={[
+
+        selectedPlan?.subscription?.subscription_type === "LITE" || selectedPlan?.subscription?.subscription_type === "PRO" ? (
+          <>
+            {(selectedPlan?.payment_status === 'Paid') ?
               (
-                <Button key="download" type="primary" onClick={handleDownloadPDF}>
-                  Download PDF
-                </Button>
-              ):(
+                <>
+                  <Button key="download" type="primary" onClick={handleDownloadPDF}>
+                    Download PDF
+                  </Button>
+                  {(fromSubscription &&
+                    <Button key="generate" type="primary" onClick={handleFreeContinue}>
+                      Continue
+                    </Button>
+                  )}
+                </>
+
+
+              ) : (
                 <Button key="generate" type="primary" onClick={handlePayment}>
-                Proceed to Payment
-              </Button>
+                  Proceed to Payment
+                </Button>
               )
             }
-              </>
-            ) : (
-              <>
-                <Button key="generate" type="primary" onClick={handleFreeContinue}>
-                  Continue
-                </Button>
-  
-              </>
-            )
-          ]}
-          width={900}
-          height={800}
-        >
-          {/* Replace this paragraph with the PDF content */}
-          <div>
-            {/* <h2>Proforma Invoice</h2> */}
-            <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
-            <br /><br />
-            <div>Please proceed to payment to complete your subscription.</div>
-          </div>
-        </Modal>
+          </>
+        ) : (
+          <>
+            <Button key="download" type="primary" onClick={handleDownloadPDF}>
+              Download PDF
+            </Button>
+            {(fromSubscription &&
+              <Button key="generate" type="primary" onClick={handleFreeContinue}>
+                Continue
+              </Button>
+            )}
+          </>
+        )
+      ]}
+      width={900}
+      height={800}
+    >
+      {/* Replace this paragraph with the PDF content */}
+      <div>
+        {/* <h2>Proforma Invoice</h2> */}
+        <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+        <br /><br />
+        <div>Please proceed to payment to complete your subscription.</div>
+      </div>
+    </Modal>
   );
 };
 
 export default ProformaInvoiveModal;
 
 
-{/* <li>The Client is bound to all the rules and regulation available at <a href="https://www.qualispace.com/legal/">https://www.qualispace.com/legal/</a></li> */}
+{/* <li>The Client is bound to all the rules and regulation available at <a href="https://www.qualispace.com/legal/">https://www.qualispace.com/legal/</a></li> */ }
 
 
 {/* <div class="bank-details">
