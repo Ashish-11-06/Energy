@@ -88,8 +88,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       path: "/consumer/consumption-pattern",
       label: "Consumption Pattern",
       icon: <WalletOutlined />,
-      requiresSubscription: subscriptionRequires,
-      requiresMatchingConsumer: false,
+      requiresSubscription: true,
+      requiresMatchingConsumer: true,
     },
   ];
 
@@ -212,7 +212,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                         </span>
 
                         {isMatchingConsumerMissing ? (
-                          <Tooltip title="Please select matching consumer first">
+                          <Tooltip title="">
                             <div
                               className="icon-circle disabled"
                               style={{

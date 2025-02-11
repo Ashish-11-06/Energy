@@ -67,17 +67,26 @@ console.log(userId);
   //   { key: 4, username: "pqr", email: "pqr@gmail.com", role: "View" },
   // ]);
 
-useEffect(() => {
-  try{
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await dispatch(fetchSubUserById(userId));
+        const users = res.payload; // Assuming the response is in the payload
+        const formattedUsers = users.map(user => ({
+          key: user.id,
+          username: user.email.split('@')[0], // Assuming username is the part before the email
+          email: user.email,
+          role: user.role,
+        }));
+        setUserDataSource(formattedUsers);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
 
-   const res= dispatch(fetchSubUserById(userId));
-   console.log(res);
-   setUserData(res);
-   } catch (error) {
-    console.error("Failed to fetch user data:", error);
-   
-  }
-}, [dispatch,userId]);
+    fetchData();
+  }, [dispatch, userId]);
+
 
   const handleEditToggle = () => setIsModalVisible(true);
   const handleCancel = () => setIsModalVisible(false);
@@ -105,8 +114,7 @@ useEffect(() => {
         { ...values, key: userDataSource.length + 1 },
       ]);
     }
-  };
-
+  };  
   const handleEdit = (record) => {
     setEditaleData(record);
     console.log(record);
@@ -131,6 +139,7 @@ useEffect(() => {
     { title: "Username", dataIndex: "username", key: "username" },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Role", dataIndex: "role", key: "role" },
+  ];
     // {
     //   title: "Action",
     //   dataIndex: "action",
@@ -156,7 +165,7 @@ useEffect(() => {
     //     </>
     //   ),
     // },
-  ];
+
 
   return (
     <Row justify="center" style={{ marginTop: "50px", width: "100%" }}>

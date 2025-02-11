@@ -92,6 +92,7 @@ let temp='';
       const response = dispatch(negotiateTariff(data));  
       console.log("Response:", response);
       message.success("Tariff negotiated ");
+      handleStatusUpdate("Accepted");
     } catch (error) {
       console.error("Error negotiating tariff:", error);
     }
@@ -328,7 +329,8 @@ let temp='';
             <>
               {(data?.from_whom === "Consumer" &&
                 data?.count % 2 === 0 &&
-                data?.count <= 4) ||
+                data?.count <= 4)                
+                ||
               (data?.from_whom === "Generator" &&
                 data?.count % 2 === 1 &&
                 data?.count <= 4) ? (
