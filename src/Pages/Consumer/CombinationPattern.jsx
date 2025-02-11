@@ -66,7 +66,7 @@ const CombinationPattern = () => {
         const batteryCapacity =
           combination["Optimal Battery Capacity (MW)"] || 0;
         // console.log("format", combination);
-        const annual_demand_met = combination["annual_demand_met"] || "NA";
+        const annual_demand_met = combination["Annual Demand Met"] || 0;
         // console.log(annual_demand_met);
         // console.log("status", combination.terms_sheet_sent);
 
@@ -112,9 +112,9 @@ const CombinationPattern = () => {
           connectivity: combination.connectivity,
           states: combination.state,
 
-          status: combination.terms_sheet_sent
-            ? "Already Sent"
-            : "Send Quotation",
+          status: combination?.terms_sheet_sent 
+          ? (combination?.sent_from_you === 1 ? "Already Sent" : "Already received") 
+          : "Send Quotation",  
         };
       }
     );
@@ -448,8 +448,8 @@ const CombinationPattern = () => {
       dataIndex: "status",
       key: "status",
       render: (text, record) =>
-        text === "Already Sent" ? (
-          "Already Sent"
+        text !== "Send Quotation" ? (
+          text
         ) : (
           <button
             style={{ padding: "2px 2px" }} // Minimize button size

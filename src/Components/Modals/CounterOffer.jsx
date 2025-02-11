@@ -17,12 +17,14 @@ import { useNavigate } from "react-router-dom";
 import { updateTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
 import { addStatus } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
 import chat from "../../assets/need.png";
+import { negotiateTariff } from "../../Redux/Slices/Consumer/negotiateTariffSlice";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransaction }) => {
   console.log(fromTransaction);
   console.log(data);
+  const term_sheet_id=data.id;
   
   // console.log(data);
   const [ppaTerm, setPpaTerm] = useState(data.term_of_ppa);
@@ -69,7 +71,7 @@ let temp='';
     navigate("/consumer/chat-page");
   };
 
-  const handleTarrif = () => {
+  const handleTarrif = async () => {
     console.log("modal");
     setTarrifModal(true);
   };
@@ -80,6 +82,19 @@ let temp='';
 
   const handleTarrifOk = (value) => {
     setOfferTariff(value);
+    const data = {
+      user_id: userId,
+      terms_sheet_id: term_sheet_id,
+      offer_tariff: offerTariff
+    };
+  console.log(data);  
+    try {
+      const response = dispatch(negotiateTariff(data));  
+      console.log("Response:", response);
+      message.success("Tariff negotiated ");
+    } catch (error) {
+      console.error("Error negotiating tariff:", error);
+    }
     setTarrifModal(false);
   };
 
@@ -162,7 +177,7 @@ let temp='';
       >
         <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
           <p style={{ margin: 0 }}>
-            Offer Tariff: {data.offer_tariff ? data.offer_tariff : "NA"}
+            Offer Tariff: {data.offer_tariff ? data.offer_tariff : 0}
           </p>
           {!fromTransaction ?(
             <>
@@ -225,11 +240,11 @@ let temp='';
             <Typography.Paragraph>
               <strong>Contracted Energy (million units):</strong>
               <InputNumber
-                min={1}
+                min={0.1}
                 value={contractedEnergy}
                 onChange={(value) => setContractedEnergy(value)}
                 disabled={fromTransaction}
-                style={{ width: "100%" }}
+                style={{ width: "100%",color:"black" }}
               />
             </Typography.Paragraph>
           </Col>
@@ -323,7 +338,7 @@ let temp='';
                   </Button>
                   <Button
                     style={{ marginLeft: "10px" }}
-                    onClick={() => handleStatusUpdate("Accepted")}
+                    onClick={handleTarrif}
                   >
                     Accept
                   </Button>
@@ -364,7 +379,7 @@ let temp='';
               ) : (
                 <p style={{ color: "#9A8406" }}>
                   {!fromTransaction ? (
-                 <p> You have sent an offer to IPP. Please wait for their decision.</p>
+                 <p> You have sent an off54t5g4er to IPP. Please wait for their decision.</p>
                 ) :null}
                 </p>
               )}
@@ -443,7 +458,7 @@ let temp='';
           onCancel={onTarrifCancel} // The close (✖) icon will still work
           footer={null} // Removes the Cancel and OK buttons
         >
-          <p>{`(If you negotiate the tariff, you can't change the terms and conditions. It will accept automatically and offer tariff send to ${temp})`}</p>
+          <p>{`(If you negotiate the tariff, you can't change the terms and conditions. It will accept and offer tariff send to ${temp})`}</p>
           <InputNumber
             style={{ width: "60%" }}
             value={offerTariff}

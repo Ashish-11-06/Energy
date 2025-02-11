@@ -16,6 +16,7 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
   };
   const handleQuotationCancel = () => setIsQuotationModalVisible(false);
 
+
   const dataSource = [
     { key: '1', label: 'RE Index', value: reIndex },
     { key: '2', label: 'Contracted Energy (million unit)', value: ipp?.annual_demand_met || 0 },

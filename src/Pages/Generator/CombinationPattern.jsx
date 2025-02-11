@@ -68,7 +68,7 @@ const CombinationPattern = () => {
         const batteryCapacity =
           combination["Optimal Battery Capacity (MW)"] || 0;
         console.log("format", combination);
-        const annual_demand_met = combination["annual_demand_met"] || "NA";
+        const annual_demand_met = combination["Annual Demand Met"] || 0;
         console.log(annual_demand_met);
         console.log("status", combination.terms_sheet_sent);
 
@@ -86,11 +86,11 @@ const CombinationPattern = () => {
           OACost:
             combination["OA_cost"] && !isNaN(combination["OA_cost"])
               ? combination["OA_cost"].toFixed(2)
-              : "N/A",
+              : 0,
           totalCost:
             combination["Final Cost"] && !isNaN(combination["Final Cost"])
               ? combination["Final Cost"].toFixed(2)
-              : "N/A",
+              : 0,
           totalCapacity: `${(
             windCapacity +
             solarCapacity +
@@ -99,26 +99,24 @@ const CombinationPattern = () => {
           perUnitCost:
             combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"])
               ? combination["Per Unit Cost"].toFixed(2)
-              : "N/A",
+              : 0,
           finalCost:
             combination["FinalCost"] && !isNaN(combination["Final Cost"])
               ? combination["Final Cost"].toFixed(2)
-              : "N/A",
+              : 0,
           cod: combination["greatest_cod"]
             ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD")
-            : "N/A",
+            : 0,
           reReplacement:
             reReplacementValue ||
             combination["Annual Demand Offset"]?.toFixed(2) ||
-            "NA", // updated to handle null or undefined values
+            0, // updated to handle null or undefined values
           connectivity: combination.connectivity,
           states: combination.state,
 
           status: combination?.terms_sheet_sent 
           ? (combination?.sent_from_you === 1 ? "Already Sent" : "Already received") 
-          : "Send Quotation",
-                  
-        
+          : "Send Quotation",  
         };
       }
     );
@@ -260,10 +258,12 @@ const CombinationPattern = () => {
 
   const handleRowClick = (record) => {
     setSelectedRow(record); // Record comes from the latest dataSource
+    console.log(record);
+    
     setIsIPPModalVisible(true);
   };
 
-  const re_index = combinationData.re_index || "NA";
+  const re_index = combinationData.re_index || 0;
   // console.log(re_index);
 
   const handleIPPCancel = () => {
@@ -447,8 +447,8 @@ const CombinationPattern = () => {
       key: "status",
       // width: 150,
       render: (text, record) =>
-        text === "Already Sent" ? (
-          "Already Sent"
+        text !== "Send Quotation" ? (
+          text
         ) : (
           <button
             style={{ padding: "2px 2px" }} // Minimize button size

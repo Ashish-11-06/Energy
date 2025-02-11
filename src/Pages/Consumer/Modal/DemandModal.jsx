@@ -27,7 +27,7 @@ const DemandModal = ({ open, onCancel, requirementContent }) => {
         <Col >
           <Row gutter={[16, 16]}>
             <Col span={12}>
-              <Text strong>Contracted Demand</Text>
+              <Text strong>Contracted Demand (million units)</Text>
             </Col>
             <Col span={12}>
               <Text>:  {requirementContent?.rq_contracted_demand || "NA"}</Text>
