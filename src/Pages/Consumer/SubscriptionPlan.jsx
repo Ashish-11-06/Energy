@@ -90,10 +90,6 @@ const SubscriptionPlans = () => {
     setIsQuotationVisible(false);
   };
 
-  const handleFreeContinue = () => {
-    navigate("/consumer/energy-consumption-table");
-  };
-
   useEffect(() => {
     const fetchPerforma = async () => {
       try {
@@ -641,7 +637,6 @@ const SubscriptionPlans = () => {
         onCancel={closeProforma}
         handleDownloadPDF={handleDownloadPDF}
         handlePayment={handlePayment}
-        handleFreeContinue={handleFreeContinue}
         plan={selectedPlan}
         selectedPlan={performa}
         selectedPlanId={selectedPlan?.id}

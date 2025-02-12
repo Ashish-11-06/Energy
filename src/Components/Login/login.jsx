@@ -36,11 +36,7 @@ const Login = () => {
         const id = user.id;
         console.log(id);
 
-        const response = await dispatch(fetchSubscriptionValidity(id));
-        setSubscriptionPlanValidity(response.payload);
-        console.log(response.payload);
-
-        localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
+       
 
         if (user.user_category === 'Generator') {
           if (user.is_new_user) {
@@ -57,6 +53,13 @@ const Login = () => {
             navigate('/consumer/dashboard');
           }
         }
+
+        const response = await dispatch(fetchSubscriptionValidity(id));
+        setSubscriptionPlanValidity(response.payload);
+        console.log(response.payload);
+
+        localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
+
       } else {
         message.error(resultAction.payload || 'Login failed. Please try again.');
       }
