@@ -91,6 +91,11 @@ const RequirementsPage = () => {
       key: 'voltageLevel',
     },
     {
+      title: 'Annual Electricity Consumption (MWh)',
+      dataIndex: 'annual_electricity_consumption',
+      key: 'annual_electricity_consumption',
+    },
+    {
       title: 'Expected Procurement Date',
       dataIndex: 'procurement_date',
       key: 'procurement',

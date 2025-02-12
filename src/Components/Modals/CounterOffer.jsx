@@ -92,7 +92,7 @@ let temp='';
       const response = dispatch(negotiateTariff(data));  
       console.log("Response:", response);
       message.success("Tariff negotiated ");
-      handleStatusUpdate("Accepted");
+      updateStatus("Accepted");
     } catch (error) {
       console.error("Error negotiating tariff:", error);
     }
@@ -105,22 +105,59 @@ let temp='';
     console.log(action);
     console.log(user.id);
     console.log(data.id);
+  
+    // If action is 'rejected', show a confirmation popup
+    if (action === "Rejected") {
+      Modal.confirm({
+        title: "Confirm Rejection",
+        content: "Are you sure, you want to reject this request?",
+        okText: "Yes, Reject",
+        cancelText: "Cancel",
+        onOk: async () => {
+          await updateStatus(action);
+        },
+      });
+    } else {
+      await updateStatus(action);
+    }
+  };
+
+  const updateStatus = async (action) => {
     try {
-      const statusData = {
-        action: action,
-      };
+      const statusData = { action: action };
+  
       const res = await dispatch(
         addStatus({ user_id: user.id, term_id: data.id, statusData })
       );
-
+  
       message.success(`Status updated to ${action}`);
       onCancel();
     } catch (error) {
       console.log(error);
-      
-      // message.error("Failed to update status");
+      message.error("Failed to update status");
     }
   };
+
+  // const handleStatusUpdate = async (action) => {
+  //   console.log(action);
+  //   console.log(user.id);
+  //   console.log(data.id);
+  //   try {
+  //     const statusData = {
+  //       action: action,
+  //     };
+  //     const res = await dispatch(
+  //       addStatus({ user_id: user.id, term_id: data.id, statusData })
+  //     );
+
+  //     message.success(`Status updated to ${action}`);
+  //     onCancel();
+  //   } catch (error) {
+  //     console.log(error);
+      
+  //     // message.error("Failed to update status");
+  //   }
+  // };
 
   const handleTariffChange = (value) => {
     setOfferTariff(value); // Update the offer tariff value in the state
@@ -323,9 +360,11 @@ let temp='';
           Continue
         </Button> */}
 
-          {user_category === "Consumer" &&
+          {user_category === "Consumer" 
+          &&
           data?.generator_status !== "Rejected" &&
-          data?.generator_status !== "Accepted" ? (
+          data?.generator_status !== "Accepted" 
+          ? (
             <>
               {(data?.from_whom === "Consumer" &&
                 data?.count % 2 === 0 &&
@@ -381,7 +420,7 @@ let temp='';
               ) : (
                 <p style={{ color: "#9A8406" }}>
                   {!fromTransaction ? (
-                 <p> You have sent an off54t5g4er to IPP. Please wait for their decision.</p>
+                 <p> You have sent an offer to IPP. Please wait for their decision.</p>
                 ) :null}
                 </p>
               )}
@@ -389,9 +428,11 @@ let temp='';
           ) : null}
 
 
-          {!fromTransaction && user_category === "Generator" &&
+          {!fromTransaction && user_category === "Generator"
+          &&
           data?.consumer_status !== "Rejected" &&
-          data?.consumer_status !== "Accepted" ? (
+          data?.consumer_status !== "Accepted"
+           ? (
             <>
               {(data?.from_whom === "Generator" &&
                 data?.count % 2 === 0 &&
@@ -405,7 +446,7 @@ let temp='';
                   </Button>
                   <Button
                     style={{ marginLeft: "10px" }}
-                    onClick={() => handleStatusUpdate("Accepted")}
+                    onClick={handleTarrif}
                   >
                     Accept
                   </Button>

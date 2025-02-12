@@ -1,4 +1,4 @@
-import axiosInstance from "../axiosInstance";
+import axiosInstance from "../../axiosInstance";
 
 const termsAndConditionsApi = {
   // Fetch all projects by ID

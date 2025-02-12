@@ -164,6 +164,7 @@ const alreadysubscribed=subscribed?.status;
 
   const handleNewUserModalClose = () => {
     setIsNewUserModalVisible(false);
+    form.resetFields();
   };
 
   return (

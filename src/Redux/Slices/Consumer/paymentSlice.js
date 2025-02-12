@@ -1,73 +1,76 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import paymentAPI from "../../api/consumer/paymentApi"; 
 
 // Create Razorpay Order
 export const createRazorpayOrder = createAsyncThunk(
   "payment/createOrder",
-  async ({ amount, currency }, { rejectWithValue }) =>{
+  async ({ amount, currency }, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://192.168.1.35:8001/api/energy/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({ amount, currency }), 
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create order');
-      }
-
-      return await response.json();
+      const response = await paymentAPI.payment({ amount, currency });
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
 
+// Complete Razorpay Payment
 export const completeRazorpayPayment = createAsyncThunk(
   "payment/completePayment",
   async (paymentData, { rejectWithValue }) => {
     try {
-      console.log("Sending payment data:", paymentData); // Log payment data
-      const response = await fetch("http://192.168.1.35:8001/api/energy/payment-transaction-complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...paymentData, user: paymentData.user }), // Ensure user field is included
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        console.error("Error response:", data); // Log error response
-        const error=data.error?.non_field_errors[0];
-        console.log(error);
-        return rejectWithValue(error);
-      }
-
-      return data;
+      const response = await paymentAPI.completePayment(paymentData);
+      return response.data;
     } catch (error) {
-      console.error("Error completing payment:", error); // Log error
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
 
 const paymentSlice = createSlice({
   name: "payment",
-  initialState: { order: null, paymentStatus: null, error: null },
-  reducers: {},
+  initialState: { 
+    loading: false, 
+    order: null, 
+    paymentStatus: null, 
+    error: null 
+  },
+  reducers: {
+    resetPaymentState: (state) => {
+      state.loading = false;
+      state.order = null;
+      state.paymentStatus = null;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
+      .addCase(createRazorpayOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(createRazorpayOrder.fulfilled, (state, action) => {
+        state.loading = false;
         state.order = action.payload;
       })
-      .addCase(completeRazorpayPayment.fulfilled, (state, action) => {
-        state.paymentStatus = action.payload;
-      })
       .addCase(createRazorpayOrder.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       })
+      .addCase(completeRazorpayPayment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(completeRazorpayPayment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.paymentStatus = action.payload;
+      })
       .addCase(completeRazorpayPayment.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },
 });
 
+export const { resetPaymentState } = paymentSlice.actions;
 export default paymentSlice.reducer;

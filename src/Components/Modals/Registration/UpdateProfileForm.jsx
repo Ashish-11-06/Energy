@@ -10,7 +10,8 @@ import {
   Upload,
   message,
   Typography,
-  Progress,Tooltip
+  Progress,
+  Tooltip,
 } from "antd";
 import * as XLSX from "xlsx";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
@@ -23,12 +24,12 @@ import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 const { Option } = Select;
 const { Title, Text } = Typography;
 
-const UpdateProfileForm = ({ form, project, onCancel,fromPortfolio }) => {
+const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
-console.log(fromPortfolio);
+  console.log(fromPortfolio);
 
-  const project_type = project.type;      
+  const project_type = project.type;
   const solar_template_downloaded = user.solar_template_downloaded;
   const wind_template_downloaded = user.wind_template_downloaded;
 
@@ -41,6 +42,15 @@ console.log(fromPortfolio);
   const [isTemplateDownloaded, setIsTemplateDownloaded] = useState(false);
   const [isState, setIsState] = useState([]);
 
+  useEffect(() => {
+  if(user.solar_template_downloaded){
+    setIsTemplateDownloaded(true);
+  }
+  if(user.wind_template_downloaded){
+    setIsTemplateDownloaded(true);
+  }
+});
+
   // Function to download Excel template
   const downloadExcelTemplate = () => {
     const wb = XLSX.utils.book_new();
@@ -52,22 +62,22 @@ console.log(fromPortfolio);
 
     setIsTemplateDownloaded(true);
     message.success("Template downloaded successfully!");
-// let user = JSON.parse(localStorage.getItem("user")).user;
+    // let user = JSON.parse(localStorage.getItem("user")).user;
 
-// user.user = {
-//   id: 6,
-//   user_category: "Consumer",
-//   email: "newemail@example.com",
-//   mobile: "9876543210",
-//   company: "NewCompany",
-//   company_representative: "John Doe",
-//   cin_number: "ABC12345",
-//   designation: "Manager",
-//   verified_at: "2025-02-01T10:00:00+05:30",
-//   is_new_user: true,
-//   solar_template_downloaded: true,
-//   wind_template_downloaded: false
-// };
+    // user.user = {
+    //   id: 6,
+    //   user_category: "Consumer",
+    //   email: "newemail@example.com",
+    //   mobile: "9876543210",
+    //   company: "NewCompany",
+    //   company_representative: "John Doe",
+    //   cin_number: "ABC12345",
+    //   designation: "Manager",
+    //   verified_at: "2025-02-01T10:00:00+05:30",
+    //   is_new_user: true,
+    //   solar_template_downloaded: true,
+    //   wind_template_downloaded: false
+    // };
     // Update template download status
     const templateData = {
       user_id: user.id,
@@ -88,27 +98,26 @@ console.log(fromPortfolio);
       .then((response) => {
         console.log("Template download info:", response);
 
-      // Retrieve user data from localStorage
-let userData = JSON.parse(localStorage.getItem("user"));
+        // Retrieve user data from localStorage
+        let userData = JSON.parse(localStorage.getItem("user"));
 
-// Ensure userData and userData.user exist
-if (userData && userData.user) {
-  // Check if the project_type is 'Solar' and update the solar_template_downloaded
-  if (project_type === "Solar") {
-    userData.user.solar_template_downloaded = true;
-  }
+        // Ensure userData and userData.user exist
+        if (userData && userData.user) {
+          // Check if the project_type is 'Solar' and update the solar_template_downloaded
+          if (project_type === "Solar") {
+            userData.user.solar_template_downloaded = true;
+          }
 
-  // Check if the project_type is 'Wind' and update the wind_template_downloaded
-  if (project_type === "Wind") {
-    userData.user.wind_template_downloaded = true;
-  }
+          // Check if the project_type is 'Wind' and update the wind_template_downloaded
+          if (project_type === "Wind") {
+            userData.user.wind_template_downloaded = true;
+          }
 
-  // Save the updated user data back to localStorage
-  localStorage.setItem("user", JSON.stringify(userData));
-} else {
-  console.error("User data is missing or corrupted in localStorage");
-}
-
+          // Save the updated user data back to localStorage
+          localStorage.setItem("user", JSON.stringify(userData));
+        } else {
+          console.error("User data is missing or corrupted in localStorage");
+        }
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -187,7 +196,7 @@ if (userData && userData.user) {
 
     dispatch(updateProject(updatedValues));
     message.success("Form submitted successfully!");
-    localStorage.removeItem('matchingConsumerId');
+    localStorage.removeItem("matchingConsumerId");
     onCancel();
   };
 
@@ -224,21 +233,24 @@ if (userData && userData.user) {
           </Form.Item>
         </Col>
         <Col span={12}>
-        <Form.Item
-  name="state"
-  label="State"
-  rules={[{ required: true, message: "Please select the state!" }]}
->
-  <Select placeholder="Select your state" showSearch disabled={!fromPortfolio}>
-    {isState &&
-      isState.map((state, index) => (
-        <Select.Option key={index} value={state}>
-          {state}
-        </Select.Option>
-      ))}
-  </Select>
-</Form.Item>
-
+          <Form.Item
+            name="state"
+            label="State"
+            rules={[{ required: true, message: "Please select the state!" }]}
+          >
+            <Select
+              placeholder="Select your state"
+              showSearch
+              disabled={!fromPortfolio}
+            >
+              {isState &&
+                isState.map((state, index) => (
+                  <Select.Option key={index} value={state}>
+                    {state}
+                  </Select.Option>
+                ))}
+            </Select>
+          </Form.Item>
         </Col>
       </Row>
 
@@ -306,7 +318,11 @@ if (userData && userData.user) {
             label="COD"
             rules={[{ required: true, message: "Please input the COD!" }]}
           >
-            <DatePicker format={'DD/MM/YYYY'} style={{ width: "100%" }} disabled={!fromPortfolio} />
+            <DatePicker
+              format={"DD/MM/YYYY"}
+              style={{ width: "100%" }}
+              disabled={!fromPortfolio}
+            />
           </Form.Item>
         </Col>
         {type !== "ESS" && (
@@ -397,13 +413,25 @@ if (userData && userData.user) {
                   return false;
                 }}
               >
-                <Button
-                  icon={<UploadOutlined />}
-                  style={{ width: "100%" }}
-                  disabled={isUploadButtonDisabled}
-                >
-                  Upload Excel Sheet
-                </Button>
+                {!isTemplateDownloaded ? (
+                  <Tooltip title="Please download the template before uploading">
+                    <Button
+                      icon={<UploadOutlined />}
+                      style={{ width: "100%" }}
+                      disabled
+                    >
+                      Upload Excel Sheet
+                    </Button>
+                  </Tooltip>
+                ) : (
+                  <Button
+                    icon={<UploadOutlined />}
+                    style={{ width: "100%" }}
+                   
+                  >
+                    Upload Excel Sheet
+                  </Button>
+                )}
               </Upload>
             </Col>
 
@@ -429,28 +457,27 @@ if (userData && userData.user) {
       <Row gutter={24} style={{ textAlign: "right" }}>
         <Col span={24}>
           <Form.Item>
-          {!fileData && type!='ESS'  ? (
-  <Tooltip title="Please fill all the details and upload the file in given format">
-    <Button type="primary" htmlType="submit" disabled>
-      Submit
-    </Button>
-  </Tooltip>
-) : (
-  // <>
-  // {!fileData && type==='ESS'? (
-  //     <Tooltip title="Please fill all the details">
-  // <Button type="primary" htmlType="submit" disabled>
-  //   Submlplplpplplit
-  // </Button>
-  // </Tooltip>
-  // ):(
-  <Button type="primary" htmlType="submit" >
-    Submit
-    </Button>
-  // )}
-  // </>
-)}
-
+            {!fileData && type != "ESS" ? (
+              <Tooltip title="Please fill all the details and upload the file in given format">
+                <Button type="primary" htmlType="submit" disabled>
+                  Submit
+                </Button>
+              </Tooltip>
+            ) : (
+              // <>
+              // {!fileData && type==='ESS'? (
+              //     <Tooltip title="Please fill all the details">
+              // <Button type="primary" htmlType="submit" disabled>
+              //   Submlplplpplplit
+              // </Button>
+              // </Tooltip>
+              // ):(
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+              // )}
+              // </>
+            )}
           </Form.Item>
         </Col>
       </Row>

@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstance";
+import axiosInstance from "../axiosInstance";
 
 const transactionWindowApi = {
   // Fetch all projects by ID
