@@ -1,0 +1,127 @@
+.navbar {
+  padding: 20px;
+
+
+}
+
+.progress-icons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* Stretch from start to end of the line */
+  position: relative;
+  z-index: 2;
+    /* background-color: #f9f9f9; */
+}
+
+.progress-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  width: 80%;
+}
+
+.horizontal-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px; /* Reduced line thickness */
+   background-color: #d9d9d9;  
+  z-index: 1;
+  border-radius: 5px; /* Optional for rounded edges */
+  overflow: hidden; /* Ensure the fill effect stays within the line */
+}
+
+.horizontal-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--progress-width, 0); /* Use CSS variable for dynamic width */
+  background-color: #669800
+  ;
+  transition: width 0.5s ease; /* Smooth transition effect */
+}
+
+.icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.icon-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.icon-circle {
+  width: 30px;
+  height: 30px;
+  background-color: #fff;
+  /* background-color: #fff; */
+  border: 2px solid #d9d9d9;
+  /* background-color: #76d34e, */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #555;
+  position: relative;
+  z-index: 3;
+  top: -30px; /* Adjust to place the circle on the line */
+  margin-bottom: 5px;
+}
+
+.icon-container:not(:first-child) .icon-circle {
+  margin-left: 20px; /* Shift all circles to the right except the first one */
+}
+
+/* Completed step styling */
+.icon-circle.completed {
+  border-color: #669800
+  ;
+  color: #669800
+  ;
+}
+
+.step-line {
+  width: 50px;
+  height: 4px;
+  background-color: #d9d9d9;
+  margin: 0 10px;
+}
+
+.step-line.completed {
+  background-color: #669800
+  ;
+}
+
+.horizontal-line.completed::before {
+  width: 80%; /* Fill the line as you navigate */
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .progress-icons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .icon-circle {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    top: -25px; /* Adjust for smaller screens */
+  }
+
+  .icon-label {
+    font-size: 0.8rem;
+  }
+}
