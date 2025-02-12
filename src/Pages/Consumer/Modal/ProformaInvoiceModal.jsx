@@ -8,6 +8,8 @@ import {
   completeRazorpayPayment,
 } from "../../../Redux/Slices/Consumer/paymentSlice"; // Import payment actions
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import { subscriptionEnroll } from "../../../Redux/Slices/Consumer/subscriptionEnrollSlice";
 const ProformaInvoiveModal = ({
   open,
   onCancel,
@@ -113,17 +115,11 @@ const ProformaInvoiveModal = ({
               if (completeResponse) {
                 message.success("Payment successful! Subscription activated.");
 
+                userData?.user_category === "Consumer"
+                ? navigate("/consumer/energy-consumption-table")
+                : navigate("/generator/update-profile-details");
 
-    const currentDate = moment().format("YYYY-MM-DD");
-    const subscriptionData = {
-      user: userId,
-      subscription: plan.id,
-      start_date: currentDate,
-    };
-    const response = dispatch(subscriptionEnroll(subscriptionData));
-
-                setIsProformaVisible(false);
-                navigate("/consumer/energy-consumption-table");
+              
               } else {
                 message.error("Payment completion failed.");
               }
