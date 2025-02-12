@@ -16,10 +16,13 @@ const InvoicePage = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userId = user.id;
 
-  const viewInvoice = (id) => {
+  const viewInvoice = (record) => {
     // Implement the logic to view the invoice details
     setIsProformaVisible(true);
-    console.log(`Viewing invoice ${id}`);
+    // console.log(`Viewing invoice ${record}`);
+    setSelectedPlan(record);
+    setSubscriptionType(record.subscription.subscripton_type)
+
   };
   const closeProforma = () => {
     setIsProformaVisible(false);
@@ -68,7 +71,7 @@ const InvoicePage = () => {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
-        <Button type="primary" onClick={() => viewInvoice(record.id)}>
+        <Button type="primary" onClick={() => viewInvoice(record)}>
           View
         </Button>
       ),
@@ -80,11 +83,10 @@ const InvoicePage = () => {
       setLoading(true);
       try {
         const response = await dispatch(fetchPerformaById(userId)).unwrap();
-        setInvoice([response]);
+        setInvoice(response);
         console.log(response);
 
-        setSelectedPlan(response);
-        setSubscriptionType(response.subscription.subscripton_type)
+
         setLoading(false);
 
       } catch (err) {
@@ -109,7 +111,8 @@ const InvoicePage = () => {
         ) : (
           <Table
             style={{ marginTop: 16, padding: "20px" }}
-            dataSource={Array.isArray(invoice) ? invoice : []} // Ensuring it's an array
+            // dataSource={Array.isArray(invoice) ? invoice : []} // Ensuring it's an array
+            dataSource={invoice} // Ensuring it's an array
             columns={columns}
             rowKey="id"
             pagination={false}
