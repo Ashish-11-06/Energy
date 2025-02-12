@@ -68,7 +68,7 @@ const Notification = () => {
           textAlign: "left",
         }}
       >
-        <Text strong>From: {notification.user}</Text>
+        {/* <Text strong>From: {notification.user}</Text> */}
         {/* Timestamp */}
         <div style={{ marginTop: "10px" }}>
           <Text strong>Timestamp: </Text>

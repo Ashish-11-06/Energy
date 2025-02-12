@@ -33,7 +33,7 @@ const LandingPage = () => {
   const textRef = useRef(""); 
 
   useEffect(() => {
-    const text = "EXT GLOBAL";
+    const text = "Welcome to Energy Transition (EXT) Platform";
     let index = 0;
     textRef.current = ""; // Reset ref text
     const interval = setInterval(() => {
@@ -45,7 +45,7 @@ const LandingPage = () => {
       } else {
         clearInterval(interval);
       }
-    }, 200);
+    }, 50);
     return () => clearInterval(interval);
   }, []);
 
@@ -162,17 +162,18 @@ const LandingPage = () => {
 
 <Row>
   <Row style={{width:'100%',height:'100%',justifyContent:'center',marginBottom:'0'}}>
-    <h1 style={{marginTop:'20px',color:'white',fontWeight:'bolder'}} >Welcome to Energy Transition (EXT) Platform</h1>
-    <h1 style={{marginTop:'20px'}}>jnkm</h1>
+    <h1 style={{marginTop:'20px',color:'white',fontWeight:'bolder'}} >{animatedText}</h1>
+    {/* <h1 style={{marginTop:'20px'}}>jnkm</h1> */}
     <div className="logo-container">
             <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
           </div>
   </Row>
   <Row>
+   {/* <h2 style={{justifyContent:'center'}}>Green Energy </h2> */}
         <div className="content-container" style={{marginTop:'0px'}}> 
           <div className="text-content" >
             
-            <h2 className="animated-text">{animatedText}</h2>
+            {/* <h2 className="animated-text">{animatedText}</h2> */}
             <ul >
               {/* <Row>
                 <Col span={12}> */}
@@ -183,6 +184,8 @@ const LandingPage = () => {
               <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Seamless transactions</li>
               {/* </Col>
              <Col span={12}> */}
+            
+
               <li style={{fontSize:'20px'}} ><FaCheckCircle className="icon" /> Optimizes energy usage</li>
               <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Forecasts trading opportunities</li>
               <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Streamlines billing processes</li>
