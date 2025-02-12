@@ -612,9 +612,9 @@ const CombinationPattern = () => {
             </Card>
           </div>
           <Card>
-            {/* <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-              Look for Consumers
-            </Title> */}
+            <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
+              Optimized Combination
+            </Title>
             {isTableLoading ? (
               <>
                 <div

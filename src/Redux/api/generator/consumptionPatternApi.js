@@ -1,4 +1,4 @@
-import axiosInstance from "../axiosInstance";
+import axiosInstance from "../../axiosInstance";
 
 const consumptionPatternApi = {
   // Fetch all projects by ID

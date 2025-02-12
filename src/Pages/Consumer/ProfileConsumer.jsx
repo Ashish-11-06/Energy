@@ -85,7 +85,7 @@ console.log(userId);
     };
 
     fetchData();
-  }, [dispatch, userId]);
+  }, [dispatch]);
 
 
   const handleEditToggle = () => setIsModalVisible(true);

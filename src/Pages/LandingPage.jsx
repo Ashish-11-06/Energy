@@ -160,9 +160,9 @@ const LandingPage = () => {
         <video className="background-video" src={video} autoPlay muted loop />
         <div className="overlay" style={{ backgroundColor: 'rgba(3, 110, 11, 0.5)', backdropFilter: 'blur(5px)' }}></div>
 
-        <div className="content-container">
-         
+        <div className="content-container"> 
           <div className="text-content" style={{ marginLeft: '10px' }}>
+            
             <h2 className="animated-text">{animatedText}</h2>
             <ul >
               {/* <Row>

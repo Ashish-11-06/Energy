@@ -1,4 +1,4 @@
-import axiosInstance2 from "../axiosInstance2";
+import axiosInstance2 from "../../axiosInstance";
 
 const optimizeCapacityApi = {
   // Fetch all projects by ID

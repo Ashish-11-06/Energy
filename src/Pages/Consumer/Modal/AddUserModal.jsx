@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Form, Input, Button, Row, Col, Select } from "antd";
+import { Modal, Form, Input, Button, Row, Col, Select, message } from "antd";
 import { addSubUser } from "../../../Redux/Slices/Consumer/registerSlice";
 import { useDispatch } from "react-redux";
 
@@ -10,20 +10,24 @@ const AddUserModal = ({ isVisible, onCancel, onSave, editableData, edit }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
 
-  console.log(user);
+  // console.log(user);
 
-  const handleFinish = (values) => {
+  const handleFinish = async (values) => {
     const data = values;
     const id = user.id;
     try {
-      dispatch(addSubUser({ id, userData: data })); // Pass an object
+      const res=await dispatch(addSubUser({ id, userData: data })).unwrap();
       onSave(values);
+
+      // console.log(res);
+      
+      form.resetFields(); // Reset the form fields after saving
     } catch (error) {
-      console.log(error);
+      // console.log(error);  
+      message.error(error); // Display error message from rejectWithValue
     }
-    // Call the onSave function passed as a prop
-    form.resetFields(); // Reset the form fields after saving
   };
+  
 
   return (
     <Modal
