@@ -65,7 +65,7 @@ const SubscriptionPlans = () => {
   const subscription = JSON.parse(
     localStorage.getItem("subscriptionPlanValidity")
   );
-  const alreadySubscribed = subscription.subscription_type;
+  const alreadySubscribed = subscription?.subscription_type;
 
   // console.log(subscription.subscription_type);
 
