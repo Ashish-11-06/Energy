@@ -706,6 +706,7 @@ useEffect(() => {
 
     return (
       <Row gutter={16}>
+        <p style={{marginTop:'3%'}}>If you upload bills, it may take 1-2 days for your data to reflect. Please allow this time for processing.</p>
         <Col span={12}>
           <Table
             dataSource={firstHalf}
@@ -947,8 +948,6 @@ useEffect(() => {
         )}
 
         {showFileUploadTable && renderSixMonthFileUploadTables()}
-
-
 
         { (user.role !== "view") ? (
           <>

@@ -46,26 +46,20 @@ const { Title, Text } = Typography;
 const SubscriptionPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isQuotationVisible, setIsQuotationVisible] = useState(false);
-  const [isPaymentVisible, setIsPaymentVisible] = useState(false);
   const [isProformaVisible, setIsProformaVisible] = useState(false);
   const [performa, setPerformaResponse] = useState(null);
   const [form] = Form.useForm();
   const [formError, setFormError] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [gstinNumber, setGstinNumber] = useState("");
-  const [companyAddress, setCompanyAddress] = useState("");
   const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] =
     useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [subscriptionPlan, setSubscriptionPlan] = useState([]);
-  const [isContinueDisabled, setIsContinueDisabled] = useState(true);
-  const [htmlContent, setHtmlContent] = useState(""); // State to hold HTML content for PDF
 
   const subscription = JSON.parse(
     localStorage.getItem("subscriptionPlanValidity")
   );
-  const alreadySubscribed = subscription.subscription_type;
+  const alreadySubscribed = subscription?.subscription_type;
 
   // console.log(subscription.subscription_type);
 
@@ -80,15 +74,15 @@ const SubscriptionPlans = () => {
   const handleSelectPlan = (id, plan) => {
     setSelectedPlan(plan);
     console.log(selectedPlan);
-    
-    const currentDate = moment().format("YYYY-MM-DD");
-    setSelectedPlanId(id);
-    const subscriptionData = {
-      user: userId,
-      subscription: id,
-      start_date: currentDate,
-    };
-    const response = dispatch(subscriptionEnroll(subscriptionData));
+
+    // const currentDate = moment().format("YYYY-MM-DD");
+    // setSelectedPlanId(id);
+    // const subscriptionData = {
+    //   user: userId,
+    //   subscription: id,
+    //   start_date: currentDate,
+    // };
+    // const response = dispatch(subscriptionEnroll(subscriptionData));
     setIsQuotationVisible(true);
   };
 
@@ -106,10 +100,10 @@ const SubscriptionPlans = () => {
         const response = await dispatch(fetchPerformaById(userId)).unwrap();
         setPerformaResponse(response);
         console.log(response);
-        
-        setCompanyName(response.company_name);
-        setGstinNumber(response.gst_number);
-        setCompanyAddress(response.company_address);
+
+        // setCompanyName(response.company_name);
+        // setGstinNumber(response.gst_number);
+        // setCompanyAddress(response.company_address);
         setFormError(""); // Reset error on successful fetch
       } catch (err) {
         message.error(err.message || "Failed to fetch performa.");
@@ -119,15 +113,14 @@ const SubscriptionPlans = () => {
     fetchPerforma();
   }, [dispatch, userId]);
 
-// console.log(performa);
-
+  // console.log(performa);
 
   useEffect(() => {
     setLoading(true);
     if (user_category === "Consumer") {
       dispatch(fetchSubscriptionPlan())
         .then((response) => {
-          setSubscriptionPlan(response.payload);       
+          setSubscriptionPlan(response.payload);
           setLoading(false);
         })
         .catch((error) => {
@@ -147,14 +140,13 @@ const SubscriptionPlans = () => {
     }
   }, [dispatch]);
 
-  const handleGenerateProforma = async () => {
-    // Your existing logic to create the performa
-    // After successfully creating the performa, set the HTML content
+  const handleGenerateProforma = async (values) => {
+    console.log(values);
     const performaData = {
-      company_name: companyName,
-      company_address: companyAddress,
-      gst_number: gstinNumber,
-      subscription: selectedPlanId,
+      company_name: values.companyName,
+      company_address: values.companyAddress,
+      gst_number: values.gstinNumber,
+      subscription: selectedPlan?.id, // Ensure selectedPlanId is coming from a controlled input
       due_date: "2025-01-25",
     };
 
@@ -164,166 +156,6 @@ const SubscriptionPlans = () => {
       ).unwrap();
       setPerformaResponse(response);
       message.success("Performa invoice generated successfully!");
-      setHtmlContent(`
-        <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice</title>
-    <style>
-        body {
-            font-family: 'Inter', Arial, sans-serif;
-            background-color: #F5F6FB;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            border: 1px solid #E6E8F1;
-            padding: 20px;
-            background-color: #ffffff;
-        }
-        h2 {
-            text-align: center;
-            color: #669800;
-        }
-        .header, .details, .payment-instructions, .bank-details {
-            border: 1px solid #E6E8F1;
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-        .header h3, .details h3, .payment-instructions h3, .bank-details h3 {
-            color: #669800;
-        }
-        a {
-            color: #9A8406;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #ffffff;
-        }
-        th, td {
-            border: 1px solid #E6E8F1;
-            padding: 8px;
-        }
-        th {
-            background-color: #669800;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Proforma Invoice #102213</h2>
-        <div class="header" style="text-align: right;">
-            <h3>EXGGLOBAL</h3>
-            <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
-        </div>
-        <p style="text-align: left;">Invoice Date: <strong>03-02-2024</strong></p>
-        <p style="text-align: left;">Due Date: <strong>--</strong></p>
-        
-        <div class="details">
-            <h3>Invoiced To:</h3>
-            <p><strong>STRATXG CONSULTING PRIVATE LIMITED</strong><br>
-               ATTN: Somdev Singh Arya<br>
-               201, 2nd floor, Sahil, Sher-e-Punjab, Andheri (E)<br>
-               Mumbai, Maharashtra, 400093, India<br>
-               GSTIN: 27ABCCS1178B1ZL</p>
-        </div>
-
-        <div class="details">
-            <h3>Details:</h3>
-            <table>
-                <tr>
-                    <th>Description</th>
-                    <th>Item Type</th>
-                    <th>SAC Code</th>
-                    <th>Total</th>
-                </tr>
-                <tr>
-                    <td>Microsoft 365 Business Basic - stratxg.com</td>
-                    <td>Upgrade</td>
-                    <td>-</td>
-                    <td>₹ 527</td>
-                </tr>
-                <tr>
-                    <td>Discount (DISC10 - 10.00%)</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>₹ -53</td>
-                </tr>
-                <tr>
-                    <td><strong>Sub Total</strong></td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td><strong>₹ 474</strong></td>
-                </tr>
-                <tr>
-                    <td>GST</td>
-                    <td colspan="2">
-                        <table>
-                            <tr>
-                                <th>CGST (9.00%)</th>
-                                <th>SGST (9.00%)</th>
-                                <th>IGST</th>
-                            </tr>
-                            <tr>
-                                <td>₹ 43</td>
-                                <td>₹ 43</td>
-                                <td>-</td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td>₹ 86</td>
-                </tr>
-                <tr>
-                    <td><strong>Total Amount Incl. GST</strong></td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td><strong>₹ 560</strong></td>
-                </tr>
-                <tr></tr>
-                    <td>Total Amount Incl. GST (in words)</td>
-                    <td colspan="3">Rupees five hundred sixty only</td>
-                </tr>
-                <tr>
-                    <td>Funds Applied</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>₹ 0</td>
-                </tr>
-                <tr>
-                    <td><strong>Balance</strong></td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td><strong>₹ 560</strong></td>
-                </tr>
-            </table>
-        </div>
-
-        <p><strong>Total Amount (in words):</strong> Rupees five hundred sixty only</p>
-        <p style="text-align:right"><strong>Authorized Signatory</strong></p>
-        <p style="font-size: 12px;">This is a computerized invoice. It does not require a signature.</p>
-        
-        <div class="payment-instructions">
-            <h3>Payment Instructions:</h3>
-            <ol>
-                <li>Non-payment within 7 days will result in suspension of the services automatically without notice.</li>
-                <li>Subject to Mumbai Jurisdiction.</li>
-                <li>The Client is bound to all the rules and regulation available at <a href="https://www.qualispace.com/legal/">https://www.qualispace.com/legal/</a></li>
-            </ol>
-            <p>[Our services does not fall under negative list of services.</p>
-        </div>
-
-       
-    </div>
-</body>
-</html>
-
-
-      `); // Set your HTML content here
       setIsProformaVisible(true);
       setIsQuotationVisible(false);
     } catch (error) {
@@ -331,106 +163,6 @@ const SubscriptionPlans = () => {
       message.error("Failed to generate Performa invoice. Please try again.");
     }
   };
-
-  const handleCreatePerforma = async () => {
-    const performaData = {
-      company_name: companyName,
-      company_address: companyAddress,
-      gst_number: gstinNumber,
-      subscription: selectedPlanId,
-      due_date: "2025-01-25",
-    };
-
-    try {
-      const response = await dispatch(
-        createPerformaById({ id: userId, performaData })
-      ).unwrap();
-      message.success("Performa invoice generated successfully!");
-      setIsProformaVisible(true);
-      setIsQuotationVisible(false);
-    } catch (error) {
-      console.error("Failed to create performa:", error);
-      message.error("Failed to generate Performa invoice. Please try again.");
-    }
-  };
-
-  const handleSubmit = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        setFormError(""); // Reset any error message if the form is valid
-        handleCreatePerforma(values);
-      })
-      .catch((errorInfo) => {
-        setFormError("Please fill in all required fields.");
-      });
-  };
-
-  const renderQuotation = () => (
-    <Form form={form} onFinish={handleCreatePerforma}>
-      <Row>
-        <Col span={12}>
-          <Form.Item
-            label="Company Name"
-            name="companyName"
-            rules={[
-              { required: true, message: "Please provide your company name" },
-            ]}
-          >
-            <Input
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-            />
-          </Form.Item>
-        </Col>
-
-        <Col span={12}>
-          <Form.Item
-            label="GSTIN Number"
-            name="gstinNumber"
-            rules={[
-              { required: true, message: "Please provide your GSTIN number" },
-              {
-                pattern:
-                  /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
-                message: "Please provide a valid GSTIN number",
-              },
-            ]}
-          >
-            <Input
-              value={gstinNumber}
-              onChange={(e) => setGstinNumber(e.target.value)}
-            />
-          </Form.Item>
-        </Col>
-
-        <Col span={24}>
-          <Form.Item
-            label="Company Address"
-            name="companyAddress"
-            rules={[
-              {
-                required: true,
-                message: "Please provide your company address",
-              },
-            ]}
-          >
-            <Input.TextArea
-              rows={2}
-              value={companyAddress}
-              onChange={(e) => setCompanyAddress(e.target.value)}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-
-      {formError && (
-        <Text type="danger" style={{ marginBottom: 20 }}>
-          {formError}
-        </Text>
-      )}
-    </Form>
-  );
 
   // const handleGenerateProforma = async () => {
   //   form.validateFields()
@@ -498,7 +230,8 @@ const SubscriptionPlans = () => {
 
   const handlePayment = async () => {
     try {
-      const amount = selectedPlanId === selectedPlanId ? 50000 : 200000; // Adjust plan amount here
+      log("Selected Plan ID:", selectedPlanId);
+      const amount = selectedPlanId === selectedPlanId ? 50000 : 100000; // Adjust plan amount here
       const orderResponse = await dispatch(
         createRazorpayOrder({ amount, currency: "INR" })
       ).unwrap();
@@ -587,12 +320,21 @@ const SubscriptionPlans = () => {
                       type="primary"
                       block
                       size="small"
-                      style={{ width: "160px", fontSize:'16px' }}
+                      style={{ width: "160px", fontSize: "16px" }}
                     >
                       Select Plan
                     </Button>
                   ) : (
-                    <Button disabled style={{fontSize:'14px', height:'17px', width:'160px' }}>Subscribed</Button>
+                    <Button
+                      disabled
+                      style={{
+                        fontSize: "14px",
+                        height: "17px",
+                        width: "160px",
+                      }}
+                    >
+                      Subscribed
+                    </Button>
                   ),
                 ]}
               >
@@ -812,7 +554,6 @@ const SubscriptionPlans = () => {
             </Col>
           ))
         )}
-        
       </Row>
 
       {isQuotationVisible && (
@@ -821,32 +562,76 @@ const SubscriptionPlans = () => {
           open={isQuotationVisible}
           onCancel={closeQuotation}
           footer={[
-            selectedPlan?.subscription_type === "LITE" ||
-            selectedPlan?.subscription_type === "PRO" ? (
-              <Button
-                key="generate"
-                type="primary"
-                onClick={handleGenerateProforma}
-              >
-                Generate Proforma
-              </Button>
-            ) : (
-              <>
-                <Button
-                  key="generate"
-                  type="primary"
-                  onClick={handleGenerateProforma}
-                >
-                  Generate Proforma
-                </Button>
-              </>
-            ),
+            <Button key="generate" type="primary" onClick={() => form.submit()}>
+              Generate Proforma
+            </Button>,
           ]}
           width={600}
-          height={600}
         >
           <p>(Please provide additional details)</p>
-          {renderQuotation()}
+
+          <Form
+            form={form}
+            onFinish={handleGenerateProforma} // Ensures form values are passed
+          >
+            <Row>
+              <Col span={12}>
+                <Form.Item
+                  label="Company Name"
+                  name="companyName"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please provide your company name",
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  label="GSTIN Number"
+                  name="gstinNumber"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please provide your GSTIN number",
+                    },
+                    {
+                      pattern:
+                        /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                      message: "Please provide a valid GSTIN number",
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+
+              <Col span={24}>
+                <Form.Item
+                  label="Company Address"
+                  name="companyAddress"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please provide your company address",
+                    },
+                  ]}
+                >
+                  <Input.TextArea rows={2} />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            {formError && (
+              <Text type="danger" style={{ marginBottom: 20 }}>
+                {formError}
+              </Text>
+            )}
+          </Form>
         </Modal>
       )}
 
@@ -857,9 +642,9 @@ const SubscriptionPlans = () => {
         handleDownloadPDF={handleDownloadPDF}
         handlePayment={handlePayment}
         handleFreeContinue={handleFreeContinue}
-        dangerouslySetInnerHTML={{ __html: htmlContent }}
+        plan={selectedPlan}
         selectedPlan={performa}
-        selectedPlanId={selectedPlanId}
+        selectedPlanId={selectedPlan?.id}
         fromSubscription={true}
       />
 
@@ -875,7 +660,6 @@ const SubscriptionPlans = () => {
 };
 
 export default SubscriptionPlans;
-
 
 // <div class="bank-details">
 // <table>

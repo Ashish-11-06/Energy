@@ -160,8 +160,17 @@ const LandingPage = () => {
         <video className="background-video" src={video} autoPlay muted loop />
         <div className="overlay" style={{ backgroundColor: 'rgba(3, 110, 11, 0.5)', backdropFilter: 'blur(5px)' }}></div>
 
-        <div className="content-container"> 
-          <div className="text-content" style={{ marginLeft: '10px' }}>
+<Row>
+  <Row style={{width:'100%',height:'100%',justifyContent:'center',marginBottom:'0'}}>
+    <h1 style={{marginTop:'20px',color:'white',fontWeight:'bolder'}} >Welcome to Energy Transition (EXT) Platform</h1>
+    <h1 style={{marginTop:'20px'}}>jnkm</h1>
+    <div className="logo-container">
+            <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
+          </div>
+  </Row>
+  <Row>
+        <div className="content-container" style={{marginTop:'0px'}}> 
+          <div className="text-content" >
             
             <h2 className="animated-text">{animatedText}</h2>
             <ul >
@@ -184,9 +193,7 @@ const LandingPage = () => {
 
           </div>
 
-          <div className="logo-container">
-            <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
-          </div>
+       
           
           {/* Login Box */}
           <div className="login-box">
@@ -265,6 +272,8 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
+        </Row>
+        </Row>
 
         {/* Footer */}
         <div className="footer">
