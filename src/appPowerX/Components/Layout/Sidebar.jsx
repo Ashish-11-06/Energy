@@ -9,17 +9,17 @@ import {
   TeamOutlined,
   FileTextOutlined,
 } from '@ant-design/icons';
-import dash from '../../assets/dashboard.png';
-import transaction from '../../assets/transaction.png';
-import subscription from '../../assets/subscription.png';
-import consumption from '../../assets/consumption.png';
-import invoice from '../../assets/invoice.png';
-import profile from '../../assets/profile.png';
-import chat from '../../assets/chat.png';
-import notification from '../../assets/notification.png';
-import offerSend from '../../assets/offerSend.png';
-import notificationImg from '../../assets/notification.png';
-import portfolio from '../../assets/portfolio.png';
+import dash from '../../../assets/dashboard.png';
+import transaction from '../../../assets/transaction.png';
+import subscription from '../../../assets/subscription.png';
+import consumption from '../../../assets/consumption.png';
+import invoice from '../../../assets/invoice.png';
+import profile from '../../../assets/profile.png';
+import chat from '../../../assets/chat.png';
+import notification from '../../../assets/notification.png';
+import offerSend from '../../../assets/offerSend.png';
+import notificationImg from '../../../assets/notification.png';
+import portfolio from '../../../assets/portfolio.png';
 
 const { Sider } = Layout;
 
@@ -33,14 +33,14 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 
 
   const consumerMenuItems = [
-    { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Notification', key: '/consumer/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Overview', key: '/px/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Day Ahead', key: '/px/day-ahead', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Month Ahead', key: '/px/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Planning', key: '/px/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Trading', key: '/px/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // { label: 'Notification', key: '/consumer/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
   const generatorMenuItems = [

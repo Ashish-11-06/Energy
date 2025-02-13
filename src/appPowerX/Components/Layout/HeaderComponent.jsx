@@ -11,8 +11,8 @@ import {
   WalletOutlined,
 } from "@ant-design/icons";
 import "./HeaderComponent.css"; // Add custom styles for header component
-import chat from "../../assets/need.png";
-import userImage from "../../assets/profile.png";
+import chat from "../../../assets/need.png";
+import userImage from "../../../assets/profile.png";
 
 const { Header } = Layout;
 
@@ -270,7 +270,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
           )}
         </div>
         {/* Profile Icon */}
-        <span>
+        {/* <span>
           <Tooltip title={username}>
             <img
               src={userImage} // User profile image
@@ -318,7 +318,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
               onClick={handleChatClick}
             />
           </Tooltip>
-        </span>
+        </span> */}
       </div>
     </Header>
   );

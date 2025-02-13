@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import dash from '../../assets/dashboard.png';
-import transaction from '../../assets/transaction.png';
-import subscription from '../../assets/subscription.png';
-import consumption from '../../assets/consumption.png';
-import invoice from '../../assets/invoice.png';
-import profile from '../../assets/profile.png';
-import notification from '../../assets/notification.png';
-import offerSend from '../../assets/offerSend.png';
-import portfolio from '../../assets/portfolio.png';
+import dash from '../../../assets/dashboard.png';
+import transaction from '../../../assets/transaction.png';
+import subscription from '../../../assets/subscription.png';
+import consumption from '../../../assets/consumption.png';
+import invoice from '../../../assets/invoice.png';
+import profile from '../../../assets/profile.png';
+import notification from '../../../assets/notification.png';
+import offerSend from '../../../assets/offerSend.png';
+import portfolio from '../../../assets/portfolio.png';
 
 
 // Define menu items for consumer and generator with icons

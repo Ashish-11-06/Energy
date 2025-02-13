@@ -44,8 +44,16 @@ import InvoicePage from './Pages/InvoicePage';
 import { lastVisitedPage } from './Redux/Slices/Consumer/lastVisitedPageSlice';
 import EmailVerification from './Pages/EmailVerification';
 
+
 // powerX
-import pLayoutComponent from './appPowerX/Components/Layout/LayoutComponent';
+import PLayoutComponent from './appPowerX/Components/Layout/LayoutComponent';
+import DashboardP from './appPowerX/Pages/Consumer/DashboardP';
+import DayAhead from './appPowerX/Pages/Consumer/DayAhead';
+import PlanYourTradePage from './appPowerX/Pages/Consumer/PlanYourTradePage';
+import StatisticalInformation from './appPowerX/Pages/Consumer/StatisticalInformation';
+import MonthAhead from './appPowerX/Pages/Consumer/MonthAhead';
+import Planning from './appPowerX/Pages/Consumer/Planning';
+import Trading from './appPowerX/Pages/Consumer/Trading';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -137,11 +145,19 @@ function App() {
 
 
         {/* PowerX routes*/}
-        {/* <Route element={<pLayoutComponent />}> */}
+        <Route element={<PLayoutComponent />}>
         <Route path="/px/*">
-          <Route path="dashboard" element={<DashboardG />} />
+          <Route path="dashboard" element={<DashboardP />} />
+          <Route path="day-ahead" element={<DayAhead />} />
+          <Route path="plan-trade-page" element={<PlanYourTradePage />} />
+          <Route path="statistical-information" element={<StatisticalInformation />} />
+          <Route path="month-ahead" element={<MonthAhead/>} />
+          <Route path="planning" element={<Planning/>} />
+          <Route path="trading" element={<Trading/>} />
+
+
         </Route>
-        {/* </Route> */}
+        </Route>
       </Routes>
     </Router>
   );

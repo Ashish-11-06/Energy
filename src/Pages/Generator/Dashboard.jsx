@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [generatorDetails, setGeneratorDetails] = useState({});
   const [profileDetails, setProfileDetails] = useState({});
   const [platformDetails, setPlatformDetails] = useState({});
+console.log('hello');
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userId = user.id;
@@ -70,6 +71,7 @@ const Dashboard = () => {
 
   return (
     <div style={{ padding: "30px" }}>
+      hudsjh
       <Row gutter={[16, 16]} style={{ height: "400px" }}>
         {/* Generator Details */}
         <Col span={12}>
