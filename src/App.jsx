@@ -136,7 +136,7 @@ function App() {
 
 
 
-        {/* PowerX routes */}
+        {/* PowerX routes*/}
         {/* <Route element={<pLayoutComponent />}> */}
         <Route path="/px/*">
           <Route path="dashboard" element={<DashboardG />} />
