@@ -154,7 +154,7 @@ console.log(data);
           </Col>
           <Col span={12}>
   <Typography.Paragraph>
-    <strong>Contracted Energy (million units):</strong>
+    <strong>Annual Contracted Energy (million units):</strong>
     <InputNumber
       min={0.1} // Allows float values starting from 0.1
       step={0.1} // Enables input of both integers and decimals
@@ -180,7 +180,7 @@ console.log(data);
             <Typography.Paragraph>
               <strong>Minimum Supply Obligation (million units):</strong>
               <InputNumber
-                min={1}
+                min={0}
                 value={minimumSupply}
                 onChange={(value) => setMinimumSupply(value)}
                 style={{ width: "100%" }}

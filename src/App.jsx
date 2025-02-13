@@ -101,7 +101,7 @@ function App() {
             <Route path="project-details" element={<IppProjectDetails />} />
             <Route path="requirement" element={<RequirementsPage />} />
             <Route path="annual-saving" element={<AnnualSvg />} />
-            <Route path="subscription-plan" element={<SubscriptionPlans />} />
+            {/* <Route path="subscription-plan" element={<SubscriptionPlans />} /> */}
             <Route path="profile" element={<ProfileConsumer />} />
             <Route path="requested-ipp" element={<RequestedIPP />} />
             <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />

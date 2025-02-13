@@ -272,6 +272,9 @@ const TransactionWindow = () => {
                 <Countdown title="Time Remaining" value={deadline} />
               </span>
             </Row>
+            <Row >
+              <Col style={{ fontSize: 'larger',color:'#9a8406'}} span={8}>Open Offer Tariff Value : {record?.offer_tariff ? record.offer_tariff : 0}</Col>
+              </Row>
             {/* <div style={{ marginTop: "24px" }}>Offers from IPPs:</div> */}
           </div>
 

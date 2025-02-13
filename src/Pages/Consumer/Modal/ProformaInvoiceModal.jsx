@@ -6,19 +6,30 @@ import jsPDF from "jspdf";
 import {
   createRazorpayOrder,
   completeRazorpayPayment,
-} from '../../../Redux/Slices/Consumer/paymentSlice'; // Import payment actions
+} from "../../../Redux/Slices/Consumer/paymentSlice"; // Import payment actions
 import { useNavigate } from "react-router-dom";
-const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fromSubscription }) => {
+import moment from "moment";
+import {
+  fetchSubscriptionValidity,
+  subscriptionEnroll,
+} from "../../../Redux/Slices/Consumer/subscriptionEnrollSlice";
+const ProformaInvoiveModal = ({
+  open,
+  onCancel,
+  selectedPlan,
+  plan,
+  selectedPlanId,
+  fromSubscription,
+}) => {
   const userData = JSON.parse(localStorage.getItem("user")).user;
   const userId = userData?.id;
-  //  console.log(selectedPlan);
+  console.log(userId);
   //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
   // //  console.log(selected_plan);
   //  const invoiceDetails=selectedPlan;
 
+  const [subscriptionPlanValidity, setSubscriptionPlanValidity] = useState([]);
   const navigate = useNavigate();
-
-
 
   //   const user = JSON.parse(localStorage.getItem("user")).user;
   //   console.log(user_category)ś;
@@ -27,7 +38,8 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
     const container = document.queryśSelector(".container"); // Select the main container
     if (!container) {
       console.error("Container element not found.");
-      return; ś
+      return;
+      ś;
     }
 
     try {
@@ -70,13 +82,14 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
 
   const handlePayment = async () => {
     try {
-      const amount = selectedPlanId === selectedPlanId ? 50000 : 200000; // Adjust plan amount here
+      console.log("selectedPlanId", selectedPlan);
+
+      const amount = selectedPlan?.subscription?.price;
       const orderResponse = await dispatch(
         createRazorpayOrder({ amount, currency: "INR" })
       ).unwrap();
 
       if (orderResponse?.data?.id) {
-
         const options = {
           key: "rzp_test_bVfC0PJsvP9OUR",
 
@@ -95,7 +108,7 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
               amount: orderResponse.data.amount,
               subscription: selectedPlanId,
             };
-            console.log('payment data', paymentData);
+            console.log("payment data", paymentData);
 
             try {
               const completeResponse = await dispatch(
@@ -105,8 +118,25 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
 
               if (completeResponse) {
                 message.success("Payment successful! Subscription activated.");
-                setIsProformaVisible(false);
-                navigate("/consumer/energy-consumption-table");
+
+                userData?.user_category === "Consumer"
+                  ? navigate("/consumer/energy-consumption-table")
+                  : navigate("/generator/update-profile-details");
+
+                 const id=userId;
+                try { const response =await dispatch(fetchSubscriptionValidity(id));
+                setSubscriptionPlanValidity(response.payload);
+                console.log(response);
+                localStorage.setItem(
+                  "subscriptionPlanValidity",
+                  JSON.stringify(response.payload)
+                );
+                } catch (error) {
+                  console.log(error);
+                  
+                }
+
+              
               } else {
                 message.error("Payment completion failed.");
               }
@@ -137,10 +167,9 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
   };
 
   const handleFreeContinue = () => {
-
-  userData?.user_category === 'Consumer' ?
-    navigate("/consumer/energy-consumption-table"):
-    navigate("/generator/update-profile-details")
+    userData?.user_category === "Consumer"
+      ? navigate("/consumer/energy-consumption-table")
+      : navigate("/generator/update-profile-details");
   };
 
   const closeProforma = () => {
@@ -204,16 +233,20 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
             <h3>EXGGLOBAL</h3>
             <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
         </div>
-<p style="text-align: left;">Invoice Date: <strong>${selectedPlan?.issue_date ?? 'NA'}</strong></p>
-<p style="text-align: left;">Due Date: <strong>${selectedPlan?.due_date ?? 'NA'}</strong></p>
+<p style="text-align: left;">Invoice Date: <strong>${
+    selectedPlan?.issue_date ?? "NA"
+  }</strong></p>
+<p style="text-align: left;">Due Date: <strong>${
+    selectedPlan?.due_date ?? "NA"
+  }</strong></p>
 
 </strong></p>
 
         <div class="details">
             <h3>Invoiced To:</h3>
-            <p><strong>${selectedPlan?.company_name ?? 'NA'}</strong><br>
-              Address: ${selectedPlan?.company_address ?? 'NA'}<br>
-              GSTIN: ${selectedPlan?.gst_number ?? 'NA'}<br>
+            <p><strong>${selectedPlan?.company_name ?? "NA"}</strong><br>
+              Address: ${selectedPlan?.company_address ?? "NA"}<br>
+              GSTIN: ${selectedPlan?.gst_number ?? "NA"}<br>
            </p>
         </div>
 
@@ -227,10 +260,12 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
                     <th>Total</th>
                 </tr>
                 <tr>
-                    <td>${selectedPlan?.subscription?.subscription_type ?? 'NA'}</td>
+                    <td>${
+                      selectedPlan?.subscription?.subscription_type ?? "NA"
+                    }</td>
                     <td>Upgrade</td>
                     <td>-</td>
-                    <td>₹ ${selectedPlan?.subscription?.price ?? 'NA'}</td>
+                    <td>₹ ${selectedPlan?.subscription?.price ?? "NA"}</td>
                 </tr>
                 <tr>
                     <td>Discount </td>
@@ -242,7 +277,9 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
                     <td><strong>Sub Total</strong></td>
                     <td>-</td>
                     <td>-</td>
-                    <td><strong>₹ ${selectedPlan?.subscription?.price ?? '0'}</strong></td>
+                    <td><strong>₹ ${
+                      selectedPlan?.subscription?.price ?? "0"
+                    }</strong></td>
                 </tr>
                 <tr>
                     <td>GST</td>
@@ -254,19 +291,25 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
                                 <th>IGST</th>
                             </tr>
                             <tr>
-                                <td>${selectedPlan?.cgst ?? '--'}</td>
-                                <td>${selectedPlan?.sgst ?? '--'}</td>
-                                <td>${selectedPlan?.igst ?? '--'}</td>
+                                <td>${selectedPlan?.cgst ?? "--"}</td>
+                                <td>${selectedPlan?.sgst ?? "--"}</td>
+                                <td>${selectedPlan?.igst ?? "--"}</td>
                             </tr>
                         </table>
                     </td>
-                    <td>${((selectedPlan?.cgst || 0) + (selectedPlan?.sgst || 0) + (selectedPlan?.igst || 0))}</td>
+                    <td>${
+                      (selectedPlan?.cgst || 0) +
+                      (selectedPlan?.sgst || 0) +
+                      (selectedPlan?.igst || 0)
+                    }</td>
                 </tr>
                 <tr>
                     <td><strong>Total Amount Incl. GST</strong></td>
                     <td>-</td>
                     <td>-</td>
-                    <td><strong>${selectedPlan?.total_amount ?? '0'}</strong></td>
+                    <td><strong>${
+                      selectedPlan?.total_amount ?? "0"
+                    }</strong></td>
                 </tr>
                 <tr></tr>
                     <td>Total Amount Incl. GST (in words)</td>
@@ -282,7 +325,9 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
                     <td><strong>Balance</strong></td>
                     <td>-</td>
                     <td>-</td>
-                    <td><strong>₹ ${selectedPlan?.subscription?.price ?? '0'}</strong></td>
+                    <td><strong>₹ ${
+                      selectedPlan?.subscription?.price ?? "0"
+                    }</strong></td>
                 </tr>
             </table>
         </div>
@@ -306,51 +351,67 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
 </html>
 
 
-      `
+      `;
 
   return (
     <Modal
       title="Proforma Invoice"
       open={open}
-
       onCancel={onCancel}
       footer={[
-
-        selectedPlan?.subscription?.subscription_type === "LITE" || selectedPlan?.subscription?.subscription_type === "PRO" ? (
+        selectedPlan?.subscription?.subscription_type === "LITE" ||
+        selectedPlan?.subscription?.subscription_type === "PRO" ? (
           <>
-            {(selectedPlan?.payment_status === 'Paid') ?
-              (
-                <>
-                  <Button key="download" type="primary" onClick={handleDownloadPDF}>
-                    Download PDF
+            {selectedPlan?.payment_status === "Paid" ? (
+              <>
+                <Button
+                  key="download"
+                  type="primary"
+                  onClick={handleDownloadPDF}
+                >
+                  Download PDF
+                </Button>
+                {fromSubscription && (
+                  <Button
+                    key="generate"
+                    type="primary"
+                    onClick={handleFreeContinue}
+                  >
+                    Continue
                   </Button>
-                  {(fromSubscription &&
-                    <Button key="generate" type="primary" onClick={handleFreeContinue}>
-                      Continue
-                    </Button>
-                  )}
-                </>
-
-
-              ) : (
+                )}
+              </>
+            ) : (
+              <>
+                <Button
+                  key="download"
+                  type="primary"
+                  onClick={handleDownloadPDF}
+                >
+                  Download PDF
+                </Button>
                 <Button key="generate" type="primary" onClick={handlePayment}>
                   Proceed to Payment
                 </Button>
-              )
-            }
+              </>
+            )}
           </>
         ) : (
           <>
             <Button key="download" type="primary" onClick={handleDownloadPDF}>
               Download PDF
             </Button>
-            {(fromSubscription &&
-              <Button key="generate" type="primary" onClick={handleFreeContinue}>
+            {fromSubscription && (
+              <Button
+                key="generate"
+                type="primary"
+                onClick={handleFreeContinue}
+              >
                 Continue
               </Button>
             )}
           </>
-        )
+        ),
       ]}
       width={900}
       height={800}
@@ -359,7 +420,8 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
       <div>
         {/* <h2>Proforma Invoice</h2> */}
         <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
-        <br /><br />
+        <br />
+        <br />
         <div>Please proceed to payment to complete your subscription.</div>
       </div>
     </Modal>
@@ -368,11 +430,12 @@ const ProformaInvoiveModal = ({ open, onCancel, selectedPlan, selectedPlanId, fr
 
 export default ProformaInvoiveModal;
 
+{
+  /* <li>The Client is bound to all the rules and regulation available at <a href="https://www.qualispace.com/legal/">https://www.qualispace.com/legal/</a></li> */
+}
 
-{/* <li>The Client is bound to all the rules and regulation available at <a href="https://www.qualispace.com/legal/">https://www.qualispace.com/legal/</a></li> */ }
-
-
-{/* <div class="bank-details">
+{
+  /* <div class="bank-details">
             <table>
                 <tr>
                     <th colspan="3" style="text-align: center;">*For Indian Customers Only</th>
@@ -405,4 +468,5 @@ export default ProformaInvoiveModal;
                     </td>
                 </tr>
             </table>
-        </div> */}
+        </div> */
+}

@@ -430,12 +430,11 @@ const CombinationPattern = () => {
       // width: 150,
     },
     {
-      title: "Total Cost (INR/KWh)",
+      title: "Final Cost (INR/KWh)",
       dataIndex: "totalCost",
       key: "totalCost",
       // width: 150,
     },
-
     {
       title: "COD",
       dataIndex: "cod",

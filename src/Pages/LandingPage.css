@@ -95,7 +95,7 @@
 
 .exg-logo {
   width: 170%;
-  height: 130%;
+  height: 100%;
 }
 
 .social-media-icons {
@@ -122,7 +122,7 @@
 @media (max-width: 360px) {
   .content-container {
     flex-direction: column;
-    padding: 5vw;
+    
   }
 
   .text-content {
