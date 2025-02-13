@@ -37,7 +37,7 @@ export const createPdfContent = (annualSavingResponse) => {
 
     <div>
       <h2 style="font-size: 20px;">Analysis</h2>
-      <p style="font-size: 14px;">Potential savings under Group Captive Transaction Structure for your existing Contracted Demand of ${annualSavingResponse?.contracted_demand || 'N/A'} kW</p>
+      <p style="font-size: 14px;">Potential savings under Group Captive Transaction Structure for your existing Contracted Demand of ${annualSavingResponse?.contracted_demand || 'N/A'} MW</p>
 
       <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px;">
         <thead>

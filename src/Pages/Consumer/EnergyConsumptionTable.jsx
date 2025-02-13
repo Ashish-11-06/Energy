@@ -707,7 +707,8 @@ useEffect(() => {
     return (
       <Row gutter={16}>
         <p style={{marginTop:'3%'}}>If you upload bills, it may take 1-2 days for your data to reflect. Please allow this time for processing.</p>
-        <Col span={12}>
+        <Row>
+        <Col span={11} style={{marginRight:'10px'}}>
           <Table
             dataSource={firstHalf}
             columns={fileUploadColumns}
@@ -729,6 +730,7 @@ useEffect(() => {
             style={{ marginTop: "20px" }}
           />
         </Col>
+        </Row>
       </Row>
     );
   };
@@ -812,7 +814,7 @@ useEffect(() => {
          <Row style={{ marginTop: "3%" }}>
           <Col span={6}>
             <Tooltip title="Add details manually">
-              <Button onClick={handleToggleDetails} icon={<FileAddOutlined />}>
+              <Button onClick={handleToggleDetails} icon={<FileAddOutlined />} style={{zIndex:2000}}>
                 {dataSource && showTable ? "Add Details " : "Add Details "}
               </Button>
             </Tooltip>
@@ -824,7 +826,7 @@ useEffect(() => {
                 <Tooltip title="Upload a CSV file">
                   <Button
                     onClick={() => handleButtonClick("csv")}
-                    style={{ padding: "5px" }}
+                    style={{ padding: "5px",zIndex:2000 }}
                     icon={<FileExcelOutlined style={{ marginTop: "5px" }} />}
                   >
                     Upload CSV file
@@ -835,7 +837,7 @@ useEffect(() => {
                 <Button
                   icon={<DownloadOutlined />}
                   onClick={handleDownloadTemplate}
-                  style={{ marginLeft: "10px" }}
+                  style={{ marginLeft: "10px",zIndex:2000 }}
                 ></Button>
               </Tooltip>
             </div>
@@ -850,7 +852,7 @@ useEffect(() => {
             <Tooltip title="Upload your monthly electricity bill">
               <Button
                 onClick={handleToggleFileUploadTable}
-                style={{ marginLeft: "50px", padding: "5px" }}
+                style={{ marginLeft: "50px", padding: "5px" ,zIndex:1000}}
                 icon={<FileTextOutlined style={{ marginTop: "5px" }} />}
               >
                 Upload Bill
@@ -868,7 +870,7 @@ useEffect(() => {
               <Upload showUploadList={false} beforeUpload={handleScadaUpload}>
                 <Button
                   onClick={() => handleButtonClick("scada")}
-                  style={{ padding: "5px" }}
+                  style={{ padding: "5px",zIndex:2000 }}
                   icon={<FileImageOutlined style={{ marginTop: "5px" }} />}
                 >
                   Upload SCADA file

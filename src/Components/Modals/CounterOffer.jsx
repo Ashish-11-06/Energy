@@ -215,7 +215,7 @@ let temp='';
       >
         <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
           <p style={{ margin: 0 }}>
-            Offer Tariff: {data.offer_tariff ? data.offer_tariff : 0}
+            Offer Tariff: {data?.offer_tariff ? data?.offer_tariff : 0}
           </p>
           {!fromTransaction ?(
             <>
@@ -276,9 +276,9 @@ let temp='';
           </Col>
           <Col span={12}>
             <Typography.Paragraph>
-              <strong>Contracted Energy (million units):</strong>
+              <strong>Annual Contracted Energy (million units):</strong>
               <InputNumber
-                min={0.1}
+                min={0}
                 value={contractedEnergy}
                 onChange={(value) => setContractedEnergy(value)}
                 disabled={fromTransaction}
@@ -290,7 +290,7 @@ let temp='';
             <Typography.Paragraph>
               <strong>Minimum Supply Obligation (million units):</strong>
               <InputNumber
-                min={1}
+                min={0}
                 value={minimumSupply}
                 onChange={(value) => setMinimumSupply(value)}
                 disabled={fromTransaction}
@@ -506,6 +506,7 @@ let temp='';
             style={{ width: "60%" }}
             value={offerTariff}
             onChange={handleTariffChange}
+            placeholder="Enter the tariff value in INR/KWh"
           />
           <Button onClick={handleTarrifOk} style={{ marginLeft: "5%" }}>
             Send

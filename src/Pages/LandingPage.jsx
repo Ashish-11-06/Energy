@@ -72,24 +72,28 @@ const LandingPage = () => {
               navigate(
                   user?.is_new_user 
                       ? '/what-we-offer' 
-                      : (lastVisitedPage === '/' ? '/generator/dashboard' : lastVisitedPage),
+                      : '/generator/dashboard',
+                      // : (lastVisitedPage === '/' ? '/generator/dashboard' : lastVisitedPage),
                   { state: { isNewUser: user?.is_new_user } }
               );
           } else if (user?.user_category === 'Consumer') {
               navigate(
                   user?.is_new_user 
                       ? '/what-we-offer' 
-                      : (lastVisitedPage === '/' ? '/consumer/dashboard' : lastVisitedPage),
+                      : '/consumer/dashboard' ,
+                      // : (lastVisitedPage === '/' ? '/consumer/dashboard' : lastVisitedPage),
                   { state: { isNewUser: user?.is_new_user } }
               );
           }
-
-            const response = await dispatch(fetchSubscriptionValidity(id));
+// console.log('jello from landing');
+const response = await dispatch(fetchSubscriptionValidity(id));
                     setSubscriptionPlanValidity(response.payload);
-                    // console.log(response.payload);
+                    console.log(response.payload);
             
             localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
           
+
+            
         } else {
             // console.error('Login failedklaksdlfklaskdlk:', resultAction.payload);
             message.error(resultAction.payload || 'Login failed. Please try again.');
@@ -170,7 +174,7 @@ const LandingPage = () => {
   </Row>
   <Row>
    {/* <h2 style={{justifyContent:'center'}}>Green Energy </h2> */}
-        <div className="content-container" style={{marginTop:'0px'}}> 
+        <div className="content-container" style={{marginTop:'-25px'}}> 
           <div className="text-content" >
             
             {/* <h2 className="animated-text">{animatedText}</h2> */}

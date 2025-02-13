@@ -70,6 +70,7 @@ console.log(userId);
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const res = await dispatch(fetchSubUserById(userId));
         const users = res.payload; // Assuming the response is in the payload
         const formattedUsers = users.map(user => ({
@@ -79,6 +80,7 @@ console.log(userId);
           role: user.role,
         }));
         setUserDataSource(formattedUsers);
+        setLoading(false);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }

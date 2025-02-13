@@ -278,7 +278,7 @@ const Offers = () => {
               </Button>
             ) : (
           <Button type="primary" onClick={() => showModal(record)}>
-            Counter Offer
+            Send Offer
           </Button>
             )
           

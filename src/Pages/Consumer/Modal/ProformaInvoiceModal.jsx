@@ -9,7 +9,10 @@ import {
 } from "../../../Redux/Slices/Consumer/paymentSlice"; // Import payment actions
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { subscriptionEnroll } from "../../../Redux/Slices/Consumer/subscriptionEnrollSlice";
+import {
+  fetchSubscriptionValidity,
+  subscriptionEnroll,
+} from "../../../Redux/Slices/Consumer/subscriptionEnrollSlice";
 const ProformaInvoiveModal = ({
   open,
   onCancel,
@@ -20,11 +23,12 @@ const ProformaInvoiveModal = ({
 }) => {
   const userData = JSON.parse(localStorage.getItem("user")).user;
   const userId = userData?.id;
-   console.log(plan);
+  console.log(userId);
   //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
   // //  console.log(selected_plan);
   //  const invoiceDetails=selectedPlan;
 
+  const [subscriptionPlanValidity, setSubscriptionPlanValidity] = useState([]);
   const navigate = useNavigate();
 
   //   const user = JSON.parse(localStorage.getItem("user")).user;
@@ -79,7 +83,7 @@ const ProformaInvoiveModal = ({
   const handlePayment = async () => {
     try {
       console.log("selectedPlanId", selectedPlan);
-      
+
       const amount = selectedPlan?.subscription?.price;
       const orderResponse = await dispatch(
         createRazorpayOrder({ amount, currency: "INR" })
@@ -116,8 +120,21 @@ const ProformaInvoiveModal = ({
                 message.success("Payment successful! Subscription activated.");
 
                 userData?.user_category === "Consumer"
-                ? navigate("/consumer/energy-consumption-table")
-                : navigate("/generator/update-profile-details");
+                  ? navigate("/consumer/energy-consumption-table")
+                  : navigate("/generator/update-profile-details");
+
+                 const id=userId;
+                try { const response =await dispatch(fetchSubscriptionValidity(id));
+                setSubscriptionPlanValidity(response.payload);
+                console.log(response);
+                localStorage.setItem(
+                  "subscriptionPlanValidity",
+                  JSON.stringify(response.payload)
+                );
+                } catch (error) {
+                  console.log(error);
+                  
+                }
 
               
               } else {

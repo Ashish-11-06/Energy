@@ -11,23 +11,23 @@ import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 const { Title, Paragraph } = Typography;
 
 const UpdateProfileDetails = () => {
-  const user = (JSON.parse(localStorage.getItem('user'))).user;
+  const user = JSON.parse(localStorage.getItem('user')).user;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [Structuredprojects, setStructuredProjects] = useState([]);  // Local state for flattened projects
+  const [structuredProjects, setStructuredProjects] = useState([]);  // Local state for flattened projects
   const [form] = Form.useForm();
+  const [refreshData, setRefreshData] = useState(false); // State to trigger data refresh
   const location = useLocation();
-  // const { selectedConsumer } = location.state || {};
   const { projects } = useSelector(state => state.portfolio);
-const selectedConsumer=localStorage.getItem('matchingConsumerId');
+  const selectedConsumer = localStorage.getItem('matchingConsumerId');
 
   useEffect(() => {
     const id = user.id; 
     dispatch(getAllProjectsById(id));
-  }, [dispatch, user.id]);
+  }, [dispatch, user.id, refreshData]); // Add refreshData to the dependency array
 
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
@@ -63,7 +63,7 @@ const selectedConsumer=localStorage.getItem('matchingConsumerId');
       title: 'Updated',
       dataIndex: 'updated',
       key: 'updated',
-      render: (text, record) => (
+      render: (text) => (
         <div style={{ textAlign: 'center' }}>
           {text ? (
             <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
@@ -103,9 +103,10 @@ const selectedConsumer=localStorage.getItem('matchingConsumerId');
   const handleCancel = () => {
     setIsModalVisible(false);
     form.resetFields();
+    setRefreshData(prev => !prev); // Toggle refreshData to trigger useEffect
   };
 
-  const allUpdated = Structuredprojects.every(item => item.updated);
+  const allUpdated = structuredProjects.every(item => item.updated);
 
   const handleProceed = () => {
     navigate('/generator/combination-pattern', { state: { selectedConsumer } });
@@ -119,7 +120,7 @@ const selectedConsumer=localStorage.getItem('matchingConsumerId');
       </Paragraph>
       <Table
         columns={columns}
-        dataSource={Structuredprojects}
+        dataSource={structuredProjects}
         pagination={false}
         bordered
         rowKey="key" // Use the unique key for each row

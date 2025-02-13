@@ -102,8 +102,15 @@ const RequirementsPage = () => {
       render: (date, record) => (
         <span key={record.id || `${record.key}-${date}`}>{date ? moment(date).format('DD-MM-YYYY') : ''}</span>
       ),
-    }
-    ,
+    },
+    // {
+    //   title:'Edit',
+    //   key:'edit',
+    //   render:(text,record)=>(
+    //     <Button type="primary" onClick={()=>handleEdit(record)}>Edit</Button>
+    //   )
+    // }
+    
     {
       title: "Select",
       key: "select",
@@ -138,7 +145,10 @@ const RequirementsPage = () => {
   }
   
 
-  
+  const handleEdit=(record)=>{
+    console.log();
+    
+  }
 
 const handleAddDetails =(record) => {
   // console.log('clicked');

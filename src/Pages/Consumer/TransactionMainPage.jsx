@@ -42,7 +42,8 @@ const [modalContent, setModalContent] = useState(null);
       contracted_energy:record.t_contracted_energy,
       minimum_supply_obligation:record.t_minimum_supply_obligation,
       payment_security_type:record.t_payment_security_type,
-      payment_security_day:record.t_payment_security_day
+      payment_security_day:record.t_payment_security_day,
+      offer_tariff:record.offer_tariff,
     }
     setModalContent(modalContent);
     setIsModalVisible(true);
@@ -97,7 +98,7 @@ const [modalContent, setModalContent] = useState(null);
         </Typography.Link>,
     },
     {
-      title: 'Date',
+      title: 'Date of Transaction',
       dataIndex: 'start_time',
       key: 'date',
       render: (text) => moment(text).format('DD-MM-YYYY'),

@@ -55,7 +55,7 @@ const Dashboard = () => {
     labels: ['Solar Energy Offered', 'Wind Energy Offered', 'ESS Energy Offered', 'Offer Received', 'Transactions Done'],
     datasets: [
       {
-        label: 'Generator Details',
+        label: 'Generator Details (in MW)',
         data: [
           generatorDetails.totalSolarEnergyOffered,
           generatorDetails.totalWindEnergyOffered,

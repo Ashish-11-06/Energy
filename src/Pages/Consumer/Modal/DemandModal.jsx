@@ -9,7 +9,7 @@ const DemandModal = ({ open, onCancel, requirementContent }) => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 // console.log(user_category);
-// console.log(requirementContent);
+console.log(requirementContent);
 
   return (
     <Modal
@@ -30,18 +30,18 @@ const DemandModal = ({ open, onCancel, requirementContent }) => {
               <Text strong>Contracted Demand (million units)</Text>
             </Col>
             <Col span={12}>
-              <Text>:  {requirementContent?.rq_contracted_demand || "NA"}</Text>
+              <Text>:  {requirementContent?.rq_contracted_demand || requirementContent?.contracted_demand || "NA"}</Text>
             </Col>
             <Col span={12}>
               <Text strong>Industry</Text>
             </Col>
             <Col span={12}>
-              <Text>:  {requirementContent?.rq_industry || "NA"}</Text>
+              <Text>:  {requirementContent?.rq_industry || requirementContent?.consumer_company_name || "NA"}</Text>
             </Col>
             <Col span={12}>
               <Text strong>Procurement Date</Text>
             </Col>
-            <Col span={12}>
+            <Col span={12} >
             <Text>:{" "}  
   {requirementContent?.rq_procurement_date
     ? new Date(requirementContent.rq_procurement_date)
@@ -59,7 +59,7 @@ const DemandModal = ({ open, onCancel, requirementContent }) => {
                   <Text strong>Site Name</Text>
                 </Col>
                 <Col span={12}>
-                  <Text>:  {requirementContent?.rq_site || "NA"}</Text>
+                  <Text>:  {requirementContent?.rq_site || requirementContent?.consumption_unit_name || "NA"}</Text>
                 </Col>
               </>
             ) : null}
@@ -73,13 +73,13 @@ const DemandModal = ({ open, onCancel, requirementContent }) => {
               <Text strong>Tariff Category</Text>
             </Col>
             <Col span={12}>
-              <Text>:  {requirementContent?.rq_tariff_category || "NA"}</Text>
+              <Text>:  {requirementContent?.rq_tariff_category || requirementContent?.tariff_category || "NA"}</Text>
             </Col>
             <Col span={12}>
               <Text strong>Voltage Level (kV)</Text>
             </Col>
             <Col span={12}>
-              <Text>:  {requirementContent?.rq_voltage_level || "NA"}</Text>
+              <Text>:  {requirementContent?.rq_voltage_level || requirementContent?.connected_voltage || "NA"}</Text>
             </Col>
           </Row>
         </Col>
