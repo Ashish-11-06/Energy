@@ -4,8 +4,9 @@ import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocati
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchRequirements } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
+import { fetchRequirements, updateRequirements } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
 import { addNewRequirement } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
+
 import moment from 'moment';
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
 import { lastVisitedPage } from '../../Redux/Slices/Consumer/lastVisitedPageSlice';
@@ -16,12 +17,13 @@ const RequirementsPage = () => {
   const [selectedRequirement, setSelectedRequirement] = useState(null); // State to hold the selected requirement
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [username, setUsername] = useState(''); // State for info modal
+  const [isEdit,setEdit] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // Get location object
   const newUser = location.state?.new_user; // Get new_user from location state
   const dispatch = useDispatch();
   const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
-
+const [editData,setEditData]=useState(selectedRequirement);
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData=JSON.parse(localStorage.getItem('user')).user;
@@ -103,14 +105,14 @@ const RequirementsPage = () => {
         <span key={record.id || `${record.key}-${date}`}>{date ? moment(date).format('DD-MM-YYYY') : ''}</span>
       ),
     },
-    // {
-    //   title:'Edit',
-    //   key:'edit',
-    //   render:(text,record)=>(
-    //     <Button type="primary" onClick={()=>handleEdit(record)}>Edit</Button>
-    //   )
-    // }
-    
+    {
+      title:'Edit',
+      key:'edit',
+      render:(text,record)=>(
+        <Button type="primary" onClick={()=>handleEdit(record)}>Edit</Button>
+      )
+    }
+    ,
     {
       title: "Select",
       key: "select",
@@ -146,8 +148,10 @@ const RequirementsPage = () => {
   
 
   const handleEdit=(record)=>{
-    console.log();
-    
+    console.log(record);
+    setEditData(record);
+    setEdit(true);
+    setIsModalVisible(true);
   }
 
 const handleAddDetails =(record) => {
@@ -178,22 +182,32 @@ const handleAddDetails =(record) => {
 
   const showModal = () => {
     setIsModalVisible(true);
+    setEdit(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setSelectedRequirement(null); // Reset selected requirement on cancel
   };
 
   const handleSubmit = async (values) => {
     try {
-      // console.log('values',values);
-      
-      // Call the API to add the requirement
+      console.log('values',values);
       // const response = await consumerrequirementA.addNewRequirement(values);
-      // Dispatch the action to update Redux state
-      dispatch(addNewRequirement(values));
+     if(isEdit){
+      const id=userData.id;
+      console.log('user',id);
+      console.log('values',values);
+      
+      
+      dispatch(updateRequirements({id,updatedData:values}));
       setIsModalVisible(false);
-      message.success('Requirement added successfully!');
+       message.success('Requirement updated successfully!');
+     } else {
+       dispatch(addNewRequirement(values));
+       setIsModalVisible(false);
+       message.success('Requirement added successfully!');
+     }
     } catch (error) {
       // console.log(error);
       message.error('Failed to add requirement');
@@ -327,6 +341,7 @@ const handleAddDetails =(record) => {
         open={isModalVisible}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
+        data={editData}
       />
      
     </div>

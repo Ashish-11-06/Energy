@@ -11,38 +11,47 @@ import {
   Tooltip,
 } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
-import states from "../../../Data/States";
-import industries from "../../../Data/Industry";
+import moment from "moment"; // Ensure moment is imported
+
 import { useDispatch, useSelector } from "react-redux";
-import dayjs from "dayjs";
 import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
 
-const requirementForm = ({ open, onCancel, onSubmit }) => {
+const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
   const [form] = Form.useForm();
-  const [customVoltage, setCustomVoltage] = useState(""); // State to hold custom voltage input
-  const [isCustomVoltage, setIsCustomVoltage] = useState(false); // Flag to toggle custom voltage input visibility
-  const [customIndustry, setCustomIndustry] = useState(""); // State to hold custom industry input
-  const [isCustomIndustry, setIsCustomIndustry] = useState(false); // Flag to toggle custom industry input visibility
-  const [isState, setIsState] = useState([]);
-  const [isIndustry, setIsIndustry] = useState([]);
-  // const states = useSelector((state) => state.consumer.states);
+  const [customVoltage, setCustomVoltage] = useState("");
+  const [isCustomVoltage, setIsCustomVoltage] = useState(false);
+  const [customIndustry, setCustomIndustry] = useState("");
+  const [isCustomIndustry, setIsCustomIndustry] = useState(false);
   const dispatch = useDispatch();
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
-  //  console.log(statee);
 
-  // useEffect(() => {
-  //   dispatch(fetchState());
-  // }, [dispatch]);
+  useEffect(() => {
+    if (industryy.length < 1) {
+      dispatch(fetchIndustry());
+    }
+    if (statee?.length < 1) {
+      dispatch(fetchState());
+    }
+  }, [dispatch]);
 
-  if (industryy.length < 1) {
-    dispatch(fetchIndustry());
-  }
-
-  if (statee?.length < 1) {
-    dispatch(fetchState());
-  }
+  useEffect(() => {
+    if (data) {
+      form.setFieldsValue({
+        state: data.state,
+        consumption_unit: data.consumption_unit,
+        industry: data.industry,
+        contractedDemand: data.contracted_demand,
+        tariffCategory: data.tariff_category,
+        voltageLevel: data.voltage_level,
+        annual_electricity_consumption: data.annual_electricity_consumption,
+        procurement: data.procurement_date ? moment(data.procurement_date) : null,
+      });
+    } else {
+      form.resetFields(); // Reset fields if no data is provided
+    }
+  }, [data, form]);
 
   const handleSubmit = (values) => {
     const user = JSON.parse(localStorage.getItem("user")).user;
@@ -52,45 +61,18 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
       industry: values.industry === "other" ? customIndustry : values.industry,
       contracted_demand: values.contractedDemand,
       tariff_category: values.tariffCategory,
-      voltage_level:
-        values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
-      procurement_date: values.procurement.format("YYYY-MM-DD"), // Change format to YYYY-MM-DD for submission
+      voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
+      procurement_date: values.procurement.format("YYYY-MM-DD"),
       consumption_unit: values.consumption_unit,
-      annual_electricity_consumption: values.annual_electricity_consumption, // Add annual consumption to formatted values
+      annual_electricity_consumption: values.annual_electricity_consumption,
     };
-    if (onSubmit) {
-      onSubmit(formattedValues);
-    }
+    onSubmit(formattedValues);
     form.resetFields();
-    setCustomVoltage(""); // Reset custom voltage field
-    setIsCustomVoltage(false); // Reset custom voltage flag
-    setCustomIndustry(""); // Reset custom industry field
-    setIsCustomIndustry(false); // Reset custom industry flag
+    setCustomVoltage("");
+    setIsCustomVoltage(false);
+    setCustomIndustry("");
+    setIsCustomIndustry(false);
   };
-
-  useEffect(() => {
-    dispatch(fetchState())
-      .then((response) => {
-        // console.log(response.payload);
-
-        setIsState(response.payload);
-        //console.log(isState);
-      })
-      .catch((error) => {
-        console.error("Error fetching states:", error);
-      });
-  }, [dispatch]);
-
-  // useEffect(() => {
-  //   dispatch(fetchIndustry())
-  //     .then(response => {
-  //     //  setIsIndustry(response.payload);
-  //       //console.log(isState);
-  //     })
-  //     .catch(error => {
-  //       console.error("Error fetching industry:", error);
-  //     });
-  // }, [dispatch]);
 
   const renderLabelWithTooltip = (label, tooltip) => (
     <span>
@@ -106,7 +88,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
       setIsCustomVoltage(true);
     } else {
       setIsCustomVoltage(false);
-      setCustomVoltage(""); // Reset custom voltage if "Other" is not selected
+      setCustomVoltage("");
     }
   };
 
@@ -115,7 +97,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
       setIsCustomIndustry(true);
     } else {
       setIsCustomIndustry(false);
-      setCustomIndustry(""); // Reset custom industry if "Other" is not selected
+      setCustomIndustry("");
     }
   };
 
@@ -155,12 +137,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
                 "Name of the consumption unit where the electricity is being consumed."
               )}
               name="consumption_unit"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter the consumption unit name!",
-                },
-              ]}
+              rules={[{ required: true, message: "Please enter the consumption unit name!" }]}
             >
               <Input type="text" placeholder="Enter consumption unit name" />
             </Form.Item>
@@ -173,14 +150,12 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
                 "Industry your company is involved in (e.g., IT, Manufacturing)."
               )}
               name="industry"
-              rules={[
-                { required: true, message: "Please select your industry!" },
-              ]}
+              rules={[{ required: true, message: "Please select your industry!" }]}
             >
               <Select
                 placeholder="Select your industry"
                 showSearch
-                optionFilterProp="children" 
+                optionFilterProp="children"
                 onChange={handleIndustryChange}
                 filterOption={(input, option) =>
                   option.children.toLowerCase().includes(input.toLowerCase())
@@ -204,12 +179,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
                   'Enter the custom industry if "Other" was selected.'
                 )}
                 name="customIndustry"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter a custom industry!",
-                  },
-                ]}
+                rules={[{ required: true, message: "Please enter a custom industry!" }]}
               >
                 <Input
                   type="text"
@@ -228,23 +198,13 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
                 "Select the tariff category for your consumption unit (refer to your electricity bill)."
               )}
               name="tariffCategory"
-              rules={[
-                { required: true, message: "Please select a tariff category!" },
-              ]}
+              rules={[{ required: true, message: "Please select a tariff category!" }]}
             >
               <Select placeholder="Select tariff category">
-                <Select.Option value="HT Commercial">
-                  HT Commercial
-                </Select.Option>
-                <Select.Option value="HT Industrial">
-                  HT Industrial
-                </Select.Option>
-                <Select.Option value="LT Commercial">
-                  LT Commercial
-                </Select.Option>
-                <Select.Option value="LT Industrial">
-                  LT Industrial
-                </Select.Option>
+                <Select.Option value="HT Commercial">HT Commercial</Select.Option>
+                <Select.Option value="HT Industrial">HT Industrial</Select.Option>
+                <Select.Option value="LT Commercial">LT Commercial</Select.Option>
+                <Select.Option value="LT Industrial">LT Industrial</Select.Option>
               </Select>
             </Form.Item>
           </Col>
@@ -256,9 +216,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
                 "Select the voltage level of the electricity being supplied to your consumption unit."
               )}
               name="voltageLevel"
-              rules={[
-                { required: true, message: "Please select the voltage level!" },
-              ]}
+              rules={[{ required: true, message: "Please select the voltage level!" }]}
             >
               <Select
                 placeholder="Select voltage level"
@@ -281,11 +239,8 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
                   'Enter the custom voltage level if "Other" was selected.'
                 )}
                 name="customVoltage"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter a custom voltage value!",
-                  },
+                rules={[{ required: true, 
+                  message: "Please enter a custom voltage value!" },
                 ]}
               >
                 <Input
@@ -305,12 +260,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
                 "Contracted demand / Sanctioned load as per your electricity bill"
               )}
               name="contractedDemand"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter the contracted demand!",
-                },
-              ]}
+              rules={[{ required: true, message: "Please enter the contracted demand!" }]}
             >
               <Input
                 type="number"
@@ -326,12 +276,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
                 "Enter the annual electricity consumption in megawatt-hours."
               )}
               name="annual_electricity_consumption"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter the annual electricity consumption!",
-                },
-              ]}
+              rules={[{ required: true, message: "Please enter the annual electricity consumption!" }]}
             >
               <Input
                 type="number"
@@ -347,12 +292,7 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
                 "Select the date from which you need RE power."
               )}
               name="procurement"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select a procurement date!",
-                },
-              ]}
+              rules={[{ required: true, message: "Please select a procurement date!" }]}
             >
               <DatePicker
                 style={{ width: "100%" }}
@@ -380,4 +320,4 @@ const requirementForm = ({ open, onCancel, onSubmit }) => {
   );
 };
 
-export default requirementForm;
+export default RequirementForm;
