@@ -26,6 +26,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
   const dispatch = useDispatch();
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
+// console.log(data);
 
   useEffect(() => {
     if (industryy.length < 1) {
@@ -39,6 +40,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
   useEffect(() => {
     if (data) {
       form.setFieldsValue({
+        id:data?.id,
         state: data.state,
         consumption_unit: data.consumption_unit,
         industry: data.industry,
@@ -56,6 +58,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
   const handleSubmit = (values) => {
     const user = JSON.parse(localStorage.getItem("user")).user;
     const formattedValues = {
+      id : data?.id,
       user: user.id,
       state: values.state,
       industry: values.industry === "other" ? customIndustry : values.industry,
@@ -66,6 +69,9 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
       consumption_unit: values.consumption_unit,
       annual_electricity_consumption: values.annual_electricity_consumption,
     };
+
+    console.log(formattedValues);
+    
     onSubmit(formattedValues);
     form.resetFields();
     setCustomVoltage("");
@@ -120,7 +126,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
               name="state"
               rules={[{ required: true, message: "Please select your state!" }]}
             >
-              <Select placeholder="Select your state" showSearch>
+              <Select placeholder="Select your state" showSearch disabled={data?.state}>
                 {statee?.map((state, index) => (
                   <Select.Option key={index} value={state}>
                     {state}
@@ -139,7 +145,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
               name="consumption_unit"
               rules={[{ required: true, message: "Please enter the consumption unit name!" }]}
             >
-              <Input type="text" placeholder="Enter consumption unit name" />
+              <Input type="text" placeholder="Enter consumption unit name" disabled={data?.consumption_unit}/>
             </Form.Item>
           </Col>
 

@@ -148,11 +148,14 @@ const [editData,setEditData]=useState(selectedRequirement);
   
 
   const handleEdit=(record)=>{
-    console.log(record);
+    // console.log(record);
     setEditData(record);
     setEdit(true);
     setIsModalVisible(true);
   }
+
+  // console.log(editData);
+  
 
 const handleAddDetails =(record) => {
   // console.log('clicked');
@@ -192,15 +195,13 @@ const handleAddDetails =(record) => {
 
   const handleSubmit = async (values) => {
     try {
-      console.log('values',values);
+      // console.log('values',values);
       // const response = await consumerrequirementA.addNewRequirement(values);
      if(isEdit){
-      const id=userData.id;
-      console.log('user',id);
-      console.log('values',values);
+      // console.log('user',id);
       
       
-      dispatch(updateRequirements({id,updatedData:values}));
+      dispatch(updateRequirements({updatedData:values}));
       setIsModalVisible(false);
        message.success('Requirement updated successfully!');
      } else {

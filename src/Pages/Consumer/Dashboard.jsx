@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, Statistic } from "antd";
+import { Row, Col, Card, Statistic, Modal } from "antd";
 import { DatabaseOutlined, ProfileOutlined } from "@ant-design/icons";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
@@ -8,23 +8,25 @@ import DashboardApi from "../../Redux/api/dashboard";
 import offerSend from "../../assets/offerSend.png";
 import state from "../../assets/state.png";
 import totalIPP from "../../assets/totalIPP.png";
-import availableCapacity from '../../assets/capacity.png';
-import demands from '../../assets/capacityAvailable.png';
-import consumption from '../../assets/consumption.png';
-
+import availableCapacity from "../../assets/capacity.png";
+import demands from "../../assets/capacityAvailable.png";
+import consumption from "../../assets/consumption.png";
 
 const Dashboard = () => {
   const [consumerDetails, setConsumerDetails] = useState({});
   const [platformDetails, setPlatformDetails] = useState({});
-
+  const [stateModal, showStateModal] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userId = user.id;
+  const [states, setStates] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await DashboardApi.getConsumerDashboardData(userId);
         const data = response.data;
+        console.log(data);
+        setStates(data?.states);
         setConsumerDetails({
           // energyPurchased: data.energy_purchased_from || 0,
           demandSent: data.total_demands || 0,
@@ -49,6 +51,10 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
+
+  const handleStateClose = () => {
+    showStateModal(false);
+  };
 
   const barData = {
     labels: ["Demand", "Offer Received", "Transactions Close"],
@@ -103,16 +109,17 @@ const Dashboard = () => {
                   <Statistic
                     title="Total Demands"
                     value={consumerDetails.totalDemands}
-                    prefix={ <img
-                      src={demands}
-                      alt=""
-                      style={{
-                        width: "20px",
-                        height: "20px",
-                        marginRight: "5px",
-
-                      }}
-                    />}
+                    prefix={
+                      <img
+                        src={demands}
+                        alt=""
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
                     valueStyle={{
                       color: "#3f8600",
                       display: "flex",
@@ -158,9 +165,9 @@ const Dashboard = () => {
                       alignItems: "center",
                     }}
                     suffix={
-                      <span style={{ fontSize: "20px", marginLeft: "5px" }}>
-                        
-                      </span>
+                      <span
+                        style={{ fontSize: "20px", marginLeft: "5px" }}
+                      ></span>
                     }
                   />
                 </Card.Grid>
@@ -283,7 +290,7 @@ const Dashboard = () => {
                       color: "#3f8600",
                       display: "flex",
                       alignItems: "center",
-                      fontSize:'17px'
+                      fontSize: "17px",
                     }}
                   />
                 </Card.Grid>
@@ -298,14 +305,17 @@ const Dashboard = () => {
                     alignItems: "center",
                     justifyContent: "center",
                   }}
+                  hoverable
+                  onMouseEnter={() => showStateModal(true)} // Open modal when hovering
+                  // onMouseLeave={() => handleStateClose()} // Close modal when hovering out
                 >
                   <Statistic
                     title="Number of States Covered"
-                    value={platformDetails.statesCovered}
+                    value={platformDetails?.statesCovered || 0} // Default to 0 if undefined
                     prefix={
                       <img
-                        src={state}
-                        alt=""
+                        src={state} // Ensure `state` is a valid image URL
+                        alt="State Icon"
                         style={{
                           width: "20px",
                           height: "20px",
@@ -325,392 +335,21 @@ const Dashboard = () => {
           </Card>
         </Col>
       </Row>
+      <Modal
+        open={stateModal}
+        title="States Covered"
+        onCancel={() => showStateModal(false)} // Close the modal when Cancel is clicked
+        footer={null} // This removes the default OK/Cancel buttons
+      >
+        <ul>
+          {states?.map((state, index) => (
+            <li key={index}>{state}</li>
+          ))}
+        </ul>
+      </Modal>
     </div>
   );
 };
 
 export default Dashboard;
 
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from "react";
-// import { Row, Col, Card, Statistic,Tooltip,Modal } from "antd";
-// import { DatabaseOutlined, ProfileOutlined } from "@ant-design/icons";
-// import { Bar } from "react-chartjs-2";
-// import "chart.js/auto";
-// import DashboardApi from "../../Redux/api/dashboard";
-
-// import offerSend from "../../assets/offerSend.png";
-// import state from "../../assets/state.png";
-// import totalIPP from "../../assets/totalIPP.png";
-// import availableCapacity from "../../assets/capacity.png";
-// import demands from "../../assets/capacityAvailable.png";
-// import consumption from "../../assets/consumption.png";
-
-// const Dashboard = () => {
-//   const [consumerDetails, setConsumerDetails] = useState({});
-//   const [platformDetails, setPlatformDetails] = useState({});
-//   const [isHovered, setIsHovered] = useState(false);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-
-//   // Function to handle opening the modal
-//   const handleMouseEnter = () => {
-//     setIsModalOpen(true);
-//   };
-
-//   // Function to handle closing the modal
-//   const handleMouseLeave = () => {
-//     setTimeout(() => {
-//       setIsModalOpen(false);
-//     }); // Adds a small delay for smoother experience
-//   };
-//   const user = JSON.parse(localStorage.getItem("user")).user;
-//   const userId = user.id;
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const response = await DashboardApi.getConsumerDashboardData(userId);
-//         const data = response.data;
-//         setConsumerDetails({
-//           // energyPurchased: data.energy_purchased_from || 0,
-//           demandSent: data.total_demands || 0,
-//           offerReceived: data.offers_received || 0,
-//           transactionsDone: data.transactions_done || 0,
-//           offersSent: data.offers_sent || 0,
-
-//           totalDemands: data.total_demands || 0,
-//           totalConsumptionUnits: data.consumption_units || 0,
-//           subscriptionPlan: data.subscription_plan || "N/A",
-//           totalStates: data.unique_states_count || 0,
-//         });
-//         setPlatformDetails({
-//           totalIPPs: data.total_portfolios || 0,
-//           totalCapacity: data.total_available_capacity || 0,
-//           statesCovered: data.unique_states_count || 0,
-//         });
-//       } catch (error) {
-//         console.error("Error fetching dashboard data", error);
-//       }
-//     };
-
-//     fetchData();
-//   }, []);
-
-// const stateList=[
-//   'state1','state2','state3'
-// ]
-
-//   const barData = {
-//     labels: ["Demand", "Offer Received", "Transactions Done"],
-//     datasets: [
-//       {
-//         label: "Consumer Details (in MW)",
-//         data: [
-//           consumerDetails.demandSent,
-//           consumerDetails.offerReceived,
-//           consumerDetails.transactionsDone,
-//           //  consumerDetails.offersSent,
-//         ],
-//         backgroundColor: ["#669800", "#669800", "#669800", "#669800"],
-//       },
-//     ],
-//   };
-
-//   return (
-//     <div style={{ padding: "30px" }}>
-//       <Row gutter={[16, 16]} style={{ height: "400px" }}>
-//         {/* Consumer Details */}
-//         <Col span={12}>
-//           <Card
-//             title="Transaction Details"
-//             style={{ backgroundColor: "white", height: "100%" }}
-//           >
-//             <div style={{ height: "100%" }}>
-//               <Bar data={barData} options={{ maintainAspectRatio: false }} />
-//             </div>
-//           </Card>
-//         </Col>
-
-//         {/* Profile Details */}
-//         <Col span={12}>
-//           <Card
-//             title="Profile Details"
-//             bordered={false}
-//             style={{ backgroundColor: "white", height: "100%" }}
-//           >
-//             <Row gutter={[16, 16]}>
-//               <Col span={8}>
-//                 <Card.Grid
-//                   style={{
-//                     width: "100%",
-//                     textAlign: "center",
-//                     height: "135px",
-//                     display: "flex",
-//                     alignItems: "center",
-//                     justifyContent: "center",
-//                   }}
-//                 >
-//                   <Statistic
-//                     title="Total Demands"
-//                     value={consumerDetails.totalDemands}
-//                     prefix={
-//                       <img
-//                         src={demands}
-//                         alt=""
-//                         style={{
-//                           width: "20px",
-//                           height: "20px",
-//                           marginRight: "5px",
-//                         }}
-//                       />
-//                     }
-//                     valueStyle={{
-//                       color: "#3f8600",
-//                       display: "flex",
-//                       alignItems: "center",
-//                     }}
-//                     suffix={
-//                       <span style={{ fontSize: "20px", marginLeft: "5px" }}>
-//                         MW
-//                       </span>
-//                     }
-//                   />
-//                 </Card.Grid>
-//               </Col>
-
-//               <Col span={8}>
-//                 <Card.Grid
-//                   style={{
-//                     width: "100%",
-//                     textAlign: "center",
-//                     height: "135px",
-//                     display: "flex",
-//                     alignItems: "center",
-//                     justifyContent: "center",
-//                   }}
-//                 >
-//                   <Statistic
-//                     title="Total Consumption Units"
-//                     value={consumerDetails.totalConsumptionUnits}
-//                     prefix={
-//                       <img
-//                         src={consumption}
-//                         alt=""
-//                         style={{
-//                           width: "20px",
-//                           height: "20px",
-//                           marginRight: "5px",
-//                         }}
-//                       />
-//                     }
-//                     valueStyle={{
-//                       color: "#3f8600",
-//                       display: "flex",
-//                       alignItems: "center",
-//                     }}
-//                     suffix={
-//                       <span
-//                         style={{ fontSize: "20px", marginLeft: "5px" }}
-//                       ></span>
-//                     }
-//                   />
-//                 </Card.Grid>
-//               </Col>
-
-//               <Col span={8}>
-//                 <Card.Grid
-//                   style={{
-//                     width: "100%",
-//                     textAlign: "center",
-//                     height: "135px",
-//                     display: "flex",
-//                     alignItems: "center",
-//                     justifyContent: "center",
-//                   }}
-//                 >
-//                   <Statistic
-//                     title="Total Offer Sent"
-//                     value={consumerDetails.offersSent}
-//                     prefix={
-//                       <img
-//                         src={offerSend}
-//                         alt=""
-//                         style={{
-//                           width: "20px",
-//                           height: "20px",
-//                           marginRight: "5px",
-//                         }}
-//                       />
-//                     }
-//                     valueStyle={{
-//                       color: "#3f8600",
-//                       display: "flex",
-//                       alignItems: "center",
-//                     }}
-//                   />
-//                 </Card.Grid>
-//               </Col>
-
-//               {/* <Col span={8}>
-//                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
-//                   <Statistic title="Subscription Plan" value={consumerDetails.subscriptionPlan} prefix={<CrownOutlined />} valueStyle={{ color: "#3f8600" }} />
-//                 </Card.Grid>
-//               </Col> */}
-//             </Row>
-//           </Card>
-//         </Col>
-
-//         {/* Platform Details */}
-//         <Col span={12}>
-//           <Card
-//             title="Platform Details"
-//             bordered={false}
-//             style={{ backgroundColor: "white", height: "100%" }}
-//           >
-//             <Row gutter={[16, 16]}>
-//               <Col span={8}>
-//                 <Card.Grid
-//                   style={{
-//                     width: "100%",
-//                     height: "135px",
-//                     display: "flex",
-//                     alignItems: "center",
-//                     justifyContent: "center",
-//                   }}
-//                 >
-//                   <Statistic
-//                     title="Total projects"
-//                     value={platformDetails.totalIPPs}
-//                     prefix={
-//                       <img
-//                         src={totalIPP}
-//                         alt=""
-//                         style={{
-//                           width: "20px",
-//                           height: "20px",
-//                           marginRight: "5px",
-//                         }}
-//                       />
-//                     }
-//                     valueStyle={{
-//                       color: "#3f8600",
-//                       display: "flex",
-//                       alignItems: "center",
-//                     }}
-//                   />
-//                 </Card.Grid>
-//               </Col>
-//               <Col span={8}>
-//                 <Card.Grid
-//                   style={{
-//                     width: "100%",
-//                     height: "135px",
-//                     display: "flex",
-//                     alignItems: "center",
-//                     justifyContent: "center",
-//                   }}
-//                 >
-//                   <Statistic
-//                     title="Total Capacity Available"
-//                     value={platformDetails.totalCapacity}
-//                     prefix={
-//                       <img
-//                         src={availableCapacity}
-//                         alt=""
-//                         style={{
-//                           width: "20px",
-//                           height: "20px",
-//                           marginRight: "5px",
-//                         }}
-//                       />
-//                     }
-//                     suffix={
-//                       <span style={{ fontSize: "16px", marginLeft: "5px" }}>
-//                         MW
-//                       </span>
-//                     }
-//                     valueStyle={{
-//                       color: "#3f8600",
-//                       display: "flex",
-//                       alignItems: "center",
-//                       fontSize: "17px",
-//                     }}
-//                   />
-//                 </Card.Grid>
-//               </Col>
-
-//               <Col span={8}>
-//       <div
-       
-//       >
-//         <Card.Grid
-//          onMouseEnter={handleMouseEnter}
-//          onMouseLeave={handleMouseLeave}
-        
-//           style={{
-//             width: "100%",
-//             height: "135px",
-//             display: "flex",
-//             alignItems: "center",
-//             justifyContent: "center",
-//             cursor: "pointer",
-//           }}
-//         >
-//           <Statistic
-//             title="Number of States Covered"
-//             value={platformDetails.statesCovered}
-//             prefix={
-//               <img
-//                 src={state}
-//                 alt=""
-//                 style={{
-//                   width: "20px",
-//                   height: "20px",
-//                   marginRight: "5px",
-//                 }}
-//               />
-//             }
-//             valueStyle={{
-//               color: "#3f8600",
-//               display: "flex",
-//               alignItems: "center",
-//             }}
-//           />
-//         </Card.Grid>
-//       </div>
-
-//       {/* Ant Design Modal */}
-//       <Modal
-//         title="States Covered"
-//         open={isModalOpen}
-//         footer={null} // Remove footer buttons
-//         onCancel={() => setIsModalOpen(false)}
-//         maskClosable={true} // Allow closing on clicking outside
-//       >
-//         <ul>
-//           {stateList.map((state, index) => (
-//             <li key={index}>{state}</li>
-//           ))}
-//         </ul>
-//       </Modal>
-//     </Col>
-
-//               ;
-//             </Row>
-//           </Card>
-//         </Col>
-//       </Row>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;

@@ -183,6 +183,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
 
   const onSubmit = (values) => {
     console.log("Form Values:", values);
+// console.log(values);
 
     const updatedValues = {
       ...values,

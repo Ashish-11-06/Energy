@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select, message, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
-import { addProject } from '../../../Redux/Slices/Generator/portfolioSlice';
+import { addProject, updateProject } from '../../../Redux/Slices/Generator/portfolioSlice';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { fetchState } from '../../../Redux/Slices/Consumer/stateSlice';
 
@@ -28,18 +28,41 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
       }
       values.user = user.id;
       setLoading(true);
-      dispatch(addProject(values))
-        .unwrap()
-        .then(() => {
-          setLoading(false);
-          form.resetFields();
-          onClose();
-          message.success('Project added successfully!');
-        })
-        .catch((err) => {
-          setLoading(false);
-          message.error(err.message || 'Failed to add project. Please try again.');
-        });
+      if (data) {
+        console.log(values);
+        const id = data?.id;
+        console.log('id', id);
+    
+        const updatedValues = { ...values, id }; // Add data.id to values
+    
+        dispatch(updateProject(updatedValues))
+            .unwrap()
+            .then(() => {
+                setLoading(false);
+                form.resetFields();
+                onClose();
+                message.success('Project updated successfully!');
+            })
+            .catch((err) => {
+                setLoading(false);
+                message.error(err.message || 'Failed to update project. Please try again.');
+            });
+    }
+            else {
+          dispatch(addProject(values))
+          .unwrap()
+          .then(() => {
+            setLoading(false);
+            form.resetFields();
+            onClose();
+            message.success('Project added successfully!');
+          })
+          .catch((err) => {
+            setLoading(false);
+            message.error(err.message || 'Failed to add project. Please try again.');
+          });
+      }
+      
     }).catch((info) => {
       console.log('Validate Failed:', info);
     });
@@ -95,6 +118,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
+            
               label={
                 <span>
                   Technology&nbsp;
@@ -105,7 +129,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
               }
               name="energy_type"
               rules={[{ required: true, message: 'Please select type!' }]} >
-              <Select placeholder="Select Type" onChange={handleTechnologyChange}>
+              <Select placeholder="Select Type" onChange={handleTechnologyChange} disabled={data?.type}>
                 <Select.Option value="Solar">Solar</Select.Option>
                 <Select.Option value="Wind">Wind</Select.Option>
                 <Select.Option value="ESS">ESS (Energy Storage System)</Select.Option>
@@ -125,8 +149,9 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
               }
               name="state"
               rules={[{ required: true, message: "Please select your state!" }]}
+              
             >
-              <Select placeholder="Select your state" showSearch>
+              <Select placeholder="Select your state" showSearch disabled={data?.state}>
                 {isState && isState.map((state, index) => (
                   <Select.Option key={index} value={state}>
                     {state}

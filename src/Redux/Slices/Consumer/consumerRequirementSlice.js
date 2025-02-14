@@ -25,11 +25,11 @@ export const fetchRequirements = createAsyncThunk(
 
 export const updateRequirements = createAsyncThunk(
     'consumerRequirement/updateRequirements',
-    async ({id,updatedData}, { rejectWithValue }) => {
+    async ({updatedData}, { rejectWithValue }) => {
         try {
             console.log(updatedData);
             
-            const response = await consumerrequirementApi.updaterequirement(id,updatedData); // Assuming API call to fetch requirements by id
+            const response = await consumerrequirementApi.updaterequirement(updatedData); // Assuming API call to fetch requirements by id
      
             return response.data;
         } catch (error) {
@@ -70,6 +70,13 @@ const consumerRequirementSlice = createSlice({
             // Remove requirement by its ID
             state.requirements = state.requirements.filter(req => req.id !== action.payload);
         },
+        //add updated requirement to the list
+        updateRequirementInList: (state, action) => {
+            const index = state.requirements.findIndex(req => req.id === action.payload.id);
+            if (index !== -1) {
+                state.requirements[index] = action.payload;
+            }
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -92,8 +99,13 @@ const consumerRequirementSlice = createSlice({
             })
             .addCase(updateRequirements.fulfilled, (state, action) => {
                 state.loading = false;  // Set loading to false after successful fetch
-                state.requirements.push(action.payload); // Add new requirement to the list
-                console.log(action.payload);
+                // state.requirements.push(action.payload); // Add new requirement to the list
+                // console.log(action.payload);
+                const index = state.requirements.findIndex(req => req.id === action.payload.id);
+                if (index !== -1) {
+                    console.log('slice',action.payload)
+                    state.requirements[index] = action.payload;
+                }
             })
             .addCase(updateRequirements.rejected, (state, action) => {
                 state.loading = false;  // Set loading to false after failed fetch

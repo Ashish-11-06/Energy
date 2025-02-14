@@ -126,7 +126,7 @@ console.log(editData);
       render: (text) => moment(text).format('DD-MM-YYYY'),  // Format date to DD-MM-YYYY
     },
        {
-          title:'Edit',
+          title:'Edit Project',
           key:'edit',
           render:(text,record)=>(
             <Button type="primary" onClick={()=>handleEdit(record)}>Edit</Button>
