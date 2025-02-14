@@ -42,7 +42,7 @@ const Dashboard = () => {
         setPlatformDetails({
           totalIPPs: data.total_portfolios || 0,
           totalCapacity: data.total_available_capacity || 0,
-          statesCovered: data.unique_states_count || 0,
+          statesCovered: data.states_covered || 0,
         });
       } catch (error) {
         console.error("Error fetching dashboard data", error);

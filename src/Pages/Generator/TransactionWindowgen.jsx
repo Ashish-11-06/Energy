@@ -62,6 +62,8 @@ const TransactionWindowgen = () => {
   useEffect(() => {
     // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
     const newSocket = connectWebSocket(user.id, record.tariff_id);
+    console.log(newSocket);
+    
     setSocket(newSocket);
 
     console.log(newSocket, socket);

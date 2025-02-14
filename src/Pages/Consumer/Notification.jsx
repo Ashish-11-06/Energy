@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Typography, Button } from "antd";
+import { Card, Row, Col, Typography, Button, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchNotificationById } from "../../Redux/Slices/Consumer/notificationSlice.js";
@@ -9,23 +9,25 @@ const Notification = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [notifications, setNotifications] = useState([]); // State to store notifications
-
-  const userId=JSON.parse(localStorage.getItem('user')).user.id;
+  const [loading, setLoading] = useState(false);
+  const userId = JSON.parse(localStorage.getItem("user")).user.id;
   console.log(userId);
-  
+
   useEffect(() => {
     // Retrieve requirement id from localStorage
-    const storedRequirementId = localStorage.getItem('selectedRequirementId');
+    const storedRequirementId = localStorage.getItem("selectedRequirementId");
     // console.log('req id in notification', storedRequirementId);
-
+    setLoading(true);
     if (storedRequirementId) {
       // Dispatch action to fetch notifications based on the retrieved requirement id
+
       dispatch(fetchNotificationById(userId))
-        .then(response => {
+        .then((response) => {
           // Assuming the response contains the notifications array
           setNotifications(response.payload); // Adjust based on your actual response structure
+          setLoading(false);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error fetching notifications:", error);
         });
     } else {
@@ -39,54 +41,70 @@ const Notification = () => {
         Notifications
       </Title>
 
-      <Row gutter={[16, 16]} justify="center">
-      {(Array.isArray(notifications) ? notifications : []).map((notification) => (
-  <Col span={24} key={notification.id}>
-    <Card
-      title={
-        <span style={{ fontSize: "18px", fontWeight: "500" }}>
-          Notification #{notification.id}
-        </span>
-      }
-      bordered={true}
-      style={{
-        width: "100%",
-        borderRadius: "8px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        backgroundColor: "#ffffff",
-        height: "auto",
-      }}
-    >
-      <div
-        style={{
-          fontSize: "14px",
-          color: "#555",
-          marginBottom: "10px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          textAlign: "left",
-        }}
-      >
-        {/* <Text strong>From: {notification.user}</Text> */}
-        {/* Timestamp */}
-        <div style={{ marginTop: "10px" }}>
-          <Text strong>Timestamp: </Text>
-          <Text>{new Date(notification.timestamp).toLocaleString()}</Text>
+      {loading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "60vh", // Full height of the viewport
+          }}
+        >
+          <Spin />
         </div>
-        <br />
-        {/* Message */}
-        <div>
-          <Text strong>Message: </Text>
-          <Text>{notification.message}</Text>
-          <Text>{notification.message?.demand}</Text> 
-        </div>
-      </div>
-    </Card>
-  </Col>
-))}
-
-      </Row>
+      ) : (
+        <Row gutter={[16, 16]} justify="center">
+          {(Array.isArray(notifications) ? notifications : []).map(
+            (notification) => (
+              <Col span={24} key={notification.id}>
+                <Card
+                  title={
+                    <span style={{ fontSize: "18px", fontWeight: "500" }}>
+                      Notification #{notification.id}
+                    </span>
+                  }
+                  bordered={true}
+                  style={{
+                    width: "100%",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#ffffff",
+                    height: "auto",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      marginBottom: "10px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      textAlign: "left",
+                    }}
+                  >
+                    {/* <Text strong>From: {notification.user}</Text> */}
+                    {/* Timestamp */}
+                    <div style={{ marginTop: "10px" }}>
+                      <Text strong>Timestamp: </Text>
+                      <Text>
+                        {new Date(notification.timestamp).toLocaleString()}
+                      </Text>
+                    </div>
+                    <br />
+                    {/* Message */}
+                    <div>
+                      <Text strong>Message: </Text>
+                      <Text>{notification.message}</Text>
+                      <Text>{notification.message?.demand}</Text>
+                    </div>
+                  </div>
+                </Card>
+              </Col>
+            )
+          )}
+        </Row>
+      )}
     </div>
   );
 };

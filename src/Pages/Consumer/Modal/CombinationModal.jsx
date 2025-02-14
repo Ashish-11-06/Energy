@@ -4,7 +4,7 @@ import { Modal, Button, Row, Col, Card, Typography } from "antd";
 const { Text } = Typography;
 
 const CombinationModal = ({ open, onCancel, combinationContent }) => {
-//   console.log(combinationContent);
+  console.log(combinationContent?.state);
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 //   console.log(user_category);
@@ -34,34 +34,49 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
               <Text>: {combinationContent?.combination || "NA"}</Text>
             </Col>
             <Col span={12}>
-              <Text strong>Solar Capacity (MWh)</Text>
-            </Col>
-            <Col span={12}>
-              <Text>
-                : {combinationContent?.optimal_solar_capacity || "NA"} &nbsp;
-                {combinationContent?.state?.Solar_1 || " "}
-              </Text>
-            </Col>
-            <Col span={12}>
-              <Text strong>Wind Capacity (MWh)</Text>
-            </Col>
-            <Col span={12}>
-            <Text>
-                : {combinationContent?.optimal_wind_capacity || "NA"} &nbsp;
-                {combinationContent?.state?.Wind_1 || " "}
-              </Text>
-            </Col>
+  <Text strong>Solar Capacity (MWh)</Text>
+</Col>
+<Col span={12}>
+  <Text>
+    : {combinationContent?.optimal_solar_capacity || "0"} &nbsp;
+    {
+      Object.entries(combinationContent?.state || {}).find(([key]) =>
+        key.startsWith("Solar")
+      )?.[1] || " "
+    }
+  </Text>
+</Col>
+
+<Col span={12}>
+  <Text strong>Wind Capacity (MWh)</Text>
+</Col>
+<Col span={12}>
+  <Text>
+    : {combinationContent?.optimal_wind_capacity || "0"} &nbsp;
+    {
+      Object.entries(combinationContent?.state || {}).find(([key]) =>
+        key.startsWith("Wind")
+      )?.[1] || " "
+    }
+  </Text>
+</Col>
+
             {/* {user_category === "Consumer" ? (
               <> */}
-            <Col span={12}>
-              <Text strong>Battery Capacity (MWh)</Text>
-            </Col>
-            <Col span={12}>
-            <Text>
-                : {combinationContent?.optimal_battery_capacity || "NA"} &nbsp;
-                {combinationContent?.state?.Battery_1 || " "}
-              </Text>
-            </Col>
+         <Col span={12}>
+  <Text strong>Battery Capacity (MWh)</Text>
+</Col>
+<Col span={12}>
+  <Text>
+    : {combinationContent?.optimal_battery_capacity || "0"} &nbsp;
+    {
+      Object.entries(combinationContent?.state || {}).find(([key]) =>
+        key.startsWith("ESS")
+      )?.[1] || " "
+    }
+  </Text>
+</Col>
+
             {/* </>
             ) : null} */}
             <Col span={12}>

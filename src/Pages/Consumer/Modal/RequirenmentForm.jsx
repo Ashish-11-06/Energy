@@ -26,6 +26,8 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
   const dispatch = useDispatch();
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
+  console.log(statee);
+  
 // console.log(data);
 
   useEffect(() => {
@@ -36,6 +38,12 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
       dispatch(fetchState());
     }
   }, [dispatch]);
+
+useEffect(()=> {
+  const res=dispatch(fetchState());
+  console.log(res);
+  
+},[dispatch])
 
   useEffect(() => {
     if (data) {

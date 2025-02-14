@@ -23,6 +23,7 @@ const InvoicePage = () => {
     setSelectedPlan(record);
     setSubscriptionType(record.subscription.subscripton_type)
 
+    
   };
   const closeProforma = () => {
     setIsProformaVisible(false);
@@ -107,7 +108,16 @@ const InvoicePage = () => {
       <div className="invoice-page">
         <h1>Invoices</h1>
         {loading ? (
+          <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "60vh", // Full height of the viewport
+          }}
+        >
           <Spin spinning={loading} tip="Loading..." />
+          </div>
         ) : (
           <Table
             style={{ marginTop: 16, padding: "20px" }}

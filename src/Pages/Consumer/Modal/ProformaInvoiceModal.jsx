@@ -98,7 +98,10 @@ const ProformaInvoiveModal = ({
           name: "Energy Exchange",
           description: `Subscription Payment for Plan ${selectedPlan}`,
           order_id: orderResponse.data.id,
+          
+          
           handler: async (response) => {
+            // console.log(select);
             const paymentData = {
               user: userId,
               invoice: selectedPlan.id,

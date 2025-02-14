@@ -222,7 +222,7 @@ const Dashboard = () => {
                  
                 >
                   <Statistic
-                    title="Total Demands"
+                    title="Total Demands (MW)"
                     value={platformDetails.totalDemands}
                     prefix={
                       <img

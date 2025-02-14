@@ -68,7 +68,7 @@ const EnergyConsumptionTable = () => {
   const [saveError, setSaveError] = useState(false); // State to track save error
 const [temp,setTemp]=useState('');
   const user = JSON.parse(localStorage.getItem("user")).user;
-
+const [buttonDisable,setButtonDisable]=useState(false);
   const currentYear = new Date().getFullYear(); // Get the current year
   const lastYear = currentYear - 1; // Calculate the last year
   const lastYearCurrentYear = `${lastYear}-${currentYear.toString().slice(-2)}`
@@ -308,12 +308,13 @@ useEffect(() => {
   };
 
   const handleToggleFileUploadTable = () => {
+    setButtonDisable(true);
     setShowFileUploadTable(
       (prevShowFileUploadTable) => !prevShowFileUploadTable
     );
     setShowTable(false); // Close details table
-    setActiveButton("bill");
-    setIsActionCompleted(true); // Mark action as completed
+    // setActiveButton("bill");
+    // setIsActionCompleted(true); // Mark action as completed
   };
 
   const handleFileUpload = async (file, key) => {
@@ -969,7 +970,7 @@ useEffect(() => {
           <Button
             type="primary"
             onClick={handleContinue}
-            disabled={monthlyData.length<1 && !scadaFileUpload} // Enable only if an action is completed
+            disabled={monthlyData.length<1 && !scadaFileUpload && !dataSource && !allFieldsFilled} // Enable only if an action is completed
             style={{ marginLeft: "86%", marginTop: "8px" }}
           >
             Continue {`>>`}
@@ -992,7 +993,7 @@ useEffect(() => {
           <Button
             type="primary"
             onClick={handleContinue}
-            // disabled={!dataSource} // Enable only if an action is completed
+            disabled={monthlyData.length<1 && !scadaFileUpload && !dataSource && !allFieldsFilled} // Enable only if an action is completed
             style={{ marginLeft: "86%", marginTop: "8px" }}
           >
             Continue {`>>`}
@@ -1003,7 +1004,7 @@ useEffect(() => {
             type="primary"
             onClick={handleContinue}
             style={{ marginLeft: "86%", marginTop: "8px" }}
-            disabled={false}
+            disabled={monthlyData.length<1 && !scadaFileUpload && !dataSource && !allFieldsFilled}
             >
             Continue {`>>`}
             </Button>
@@ -1108,3 +1109,505 @@ useEffect(() => {
 };
 
 export default EnergyConsumptionTable;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import {
+//   Table,
+//   Typography,
+//   Card,
+//   Button,
+//   Upload,
+//   message,
+//   Space,
+//   InputNumber,
+//   Tooltip,
+//   Modal,
+//   Row,
+//   Col,
+//   Select,
+// } from "antd";
+// import {
+//   UploadOutlined,
+//   InfoCircleOutlined,
+//   DownOutlined,
+//   DownloadOutlined,
+//   FileAddOutlined,
+//   FileExcelOutlined,
+//   FileImageOutlined,
+//   FileTextOutlined,
+// } from "@ant-design/icons";
+// import { data, useLocation, useNavigate } from "react-router-dom";
+// import { QuestionCircleOutlined } from "@ant-design/icons";
+
+// import {
+//   addConsumption,
+//   fetchMonthlyDataById,
+// } from "../../Redux/Slices/Consumer/monthlyConsumptionSlice";
+// import "../EnergyTable.css";
+// import { consumptionBill } from "../../Redux/Slices/Consumer/monthlyConsumptionBillSlice";
+// import { addScada } from "../../Redux/Slices/Consumer/uploadScadaSlice";
+// import { uploadCSV } from "../../Redux/Slices/Consumer/uploadCSVFileSlice";
+
+// const { Title } = Typography;
+
+// // Function to render a label with a tooltip
+// const renderLabelWithTooltip = (label, tooltipText, onClick) => (
+//   <span>
+//     {label}{" "}
+//     <Tooltip title={tooltipText}>
+//       <InfoCircleOutlined style={{ color: "black", marginLeft: "4px" }} />
+//     </Tooltip>
+//     <br />
+//     {onClick && (
+//       <Button size="small" style={{ marginLeft: "8px" }} onClick={onClick}>
+//         <DownOutlined />
+//       </Button>
+//     )}
+//   </span>
+// );
+
+// const EnergyConsumptionTable = () => {
+//   const location = useLocation();
+//   const { reReplacement } = location.state || {};
+//   const requirementId = localStorage.getItem('selectedRequirementId');
+//   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false);
+//   const [showTable, setShowTable] = useState(false);
+//   const [activeButton, setActiveButton] = useState(null);
+//   const [isActionCompleted, setIsActionCompleted] = useState(false);
+//   const [showFileUploadTable, setShowFileUploadTable] = useState(false);
+//   const [saveSuccess, setSaveSuccess] = useState(false);
+//   const [saveError, setSaveError] = useState(false);
+//   const [temp, setTemp] = useState('');
+//   const user = JSON.parse(localStorage.getItem("user")).user;
+//   const [buttonDisable, setButtonDisable] = useState(false);
+//   const currentYear = new Date().getFullYear();
+//   const lastYear = currentYear - 1;
+//   const lastYearCurrentYear = `${lastYear}-${currentYear.toString().slice(-2)}`;
+
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+
+//   const [dataSource, setDataSource] = useState(
+//     Array.from({ length: 12 }, (_, index) => ({
+//       key: index,
+//       month: [
+//         "January",
+//         "February",
+//         "March",
+//         "April",
+//         "May",
+//         "June",
+//         "July",
+//         "August",
+//         "September",
+//         "October",
+//         "November",
+//         "December",
+//       ][index],
+//       monthlyConsumption: null,
+//       peakConsumption: null,
+//       offPeakConsumption: null,
+//       monthlyBill: null,
+//       fileUploaded: null,
+//     }))
+//   );
+
+//   const monthlyData = useSelector(
+//     (state) => state.monthlyData?.monthlyData || []
+//   );
+
+//   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
+//   const [isModalVisible, setIsModalVisible] = useState(false);
+//   const [loading, setLoading] = useState(false);
+//   const [fileUploaded, setFileUploaded] = useState(false);
+//   const [uploadedFileName, setUploadedFileName] = useState("");
+//   const [uploadMonthlyFile, setUploadMonthlyFile] = useState("");
+//   const [scadaFileUpload, setScadaFileUpload] = useState(true);
+//   const [continueEnabled, setContinueEnabled] = useState(false); // New state for continue button
+
+//   // Fetch monthly data when requirementId changes
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       if (requirementId) {
+//         try {
+//           const response = await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
+//           const temp = response.length;
+//           setTemp(response.length);
+//           if (temp > 0) {
+//             setShowTable(true);
+//           }
+//         } catch (error) {
+//           console.error("Error fetching data:", error);
+//         }
+//       }
+//     };
+
+//     fetchData();
+//   }, [requirementId, dispatch]);
+
+//   // Update dataSource when monthlyData is fetched
+//   useEffect(() => {
+//     if (monthlyData.length > 0) {
+//       const updatedDataSource = dataSource.map((item) => {
+//         const data = monthlyData.find((data) => data.month === item.month);
+//         return data
+//           ? {
+//               ...item,
+//               monthlyConsumption: data.monthly_consumption,
+//               peakConsumption: data.peak_consumption,
+//               offPeakConsumption: data.off_peak_consumption,
+//               monthlyBill: data.monthly_bill_amount,
+//             }
+//           : item;
+//       });
+//       setDataSource(updatedDataSource);
+//     }
+//   }, [monthlyData]);
+
+//   // Check if all fields are filled
+//   useEffect(() => {
+//     const allFilled = dataSource.every(
+//       (item) =>
+//         (item.monthlyConsumption !== null &&
+//           item.peakConsumption !== null &&
+//           item.offPeakConsumption !== null &&
+//           item.monthlyBill !== null) ||
+//         item.fileUploaded !== null
+//     );
+//     setAllFieldsFilled(allFilled);
+//   }, [dataSource]);
+
+//   const handleInputChange = (value, key, dataIndex) => {
+//     const newData = [...dataSource];
+//     const index = newData.findIndex((item) => key === item.key);
+//     if (index > -1) {
+//       const item = newData[index];
+//       newData.splice(index, 1, {
+//         ...item,
+//         [dataIndex]: value,
+//         fileUploaded: null,
+//       });
+//       setDataSource(newData);
+//     }
+//   };
+
+//   const handleFileUpload = async (file, key) => {
+//     const newData = [...dataSource];
+//     const index = newData.findIndex((item) => key === item.key);
+//     if (index > -1) {
+//       const item = newData[index];
+//       newData.splice(index, 1, {
+//         ...item,
+//         fileUploaded: file.name,
+//         monthlyConsumption: null,
+//         peakConsumption: null,
+//         offPeakConsumption: null,
+//         monthlyBill: null,
+//       });
+//       setDataSource(newData);
+//       message.success(`${file.name} uploaded successfully`);
+//       setUploadMonthlyFile(file.name);
+//       setIsActionCompleted(true); // Mark action as completed
+
+//       // Convert file to Base64
+//       const reader = new FileReader();
+//       reader.onloadend = async () => {
+//         const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+
+//         // Dispatch the consumptionBill thunk with the required format
+//         await dispatch(
+//           consumptionBill({
+//             requirement: requirementId,
+//             month: item.month,
+//             bill_file: base64File,
+//           })
+//         );
+
+//         // Enable continue button after successful upload
+//         setContinueEnabled(true);
+//       };
+//       reader.readAsDataURL(file); // Read the file as a Base64 string
+//     }
+//     return false; // Prevent automatic upload
+//   };
+
+//   const handleCSVUpload = async (file) => {
+//     try {
+//       const isValidFormat = file.name.endsWith(".csv");
+//       if (!isValidFormat) {
+//         message.error("Please upload a valid CSV file.");
+//         return false;
+//       }
+
+//       message.success(`${file.name} uploaded successfully`);
+//       setUploadedFileName(file.name);
+
+//       const reader = new FileReader();
+//       reader.onloadend = async () => {
+//         try {
+//           const base64File = reader.result.split(",")[1];
+
+//           const csvData = atob(base64File);
+//           const parsedData = csvData.split("\n").map((row) => row.split(","));
+//           const updatedDataSource = dataSource.map((item, index) => {
+//             const row = parsedData[index + 1];
+//             return row
+//               ? {
+//                   ...item,
+//                   monthlyConsumption: parseFloat(row[1]),
+//                   peakConsumption: parseFloat(row[2]),
+//                   offPeakConsumption: parseFloat(row[3]),
+//                   monthlyBill: parseFloat(row[4]),
+//                 }
+//               : item;
+//           });
+
+//           setDataSource(updatedDataSource);
+
+//           await dispatch(
+//             uploadCSV({ requirement_id: requirementId, file: base64File })
+//           );
+
+//           setContinueEnabled(true); // Enable continue button after successful upload
+//         } catch (error) {
+//           console.error("Error processing the file:", error);
+//           message.error(
+//             "An error occurred while processing the file. Please try again."
+//           );
+//         }
+//       };
+
+//       reader.readAsDataURL(file);
+//       return false;
+//     } catch (error) {
+//       console.error("Error uploading the file:", error);
+//       message.error(
+//         "An error occurred during the upload process. Please try again."
+//       );
+//       return false;
+//     }
+//   };
+
+//   const handleScadaUpload = async (file) => {
+//     const reader = new FileReader();
+//     reader.onloadend = async () => {
+//       const base64File = reader.result.split(",")[1];
+
+//       await dispatch(
+//         addScada({
+//           id: requirementId,
+//           file: base64File,
+//         })
+//       );
+
+//       message.success(`${file.name} uploaded successfully`);
+//       setScadaFileUpload(true);
+//       setFileUploaded(true);
+//       setUploadedFileName(file.name);
+//       setContinueEnabled(true); // Enable continue button after successful upload
+//     };
+//     reader.readAsDataURL(file);
+//     return false;
+//   };
+
+//   const handleContinue = () => {
+//     navigate("/consumer/consumption-pattern", {
+//       state: { requirementId, reReplacement },
+//     });
+//   };
+
+//   const handleSave = async () => {
+//     if (!allFieldsFilled) {
+//       message.error("All fields are required");
+//       return;
+//     }
+
+//     setLoading(true);
+
+//     try {
+//       const values = dataSource.map((item) => ({
+//         requirement: requirementId,
+//         month: item.month,
+//         monthly_consumption: item.monthlyConsumption,
+//         peak_consumption: item.peakConsumption,
+//         off_peak_consumption: item.offPeakConsumption,
+//         monthly_bill_amount: item.monthlyBill,
+//       }));
+
+//       const response = await dispatch(addConsumption(values)).unwrap();
+
+//       message.success("Monthly data added successfully!");
+//       setSaveSuccess(true);
+//       setSaveError(false);
+//       setContinueEnabled(true); // Enable continue button after saving
+//     } catch (error) {
+//       message.error("Failed to add monthly data");
+//       setSaveError(true);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="energy-table-container" style={{ padding: "20px" }}>
+//       <Card style={{ maxWidth: "100%", margin: "0 auto" }}>
+//         <Tooltip title="Help">
+//           <Button
+//             shape="circle"
+//             icon={<QuestionCircleOutlined />}
+//             onClick={() => setIsInfoModalVisible(true)}
+//             style={{ position: "absolute", marginLeft: "95%", right: 30, zIndex: 1000 }}
+//           />
+//         </Tooltip>
+//         <Row justify="center" align="middle" style={{ width: "100%" }}>
+//           <Col xs={24} sm={12} md={12} style={{ display: "flex", justifyContent: "center" }}>
+//             <h2 style={{ textAlign: "center", marginTop: "10px", transform: "translateX(235px)" }}>
+//               Energy Consumption Data (12 Months) {lastYearCurrentYear}
+//             </h2>
+//           </Col>
+//         </Row>
+
+//         {user.role !== "view" && (
+//           <>
+//             <p style={{ margin: 0 }}>
+//               {`(`} Provide / Upload / Amend your energy consumption data for the last 12 months. {`)`}
+//             </p>
+//             <Row style={{ marginTop: "3%" }}>
+//               <Col span={6}>
+//                 <Tooltip title="Add details manually">
+//                   <Button onClick={() => setShowTable((prev) => !prev)} icon={<FileAddOutlined />}>
+//                     {showTable ? "Hide Details" : "Add Details"}
+//                   </Button>
+//                 </Tooltip>
+//               </Col>
+//               <Col span={6}>
+//                 <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
+//                   <Tooltip title="Upload a CSV file">
+//                     <Button icon={<FileExcelOutlined style={{ marginTop: "5px" }} />}>
+//                       Upload CSV file
+//                     </Button>
+//                   </Tooltip>
+//                 </Upload>
+//               </Col>
+//               <Col span={6}>
+//                 <Tooltip title="Upload your monthly electricity bill">
+//                   <Button onClick={() => setShowFileUploadTable((prev) => !prev)} icon={<FileTextOutlined style={{ marginTop: "5px" }} />}>
+//                     Upload Bill
+//                   </Button>
+//                 </Tooltip>
+//               </Col>
+//               <Col span={6}>
+//                 <Upload showUploadList={false} beforeUpload={handleScadaUpload}>
+//                   <Tooltip title="Upload a SCADA file">
+//                     <Button icon={<FileImageOutlined style={{ marginTop: "5px" }} />}>
+//                       Upload SCADA file
+//                     </Button>
+//                   </Tooltip>
+//                 </Upload>
+//               </Col>
+//             </Row>
+//           </>
+//         )}
+
+//         {showTable && (
+//           <Table
+//             dataSource={dataSource}
+//             columns={columns}
+//             pagination={false}
+//             bordered
+//             size="small"
+//             tableLayout="fixed"
+//             style={{ marginTop: "20px" }}
+//           />
+//         )}
+
+//         {showFileUploadTable && (
+//           <Table
+//             dataSource={dataSource}
+//             columns={fileUploadColumns}
+//             pagination={false}
+//             bordered
+//             size="small"
+//             tableLayout="fixed"
+//             style={{ marginTop: "20px" }}
+//           />
+//         )}
+
+//         <div style={{ marginTop: "30px", textAlign: "right" }}>
+//           <Tooltip title="Save the entered/updated data">
+//             <Button
+//               type="primary"
+//               onClick={handleSave}
+//               disabled={!allFieldsFilled}
+//               loading={loading}
+//               style={{ marginRight: "10px" }}
+//             >
+//               Save
+//             </Button>
+//           </Tooltip>
+//           <Tooltip title="Proceed to the next step">
+//             <Button
+//               type="primary"
+//               onClick={handleContinue}
+//               disabled={!continueEnabled} // Enable only if an action is completed
+//             >
+//               Continue {`>>`}
+//             </Button>
+//           </Tooltip>
+//         </div>
+//       </Card>
+
+//       <Modal
+//         title="Welcome"
+//         open={isInfoModalVisible}
+//         onOk={() => setIsInfoModalVisible(false)}
+//         onCancel={() => setIsInfoModalVisible(false)}
+//         okText="Got it"
+//         footer={[
+//           <Button key="submit" type="primary" onClick={() => setIsInfoModalVisible(false)}>
+//             Got it
+//           </Button>,
+//         ]}
+//       >
+//         <p>Please follow these steps to proceed:</p>
+//         <ol>
+//           <li>
+//             <strong>Add Details:</strong> Click the "Add Details" button to open a table where you can enter the data manually.
+//           </li>
+//           <li>
+//             <strong>Upload CSV File:</strong> Download
+
+
+
+//             the CSV template, fill it with the required information, and upload the completed file in the specified format.
+//           </li>
+//           <li>
+//             <strong>Upload Bill:</strong> Upload monthly bills for all 12 months.
+//           </li>
+//           <li>
+//             <strong>Upload SCADA File:</strong> For more accurate data, you can upload a SCADA file with 15-minute interval dumps.
+//           </li>
+//         </ol>
+//       </Modal>
+//     </div>
+//   );
+// };
+
+// export default EnergyConsumptionTable;

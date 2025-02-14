@@ -18,7 +18,7 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
 
 
   const dataSource = [
-    { key: '1', label: 'RE Index', value: reIndex },
+    { key: '1', label: 'RE Index', value: 'A1' },
     { key: '2', label: 'Annual Contracted Energy (million unit)', value: ipp?.annual_demand_met || 0 },
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
     { key: '4', label: 'Per Unit Cost (INR/KWh)', value: ipp?.perUnitCost || "N/A" },

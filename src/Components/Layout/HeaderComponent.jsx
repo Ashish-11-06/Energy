@@ -273,16 +273,27 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
         </div>
         {/* Profile Icon */}
         <span style={{ display: "flex", alignItems: "center" }}>
-  <p style={{
-    position: "absolute",
-    right: "24px",
-    top: "1px",
-    marginRight: "50px",
-    marginBottom: '60px',
-    marginLeft: "10px", // Optional: To add some space between the text and chat icon
-  }}>
-    Welcome, <a href={`/${user_category}/profile`}>{username}!</a>
-  </p>
+      
+        <p style={{
+  position: "absolute",
+  right: "24px",
+  top: "1px",
+  marginRight: "50px",
+  marginBottom: '60px',
+  marginLeft: "10px", // Optional: To add some space between the text and chat icon
+}}>
+  {user_category && username ? (
+    // Show Tooltip with "My Profile" when there's a valid user_category and username
+    <Tooltip title="My Profile" placement="bottom">
+      <p>Welcome, <a href={`/${user_category}/profile`}>{username}!</a></p>
+    </Tooltip>
+  ) : (
+    // Show a different message if user_category or username is not available
+    <p>Welcome, Guest!</p>
+  )}
+</p>
+
+
 
   <Tooltip title="Need Assistance?">
     <img

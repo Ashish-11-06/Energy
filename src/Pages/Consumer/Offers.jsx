@@ -69,7 +69,7 @@ const Offers = () => {
   }, [dispatch, user.id, refresh]);
 
 
-  // console.log(ippData);
+  console.log(ippData);
 
   const showModal = (record) => {
     console.log(record);
@@ -148,7 +148,7 @@ const Offers = () => {
       })
     : [];
 
-  console.log(filteredData);
+  // console.log(filteredData);
 
   const columns = [
     {
