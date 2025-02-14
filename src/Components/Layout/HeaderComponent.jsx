@@ -41,6 +41,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   };
 
   const user = getFromLocalStorage("user").user;
+  const user_category=user?.user_category==='Consumer' ?'consumer':'generator';
+  
   if (user && user.company_representative) {
     username = user.company_representative;
   }
@@ -270,55 +272,44 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
           )}
         </div>
         {/* Profile Icon */}
-        <span>
-          <Tooltip title={username}>
-            <img
-              src={userImage} // User profile image
-              alt="User "
-              style={{
-                position: "absolute",
-                right: 24,
-                top: 18,
-                marginRight: "50px",
-                zIndex: 1001,
-                backgroundColor: "white",
-                cursor: "pointer",
-                height: "30px",
-                padding: "5px",
-                width: "30px",
-                borderRadius: "50%", // Ensures a circular shape
-                objectFit: "cover", // Scales image to fill the circle properly
-                border: "1px solid green",
-              }}
-              onClick={handleProfileClick}
-            />
-          </Tooltip>
+        <span style={{ display: "flex", alignItems: "center" }}>
+  <p style={{
+    position: "absolute",
+    right: "24px",
+    top: "1px",
+    marginRight: "50px",
+    marginBottom: '60px',
+    marginLeft: "10px", // Optional: To add some space between the text and chat icon
+  }}>
+    Welcome, <a href={`/${user_category}/profile`}>{username}!</a>
+  </p>
 
-          <Tooltip title="Need Assistance?">
-            <img
-              src={chat} // Use your imported chat image
-              alt="Chat"
-              style={{
-                position: "absolute",
-                right: 8,
-                top: 18,
-                marginRight: "20px",
-                zIndex: 1001,
-                backgroundColor: "white",
-                cursor: "pointer",
-                height: "30px",
-                width: "30px",
-                padding: "5px",
-                borderRadius: "50%",
-                border: "1px solid green",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              onClick={handleChatClick}
-            />
-          </Tooltip>
-        </span>
+  <Tooltip title="Need Assistance?">
+    <img
+      src={chat} // Use your imported chat image
+      alt="Chat"
+      style={{
+        position: "absolute",
+        right: 8,
+        top: 18,
+        marginRight: "20px",
+        zIndex: 1001,
+        backgroundColor: "white",
+        cursor: "pointer",
+        height: "30px",
+        width: "30px",
+        padding: "5px",
+        borderRadius: "50%",
+        border: "1px solid green",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+      onClick={handleChatClick}
+    />
+  </Tooltip>
+</span>
+
       </div>
     </Header>
   );
