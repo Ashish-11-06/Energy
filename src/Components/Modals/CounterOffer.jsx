@@ -215,7 +215,7 @@ let temp='';
       >
         <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
           <p style={{ margin: 0 }}>
-            Offer Tariff: {data?.offer_tariff ? data?.offer_tariff : 0}
+            Offer Tariff: <strong>{data?.offer_tariff ? data?.offer_tariff : 0}</strong> INR/kWh
           </p>
           {!fromTransaction ?(
             <>

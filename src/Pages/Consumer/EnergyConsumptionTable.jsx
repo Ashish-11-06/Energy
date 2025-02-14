@@ -102,11 +102,7 @@ const [temp,setTemp]=useState('');
   };
 
   const handleScadaUpload = async (file) => {
-    message.success(`${file.name} uploaded successfully`);
-    setFileUploaded(true);
-    setUploadedFileName(file.name);
-    setIsActionCompleted(true); // Mark action as completed
-    {dataSource && showTable }
+   
     // Convert file to Base64
     const reader = new FileReader();
     reader.onloadend = async () => {
@@ -121,6 +117,12 @@ const [temp,setTemp]=useState('');
       );
     };
     reader.readAsDataURL(file); // Read the file as a Base64 string
+    message.success(`${file.name} uploaded successfully`);
+    setScadaFileUpload(true);
+    setFileUploaded(true);
+    setUploadedFileName(file.name);
+    setIsActionCompleted(true); // Mark action as completed
+    {dataSource && showTable }
 
     return false; // Prevent automatic upload
   };
@@ -230,6 +232,7 @@ const [temp,setTemp]=useState('');
   const [fileUploaded, setFileUploaded] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState("");
   const [uploadMonthlyFile, setUploadMonthlyFile] = useState("");
+  const [scadaFileUpload, setScadaFileUpload] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -870,7 +873,7 @@ useEffect(() => {
               <Upload showUploadList={false} beforeUpload={handleScadaUpload}>
                 <Button
                   onClick={() => handleButtonClick("scada")}
-                  style={{ padding: "5px",zIndex:2000 }}
+                  style={{ padding: "5px",zIndex:1000 }}
                   icon={<FileImageOutlined style={{ marginTop: "5px" }} />}
                 >
                   Upload SCADA file
@@ -951,11 +954,12 @@ useEffect(() => {
 
         {showFileUploadTable && renderSixMonthFileUploadTables()}
 
-        { (user.role !== "view") ? (
+        { (user.role !== "view") ? (          
+
           <>
            <Tooltip
           title={
-            monthlyData.length<1
+           ( monthlyData.length<1 && !scadaFileUpload)
               ? "Please fill the details or upload any file"
               : "Proceed to the next step"
           }
@@ -965,7 +969,7 @@ useEffect(() => {
           <Button
             type="primary"
             onClick={handleContinue}
-            disabled={monthlyData.length<1} // Enable only if an action is completed
+            disabled={monthlyData.length<1 && !scadaFileUpload} // Enable only if an action is completed
             style={{ marginLeft: "86%", marginTop: "8px" }}
           >
             Continue {`>>`}
@@ -978,7 +982,7 @@ useEffect(() => {
           <>
            <Tooltip
           title={
-            !dataSource
+            !dataSource || !scadaFileUpload
               ? "consumptions are not availble to proceed"
               : "Proceed to the next step"
           }
