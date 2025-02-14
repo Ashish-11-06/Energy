@@ -106,7 +106,7 @@ const [editData,setEditData]=useState(selectedRequirement);
       ),
     },
     {
-      title:'Edit',
+      title:'Edit Consumption Unit',
       key:'edit',
       render:(text,record)=>(
         <Button type="primary" onClick={()=>handleEdit(record)}>Edit</Button>

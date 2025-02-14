@@ -250,31 +250,35 @@ const TransactionWindow = () => {
           }}
         >
           <div ref={contentRef}>
+          
             <Title level={2} style={{ textAlign: "center" }}>
               Term Sheet Details
             </Title>
             <Row gutter={[16, 16]}>
+            <Col style={{ fontSize: 'larger',color:'#9a8406', background: 'white'}} span={8}>Open Offer Tariff Value : <strong>{record?.offer_tariff ? record.offer_tariff : 0}</strong> INR/kWh</Col>
+           
               <Col style={{ fontSize: 'larger'}} span={8}><strong>Term of PPA (years) :  {record.t_term_of_ppa}</strong> </Col>
               <Col style={{ fontSize: 'larger'}} span={8}><strong>Lock-in Period (years) : {record.t_lock_in_period}</strong></Col>
               <Col style={{ fontSize: 'larger'}} span={8}><strong>Commencement of Supply : {moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</strong></Col>
-            </Row>
-            <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+            {/* </Row> */}
+            {/* <Row gutter={[16, 16]} style={{ marginTop: "16px" }}> */}
               <Col style={{ fontSize: 'larger'}} span={8}><strong>Contracted Energy (MW) : {record.t_contracted_energy}</strong></Col>
               <Col style={{ fontSize: 'larger'}} span={8}><strong>Minimum Supply Obligation (million units) : {record.t_minimum_supply_obligation}</strong></Col>
               <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security (days) : {record.t_payment_security_day}</strong></Col>
-            </Row>
-            <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+            {/* </Row> */}
+            {/* <Row gutter={[16, 16]} style={{ marginTop: "16px" }}> */}
               <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security Type : {record.t_payment_security_type}</strong> </Col>
             </Row>
+            {/* <Row > */}
+                {/* </Row> */}
             <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <img src={time} alt="" style={{ height: '30px', width: '30px' }} />
                 <Countdown title="Time Remaining" value={deadline} />
               </span>
+              
             </Row>
-            <Row >
-              <Col style={{ fontSize: 'larger',color:'#9a8406'}} span={8}>Open Offer Tariff Value : {record?.offer_tariff ? record.offer_tariff : 0}</Col>
-              </Row>
+           
             {/* <div style={{ marginTop: "24px" }}>Offers from IPPs:</div> */}
           </div>
 
