@@ -233,6 +233,7 @@ try {
             <Select
               placeholder="Select type"
               value={type}
+              disabled
               onChange={(value) => {
                 setType(value);
                 form.setFieldsValue({ type: value });
@@ -254,7 +255,7 @@ try {
             <Select
               placeholder="Select your state"
               showSearch
-              disabled={!fromPortfolio}
+              disabled
             >
               {isState &&
                 isState.map((state, index) => (

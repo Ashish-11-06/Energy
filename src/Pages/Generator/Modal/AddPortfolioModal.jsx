@@ -256,15 +256,15 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
         </Row>
 
         <Form.Item>
-          <Button
-            type="primary"
-            onClick={handleSubmit}
-            style={{ width: '100%' }}
-            loading={loading}
-          >
-            Add Entry
-          </Button>
-        </Form.Item>
+  <Button
+    type="primary"
+    onClick={handleSubmit}
+    style={{ width: '100%' }}
+    loading={loading}
+  >
+    {!data ? 'Add Entry' : 'Update Entry'}
+  </Button>
+</Form.Item>
       </Form>
     </Modal>
   );

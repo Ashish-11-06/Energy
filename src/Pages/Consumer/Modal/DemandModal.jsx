@@ -4,7 +4,7 @@ import { Modal, Button, Row, Col, Card, Typography } from "antd";
 const { Text } = Typography;
 
 const DemandModal = ({ open, onCancel, requirementContent }) => {
-  // console.log(requirementContent);
+  console.log(requirementContent);
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
@@ -42,9 +42,10 @@ console.log(requirementContent);
               <Text strong>Procurement Date</Text>
             </Col>
             <Col span={12} >
-            <Text>:{" "}  
-  {requirementContent?.rq_procurement_date
-    ? new Date(requirementContent.rq_procurement_date)
+            <Text>
+  :{" "}
+  {requirementContent?.rq_procurement_date || requirementContent?.procurement_date
+    ? new Date(requirementContent?.rq_procurement_date || requirementContent?.procurement_date)
         .toISOString()
         .split("T")[0]
         .split("-")
@@ -52,6 +53,7 @@ console.log(requirementContent);
         .join("-")
     : "NA"}
 </Text>
+
    </Col>
             {user_category === "Consumer" ? (
               <>
@@ -67,7 +69,7 @@ console.log(requirementContent);
               <Text strong>State</Text>
             </Col>
             <Col span={12}>
-              <Text>:  {requirementContent?.rq_state || "NA"}</Text>
+              <Text>:  {requirementContent?.rq_state || requirementContent?.state || "NA"}</Text>
             </Col>
             <Col span={12}>
               <Text strong>Tariff Category</Text>

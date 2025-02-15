@@ -261,7 +261,7 @@ const Offers = () => {
       },
     },
     {
-      title: "Transaction Window Date",
+      title: "Bidding Window Date",
       dataIndex: "transaction_window_date",
       key: "transaction_window_date",
       render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
@@ -303,7 +303,7 @@ const Offers = () => {
     <div style={{ padding: "20px" }}>
       <Col span={24} style={{ marginLeft: "20px" }}>
         <Title level={3} style={{ color: "#001529" }}>
-          Offers
+          Offer Transaction Window
         </Title>
         <h4>( Total offers received and sent from you. )</h4>
       </Col>

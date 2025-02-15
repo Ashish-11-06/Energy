@@ -62,7 +62,9 @@ const EnergyConsumptionTable = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const currentYear = new Date().getFullYear(); // Get the current year
+  const lastYear = currentYear - 1; // Calculate the last year
+const lastYearCurrentYear = `${lastYear}-${currentYear.toString().slice(-2)}`
   const [dataSource, setDataSource] = useState(
     Array.from({ length: 12 }, (_, index) => ({
       key: index,
@@ -95,7 +97,7 @@ const EnergyConsumptionTable = () => {
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [continueEnabled, setContinueEnabled] = useState(false); // New state for continue button
-
+const [uploadBill,setUploadFile]=useState(false);
   // Fetch monthly data when requirementId changes
   useEffect(() => {
     const fetchData = async () => {
@@ -113,6 +115,13 @@ const EnergyConsumptionTable = () => {
 
     fetchData();
   }, [requirementId, dispatch]);
+
+  // const monthlyDataSource = useSelector(
+  //   (state) => state.monthlyData?.monthlyData || []
+  // );
+
+  // console.log(monthlyDataSource);
+  
 
   // Update dataSource when monthlyData is fetched
   useEffect(() => {
@@ -132,6 +141,8 @@ const EnergyConsumptionTable = () => {
       setDataSource(updatedDataSource);
     }
   }, [monthlyData]);
+  console.log('xx',monthlyData);
+  
 
   // Check if all fields are filled
   useEffect(() => {
@@ -146,7 +157,8 @@ const EnergyConsumptionTable = () => {
     setAllFieldsFilled(allFilled);
     // Check if all files are uploaded
     const allFilesUploaded = dataSource.every(item => item.fileUploaded !== null);
-    setContinueEnabled(allFilesUploaded); // Enable continue button only if all files are uploaded
+setUploadFile(false);
+    // setContinueEnabled(allFilesUploaded); // Enable continue button only if all files are uploaded
   }, [dataSource]);
 
   const handleInputChange = (value, key, dataIndex) => {
@@ -345,6 +357,7 @@ const EnergyConsumptionTable = () => {
           // Check if all files are uploaded
           const allFilesUploaded = updatedDataSource.every(item => item.fileUploaded !== null);
           setContinueEnabled(allFilesUploaded); // Enable continue button only if all files are uploaded
+          {showTable}
         } catch (error) {
           console.error("Error processing the file:", error);
           message.error(
@@ -468,38 +481,47 @@ const EnergyConsumptionTable = () => {
           />
         </Tooltip>
         <Row justify="center" align="middle" style={{ width: "100%" }}>
-          <Col xs={24} sm={12} md={12} style={{ display: "flex", justifyContent: "center" }}>
-            <h2 style={{ textAlign: "center", marginTop: "10px", transform: "translateX(235px)" }}>
-              Energy Consumption Data (12 Months)
-            </h2>
-          </Col>
-        </Row>
+  <Col xs={24} sm={12} md={12} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <h2 style={{ textAlign: "center", marginTop: "10px" }}>
+      Energy Consumption Data (12 Months) {lastYearCurrentYear}
+    </h2>
+  </Col>
+</Row>
+
 
         {user.role !== "view" && (
           <>
             <p style={{ margin: 0 }}>
-              {`(`} Provide / Upload / Amend your energy consumption data for the last 12 months. {`)`}
+              {`(`} Enter / Upload / Amend your energy consumption data for the last 12 months. {`)`}
             </p>
             <Row style={{ marginTop: "3%" }}>
               <Col span={6}>
                 <Tooltip title="Add details manually">
-                  <Button onClick={() => { setShowTable((prev) => !prev); setShowFileUploadTable(false); }} icon={<FileAddOutlined />}>
-                    {showTable ? "Hide Details" : "Add Details"}
+                  <Button onClick={() => { setShowTable((prev) => !prev); setShowFileUploadTable(false); }} icon={<FileAddOutlined />} style={{zIndex:1000}}>
+                    {showTable ? "Add Details" : "Add Details"}
                   </Button>
                 </Tooltip>
                 </Col>
+                
               <Col span={6}>
                 <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
                   <Tooltip title="Upload a CSV file">
-                    <Button icon={<FileExcelOutlined style={{ marginTop: "5px" }} />}>
+                    <Button icon={<FileExcelOutlined style={{ marginTop: "5px",padding:'5px',zIndex:1000 }} />}>
                       Upload CSV file
                     </Button>
                   </Tooltip>
                 </Upload>
+                {/* <Tooltip title="Download a CSV file">
+                <Button
+                  icon={<DownloadOutlined />}
+                  onClick={handleDownloadTemplate}
+                  style={{ marginLeft: "10px",zIndex:2000 }}
+                ></Button>
+              </Tooltip> */}
               </Col>
               <Col span={6}>
                 <Tooltip title="Upload your monthly electricity bill">
-                  <Button onClick={() => { setShowFileUploadTable((prev) => !prev); setShowTable(false); }} icon={<FileTextOutlined style={{ marginTop: "5px" }} />}>
+                  <Button onClick={() => { setShowFileUploadTable((prev) => !prev); setShowTable(false); }} icon={<FileTextOutlined style={{ marginTop: "5px",zIndex:1000 }} />}>
                     Upload Bill
                   </Button>
                 </Tooltip>
@@ -507,7 +529,7 @@ const EnergyConsumptionTable = () => {
               <Col span={6}>
                 <Upload showUploadList={false} beforeUpload={handleScadaUpload}>
                   <Tooltip title="Upload a SCADA file">
-                    <Button icon={<FileImageOutlined style={{ marginTop: "5px" }} />}>
+                    <Button icon={<FileImageOutlined style={{ marginTop: "5px" ,zIndex:1000}} />}>
                       Upload SCADA file
                     </Button>
                   </Tooltip>
@@ -560,16 +582,18 @@ const EnergyConsumptionTable = () => {
         {showFileUploadTable && renderSixMonthFileUploadTables()}
 
         <div style={{ marginTop: "30px", textAlign: "right" }}>
-          <Tooltip title="Proceed to the next step">
-            <Button
-              type="primary"
-              onClick={handleContinue}
-              disabled={!continueEnabled} // Enable only if all files are uploaded
-            >
-              Continue {`>>`}
-            </Button>
-          </Tooltip>
-        </div>
+  <Tooltip title={uploadBill ? "It will take 1-2 days to revert" : "Proceed to the next step"}>
+    <Button
+      type="primary"
+      onClick={handleContinue}
+      disabled={!continueEnabled} // Enable only if all files are uploaded
+    >
+      Continue {`>>`}
+    </Button>
+  </Tooltip>
+</div>
+
+
       </Card>
 
       <Modal
@@ -686,9 +710,9 @@ export default EnergyConsumptionTable;
 // const [temp,setTemp]=useState('');
 //   const user = JSON.parse(localStorage.getItem("user")).user;
 // const [buttonDisable,setButtonDisable]=useState(false);
-//   const currentYear = new Date().getFullYear(); // Get the current year
-//   const lastYear = currentYear - 1; // Calculate the last year
-//   const lastYearCurrentYear = `${lastYear}-${currentYear.toString().slice(-2)}`
+  // const currentYear = new Date().getFullYear(); // Get the current year
+  // const lastYear = currentYear - 1; // Calculate the last year
+  // const lastYearCurrentYear = `${lastYear}-${currentYear.toString().slice(-2)}`
 
 //   console.log(isActionCompleted);
 
@@ -839,9 +863,9 @@ export default EnergyConsumptionTable;
 //   );
 
 //   // console.log(dataSource);
-//   const monthlyData = useSelector(
-//     (state) => state.monthlyData?.monthlyData || []
-//   );
+  // const monthlyData = useSelector(
+  //   (state) => state.monthlyData?.monthlyData || []
+  // );
 
 //   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
 //   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -877,25 +901,25 @@ export default EnergyConsumptionTable;
 //   fetchData(); 
 // }, [requirementId, dispatch]);
 //   // Update dataSource when monthlyData is fetched
-//   useEffect(() => {
-//     //   console.log(monthlyData);
-//     if (monthlyData.length > 0) {
-//       const updatedDataSource = dataSource.map((item) => {
-//         const data = monthlyData.find((data) => data.month === item.month);
-//         return data
-//           ? {
-//               ...item,
-//               monthlyConsumption: data.monthly_consumption,
-//               peakConsumption: data.peak_consumption,
-//               offPeakConsumption: data.off_peak_consumption,
-//               monthlyBill: data.monthly_bill_amount,
-//             }
-//           : item;
-//       });
-//       setDataSource(updatedDataSource);
-//       // console.log(updatedDataSource);
-//     }
-//   }, [monthlyData]);
+  // useEffect(() => {
+  //   //   console.log(monthlyData);
+  //   if (monthlyData.length > 0) {
+  //     const updatedDataSource = dataSource.map((item) => {
+  //       const data = monthlyData.find((data) => data.month === item.month);
+  //       return data
+  //         ? {
+  //             ...item,
+  //             monthlyConsumption: data.monthly_consumption,
+  //             peakConsumption: data.peak_consumption,
+  //             offPeakConsumption: data.off_peak_consumption,
+  //             monthlyBill: data.monthly_bill_amount,
+  //           }
+  //         : item;
+  //     });
+  //     setDataSource(updatedDataSource);
+  //     // console.log(updatedDataSource);
+  //   }
+  // }, [monthlyData]);
 
 //   // Check if all fields are filled
 //   useEffect(() => {
@@ -1370,22 +1394,22 @@ export default EnergyConsumptionTable;
 //         </Tooltip>
 //         <span>
 //           <Row justify="center" align="middle" style={{ width: "100%" }}>
-//             <Col
-//               xs={24}
-//               sm={12}
-//               md={12}
-//               style={{ display: "flex", justifyContent: "center" }}
-//             >
-//               <h2
-//                 style={{
-//                   textAlign: "center",
-//                   marginTop: "10px",
-//                   transform: "translateX(235px)",
-//                 }}
-//               >
-//                 Energy Consumption Data (12 Months) {lastYearCurrentYear}
-//               </h2>
-//             </Col>
+            // <Col
+            //   xs={24}
+            //   sm={12}
+            //   md={12}
+            //   style={{ display: "flex", justifyContent: "center" }}
+            // >
+            //   <h2
+            //     style={{
+            //       textAlign: "center",
+            //       marginTop: "10px",
+            //       transform: "translateX(235px)",
+            //     }}
+            //   >
+            //     Energy Consumption Data (12 Months) {lastYearCurrentYear}
+            //   </h2>
+            // </Col>
 //             <Col
 //               xs={24}
 //               sm={12}
@@ -1454,13 +1478,13 @@ export default EnergyConsumptionTable;
 //                   </Button>
 //                 </Tooltip>
 //               </Upload>
-//               <Tooltip title="Download a CSV file">
-//                 <Button
-//                   icon={<DownloadOutlined />}
-//                   onClick={handleDownloadTemplate}
-//                   style={{ marginLeft: "10px",zIndex:2000 }}
-//                 ></Button>
-//               </Tooltip>
+              // <Tooltip title="Download a CSV file">
+              //   <Button
+              //     icon={<DownloadOutlined />}
+              //     onClick={handleDownloadTemplate}
+              //     style={{ marginLeft: "10px",zIndex:2000 }}
+              //   ></Button>
+              // </Tooltip>
 //             </div>
 //             {activeButton === "csv" && uploadedFileName && (
 //               <div style={{ marginTop: "10px" }}>
