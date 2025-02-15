@@ -290,11 +290,18 @@ const handleAddDetails =(record) => {
       >
         <p>Hi {username},</p>
        
-        <p>Welcome to the EXG. Please follow these steps to proceed:</p>
+        <p>Welcome to the EXT. Please follow these steps to proceed:</p>
         <ol>
           <li>Add your requirements by clicking the "Add Requirement +" button.</li>
           <li>Fill in the details shown in the form.</li>
-          <li>Use the tooltip option for each field for more information.</li>
+          <li>
+  Use the tooltip [
+  <Tooltip title="More information about this field">
+    <QuestionCircleOutlined />
+  </Tooltip> 
+  ]
+  option for each field for more information.
+</li>
           <li>You can add multiple requirements (demands).</li>
           <li>To continue, select a requirement and click the "Continue" button.</li>
         </ol>

@@ -71,6 +71,10 @@ const SubscriptionPlans = () => {
   const Razorpay = useRazorpay();
   const [orderId, setOrderId] = useState(null);
 
+const companyName=userData[0]?.company;
+console.log(companyName);
+
+
   const handleSelectPlan = (id, plan) => {
     setSelectedPlan(plan);
     console.log(selectedPlan);
@@ -559,7 +563,7 @@ const SubscriptionPlans = () => {
           onCancel={closeQuotation}
           footer={[
             <Button key="generate" type="primary" onClick={() => form.submit()}>
-              Generate Proforma
+              Generate Proforma Invoice
             </Button>,
           ]}
           width={600}
@@ -569,6 +573,9 @@ const SubscriptionPlans = () => {
           <Form
             form={form}
             onFinish={handleGenerateProforma} // Ensures form values are passed
+            initialValues={{
+              companyName: companyName, // Set initial value from a variable
+            }}
           >
             <Row>
               <Col span={12}>

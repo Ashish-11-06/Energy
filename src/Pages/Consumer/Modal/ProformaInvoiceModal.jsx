@@ -23,7 +23,7 @@ const ProformaInvoiveModal = ({
 }) => {
   const userData = JSON.parse(localStorage.getItem("user")).user;
   const userId = userData?.id;
-  console.log(userId);
+  const companyName=userData?.company;
   //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
   // //  console.log(selected_plan);
   //  const invoiceDetails=selectedPlan;
@@ -232,10 +232,15 @@ const ProformaInvoiveModal = ({
 <body>
     <div class="container">
         <h2>${selectedPlan?.invoice_number}</h2>
-        <div class="header" style="text-align: right;">
+<div className="header" style={{ display: "flex", justifyContent: "flex-start", textAlign: "left" }}>
+          <div class="header" style="text-align: right;">
             <h3>EXGGLOBAL</h3>
             <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
         </div>
+</div>
+
+
+
 <p style="text-align: left;">Invoice Date: <strong>${
     selectedPlan?.issue_date ?? "NA"
   }</strong></p>

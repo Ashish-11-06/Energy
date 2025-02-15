@@ -237,8 +237,8 @@ const response = await dispatch(fetchSubscriptionValidity(id));
                 rules={[{ required: true, message: 'Please select your user type!' }]}
               >
                 <Radio.Group onChange={(e) => setUserType(e.target.value)} value={userType}>
-                  <Radio value="Consumer">Consumer</Radio>
-                  <Radio value="Generator">Generator</Radio>
+                  <Radio value="Consumer" style={{fontSize:'20px'}}>Consumer</Radio>
+                  <Radio value="Generator" style={{fontSize:'20px'}}>Generator</Radio>
                 </Radio.Group>
               </Form.Item>
 

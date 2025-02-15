@@ -82,10 +82,10 @@ console.log(annualSavingResponse);
                 </Title>
                 <Row gutter={[16, 16]}>
                   <Col span={12} style={{zIndex: 1000}}>
-                    <p strong style={{ fontSize: '16px',color:'#9a8406',cursor:'pointer' }} onClick={showRequirementModal}>Contracted Demand (MW)</p>
+                    <p strong style={{ fontSize: '16px',color:'#9a8406',cursor:'pointer' }} onMouseEnter={showRequirementModal}>Contracted Demand (MW)</p>
                   </Col>
                   <Col span={12} style={{ zIndex: 1000 }}>
-                    <Text style={{ fontSize: '20px', zIndex: 1000, color:'#9a8406',cursor:'pointer' }} onClick={showRequirementModal}>{` : `}
+                    <Text style={{ fontSize: '20px', zIndex: 1000, color:'#9a8406',cursor:'pointer' }} onMouseEnter={showRequirementModal}>{` : `}
                       {annualSavingResponse ? annualSavingResponse.contracted_demand : "0"}
                     </Text>
                   </Col>
@@ -107,7 +107,7 @@ console.log(annualSavingResponse);
                     </Text>
                   </Col>
                   <Col span={12}>
-                    <Text strong style={{ fontSize: '16px' }}>Average Savings (For your Industry Category) (INR/MW)</Text>
+                    <Text strong style={{ fontSize: '16px' }}>Average Savings (For your Industry Category) <span style={{fontSize:'14px'}}>(INR/MW)</span></Text>
                   </Col>
                   <Col span={12}>
                     <Text style={{ fontSize: '20px' }}>{` : `}

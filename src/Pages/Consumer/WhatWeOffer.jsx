@@ -7,6 +7,7 @@ import CountUp from 'react-countup';
 import whatWeOffer from '../../Redux/api/whatWeOffer';
 import { useDispatch } from 'react-redux';
 import TermsAndConditionModal from './Modal/TermsAndConditionModal';
+import EXGLogo from '../../assets/EXG.png';
 
 
 const WhatWeOffer = () => {
@@ -62,6 +63,9 @@ const [isModal,setIsModal] =useState(false);
 
       }}
     >
+        <div className="logo-container">
+                  <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
+                </div>
       <div
         style={{
           backgroundColor: '#F5F6FB',
@@ -69,8 +73,8 @@ const [isModal,setIsModal] =useState(false);
           padding: '60px',
           borderRadius: '10px',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          height: '70vh',
-          width: '100%'
+          height: '78vh',
+          width: '100%' 
         }}
       >
         <h1 style={{ textAlign: 'center', fontSize: '3rem', marginBottom: '30px', color: '#669800' }}>
@@ -207,7 +211,7 @@ const [isModal,setIsModal] =useState(false);
           <div style={{ textAlign: 'center', marginTop: '50px' }}>
             <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Did You Know?</h2>
             <p style={{ fontSize: '1.5rem', marginBottom: '30px' }}>
-              The total amount consumers have saved <span style={{ fontWeight: 'bold', color: '#669800' }}>INR {formatNumberWithCommas(data.amount_saved_annually)} annually!</span>
+              The total amount consumers have saved <span style={{ fontWeight: 'bold', color: '#669800' }}>INR <span style={{fontSize:'30px'}}>{formatNumberWithCommas(data.amount_saved_annually)}</span> annually!</span>
             </p>
           </div>
         )}
@@ -218,7 +222,7 @@ const [isModal,setIsModal] =useState(false);
           </h6>
           <Button
             type="default"
-            style={{ padding: '10px 20px', fontSize: '1rem', borderColor: '#E6E8F1' }}
+            style={{ padding: '10px 20px',height:'40px',marginBottom:'-120px', fontSize: '24px', borderColor: '#E6E8F1',marginLeft:'90%' }}
             onClick={handleContinue}
           >
             Proceed {`>>`}
