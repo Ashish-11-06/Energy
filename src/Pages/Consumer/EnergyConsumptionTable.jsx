@@ -57,7 +57,8 @@ const renderLabelWithTooltip = (label, tooltipText, onClick) => (
 
 const EnergyConsumptionTable = () => {
   const location = useLocation();
-  const { requirementId, reReplacement } = location.state || {}; // Destructure state to get `requirementId` and `annualSaving`
+  const { reReplacement } = location.state || {};
+  const requirementId =localStorage.getItem('selectedRequirementId') // Destructure state to get `requirementId` and `annualSaving`
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [showTable, setShowTable] = useState(false); // State to control table visibility
   const [activeButton, setActiveButton] = useState(null); // State to control active button
@@ -416,7 +417,7 @@ const EnergyConsumptionTable = () => {
   };
 
   const generateYears = () => {
-    return Array.from({ length: 30000 - 2000 + 1 }, (_, i) => 2000 + i);
+    return Array.from({ length: 30000 - 2000 + 1 }, (_, i) => 2025 + i);
   };
 
   const handleImageUpload = async (file) => {
@@ -864,7 +865,7 @@ const EnergyConsumptionTable = () => {
 
       <Modal
         title="Upload SCADA File"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >

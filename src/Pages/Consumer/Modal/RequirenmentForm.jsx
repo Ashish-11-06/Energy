@@ -19,7 +19,7 @@ import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
 
 
-const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
+const requirementForm = ({ open, onCancel, onSubmit }) => {
   const [form] = Form.useForm();
   const [customVoltage, setCustomVoltage] = useState(""); // State to hold custom voltage input
   const [isCustomVoltage, setIsCustomVoltage] = useState(false); // Flag to toggle custom voltage input visibility
@@ -112,7 +112,7 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
   return (
     <Modal
       title="Fill in the details"
-      open={isVisible}
+      open={open}
       onCancel={onCancel}
       footer={null}
       width={900}
@@ -175,10 +175,10 @@ const requirementForm = ({ isVisible, onCancel, onSubmit }) => {
               <Select
                 placeholder="Select your industry"
                 showSearch
-                optionFilterProp="children"
+                optionFilterProp="items"
                 onChange={handleIndustryChange}
                 filterOption={(input, option) =>
-                  option.children.toLowerCase().includes(input.toLowerCase())
+                  option.items.toLowerCase().includes(input.toLowerCase())
                 }
               >
                 {isIndustry.map((industry, index) => (

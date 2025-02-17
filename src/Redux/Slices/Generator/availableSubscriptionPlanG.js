@@ -5,8 +5,8 @@ import industryApi from "../../api/consumer/industryApi";
 import availableSubscriptionPlanApi from "../../api/generator/availableSubscriptionPlanApi";
 
 // Async thunk for fetching data
-export const fetchSubscriptionPlan = createAsyncThunk(
-  "subscriptionPlanG/fetchSubscriptionPlanG",
+export const fetchSubscriptionPlanG = createAsyncThunk(
+  "subscriptionPlanG/GG",
   async () => {
     // console.log('Fetching subscriptionPlan...');
     try {
@@ -32,15 +32,15 @@ const subscriptionPlanGSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSubscriptionPlanG.pending, (state) => {
+      .addCase(GG.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchSubscriptionPlanG.fulfilled, (state, action) => {
+      .addCase(GG.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.subscriptionPlanG = action.payload;
       })
-      .addCase(fetchSubscriptionPlanG.rejected, (state, action) => {
+      .addCase(GG.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Failed to fetch data";
       });

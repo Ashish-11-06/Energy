@@ -10,7 +10,7 @@ import {
   Upload,
   message,
   Typography,
-  Progress,
+  Progress,Tooltip
 } from "antd";
 import * as XLSX from "xlsx";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
@@ -18,6 +18,7 @@ import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
 import { updateProject } from "../../../Redux/Slices/Generator/portfolioSlice";
 import { templateDownload } from "../../../Redux/Slices/Generator/templateDownloadSlice";
+import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -37,6 +38,7 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
   const [progress, setProgress] = useState(0);
   const [type, setType] = useState(selectedProject.type || "Solar");
   const [isTemplateDownloaded, setIsTemplateDownloaded] = useState(false);
+  const [isState, setIsState] = useState([]);
 
   // Function to download Excel template
   const downloadExcelTemplate = () => {
@@ -88,6 +90,19 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
         message.error("Failed to update template status.");
       });
   };
+
+  useEffect(() => {
+    dispatch(fetchState())
+      .then((response) => {
+        // console.log(response.payload);
+
+        setIsState(response.payload);
+        //console.log(isState);
+      })
+      .catch((error) => {
+        console.error("Error fetching states:", error);
+      });
+  }, [dispatch]);
 
   // Handle file upload
   const handleFileUpload = (file) => {
@@ -188,7 +203,14 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
             label="State"
             rules={[{ required: true, message: "Please input the state!" }]}
           >
-            <Input />
+            <Select placeholder="Select your state" showSearch>
+              {isState &&
+                isState.map((state, index) => (
+                  <Select.Option key={index} value={state}>
+                    {state}
+                  </Select.Option>
+                ))}
+            </Select>
           </Form.Item>
         </Col>
       </Row>
@@ -313,10 +335,10 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
 
       {type !== "ESS" && (
         <>
-          <Row gutter={16} style={{ marginBottom: '3%' }}>
+          <Row gutter={16} style={{ marginBottom: "3%" }}>
             <Col span={24}>
               <h3>Upload Hourly Generation Data</h3>
-              <Text type="secondary" style={{ marginBottom: '40px' }}>
+              <Text type="secondary" style={{ marginBottom: "40px" }}>
                 Please download the template, fill it with the hourly generation
                 data, and then upload it here.
               </Text>
@@ -380,9 +402,18 @@ const UpdateProfileForm = ({ form, project, onCancel }) => {
       <Row gutter={24} style={{ textAlign: "right" }}>
         <Col span={24}>
           <Form.Item>
-            <Button type="primary" htmlType="submit" disabled={!fileData}>
-              Submit
-            </Button>
+          {!fileData ? (
+  <Tooltip title="Please fill all the details and upload the file in given format">
+    <Button type="primary" htmlType="submit" disabled>
+      Submit
+    </Button>
+  </Tooltip>
+) : (
+  <Button type="primary" htmlType="submit">
+    Submit
+  </Button>
+)}
+
           </Form.Item>
         </Col>
       </Row>

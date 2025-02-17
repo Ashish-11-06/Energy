@@ -102,7 +102,7 @@ function App() {
             <Route path="what-we-offer" element={<WhatWeOfferG />} />
             <Route path="portfolio" element={<GenerationPortfolio />} />
             <Route path="matching-consumer" element={<MatchingConsumerPage />} />
-            <Route path="subscription-plan" element={<SubscriptionPlanG />} />
+            <Route path="subscription-plan" element={<SubscriptionPlans />} />
             <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
             <Route path="update-profile-details" element={<UpdateProfileDetails />} />
             <Route path="chat-page" element={<ChatWithExpert />} />

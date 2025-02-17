@@ -104,9 +104,9 @@ const RegisterModal = ({ open, onCancel }) => {
                   <Select
                     showSearch
                     placeholder="Select your state"
-                    optionFilterProp="children"
+                    optionFilterProp="items"
                     filterOption={(input, option) =>
-                      option.children.toLowerCase().includes(input.toLowerCase())
+                      option.items.toLowerCase().includes(input.toLowerCase())
                     }
                   >
                     {states.map((state, index) => (

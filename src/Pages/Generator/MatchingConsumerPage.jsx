@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Radio, Button, message, Input, Select, Modal,Row,Col } from 'antd';
+import { Table, Radio, Button, message, Input, Select, Modal,Row,Col,Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons'; // Import the Eye icon
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector hooks
@@ -49,6 +49,8 @@ const MatchingConsumerPage = () => {
 
   // Handle radio button change for selecting a consumer
   const handleRadioChange = (e, key) => {
+    console.log(key);
+    localStorage.setItem('matchingConsumerId',key);
     setSelectedConsumer(key); // Set the selected consumer key
     // message.success(`You have selected consumer with Serial No: ${key}`);
   };
@@ -146,7 +148,7 @@ const MatchingConsumerPage = () => {
   const handleNextClick = () => {
     if (selectedConsumer) {
       // Navigate to the next page (e.g., /next-page)
-      console.log(selectedConsumer);
+      // console.log(selectedConsumer);
       if(subscriptionPlan.status === 'active') {
         navigate('/generator/update-profile-details', { state: { selectedConsumer } }); // Pass selected consumer as state
       } else {
@@ -165,13 +167,13 @@ const MatchingConsumerPage = () => {
           placeholder="Search "
           onSearch={handleSearch}
           onChange={(e) => handleSearch(e.target.value)}
-          style={{ width: 200 }}
+          style={{ width: 200,height:'35px' }}
         />
         <Select
           placeholder="Filter by state"
           onChange={handleStateFilterChange}
           allowClear
-          style={{ width: 200 }}
+          style={{ width: 200,height:35 }}
         >
           <Option value="Karnataka">Karnataka</Option>
           <Option value="Maharashtra">Maharashtra</Option>
@@ -190,7 +192,7 @@ const MatchingConsumerPage = () => {
 
 
       {/* Button to show selected consumer */}
-      
+      <Tooltip title={!selectedConsumer ? 'Please select a matching consumer' : ''}>
       <Button
         type="primary"
         style={{
@@ -205,6 +207,7 @@ const MatchingConsumerPage = () => {
       >
         Next
       </Button>
+      </Tooltip>
 
       {/* Modal to show consumer details */}
       <Modal

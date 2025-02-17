@@ -7,7 +7,7 @@
 </head>
 <body>
   <script>
-    const socket = new WebSocket('ws://192.168.1.47:8001/api/energy/ws/negotiation/?user_id=7&tariff_id=13');
+    const socket = new WebSocket('ws://192.168.1.35:8001/api/energy/ws/negotiation/?user_id=7&tariff_id=13');
 
     socket.addEventListener('open', (event) => {
       console.log('Connected to the server');

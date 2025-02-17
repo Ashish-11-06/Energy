@@ -21,7 +21,7 @@ export const subscriptionEnroll = createAsyncThunk(
           return rejectWithValue('Unexpected response structure');
         }
       } catch (error) {
-        console.log('error',error);
+        // console.log('error',error);
         // Handle errors if the request fails
         return rejectWithValue(
           error.response?.data?.error || 'Failed to register user'

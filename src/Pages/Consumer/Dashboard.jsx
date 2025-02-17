@@ -6,7 +6,7 @@ import "chart.js/auto";
 import DashboardApi from "../../Redux/api/dashboard";
 
 import offerSend from "../../assets/offerSend.png";
-import state from "../../assets/state.jpg";
+import state from "../../assets/state.png";
 import totalIPP from "../../assets/totalIPP.png";
 import availableCapacity from '../../assets/capacity.png';
 import demands from '../../assets/capacityAvailable.png';

@@ -4,6 +4,12 @@ import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined, DatabaseOutlined, Pro
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import DashboardApi from "../../Redux/api/dashboard";
+import totalIPP from "../../assets/totalIPP.png";
+import demands from '../../assets/capacityAvailable.png';
+import state from "../../assets/state.png";
+import solar from '../../assets/solar.avif';
+import battery from '../../assets/battery.webp';
+
 
 const Dashboard = () => {
   const [generatorDetails, setGeneratorDetails] = useState({});
@@ -95,7 +101,15 @@ const Dashboard = () => {
               </Col>
               <Col span={8}>
                 <Card.Grid style={{ width: "100%", textAlign: "center", height: '135px' }}>
-                  <Statistic title="ESS Profiles" value={profileDetails.ESS} prefix={<SendOutlined  />} valueStyle={{ color: "#3f8600" }} />
+                  <Statistic title="ESS Profiles" value={profileDetails.ESS} prefix={<img
+                                          src={battery}
+                                          alt=""
+                                          style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "5px",
+                                          }}
+                                        />} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
               </Col>
             </Row>
@@ -112,17 +126,42 @@ const Dashboard = () => {
             <Row gutter={[16, 16]}>
               <Col span={8}>
                 <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center" }}>
-                  <Statistic title="Total Consumers" value={platformDetails.totalConsumers} prefix={<UserOutlined />} valueStyle={{ color: "#3f8600" }} />
+                  <Statistic title="Total Consumers" value={platformDetails.totalConsumers} prefix={ <img
+                                          src={totalIPP}
+                                          alt=""
+                                          style={{
+                                            width: "20px",
+                                            height: "20px",
+                                            marginRight: "5px",
+                                          }}
+                                        />} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
               </Col>
               <Col span={8}>
                 <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center" }}>
-                  <Statistic title="Total Demands" value={platformDetails.totalDemands} prefix={<DatabaseOutlined />} valueStyle={{ color: "#cf1322" }} />
+                  <Statistic title="Total Demands" value={platformDetails.totalDemands} prefix={<img
+                                        src={demands}
+                                        alt=""
+                                        style={{
+                                          width: "20px",
+                                          height: "20px",
+                                          marginRight: "5px",
+                  
+                                        }}
+                                      />} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
               </Col>
               <Col span={8}>
                 <Card.Grid style={{ width: "100%", height: "100%", textAlign: "center"}}>
-                  <Statistic title="Total States" value={platformDetails.totalStates} valueStyle={{ color: "#3f8600" }} />
+                  <Statistic title="Total States" value={platformDetails.totalStates} prefix={ <img
+                                          src={state}
+                                          alt=""
+                                          style={{
+                                            width: "20px",
+                                            height: "20px",
+                                            marginRight: "5px",
+                                          }}
+                                        />} valueStyle={{ color: "#3f8600" }} />
                 </Card.Grid>
               </Col>
             </Row>

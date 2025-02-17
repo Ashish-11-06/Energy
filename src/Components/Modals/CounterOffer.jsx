@@ -9,6 +9,7 @@ import {
   Select,
   InputNumber,
   message,
+  Tooltip,
 } from "antd";
 import React, { useState } from "react"; // Import useState along with React
 import { useDispatch } from "react-redux";
@@ -19,14 +20,15 @@ import chat from "../../assets/need.png";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
-  console.log(data);
+const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransaction }) => {
+  console.log(fromTransaction);
+  
+  // console.log(data);
   const [ppaTerm, setPpaTerm] = useState(data.term_of_ppa);
   const [lockInPeriod, setLockInPeriod] = useState(data.lock_in_period);
+  // const [commencementOfSupply,setCommencementOfSupply ] = useState(data.commencement_of_supply);
   const navigate = useNavigate();
-  const [minimumSupply, setMinimumSupply] = useState(
-    data.minimum_supply_obligation
-  );
+  const [minimumSupply, setMinimumSupply] = useState(data.minimum_supply_obligation);
   const [contractedEnergy, setContractedEnergy] = useState(
     data.contracted_energy
   );
@@ -42,6 +44,12 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
+let temp='';
+  if(user_category =='Consumer') {
+    temp="IPP"
+  } else {
+    temp="Consumer"
+  }
 
   // Initialize the commencement date using moment
   const [commencementDate, setCommencementDate] = useState(() => {
@@ -74,22 +82,26 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
     setTarrifModal(false);
   };
 
-  console.log(data);
+  // console.log(data);
 
   const handleStatusUpdate = async (action) => {
     console.log(action);
     console.log(user.id);
-    console.log(data.id); 
+    console.log(data.id);
     try {
       const statusData = {
         action: action,
       };
-      const res=await dispatch(addStatus({ user_id: user.id, term_id: data.id, statusData }));
-    
+      const res = await dispatch(
+        addStatus({ user_id: user.id, term_id: data.id, statusData })
+      );
+
       message.success(`Status updated to ${action}`);
-      setIsModalVisible(false);
+      onCancel();
     } catch (error) {
-      message.error("Failed to update status");
+      console.log(error);
+      
+      // message.error("Failed to update status");
     }
   };
 
@@ -97,7 +109,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
     setOfferTariff(value); // Update the offer tariff value in the state
   };
 
-  console.log(commencementDate);
+  // console.log(commencementDate);
   // Handle form submission
   const handleContinue = async () => {
     const termSheetId = data.id;
@@ -151,9 +163,13 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
           <p style={{ margin: 0 }}>
             Offer Tariff: {data.offer_tariff ? data.offer_tariff : "NA"}
           </p>
+          {!fromTransaction ?(
+            <>
           <Button style={{ marginLeft: "auto" }} onClick={handleTarrif}>
             Negotiate Tariff
           </Button>
+          </>
+          ): null}
         </span>
 
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
@@ -166,6 +182,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
               <InputNumber
                 min={1}
                 value={ppaTerm}
+                disabled={fromTransaction}
                 onChange={(value) => setPpaTerm(value)}
                 style={{ width: "100%" }}
               />
@@ -177,6 +194,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
               <InputNumber
                 min={1}
                 value={lockInPeriod}
+                disabled={fromTransaction}
                 onChange={(value) => setLockInPeriod(value)}
                 style={{ width: "100%" }}
               />
@@ -197,6 +215,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
                 format="DD-MM-YYYY" // Format the date
                 // value={commencementDate} // Use moment date here
                 onChange={handleDateChange} // Update the state on date change
+                disabled={fromTransaction}
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -208,6 +227,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
                 min={1}
                 value={contractedEnergy}
                 onChange={(value) => setContractedEnergy(value)}
+                disabled={fromTransaction}
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -219,6 +239,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
                 min={1}
                 value={minimumSupply}
                 onChange={(value) => setMinimumSupply(value)}
+                disabled={fromTransaction}
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -228,6 +249,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
               <strong>Payment Security Type:</strong>
               <Select
                 value={paymentSecurityType}
+                disabled={fromTransaction}
                 onChange={(value) => setPaymentSecurityType(value)}
                 style={{ width: "100%" }}
               >
@@ -243,6 +265,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
               <InputNumber
                 min={1}
                 value={paymentSecurityDays}
+                disabled={fromTransaction}
                 onChange={(value) => setPaymentSecurityDays(value)}
                 style={{ width: "100%" }}
               />
@@ -262,8 +285,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
               <img
                 src={chat} // Use your imported chat image
                 alt="Chat"
-              style={{width:'15px',height:'15px'}}
-             
+                style={{ width: "15px", height: "15px" }}
               />
               Need Assistance?
             </Button>
@@ -290,10 +312,10 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
             <>
               {(data?.from_whom === "Consumer" &&
                 data?.count % 2 === 0 &&
-                data?.count < 4) ||
+                data?.count <= 4) ||
               (data?.from_whom === "Generator" &&
                 data?.count % 2 === 1 &&
-                data?.count < 4) ? (
+                data?.count <= 4) ? (
                 <>
                   <Button onClick={() => handleStatusUpdate("Rejected")}>
                     Reject
@@ -304,22 +326,52 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
                   >
                     Accept
                   </Button>
-                  <Button
-                    style={{ marginLeft: "10px" }}
-                    onClick={handleContinue}
-                  >
-                    Counter Offer
-                  </Button>
+
+                  {data?.count === 4 ? (
+                    <Tooltip title="You have reached the limit for counter offers">
+                      <Button style={{ marginLeft: "10px" }} disabled>
+                        Counter Offer
+                      </Button>
+                    </Tooltip>
+                  ) : data?.count === 3 ? (
+                    <Tooltip title={`This is your last chance to send offer to ${temp}, for this demand`}>
+                      <Button
+                        style={{ marginLeft: "10px" }}
+                        onClick={handleContinue}
+                      >
+                        Counter Offer
+                      </Button>
+                    </Tooltip>
+                  ) : data?.count === 2 ? (
+                    <Tooltip title={`You have received a counter offer from ${temp}`}>
+                      <Button
+                        style={{ marginLeft: "10px" }}
+                        onClick={handleContinue}
+                      >
+                        Counter Offer
+                      </Button>
+                    </Tooltip>
+                  ) : (
+                    <Button
+                      style={{ marginLeft: "10px" }}
+                      onClick={handleContinue}
+                    >
+                      Counter Offer
+                    </Button>
+                  )}
                 </>
               ) : (
                 <p style={{ color: "#9A8406" }}>
-                  You have sent an offer to IPP. Please wait for their decision.
+                  {!fromTransaction ? (
+                 <p> You have sent an offer to IPP. Please wait for their decision.</p>
+                ) :null}
                 </p>
               )}
             </>
           ) : null}
 
-          {user_category === "Generator" &&
+
+          {!fromTransaction && user_category === "Generator" &&
           data?.consumer_status !== "Rejected" &&
           data?.consumer_status !== "Accepted" ? (
             <>
@@ -339,12 +391,38 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
                   >
                     Accept
                   </Button>
-                  <Button
-                    style={{ marginLeft: "10px" }}
-                    onClick={handleContinue}
-                  >
-                    Counter Offer
-                  </Button>
+                  {data?.count === 4 ? (
+                    <Tooltip title="You have reached the limit for counter offers">
+                      <Button style={{ marginLeft: "10px" }} disabled>
+                        Counter Offer
+                      </Button>
+                    </Tooltip>
+                  ) : data?.count === 3 ? (
+                    <Tooltip title={`This is your last chance to send offer to ${temp} for this demand`}>
+                      <Button
+                        style={{ marginLeft: "10px" }}
+                        onClick={handleContinue}
+                      >
+                        Counter Offer
+                      </Button>
+                    </Tooltip>
+                  ) : data?.count === 2 ? (
+                    <Tooltip title={`You have received counter offer from ${temp}`}>
+                      <Button
+                        style={{ marginLeft: "10px" }}
+                        onClick={handleContinue}
+                      >
+                        Counter Offer
+                      </Button>
+                    </Tooltip>
+                  ) : (
+                    <Button
+                      style={{ marginLeft: "10px" }}
+                      onClick={handleContinue}
+                    >
+                      Counter Offer
+                    </Button>
+                  )}
                 </>
               ) : (
                 <p style={{ color: "#9A8406" }}>
@@ -353,68 +431,10 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
                 </p>
               )}
             </>
-          ) : null}
+          ) : null} 
 
-          {/* {user_category === "Consumer" ? (
-          data?.generator_status !== "Rejected" &&
-          data?.generator_status !== "Accepted" ? (
-            <>
-              {console.log("ippju")}
-              {data?.from_whom === "Consumer" &&
-              data?.count % 2 === 0 &&
-              data?.count < 4 ? (
-                <>
-                  <Button onClick={() => handleStatusUpdate("Rejected")}>
-                    Reject
-                  </Button>
-                  <Button
-                    style={{ marginLeft: "10px" }}
-                    onClick={() => handleStatusUpdate("Accepted")}
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    style={{ marginLeft: "10px" }}
-                    onClick={handleContinue}
-                  >
-                    Counter Offer
-                  </Button>
-                </>
-              ) : (
-                <p>
-                  You have sent an offer to IPP. Please wait for their decision.
-                </p>
-              )}
-            </>
-          ) : null
-        ) : data?.consumer_status !== "Rejected" &&
-          data?.consumer_status !== "Accepted" ? (
-          <>
-            {console.log("ippju")}
-            {data?.from_whom === "Consumer" &&
-            data?.count % 2 === 0 &&
-            data?.count < 4 ? (
-              <>
-                <Button onClick={() => handleStatusUpdate("Rejected")}>
-                  Reject
-                </Button>
-                <Button
-                  style={{ marginLeft: "10px" }}
-                  onClick={() => handleStatusUpdate("Accepted")}
-                >
-                  Accept
-                </Button>
-                <Button style={{ marginLeft: "10px" }} onClick={handleContinue}>
-                  Counter Offer
-                </Button>
-              </>
-            ) : (
-              <p>
-                You have sent an offer to IPP. Please wait for their decision.
-              </p>
-            )}
-          </>
-        ) : null} */}
+
+      
         </Row>
         <Modal
           title={"Negotiate Tariff"}
@@ -422,6 +442,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId }) => {
           onCancel={onTarrifCancel} // The close (✖) icon will still work
           footer={null} // Removes the Cancel and OK buttons
         >
+          <p>(If you negotiate the tariff, you can't change the terms and conditions)</p>
           <InputNumber
             style={{ width: "60%" }}
             value={offerTariff}

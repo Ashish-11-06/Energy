@@ -7,7 +7,7 @@ const termsAndConditionsApi = {
   },
 
   addStatus: ({ user_id, term_id, statusData }) => {
-    return axiosInstance.put(`/energy/term-sheet/${user_id}/${term_id}`, statusData);
+    return axiosInstance.put(`/energy/terms-sheet/${user_id}/${term_id}`, statusData);
   },
 
   updateTermsAndConditions: (userId, termSheetId, termsData) => {

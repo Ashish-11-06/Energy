@@ -8,24 +8,19 @@ import store from './Redux/store.js'  // Import your store
 import { ConfigProvider } from 'antd';
 
 createRoot(document.getElementById('root')).render(
-  
-  <StrictMode>
-    <Provider store={store}>
+  <Provider store={store}>
     <ConfigProvider
-    theme={{
-      token: {
-        fontFamily: 'Inter, sans-serif',
-        colorPrimary: '#669800',
-        colorLink: '#9A8406',
-        colorBgBase: '#F5F6FB',
-        colorBorder: '#E6E8F1',
-      },
-    }}
-  >
+      theme={{
+        token: {
+          fontFamily: 'Inter, sans-serif',
+          colorPrimary: '#669800',
+          colorLink: '#9A8406',
+          colorBgBase: '#F5F6FB',
+          colorBorder: '#E6E8F1',
+        },
+      }}
+    >
       <App />
-      </ConfigProvider>
-    </Provider>
-  </StrictMode>
- 
-
+    </ConfigProvider>
+  </Provider>
 );

@@ -36,7 +36,9 @@ const RequirementsPage = () => {
       title: 'Sr No',
       dataIndex: 'srNo',
       key: 'srNo',
-      render: (text, record, index) => index + 1,
+      render: (text, record, index) => (
+        <span key={record.id || index}>{index + 1}</span> // Wrapping in a span with key
+      ),
     },
     {
       title: 'State',
@@ -47,7 +49,9 @@ const RequirementsPage = () => {
       title: 'Consumption Unit (Site Name)',
       dataIndex: 'consumption_unit',
       key: 'consumption_unit',
-      render: (text) => text || "NA",
+      render: (text, record) => (
+        <span key={record.id || `${record.key}-${text}`}>{text || "NA"}</span>
+      ),
     },
     {
       title: 'Industry',
@@ -73,8 +77,11 @@ const RequirementsPage = () => {
       title: 'Expected Procurement Date',
       dataIndex: 'procurement_date',
       key: 'procurement',
-      render: (date) => (date ? moment(date).format('DD-MM-YYYY') : ''),
-    },
+      render: (date, record) => (
+        <span key={record.id || `${record.key}-${date}`}>{date ? moment(date).format('DD-MM-YYYY') : ''}</span>
+      ),
+    }
+    ,
     {
       title: "Select",
       key: "select",
@@ -84,8 +91,10 @@ const RequirementsPage = () => {
           onChange={() => handleRowSelect(record)} 
         />
       ),
-    },
+    }
+    ,    
   ];
+  
   
   // Insert "Add Details" before the "Select" column if subscription is active
   if (subscriptionPlan?.status === 'active') {
@@ -107,9 +116,14 @@ const RequirementsPage = () => {
   }
   
 
-const handleAddDetails =() => {
-  console.log('add button clicked');
-  localStorage.setItem('selectedRequirementId',selectedRequirement.id);
+  
+
+const handleAddDetails =(record) => {
+  // console.log('clicked');
+  
+// setSelectedRequirement(record);
+  // console.log(selectedRequirement);
+  localStorage.setItem('selectedRequirementId',record.id);
  navigate('/consumer/energy-consumption-table');
 
 }
@@ -117,9 +131,9 @@ const handleAddDetails =() => {
   const handleRowSelect = (record) => {
     setSelectedRowKeys([record.key]); // Only allow single selection
     setSelectedRequirement(record); // Store the selected record
-    
-    // localStorage.setItem('selectedRequirementId', JSON.stringify(record.id));
     message.success(`You selected record of state '${record.state}'`);
+    // console.log(selectedRequirement);  
+    // localStorage.setItem('selectedRequirementId', JSON.stringify(record.id));
     // console.log('record', record);
   };
 
@@ -133,7 +147,7 @@ const handleAddDetails =() => {
 
   const handleSubmit = async (values) => {
     try {
-      console.log('values',values);
+      // console.log('values',values);
       
       // Call the API to add the requirement
       // const response = await consumerrequirementA.addNewRequirement(values);
@@ -142,7 +156,7 @@ const handleAddDetails =() => {
       setIsModalVisible(false);
       message.success('Requirement added successfully!');
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       message.error('Failed to add requirement');
       setIsInfoModalVisible(false);
     }
@@ -266,7 +280,7 @@ const handleAddDetails =() => {
 
       {/* Modal for adding new requirement */}
       <RequirementForm
-        isVisible={isModalVisible}
+        open={isModalVisible}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
       />

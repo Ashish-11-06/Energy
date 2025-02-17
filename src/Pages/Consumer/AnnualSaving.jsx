@@ -24,6 +24,8 @@ const AnnualSvg = () => {
   const User = JSON.parse(localStorage.getItem('user'));
   const userId = User.id;
 
+  const status=subscriptionPlan.status;
+
   // console.log(subscriptionPlan.status);
   
   const handleChatWithExpert = () => {
@@ -49,8 +51,8 @@ const AnnualSvg = () => {
   }, [dispatch, requirementId]);
 
   const handleContinue = () => {
-    console.log('akjdkfjlajlfkjal');
-    if(subscriptionPlan.status === 'active') {
+    // console.log('akjdkfjlajlfkjal');
+    if(status === 'active') {
      
       navigate("/consumer/energy-consumption-table", { state: { requirementId, reReplacement: annualSavingResponse?.re_replacement } });
     } else {
@@ -99,10 +101,10 @@ const AnnualSvg = () => {
             </div>
             <div style={{ marginTop: "20px" }}>
               <Space wrap className="actions" style={{ marginTop: "20px", display: 'flex', justifyContent: 'space-between' }}>
-                <Button type="primary" onClick={() => generatePDF(createPdfContent(annualSavingResponse), requirementId)} icon={<FileTextOutlined />} style={{ fontSize: '20px', padding: '10px 20px' , zIndex: 100 }}>
+                <Button type="primary" onClick={() => generatePDF(createPdfContent(annualSavingResponse), requirementId)} icon={<FileTextOutlined />} style={{ fontSize: '20px', padding: '10px 20px',zIndex:100 }}>
                   Download Report
                 </Button>
-                <Button type="primary" onClick={handleChatWithExpert} icon={<img src={chat} alt="chat icon" style={{ width: '20px', height: '20px' }} />} style={{ fontSize: '20px', padding: '10px 20px' ,zIndex: 100 }}>
+                <Button type="primary" onClick={handleChatWithExpert} icon={<img src={chat} alt="chat icon" style={{ width: '20px', height: '20px' }} />} style={{ fontSize: '20px', padding: '10px 20px',zIndex:100}}>
                   Need Assistance ?
                 </Button>
               </Space>
@@ -112,7 +114,7 @@ const AnnualSvg = () => {
       </div>
   <div>
  {/* Continue Button */}
- {subscriptionPlan.status === 'active' ? (
+ {status === 'active' ? (
   <Tooltip title="Please click to proceed">
     <Button
       type="primary"
@@ -127,7 +129,7 @@ const AnnualSvg = () => {
       }}
       onClick={handleContinue}
     >
-      Continue
+     Continue {`>>`}
     </Button>
   </Tooltip>
 ) : (

@@ -68,7 +68,6 @@ const RequestedIPP = () => {
   const handleStatusUpdate = async (action) => {
     try {
       const statusData = {
-        
         action: action,
       };
       await dispatch(addStatus({ user_id: user.id, term_id: modalContent.id, statusData }));

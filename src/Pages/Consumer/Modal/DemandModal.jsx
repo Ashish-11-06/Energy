@@ -4,10 +4,12 @@ import { Modal, Button, Row, Col, Card, Typography } from "antd";
 const { Text } = Typography;
 
 const DemandModal = ({ open, onCancel, requirementContent }) => {
-//   console.log(requirementContent);
+  // console.log(requirementContent);
+
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 // console.log(user_category);
+// console.log(requirementContent);
 
   return (
     <Modal

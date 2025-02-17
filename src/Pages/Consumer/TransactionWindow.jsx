@@ -15,7 +15,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import ippData from "../../Data/IPPData.js";
 import {
   connectWebSocket,
-  subscribeToEvent,
   sendEvent,
   // disconnectWebSocket,
 } from '../../Redux/api/webSocketService.js';
@@ -38,10 +37,14 @@ const TransactionWindow = () => {
   const [sortedIppData, setSortedIppData] = useState([]);
   const contentRef = useRef();
   const [socket, setSocket] = useState(null); // Add this line to define the socket variable
-
+  const [messages, setMessages] = useState([]); // Store incoming messages
+  const [currentTime, setCurrentTime] = useState(Date.now()); // Track current time
+ 
   const location = useLocation();
 
   const navigate = useNavigate();
+  
+  const [deadline, setDeadline] = useState(null);
 
   // const { state } = location;  // this should contain your passed record
 
@@ -52,43 +55,74 @@ const TransactionWindow = () => {
   const record = location.state;
 
   useEffect(() => {
-    console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
     const newSocket = connectWebSocket(user.id, record.tariff_id);
-    setSocket(newSocket); // Set the socket state
+    setSocket(newSocket);
 
-    const onOpenHandler = () => {
-      console.log("WebSocket Connected");
-      // Once the WebSocket is connected, subscribe to events
-      subscribeToEvent("offerUpdate", (data) => {
-        console.log("Offer Update Received:", data);
-        message.info(`Offer updated: ${data.message}`);
-      });
+    console.log(newSocket, socket);
 
-      subscribeToEvent("previous_offers", (data) => {
-        console.log("Previous Offers Received:", data);
-        if (data.offers && data.offers.length > 0) {
-          // Update sortedIppData with previous offer updates
-          const updatedIppData = sortedIppData.map((item) => {
-            const updatedOffer = data.offers.find(offer => offer.generator_username === item.ipp);
-            if (updatedOffer) {
-              return { ...item, perUnitCost: updatedOffer.updated_tariff };
+    const onMessageHandler = (event) => {
+      console.log("📩 event jkjkjkjkjkjkjkjkjkj:", event);
+      try {
+
+        const data = JSON.parse(event.data); // Parse the JSON message
+        console.log("ll", data);
+
+        if (data.offers) {
+          console.log("data.offers", data.offers);
+          setMessages([data.offers]); // Append new message to state
+        } else {
+          const newOffers = data; // Assuming data is the new offers object
+          console.log("newOffers", newOffers);
+          setMessages(prevMessages => {
+            const updatedMessages = [...prevMessages]; // Start with a copy of the previous messages
+
+            // Iterate over the keys in the new offers
+            for (const offerKey in newOffers) {
+              if (newOffers.hasOwnProperty(offerKey)) {
+                // Check if the key already exists in any of the existing messages
+                const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
+
+                if (existingMessageIndex !== -1) {
+                  // Update the existing message
+                  updatedMessages[existingMessageIndex][offerKey] = {
+                    ...updatedMessages[existingMessageIndex][offerKey],
+                    ...newOffers[offerKey],
+                  };
+                } else {
+                  // If the key does not exist, you can choose to add it as a new message
+                  updatedMessages.push({ [offerKey]: newOffers[offerKey] });
+                }
+              }
             }
-            return item;
+
+            return updatedMessages; // Return the updated messages array
           });
-          setSortedIppData(updatedIppData);
-          message.success(`Received previous offers for IPP(s)`);
         }
-      });
+      } catch (error) {
+        console.error("❌ Error parsing message:", error);
+      }
     };
 
     if (newSocket) {
-      newSocket.onopen = onOpenHandler;
+      // console.log("Subscribing to messages...");
+      newSocket.onmessage = onMessageHandler;
     }
 
     return () => {
       // disconnectWebSocket();
     };
-  }, [sortedIppData]);
+  }, []);
+
+  // console.log(messages);
 
   useEffect(() => {
     // Sort IPP data by ascending value of tariff offer
@@ -96,34 +130,49 @@ const TransactionWindow = () => {
     setSortedIppData(sortedData);
   }, []);
 
-  const handleUser = (record) => {
-    if (userCategory === "consumer") {
-      message.success(`Offer sent to IPP ${record.ipp}`);
-    } else {
-      message.success(`Offer accepted of IPP ${record.ipp}`);
-    }
-  };
 
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
   const handleRejectTransaction = () => {
-    message.error(`Transaction ${transactionId} rejected`);
+    
+    const messageToSend = {
+      action: "reject",
+    };
+
+    // Send the message using the sendEvent function
+    sendEvent("rejectOffer", messageToSend);
+
+    message.error(`Transaction rejected`);
     navigate('/consumer/transaction-page');
   };
 
   const handleDownloadTransaction = async () => {
-    const input = contentRef.current;
-    const canvas = await html2canvas(input, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("transaction_details.pdf");
+    const input = document.getElementById("transaction-page"); // Ensure the entire page is captured
+    if (!input) {
+      message.error("Error: Unable to capture transaction details.");
+      return;
+    }
+  
+    try {
+      const canvas = await html2canvas(input, { scale: 2, useCORS: true });
+      const imgData = canvas.toDataURL("image/png");
+  
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("transaction_details.pdf");
+  
+      message.success("Transaction details downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      message.error("Failed to generate PDF.");
+    }
   };
+  
 
   const handleAccept = (key) => {
     message.success("Offer accepted");
@@ -169,10 +218,29 @@ const TransactionWindow = () => {
     setOfferValue(value);
   };
 
-  const deadline = Date.now() + 3600 * 1000; // 1 hour from now
+  useEffect(() => {
+    const calculatedDeadline = Date.now() + 60 * 1000; // 1 minute from now
+    setDeadline(calculatedDeadline);
+  }, []); // Runs only once on mount
+
+  const handleAcceptOffer = (msg) => {
+    // Construct the message object
+
+    console.log(msg);
+    const messageToSend = {
+      action: "select_generator",
+      selected_generator_id: msg.generator_id // Assuming msg.id contains the generator ID
+    };
+
+    // Send the message using the sendEvent function
+    sendEvent("acceptOffer", messageToSend);
+
+    // Optionally, you can also show a success message
+    message.success("Offer accepted for generator ID: " + msg.id);
+  };
 
   return (
-    <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
+    <div id="transaction-page" style={{ padding: "30px", backgroundColor: "" }}>
       <Row gutter={[16, 16]} justify="center">
         <Card
           style={{
@@ -205,38 +273,83 @@ const TransactionWindow = () => {
               </span>
             </Row>
             <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
-            {sortedIppData.map((item, index) => (
-              <Col span={24} key={`${item.key}-${index}`} style={{ marginTop: "16px" }}>
-                <Card
-                  bordered
-                  style={{
-                    width: "100%",
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  <Row justify="space-between" align="middle">
-                    <span><strong>IPP {item.ipp}</strong></span>
-                    <span><strong>Offer Tariff:</strong> {item.perUnitCost}</span>
-                    <span><strong>Time:</strong> {item.time}</span>
-                    <Button onClick={() => handleUser(item)}>
-                      {userCategory === "consumer" ? "Send Offer" : "Accept"}
-                    </Button>
-                  </Row>
-                </Card>
-              </Col>
-            ))}
           </div>
+
+          <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
+            <Title level={3}>Offer tarrifs:</Title>
+            {messages.length === 0 ? (
+              <Text>No messages available.</Text>
+            ) : (
+              messages.length === 0 ? (
+                <Text>No messages available.</Text>
+              ) : (
+                messages.map((messageObject, index) => {
+                  // Iterate over each key in the messageObject
+                  return Object.keys(messageObject).map((msgKey) => {
+                    const msg = messageObject[msgKey]; // Access the message using the key
+
+                    // Validate the message object
+                    if (msg && typeof msg === 'object') {
+                      return (
+
+
+                        <div>
+                          <Card
+                            key={msg.id || index}
+                            style={{
+                              marginBottom: "10px",
+                              // padding: "10px",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "space-between",
+                              alignItems: "flex-start" // Aligns text to start
+                            }}
+                          >
+                            <div>
+                              <Text strong>Event: </Text> {msg.generator_username} <br />
+                              <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/KWH <br />
+                              <Text strong>Time: </Text> {moment(msg.timestamp).format("hh:mm A")}
+                            </div>
+
+
+                          </Card>
+                          <div style={{
+                            width: "98%", display: "flex", justifyContent: "flex-end",
+                            transform: 'translateY(-60px)',
+                            marginTop: "10px"
+                          }}>
+                            {/* Show Accept Offer button only if the deadline has passed */}
+                          {currentTime >= deadline && (
+                            <Button type="primary" onClick={() => handleAcceptOffer(msg)}>
+                              Accept Offer
+                            </Button>
+                          )}
+                          </div>
+                        </div>
+
+                      );
+                    } else {
+                      console.warn("Invalid message format:", messageObject);
+                      return null; // Return null if the message format is invalid
+                    }
+                  });
+                })
+              )
+            )}
+          </div>
+
           <br /><br />
+
           <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
         </Card>
+
       </Row>
 
       {/* View Modal */}
       <Modal
         title="Project Details"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={handleCancel}
         footer={[<Button key="close" onClick={handleCancel}>Close</Button>]}>
         {modalContent && (
