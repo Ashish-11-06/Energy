@@ -101,7 +101,7 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
                       <Text strong>{item.label}</Text>
                     </Col>
                     <Col span={12}>
-                      <Text>: {item.value}</Text>
+                      <Text>: <p style={{marginLeft:'20%'}}>{item.value}</p></Text>
                     </Col>
                   </React.Fragment>
                 ))}

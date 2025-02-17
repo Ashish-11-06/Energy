@@ -118,6 +118,27 @@
   align-items: center;
 }
 
+.responsive-container {
+  background-color: #669800;
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  margin: 0 auto;
+}
+
+.green-energy {
+  margin-left: 2%;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.marketplace {
+  margin-left: 10%;
+  margin-top: -20px;
+  font-size: 3rem;
+  font-weight: bolder;
+}
+
 /* Mobile Devices (up to 360px wide, e.g., smaller phones) */
 @media (max-width: 360px) {
   .content-container {
@@ -158,6 +179,15 @@
     height: auto;
     margin-top: 20px; /* Ensure login box is under key features */
   }
+
+  .green-energy {
+    font-size: 1rem;
+  }
+
+  .marketplace {
+    font-size: 1.5rem;
+    margin-left: 5%;
+  }
 }
 
 /* Tablets and Small Laptops (up to 768px wide) */
@@ -178,6 +208,15 @@
     max-width: 400px;
     height: auto;
     margin-top: 20px; /* Ensure login box is under key features */
+  }
+
+  .green-energy {
+    font-size: 1.2rem;
+  }
+
+  .marketplace {
+    font-size: 2rem;
+    margin-left: 5%;
   }
 }
 

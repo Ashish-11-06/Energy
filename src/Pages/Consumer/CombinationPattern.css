@@ -92,3 +92,4 @@ div.ant-slider-handle.ant-tooltip-open:hover::after {
     50% { transform: scale(1.3); background-color: #a2d000; }
     100% { transform: scale(1); background-color: #669800; }
 }
+
