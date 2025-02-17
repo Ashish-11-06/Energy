@@ -7,6 +7,8 @@ import CountUp from 'react-countup';
 import whatWeOffer from '../../Redux/api/whatWeOffer';
 import { useDispatch } from 'react-redux';
 import TermsAndConditionModal from './Modal/TermsAndConditionModal';
+import { motion } from 'framer-motion';  // Import motion here
+import { FaRupeeSign } from 'react-icons/fa'; 
 import EXGLogo from '../../assets/EXG.png';
 
 
@@ -15,6 +17,9 @@ const WhatWeOffer = () => {
   const dispatch = useDispatch();
   const [data, setData] = useState(null); // State to store the fetched data
 const [isModal,setIsModal] =useState(false);
+const [count, setCount] = useState(0);  // State to track the animated count
+const [targetAmount, setTargetAmount] = useState(0);  // State to hold the target amount
+
 
   const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category = user.user_category;
@@ -33,6 +38,25 @@ const [isModal,setIsModal] =useState(false);
 
     fetchData();
   }, [dispatch]);
+
+
+  useEffect(() => {
+    let start = 0;
+    const duration = 2000; // Animation duration in ms
+    const increment = Math.ceil(targetAmount / (duration / 50));
+
+    const interval = setInterval(() => {
+      start += increment;
+      if (start >= targetAmount) {
+        setCount(targetAmount);
+        clearInterval(interval);
+      } else {
+        setCount(start);
+      }
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [targetAmount]);
 
   const handleContinue = () => {
     setIsModal(true);
@@ -207,15 +231,42 @@ const [isModal,setIsModal] =useState(false);
           </Col>
         </Row>
 
-        {user_category === 'Consumer' && (
+        {/* {user_category === 'Consumer' && (
           <div style={{ textAlign: 'center', marginTop: '50px' }}>
             <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Did You Know?</h2>
             <p style={{ fontSize: '1.5rem', marginBottom: '30px' }}>
               The total amount consumers have saved <span style={{ fontWeight: 'bold', color: '#669800' }}>INR <span style={{fontSize:'30px'}}>{formatNumberWithCommas(data.amount_saved_annually)}</span> annually!</span>
             </p>
           </div>
-        )}
-
+        )} */}
+        {user_category === 'Consumer' && (
+              <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Did You Know?</h2>
+                <div
+                  className="flex flex-col items-center justify-center p-6 bg-gradient-to-r from-green-300 to-green-500 rounded-2xl shadow-xl text-white text-center max-w-xl mx-auto"
+                  style={{ fontSize: '1.5rem' }}
+                >
+                  <motion.h2
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1 }}
+                    className="text-2xl font-semibold mb-2"
+                  >
+                    Did You Know?
+                  </motion.h2>
+                  <motion.div
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 1.2 }}
+                    className="text-4xl font-bold flex items-center justify-center gap-2"
+                  >
+                    <FaRupeeSign className="text-5xl" />
+                    {count.toLocaleString()}
+                  </motion.div>
+                  <p className="mt-2 text-lg font-medium">saved annually by our consumers!</p>
+                </div>
+              </div>
+            )}
         <div style={{ textAlign: 'center', marginTop: '30px' }}>
           <h6 style={{ fontSize: '1.4rem', color: '#9A8406', marginBottom: '20px' }}>
             Start Your Transition Journey

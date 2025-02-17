@@ -177,7 +177,7 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
             <Select.Option value="+61">+61</Select.Option>
           </Select>
         </Form.Item>
-        <Form.Item name="phoneNumber" noStyle>
+        <Form.Item name="mobile" noStyle>
           <Input style={{ width: "75%" }} maxLength={10} placeholder="Enter mobile number" />
         </Form.Item>
       </Input.Group>
@@ -266,3 +266,4 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
 };
 
 export default RegisterForm;
+

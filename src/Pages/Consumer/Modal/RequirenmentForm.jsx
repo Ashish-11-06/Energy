@@ -23,6 +23,9 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
   const [isCustomVoltage, setIsCustomVoltage] = useState(false);
   const [customIndustry, setCustomIndustry] = useState("");
   const [isCustomIndustry, setIsCustomIndustry] = useState(false);
+  const [selectedIndustry, setSelectedIndustry] = useState(""); // State to track selected industry
+  const [subIndustries, setSubIndustries] = useState([]);
+
   const dispatch = useDispatch();
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
@@ -58,10 +61,23 @@ useEffect(()=> {
         annual_electricity_consumption: data.annual_electricity_consumption,
         procurement: data.procurement_date ? moment(data.procurement_date) : null,
       });
+      setSelectedIndustry(data.industry);
+      setSubIndustries(industryy[data.industry] || []);
     } else {
       form.resetFields(); // Reset fields if no data is provided
     }
-  }, [data, form]);
+  }, [data, form, industryy]);
+
+  const handleIndustryChange = (value) => {
+    setSelectedIndustry(value); // Update selected industry
+    setSubIndustries(industryy[value] || []); // Fetch corresponding sub-industries
+    if (value === "other") {
+      setIsCustomIndustry(true);
+    } else {
+      setIsCustomIndustry(false);
+      setCustomIndustry("");
+    }
+  };
 
   const handleSubmit = (values) => {
     const user = JSON.parse(localStorage.getItem("user")).user;
@@ -106,14 +122,14 @@ useEffect(()=> {
     }
   };
 
-  const handleIndustryChange = (value) => {
-    if (value === "other") {
-      setIsCustomIndustry(true);
-    } else {
-      setIsCustomIndustry(false);
-      setCustomIndustry("");
-    }
-  };
+  // const handleIndustryChange = (value) => {
+  //   if (value === "other") {
+  //     setIsCustomIndustry(true);
+  //   } else {
+  //     setIsCustomIndustry(false);
+  //     setCustomIndustry("");
+  //   }
+  // };
 
   return (
     <Modal
@@ -175,7 +191,12 @@ useEffect(()=> {
                   option.children.toLowerCase().includes(input.toLowerCase())
                 }
               >
-                {industryy.map((industry, index) => (
+                {/* {industryy.map((industry, index) => (
+                  <Select.Option key={index} value={industry}>
+                    {industry}
+                  </Select.Option>
+                ))} */}
+                 {Object.keys(industryy).map((industry, index) => (
                   <Select.Option key={index} value={industry}>
                     {industry}
                   </Select.Option>
@@ -184,6 +205,28 @@ useEffect(()=> {
               </Select>
             </Form.Item>
           </Col>
+
+                    {/* Sub-industry selection */}
+                    {selectedIndustry && selectedIndustry !== "other" && (
+            <Col span={12}>
+              <Form.Item
+                label={renderLabelWithTooltip("Sub Industry", "Select a sub-industry from the chosen industry.")}
+                name="subIndustry"
+                rules={[{ required: true, message: "Please select your sub-industry!" }]}
+              >
+                <Select
+                  placeholder="Select a sub-industry"
+                  disabled={!subIndustries.length}
+                >
+                  {subIndustries.map((subIndustry, index) => (
+                    <Select.Option key={index} value={subIndustry}>
+                      {subIndustry}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          )}
 
           {isCustomIndustry && (
             <Col span={12}>
