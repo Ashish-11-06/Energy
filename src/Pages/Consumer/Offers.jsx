@@ -148,7 +148,7 @@ const Offers = () => {
       })
     : [];
 
-  // console.log(filteredData);
+  console.log(filteredData);
 
   const columns = [
     {
@@ -273,7 +273,7 @@ const Offers = () => {
         return (
           
             record.consumer_status === 'Accepted' || record.consumer_status === 'Rejected' ||  record.generator_status === 'Accepted' || record.generator_status === 'Rejected' ? (
-              <Button type="primary" disabled>
+              <Button type="primary" disabled  >
                 Offer Closed
               </Button>
             ) : (
