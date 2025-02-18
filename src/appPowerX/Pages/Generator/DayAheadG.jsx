@@ -7,13 +7,13 @@ import { fetchDayAheadData } from '../../Redux/slices/dayAheadSlice';
 import { useDispatch } from 'react-redux';
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
-
-const { Option } = Select;
+import './DayAheadG.css';
+const { Option } = Select; 
 
 // Define chart data for Line chart with more X-axis values
 
 
-const DayAhead = () => {
+const DayAheadG = () => {
   const [tableData, setTableData] = useState('');
   const navigate = useNavigate(); 
   const handleChange = (value) => {
@@ -95,16 +95,16 @@ useEffect(() => {
 //   ];
 
   const handleNextTrade = () => {
-navigate('/px/consumer/plan-trade-page');
+navigate('/px/generator/plan-day-trade-page');
   }
   
   const handleStatistics = () => {
-    navigate('/px/consumer/statistical-information');
+    navigate('/px/generator/statistical-day-information');
   }
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Day ahead Forecasted Market</h1>
+      <h1>Day ahead Market</h1>
       <Select defaultValue="Solar" style={{ width: 120 ,marginLeft:'80%',marginBottom:'10px'}} onChange={handleChange}>
         <Option value="Solar">Solar</Option>
         <Option value="Non-solar">Non-solar</Option>
@@ -118,7 +118,13 @@ navigate('/px/consumer/plan-trade-page');
       </div>
       </Card>
       <h2></h2>
-      <Table columns={columns} dataSource={tableData} pagination={false} bordered/>
+      <Table 
+  columns={columns} 
+  dataSource={tableData} 
+  pagination={false} 
+  bordered 
+  style={{ width: '300px' }} // ✅ Overriding AntD default width
+/>
 
       <div style={{ padding: '20px' }}>
       <Row justify="space-between">
@@ -134,4 +140,4 @@ navigate('/px/consumer/plan-trade-page');
   );
 };
 
-export default DayAhead;
+export default DayAheadG;

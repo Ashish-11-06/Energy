@@ -1,10 +1,11 @@
-import React, { useState,useEffect} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Select, Table,Row,Col, Card } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import {useNavigate } from "react-router-dom";
-import { fetchDayAheadData } from '../../Redux/slices/dayAheadSlice';
 import { useDispatch } from 'react-redux';
+import { fetchMonthAheadData } from '../../Redux/slices/monthAheadSlice';
+
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
 
@@ -13,31 +14,14 @@ const { Option } = Select;
 // Define chart data for Line chart with more X-axis values
 
 
-const DayAhead = () => {
-  const [tableData, setTableData] = useState('');
+const MonthAheadG = () => {
+    const [tableData,setTableData] = useState('');
   const navigate = useNavigate(); 
   const handleChange = (value) => {
     setSelectedType(value);
   };
 
 const dispatch = useDispatch();
-
-
-useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const data = await dispatch(fetchDayAheadData());
-            console.log(data.payload); // Logging the fetched data
-            setTableData(data.payload);
-        } catch (error) {
-            console.log(error);         
-        }
-    //   setDayAheadData(data);
-    };
-
-    fetchData();
-  }, []);
-
   const data = {
     labels: [1,2,3,4,5,6,7,8], // Updated X-axis labels
     datasets: [
@@ -52,7 +36,19 @@ useEffect(() => {
     ],
   };
   
-  
+useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const data = await dispatch(fetchMonthAheadData());
+            console.log(data.payload); // Logging the fetched data
+            setTableData(data.payload);
+        } catch (error) {
+            console.log(error);         
+        }
+    };
+
+    fetchData();
+  }, []);
   // Define columns for the table
   const columns = [
     {
@@ -95,16 +91,16 @@ useEffect(() => {
 //   ];
 
   const handleNextTrade = () => {
-navigate('/px/consumer/plan-trade-page');
+navigate('/px/generator/plan-month-trade-page');
   }
   
   const handleStatistics = () => {
-    navigate('/px/consumer/statistical-information');
+    navigate('/px/generator/statistical-information');
   }
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Day ahead Forecasted Market</h1>
+      <h1>Month ahead Forecasted Market</h1>
       <Select defaultValue="Solar" style={{ width: 120 ,marginLeft:'80%',marginBottom:'10px'}} onChange={handleChange}>
         <Option value="Solar">Solar</Option>
         <Option value="Non-solar">Non-solar</Option>
@@ -118,7 +114,7 @@ navigate('/px/consumer/plan-trade-page');
       </div>
       </Card>
       <h2></h2>
-      <Table columns={columns} dataSource={tableData} pagination={false} bordered/>
+      <Table columns={columns} dataSource={tableData} pagination={false} />
 
       <div style={{ padding: '20px' }}>
       <Row justify="space-between">
@@ -126,7 +122,7 @@ navigate('/px/consumer/plan-trade-page');
           <Button onClick={handleStatistics}>Model Statistics</Button>
         </Col>
         <Col>
-          <Button onClick={handleNextTrade}>Plan Your Next Day Trading</Button>
+          <Button onClick={handleNextTrade}>Plan Your Month Ahead Trading</Button>
         </Col>
       </Row>
     </div>
@@ -134,4 +130,4 @@ navigate('/px/consumer/plan-trade-page');
   );
 };
 
-export default DayAhead;
+export default MonthAheadG;

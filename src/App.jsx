@@ -54,6 +54,16 @@ import StatisticalInformation from './appPowerX/Pages/Consumer/StatisticalInform
 import MonthAhead from './appPowerX/Pages/Consumer/MonthAhead';
 import Planning from './appPowerX/Pages/Consumer/Planning';
 import Trading from './appPowerX/Pages/Consumer/Trading';
+import DashboardPG from './appPowerX/Pages/Generator/Dashboard';
+import DayAheadG from './appPowerX/Pages/Generator/DayAheadG';
+import MonthAheadG from './appPowerX/Pages/Generator/MonthAheadG';
+import PlanYourTradePageG from './appPowerX/Pages/Generator/PlanYourMonthTradePageG';
+import StatisticalInformationG from './appPowerX/Pages/Generator/StatisticalinformationG';
+import PlanningG from './appPowerX/Pages/Generator/Planning';
+import TradingG from './appPowerX/Pages/Generator/TradingG';
+import PlanYourMonthTradePageG from './appPowerX/Pages/Generator/PlanYourMonthTradePageG';
+import DayStatisticsInformation from './appPowerX/Pages/Generator/DayStatisticsInformation';
+import PlanDayTradePage from './appPowerX/Pages/Generator/PlanDayTradePage';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -144,20 +154,39 @@ function App() {
 
 
 
-        {/* PowerX routes*/}
-        <Route element={<PLayoutComponent />}>
-        <Route path="/px/*">
-          <Route path="dashboard" element={<DashboardP />} />
-          <Route path="day-ahead" element={<DayAhead />} />
-          <Route path="plan-trade-page" element={<PlanYourTradePage />} />
-          <Route path="statistical-information" element={<StatisticalInformation />} />
-          <Route path="month-ahead" element={<MonthAhead/>} />
-          <Route path="planning" element={<Planning/>} />
-          <Route path="trading" element={<Trading/>} />
+       {/* PowerX routes */}
+<Route element={<PLayoutComponent />}>
+  <Route path="px">
+    
+
+    {/* Consumer Routes (Nested Correctly) */}
+    <Route path="consumer">
+    <Route path="dashboard" element={<DashboardP />} />
+      <Route path="day-ahead" element={<DayAhead />} />
+      <Route path="plan-trade-page" element={<PlanYourTradePage />} />
+      <Route path="statistical-information" element={<StatisticalInformation />} />
+      <Route path="month-ahead" element={<MonthAhead />} />
+      <Route path="planning" element={<Planning />} />
+      <Route path="trading" element={<Trading />} />
+    </Route>
+
+    <Route path="generator">
+    <Route path="dashboard" element={<DashboardPG />} />
+      <Route path="day-ahead" element={<DayAheadG />} />
+      <Route path="plan-month-trade-page" element={<PlanYourMonthTradePageG />} />
+      <Route path="plan-day-trade-page" element={<PlanDayTradePage />} />
+      <Route path="statistical-information" element={<StatisticalInformationG />} />
+      <Route path="statistical-day-information" element={<DayStatisticsInformation />} />
+      <Route path="month-ahead" element={<MonthAheadG />} />
+      <Route path="planning" element={<PlanningG />} />
+      <Route path="trading" element={<TradingG />} />
+    </Route>
+  </Route>
+</Route>
 
 
-        </Route>
-        </Route>
+
+       
       </Routes>
     </Router>
   );

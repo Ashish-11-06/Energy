@@ -33,29 +33,23 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 
 
   const consumerMenuItems = [
-    { label: 'Overview', key: '/px/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Day Ahead', key: '/px/day-ahead', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Month Ahead', key: '/px/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Planning', key: '/px/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Trading', key: '/px/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Overview', key: '/px/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Day Ahead', key: '/px/consumer/day-ahead', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Month Ahead', key: '/px/consumer/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Planning', key: '/px/consumer/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Trading', key: '/px/consumer/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Notification', key: '/consumer/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
   const generatorMenuItems = [
-    { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Portfolio', key: '/generator/portfolio', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
-    // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
-    { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
-    // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
-    // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
-    { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },  
-    { label: 'Notification', key: '/generator/notificationgen', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
-  ];
+    { label: 'Overview', key: '/px/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Day Ahead', key: '/px/generator/day-ahead', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Month Ahead', key: '/px/generator/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Planning', key: '/px/generator/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Trading', key: '/px/generator/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
+    ];
 
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
