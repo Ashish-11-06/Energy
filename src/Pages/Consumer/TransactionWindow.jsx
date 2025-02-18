@@ -283,9 +283,9 @@ const TransactionWindow = () => {
            
             {/* <div style={{ marginTop: "24px" }}>Offers from IPPs:</div> */}
           </div>
-
+<Card style={{marginTop:'4%',backgroundColor:'white'}}>
           <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
-            <Title level={3}>Offer tarrifs:</Title>
+            <Title level={3}>Tariff Offers:</Title>
             {messages.length === 0 ? (
               <Text>No messages available.</Text>
             ) : (
@@ -346,12 +346,13 @@ const TransactionWindow = () => {
               )
             )}
           </div>
-
+          </Card>
           <br /><br />
 
           <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
         </Card>
+
 
       </Row>
 

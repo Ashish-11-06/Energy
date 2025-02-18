@@ -95,7 +95,19 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
               <Text strong>Per Unit Cost (INR/MWh)</Text>
             </Col>
             <Col span={12}>
-              <Text>: {combinationContent?.per_unit_cost || "NA"}</Text>
+              <Text>: {combinationContent?.per_unit_cost || "0"}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>RE Replacement</Text>
+            </Col>
+            <Col span={12}>
+              <Text>:{combinationContent?.re_replacement|| "A1"}</Text>
+            </Col>
+            <Col span={12}>
+              <Text strong>RE Index</Text>
+            </Col>
+            <Col span={12}>
+              <Text>: {combinationContent?.re_index|| "A1"}</Text>
             </Col>
           </Row>
         </Col>

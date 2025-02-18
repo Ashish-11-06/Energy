@@ -115,7 +115,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       label: "Update Profile Details",
       icon: <FileTextOutlined />,
       requiresSubscription: subscriptionRequires,
-      requiresMatchingConsumer: matchingConsumer,
+      // requiresMatchingConsumer: matchingConsumer,
     },
     {
       path: "/generator/combination-pattern",
@@ -297,7 +297,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
               // Show Tooltip with "My Profile" when there's a valid user_category and username
               <Tooltip title="My Profile" placement="top">
                 <p>
-                  Welcome,  <span onClick={()=> {navigate(`/${user_category}/profile`)}} sty>{username}</span>
+                  Welcome,  <span onClick={()=> {navigate(`/${user_category}/profile`)}} style={{color:'rgb(154, 132, 6)'}}>{username}</span>
                 </p>
                 {/* <a href={`/${user_category}/profile`}>{username}!</a> */}
               </Tooltip>

@@ -29,6 +29,7 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
       try {
         const response = await whatWeOffer.whatWeOffer();
         setData(response.data); // Set the fetched data
+        setTargetAmount(response.data.amount_saved_annually); // Set targetAmount for animation
         console.log(response);
       } catch (error) {
         console.error('Failed to fetch data from the server.', error);
@@ -242,32 +243,25 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
         {user_category === 'Consumer' && (
               <div style={{ textAlign: 'center', marginTop: '50px' }}>
                 <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Did You Know?</h2>
-                <div
-                  className="flex flex-col items-center justify-center p-6 bg-gradient-to-r from-green-300 to-green-500 rounded-2xl shadow-xl text-white text-center max-w-xl mx-auto"
-                  style={{ fontSize: '1.5rem' }}
+                <motion.div
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 1.2 }}
+                  style={{ fontSize: '3rem', fontWeight: 'bold', color: '#669800', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <motion.h2
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1 }}
-                    className="text-2xl font-semibold mb-2"
-                  >
-                    Did You Know?
-                  </motion.h2>
-                  <motion.div
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1.2 }}
-                    className="text-4xl font-bold flex items-center justify-center gap-2"
-                  >
-                    <FaRupeeSign className="text-5xl" />
-                    {count.toLocaleString()}
-                  </motion.div>
-                  <p className="mt-2 text-lg font-medium">saved annually by our consumers!</p>
-                </div>
+                  <FaRupeeSign style={{ fontSize: '3.5rem', marginRight: '5px' }} />
+                  <CountUp
+                    start={0}
+                    end={targetAmount}
+                    duration={3}
+                    separator=","
+                  />
+                </motion.div>
+                <p className="mt-2 text-lg font-medium">saved annually by our consumers!</p>
               </div>
             )}
-        <div style={{ textAlign: 'center', marginTop: '30px' }}>
+
+          <div style={{ textAlign: 'center', marginTop: '30px' }}>
           <h6 style={{ fontSize: '1.4rem', color: '#9A8406', marginBottom: '20px' }}>
             Start Your Transition Journey
           </h6>

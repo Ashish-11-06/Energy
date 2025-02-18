@@ -245,21 +245,38 @@ const Offers = () => {
       key: "commencement_of_supply",
       render: (text) => moment(text).format("DD-MM-YYYY"),
     },
+
     // {
     //   title: "Tariff Category",
     //   dataIndex: "requirement",
     //   key: "tariffCategory",
     //   render: (text) => text.rq_tariff_category,
     // },
-    {
+    // {
+    //   title: "Status",
+    //   key: "status",
+    //   render: (_, record) => {
+    //     return user_category === "Consumer"
+    //       ? record.consumer_status `Generator response awaited`
+    //       : record.generator_status;
+    //   },
+
+    { 
       title: "Status",
       key: "status",
       render: (_, record) => {
-        return user_category === "Consumer"
-          ? record.consumer_status
-          : record.generator_status;
+        if (user_category === "Consumer") {
+          return (record.consumer_status === "Offer Sent" || record.consumer_status === "Counter Offer Sent") 
+            ? `${record.consumer_status} - (Generator response awaited)` 
+            : record.consumer_status || "";
+        } else {
+          return (record.generator_status === "Offer Sent" || record.generator_status === "Counter Offer Sent") 
+            ? `${record.generator_status} - (Consumer response awaited)` 
+            : record.generator_status || "";
+        }
       },
     },
+    
     {
       title: "Bidding Window Date",
       dataIndex: "transaction_window_date",
