@@ -11,6 +11,8 @@ import monthlyDataReducer from './Slices/Consumer/monthlyConsumptionSlice'
 import paymentReducer from './Slices/Consumer/paymentSlice'; // Import the paymentReducer
 import industry from'./Slices/Consumer/industrySlice';
 import states from './Slices/Consumer/stateSlice';
+import Notifications from './Slices/notificationSlice';
+
 export const store = configureStore({
   reducer: {
     login: loginReducer, // Add loginReducer to the store
@@ -24,7 +26,8 @@ export const store = configureStore({
     monthlyData: monthlyDataReducer,
     payment: paymentReducer,
     industry:industry,
-    states:states
+    states:states,
+    notifications: Notifications
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

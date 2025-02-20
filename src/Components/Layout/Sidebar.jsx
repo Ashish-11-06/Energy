@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { Badge } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { connectWebSocket } from '../../Redux/Slices/notificationSlice';
 import PropTypes from 'prop-types';
 import { Layout, Menu, Button, Drawer } from 'antd';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import {
-  DashboardOutlined,
-  AppstoreAddOutlined,
-  SolutionOutlined,
-  TeamOutlined,
-  FileTextOutlined,
-} from '@ant-design/icons';
 import dash from '../../assets/dashboard.png';
 import transaction from '../../assets/transaction.png';
 import subscription from '../../assets/subscription.png';
 import consumption from '../../assets/consumption.png';
 import invoice from '../../assets/invoice.png';
 import profile from '../../assets/profile.png';
-import chat from '../../assets/chat.png';
-import notification from '../../assets/notification.png';
 import offerSend from '../../assets/offerSend.png';
 import notificationImg from '../../assets/notification.png';
 import portfolio from '../../assets/portfolio.png';
@@ -24,6 +18,12 @@ import portfolio from '../../assets/portfolio.png';
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
+  const dispatch = useDispatch();
+  // const notificationCount = useSelector((state) => state.notifications.count);
+  const notificationCount = 9;
+
+  console.log(notificationCount);
+
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState(location.pathname);
@@ -31,6 +31,15 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category = user?.user_category;
 
+  useEffect(() => {
+    // Dispatch the thunk to connect to the WebSocket
+    dispatch(connectWebSocket());
+
+    // Clean up on component unmount (optional)
+    return () => {
+      // You can add logic here to close the socket if needed
+    };
+  }, [dispatch]);
 
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
@@ -39,7 +48,11 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Notification', key: '/consumer/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
+    {   label: (
+      <Badge count={notificationCount} overflowCount={5}>
+        <span>Notification</span>
+      </Badge>
+    ), key: '/consumer/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
@@ -53,7 +66,11 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },  
-    { label: 'Notification', key: '/generator/notificationgen', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: (
+      <Badge count={notificationCount} overflowCount={99}>
+        <span>Notification</span>
+      </Badge>
+    ), key: '/generator/notificationgen', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
