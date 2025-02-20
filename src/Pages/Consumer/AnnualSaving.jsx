@@ -128,9 +128,9 @@ console.log(annualSavingResponse);
                     <Button type="primary" onClick={() => generatePDF(createPdfContent(annualSavingResponse), requirementId)} icon={<FileTextOutlined />} style={{ fontSize: '16px',width:'180px', padding: '5px', zIndex: 100 }}>
                       Download Report
                     </Button>
-                    <Button type="primary" onClick={handleChatWithExpert} icon={<img src={chat} alt="chat icon" style={{ width: '20px', height: '20px' }} />} style={{ fontSize: '16px',width:'180px', padding: '5px', zIndex: 100 }}>
+                    {/* <Button type="primary" onClick={handleChatWithExpert} icon={<img src={chat} alt="chat icon" style={{ width: '20px', height: '20px' }} />} style={{ fontSize: '16px',width:'180px', padding: '5px', zIndex: 100 }}>
                       Need Assistance ?
-                    </Button>
+                    </Button> */}
                   </Space>
                 </div>
               </div>

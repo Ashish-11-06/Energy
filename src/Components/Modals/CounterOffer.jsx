@@ -331,7 +331,7 @@ let temp='';
               />
             </Typography.Paragraph>
           </Col>
-          <Col span={12}>
+          {/* <Col span={12}>
             <Button
               block
               onClick={handleChatWithExpert}
@@ -349,7 +349,7 @@ let temp='';
               />
               Need Assistance?
             </Button>
-          </Col>
+          </Col> */}
         </Row>
 
         <Row justify="end" style={{ marginTop: "20px" }}>

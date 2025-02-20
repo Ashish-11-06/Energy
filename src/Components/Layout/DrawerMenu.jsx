@@ -16,6 +16,25 @@ const menuType=JSON.parse(localStorage.getItem('user'))?.user?.user_category;
 // console.log("Menu items ",menuItems);
 
   return (
+    // <Drawer
+    //   title="Menu"
+    //   placement="left"
+    //   closable
+    //   onClose={toggleDrawer}
+    //   open={drawerVisible}
+    //   contentStyle={{ padding: 0 }} // Updated for Ant Design v5
+    // >
+    //   <Menu theme="light" mode="inline" items={menuItems} />
+    // </Drawer>
+    <Layout>
+    <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0 }}>
+      <div style={{ color: 'white', fontSize: '18px' }}>Company Name</div>
+      <div>
+        {/* Drawer trigger button */}
+        <button onClick={toggleDrawer}>☰</button>
+      </div>
+    </Header>
+
     <Drawer
       title="Menu"
       placement="left"
@@ -26,6 +45,7 @@ const menuType=JSON.parse(localStorage.getItem('user'))?.user?.user_category;
     >
       <Menu theme="light" mode="inline" items={menuItems} />
     </Drawer>
+  </Layout>
   );
 };
 
