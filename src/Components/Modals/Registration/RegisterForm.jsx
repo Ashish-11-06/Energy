@@ -97,8 +97,8 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
       onCancel={handleCancel}
       width={700}
       style={{
-        marginLeft: '55%',
-        marginTop: '4%',
+        // marginLeft: '55%',
+        // marginTop: '4%',
       }}
     >
       <Form form={form} layout="vertical" name="consumer_registration_form"
