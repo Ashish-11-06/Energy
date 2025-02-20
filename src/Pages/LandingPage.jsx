@@ -5,10 +5,8 @@ import './LandingPage.css';
 import video from '../assets/vecteezy_solar-panels-and-wind-turbines-green-energy-concept_6299246.mp4';
 import EXGLogo from '../assets/EXG.png'; // Import the logo image
 import { useDispatch } from 'react-redux';
-import { setLoginType } from '../Redux/actions';
 import { loginUser } from "../Redux/Slices/loginSlice";
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons'; // Import UserOutlined icon
-import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaCheckCircle } from 'react-icons/fa'; // Import social media and check icons
 import RegisterForm from '../Components/Modals/Registration/RegisterForm';
 import { fetchSubscriptionValidity } from '../Redux/Slices/Consumer/subscriptionEnrollSlice';
 

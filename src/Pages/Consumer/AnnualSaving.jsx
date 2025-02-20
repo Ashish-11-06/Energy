@@ -8,6 +8,7 @@ import { FileTextOutlined } from "@ant-design/icons";
 import chat from '../../assets/chatAnnual.png';
 import { generatePDF, createPdfContent } from './utils'; // Import from utils.js
 import DemandModal from "./Modal/DemandModal";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
 const { Title, Text } = Typography;
 
@@ -57,9 +58,6 @@ const AnnualSvg = () => {
     setIsRequirementModalVisible(false);
   };
 
-console.log(annualSavingResponse);
-
-
   const handleContinue = () => {
     if (status === 'active') {
       navigate("/consumer/energy-consumption-table", { state: { requirementId, reReplacement: annualSavingResponse?.re_replacement } });
@@ -67,6 +65,18 @@ console.log(annualSavingResponse);
       navigate('/subscription-plan');
     }
   };
+
+  const dataForBarChart = [
+    { name: 'Potential Savings', value: annualSavingResponse?.annual_savings || 0 },
+    { name: 'Average Savings', value: annualSavingResponse?.average_savings || 0 },
+  ];
+
+  const dataForPieChart = [
+    { name: 'RE Replacement', value: annualSavingResponse?.re_replacement || 0 },
+    { name: 'Non-RE', value: 100 - (annualSavingResponse?.re_replacement || 0) },
+  ];
+
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
   return (
     <div>
@@ -89,14 +99,6 @@ console.log(annualSavingResponse);
                       {annualSavingResponse ? annualSavingResponse.contracted_demand : "0"}
                     </Text>
                   </Col>
-                  {/* <Col span={12}>
-                    <Text strong style={{ fontSize: '16px' }}>Voltage Level (kV)</Text>
-                  </Col>
-                  <Col span={12}>
-                    <Text style={{ fontSize: '20px' }}>{` : `}
-                      {annualSavingResponse ? annualSavingResponse.connected_voltage : "0"}
-                    </Text>
-                  </Col> */}
                   <Col span={12}>
                     <Text strong style={{ fontSize: '16px' }}>Potential Savings</Text>
                   </Col>
@@ -128,13 +130,52 @@ console.log(annualSavingResponse);
                     <Button type="primary" onClick={() => generatePDF(createPdfContent(annualSavingResponse), requirementId)} icon={<FileTextOutlined />} style={{ fontSize: '16px',width:'180px', padding: '5px', zIndex: 100 }}>
                       Download Report
                     </Button>
-                    {/* <Button type="primary" onClick={handleChatWithExpert} icon={<img src={chat} alt="chat icon" style={{ width: '20px', height: '20px' }} />} style={{ fontSize: '16px',width:'180px', padding: '5px', zIndex: 100 }}>
-                      Need Assistance ?
-                    </Button> */}
                   </Space>
                 </div>
               </div>
             )}
+          </div>
+          <div>
+            {/* Infographics Section */}
+            <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+              <Col span={12}>
+                <Title level={4} style={{ textAlign: 'center' }}>Savings Comparison</Title>
+                <BarChart
+                  width={500}
+                  height={300}
+                  data={dataForBarChart}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <RechartsTooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#8884d8" />
+                </BarChart>
+              </Col>
+              <Col span={12}>
+                <Title level={4} style={{ textAlign: 'center' }}>RE Replacement</Title>
+                <PieChart width={400} height={300}>
+                  <Pie
+                    data={dataForPieChart}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(2)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {dataForPieChart.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip />
+                  <Legend />
+                </PieChart>
+              </Col>
+            </Row>
           </div>
           <div>
             {/* Continue Button */}
