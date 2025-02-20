@@ -161,6 +161,7 @@ const Offers = () => {
       title: "Combination ID",
       dataIndex: "combination",
       key: "combination",
+      width: '15%',
       render: (text) => {
         const transformCombination = (text) => {
           const parts = text.split("-");

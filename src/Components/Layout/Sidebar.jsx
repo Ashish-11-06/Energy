@@ -20,6 +20,7 @@ const { Sider } = Layout;
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const dispatch = useDispatch();
   const notificationCount = useSelector((state) => state.notifications.count);
+  const offerCount = useSelector((state) => state.notifications.offer);
   // const notificationCount = 9;
 
   console.log(notificationCount);

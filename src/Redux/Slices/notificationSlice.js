@@ -1,6 +1,6 @@
 // src/features/notificationSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getNotification } from '../api/websocketConf'; // Ensure this points to your WebSocket URL
+import { getNotification, getOffer } from '../api/websocketConf'; // Ensure this points to your WebSocket URL
 
 // Async thunk to connect to the WebSocket
 export const connectWebSocket = createAsyncThunk(
@@ -11,6 +11,40 @@ export const connectWebSocket = createAsyncThunk(
     // Handle connection open
     socket.onopen = () => {
       console.log('Connected to WebSocket server');
+    };
+
+    // Listen for messages
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.unread_count !== undefined) {
+        dispatch(setNotificationCount(data.unread_count));
+      }
+    };
+
+    // Handle connection errors
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    // Handle connection close
+    socket.onclose = () => {
+      console.log('Disconnected from WebSocket server');
+    };
+
+    // Return the socket for potential future use
+    return socket;
+  }
+);
+
+
+export const connectOfferSocket = createAsyncThunk(
+  'notification/connectWebSocket',
+  async (userId, { dispatch }) => {
+    const socket = new WebSocket(getOffer(userId)); // Use the user ID to get the WebSocket URL
+
+    // Handle connection open
+    socket.onopen = () => {
+      console.log('Connected to offer WebSocket server');
     };
 
     // Listen for messages
