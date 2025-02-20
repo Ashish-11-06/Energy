@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, Statistic, Button, message, Spin } from 'antd';
-import { ThunderboltOutlined, DashboardOutlined, ApartmentOutlined, UserOutlined, LineChartOutlined } from '@ant-design/icons';
+import { ThunderboltOutlined, DashboardOutlined, ApartmentOutlined, UserOutlined, LineChartOutlined, RightOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import map from '../../assets/map.png';
 import { useNavigate } from 'react-router-dom';
 import CountUp from 'react-countup';
