@@ -9,7 +9,10 @@ import {
 } from "../../../Redux/Slices/Consumer/paymentSlice"; // Import payment actions
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { subscriptionEnroll } from "../../../Redux/Slices/Consumer/subscriptionEnrollSlice";
+import {
+  fetchSubscriptionValidity,
+  subscriptionEnroll,
+} from "../../../Redux/Slices/Consumer/subscriptionEnrollSlice";
 const ProformaInvoiveModal = ({
   open,
   onCancel,
@@ -20,11 +23,12 @@ const ProformaInvoiveModal = ({
 }) => {
   const userData = JSON.parse(localStorage.getItem("user")).user;
   const userId = userData?.id;
-   console.log(plan);
+  const companyName=userData?.company;
   //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
   // //  console.log(selected_plan);
   //  const invoiceDetails=selectedPlan;
 
+  const [subscriptionPlanValidity, setSubscriptionPlanValidity] = useState([]);
   const navigate = useNavigate();
 
   //   const user = JSON.parse(localStorage.getItem("user")).user;
@@ -79,7 +83,7 @@ const ProformaInvoiveModal = ({
   const handlePayment = async () => {
     try {
       console.log("selectedPlanId", selectedPlan);
-      
+
       const amount = selectedPlan?.subscription?.price;
       const orderResponse = await dispatch(
         createRazorpayOrder({ amount, currency: "INR" })
@@ -94,7 +98,10 @@ const ProformaInvoiveModal = ({
           name: "Energy Exchange",
           description: `Subscription Payment for Plan ${selectedPlan}`,
           order_id: orderResponse.data.id,
+          
+          
           handler: async (response) => {
+            // console.log(select);
             const paymentData = {
               user: userId,
               invoice: selectedPlan.id,
@@ -116,8 +123,21 @@ const ProformaInvoiveModal = ({
                 message.success("Payment successful! Subscription activated.");
 
                 userData?.user_category === "Consumer"
-                ? navigate("/consumer/energy-consumption-table")
-                : navigate("/generator/update-profile-details");
+                  ? navigate("/consumer/energy-consumption-table")
+                  : navigate("/generator/update-profile-details");
+
+                 const id=userId;
+                try { const response =await dispatch(fetchSubscriptionValidity(id));
+                setSubscriptionPlanValidity(response.payload);
+                console.log(response);
+                localStorage.setItem(
+                  "subscriptionPlanValidity",
+                  JSON.stringify(response.payload)
+                );
+                } catch (error) {
+                  console.log(error);
+                  
+                }
 
               
               } else {
@@ -212,10 +232,15 @@ const ProformaInvoiveModal = ({
 <body>
     <div class="container">
         <h2>${selectedPlan?.invoice_number}</h2>
-        <div class="header" style="text-align: right;">
+<div className="header" style={{ display: "flex", justifyContent: "flex-start", textAlign: "left" }}>
+          <div class="header" style="text-align: right;">
             <h3>EXGGLOBAL</h3>
             <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
         </div>
+</div>
+
+
+
 <p style="text-align: left;">Invoice Date: <strong>${
     selectedPlan?.issue_date ?? "NA"
   }</strong></p>

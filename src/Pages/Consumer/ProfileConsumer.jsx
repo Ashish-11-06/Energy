@@ -9,6 +9,7 @@ import {
   Table,
   Modal,
   Form,
+  Spin,
 } from "antd";
 import EditProfileModal from "./Modal/EditProfileModal";
 import dayjs from "dayjs";
@@ -27,15 +28,15 @@ const ProfilePage = () => {
   const [editableData, setEditaleData] = useState("");
   const [editValue, setEditValue] = useState(false);
   const [form] = Form.useForm();
-    const dispatch = useDispatch();
-   const [userDataSource, setUserDataSource] = useState([]);
+  const dispatch = useDispatch();
+  const [userDataSource, setUserDataSource] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  
   // Retrieve user data safely from localStorage
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
-const userId = initialUserData.id;
-console.log(userId);
+  const userId = initialUserData.id;
+  console.log(userId);
 
   const navigate = useNavigate();
 
@@ -70,15 +71,17 @@ console.log(userId);
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const res = await dispatch(fetchSubUserById(userId));
         const users = res.payload; // Assuming the response is in the payload
-        const formattedUsers = users.map(user => ({
+        const formattedUsers = users.map((user) => ({
           key: user.id,
-          username: user.email.split('@')[0], // Assuming username is the part before the email
+          username: user.email.split("@")[0], // Assuming username is the part before the email
           email: user.email,
           role: user.role,
         }));
         setUserDataSource(formattedUsers);
+        setLoading(false);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }
@@ -86,7 +89,6 @@ console.log(userId);
 
     fetchData();
   }, [dispatch]);
-
 
   const handleEditToggle = () => setIsModalVisible(true);
   const handleCancel = () => setIsModalVisible(false);
@@ -114,7 +116,7 @@ console.log(userId);
         { ...values, key: userDataSource.length + 1 },
       ]);
     }
-  };  
+  };
   const handleEdit = (record) => {
     setEditaleData(record);
     console.log(record);
@@ -140,32 +142,31 @@ console.log(userId);
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Role", dataIndex: "role", key: "role" },
   ];
-    // {
-    //   title: "Action",
-    //   dataIndex: "action",
-    //   key: "action",
-    //   render: (_, record) => (
-    //     <>
-    //       {/* <a
-    //         type="primary"
-    //         style={{ marginRight: 8 }}
-    //         icon={<EditOutlined />}
-    //         onClick={() => handleEdit(record)}
-    //       >
-    //         Edit
-    //       </a> */}
-    //       <a
-    //         type="danger"
-    //         style={{ color: "red" }}
-    //         icon={<DeleteOutlined />}
-    //         onClick={() => handleDelete(record.key)}
-    //       >
-    //         Delete
-    //       </a>
-    //     </>
-    //   ),
-    // },
-
+  // {
+  //   title: "Action",
+  //   dataIndex: "action",
+  //   key: "action",
+  //   render: (_, record) => (
+  //     <>
+  //       {/* <a
+  //         type="primary"
+  //         style={{ marginRight: 8 }}
+  //         icon={<EditOutlined />}
+  //         onClick={() => handleEdit(record)}
+  //       >
+  //         Edit
+  //       </a> */}
+  //       <a
+  //         type="danger"
+  //         style={{ color: "red" }}
+  //         icon={<DeleteOutlined />}
+  //         onClick={() => handleDelete(record.key)}
+  //       >
+  //         Delete
+  //       </a>
+  //     </>
+  //   ),
+  // },
 
   return (
     <Row justify="center" style={{ marginTop: "50px", width: "100%" }}>
@@ -284,13 +285,26 @@ console.log(userId);
                 </Button>
               </Row>
               <br />
-              <Table
-                columns={userColumns}
-                dataSource={userDataSource}
-                bordered
-                style={{ marginTop: "10px" }}
-                pagination={false}
-              />
+              {loading ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "60vh", // Full height of the viewport
+                  }}
+                >
+                  <Spin />
+                </div>
+              ) : (
+                <Table
+                  columns={userColumns}
+                  dataSource={userDataSource}
+                  bordered
+                  style={{ marginTop: "10px" }}
+                  pagination={false}
+                />
+              )}
             </Card>
           </Col>
         ) : null}

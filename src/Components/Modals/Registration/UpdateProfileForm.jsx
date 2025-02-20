@@ -35,12 +35,15 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
 
   const selectedProject = JSON.parse(JSON.stringify(project, null, 2));
   const [fileData, setFileData] = useState(null);
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState('');
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [type, setType] = useState(selectedProject.type || "Solar");
+  const [type, setType] = useState(selectedProject.type);
   const [isTemplateDownloaded, setIsTemplateDownloaded] = useState(false);
   const [isState, setIsState] = useState([]);
+const [solarFile,setSolarFile]=useState('');
+const [windFile,setWindFile]=useState('');
+  // console.log(selectedProject.type);
 
   useEffect(() => {
   if(user.solar_template_downloaded){
@@ -143,6 +146,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       setFileData(reader.result);
+      console.log(file.name);   
       setFile(file);
     };
     reader.readAsDataURL(file);
@@ -181,6 +185,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
 
   const onSubmit = (values) => {
     console.log("Form Values:", values);
+// console.log(values);
 
     const updatedValues = {
       ...values,
@@ -193,11 +198,19 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
     };
 
     console.log("Updated Form Values:", updatedValues);
+try {
+  dispatch(updateProject(updatedValues));
+  form.resetFields();
+  setFileData(null);
+  setFile('');
+  message.success("Form submitted successfully!");
+  localStorage.removeItem("matchingConsumerId");
+  onCancel();
+  // setFile('')
+} catch (error) {
+  console.log(error); 
+}
 
-    dispatch(updateProject(updatedValues));
-    message.success("Form submitted successfully!");
-    localStorage.removeItem("matchingConsumerId");
-    onCancel();
   };
 
   return (
@@ -220,6 +233,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
             <Select
               placeholder="Select type"
               value={type}
+              disabled
               onChange={(value) => {
                 setType(value);
                 form.setFieldsValue({ type: value });
@@ -241,7 +255,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
             <Select
               placeholder="Select your state"
               showSearch
-              disabled={!fromPortfolio}
+              disabled
             >
               {isState &&
                 isState.map((state, index) => (
@@ -325,14 +339,14 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
             />
           </Form.Item>
         </Col>
-        {type !== "ESS" && (
+        {selectedProject.type !== "ESS" && (
           <Col span={12}>
             <Form.Item
               name="annual_generation_potential"
               label="Annual Generation Potential (MWh)"
               rules={[
                 {
-                  required: type !== "ESS",
+                  required: selectedProject.type !== "ESS",
                   message: "Please input the annual generation potential!",
                 },
               ]}
@@ -343,7 +357,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
         )}
       </Row>
 
-      {type === "ESS" && (
+      {selectedProject.type === "ESS" && (
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
@@ -362,11 +376,11 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
           <Col span={12}>
             <Form.Item
               name="efficiency_of_dispatch"
-              label="Efficiency of Dispatch"
+              label="Depth of Discharge"
               rules={[
                 {
                   required: true,
-                  message: "Please input the efficiency of dispatch!",
+                  message: "Please input the depth of discharge!",
                 },
               ]}
             >
@@ -376,7 +390,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
         </Row>
       )}
 
-      {type !== "ESS" && (
+      {selectedProject.type !== "ESS" && (
         <>
           <Row gutter={16} style={{ marginBottom: "3%" }}>
             <Col span={24}>

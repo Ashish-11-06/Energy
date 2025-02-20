@@ -9,7 +9,10 @@ let socket = null; // Explicitly initialize socket as null
     export const connectWebSocket = (user_id, tariff_id) => {
         if (socket && socket.readyState === WebSocket.OPEN) {
             console.warn('WebSocket is already connected.');
-            return;
+            socket.onclose = (event) => {
+                console.warn('⚠️ Disconnecting from WebSocket server:', event.reason);
+            };
+            // return;
         }
     
         socket = new WebSocket(FULL_URL + `?user_id=${user_id}&tariff_id=${tariff_id}`);
@@ -76,6 +79,11 @@ export const sendEvent = (data) => {
         console.error('Socket not initialized. Call connectWebSocket first.');
         return;
     }
+    if (socket && socket.readyState === WebSocket.CLOSED) {
+        console.warn('WebSocket is closed');
+        // return;
+    }
+    // console.log(data);
 
     socket.send(JSON.stringify(data));
 };

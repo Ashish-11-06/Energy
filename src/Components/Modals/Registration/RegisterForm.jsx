@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, Button, Row, Col, message, Radio } from "antd";
+import { Modal, Form, Input, Button, Row, Col, message, Radio,Select } from "antd";
 import { useDispatch } from "react-redux";
 import { registerUser, verifyOtp } from "../../../Redux/Slices/Consumer/registerSlice";
 
@@ -95,34 +95,35 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
       title={<span style={{ fontSize: '1.6rem',justifyContent:'center',marginLeft:'40%' }}>Register</span>} // Enlarge the title
       footer={null}
       onCancel={handleCancel}
-      width={600}
+      width={700}
       style={{
         marginLeft: '55%',
         marginTop: '4%',
       }}
     >
-      <Form form={form} layout="vertical" name="consumer_registration_form">
+      <Form form={form} layout="vertical" name="consumer_registration_form"
+        initialValues={{ countryCode: "+91" }}>
         {/* User Category Radio Buttons */}
         <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item
-              name="user_category"
-              label="Select Category"
-              rules={[{ required: true, message: "Please select a user category!" }]}
-              labelCol={{ span: 10 }}
-              wrapperCol={{ span: 14 }} // Adjust wrapperCol to align radio buttons
-            >
-              <Radio.Group
-                onChange={(e) => setUserCategory(e.target.value)}
-                value={user_category}
-                style={{ fontSize: '1.2rem' }} // Increase font size
-              >
-                <Radio value="Consumer" style={{ fontSize: '1.2rem' }}>Consumer</Radio>
-                <Radio value="Generator" style={{ fontSize: '1.2rem' }}>Generator</Radio>
-              </Radio.Group>
-            </Form.Item>
-          </Col>
-        </Row>
+  <Col span={24}>
+    <Form.Item
+      name="user_category"
+      label="Select Category"
+      rules={[{ required: true, message: "Please select a user category!" }]}
+      labelCol={{ span: 10 }}
+    >
+      <Radio.Group
+        onChange={(e) => setUserCategory(e.target.value)}
+        value={user_category}
+        style={{ display: "flex", justifyContent: "space-between", width: "100%" }} // Aligning buttons properly
+      >
+        <Radio value="Consumer" style={{ fontSize: '1.2rem',marginLeft:'15%' }}>Consumer</Radio>
+        <Radio value="Generator" style={{ fontSize: '1.2rem' ,marginRight:'20%'}}>Generator</Radio>
+      </Radio.Group>
+    </Form.Item>
+  </Col>
+</Row>
+
 
         <Row gutter={16}>
           <Col span={12}>
@@ -159,17 +160,30 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-              name="mobile"
-              label="Mobile"
-              rules={[
-                { required: true, message: "Please input the mobile number!" },
-                { pattern: /^[0-9]{10}$/, message: "Mobile number must be 10 digits!" }, // Add validation for mobile number
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
+    <Form.Item
+      name="mobile"
+      label="Mobile"
+      rules={[
+        { required: true, message: "Please input the mobile number!" },
+        { pattern: /^[0-9]{10}$/, message: "Mobile number must be 10 digits!" }, // Validation for mobile number
+      ]}
+    >
+      <Input.Group compact>
+        <Form.Item name="countryCode" noStyle>
+          <Select style={{ width: "25%" }} defaultValue="+91"> {/* ✅ Default country code */}
+            <Select.Option value="+91">+91</Select.Option>
+            <Select.Option value="+1">+1</Select.Option>
+            <Select.Option value="+44">+44</Select.Option>
+            <Select.Option value="+61">+61</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item name="mobile" noStyle>
+          <Input style={{ width: "75%" }} maxLength={10} placeholder="Enter mobile number" />
+        </Form.Item>
+      </Input.Group>
+    </Form.Item>
+  </Col>
+
         </Row>
 
         <Row gutter={16}>
@@ -252,3 +266,4 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
 };
 
 export default RegisterForm;
+

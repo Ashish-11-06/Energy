@@ -11,7 +11,7 @@ import {
   message,
   Tooltip,
 } from "antd";
-import React, { useState } from "react"; // Import useState along with React
+import React, { useState,useEffect } from "react"; // Import useState along with React
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
@@ -31,10 +31,10 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransactio
   const [lockInPeriod, setLockInPeriod] = useState(data.lock_in_period);
   // const [commencementOfSupply,setCommencementOfSupply ] = useState(data.commencement_of_supply);
   const navigate = useNavigate();
-  const [minimumSupply, setMinimumSupply] = useState(data.minimum_supply_obligation);
   const [contractedEnergy, setContractedEnergy] = useState(
     data.contracted_energy
   );
+  const [minimumSupply, setMinimumSupply] = useState(data.minimum_supply_obligation);
   const [paymentSecurityType, setPaymentSecurityType] = useState(
     data.payment_security_type
   );
@@ -53,6 +53,12 @@ let temp='';
   } else {
     temp="Consumer"
   }
+
+  useEffect(() => {
+    // Update minimumSupply to 80% of contractedEnergy and keep 2 decimal places
+    setMinimumSupply(((contractedEnergy * 80) / 100).toFixed(2));
+  }, [contractedEnergy]);
+  
 
   // Initialize the commencement date using moment
   const [commencementDate, setCommencementDate] = useState(() => {
@@ -215,7 +221,7 @@ let temp='';
       >
         <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
           <p style={{ margin: 0 }}>
-            Offer Tariff: {data.offer_tariff ? data.offer_tariff : 0}
+            Offer Tariff: <strong>{data?.offer_tariff ? data?.offer_tariff : 0}</strong> INR/kWh
           </p>
           {!fromTransaction ?(
             <>
@@ -276,9 +282,9 @@ let temp='';
           </Col>
           <Col span={12}>
             <Typography.Paragraph>
-              <strong>Contracted Energy (million units):</strong>
+              <strong>Annual Contracted Energy (million units):</strong>
               <InputNumber
-                min={0.1}
+                min={0}
                 value={contractedEnergy}
                 onChange={(value) => setContractedEnergy(value)}
                 disabled={fromTransaction}
@@ -290,7 +296,7 @@ let temp='';
             <Typography.Paragraph>
               <strong>Minimum Supply Obligation (million units):</strong>
               <InputNumber
-                min={1}
+                min={0}
                 value={minimumSupply}
                 onChange={(value) => setMinimumSupply(value)}
                 disabled={fromTransaction}
@@ -506,6 +512,7 @@ let temp='';
             style={{ width: "60%" }}
             value={offerTariff}
             onChange={handleTariffChange}
+            placeholder="Enter the tariff value in INR/KWh"
           />
           <Button onClick={handleTarrifOk} style={{ marginLeft: "5%" }}>
             Send

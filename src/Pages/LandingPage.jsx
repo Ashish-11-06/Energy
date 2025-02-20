@@ -33,7 +33,7 @@ const LandingPage = () => {
   const textRef = useRef(""); 
 
   useEffect(() => {
-    const text = "EXT GLOBAL";
+    const text = "Welcome to Energy Transition (EXT) Platform";
     let index = 0;
     textRef.current = ""; // Reset ref text
     const interval = setInterval(() => {
@@ -45,7 +45,7 @@ const LandingPage = () => {
       } else {
         clearInterval(interval);
       }
-    }, 200);
+    }, 50);
     return () => clearInterval(interval);
   }, []);
 
@@ -72,24 +72,28 @@ const LandingPage = () => {
               navigate(
                   user?.is_new_user 
                       ? '/what-we-offer' 
-                      : (lastVisitedPage === '/' ? '/generator/dashboard' : lastVisitedPage),
+                      : '/generator/dashboard',
+                      // : (lastVisitedPage === '/' ? '/generator/dashboard' : lastVisitedPage),
                   { state: { isNewUser: user?.is_new_user } }
               );
           } else if (user?.user_category === 'Consumer') {
               navigate(
                   user?.is_new_user 
                       ? '/what-we-offer' 
-                      : (lastVisitedPage === '/' ? '/consumer/dashboard' : lastVisitedPage),
+                      : '/consumer/dashboard' ,
+                      // : (lastVisitedPage === '/' ? '/consumer/dashboard' : lastVisitedPage),
                   { state: { isNewUser: user?.is_new_user } }
               );
           }
-
-            const response = await dispatch(fetchSubscriptionValidity(id));
+// console.log('jello from landing');
+const response = await dispatch(fetchSubscriptionValidity(id));
                     setSubscriptionPlanValidity(response.payload);
-                    // console.log(response.payload);
+                    console.log(response.payload);
             
             localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
           
+
+            
         } else {
             // console.error('Login failedklaksdlfklaskdlk:', resultAction.payload);
             message.error(resultAction.payload || 'Login failed. Please try again.');
@@ -155,49 +159,56 @@ const LandingPage = () => {
 
   return (
     <App> {/* Wrap the component with App */}
-      <div className="landing-page">
+      <div className="landing-page" style={{padding:'5px'}}>
         {/* Background Video */}
         <video className="background-video" src={video} autoPlay muted loop />
         <div className="overlay" style={{ backgroundColor: 'rgba(3, 110, 11, 0.5)', backdropFilter: 'blur(5px)' }}></div>
 
 <Row>
   <Row style={{width:'100%',height:'100%',justifyContent:'center',marginBottom:'0'}}>
-    <h1 style={{marginTop:'20px',color:'white',fontWeight:'bolder'}} >Welcome to Energy Transition (EXT) Platform</h1>
-    <h1 style={{marginTop:'20px'}}>jnkm</h1>
+    <h1 style={{marginTop:'20px',color:'white',fontWeight:'bolder'}} >{animatedText}</h1>
+    {/* <h1 style={{marginTop:'20px'}}>jnkm</h1> */}
     <div className="logo-container">
             <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
           </div>
   </Row>
   <Row>
-        <div className="content-container" style={{marginTop:'0px'}}> 
-          <div className="text-content" >
-            
-            <h2 className="animated-text">{animatedText}</h2>
+   {/* <h2 style={{justifyContent:'center'}}>Green Energy </h2> */}
+        <div className="content-container" style={{marginTop:'-10px'}}> 
+          <div className="text-content"  >
+            <div style={{backgroundColor:'#669800',width:'600px'}}>
+            <p style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
+            <p style={{marginLeft:'5%',marginTop:'-30px',fontSize:'90px',fontWeight:'bolder'}}>MarketPlace</p>
+            </div>
+           <p style={{fontSize:'28px',width:'700px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators.</i></p>
+            {/* <h2 className="animated-text">{animatedText}</h2> */}
             <ul >
               {/* <Row>
                 <Col span={12}> */}
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Comprehensive energy marketplace</li>
-              <li style={{fontSize:'20px'}} ><FaCheckCircle className="icon" /> Bridges the gap between energy </li>
+              {/* <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Comprehensive energy marketplace</li>
+              <li style={{fontSize:'20px'}} ><FaCheckCircle cssName="icon" /> Bridges the gap between energy </li>
               <li style={{fontSize:'20px'}}> consumers and generators</li>
               <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Enables informed decision-making</li>
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Seamless transactions</li>
+              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Seamless transactions</li> */}
               {/* </Col>
              <Col span={12}> */}
-              <li style={{fontSize:'20px'}} ><FaCheckCircle className="icon" /> Optimizes energy usage</li>
+            
+
+              {/* <li style={{fontSize:'20px'}} ><FaCheckCircle className="icon" /> Optimizes energy usage</li>
               <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Forecasts trading opportunities</li>
               <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Streamlines billing processes</li>
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Monitors energy generation projects</li>
+              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Monitors energy generation projects</li> */}
               {/* </Col>
               </Row> */}
             </ul>
-
+<p style={{color:'white',fontWeight:'bold',marginTop:'10%',marginLeft:'-30%'}}>Fast track energy transition</p>
           </div>
 
        
           
           {/* Login Box */}
-          <div className="login-box">
-            
+          <div className="login-box" style={{marginLeft:'200px'}}>
+         
             <h2 className="login-title"><UserOutlined /> Login</h2> 
             <Form
               name="login"
@@ -230,8 +241,8 @@ const LandingPage = () => {
                 rules={[{ required: true, message: 'Please select your user type!' }]}
               >
                 <Radio.Group onChange={(e) => setUserType(e.target.value)} value={userType}>
-                  <Radio value="Consumer">Consumer</Radio>
-                  <Radio value="Generator">Generator</Radio>
+                  <Radio value="Consumer" style={{fontSize:'20px'}}>Consumer</Radio>
+                  <Radio value="Generator" style={{fontSize:'20px'}}>Generator</Radio>
                 </Radio.Group>
               </Form.Item>
 

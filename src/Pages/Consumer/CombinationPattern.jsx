@@ -11,6 +11,8 @@ import {
   Button,
   Card,
 } from "antd";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
+
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -45,10 +47,9 @@ const CombinationPattern = () => {
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
-  const role=user.role;
+  const role = user.role;
   // console.log(user.id);
   const user_id = user.id;
-
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
     if (
@@ -114,9 +115,11 @@ const CombinationPattern = () => {
           connectivity: combination.connectivity,
           states: combination.state,
 
-          status: combination?.terms_sheet_sent 
-          ? (combination?.sent_from_you === 1 ? "Already Sent" : "Already received") 
-          : "Send Quotation",  
+          status: combination?.terms_sheet_sent
+            ? combination?.sent_from_you === 1
+              ? "Already Sent"
+              : "Already received"
+            : "Send Quotation",
         };
       }
     );
@@ -141,6 +144,14 @@ const CombinationPattern = () => {
   );
 
   // console.log('comn', combinationData);
+
+  const increaseValue = () => {
+    setSliderValue((prev) => Math.min(prev + 1, 100)); // Increase by 5, max 100
+  };
+
+  const decreaseValue = () => {
+    setSliderValue((prev) => Math.max(prev - 1, 0)); // Decrease by 5, min 0
+  };
 
   useEffect(() => {
     const fetchPatterns = async () => {
@@ -430,19 +441,18 @@ const CombinationPattern = () => {
       // width: 150,
     },
     {
-      title: "Total Cost (INR/KWh)",
+      title: "Final Cost (INR/KWh)",
       dataIndex: "totalCost",
       key: "totalCost",
       // width: 150,
     },
-
     {
       title: "COD",
       dataIndex: "cod",
       key: "cod",
       width: 120,
       render: (text) => dayjs(text).format("DD-MM-YYYY"),
-    },  
+    },
   ];
 
   if (role !== "view") {
@@ -587,18 +597,53 @@ const CombinationPattern = () => {
               <p>( Scroll the below bar for different RE combination )</p>
               {/* <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>( Scroll the below bar for different RE combination  )</p></span> Display slider value */}
               <span>
-                <Slider
-                  min={0}
-                  max={100}
-                  marks={marks} // Add marks to the slider
-                  style={{ width: "80%", marginLeft: "5%" }}
-                  onChange={handleSliderChange}
-                  value={sliderValue}
-                  tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Correct way to control tooltip visibility
-                  trackStyle={{ height: 20 }} // Increase the thickness of the slider line
-                  handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
-                />
+                <div
+                  style={{
+                    position: "relative",
+                    width: "80%",
+                    marginLeft: "5%",
+                  }}
+                >
+                  {/* Left Arrow Button (Positioned on the Slider Line) */}
+                  <Button
+                    onClick={decreaseValue}
+                    icon={<LeftOutlined />}
+                    style={{
+                      position: "absolute",
+                      left: `${(sliderValue / 100) * 84}%`, // Position based on slider value
+                      top: "100%",
+                      transform: "translate(-50%, -50%)",
+                      zIndex: 10,
+                 
+                    }}
+                  />
 
+                  <Slider
+                    min={0}
+                    max={100}
+                    marks={marks} // Add marks to the slider
+                    style={{ width: "80%", marginLeft: "5%" }}
+                    onChange={handleSliderChange}
+                    value={sliderValue}
+                    tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Correct way to control tooltip visibility
+                    trackStyle={{ height: 20 }} // Increase the thickness of the slider line
+                    handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
+                  />
+                  {/* Right Arrow Button (Positioned on the Slider Line) */}
+                  <Button
+                    onClick={increaseValue}
+                    icon={<RightOutlined />}
+                    style={{
+                      position: "absolute",
+                      left: `${(sliderValue / 100) * 83}%`, // Position based on slider value
+                      top: "100%",
+                      transform: "translate(50%, -50%)",
+                      zIndex: 10,
+                      marginLeft: "30px",
+                  
+                    }}
+                  />
+                </div>
                 <Button
                   type="primary"
                   onClick={handleOptimizeClick}
@@ -612,7 +657,7 @@ const CombinationPattern = () => {
           </div>
           <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-              Optimized Combinations
+              Optimized Combinations for {sliderValue}% RE replacement
             </Title>
             {isTableLoading ? (
               <>

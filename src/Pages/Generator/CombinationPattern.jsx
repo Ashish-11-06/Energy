@@ -613,7 +613,7 @@ const CombinationPattern = () => {
           </div>
           <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-              Optimized Combination
+              Optimized Combination for {sliderValue}% RE replacement
             </Title>
             {isTableLoading ? (
               <>

@@ -192,7 +192,7 @@ console.log(userId);
                 <Text strong>CIN Number</Text>
               </Col>
               <Col span={12}>
-                <Text> : {userData.cin_number || "N/A"}</Text>
+                <Text> : {userData.cin_number || "-"}</Text>
               </Col>
               <Col span={12}>
                 <Text strong>Company</Text>
