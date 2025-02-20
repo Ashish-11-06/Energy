@@ -1,18 +1,13 @@
-import { FULL_URL } from "./websocketConf";
-
 let socket = null; // Explicitly initialize socket as null
 
-// const SOCKET_URL = 'ws://192.168.1.34:8001';
-// const SOCKET_PATH = '/api/energy/ws/test-negotiation/';
-// const FULL_URL = SOCKET_URL + SOCKET_PATH;
+const SOCKET_URL = 'ws://192.168.1.47:8001';
+const SOCKET_PATH = '/api/energy/ws/negotiation/';
+const FULL_URL = SOCKET_URL + SOCKET_PATH;
 
     export const connectWebSocket = (user_id, tariff_id) => {
         if (socket && socket.readyState === WebSocket.OPEN) {
             console.warn('WebSocket is already connected.');
-            socket.onclose = (event) => {
-                console.warn('⚠️ Disconnecting from WebSocket server:', event.reason);
-            };
-            // return;
+            return;
         }
     
         socket = new WebSocket(FULL_URL + `?user_id=${user_id}&tariff_id=${tariff_id}`);
@@ -74,18 +69,18 @@ let socket = null; // Explicitly initialize socket as null
     };
     
 
-export const sendEvent = (data) => {
+export const sendEvent = (event, data) => {
     if (!socket) {
         console.error('Socket not initialized. Call connectWebSocket first.');
         return;
     }
-    if (socket && socket.readyState === WebSocket.CLOSED) {
-        console.warn('WebSocket is closed');
-        // return;
-    }
-    // console.log(data);
 
-    socket.send(JSON.stringify(data));
+    const message = {
+        event: event,
+        payload: data
+    };
+
+    socket.send(JSON.stringify(message));
 };
 
 // Optional: Add WebSocket disconnect functionality

@@ -264,6 +264,7 @@ const Offers = () => {
     { 
       title: "Status",
       key: "status",
+      width: "15%",
       render: (_, record) => {
         if (user_category === "Consumer") {
           return (record.consumer_status === "Offer Sent" || record.consumer_status === "Counter Offer Sent") 
@@ -386,7 +387,7 @@ const Offers = () => {
         <Table
           dataSource={filteredData}
           columns={columns}
-          
+          size="small"
           bordered
           loading={loading} // AntD's built-in loader
           pagination={false}
