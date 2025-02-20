@@ -172,9 +172,9 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
         <Form.Item name="countryCode" noStyle>
           <Select style={{ width: "25%" }} defaultValue="+91"> {/* ✅ Default country code */}
             <Select.Option value="+91">+91</Select.Option>
-            <Select.Option value="+1">+1</Select.Option>
-            <Select.Option value="+44">+44</Select.Option>
-            <Select.Option value="+61">+61</Select.Option>
+            <Select.Option value="+93">+93</Select.Option>
+            <Select.Option value="+43">+43</Select.Option>
+            <Select.Option value="+32">+32</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item name="mobile" noStyle>

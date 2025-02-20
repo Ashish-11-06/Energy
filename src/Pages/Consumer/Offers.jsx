@@ -276,13 +276,12 @@ const Offers = () => {
         }
       },
     },
-    
-    {
-      title: "Bidding Window Date",
-      dataIndex: "transaction_window_date",
-      key: "transaction_window_date",
-      render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
-    },
+    // {
+    //   title: "Bidding Window Date",
+    //   dataIndex: "transaction_window_date",
+    //   key: "transaction_window_date",
+    //   render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
+    // },
     {
       title: "Action",
       key: "action",
@@ -298,7 +297,6 @@ const Offers = () => {
             Send Offer
           </Button>
             )
-          
           //   )
           // ) : user_category === 'Generator' ? (
           //   record.count === 1 && record.generator_status === 'Pending' ? (
@@ -313,6 +311,12 @@ const Offers = () => {
           // ) : null // This covers the case when user_category is neither 'Consumer' nor 'Generator'
         );
       },
+    },
+    {
+      title: "Bidding Window Date",
+      dataIndex: "transaction_window_date",
+      key: "transaction_window_date",
+      render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
     },
   ];
 

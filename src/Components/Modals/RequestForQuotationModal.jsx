@@ -192,7 +192,7 @@ const RequestForQuotationModal = ({
               />
             </Typography.Paragraph>
           </Col>
-          <Col span={12}>
+          {/* <Col span={12}>
             <Button
               block
               onClick={handleChatWithExpert}
@@ -206,7 +206,7 @@ const RequestForQuotationModal = ({
             >
               Need Assistance ?
             </Button>
-          </Col>
+          </Col> */}
         </Row>
         <Row justify="end" style={{ marginTop: "20px" }}>
           <Button
