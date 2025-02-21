@@ -1914,7 +1914,7 @@ const renderSixMonthFileUploadTables = () => {
                 <Tooltip title="Upload a CSV file">
                   <Button
                     onClick={() => handleButtonClick("csv")}
-                    style={{ padding: "5px",zIndex:2000 }}
+                    style={{ padding: "5px",zIndex:100 }}
                     icon={<FileExcelOutlined style={{ marginTop: "5px" }} />}
                   >
                     Upload CSV file
@@ -1925,7 +1925,7 @@ const renderSixMonthFileUploadTables = () => {
   <Button
     icon={<DownloadOutlined />}
     onClick={handleDownloadTemplate}
-    style={{ marginLeft: "10px",zIndex:2000 }}
+    style={{ marginLeft: "10px",zIndex:100 }}
   ></Button>
 </Tooltip>
 <span 
