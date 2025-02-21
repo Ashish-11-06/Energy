@@ -4,7 +4,7 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import {useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { fetchMonthAheadData } from '../../Redux/slices/monthAheadSlice';
+import { fetchMonthAheadData } from '../../Redux/slices/consumer/monthAheadSlice';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Col, Typography, Row, } from "antd";
 import { Bar,Pie,Doughnut  } from "react-chartjs-2";
 import {
@@ -14,29 +14,43 @@ import Title from "antd/es/typography/Title";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 import market from'../../assets/market.png';
 import statistics from'../../assets/statistics.png';
+import { fetchDashboardData } from "../../Redux/slices/consumer/dashboardSlice";
+import { useDispatch } from "react-redux";
 const DashboardP = () => {
-  const consumptionPatterns = [
-    { id: 1, month: "Jan/24", value: 150 },
-    { id: 2, month: "Feb/24", value: 250 },
-    { id: 3, month: "Mar/24", value: 100 },
-    { id: 4, month: "Apr/24", value: 300 },
-    { id: 5, month: "May/24", value: 100 },
-    { id: 6, month: "Jun/24", value: 300 },
-    { id: 7, month: "July/24", value: 250 },
-    { id: 8, month: "Aug/24", value: 180 },
-    { id: 9, month: "Sep/24", value: 120 },
-    { id: 10, month: "Oct/24", value: 100 },
-    { id: 11, month: "Nov/24", value: 350 },
-    { id: 12, month: "Dec/24", value: 300 },
-  ];
+const dispatch=useDispatch();
+const [dashboardData,setDashboardData] = useState([]);
+
+useEffect(() => {
+  const fetchData = async () => {
+    const res = await dispatch(fetchDashboardData());
+    console.log(res.payload);
+    setDashboardData(res.payload);
+  };
+  fetchData();
+}, []);
+
+  // const consumptionPatterns = [
+  //   { id: 1, month: "Jan/24", value: 150 },
+  //   { id: 2, month: "Feb/24", value: 250 },
+  //   { id: 3, month: "Mar/24", value: 100 },
+  //   { id: 4, month: "Apr/24", value: 300 },
+  //   { id: 5, month: "May/24", value: 100 },
+  //   { id: 6, month: "Jun/24", value: 300 },
+  //   { id: 7, month: "July/24", value: 250 },
+  //   { id: 8, month: "Aug/24", value: 180 },
+  //   { id: 9, month: "Sep/24", value: 120 },
+  //   { id: 10, month: "Oct/24", value: 100 },
+  //   { id: 11, month: "Nov/24", value: 350 },
+  //   { id: 12, month: "Dec/24", value: 300 },
+  // ];
 
   const barData = {
-    labels: consumptionPatterns.map((pattern) => pattern.month), // X-axis labels
+    labels: dashboardData.map((pattern) => pattern.month), // X-axis labels
     datasets: [
       {
         type: "bar",
         label: "Consumption (MWh)",
-        data: consumptionPatterns.map((pattern) => pattern.value), // Use value, not consumption
+        data: dashboardData.map((pattern) => pattern.value), // Use value, not consumption
         backgroundColor: "#669800",
         barThickness: 30, // Adjust bar thickness
       },

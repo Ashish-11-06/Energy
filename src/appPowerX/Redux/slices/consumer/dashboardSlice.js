@@ -1,13 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import dayAheadApi from "../api/consumer/dayAhead";
+import dashboardApi from "../../api/consumer/dashboardApi";
 
 // Async thunk for fetching data
-export const fetchDayAheadData = createAsyncThunk(
-  "dayAheadData/fetchDayAheadData",
+export const fetchDashboardData = createAsyncThunk(
+  "dashboardData/fetchDashboardData",
   async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
     try {
-      const response = await dayAheadApi.getDayAhead();
+      const response = await dashboardApi.fetchDashboard();
+      
+      
       if (response.status === 200 && response.data) {
+        console.log('response in slice',response);
         return response.data; // Ensure response contains valid data
       }
       throw new Error("Invalid response from server");
@@ -18,29 +21,29 @@ export const fetchDayAheadData = createAsyncThunk(
 );
 
 // Slice for matching IPP
-const dayAheadSlice = createSlice({
-  name: "tableData",
+const dashboardData = createSlice({
+  name: "dashboardData",
   initialState: {
-    tableData: [],
+    dashboardData: [],
     status: "idle",
     error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchDayAheadData.pending, (state) => {
+      .addCase(dashboardData.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchDayAheadData.fulfilled, (state, action) => {
+      .addCase(dashboardData.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.tableData = action.payload;
+        state.dashboardData = action.payload;
       })
-      .addCase(fetchDayAheadData.rejected, (state, action) => {
+      .addCase(dashboardData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Failed to fetch data";
       });
   },
 });
 
-export default dayAheadSlice.reducer;
+export default dashboardData.reducer;

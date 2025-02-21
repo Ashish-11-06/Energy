@@ -3,9 +3,13 @@ import { Card, Statistic, Progress, Button, Row, Col } from 'antd';
 import 'antd/dist/reset.css'; // Import Ant Design styles
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { useNavigate } from 'react-router-dom';
 const { Meta } = Card;
 
+
 const TradingG = () => {
+
+  const navigate=useNavigate();
     const data = {
         labels: [1,2,3,4,5,6,7,8], // Updated X-axis labels
         datasets: [
@@ -21,6 +25,7 @@ const TradingG = () => {
       };
       
       const handleChat = () => {
+        navigate('/px/chat-page')
         console.log('Chat with Expert');
         
       }

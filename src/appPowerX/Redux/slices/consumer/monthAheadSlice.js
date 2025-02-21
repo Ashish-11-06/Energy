@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import monthAheadApi from "../api/consumer/monthAheadApi";
+import monthAheadApi from "../../api/consumer/monthAheadApi";
 
 // Async thunk for fetching data
 export const fetchMonthAheadData = createAsyncThunk(

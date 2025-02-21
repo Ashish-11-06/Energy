@@ -3,7 +3,7 @@ import { Button, Select, Table,Row,Col, Card } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import {useNavigate } from "react-router-dom";
-import { fetchDayAheadData } from '../../Redux/slices/dayAheadSlice';
+import { fetchDayAheadData } from '../../Redux/slices/consumer/dayAheadSlice';
 import { useDispatch } from 'react-redux';
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
