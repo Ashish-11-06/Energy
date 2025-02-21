@@ -249,7 +249,9 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
                   transition={{ duration: 1.2 }}
                   style={{ fontSize: '3rem', fontWeight: 'bold', color: '#669800', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <FaRupeeSign style={{ fontSize: '3.5rem', marginRight: '5px' }} />
+                  {/* <FaRupeeSign style={{ fontSize: '3.5rem', marginRight: '5px' }} /> */}
+                  <span style={{ fontSize: '3rem', marginRight: '5px' }}>INR
+                  </span>
                   <CountUp
                     start={0}
                     end={targetAmount}

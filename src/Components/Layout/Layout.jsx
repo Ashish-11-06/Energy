@@ -44,7 +44,13 @@ const LayoutComponent = () => {
 
   const isChatPage =
   location.pathname === "/consumer/chat-page" ||
-  location.pathname === "/generator/chat-page";
+  location.pathname === "/generator/chat-page" ||
+  location.pathname === "/consumer/energy-consumption-table" ||
+  location.pathname === "/generator/energy-consumption-table";
+
+  // const isConsuptionPage =
+  // location.pathname === "/consumer/energy-consumption-table" ||
+  // location.pathname === "/generator/energy-consumption-table";
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -93,7 +99,7 @@ const LayoutComponent = () => {
         </Content>
 
         {/* Floating Chatbot Button (Only visible after login) */}
-        {user && !isChatPage && (
+        {user && !isChatPage &&(
           <div
             style={{
               position: "fixed",

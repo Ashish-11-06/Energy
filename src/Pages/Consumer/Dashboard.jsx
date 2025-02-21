@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Card, Statistic, Modal } from "antd";
+import { Popover } from "antd";
 import { DatabaseOutlined, ProfileOutlined } from "@ant-design/icons";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
@@ -11,6 +12,7 @@ import totalIPP from "../../assets/totalIPP.png";
 import availableCapacity from "../../assets/capacity.png";
 import demands from "../../assets/capacityAvailable.png";
 import consumption from "../../assets/consumption.png";
+
 
 const Dashboard = () => {
   const [consumerDetails, setConsumerDetails] = useState({});
@@ -305,11 +307,11 @@ const Dashboard = () => {
                     alignItems: "center",
                     justifyContent: "center",
                   }}
-                  hoverable
-                  onMouseEnter={() => showStateModal(true)} // Open modal when hovering
+                  // hoverable
+                  // onMouseEnter={() => showStateModal(true)} // Open modal when hovering
                   // onMouseLeave={() => handleStateClose()} // Close modal when hovering out
                 >
-                  <Statistic
+                  {/* <Statistic
                     title="Number of States Covered"
                     value={platformDetails?.statesCovered || 0} // Default to 0 if undefined
                     prefix={
@@ -328,7 +330,49 @@ const Dashboard = () => {
                       display: "flex",
                       alignItems: "center",
                     }}
+                  /> */}
+
+                  <Statistic
+                    title="Number of States Covered"
+                    value={platformDetails?.statesCovered || 0} // Default to 0 if undefined
+                    prefix={
+                      <img
+                        src={state} // Ensure `state` is a valid image URL
+                        alt="State Icon"
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    valueRender={(value) => (
+                      <Popover
+                        content={
+                          <div style={{ padding: "10px", maxWidth: "200px" }}>
+                            <strong>States Covered:</strong>
+                            <ul style={{ paddingLeft: "20px", margin: "5px 0" }}>
+                              {states?.length > 0 ? (
+                                states.map((state, index) => <li key={index}>{state}</li>)
+                              ) : (
+                                <li>No states available</li>
+                              )}
+                            </ul>
+                          </div>
+                        }
+                        trigger="hover" // Show popover on hover
+                        placement="top" // Adjust position if needed
+                      >
+                        <span style={{ cursor: "pointer" }}>{value}</span>
+                      </Popover>
+                    )}
+                    valueStyle={{
+                      color: "#3f8600",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
                   />
+
                 </Card.Grid>
               </Col>
             </Row>

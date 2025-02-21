@@ -67,6 +67,21 @@ export const createPdfContent = (annualSavingResponse) => {
               <td style="border: 1px solid #E6E8F1; padding: 10px; text-align: left;">INR/kWh</td>
               <td style="border: 1px solid #E6E8F1; padding: 10px; text-align: left;">${annualSavingResponse?.state_charges || 'N/A'}</td>
             </tr>
+            <tr>
+              <td style="border: 1px solid #ccc; padding: 10px; text-align: left;">Per Unit Savings Potential (A-B-C)</td>
+              <td style="border: 1px solid #ccc; padding: 10px; text-align: left;">INR/kWh</td>
+              <td style="border: 1px solid #ccc; padding: 10px; text-align: left;">${annualSavingResponse?.per_unit_savings_potential || 'N/A'}</td>
+            </tr>
+          <tr>
+            <td style="border: 1px solid #ccc; padding: 10px; text-align: left;">Potential RE Replacement</td>
+            <td style="border: 1px solid #ccc; padding: 10px; text-align: left;">%</td>
+            <td style="border: 1px solid #ccc; padding: 10px; text-align: left;">${annualSavingResponse?.potential_re_replacement || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ccc; padding: 10px; text-align: left;">Total Savings</td>
+            <td style="border: 1px solid #ccc; padding: 10px; text-align: left;">INR crore</td>
+            <td style="border: 1px solid #ccc; padding: 10px; text-align: left;">${annualSavingResponse?.total_savings || 'N/A'}</td>
+          </tr>
           </tbody>
         </table>
       </div>
