@@ -14,6 +14,17 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
 
   const restrictedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com', 'icloud.com', 'zoho.com', 'protonmail.com', 'mail.com', 'yandex.com', 'gmx.com'];
 
+  const countryPhoneRules = {
+    "+91": /^[6-9]\d{9}$/, // India - 10 digits
+    "+1": /^\d{10}$/, // USA, Canada - 10 digits
+    "+44": /^\d{10}$/, // UK - 10 digits
+    "+61": /^\d{9}$/, // Australia - 9 digits
+    "+971": /^\d{9}$/, // UAE - 9 digits
+    "+49": /^\d{10}$/, // Germany - 10 digits
+    "+33": /^\d{9}$/, // France - 9 digits
+    "+86": /^\d{11}$/, // China - 11 digits
+  };
+
   const validateCompanyEmail = (_, value) => {
     if (!value) {
       return Promise.reject(new Error('Please provide your email address!'));
@@ -89,6 +100,7 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
       });
   };
 
+  
   return (
     <Modal
       open={open}
@@ -160,7 +172,7 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-    <Form.Item
+    {/* <Form.Item
       name="mobile"
       label="Mobile"
       rules={[
@@ -170,7 +182,7 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
     >
       <Input.Group compact>
         <Form.Item name="countryCode" noStyle>
-          <Select style={{ width: "25%" }} defaultValue="+91"> {/* ✅ Default country code */}
+          <Select style={{ width: "25%" }} defaultValue="+91"> 
             <Select.Option value="+91">+91</Select.Option>
             <Select.Option value="+93">+93</Select.Option>
             <Select.Option value="+43">+43</Select.Option>
@@ -181,7 +193,44 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
           <Input style={{ width: "75%" }} maxLength={10} placeholder="Enter mobile number" />
         </Form.Item>
       </Input.Group>
-    </Form.Item>
+    </Form.Item> */}
+
+    <Form.Item 
+    label="Mobile">
+        <Input.Group compact>
+          <Form.Item name="countryCode" noStyle>
+            <Select style={{ width: "30%" }} defaultValue="+91">
+              {Object.keys(countryPhoneRules).map((code) => (
+                <Select.Option key={code} value={code}>
+                  {code}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="mobile"
+            noStyle
+            rules={[
+              { required: true, message: "Please input the mobile number!" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  const selectedCode = getFieldValue("countryCode");
+                  const regex = countryPhoneRules[selectedCode];
+                  if (regex && regex.test(value)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(`Invalid number format for ${selectedCode}`)
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input style={{ width: "70%" }} placeholder="Enter mobile number" />
+          </Form.Item>
+        </Input.Group>
+        </Form.Item>
   </Col>
 
         </Row>
