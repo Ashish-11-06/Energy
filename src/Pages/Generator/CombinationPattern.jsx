@@ -67,10 +67,13 @@ const CombinationPattern = () => {
     }
 
     useEffect(() => {
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: "smooth",
-      });
+      if(!isTableLoading){
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+        // console.log('scrolled');
+      }
     }, [isTableLoading, setIsTableLoading]);
 
 
@@ -199,6 +202,11 @@ const CombinationPattern = () => {
             formatAndSetCombinations(response);
             setIsTableLoading(false);
             setFetchingCombinations(false);
+            // Scroll to the bottom of the page
+            window.scrollTo({
+              top: document.body.scrollHeight,
+              behavior: "smooth",
+            });
           },
           (errorMessage) => {
             // Handle network or other fetch errors
@@ -209,11 +217,7 @@ const CombinationPattern = () => {
           }
         );
 
-        // Scroll to the bottom of the page
-        window.scrollTo({
-          top: document.body.scrollHeight,
-          behavior: "smooth",
-        });
+       
       } catch (error) {
         console.error("Error in loadCombinations:", error);
         message.error("Failed to fetch combinations.");
