@@ -10,12 +10,13 @@ import {
   Slider,
   Button,
   Card,
+  Tooltip,
 } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
 
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { fetchOptimizedCombinations } from "../../Redux/Slices/Generator/optimizeCapacitySlice";
 import { fetchConsumptionPattern } from "../../Redux/Slices/Generator/ConsumptionPatternSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,6 +35,7 @@ const CombinationPattern = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [ value, setValue ] = useState(65);
   const [fetchingCombinations, setFetchingCombinations] = useState(false);
   const [progress, setProgress] = useState(0);
   const [combinationData, setCombinationData] = useState([]);
@@ -154,6 +156,14 @@ const CombinationPattern = () => {
   };
 
   useEffect(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [isTableLoading, setIsTableLoading]);
+
+
+  useEffect(() => {
     const fetchPatterns = async () => {
       try {
         if (
@@ -227,7 +237,7 @@ const CombinationPattern = () => {
 
     fetchPatterns();
     loadCombinations();
-  }, [dispatch, selectedDemandId, reReplacement]);
+  }, [dispatch, selectedDemandId]);
 
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
@@ -245,28 +255,7 @@ const CombinationPattern = () => {
       }, 100);
       return () => clearInterval(interval);
 
-      // const xhr = new XMLHttpRequest();
-      // xhr.open("GET", "/path/to/your/api", true); // Update with the actual API endpoint
-      // xhr.onprogress = (event) => {
-      //   if (event.lengthComputable) {
-      //     const percentComplete = (event.loaded / event.total) * 100;
-      //     setProgress(percentComplete);
-      //   }
-      // };
-      // xhr.onload = () => {
-      //   if (xhr.status === 200) {
-      //     setProgress(100);
-      //     setIsTableLoading(false);
-      //   } else {
-      //     message.error("Failed to load data.");
-      //     setIsTableLoading(false);
-      //   }
-      // };
-      // xhr.onerror = () => {
-      //   message.error("Failed to load data.");
-      //   setIsTableLoading(false);
-      // };
-      // xhr.send();
+   
     }
   }, [isTableLoading]);
 
@@ -296,6 +285,7 @@ const CombinationPattern = () => {
   };
 
   const handleOptimizeClick = async () => {
+    setValue(sliderValue);
     try {
       setIsTableLoading(true);
       setFetchingCombinations(true);
@@ -460,9 +450,13 @@ const CombinationPattern = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (text, record) =>
+      render: (text, record) => 
         text !== "Send Quotation" ? (
-          text
+          <Tooltip title="View Offers">
+          <Link to={`/offers`} style={{ textDecoration: "none", color: "#9A8406" }}>
+            {text}
+          </Link>
+        </Tooltip>
         ) : (
           <button
             style={{ padding: "2px 2px" }} // Minimize button size
@@ -552,7 +546,7 @@ const CombinationPattern = () => {
   // console.log(dataSource);
 
   return (
-    <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif", paddingBottom:'50px'}}>
       <Row
         justify="center"
         align="middle"
@@ -567,14 +561,6 @@ const CombinationPattern = () => {
             </Title>
           </Col>
 
-          {/* <Tooltip title="Help">
-          <Button
-            shape="circle"
-            icon={<QuestionCircleOutlined />}
-            onClick={showInfoModal}
-            style={{ position: "absolute",marginLeft:'95%', right: 30 }}
-          />
-        </Tooltip> */}
 
           <Col span={24} style={{ marginBottom: "20px" }}>
             <div
@@ -591,7 +577,18 @@ const CombinationPattern = () => {
         </Card>
 
         {/* Combination Table */}
-        <Col span={24}>
+        <Col span={24}
+          style={{
+            border: "1px solid #669800",
+            background: '#E6E8F1',
+            padding: '10px',
+          }}
+        >
+          <div>
+            <Title level={4} style={{ color: "#669800", background:'#f8f8f8', marginBottom: "10px", padding: '10px' }}>
+            Choose Your RE transition Goal!
+            </Title>
+          </div>
           <div style={{ marginBottom: "20px" }}>
             <Card>
               <p>( Scroll the below bar for different RE combination )</p>
@@ -605,7 +602,7 @@ const CombinationPattern = () => {
                   }}
                 >
                   {/* Left Arrow Button (Positioned on the Slider Line) */}
-                  <Button
+                  {/* <Button
                     onClick={decreaseValue}
                     icon={<LeftOutlined />}
                     style={{
@@ -616,7 +613,7 @@ const CombinationPattern = () => {
                       zIndex: 10,
                  
                     }}
-                  />
+                  /> */}
 
                   <Slider
                     min={0}
@@ -624,40 +621,43 @@ const CombinationPattern = () => {
                     marks={marks} // Add marks to the slider
                     style={{ width: "80%", marginLeft: "5%" }}
                     onChange={handleSliderChange}
-                    value={sliderValue}
+                    value={`${sliderValue}`}
                     tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Correct way to control tooltip visibility
                     trackStyle={{ height: 20 }} // Increase the thickness of the slider line
                     handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
                   />
                   {/* Right Arrow Button (Positioned on the Slider Line) */}
-                  <Button
+                  {/* <Button
                     onClick={increaseValue}
                     icon={<RightOutlined />}
                     style={{
                       position: "absolute",
-                      left: `${(sliderValue / 100) * 83}%`, // Position based on slider value
+                      left: `${(sliderValue / 100) * 80}%`, // Position based on slider value
                       top: "100%",
                       transform: "translate(50%, -50%)",
                       zIndex: 10,
+                      background: 'none !important',
                       marginLeft: "30px",
                   
                     }}
-                  />
+                  /> */}
                 </div>
                 <Button
                   type="primary"
                   onClick={handleOptimizeClick}
-                  style={{ marginLeft: "90%", transform: "translateY(-46px)" }}
+                  style={{ marginLeft: "80%", transform: "translateY(-46px)" }}
                 >
-                  Optimize
+                  Run Optimizer
                 </Button>
               </span>
               <br />
             </Card>
           </div>
-          <Card>
+          <Card
+        
+          >
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-              Optimized Combinations for {sliderValue}% RE replacement
+              Optimized Combinations for {value}% RE replacement
             </Title>
             {isTableLoading ? (
               <>
