@@ -1,28 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {
-  DashboardOutlined,
-  AppstoreAddOutlined,
-  SolutionOutlined,
-  MessageOutlined,
-  FormOutlined,
-  TableOutlined,
-  AreaChartOutlined,
-  WalletOutlined,
-  TeamOutlined,
-  ControlOutlined,
-  FileTextOutlined,
-  UserOutlined,
-  ProfileOutlined,
-  ThunderboltOutlined
-} from '@ant-design/icons';
 import dash from '../../assets/dashboard.png';
 import transaction from '../../assets/transaction.png';
 import subscription from '../../assets/subscription.png';
 import consumption from '../../assets/consumption.png';
 import invoice from '../../assets/invoice.png';
 import profile from '../../assets/profile.png';
-import chat from '../../assets/chat.png';
 import notification from '../../assets/notification.png';
 import offerSend from '../../assets/offerSend.png';
 import portfolio from '../../assets/portfolio.png';
