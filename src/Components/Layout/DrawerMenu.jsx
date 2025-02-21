@@ -1,7 +1,8 @@
 import React from 'react';
-import { Drawer, Menu } from 'antd';
+import { Drawer, Layout, Menu } from 'antd';
 import { useLocation } from 'react-router-dom';
 import { consumerMenuItems, generatorMenuItems } from './MenuItems';
+import { Header } from 'antd/es/layout/layout';
 
 const DrawerMenu = ({ drawerVisible, toggleDrawer }) => {
   const location = useLocation();

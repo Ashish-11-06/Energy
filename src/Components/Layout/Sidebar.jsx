@@ -19,8 +19,9 @@ const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const dispatch = useDispatch();
-  // const notificationCount = useSelector((state) => state.notifications.count);
-  const notificationCount = 9;
+  const notificationCount = useSelector((state) => state.notifications.count);
+  const offerCount = useSelector((state) => state.notifications.offer);
+  // const notificationCount = 9;
 
   console.log(notificationCount);
 
@@ -33,13 +34,14 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 
   useEffect(() => {
     // Dispatch the thunk to connect to the WebSocket
-    dispatch(connectWebSocket());
+    const userId = user?.id;
+    dispatch(connectWebSocket(userId));
 
     // Clean up on component unmount (optional)
     return () => {
       // You can add logic here to close the socket if needed
     };
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
@@ -48,11 +50,25 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    {   label: (
-      <Badge count={notificationCount} overflowCount={5}>
-        <span>Notification</span>
-      </Badge>
-    ), key: '/consumer/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
+    {
+      label: (<span>Notification</span>), key: '/consumer/notification', icon: (
+        <Badge
+          style={{
+            transform: 'translate(50%, -50%)',
+            minWidth: '15px',
+            height: '15px'
+          }}
+          count={notificationCount}
+          overflowCount={5}
+        >
+          <img
+            src={notificationImg}
+            alt="Notification"
+            style={{ width: '20px', height: '20px' }}
+          />
+        </Badge>
+      )
+    },
     { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
@@ -65,12 +81,26 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
     // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },  
-    { label: (
-      <Badge count={notificationCount} overflowCount={99}>
-        <span>Notification</span>
-      </Badge>
-    ), key: '/generator/notificationgen', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    {
+      label: (<span>Notification</span>), key: '/consumer/notification', icon: (
+        <Badge
+          style={{
+            transform: 'translate(50%, -50%)',
+            minWidth: '15px',
+            height: '15px'
+          }}
+          count={notificationCount}
+          overflowCount={5}
+        >
+          <img
+            src={notificationImg}
+            alt="Notification"
+            style={{ width: '20px', height: '20px' }}
+          />
+        </Badge>
+      )
+    },
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 

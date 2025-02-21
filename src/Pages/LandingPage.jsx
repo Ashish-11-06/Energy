@@ -5,10 +5,8 @@ import './LandingPage.css';
 import video from '../assets/vecteezy_solar-panels-and-wind-turbines-green-energy-concept_6299246.mp4';
 import EXGLogo from '../assets/EXG.png'; // Import the logo image
 import { useDispatch } from 'react-redux';
-import { setLoginType } from '../Redux/actions';
 import { loginUser } from "../Redux/Slices/loginSlice";
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons'; // Import UserOutlined icon
-import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaCheckCircle } from 'react-icons/fa'; // Import social media and check icons
 import RegisterForm from '../Components/Modals/Registration/RegisterForm';
 import { fetchSubscriptionValidity } from '../Redux/Slices/Consumer/subscriptionEnrollSlice';
 
@@ -178,9 +176,9 @@ const response = await dispatch(fetchSubscriptionValidity(id));
           <div className="text-content"  >
             <div style={{backgroundColor:'#669800',width:'600px'}}>
             <p style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
-            <p style={{marginLeft:'5%',marginTop:'-30px',fontSize:'90px',fontWeight:'bolder'}}>MarketPlace</p>
+            <p style={{marginLeft:'5%',marginTop:'-30px',fontSize:'70px',fontWeight:'bolder'}}>MarketPlace</p>
             </div>
-           <p style={{fontSize:'28px',width:'700px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators.</i></p>
+           <p style={{fontSize:'24px',width:'600px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators.</i></p>
             {/* <h2 className="animated-text">{animatedText}</h2> */}
             <ul >
               {/* <Row>
@@ -201,13 +199,15 @@ const response = await dispatch(fetchSubscriptionValidity(id));
               {/* </Col>
               </Row> */}
             </ul>
-<p style={{color:'white',fontWeight:'bold',marginTop:'10%',marginLeft:'-30%'}}>Fast track energy transition</p>
+<p style={{color:'white',fontWeight:'bold',marginTop:'10%',marginLeft:'-10%'}}>Fast track energy transition</p>
           </div>
 
        
           
           {/* Login Box */}
-          <div className="login-box" style={{marginLeft:'200px'}}>
+          <div className="login-box" style={{marginLeft:'200px',
+          marginTop: '-70px'
+          }}>
          
             <h2 className="login-title"><UserOutlined /> Login</h2> 
             <Form
@@ -288,7 +288,10 @@ const response = await dispatch(fetchSubscriptionValidity(id));
 
         {/* Footer */}
         <div className="footer">
-       <a href='WWW.EXGGLOBAL.COM' style={{zIndex:2000}}  alt='EXG Global'>WWW.EXGGLOBAL.COM</a> 
+       <a 
+      //  href='https://www.exgglobal.com' 
+       href='#' 
+       style={{zIndex:2000}}  alt='EXG Global'>WWW.EXGGLOBAL.COM</a> 
         </div>
 
         {/* Registration Modal */}

@@ -3,6 +3,7 @@ import { Button, Tooltip } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
 import { useLocation, Link, useNavigate } from "react-router-dom";
+
 import {
   UserOutlined,
   HomeOutlined,
@@ -114,7 +115,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       label: "Update Profile Details",
       icon: <FileTextOutlined />,
       requiresSubscription: subscriptionRequires,
-      requiresMatchingConsumer: matchingConsumer,
+      // requiresMatchingConsumer: matchingConsumer,
     },
     {
       path: "/generator/combination-pattern",
@@ -296,8 +297,9 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
               // Show Tooltip with "My Profile" when there's a valid user_category and username
               <Tooltip title="My Profile" placement="top">
                 <p>
-                  Welcome, <a href={`/${user_category}/profile`}>{username}!</a>
+                  Welcome,  <span onClick={()=> {navigate(`/${user_category}/profile`)}} style={{color:'rgb(154, 132, 6)'}}>{username}</span>
                 </p>
+                {/* <a href={`/${user_category}/profile`}>{username}!</a> */}
               </Tooltip>
             ) : (
               // Show a different message if user_category or username is not available

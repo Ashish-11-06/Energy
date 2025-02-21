@@ -7,27 +7,32 @@ import {
   Button,
   Upload,
   message,
+  Space,
   InputNumber,
   Tooltip,
   Modal,
   Row,
   Col,
+  Select,
 } from "antd";
 import {
   UploadOutlined,
   InfoCircleOutlined,
   DownOutlined,
+  DownloadOutlined,
   FileAddOutlined,
   FileExcelOutlined,
   FileImageOutlined,
   FileTextOutlined,
-  QuestionCircleOutlined,
 } from "@ant-design/icons";
-import { useLocation, useNavigate } from "react-router-dom";
+import { data, useLocation, useNavigate } from "react-router-dom";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+
 import {
   addConsumption,
   fetchMonthlyDataById,
 } from "../../Redux/Slices/Consumer/monthlyConsumptionSlice";
+import "../EnergyTable.css";
 import { consumptionBill } from "../../Redux/Slices/Consumer/monthlyConsumptionBillSlice";
 import { addScada } from "../../Redux/Slices/Consumer/uploadScadaSlice";
 import { uploadCSV } from "../../Redux/Slices/Consumer/uploadCSVFileSlice";
@@ -60,6 +65,7 @@ const EnergyConsumptionTable = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")).user;
+  const [fileUploaded,setFileUploaded]=useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const currentYear = new Date().getFullYear(); // Get the current year
@@ -90,11 +96,13 @@ const EnergyConsumptionTable = () => {
     }))
   );
 
+  // console.log(dataSource);
   const monthlyData = useSelector(
     (state) => state.monthlyData?.monthlyData || []
   );
 
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [continueEnabled, setContinueEnabled] = useState(false); // New state for continue button
   const [uploadBill, setUploadFile] = useState(false);
@@ -126,6 +134,7 @@ const EnergyConsumptionTable = () => {
 
   // Update dataSource when monthlyData is fetched
   useEffect(() => {
+    //   console.log(monthlyData);
     if (monthlyData.length > 0) {
       const updatedDataSource = dataSource.map((item) => {
         const data = monthlyData.find((data) => data.month === item.month);
@@ -140,6 +149,7 @@ const EnergyConsumptionTable = () => {
           : item;
       });
       setDataSource(updatedDataSource);
+      // console.log(updatedDataSource);
     }
   }, [monthlyData]);
   console.log("xx", monthlyData);
@@ -177,6 +187,234 @@ const EnergyConsumptionTable = () => {
     }
   };
 
+  const handleToggleFileUploadTable = () => {
+    setShowFileUploadTable(
+      (prevShowFileUploadTable) => !prevShowFileUploadTable
+    );
+    setShowTable(false); // Close details table
+    setActiveButton("bill");
+    setIsActionCompleted(true); // Mark action as completed
+  };
+
+  const handleFileUpload = async (file, key) => {
+    const newData = [...dataSource];
+    const index = newData.findIndex((item) => key === item.key);
+    if (index > -1) {
+      const item = newData[index];
+      newData.splice(index, 1, {
+        ...item,
+        fileUploaded: file.name,
+        monthlyConsumption: null,
+        peakConsumption: null,
+        offPeakConsumption: null,
+        monthlyBill: null,
+      });
+      setDataSource(newData);
+      message.success(`${file.name} uploaded successfully`);
+      setUploadMonthlyFile(file.name);
+      setIsActionCompleted(true); // Mark action as completed
+
+      // Convert file to Base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+
+        // Dispatch the consumptionBill thunk with the required format
+        await dispatch(
+          consumptionBill({
+            requirement: requirementId,
+            month: item.month,
+            bill_file: base64File,
+          })
+        );
+      };
+      reader.readAsDataURL(file); // Read the file as a Base64 string
+    }
+    return false; // Prevent automatic upload
+  };
+
+  const handleContinue = () => {
+    // setIsModalVisible(true);
+    navigate("/consumer/consumption-pattern", {
+      state: { requirementId, reReplacement },
+    });
+  };
+
+  const handleSkip = () => {
+    navigate("/consumer/consumption-pattern", {
+      state: { requirementId, reReplacement },
+    });
+  };
+
+  const handleYearChange = (year) => {
+    console.log("Selected Year:", year);
+  };
+
+  const handleSave = async () => {
+    if (!allFieldsFilled) {
+      message.error("All fields are required");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const values = dataSource.map((item) => ({
+        requirement: requirementId,
+        month: item.month,
+        monthly_consumption: item.monthlyConsumption,
+        peak_consumption: item.peakConsumption,
+        off_peak_consumption: item.offPeakConsumption,
+        monthly_bill_amount: item.monthlyBill,
+      }));
+      // Call the API to add the requirement
+      console.log(values);
+
+      const response = await dispatch(addConsumption(values)).unwrap();
+
+      console.log("resssss", response);
+
+      message.success({
+        content: "Monthly data added successfully!",
+        style: {
+          position: "absolute",
+          bottom: "0px",
+          marginTop: "90%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 9999,
+        },
+      });
+
+      // Show the modal after saving data
+      setSaveSuccess(true); // Set save success to true
+      setSaveError(false); // Reset save error
+    } catch (error) {
+      // ...existing code...
+      message.error("Failed to add monthly data");
+      setSaveError(true); // Set save error to true
+    } finally {
+      setLoading(false);
+      // message.success("Monthly data added successfully!");
+    }
+  };
+
+  useEffect(() => {
+    if (saveSuccess) {
+      const timer = setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000); // Hide success message after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [saveSuccess]);
+
+  useEffect(() => {
+    if (saveError) {
+      const timer = setTimeout(() => {
+        setSaveError(false);
+      }, 3000); // Hide error message after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [saveError]);
+
+  const handleFillBelow = (dataIndex) => {
+    const newData = [...dataSource];
+    const firstValue = newData[0][dataIndex];
+    newData.forEach((item, index) => {
+      if (index > 0) {
+        item[dataIndex] = firstValue;
+      }
+    });
+    setDataSource(newData);
+  };
+
+  const handleInfoModalOk = () => {
+    setIsInfoModalVisible(false);
+  };
+
+  const generateYears = () => {
+    return Array.from({ length: 30000 - 2000 + 1 }, (_, i) => 2025 + i);
+  };
+
+  const handleImageUpload = async (file) => {
+    message.success(`${file.name} uploaded successfully`);
+    // Add your image upload handling logic here
+    return false; // Prevent automatic upload
+  };
+
+  const handleScada = () => {
+    message.success("success");
+  };
+
+  const handleFileUploadModal = async (file) => {
+    message.success(`${file.name} uploaded successfully`);
+    setFileUploaded(true);
+    setUploadedFileName(file.name);
+
+    // Convert file to Base64
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+
+      // Dispatch the addScada thunk with the required format
+      await dispatch(
+        addScada({
+          id: requirementId,
+          file: base64File,
+        })
+      );
+    };
+    reader.readAsDataURL(file); // Read the file as a Base64 string
+
+    return false; // Prevent automatic upload
+  };
+
+  const vcolumns = [
+    {
+      title: "Month",
+      dataIndex: "month",
+      key: "month",
+    },
+    {
+      title: renderLabelWithTooltip(
+        "Monthly Consumption (MWh)",
+        "Total energy consumed during the month in megawatt-hours.",
+      ),
+      dataIndex: "monthlyConsumption",
+      key: "monthlyConsumption",
+      // width: 250,
+    },
+    {
+      title: renderLabelWithTooltip(
+        "Peak Consumption (MWh)",
+        "Energy consumption during peak hours in megawatt-hours.",
+      ),
+      dataIndex: "peakConsumption",
+      key: "peakConsumption",
+    },
+    {
+      title: renderLabelWithTooltip(
+        "Off-Peak Consumption (MWh)",
+        "Energy consumption during off-peak hours in megawatt-hours.",
+          ),
+      dataIndex: "offPeakConsumption",
+      key: "offPeakConsumption",
+      with: 300,
+      editable: true,
+      },
+    {
+      title: renderLabelWithTooltip(
+        "Monthly Bill (INR)",
+        "The total cost of energy consumed during the month.",
+           ),
+      dataIndex: "monthlyBill",
+      key: "monthlyBill",
+      editable: true,
+      width: 180,
+   },
+  ];
+
+
   const columns = [
     {
       title: "Month",
@@ -186,10 +424,13 @@ const EnergyConsumptionTable = () => {
     {
       title: renderLabelWithTooltip(
         "Monthly Consumption (MWh)",
-        "Total energy consumed during the month in megawatt-hours."
+        "Total energy consumed during the month in megawatt-hours.",
+        () => handleFillBelow("monthlyConsumption")
       ),
       dataIndex: "monthlyConsumption",
       key: "monthlyConsumption",
+      width: 250,
+      editable: true,
       render: (_, record) => (
         <InputNumber
           value={record.monthlyConsumption}
@@ -198,16 +439,19 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
     {
       title: renderLabelWithTooltip(
         "Peak Consumption (MWh)",
-        "Energy consumption during peak hours in megawatt-hours."
+        "Energy consumption during peak hours in megawatt-hours.",
+        () => handleFillBelow("peakConsumption")
       ),
       dataIndex: "peakConsumption",
       key: "peakConsumption",
+      editable: true,
       render: (_, record) => (
         <InputNumber
           value={record.peakConsumption}
@@ -216,16 +460,20 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
     {
       title: renderLabelWithTooltip(
         "Off-Peak Consumption (MWh)",
-        "Energy consumption during off-peak hours in megawatt-hours."
+        "Energy consumption during off-peak hours in megawatt-hours.",
+        () => handleFillBelow("offPeakConsumption")
       ),
       dataIndex: "offPeakConsumption",
       key: "offPeakConsumption",
+      with: 300,
+      editable: true,
       render: (_, record) => (
         <InputNumber
           value={record.offPeakConsumption}
@@ -234,16 +482,20 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
+          disabled={record.fileUploaded !== null}
         />
       ),
     },
     {
       title: renderLabelWithTooltip(
         "Monthly Bill (INR)",
-        "The total cost of energy consumed during the month."
+        "The total cost of energy consumed during the month.",
+        () => handleFillBelow("monthlyBill")
       ),
       dataIndex: "monthlyBill",
       key: "monthlyBill",
+      editable: true,
+      width: 180,
       render: (_, record) => (
         <InputNumber
           value={record.monthlyBill}
@@ -252,6 +504,7 @@ const EnergyConsumptionTable = () => {
           }
           style={{ width: "100%" }}
           min={0}
+          // disabled={record.fileUploaded !== null}
         />
       ),
     },
@@ -320,41 +573,41 @@ const EnergyConsumptionTable = () => {
   //   return false; // Prevent automatic upload
   // };
 
-  const handleFileUpload = async (file, key) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => key === item.key);
-    if (index > -1) {
-      const item = newData[index];
-      newData.splice(index, 1, {
-        ...item,
-        fileUploaded: file.name, // Update only the fileUploaded field for the specific month
-        // Remove these lines if you want to keep previous values:
-        // monthlyConsumption: null, 
-        // peakConsumption: null,
-        // offPeakConsumption: null,
-        // monthlyBill: null,
-      });
-      setDataSource(newData);
-      message.success(`${file.name} uploaded successfully`);
+  // const handleFileUpload = async (file, key) => {
+  //   const newData = [...dataSource];
+  //   const index = newData.findIndex((item) => key === item.key);
+  //   if (index > -1) {
+  //     const item = newData[index];
+  //     newData.splice(index, 1, {
+  //       ...item,
+  //       fileUploaded: file.name, // Update only the fileUploaded field for the specific month
+  //       // Remove these lines if you want to keep previous values:
+  //       // monthlyConsumption: null, 
+  //       // peakConsumption: null,
+  //       // offPeakConsumption: null,
+  //       // monthlyBill: null,
+  //     });
+  //     setDataSource(newData);
+  //     message.success(`${file.name} uploaded successfully`);
   
-      // Convert file to Base64
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+  //     // Convert file to Base64
+  //     const reader = new FileReader();
+  //     reader.onloadend = async () => {
+  //       const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
   
-        // Dispatch the consumptionBill thunk with the required format
-        await dispatch(
-          consumptionBill({
-            requirement: requirementId,
-            month: item.month,
-            bill_file: base64File,
-          })
-        );
-      };
-      reader.readAsDataURL(file); // Read the file as a Base64 string
-    }
-    return false; // Prevent automatic upload
-  };
+  //       // Dispatch the consumptionBill thunk with the required format
+  //       await dispatch(
+  //         consumptionBill({
+  //           requirement: requirementId,
+  //           month: item.month,
+  //           bill_file: base64File,
+  //         })
+  //       );
+  //     };
+  //     reader.readAsDataURL(file); // Read the file as a Base64 string
+  //   }
+  //   return false; // Prevent automatic upload
+  // };
   
   const handleCSVUpload = async (file) => {
     try {
@@ -438,43 +691,43 @@ const EnergyConsumptionTable = () => {
     return false;
   };
 
-  const handleContinue = () => {
-    navigate("/consumer/consumption-pattern", {
-      state: { requirementId, reReplacement },
-    });
-  };
+  // const handleContinue = () => {
+  //   navigate("/consumer/consumption-pattern", {
+  //     state: { requirementId, reReplacement },
+  //   });
+  // };
 
-  const handleSave = async () => {
-    if (!allFieldsFilled) {
-      message.error("All fields are required");
-      return;
-    }
+  // const handleSave = async () => {
+  //   if (!allFieldsFilled) {
+  //     message.error("All fields are required");
+  //     return;
+  //   }
 
-    setLoading(true);
+  //   setLoading(true);
 
-    try {
-      const values = dataSource.map((item) => ({
-        requirement: requirementId,
-        month: item.month,
-        monthly_consumption: item.monthlyConsumption,
-        peak_consumption: item.peakConsumption,
-        off_peak_consumption: item.offPeakConsumption,
-        monthly_bill_amount: item.monthlyBill,
-      }));
+  //   try {
+  //     const values = dataSource.map((item) => ({
+  //       requirement: requirementId,
+  //       month: item.month,
+  //       monthly_consumption: item.monthlyConsumption,
+  //       peak_consumption: item.peakConsumption,
+  //       off_peak_consumption: item.offPeakConsumption,
+  //       monthly_bill_amount: item.monthlyBill,
+  //     }));
 
-      await dispatch(addConsumption(values)).unwrap();
+  //     await dispatch(addConsumption(values)).unwrap();
 
-      message.success("Monthly data added successfully!");
-      setSaveSuccess(true);
-      setSaveError(false);
-      setContinueEnabled(true); // Enable continue button after saving
-    } catch (error) {
-      message.error("Failed to add monthly data");
-      setSaveError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     message.success("Monthly data added successfully!");
+  //     setSaveSuccess(true);
+  //     setSaveError(false);
+  //     setContinueEnabled(true); // Enable continue button after saving
+  //   } catch (error) {
+  //     message.error("Failed to add monthly data");
+  //     setSaveError(true);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const renderSixMonthFileUploadTables = () => {
     const firstHalf = dataSource.slice(0, 6);
@@ -517,6 +770,7 @@ const EnergyConsumptionTable = () => {
   return (
     <div className="energy-table-container" style={{ padding: "20px" }}>
       <Card style={{ maxWidth: "100%", margin: "0 auto" }}>
+        {/*<p>Please fill the details for making your energy transition plan.</p> */}
         <Tooltip title="Help">
           <Button
             shape="circle"
@@ -555,7 +809,7 @@ const EnergyConsumptionTable = () => {
               last 12 months. {`)`}
             </p>
             <Row style={{ marginTop: "3%" }}>
-              <Col span={6}>
+              <Col span={5}>
                 <Tooltip title="Add details manually ">
                   {/* <Button onClick={() => { setShowTable((prev) => !prev); setShowFileUploadTable(false); }} icon={<FileAddOutlined />} style={{marginTop: "5px",padding:'5px', zIndex:1000}}>
                     {showTable ? "Add Details" : "Add Details"}
@@ -578,12 +832,12 @@ const EnergyConsumptionTable = () => {
               </Col>
 
               <Col span={1}>
-              <span style={{ fontWeight: "bold", fontSize: "16px", paddingTop: "4px", margin:"0px" }}>
+              <span style={{ fontWeight: "bold", fontSize: "16px", paddingTop: "4px", marginLeft:"-70px" }}>
                   OR
               </span>
               </Col>
               
-              <Col span={6}>
+              <Col span={5}>
                 <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
                   <Tooltip title="Upload a CSV file">
                     {/* <Button icon={<FileExcelOutlined style={{marginTop: "0px",padding:'5px',zIndex:1000 }} />}>
@@ -618,7 +872,7 @@ const EnergyConsumptionTable = () => {
               </Col>
 
 
-              <Col span={6}>
+              <Col span={5}>
                 <Tooltip title="Upload your monthly electricity bill">
                   {/* <Button onClick={() => { setShowFileUploadTable((prev) => !prev); setShowTable(false); }} icon={<FileTextOutlined style={{ marginTop: "0px", zIndex:1000 }} />}>
                     Upload Bill
@@ -645,7 +899,7 @@ const EnergyConsumptionTable = () => {
               </span>
               </Col>
 
-              <Col span={6}>
+              <Col span={5}>
                 <Upload showUploadList={false} beforeUpload={handleScadaUpload}>
                   <Tooltip title="Upload a SCADA file">
                     {/* <Button icon={<FileImageOutlined style={{ marginTop: "0px" ,zIndex:1000}} />}>
@@ -730,10 +984,59 @@ const EnergyConsumptionTable = () => {
       </Card>
 
       <Modal
+        title="Upload SCADA File"
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+      >
+        <span>
+          {" "}
+          For more accuracy, you can upload a SCADA_15 min dump energy
+          consumption file.
+        </span>
+        <Upload
+          style={{ marginLeft: "5%" }}
+          beforeUpload={handleFileUploadModal}
+          showUploadList={false}
+        >
+          <Button style={{ marginLeft: "5%" }} icon={<UploadOutlined />}>
+            Upload File
+          </Button>
+        </Upload>
+        {fileUploaded && (
+          <div style={{ marginTop: "10px" }}>
+            <span>Uploaded File: {uploadedFileName}</span>
+          </div>
+        )}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "20px",
+          }}
+        >
+          {!fileUploaded && (
+            <Button
+              onClick={() => setIsModalVisible(false)}
+              // onClick={handleSkip}
+              style={{ marginRight: "10px" }}
+            >
+              Back
+            </Button>
+          )}
+          {fileUploaded && (
+            <Button type="primary" onClick={handleSkip}>
+              Continue
+            </Button>
+          )}
+        </div>
+        <button onClick={handleSkip}>Skip</button>
+      </Modal>
+      <Modal
         title="Welcome"
         open={isInfoModalVisible}
-        onOk={() => setIsInfoModalVisible(false)}
-        onCancel={() => setIsInfoModalVisible(false)}
+        onOk={handleInfoModalOk}
+        onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
         okText="Got it"
         footer={[
           <Button
@@ -745,21 +1048,26 @@ const EnergyConsumptionTable = () => {
           </Button>,
         ]}
       >
+        <p>Hi</p>
+
         <p>Please follow these steps to proceed:</p>
         <ol>
           <li>
             <strong>Add Details:</strong> Click the "Add Details" button to open
             a table where you can enter the data manually.
           </li>
+
           <li>
             <strong>Upload CSV File:</strong> Download the CSV template, fill it
             with the required information, and upload the completed file in the
             specified format.
           </li>
+
           <li>
             <strong>Upload Bill:</strong> Upload monthly bills for all 12
             months.
           </li>
+
           <li>
             <strong>Upload SCADA File:</strong> For more accurate data, you can
             upload a SCADA file with 15-minute interval dumps.
@@ -768,8 +1076,7 @@ const EnergyConsumptionTable = () => {
       </Modal>
     </div>
   );
-};
-
+}
 export default EnergyConsumptionTable;
 
 // import React, { useState, useEffect } from "react";
@@ -851,9 +1158,9 @@ export default EnergyConsumptionTable;
 
 //   console.log(user.role);
 
-//   const handleInfoModalOk = () => {
-//     setIsInfoModalVisible(false);
-//   };
+  // const handleInfoModalOk = () => {
+  //   setIsInfoModalVisible(false);
+  // };
 //   const showInfoModal = () => {
 //     setIsInfoModalVisible(true);
 //   };
@@ -1875,4 +2182,4 @@ export default EnergyConsumptionTable;
 //   );
 // };
 
-// export default EnergyConsumptionTable;
+// export default EnergyConsumptionTable

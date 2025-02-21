@@ -3,17 +3,14 @@
 export const SOCKET_URL = 'ws://192.168.1.34:8001';
 export const SOCKET_PATH = '/api/energy/ws/test-negotiation/';
 
-// Function to get user ID from local storage
-const getUserId = () => {
-  const user = JSON.parse(localStorage.getItem('user')).user;
-  console.log(user);
-  return user ? user.id : 1; // Adjust this based on your user object structure
+// Function to get the notification WebSocket URL
+export const getNotification = (id) => {
+  return `${SOCKET_URL}/api/notifications/${id}/`;
+};
+export const getOffer = (id) => {
+  return `${SOCKET_URL}/api/terms-sheet/${id}/`;
 };
 
-export const NOTIFICATION_PATH = () => {
-  const id = getUserId();
-  return id ? `/api/notifications/${id}/` : null; // Return null if no ID is found
-};
-
+// Full WebSocket URL for the main connection
 export const FULL_URL = SOCKET_URL + SOCKET_PATH;
-export const NOTIFICATION_URL = SOCKET_URL + NOTIFICATION_PATH();
+// export const NOTIFICATION_URL = SOCKET_URL + getNotification(id);

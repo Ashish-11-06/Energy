@@ -146,11 +146,11 @@ const CombinationPattern = () => {
   // console.log('comn', combinationData);
 
   const increaseValue = () => {
-    setSliderValue((prev) => Math.min(prev + 5, 100)); // Increase by 5, max 100
+    setSliderValue((prev) => Math.min(prev + 1, 100)); // Increase by 5, max 100
   };
 
   const decreaseValue = () => {
-    setSliderValue((prev) => Math.max(prev - 5, 0)); // Decrease by 5, min 0
+    setSliderValue((prev) => Math.max(prev - 1, 0)); // Decrease by 5, min 0
   };
 
   useEffect(() => {
@@ -610,10 +610,11 @@ const CombinationPattern = () => {
                     icon={<LeftOutlined />}
                     style={{
                       position: "absolute",
-                      left: "-30px",
+                      left: `${(sliderValue / 100) * 84}%`, // Position based on slider value
                       top: "100%",
-                      transform: "translateY(-50%)",
+                      transform: "translate(-50%, -50%)",
                       zIndex: 10,
+                 
                     }}
                   />
 
@@ -634,11 +635,12 @@ const CombinationPattern = () => {
                     icon={<RightOutlined />}
                     style={{
                       position: "absolute",
-                      right: "5px",
+                      left: `${(sliderValue / 100) * 83}%`, // Position based on slider value
                       top: "100%",
-                      transform: "translateY(-50%)",
+                      transform: "translate(50%, -50%)",
                       zIndex: 10,
-                      marginLeft: "10px",
+                      marginLeft: "30px",
+                  
                     }}
                   />
                 </div>
@@ -655,7 +657,7 @@ const CombinationPattern = () => {
           </div>
           <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-              Optimized Combinations
+              Optimized Combinations for {sliderValue}% RE replacement
             </Title>
             {isTableLoading ? (
               <>

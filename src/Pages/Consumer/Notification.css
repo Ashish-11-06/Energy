@@ -1,0 +1,8 @@
+/* Notification.css */
+.notification-card {
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  
+  .notification-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }

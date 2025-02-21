@@ -148,7 +148,7 @@ const Offers = () => {
       })
     : [];
 
-  // console.log(filteredData);
+  console.log(filteredData);
 
   const columns = [
     {
@@ -161,6 +161,7 @@ const Offers = () => {
       title: "Combination ID",
       dataIndex: "combination",
       key: "combination",
+      width: '15%',
       render: (text) => {
         const transformCombination = (text) => {
           const parts = text.split("-");
@@ -264,6 +265,7 @@ const Offers = () => {
     { 
       title: "Status",
       key: "status",
+      width: "15%",
       render: (_, record) => {
         if (user_category === "Consumer") {
           return (record.consumer_status === "Offer Sent" || record.consumer_status === "Counter Offer Sent") 
@@ -289,7 +291,7 @@ const Offers = () => {
         return (
           
             record.consumer_status === 'Accepted' || record.consumer_status === 'Rejected' ||  record.generator_status === 'Accepted' || record.generator_status === 'Rejected' ? (
-              <Button type="primary" disabled>
+              <Button type="primary" disabled  >
                 Offer Closed
               </Button>
             ) : (
@@ -390,7 +392,7 @@ const Offers = () => {
         <Table
           dataSource={filteredData}
           columns={columns}
-          
+          size="small"
           bordered
           loading={loading} // AntD's built-in loader
           pagination={false}
