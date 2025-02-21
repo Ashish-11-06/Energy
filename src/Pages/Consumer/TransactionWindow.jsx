@@ -73,28 +73,28 @@ const TransactionWindow = () => {
           console.log("newOffers", newOffers);
           setMessages(prevMessages => {
             const updatedMessages = [...prevMessages]; // Start with a copy of the previous messages
-        
+
             // Iterate over the keys in the new offers
             for (const offerKey in newOffers) {
-                if (newOffers.hasOwnProperty(offerKey)) {
-                    // Check if the key already exists in any of the existing messages
-                    const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
-        
-                    if (existingMessageIndex !== -1) {
-                        // Update the existing message
-                        updatedMessages[existingMessageIndex][offerKey] = {
-                            ...updatedMessages[existingMessageIndex][offerKey],
-                            ...newOffers[offerKey],
-                        };
-                    } else {
-                        // If the key does not exist, you can choose to add it as a new message
-                        updatedMessages.push({ [offerKey]: newOffers[offerKey] });
-                    }
+              if (newOffers.hasOwnProperty(offerKey)) {
+                // Check if the key already exists in any of the existing messages
+                const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
+
+                if (existingMessageIndex !== -1) {
+                  // Update the existing message
+                  updatedMessages[existingMessageIndex][offerKey] = {
+                    ...updatedMessages[existingMessageIndex][offerKey],
+                    ...newOffers[offerKey],
+                  };
+                } else {
+                  // If the key does not exist, you can choose to add it as a new message
+                  updatedMessages.push({ [offerKey]: newOffers[offerKey] });
                 }
+              }
             }
-        
+
             return updatedMessages; // Return the updated messages array
-        });
+          });
         }
       } catch (error) {
         console.error("❌ Error parsing message:", error);
@@ -206,10 +206,10 @@ const TransactionWindow = () => {
         >
           <div ref={contentRef}>
             <Title level={2} style={{ textAlign: "center" }}>
-              Term Sheet Details 
+              Term Sheet Details
             </Title>
             <Row gutter={[16, 16]}>
-              <Col style={{ fontSize: 'larger',color:'#9a8406', background: 'white'}} span={8}>Open Offer Tariff Value : <strong>{record?.offer_tariff ? record.offer_tariff : 0}</strong> INR/kWh</Col>
+              <Col style={{ fontSize: 'larger', color: '#9a8406', background: 'white' }} span={8}>Open Offer Tariff Value : <strong>{record?.offer_tariff ? record.offer_tariff : 0}</strong> INR/kWh</Col>
               <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
               <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
               {/* <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col> */}
@@ -231,12 +231,12 @@ const TransactionWindow = () => {
             </Row> */}
             <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
               <Col>
-                <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div> 
+                <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <img 
-                    src={time} 
-                    alt="" 
-                    style={{ height: '30px', width: '30px', filter: 'brightness(0) saturate(100%) invert(13%) sepia(85%) saturate(7484%) hue-rotate(1deg) brightness(91%) contrast(119%)' }} 
+                  <img
+                    src={time}
+                    alt=""
+                    style={{ height: '30px', width: '30px', filter: 'brightness(0) saturate(100%) invert(13%) sepia(85%) saturate(7484%) hue-rotate(1deg) brightness(91%) contrast(119%)' }}
                   />
                   <Countdown value={deadline} valueStyle={{ color: 'red' }} />
                 </span>
@@ -256,24 +256,50 @@ const TransactionWindow = () => {
                 messages.map((messageObject, index) => {
                   // Iterate over each key in the messageObject
                   return Object.keys(messageObject).map((msgKey) => {
-                      const msg = messageObject[msgKey]; // Access the message using the key
-          
-                      // Validate the message object
-                      if (msg && typeof msg === 'object') {
-                          return (
-                              <Card key={msg.id || index} style={{ marginBottom: "10px" }}>
-                                  <Text strong>IPP ID: </Text> {msg.generator_username} <br />
-                                  <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/KWH <br />
-                                  <Text strong>Time: </Text> {moment(msg.timestamp).format("hh:mm A")}
-                                
-                              </Card>
-                          );
-                      } else {
-                          console.warn("Invalid message format:", messageObject);
-                          return null; // Return null if the message format is invalid
-                      }
+                    const msg = messageObject[msgKey]; // Access the message using the key
+
+                    // Validate the message object
+                    if (msg && typeof msg === 'object') {
+                      const openOfferTariff = record.offer_tariff; // Use backend-provided value
+                      const tariffChange =  openOfferTariff - msg.updated_tariff;
+                      const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
+                      const isIncrease = tariffChange > 0;
+                      return (
+                        <Card key={msg.id || index} style={{ marginBottom: "10px", padding: "10px" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            {/* IPP ID */}
+                            <Text strong>
+                              IPP ID: <span style={{ fontSize: "larger" }}>{msg.generator_username}</span>
+                            </Text>
+
+                            {/* Offer Tariff with Percentage Change */}
+                            <div>
+                              <Text strong>
+                                Offer Tariff:{" "}
+                                <span style={{ fontSize: "larger", color: "#9A8406" }}>
+                                  {msg.updated_tariff} INR/KWh{" "}
+                                </span>
+                              </Text>
+                              <Text type={isIncrease ? "success" : "danger"} style={{ marginLeft: "8px" }}>
+                                {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
+                              </Text>
+                            </div>
+
+                            {/* Time */}
+                            <Text strong>
+                              Time: <span style={{ fontSize: "larger" }}>{moment(msg.timestamp).format("hh:mm A")}</span>
+                            </Text>
+                          </div>
+
+
+                        </Card>
+                      );
+                    } else {
+                      console.warn("Invalid message format:", messageObject);
+                      return null; // Return null if the message format is invalid
+                    }
                   });
-              })
+                })
               )
             )}
           </div>
@@ -310,7 +336,7 @@ const TransactionWindow = () => {
                 })
             )}
         </div> */}
-        <br /><br />
+          <br /><br />
 
           <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button>

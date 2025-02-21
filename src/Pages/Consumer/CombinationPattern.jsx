@@ -452,7 +452,7 @@ const CombinationPattern = () => {
       key: "status",
       render: (text, record) => 
         text !== "Send Quotation" ? (
-          <Tooltip title="View Offers">
+          <Tooltip title="refer offer">
           <Link to={`/offers`} style={{ textDecoration: "none", color: "#9A8406" }}>
             {text}
           </Link>

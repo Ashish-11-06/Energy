@@ -218,6 +218,24 @@ const TransactionWindowgen = () => {
 
   const deadline = Date.now() + 3600 * 1000; // 1 hour from now
 
+ // Separate pinned messages (generator_id === 5) and other messages
+const pinnedMessages = messages.filter((messageObject) => {
+  const msg = Object.values(messageObject)[0]; // Access the first message object
+  console.log(msg);
+  return msg.generator_id === 33;
+});
+
+const otherMessages = messages.filter((messageObject) => {
+  const msg = Object.values(messageObject)[0]; // Access the first message object
+  console.log(msg)
+  return msg.generator_id !== 33;
+});
+
+// Combine pinned messages and other messages
+const combinedMessages = [...pinnedMessages, ...otherMessages];
+
+console.log(combinedMessages);
+
   return (
     <div style={{ padding: "30px", }}>
       <Row gutter={[16, 16]} justify="center">
@@ -303,11 +321,11 @@ const TransactionWindowgen = () => {
               messages.length === 0 ? (
                 <Text>No messages available.</Text>
               ) : (
-                messages.map((messageObject, index) => {
+                combinedMessages.map((messageObject, index) => {
                   // Iterate over each key in the messageObject
                   return Object.keys(messageObject).map((msgKey) => {
                     const msg = messageObject[msgKey]; // Access the message using the key
-
+                
                     // Validate the message object
                     if (msg && typeof msg === 'object') {
                       return (
@@ -315,20 +333,23 @@ const TransactionWindowgen = () => {
                           key={msg.id || index}
                           style={{
                             marginBottom: "10px",
-                            // padding: "10px",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "space-between",
-                            alignItems: "flex-start" // Aligns text to start
+                            alignItems: "flex-start", // Aligns text to start
                           }}
                         >
                           <div>
-                            <Text strong>IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span> </Text>
-                            <Text style={{ margin: '150px' }} strong>Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span></Text>
-                            <Text strong>Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span> </Text>
+                            <Text strong>
+                              IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span>
+                            </Text>
+                            <Text style={{ margin: '150px' }} strong>
+                              Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span>
+                            </Text>
+                            <Text strong>
+                              Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
+                            </Text>
                           </div>
-
-
                         </Card>
                       );
                     } else {

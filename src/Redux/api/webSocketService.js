@@ -74,13 +74,13 @@ export const sendEvent = (event, data) => {
         console.error('Socket not initialized. Call connectWebSocket first.');
         return;
     }
+console.log(event);
+    // const message = {
+    //     event: event,
+    //     payload: data
+    // };
 
-    const message = {
-        event: event,
-        payload: data
-    };
-
-    socket.send(JSON.stringify(message));
+    socket.send(JSON.stringify(event));
 };
 
 // Optional: Add WebSocket disconnect functionality

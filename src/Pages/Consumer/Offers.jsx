@@ -161,7 +161,7 @@ const Offers = () => {
       title: "Combination ID",
       dataIndex: "combination",
       key: "combination",
-      width: '15%',
+      width: '10%',
       render: (text) => {
         const transformCombination = (text) => {
           const parts = text.split("-");
@@ -318,6 +318,7 @@ const Offers = () => {
       title: "Bidding Window Date",
       dataIndex: "transaction_window_date",
       key: "transaction_window_date",
+      width: "10%",
       render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
     },
   ];
