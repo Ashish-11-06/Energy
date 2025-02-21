@@ -206,12 +206,13 @@ const TransactionWindow = () => {
         >
           <div ref={contentRef}>
             <Title level={2} style={{ textAlign: "center" }}>
-              Term Sheet Details
+              Term Sheet Details 
             </Title>
             <Row gutter={[16, 16]}>
+              <Col style={{ fontSize: 'larger',color:'#9a8406', background: 'white'}} span={8}>Open Offer Tariff Value : <strong>{record?.offer_tariff ? record.offer_tariff : 0}</strong> INR/kWh</Col>
               <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
               <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
-              <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
+              {/* <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col> */}
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
               <Col span={8}><strong>Contracted Energy (MW): </strong>{record.t_contracted_energy}</Col>
@@ -219,13 +220,27 @@ const TransactionWindow = () => {
               <Col span={8}><strong>Payment Security (days):</strong>{record.t_payment_security_day}</Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+              <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
               <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
             </Row>
-            <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
+            {/* <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <img src={time} alt="" style={{ height: '30px', width: '30px' }} />
                 <Countdown title="Time Remaining" value={deadline} />
               </span>
+            </Row> */}
+            <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
+              <Col>
+                <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div> 
+                <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <img 
+                    src={time} 
+                    alt="" 
+                    style={{ height: '30px', width: '30px', filter: 'brightness(0) saturate(100%) invert(13%) sepia(85%) saturate(7484%) hue-rotate(1deg) brightness(91%) contrast(119%)' }} 
+                  />
+                  <Countdown value={deadline} valueStyle={{ color: 'red' }} />
+                </span>
+              </Col>
             </Row>
             <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
           </div>
@@ -262,8 +277,40 @@ const TransactionWindow = () => {
               )
             )}
           </div>
+          {/* <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
+            <Title level={3}>Offer Tariffs:</Title>
+            {messages.length === 0 ? (
+                <Text>No messages available.</Text>
+            ) : (
+                messages.map((messageObject, index) => {
+                    return Object.keys(messageObject).map((msgKey) => {
+                        const msg = messageObject[msgKey]; 
 
-          <br /><br />
+                        if (msg && typeof msg === 'object' && record?.offer_tariff) { 
+                            const openOfferTariff = record.offer_tariff; // Use backend-provided value
+                            const tariffChange = msg.updated_tariff - openOfferTariff;
+                            const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
+                            const isIncrease = tariffChange > 0;
+
+                            return (
+                                <Card key={msg.id || index} style={{ marginBottom: "10px" }}>
+                                    <Text strong>IPP ID: </Text> {msg.generator_username} <br />
+                                    <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/kWh <br />
+                                    <Text strong>Time: </Text> {moment(msg.timestamp).format("hh:mm A")} <br />
+                                    <Text strong>Change: </Text> 
+                                    <Text type={isIncrease ? "success" : "danger"}>
+                                        {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
+                                    </Text>
+                                </Card>
+                            );
+                        } else {
+                            return null; // Do not render anything if record.offer_tariff is missing
+                        }
+                    });
+                })
+            )}
+        </div> */}
+        <br /><br />
 
           <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
