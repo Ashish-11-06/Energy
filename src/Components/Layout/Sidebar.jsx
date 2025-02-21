@@ -30,6 +30,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 
   const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category = user?.user_category;
+  console.log(user);
+  const company=user.company;
 
 
   const consumerMenuItems = [
@@ -99,14 +101,16 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
             className="logo"
             style={{
               color: 'white',
-              padding: '21px',
+              padding: '20px',
               textAlign: 'center',
               fontSize: '18px',
               backgroundColor: '#6698005c',
               height: '70px',
             }}
           >
-            Menu
+<p style={{ color: '#669800' }}><span style={{fontSize:'bold'}}>{company.toUpperCase()}</span></p>
+{/* <p style={{marginTop:'8%', marginLeft:'-100px'}}> Menu  </p> */}
+           
           </div>
           <Menu mode="inline" selectedKeys={[selectedKey]}>
             {menuItems.map((item) => (
@@ -128,7 +132,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               zIndex: 101,
             }}
           >
-            Menu
+            <p style={{ color: '#669800' }}><span style={{fontSize:'bold'}}>{company.toUpperCase()}</span></p>
+
           </Button>
           <Drawer
             title="Navigation"
