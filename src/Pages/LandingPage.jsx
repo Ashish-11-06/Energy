@@ -178,7 +178,7 @@ const response = await dispatch(fetchSubscriptionValidity(id));
             <p style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
             <p style={{marginLeft:'5%',marginTop:'-30px',fontSize:'70px',fontWeight:'bolder'}}>MarketPlace</p>
             </div>
-           <p style={{fontSize:'24px',width:'600px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators.</i></p>
+           <p style={{fontSize:'24px',width:'600px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators</i></p>
             {/* <h2 className="animated-text">{animatedText}</h2> */}
             <ul >
               {/* <Row>
@@ -199,7 +199,7 @@ const response = await dispatch(fetchSubscriptionValidity(id));
               {/* </Col>
               </Row> */}
             </ul>
-<p style={{color:'white',fontWeight:'bold',marginTop:'10%',marginLeft:'-10%'}}>Fast track energy transition</p>
+<p style={{color:'white',fontWeight:'bold',marginTop:'10%',marginLeft:'-10%'}}>Fast track your energy transition</p>
           </div>
 
        
