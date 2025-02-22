@@ -16,12 +16,39 @@ export const fetchDayAheadData = createAsyncThunk(
     }
   }
 );
+export const fetchMCVData = createAsyncThunk(
+  "mcvData/fetchMCVData",
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await dayAheadApi.mcvData(); // No need to check response.status
+      return data; // Just return the data
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+export const fetchMCPData = createAsyncThunk(
+  "mcpData/fetchMCPData",
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await dayAheadApi.mcpData(); // No need to check response.status
+      return data; // Just return the data
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+
+
 
 // Slice for matching IPP
 const dayAheadSlice = createSlice({
   name: "tableData",
   initialState: {
     tableData: [],
+    mcvData:[],
+    mcpData:[],
     status: "idle",
     error: null,
   },
@@ -37,6 +64,30 @@ const dayAheadSlice = createSlice({
         state.tableData = action.payload;
       })
       .addCase(fetchDayAheadData.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || "Failed to fetch data";
+      })
+      .addCase(fetchMCVData.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchMCVData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.mcvData = action.payload;
+      })
+      .addCase(fetchMCVData.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || "Failed to fetch data";
+      })
+      .addCase(fetchMCPData.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchMCPData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.mcpData = action.payload;
+      })
+      .addCase(fetchMCPData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Failed to fetch data";
       });

@@ -101,14 +101,14 @@ navigate('/px/consumer/plan-trade-page');
   return (
     <div style={{ padding: '20px' }}>
       <h1>Day ahead Forecasted Market</h1>
-      <Select defaultValue="Solar" style={{ width: 120 ,marginLeft:'80%',marginBottom:'10px'}} onChange={handleChange}>
+      {/* <Select defaultValue="Solar" style={{ width: 120 ,marginLeft:'80%',marginBottom:'10px'}} onChange={handleChange}>
         <Option value="Solar">Solar</Option>
         <Option value="Non-solar">Non-solar</Option>
         <Option value="Hydro">Hydro</Option>
-      </Select>
+      </Select> */}
 
 <Card>
-      <h2>Model Statistics</h2>
+      {/* <h2>Model Statistics</h2> */}
       <div style={{ height: '300px' ,width:'80%',margin:'0 auto'}}>
         <Line data={data} options={{ responsive: true }} />
       </div>
