@@ -167,14 +167,15 @@ const response = await dispatch(fetchSubscriptionValidity(id));
     <h1 style={{marginTop:'20px',color:'white',fontWeight:'bolder'}} >{animatedText}</h1>
     {/* <h1 style={{marginTop:'20px'}}>jnkm</h1> */}
     <div className="logo-container">
-            <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
+            {/* <img src={EXGLogo} alt="EXG Logo" className="exg-logo" /> */}
+            <img src={EXGLogo} alt="EXG Logo" className="exg-logo" style={{ width: '120px', height: '100px' }} />
           </div>
   </Row>
   <Row>
    {/* <h2 style={{justifyContent:'center'}}>Green Energy </h2> */}
         <div className="content-container" style={{marginTop:'-10px'}}> 
           <div className="text-content"  >
-            <div style={{backgroundColor:'#669800',width:'600px'}}>
+            <div style={{backgroundColor:'#669800',width:'600px'}}> 
             <p style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
             <p style={{marginLeft:'5%',marginTop:'-30px',fontSize:'70px',fontWeight:'bolder'}}>MarketPlace</p>
             </div>
@@ -205,7 +206,7 @@ const response = await dispatch(fetchSubscriptionValidity(id));
        
           
           {/* Login Box */}
-          <div className="login-box" style={{marginLeft:'200px',
+          <div className="login-box" style={{marginLeft:'400px',
           marginTop: '-70px'
           }}>
          
