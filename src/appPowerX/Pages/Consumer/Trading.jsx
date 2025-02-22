@@ -92,8 +92,9 @@ const Trading = () => {
 
    <Card style={{marginTop:'20px'}}>
          <h2>Model Statistics</h2>
-         <div style={{ height: '300px' ,width:'80%',margin:'0 auto',marginTop:'10px'}}>
+         <div style={{ height: '48vh' ,width:'80%',margin:'0 auto',marginTop:'10px'}}>
            <Line data={data} options={{ responsive: true }} />
+           <p style={{marginLeft:'30%',padding:'10px',marginBottom:'10px'}}>Plan vs Trade</p>
          </div>
          </Card>
 
