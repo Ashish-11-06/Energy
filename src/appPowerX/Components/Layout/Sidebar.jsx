@@ -39,7 +39,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Planning', key: '/px/consumer/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Trading', key: '/px/consumer/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    // { label: 'Notification', key: '/consumer/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Notification', key: '/px/consumer/notification-powerX', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 

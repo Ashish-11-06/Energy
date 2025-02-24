@@ -16,10 +16,11 @@ import market from'../../assets/market.png';
 import statistics from'../../assets/statistics.png';
 import { fetchDashboardData } from "../../Redux/slices/consumer/dashboardSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 const DashboardP = () => {
 const dispatch=useDispatch();
 const [dashboardData,setDashboardData] = useState([]);
-
+const navigate=useNavigate();
 useEffect(() => {
   const fetchData = async () => {
     const res = await dispatch(fetchDashboardData());
@@ -90,6 +91,12 @@ useEffect(() => {
     },
   };
   
+const handleUpcomingMarket =()=> {
+  navigate('/px/consumer/month-ahead')
+}
+const handleMarketStatistics =()=> {
+  navigate('/px/consumer/statistical-information')
+}
 
   const chartOptions = {
     responsive: true,
@@ -133,9 +140,39 @@ useEffect(() => {
         {/* First Column */}
         <Col span={8}>
           <Typography.Title level={4}>Power X Detail</Typography.Title>
-          <Col><img src={market} alt="" style={{height:'20px',width:'20px',marginRight:'5px'}}/>Upcoming Market</Col>
-          <Col><img src={statistics} alt="" style={{height:'20px',width:'20px',marginRight:'5px',marginTop:'5px'}}/>Market Statistics</Col>
-        </Col>
+          <Col>
+  <img 
+    src={market} 
+    alt=""  
+    style={{ height: '20px', width: '20px', marginRight: '5px' }} 
+  />
+  <span 
+    onClick={handleUpcomingMarket} 
+    style={{ cursor: 'pointer', color: 'black' }} // Default color
+    onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
+    onMouseLeave={(e) => e.target.style.color = 'black'}
+  >
+    Upcoming Market
+  </span>
+</Col>
+
+<Col>
+  <img 
+    src={statistics}  
+    alt="" 
+    style={{ height: '20px', width: '20px', marginRight: '5px', marginTop: '5px' }} 
+  />
+  <span 
+    onClick={handleMarketStatistics} 
+    style={{ cursor: 'pointer', color: 'black' }} // Default color
+    onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
+    onMouseLeave={(e) => e.target.style.color = 'black'}
+  >
+    Market Statistics
+  </span>
+</Col>
+
+  </Col>
 
         {/* Second Column */}
         <Col span={8}>

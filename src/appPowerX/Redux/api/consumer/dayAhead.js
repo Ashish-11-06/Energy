@@ -1,6 +1,9 @@
 import axiosInstance from "../../axiosInstance";
 
 const dayAheadApi = {
+  dayAheadData: async () => {
+    return axiosInstance.get('/dayAheadData');
+  },
   getDayAhead: () => {
     return axiosInstance.get(`/tableData`);
   },

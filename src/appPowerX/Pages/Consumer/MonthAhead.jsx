@@ -4,7 +4,7 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import {useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { fetchMonthAheadData } from '../../Redux/slices/consumer/monthAheadSlice';
+import { fetchMonthAheadData, fetchMonthAheadLineData } from '../../Redux/slices/consumer/monthAheadSlice';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
@@ -16,6 +16,8 @@ const { Option } = Select;
 
 const MonthAhead = () => {
     const [tableData,setTableData] = useState('');
+    const [lineData,setLineData] = useState('');
+
   const navigate = useNavigate(); 
   const handleChange = (value) => {
     setSelectedType(value);
@@ -23,15 +25,15 @@ const MonthAhead = () => {
 
 const dispatch = useDispatch();
   const data = {
-    labels: [1,2,3,4,5,6,7,8], // Updated X-axis labels
+    labels:Array.from({ length: 31 }, (_, i) => i + 1), // Updated X-axis labels
     datasets: [
       {
         label: 'MCP (INR/MWh)', // Label for MCP dataset
-        data: [2000, 5000, 4000, 2000, 1300, 2900, 3100, 1000], // Updated data for MCP
+        data: lineData?.MCP, // Updated data for MCP
       },
       {
         label: 'MCV (MWh)', // Label for MCY dataset
-        data: [3000, 3000, 3000, 2088, 2341, 1020, 2000, 3200], // Updated data for MCY
+        data: lineData?.MCV, // Updated data for MCY
       },
     ],
   };
@@ -40,8 +42,22 @@ useEffect(() => {
     const fetchData = async () => {
         try {
             const data = await dispatch(fetchMonthAheadData());
-            console.log(data.payload); // Logging the fetched data
+            // console.log(data.payload); // Logging the fetched data
             setTableData(data.payload);
+        } catch (error) {
+            console.log(error);         
+        }
+    };
+
+    fetchData();
+  }, []);
+
+useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const data = await dispatch(fetchMonthAheadLineData());
+            // console.log(data.payload); // Logging the fetched data
+             setLineData(data.payload);
         } catch (error) {
             console.log(error);         
         }
@@ -91,7 +107,7 @@ useEffect(() => {
 //   ];
 
   const handleNextTrade = () => {
-navigate('/px/consumer/plan-trade-page');
+navigate('/px/consumer/plan-month-trade');
   }
   
   const handleStatistics = () => {
@@ -100,7 +116,7 @@ navigate('/px/consumer/plan-trade-page');
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Day ahead Forecasted Market</h1>
+      <h1>Month ahead Forecasted Market</h1>
       {/* <Select defaultValue="Solar" style={{ width: 120 ,marginLeft:'80%',marginBottom:'10px'}} onChange={handleChange}>
         <Option value="Solar">Solar</Option>
         <Option value="Non-solar">Non-solar</Option>
@@ -109,8 +125,8 @@ navigate('/px/consumer/plan-trade-page');
 
 <Card>
       {/* <h2>Model Statistics</h2> */}
-      <div style={{ height: '300px' ,width:'80%',margin:'0 auto'}}>
-        <Line data={data} options={{ responsive: true }} />
+      <div style={{ height: '350px' ,width:'90%',margin:'0 auto'}}>
+        <Line data={data} style={{width:'80%'}} options={{ responsive: true }} />
       </div>
       </Card>
       <h2></h2>
@@ -122,7 +138,7 @@ navigate('/px/consumer/plan-trade-page');
           <Button onClick={handleStatistics}>Model Statistics</Button>
         </Col>
         <Col>
-          <Button onClick={handleNextTrade}>Plan Your Next Day Trading</Button>
+          <Button onClick={handleNextTrade}>Plan Your Month Ahead Trading</Button>
         </Col>
       </Row>
     </div>

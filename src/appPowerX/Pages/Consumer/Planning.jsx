@@ -1,53 +1,23 @@
-import React, { useState } from 'react';
-import { Table, Calendar, Card, Row, Col } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Table, Calendar, Card, Row, Col, Tooltip, Button } from 'antd';
 import 'antd/dist/reset.css'; // Import Ant Design styles
-
-const dataSource = [
-  {
-    key: '1',
-    date: '18-09-23',
-    demand: 200,
-    price: 200,
-  },
-  {
-    key: '2',
-    date: '20-09-23',
-    demand: 100,
-    price: 200,
-  },
-  {
-    key: '3',
-    date: '25-09-23',
-    demand: 150,
-    price: 200,
-  },
-  {
-    key: '4',
-    date: '27-09-23',
-    demand: 100,
-    price: 200,
-  },
-  {
-    key: '5',
-    date: '30-09-23',
-    demand: 100,
-    price: 200,
-  },
-];
+import moment from 'moment';
+import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
+import { useDispatch } from 'react-redux';
 
 const columns = [
   {
     title: 'Date',
-    dataIndex: 'date',
-    key: 'date',
+    dataIndex: 'Date',
+    key: 'Date',
   },
   {
-    title: 'Demand',
+    title: 'Demand (MW)',
     dataIndex: 'demand',
     key: 'demand',
   },
   {
-    title: 'Price',
+    title: 'Price (INR)',
     dataIndex: 'price',
     key: 'price',
   },
@@ -55,24 +25,75 @@ const columns = [
 
 const Planning = () => {
   const [selectedDate, setSelectedDate] = useState(null);
+  const [showTable, setShowTable] = useState(false);
+  const [tableDemandData, setTableDemandData] = useState([]);
+  const dispatch = useDispatch();
 
   const onSelect = (date) => {
     setSelectedDate(date);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await dispatch(fetchTableMonthData());
+        console.log(data.payload); // Logging the fetched data
+        setTableDemandData(data.payload);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [dispatch]);
+
+  const getListData = (value) => {
+    const dateStr = value.format('DD-MM-YYYY');
+    return tableDemandData.filter(item => item.Date === dateStr);
+  };
+
+  const dateCellRender = (value) => {
+    const listData = getListData(value);
+    return (
+      <div className="events">
+        {listData.map(item => (
+          <Tooltip key={item.id} title={`Demand: ${item.demand} MW, Price: ${item.price} INR`}>
+            <div className="event-dot" style={{ backgroundColor: '#669800', borderRadius: '50%', width: '8px', height: '8px', display: 'inline-block' }} />
+          </Tooltip>
+        ))}
+      </div>
+    );
+  };
+
+  const handleToggleView = () => {
+    setShowTable(!showTable);
+  };
+
   return (
     <div style={{ padding: '20px' }}>
+      <h1>Your Planning</h1>
       <Row gutter={[0, 20]} justify="center">
-        <Col span={24} style={{ textAlign: 'center' }}>
-          <Card style={{ width: '60%' }}>
-            <Calendar fullscreen={false} onSelect={onSelect} />
-          </Card>
-        </Col>
-        <Col span={24}>
-          <Card style={{ width: '100%' }}>
-            <Table dataSource={dataSource} columns={columns} pagination={false}/>
-          </Card>
-        </Col>
+        <Button style={{ marginLeft: '79%' }} onClick={handleToggleView}>
+          {showTable ? 'Show Calendar' : 'Show Table'}
+        </Button>
+        {!showTable ? (
+          <Col span={24} style={{ textAlign: 'center', marginLeft: '10%' }}>
+            <Card style={{ width: '90%', height: '70vh', alignItems: 'center', padding: '10px' }}>
+              <Calendar
+                style={{ height: 'full' }}
+                fullscreen={false}
+                onSelect={onSelect}
+                dateCellRender={dateCellRender}
+                className="custom-calendar"
+              />
+            </Card>
+          </Col>
+        ) : (
+          <Col span={24}>
+            <Card style={{ width: '90%', marginLeft: '5%' }}>
+              <Table dataSource={tableDemandData} columns={columns} pagination={false} bordered />
+            </Card>
+          </Col>
+        )}
       </Row>
     </div>
   );

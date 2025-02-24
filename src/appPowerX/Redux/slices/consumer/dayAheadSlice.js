@@ -16,6 +16,24 @@ export const fetchDayAheadData = createAsyncThunk(
     }
   }
 );
+
+export const dayAheadData = createAsyncThunk(
+  "dayAheadData/dayAheadData",
+  async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
+    try {
+      const response = await dayAheadApi.dayAheadData();
+      if (response.status === 200 && response.data) {
+        return response.data; // Ensure response contains valid data
+      }
+      throw new Error("Invalid response from server");
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+
+
 export const fetchMCVData = createAsyncThunk(
   "mcvData/fetchMCVData",
   async (_, { rejectWithValue }) => {
@@ -49,6 +67,7 @@ const dayAheadSlice = createSlice({
     tableData: [],
     mcvData:[],
     mcpData:[],
+    dayAheadData:[],
     status: "idle",
     error: null,
   },
@@ -64,6 +83,18 @@ const dayAheadSlice = createSlice({
         state.tableData = action.payload;
       })
       .addCase(fetchDayAheadData.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || "Failed to fetch data";
+      })
+      .addCase(dayAheadData.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(dayAheadData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.dayAheadData = action.payload;
+      })
+      .addCase(dayAheadData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Failed to fetch data";
       })

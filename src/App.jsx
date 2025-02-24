@@ -66,6 +66,8 @@ import DayStatisticsInformation from './appPowerX/Pages/Generator/DayStatisticsI
 import PlanDayTradePage from './appPowerX/Pages/Generator/PlanDayTradePage';
 import ChatPage from './appPowerX/Pages/ChatPage';
 import Trading2 from './appPowerX/Pages/Generator/Trading2';
+import PlanMonthTrading from './appPowerX/Pages/Consumer/PlanMonthTrading';
+import NotificationP from './appPowerX/Pages/Consumer/Notification';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -170,8 +172,10 @@ function App() {
         <Route path="plan-trade-page" element={<PlanYourTradePage />} />
         <Route path="statistical-information" element={<StatisticalInformation />} />
         <Route path="month-ahead" element={<MonthAhead />} />
+        <Route path="plan-month-trade" element={<PlanMonthTrading/>} />
         <Route path="planning" element={<Planning />} />
         <Route path="trading" element={<Trading />} />
+        <Route path="notification-powerX" element={<NotificationP/>} />
       </Route>
 
       {/* Generator Routes */}
@@ -183,6 +187,7 @@ function App() {
         <Route path="statistical-information" element={<StatisticalInformationG />} />
         <Route path="statistical-day-information" element={<DayStatisticsInformation />} />
         <Route path="month-ahead" element={<MonthAheadG />} />
+
         <Route path="planning" element={<PlanningG />} />
         <Route path="trading" element={<TradingG />} />
         <Route path="trading2" element={<Trading2 />} />
