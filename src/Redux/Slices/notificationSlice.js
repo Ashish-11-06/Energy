@@ -2,80 +2,89 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getNotification, getOffer } from '../api/websocketConf'; // Ensure this points to your WebSocket URL
 
-// Async thunk to connect to the WebSocket
+// WebSocket state to manage open connections
+let notificationSocket = null;
+let offerSocket = null;
+
+// Async thunk to connect to the WebSocket for notifications
 export const connectWebSocket = createAsyncThunk(
   'notification/connectWebSocket',
   async (userId, { dispatch }) => {
-    const socket = new WebSocket(getNotification(userId)); // Use the user ID to get the WebSocket URL
+    if (notificationSocket) {
+      console.log('Notification WebSocket already connected');
+      return;
+    }
 
-    // Handle connection open
-    socket.onopen = () => {
-      console.log('Connected to WebSocket server');
+    notificationSocket = new WebSocket(getNotification(userId));
+
+    notificationSocket.onopen = () => {
+      console.log('Connected to Notification WebSocket server');
     };
 
-    // Listen for messages
-    socket.onmessage = (event) => {
+    notificationSocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.unread_count !== undefined) {
         dispatch(setNotificationCount(data.unread_count));
       }
     };
 
-    // Handle connection errors
-    socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
+    notificationSocket.onerror = (error) => {
+      console.error('Notification WebSocket error:', error);
     };
 
-    // Handle connection close
-    socket.onclose = () => {
-      console.log('Disconnected from WebSocket server');
+    notificationSocket.onclose = () => {
+      console.log('Disconnected from Notification WebSocket server');
+      notificationSocket = null;
     };
-
-    // Return the socket for potential future use
-    return socket;
   }
 );
 
-
+// Async thunk to connect to the WebSocket for offers
 export const connectOfferSocket = createAsyncThunk(
-  'notification/connectWebSocket',
+  'notification/connectOfferSocket',
   async (userId, { dispatch }) => {
-    const socket = new WebSocket(getOffer(userId)); // Use the user ID to get the WebSocket URL
+    if (offerSocket) {
+      console.log('Offer WebSocket already connected');
+      return;
+    }
 
-    // Handle connection open
-    socket.onopen = () => {
-      console.log('Connected to offer WebSocket server');
+    offerSocket = new WebSocket(getOffer(userId));
+
+    offerSocket.onopen = () => {
+      console.log('Connected to Offer WebSocket server');
     };
 
-    // Listen for messages
-    socket.onmessage = (event) => {
+    offerSocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.unread_count !== undefined) {
-        dispatch(setNotificationCount(data.unread_count));
+        dispatch(setOfferCount(data.unread_count));
       }
     };
 
-    // Handle connection errors
-    socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
+    offerSocket.onerror = (error) => {
+      console.error('Offer WebSocket error:', error);
     };
 
-    // Handle connection close
-    socket.onclose = () => {
-      console.log('Disconnected from WebSocket server');
+    offerSocket.onclose = () => {
+      console.log('Disconnected from Offer WebSocket server');
+      offerSocket = null;
     };
-
-    // Return the socket for potential future use
-    return socket;
   }
 );
 
+// Async thunk to disconnect WebSockets
 export const disconnectWebSocket = createAsyncThunk(
   'notification/disconnectWebSocket',
-  async (socket, { dispatch }) => {
-    if (socket) {
-      socket.close();
-      console.log('WebSocket connection closed');
+  async (_, { dispatch }) => {
+    if (notificationSocket) {
+      notificationSocket.close();
+      notificationSocket = null;
+      console.log('Notification WebSocket connection closed');
+    }
+    if (offerSocket) {
+      offerSocket.close();
+      offerSocket = null;
+      console.log('Offer WebSocket connection closed');
     }
   }
 );
@@ -83,22 +92,19 @@ export const disconnectWebSocket = createAsyncThunk(
 const notificationSlice = createSlice({
   name: 'notification',
   initialState: {
-    count: 0,
+    notificationCount: 0,
+    offerCount: 0,  // Added offer count to store
   },
   reducers: {
     setNotificationCount: (state, action) => {
-      state.count = action.payload;
+      state.notificationCount = action.payload;
+    },
+    setOfferCount: (state, action) => {  // New reducer for offer count
+      state.offerCount = action.payload;
     },
   },
-  // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(connectWebSocket.fulfilled, (state, action) => {
-  //       // Optionally store the socket if needed
-  //       // state.socket = action.payload;
-  //     });
-  // },
 });
 
-export const { setNotificationCount } = notificationSlice.actions;
+export const { setNotificationCount, setOfferCount } = notificationSlice.actions;
 
 export default notificationSlice.reducer;
