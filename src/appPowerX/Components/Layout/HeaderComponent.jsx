@@ -48,16 +48,16 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const handleProfileClick = () => {
     navigate(
       (user.user_category === 'Consumer')
-        ? "/consumer/profile"
-        : "/generator/profile"
+        ? "/px/consumer/profile"
+        : "/px/generator/profile"
     );
   };
 
   const handleChatClick = () => {
     navigate(
       (user.user_category === 'Consumer')
-        ? "/consumer/chat-page"
-        : "/generator/chat-page"
+        ? "/px/chat-page"
+        : "/px/chat-page"
     );
   };
 

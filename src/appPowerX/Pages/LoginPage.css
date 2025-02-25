@@ -1,0 +1,52 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
+
+.login-box {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+}
+
+.login-title {
+  color: #669800 !important;
+}
+
+.ant-form-item-label > label {
+  font-weight: bold;
+  color: #333;
+}
+
+.login-btn {
+  width: 100%;
+  background-color: #669800 !important;
+  border-color: #669800 !important;
+}
+
+.login-btn:hover {
+  background-color: #557800 !important;
+  border-color: #557800 !important;
+}
+
+.login-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.forgot-link, .create-account-link {
+  color: #669800;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.forgot-link:hover, .create-account-link:hover {
+  text-decoration: underline;
+}

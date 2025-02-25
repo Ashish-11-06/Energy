@@ -29,7 +29,7 @@ const NotificationP = () => {
 
   return (
     <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
-      <Title level={2} style={{ textAlign: "center", color: "#4B4B4B" }}>
+      <Title level={2} style={{ color: "#4B4B4B" }}>
         Notifications
       </Title>
 
@@ -39,7 +39,7 @@ const NotificationP = () => {
     <Card
       title={
         <span style={{ fontSize: "18px", fontWeight: "500" }}>
-          Notification #{notification.id}
+          Notification #{notification.title}
         </span>
       }
       bordered={true}
@@ -66,7 +66,7 @@ const NotificationP = () => {
         {/* Timestamp */}
         <div style={{ marginTop: "10px" }}>
           <Text strong>Timestamp: </Text>
-          <Text>{new Date(notification.timestamp).toLocaleString()}</Text>
+          <Text>{notification.timestamp}</Text>
         </div>
         <br />
         {/* Message */}

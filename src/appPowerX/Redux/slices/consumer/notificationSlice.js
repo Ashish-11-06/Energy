@@ -6,9 +6,9 @@ export const getNotificationData = createAsyncThunk(
   "notificationData/getNotificationData",
   async (userId, { rejectWithValue }) => { // Accept message as parameter
     console.log('user',userId);
-    
     try {
-      const response = await notificationApi.getNotification({ userId }); // Ensure PATCH request
+        console.log("User ID:", userId, typeof userId);
+        const response = await notificationApi.getNotification(Number(userId)); 
 
       if (response.status === 200 && response.data) {
         console.log("Updated notification:", response.data);

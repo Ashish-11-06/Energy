@@ -1,74 +1,104 @@
 import React, { useEffect, useState } from "react";
-import { Card, Col, Typography, Row, } from "antd";
-import { Bar,Pie,Doughnut  } from "react-chartjs-2";
+import { Card, Col, Typography, Row } from "antd";
+import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   BarElement,
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
+  Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import Title from "antd/es/typography/Title";
-// Register required chart.js components
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-import market from'../../assets/market.png';
-import statistics from'../../assets/statistics.png';
-import { fetchDashboardData } from "../../Redux/slices/consumer/dashboardSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-const DashboardP = () => {
-const dispatch=useDispatch();
-const [dashboardData,setDashboardData] = useState([]);
-const navigate=useNavigate();
-useEffect(() => {
-  const fetchData = async () => {
-    const res = await dispatch(fetchDashboardData());
-    console.log(res.payload);
-    setDashboardData(res.payload);
-  };
-  fetchData();
-}, []);
+import { fetchDashboardData, fetchDashboardLine } from "../../Redux/slices/consumer/dashboardSlice";
+import market from "../../assets/market.png";
+import statistics from "../../assets/statistics.png";
 
-  // const consumptionPatterns = [
-  //   { id: 1, month: "Jan/24", value: 150 },
-  //   { id: 2, month: "Feb/24", value: 250 },
-  //   { id: 3, month: "Mar/24", value: 100 },
-  //   { id: 4, month: "Apr/24", value: 300 },
-  //   { id: 5, month: "May/24", value: 100 },
-  //   { id: 6, month: "Jun/24", value: 300 },
-  //   { id: 7, month: "July/24", value: 250 },
-  //   { id: 8, month: "Aug/24", value: 180 },
-  //   { id: 9, month: "Sep/24", value: 120 },
-  //   { id: 10, month: "Oct/24", value: 100 },
-  //   { id: 11, month: "Nov/24", value: 350 },
-  //   { id: 12, month: "Dec/24", value: 300 },
-  // ];
+// Register required chart.js components
+ChartJS.register(
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const DashboardP = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [dashboardData, setDashboardData] = useState([]);
+  const [dashboardLine, setDashboardLine] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await dispatch(fetchDashboardData());
+      setDashboardData(res.payload || []);
+    };
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    const fetchLineData = async () => {
+      const res = await dispatch(fetchDashboardLine());
+      setDashboardLine(res.payload?.data || []);
+    };
+    fetchLineData();
+  }, [dispatch]);
+
+  // Line Chart Data
+  const lineData = {
+    labels: dashboardLine.length ? Array.from({ length: dashboardLine.length }, (_, i) => i + 1) : [],
+    datasets: [
+      {
+        label: "Consumption Over Time",
+        data: dashboardLine,
+        borderColor: "blue",
+        backgroundColor: "rgba(0, 0, 255, 0.2)",
+        fill: true,
+        tension: 0.3, // Smooth curves
+      },
+    ],
+  };
+
+  const lineOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "MWh",
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Time",
+        },
+      },
+    },
+  };
 
   const barData = {
-    labels: dashboardData.map((pattern) => pattern.month), // X-axis labels
+    labels: dashboardData.map((pattern) => pattern.month),
     datasets: [
       {
-        type: "bar",
         label: "Consumption (MWh)",
-        data: dashboardData.map((pattern) => pattern.value), // Use value, not consumption
+        data: dashboardData.map((pattern) => pattern.value),
         backgroundColor: "#669800",
-        barThickness: 30, // Adjust bar thickness
+        barThickness: 30,
       },
     ],
   };
 
-  const doughnutData = {
-    labels: ["Maharashtra", "Gujarat", "Karnataka", "Tamil Nadu", "Rajasthan"],
-    datasets: [
-      {
-        data: [30, 20, 15, 25, 10], // Percentage distribution
-        backgroundColor: ["rgb(63, 134, 0)", "rgb(63, 134, 0)", "rgb(63, 134, 0)", "rgb(63, 134, 0)", "rgb(63, 134, 0)"],
-        hoverBackgroundColor: ["rgb(63, 134, 0)", "rgb(63, 134, 0)", "rgb(63, 134, 0)", "rgb(63, 134, 0)", "rgb(63, 134, 0)"],
-      },
-    ],
-  };
-  
   const chartDoughnutOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -90,32 +120,24 @@ useEffect(() => {
       },
     },
   };
-  
-const handleUpcomingMarket =()=> {
-  navigate('/px/consumer/month-ahead')
-}
-const handleMarketStatistics =()=> {
-  navigate('/px/consumer/statistical-information')
-}
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "MWh",
-        },
+  const doughnutData = {
+    labels: ["Maharashtra", "Gujarat", "Karnataka", "Tamil Nadu", "Rajasthan"],
+    datasets: [
+      {
+        data: [30, 20, 15, 25, 10],
+        backgroundColor: ["#3F8600", "#4CAF50", "#66BB6A", "#81C784", "#A5D6A7"],
+        hoverBackgroundColor: ["#2E7D32", "#388E3C", "#43A047", "#4CAF50", "#66BB6A"],
       },
-      x: {
-        title: {
-          display: true,
-          text: "Month",
-        },
-      },
-    },
+    ],
+  };
+
+  const handleUpcomingMarket = () => {
+    navigate("/px/consumer/month-ahead");
+  };
+
+  const handleMarketStatistics = () => {
+    navigate("/px/consumer/statistical-information");
   };
 
   return (
@@ -123,15 +145,8 @@ const handleMarketStatistics =()=> {
       <Typography.Title level={3}>Your Consumption Pattern</Typography.Title>
       <Card style={{ height: "50%" }}>
         <Col span={24} style={{ marginBottom: "20px" }}>
-          <div
-            style={{
-              position: "relative",
-              width: "80%",
-              height: "300px",
-              margin: "0 auto",
-            }}
-          >
-            <Bar data={barData} options={chartOptions} />
+          <div style={{ position: "relative", width: "80%", height: "300px", margin: "0 auto" }}>
+            {dashboardLine.length ? <Line data={lineData} options={lineOptions} /> : <p>Loading data...</p>}
           </div>
         </Col>
       </Card>
