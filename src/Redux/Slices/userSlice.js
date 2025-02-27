@@ -4,7 +4,7 @@ import userApi from '../api/userApi';  // Assuming you have an API utility for u
 // Async Thunks
 
 // Register a new user
-export const registerUser = createAsyncThunk( 'registerUser/registerUser', async (newUser, { rejectWithValue }) => {
+export const registerUser = createAsyncThunk('registerUser/registerUser', async (newUser, { rejectWithValue }) => {
         try {
             // Call your API for user registration
             const response = await userApi.RegisterUser(newUser); // Replace with your actual API call
@@ -15,7 +15,7 @@ export const registerUser = createAsyncThunk( 'registerUser/registerUser', async
         }
     }
 );
-export const verifyUser = createAsyncThunk( 'registerUser/verifyUser', async (data, { rejectWithValue }) => {
+export const verifyUser = createAsyncThunk('registerUser/verifyUser', async (data, { rejectWithValue }) => {
         try {
             // Call your API for user registration
             const response = await userApi.verifyEmail(data); // Replace with your actual API call

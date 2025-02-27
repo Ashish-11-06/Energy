@@ -616,7 +616,7 @@ const CombinationPattern = () => {
             <Card>
               {/* <Text>RE Replacement Value: {sliderValue}%</Text> Display slider value */}
               <br />
-              <p>( You can change your RE Replacement from below bar. )</p>
+              <p>(You can change your RE Replacement from below bar. )</p>
              <span>
                              <div
                                style={{
@@ -675,7 +675,7 @@ const CombinationPattern = () => {
                              </Button>
                            </span>
                             <br />
-              {/* <p>( You can change your RE Replacement from above bar. )</p> */}
+              {/* <p>(You can change your RE Replacement from above bar. )</p> */}
             </Card>
           </div>
           <Card>

@@ -1,0 +1,75 @@
+[
+    {
+      "question": "How do I register on the platform?",
+      "answer": "To register, click on the 'Sign Up' button and fill in your details. You will receive an OTP for verification."
+    },
+    {
+      "question": "I didn't receive my OTP. What should I do?",
+      "answer": "Please check your spam folder. If you still haven't received it, try resending the OTP or contact support."
+    },
+    {
+      "question": "How can I reset my password?",
+      "answer": "Click on 'Forgot Password' on the login page and follow the instructions to reset your password."
+    },
+    {
+      "question": "What payment methods do you accept?",
+      "answer": "We accept credit/debit cards, UPI, net banking, and Razorpay for secure payments."
+    },
+    {
+      "question": "Is my payment secure?",
+      "answer": "Yes, all payments are securely processed through Razorpay with encryption and fraud protection."
+    },
+    {
+      "question": "How can I upgrade my subscription?",
+      "answer": "Go to the 'Subscriptions' section in your account settings and select your preferred plan."
+    },
+    {
+      "question": "Can I cancel my subscription anytime?",
+      "answer": "Yes, you can cancel your subscription from the account settings. However, refunds depend on our cancellation policy."
+    },
+    {
+      "question": "How do I contact support?",
+      "answer": "You can reach our support team via email at support@yourplatform.com or through the chat feature on our website."
+    },
+    {
+      "question": "What is MCP and MCV?",
+      "answer": "MCP (Market Clearing Price) and MCV (Market Clearing Volume) are key metrics in electricity trading that define the price and volume of cleared trades."
+    },
+    {
+      "question": "How do I fetch daily market data?",
+      "answer": "You can fetch daily market data from the dashboard or API section of our platform."
+    },
+    {
+      "question": "How does the optimization model work?",
+      "answer": "Our optimization model minimizes energy costs by analyzing demand profiles, solar, wind, and energy storage capacities."
+    },
+    {
+      "question": "Can I integrate my own data with the prediction model?",
+      "answer": "Yes, you can upload your data in the specified format to get predictions based on historical trends."
+    },
+    {
+      "question": "Where can I see my transaction history?",
+      "answer": "You can view your past transactions in the 'Billing' section of your account."
+    },
+    {
+      "question": "How can I download my reports?",
+      "answer": "Reports can be downloaded from the 'Reports' section in your dashboard."
+    },
+    {
+      "question": "What are the system requirements for using the platform?",
+      "answer": "Our platform works on modern browsers like Chrome, Firefox, and Edge. No special hardware is required."
+    },
+    {
+      "question": "Is there an API available for developers?",
+      "answer": "Yes, we provide an API for integrating market data, predictions, and trading functionalities. Check our API documentation."
+    },
+    {
+      "question": "How accurate are the AI/ML predictions?",
+      "answer": "Our AI/ML models are trained on real market data and provide high accuracy, but market conditions may impact results."
+    },
+    {
+      "question": "Do you provide a trial before purchasing a subscription?",
+      "answer": "Yes, we offer a free trial for new users to explore our features before subscribing."
+    }
+  ]
+  

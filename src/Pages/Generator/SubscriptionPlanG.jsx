@@ -272,7 +272,7 @@ console.log(response);
         Choose Your Annual Subscription Plan
       </Title>
       <Row gutter={[16, 16]} justify="center">
-  {loading ? ( // Show loader if loading is true
+  {loading ? (// Show loader if loading is true
     <Spin size="large" />
   ) : (
     subscriptionPlan.map((plan) => (

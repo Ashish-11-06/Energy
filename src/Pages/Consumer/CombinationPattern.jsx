@@ -590,8 +590,8 @@ const CombinationPattern = () => {
           </div>
           <div style={{ marginBottom: "20px" }}>
             <Card>
-              <p>( Scroll the below bar for different RE combination )</p>
-              {/* <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>( Scroll the below bar for different RE combination  )</p></span> Display slider value */}
+              <p>(Scroll the below bar for different RE combination )</p>
+              {/* <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>(Scroll the below bar for different RE combination  )</p></span> Display slider value */}
               <span>
                 <div
                   style={{
