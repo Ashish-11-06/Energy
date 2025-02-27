@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"; 
 import { Modal, Button, Row, Col, Card, Typography } from "antd";
 
 const { Text } = Typography;

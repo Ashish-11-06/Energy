@@ -65,11 +65,31 @@ const AnnualSvg = () => {
     }
   };
 
-  const dataForBarChart = [
-    { name: 'Potential Savings', Savings: annualSavingResponse?.annual_savings || 0 },
-    { name: 'Average Savings', Savings: annualSavingResponse?.average_savings || 0 },
-  ];
+  // const dataForBarChart = [
+  //   { name: 'Potential Savings', Savings: annualSavingResponse?.annual_savings || 0 },
+  //   { name: 'Average Savings', Savings: annualSavingResponse?.average_savings || 0 },
+  // ];
 
+  const formatter = new Intl.NumberFormat('en-IN', { 
+    style: 'currency', 
+    currency: 'INR', 
+    minimumFractionDigits: 0, 
+    maximumFractionDigits: 0 
+  });
+  
+  const dataForBarChart = [
+    { 
+      name: 'Potential Savings', 
+      Savings: annualSavingResponse?.annual_savings || 0, 
+      formattedSavings: formatter.format(annualSavingResponse?.annual_savings || 0) 
+    },
+    { 
+      name: 'Average Savings', 
+      Savings: annualSavingResponse?.average_savings || 0, 
+      formattedSavings: formatter.format(annualSavingResponse?.average_savings || 0) 
+    }
+  ];  
+  
   const dataForTariffComparison = [
     { name: 'Your Electricity Tariff', Tarrif: annualSavingResponse?.electricity_tariff || 0 },
     { name: 'Potential RE Tariff', Tarrif: annualSavingResponse?.potential_re_tariff || 0 },
@@ -97,7 +117,11 @@ const AnnualSvg = () => {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
+                {/* <YAxis tick={{ fontSize: 12 }} /> */}
+                <YAxis 
+                  tickFormatter={(value) => formatter.format(value)} 
+                  tick={{ fontSize: 10 }} 
+                />
                 <RechartsTooltip />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Bar dataKey="Savings" fill="#669800" />
@@ -116,7 +140,8 @@ const AnnualSvg = () => {
                 <YAxis tick={{ fontSize: 12 }} />
                 <RechartsTooltip />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Line type="monotone" dataKey="Tarrif" stroke="#669800" />
+                {/* <Line type="monotone" dataKey="Tarrif" stroke="#669800" /> */}
+                <Line type="monotone" dataKey="Tarrif" stroke="#669800" strokeDasharray="5 5" />
               </LineChart>
             </Col>
             <Col xs={24} sm={12} md={12} lg={8}>

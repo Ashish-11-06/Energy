@@ -57,6 +57,10 @@ const TransactionWindowgen = () => {
   const userCategory = user?.user_category;
   const record = location.state;
 
+  const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  const loggedInUserId = loggedInUser?.user?.id;
+
+
   // const t = 13;
 
   useEffect(() => {
@@ -218,23 +222,7 @@ const TransactionWindowgen = () => {
 
   const deadline = Date.now() + 3600 * 1000; // 1 hour from now
 
- // Separate pinned messages (generator_id === 5) and other messages
-const pinnedMessages = messages.filter((messageObject) => {
-  const msg = Object.values(messageObject)[0]; // Access the first message object
-  console.log(msg);
-  return msg.generator_id === 33;
-});
 
-const otherMessages = messages.filter((messageObject) => {
-  const msg = Object.values(messageObject)[0]; // Access the first message object
-  console.log(msg)
-  return msg.generator_id !== 33;
-});
-
-// Combine pinned messages and other messages
-const combinedMessages = [...pinnedMessages, ...otherMessages];
-
-console.log(combinedMessages);
 
   return (
     <div style={{ padding: "30px", }}>
@@ -309,25 +297,84 @@ console.log(combinedMessages);
 
               You can submit/update tariffs within the specified time frame. After one hour, the consumer will decide which offer to select.
             </div>
-
-            <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
+            
+          {/* <div style={{ marginTop: "24px" }}>Offers from IPPs:</div> */}
+          </div>
+       
+          <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px"  }}>
+            <Title level={3}>Your Offers:</Title>
+            {messages.length === 0 ? (
+              <Text>No messages available.</Text>
+            ) : (
+              messages
+                .filter((messageObject) => Object.values(messageObject).some(msg => msg.generator_id === loggedInUserId))
+                .map((messageObject, index) =>
+                  Object.keys(messageObject).map((msgKey) => {
+                    const msg = messageObject[msgKey];
+                    console.log("Generator Username:", msg.generator_username);
+                    if (msg && typeof msg === "object" && msg.generator_id === loggedInUserId) {
+                      return (
+                        <Card
+                          key={msg.id || index}
+                          style={{
+                            marginBottom: "10px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start", // Aligns text to start
+                          }}
+                        >
+                          <div>
+                            <Text strong>
+                              IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span>
+                            </Text>
+                            <Text style={{ margin: '150px' }} strong>
+                              Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span>
+                            </Text>
+                            <Text strong>
+                              Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
+                            </Text>
+                          </div>
+                        </Card>
+                      );
+                    }
+                    return null;
+                  })
+                )
+            )}
+            <div style={{ display: "flex", justifyContent: "flex-end", width: "100%", marginTop: "10px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <InputNumber
+                  style={{ backgroundColor: "white", width: "150px" }}
+                  placeholder="Enter tariff value"
+                  value={tariffValue}
+                  onChange={handleTariffChange}
+                />
+                <Button
+                  onClick={handleSendTariff}
+                  disabled={tariffValue === null || tariffValue <= 0}
+                >
+                  Send Tariff
+                </Button>
+              </div>
+            </div>
           </div>
 
           <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
-            <Title level={3}>Offer tarrifs:</Title>
+            <Title level={3}>Other IPP offers:</Title>
             {messages.length === 0 ? (
               <Text>No messages available.</Text>
             ) : (
               messages.length === 0 ? (
                 <Text>No messages available.</Text>
               ) : (
-                combinedMessages.map((messageObject, index) => {
+                messages.map((messageObject, index) => {
                   // Iterate over each key in the messageObject
                   return Object.keys(messageObject).map((msgKey) => {
                     const msg = messageObject[msgKey]; // Access the message using the key
                 
                     // Validate the message object
-                    if (msg && typeof msg === 'object') {
+                    if (msg && typeof msg === 'object' && msg.generator_id !== loggedInUserId) {
                       return (
                         <Card
                           key={msg.id || index}
@@ -361,12 +408,11 @@ console.log(combinedMessages);
               )
             )}
           </div>
-
           <br /><br />
 
           {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button> */}
-          <Row style={{ marginLeft: '60%' }}>
+          {/* <Row style={{ marginLeft: '60%' }}>
             <div style={{
               color: '#9A8406',
               marginRight: '10px'
@@ -386,7 +432,7 @@ console.log(combinedMessages);
             >
               Send Tariff
             </Button>
-          </Row>
+          </Row> */}
         </Card>
 
       </Row>

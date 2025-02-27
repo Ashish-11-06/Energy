@@ -59,7 +59,7 @@ const Dashboard = () => {
   };
 
   const barData = {
-    labels: ["Demand", "Offer Received", "Transactions Close"],
+    labels: ["Demand", "Offer Received", "Transactions Closed"],
     datasets: [
       {
         label: "Consumer Details (in MW)",
@@ -109,7 +109,7 @@ const Dashboard = () => {
                   }}
                 >
                   <Statistic
-                    title="Total Demands"
+                    title="Total Demand"
                     value={consumerDetails.totalDemands}
                     prefix={
                       <img
@@ -361,7 +361,7 @@ const Dashboard = () => {
                           </div>
                         }
                         trigger="hover" // Show popover on hover
-                        placement="top" // Adjust position if needed
+                        placement="right" // Adjust position if needed
                       >
                         <span style={{ cursor: "pointer" }}>{value}</span>
                       </Popover>

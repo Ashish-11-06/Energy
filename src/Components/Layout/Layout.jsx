@@ -5,6 +5,7 @@ import DrawerMenu from "./DrawerMenu";
 import HeaderComponent from "./HeaderComponent";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { FaRobot } from "react-icons/fa"; // Chatbot icon
+import intercomIcon from "../../assets/chatbot.svg"; // Intercom icon
 
 const { Header, Content } = Layout;
 
@@ -108,7 +109,7 @@ const LayoutComponent = () => {
               zIndex: 1000,
             }}
           >
-            <button
+            {/* <button
               onClick={handleChatClick}
               style={{
                 color: "#FFFFFF",
@@ -124,6 +125,26 @@ const LayoutComponent = () => {
             >
               <FaRobot style={{ fontSize: "24px", marginRight: "8px" }} />
               <span>Need Assistance?</span>
+            </button> */}
+             <button
+              onClick={handleChatClick}
+              style={{
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: "50px",
+                padding: "12px 18px",
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
+              }}
+            >
+              <img 
+                src={intercomIcon} 
+                alt="Chatbot" 
+                style={{ width: "35px", height: "35px", filter: "invert(1) sepia(1) saturate(0) brightness(1000%)"}} 
+              />
+              {/* <span>Need Assistance?</span> */}
             </button>
           </div>
         )}
