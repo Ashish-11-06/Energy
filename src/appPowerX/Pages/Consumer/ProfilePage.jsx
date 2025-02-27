@@ -125,7 +125,7 @@ console.log(userId);
 
   const handleLogOut = () => {
     localStorage.removeItem("user");
-    navigate("/");
+    navigate("/px-login");
   };
 
   const handleDelete = (key) => {

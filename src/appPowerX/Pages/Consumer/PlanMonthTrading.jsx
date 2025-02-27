@@ -17,10 +17,10 @@ const PlanMonthTrading = () => {
   const [tableDemandData, setTableDemandData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [demand, setDemand] = useState('');
+  const [price, setPrice] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('January');
   const [demandData, setDemandData] = useState([]);
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
-  const [demandRequire, setDemandRequire] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -89,7 +89,7 @@ console.log(tableDemandData);
     const data = {
       Date: selectedDate ? selectedDate.format('DD-MM-YYYY') : '',
       demand: demand,
-      price: '1200'
+      price: price
     };
   
     try {
@@ -286,7 +286,6 @@ console.log(tableDemandData);
   />
 
   <span style={{fontSize:'18px', marginLeft:'5%'}}>Enter Demand</span>
-
   <input
     type="number"
     placeholder="Enter demand"
@@ -299,9 +298,28 @@ console.log(tableDemandData);
     }}
     onChange={(e) => {
       setDemand(e.target.value);
-      setDemandRequire(e.target.value !== '');
+      setAllFieldsFilled(e.target.value !== '' && selectedDate !== null );
+      // && price !== ''
     }}
   />
+
+{/* <span style={{fontSize:'18px', marginLeft:'10%'}}>Enter Price</span>
+<input
+    type="number"
+    placeholder="Enter price"
+    style={{
+      width: "25%",
+      padding: "5px",
+      fontSize: "16px",
+      borderRadius: "5px",
+      border: "1px solid #ccc"
+    }}
+    onChange={(e) => {
+      setPrice(e.target.value);
+      setAllFieldsFilled(e.target.value !== '' && selectedDate !== null && demand !== '');
+    }}
+  /> */}
+
 </div>
 
       {/* <p style={{fontSize:'18px'}}>Fill the details for month : <span style={{fontWeight:'bold',fontSize:'18px'}}>{selectedMonth}</span></p> */}
@@ -336,13 +354,8 @@ console.log(tableDemandData);
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
           <Col style={{ marginLeft: '90%' }}>
-            {/* <Tooltip title={!allFieldsFilled ? "All fields are required" : ""} placement="top">
+            <Tooltip title={!allFieldsFilled ? "All fields are required" : ""} placement="top">
               <Button onClick={handleNextTrade} disabled={!allFieldsFilled}>
-                Continue
-              </Button>
-            </Tooltip> */}
-             <Tooltip title={!demandRequire ? "Please enter the demand" : ""} placement="top">
-              <Button onClick={handleNextTrade} disabled={!demandRequire}>
                 Continue
               </Button>
             </Tooltip>

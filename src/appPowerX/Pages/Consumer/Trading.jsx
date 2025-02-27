@@ -4,44 +4,41 @@ import 'antd/dist/reset.css'; // Import Ant Design styles
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { fetchTradingData } from '../../Redux/slices/consumer/tradingSlice';
 
 const Trading = () => {
+  const [tradeData, setTradeData] = useState({ plan: [], trade: [] });
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [tradeData, setTradeData] = useState([]);
-  const [monthTradeData, setMonthTradeData] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState('');
-  const [navigationSource, setNavigationSource] = useState('');
 
   useEffect(() => {
-    const storedNavigationSource = localStorage.getItem("navigationSource");
-    setNavigationSource(storedNavigationSource);
+    const fetchData = async () => {
+      try {
+        const res = await dispatch(fetchTradingData()).unwrap(); // Await the dispatched action
+        console.log(res); // Now you can safely access payload
+        setTradeData(res);
+      } catch (error) {
+        console.error("Error fetching trading data:", error);
+      }
+    };
 
-    if (storedNavigationSource === "PlanYourTradePage") {
-      const storedData = JSON.parse(localStorage.getItem("tradeData"));
-      if (storedData) {
-        setTradeData(storedData);
-      }
-    } else if (storedNavigationSource === "PlanMonthTrading") {
-      const storedMonthData = JSON.parse(localStorage.getItem("monthTradeData"));
-      const storedSelectedMonth = localStorage.getItem("selectedMonth");
-      if (storedMonthData && storedSelectedMonth) {
-        setMonthTradeData(storedMonthData);
-        setSelectedMonth(storedSelectedMonth);
-      }
-    }
-  }, []);
+    fetchData(); // Call the async function
+  }, [dispatch]);
 
   const data = {
-    labels: navigationSource === "PlanYourTradePage" 
-      ? tradeData.map(item => item.time) 
-      : monthTradeData.map(item => item.date),
+    labels: Array.from({ length: 96 }, (_, i) => i + 1), // Updated X-axis labels
     datasets: [
       {
-        label: 'Demand (MW)',
-        data: navigationSource === "PlanYourTradePage" 
-          ? tradeData.map(item => item.demand) 
-          : monthTradeData.map(item => item.demand),
+        label: 'Plan Data', // Label for Plan dataset
+        data: tradeData.plan, // Updated data for Plan
         borderColor: 'blue',
+        fill: false,
+      },
+      {
+        label: 'Trade Data', // Label for Trade dataset
+        data: tradeData.trade, // Updated data for Trade
+        borderColor: 'green',
         fill: false,
       },
     ],
@@ -49,6 +46,7 @@ const Trading = () => {
 
   const handleChat = () => {
     navigate('/px/chat-page');
+    console.log('Chat with Expert');
   };
 
   const handleTradingStatus = () => {
@@ -92,7 +90,7 @@ const Trading = () => {
         <div style={{ height: '48vh', width: '80%', margin: '0 auto', marginTop: '10px' }}>
           <Line data={data} options={{ responsive: true }} />
           <p style={{ marginLeft: '30%', padding: '10px', marginBottom: '10px' }}>
-            {navigationSource === "PlanYourTradePage" ? "Plan vs Trade (96 Blocks)" : `Plan vs Trade (${selectedMonth})`}
+            Plan vs Trade
           </p>
         </div>
       </Card>

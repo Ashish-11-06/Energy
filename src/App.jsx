@@ -70,7 +70,8 @@ import PlanMonthTrading from './appPowerX/Pages/Consumer/PlanMonthTrading';
 import NotificationP from './appPowerX/Pages/Consumer/Notification';
 import Subscription from './appPowerX/Pages/Consumer/Subscription';
 import LoginPage from './appPowerX/Pages/LoginPage';
-import ProfileP from './appPowerX/Pages/Consumer/Profile';
+// import ProfileP from './appPowerX/Pages/Consumer/Profile';
+import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -182,7 +183,7 @@ function App() {
         <Route path="trading" element={<Trading />} />
         <Route path="notification-powerX" element={<NotificationP/>} />
         <Route path="powerx-subscription" element={<Subscription />} />
-        <Route path="profile" element={<ProfileP />} />
+        <Route path="profile" element={<ProfilePage />} />
       </Route>
 
       {/* Generator Routes */}

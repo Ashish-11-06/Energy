@@ -81,7 +81,7 @@ const DayAhead = () => {
         </div>
       </Card>
       <h2></h2>
-      <Table columns={columns} dataSource={Array.isArray(tableData) ? tableData : []} pagination={false} />
+      {/* <Table columns={columns} dataSource={Array.isArray(tableData) ? tableData : []} pagination={false} /> */}
 
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">

@@ -81,7 +81,7 @@ const DashboardP = () => {
       x: {
         title: {
           display: true,
-          text: "Time",
+          text: "Blocks",
         },
       },
     },

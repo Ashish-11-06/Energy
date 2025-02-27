@@ -55,6 +55,9 @@ const PlanYourTradePage = () => {
   }, [tableData]);
 
   const handleModalOk = () => {
+    localStorage.setItem("tradeData", JSON.stringify(tableData));
+    localStorage.setItem("selectedTechnology", selectedTechnology);
+    localStorage.setItem("navigationSource", "PlanYourTradePage");
     navigate('/px/consumer/trading');
   };
 
