@@ -220,7 +220,7 @@ const TransactionWindow = () => {
         cancelText: 'Cancel',
         onOk: () => {
             // Send the reject action through WebSocket
-            sendEvent("rejectTransaction", { action: "reject", transactionId });
+            sendEvent({ action: "reject" });
             message.error('Transaction rejected');
             navigate('/transaction-page');
         },
