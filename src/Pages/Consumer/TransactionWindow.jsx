@@ -208,13 +208,10 @@ const TransactionWindow = () => {
         okText: 'Yes, Reject',
         cancelText: 'Cancel',
         onOk: () => {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                sendEvent("rejectTransaction", { action: "reject", transactionId });
-                message.error('Transaction rejected');
-                navigate('/transaction-page');
-            } else {
-                message.error('Failed to reject transaction. WebSocket not connected.');
-            }
+            // Send the reject action through WebSocket
+            sendEvent({ action: "reject" });
+            message.error('Transaction rejected');
+            navigate('/transaction-page');
         },
     });
 };

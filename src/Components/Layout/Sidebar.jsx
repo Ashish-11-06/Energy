@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { connectWebSocket } from '../../Redux/Slices/notificationSlice';
+import { connectWebSocket, connectOfferSocket } from '../../Redux/Slices/notificationSlice';
 import PropTypes from 'prop-types';
 import { Layout, Menu, Button, Drawer } from 'antd';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
@@ -19,11 +19,11 @@ const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const dispatch = useDispatch();
-  const notificationCount = useSelector((state) => state.notifications.count);
-  const offerCount = useSelector((state) => state.notifications.offer);
+  const notificationCount = useSelector((state) => state.notifications.notificationCount);
+  const offerCount = useSelector((state) => state.notifications.offerCount);
   // const notificationCount = 9;
 
-  console.log(notificationCount);
+  // console.log(notificationCount);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -36,6 +36,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     // Dispatch the thunk to connect to the WebSocket
     const userId = user?.id;
     dispatch(connectWebSocket(userId));
+    dispatch(connectOfferSocket(userId));
 
     // Clean up on component unmount (optional)
     return () => {
@@ -47,7 +48,23 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
+    {
+      label: (<span>Offers</span>), 
+      key: '/offers', 
+      icon: (
+        <Badge
+          style={{
+            transform: 'translate(50%, -50%)',
+            minWidth: '15px',
+            height: '15px'
+          }}
+          count={offerCount}
+          overflowCount={5}
+        >
+          <img src={offerSend} alt="Offers" style={{ width: '20px', height: '20px' }} />
+        </Badge>
+      )
+    },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     {
@@ -78,8 +95,24 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Portfolio', key: '/generator/portfolio', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
-    { label: 'Offers', key: '/offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
-    // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
+    {
+      label: (<span>Offers</span>), 
+      key: '/offers', 
+      icon: (
+        <Badge
+          style={{
+            transform: 'translate(50%, -50%)',
+            minWidth: '15px',
+            height: '15px'
+          }}
+          count={offerCount}
+          overflowCount={5}
+        >
+          <img src={offerSend} alt="Offers" style={{ width: '20px', height: '20px' }} />
+        </Badge>
+      )
+    },
+     // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
     // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },

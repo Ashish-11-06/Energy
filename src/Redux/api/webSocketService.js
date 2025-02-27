@@ -69,7 +69,7 @@ const FULL_URL = SOCKET_URL + SOCKET_PATH;
     };
     
 
-export const sendEvent = (event, data) => {
+export const sendEvent = (event) => {
     if (!socket) {
         console.error('Socket not initialized. Call connectWebSocket first.');
         return;

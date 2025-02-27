@@ -8,7 +8,7 @@ export const getNotification = (id) => {
   return `${SOCKET_URL}/api/notifications/${id}/`;
 };
 export const getOffer = (id) => {
-  return `${SOCKET_URL}/api/terms-sheet/${id}/`;
+  return `${SOCKET_URL}/api/terms-sheet/${id}`;
 };
 
 // Full WebSocket URL for the main connection
