@@ -12,6 +12,9 @@ const registerApi = {
   addSubUser: (id, data) => {
     return axiosInstance.post(`/accounts/add-sub-user/${id}`, data);
 },
+// validateCIN: (payload) => {
+//   return axiosInstance.post(`/accounts/validate-cin`, payload);
+// },
 };
 
 export default registerApi;

@@ -6,6 +6,7 @@ import video from '../assets/vecteezy_solar-panels-and-wind-turbines-green-energ
 import EXGLogo from '../assets/EXG.png'; // Import the logo image
 import { useDispatch } from 'react-redux';
 import { loginUser } from "../Redux/Slices/loginSlice";
+import { sendForgotPasswordOtp, verifyForgotPasswordOtp, setNewPassword } from "../Redux/Slices/loginSlice";
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons'; // Import UserOutlined icon
 import RegisterForm from '../Components/Modals/Registration/RegisterForm';
 import { fetchSubscriptionValidity } from '../Redux/Slices/Consumer/subscriptionEnrollSlice';
@@ -28,7 +29,12 @@ const LandingPage = () => {
   const [userType, setUserType] = useState('consumer');
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const textRef = useRef(""); 
+  const textRef = useRef("");
+  // const [loading, setLoading] = useState(false);
+  // const [otpVerified, setOtpVerified] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     const text = "Welcome to Energy Transition (EXT) Platform";
@@ -118,7 +124,6 @@ const response = await dispatch(fetchSubscriptionValidity(id));
   };
 
   const handleCreate = (values) => {
-    // console.log('Received values of form: ', values);
     setIsModalVisible(false);
   };
 
@@ -130,30 +135,59 @@ const response = await dispatch(fetchSubscriptionValidity(id));
     setIsForgotPasswordModalVisible(false);
   };
 
+  // const handleSendOtp = async (email) => {
+  //   setLoading(true);
+  //   setLoading(false);
+  //   setOtpSent(true);
+  //   setEmailForReset(email);
+  // };
+
+  // const handleVerifyOtp = async (values) => {
+  //   setLoading(true);
+  //   // Implement OTP verification logic here
+  //   setLoading(false);
+  //   setOtpVerified(true);
+  // };
+
+  // const handleResetPassword = async (values) => {
+  //   setLoading(true);
+  //   // Implement password reset logic here
+  //   setLoading(false);
+  //   setIsForgotPasswordModalVisible(false);
+  //   setOtpSent(false);
+  //   setOtpVerified(false);
+  //   message.success("Password reset successful!");
+  // };
+
   const handleSendOtp = async (email) => {
-    setLoading(true);
-    // Implement OTP sending logic here
-    setLoading(false);
-    setOtpSent(true);
     setEmailForReset(email);
+    dispatch(sendForgotPasswordOtp(email));
   };
 
-  const handleVerifyOtp = async (values) => {
-    setLoading(true);
-    // Implement OTP verification logic here
-    setLoading(false);
-    setOtpVerified(true);
+  const handleVerifyOtp = async (otp) => {
+    dispatch(verifyForgotPasswordOtp({ email: emailForReset, otp }));
   };
 
-  const handleResetPassword = async (values) => {
-    setLoading(true);
-    // Implement password reset logic here
-    setLoading(false);
-    setIsForgotPasswordModalVisible(false);
-    setOtpSent(false);
-    setOtpVerified(false);
-    message.success("Password reset successful!");
+  const handleResetPassword = async (newPassword) => {
+    dispatch(setNewPassword({ email: emailForReset, newPassword }));
   };
+
+  // ✅ Handle success messages
+  useEffect(() => {
+    if (otpVerified) message.success("OTP verified successfully!");
+    if (passwordResetSuccess) {
+      message.success("Password reset successful!");
+      setIsForgotPasswordModalVisible(false);
+    }
+  }, [otpVerified, passwordResetSuccess]);
+
+  // ✅ Handle errors from Redux
+  useEffect(() => {
+    if (error) {
+      message.error(error);
+    }
+  }, [error]);
+
 
   return (
     <App> {/* Wrap the component with App */}

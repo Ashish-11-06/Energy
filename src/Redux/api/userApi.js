@@ -8,6 +8,20 @@ const userApi = {
     RegisterUser: (userData) => {
         return axiosInstance.post('/accounts/register', userData);
     },
+
+     // Forgot Password APIs
+     sendForgotPasswordOtp: (email) => {
+        return axiosInstance.get(`/accounts/forgot-password/${email}`);
+    },
+
+    verifyForgotPasswordOtp: (data) => {
+        return axiosInstance.post('/accounts/verify-forgot-password-otp', data);
+    },
+
+    setNewPassword: (data) => {
+        return axiosInstance.post('/accounts/set-new-password', data);
+    },
+
     getAllusers: () => {
         return axiosInstance.get('/users/all');
     },

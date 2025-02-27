@@ -110,69 +110,76 @@ const TransactionWindow = () => {
   //     // disconnectWebSocket();
   //   };
   // }, []);
+  useEffect(() => {
+    console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
+    const newSocket = connectWebSocket(user.id, record.tariff_id);
+    setSocket(newSocket);
 
-    useEffect(() => {
-      console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
-      const newSocket = connectWebSocket(user.id, record.tariff_id);
-      setSocket(newSocket);
+    const sendEvent = (action, data) => {
+        if (newSocket && newSocket.readyState === WebSocket.OPEN) {
+            newSocket.send(JSON.stringify({ action, ...data }));
+            console.log("📤 Sent WebSocket message:", { action, ...data });
+        } else {
+            console.error("⚠️ WebSocket is not open. Cannot send message.");
+        }
+    };
 
-      const onMessageHandler = (event) => {
-          console.log("📩 WebSocket event received:", event);
+    const onMessageHandler = (event) => {
+        console.log("📩 WebSocket event received:", event);
 
-          try {
-              const data = JSON.parse(event.data); // Parse the WebSocket message
-              console.log("Parsed Data:", data);
+        try {
+            const data = JSON.parse(event.data);
+            console.log("Parsed Data:", data);
 
-              if (data.action === "rejectTransaction") {
-                  // Update status if the rejection action is received
-                  setTransactions((prevTransactions) =>
-                      prevTransactions.map((transaction) =>
-                          transaction.window_id === data.transactionId
-                              ? { ...transaction, tariff_status: "Rejected" }
-                              : transaction
-                      )
-                  );
-              } else if (data.offers) {
-                  console.log("data.offers", data.offers);
-                  setMessages([data.offers]);
-              } else {
-                  // Handle new offers update
-                  const newOffers = data;
-                  console.log("newOffers", newOffers);
-                  setMessages(prevMessages => {
-                      const updatedMessages = [...prevMessages];
+            if (data.action === "rejectTransaction") {
+                setTransactions((prevTransactions) =>
+                    prevTransactions.map((transaction) =>
+                        transaction.window_id === data.transactionId
+                            ? { ...transaction, tariff_status: "Rejected" }
+                            : transaction
+                    )
+                );
+            } else if (data.offers) {
+                console.log("data.offers", data.offers);
+                setMessages([data.offers]);
+            } else {
+                const newOffers = data;
+                console.log("newOffers", newOffers);
+                setMessages(prevMessages => {
+                    const updatedMessages = [...prevMessages];
 
-                      for (const offerKey in newOffers) {
-                          if (newOffers.hasOwnProperty(offerKey)) {
-                              const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
+                    for (const offerKey in newOffers) {
+                        if (newOffers.hasOwnProperty(offerKey)) {
+                            const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
 
-                              if (existingMessageIndex !== -1) {
-                                  updatedMessages[existingMessageIndex][offerKey] = {
-                                      ...updatedMessages[existingMessageIndex][offerKey],
-                                      ...newOffers[offerKey],
-                                  };
-                              } else {
-                                  updatedMessages.push({ [offerKey]: newOffers[offerKey] });
-                              }
-                          }
-                      }
+                            if (existingMessageIndex !== -1) {
+                                updatedMessages[existingMessageIndex][offerKey] = {
+                                    ...updatedMessages[existingMessageIndex][offerKey],
+                                    ...newOffers[offerKey],
+                                };
+                            } else {
+                                updatedMessages.push({ [offerKey]: newOffers[offerKey] });
+                            }
+                        }
+                    }
 
-                      return updatedMessages;
-                  });
-              }
-          } catch (error) {
-              console.error("❌ Error parsing WebSocket message:", error);
-          }
-      };
+                    return updatedMessages;
+                });
+            }
+        } catch (error) {
+            console.error("❌ Error parsing WebSocket message:", error);
+        }
+    };
 
-      if (newSocket) {
-          newSocket.onmessage = onMessageHandler;
-      }
+    if (newSocket) {
+        newSocket.onmessage = onMessageHandler;
+    }
 
-      return () => {
-          newSocket.close(); // Close WebSocket on component unmount
-      };
-  }, []);
+    return () => {
+        newSocket.close();
+    };
+}, []);
+
 
   console.log(messages);
 
@@ -194,24 +201,6 @@ const TransactionWindow = () => {
     setIsModalVisible(false);
   };
 
-  // const handleRejectTransaction = () => {
-  //   Modal.confirm({
-  //     title: 'Are you sure you want to reject this transaction?',
-  //     content: 'It will not be visible to you again if rejected.',
-  //     okText: 'Yes, Reject',
-  //     cancelText: 'Cancel',
-  //     onOk: () => {
-  //       // Store rejected transaction ID in localStorage
-  //       const rejectedTransactions = JSON.parse(localStorage.getItem('rejectedTransactions')) || [];
-  //       rejectedTransactions.push(transactionId);
-  //       localStorage.setItem('rejectedTransactions', JSON.stringify(rejectedTransactions));
-
-  //       message.error('Transaction rejected');
-  //       navigate('/transaction-page');
-  //     },
-  //   });
-  // };
-
   const handleRejectTransaction = (transactionId) => {
     Modal.confirm({
         title: 'Are you sure you want to reject this transaction?',
@@ -219,13 +208,18 @@ const TransactionWindow = () => {
         okText: 'Yes, Reject',
         cancelText: 'Cancel',
         onOk: () => {
-            // Send the reject action through WebSocket
-            sendEvent("rejectTransaction", { action: "reject", transactionId });
-            message.error('Transaction rejected');
-            navigate('/transaction-page');
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                sendEvent("rejectTransaction", { action: "reject", transactionId });
+                message.error('Transaction rejected');
+                navigate('/transaction-page');
+            } else {
+                message.error('Failed to reject transaction. WebSocket not connected.');
+            }
         },
     });
 };
+
+
 
   
   const handleDownloadTransaction = async () => {

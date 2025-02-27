@@ -335,7 +335,7 @@ const Offers = () => {
         <Title level={3} style={{ color: "#001529" }}>
           Offer Transaction Window
         </Title>
-        <h4>( Total offers received and sent from you. )</h4>
+        <h4>(Total offers received and sent from you.)</h4>
       </Col>
 
       <Row
@@ -389,7 +389,7 @@ const Offers = () => {
 
       {error ? (
         <div style={{ color: "red", textAlign: "center" }}>{error}</div>
-      ) : loading ? ( // Show loader when data is being fetched
+      ) : loading ? (// Show loader when data is being fetched
         <div style={{ textAlign: "center", marginTop: "20px" }}>
           <Spin size="large" />
         </div>

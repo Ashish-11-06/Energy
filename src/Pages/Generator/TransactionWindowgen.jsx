@@ -59,6 +59,8 @@ const TransactionWindowgen = () => {
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const loggedInUserId = loggedInUser?.user?.id;
+  console.log("user",loggedInUser)
+  console.log("user id ",loggedInUserId)
 
 
   // const t = 13;

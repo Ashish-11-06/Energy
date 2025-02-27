@@ -85,7 +85,7 @@ const initialState = {
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null, // Error message if the API call fails
   otpStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-  otpError: null, // Error message if the OTP verification fails
+  otpError: null, // Error message if the OTP verification failed
 };
 
 // Create the slice
