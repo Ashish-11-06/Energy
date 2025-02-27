@@ -1,4 +1,5 @@
 import html2pdf from 'html2pdf.js'; // Import html2pdf.js
+import EXGLogo from '../../../src/assets/EXG_green.png';
 
 export const generatePDF = (pdfElement, requirementId, reportResponse) => {
   console.log(reportResponse);
@@ -20,7 +21,7 @@ export const createPdfContent = (annualSavingResponse) => {
   <body style="font-family: 'Inter', sans-serif; background-color: #F5F6FB; margin: 0; padding: 0;">
     <div style="width: 100%; margin: 0 auto; padding: 20px; border: 1px solid #E6E8F1; box-sizing: border-box; background-color: #fff;">
       <div style="position: absolute; top: 10px; right: 20px; font-size: 12px; text-align: right; color: #669800;">
-        EXG Branding
+        <img src="${EXGLogo}" alt="EXG Logo" style="width: 100px; height: auto;">
       </div>
       <h1 style="text-align: center; margin-bottom: 20px; font-size: 28px; color: #669800;">Annual Savings Report</h1>
 

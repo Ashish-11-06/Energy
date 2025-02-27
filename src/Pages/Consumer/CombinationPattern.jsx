@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import {
   Table,
   Typography,
@@ -96,8 +96,7 @@ const CombinationPattern = () => {
               : "N/A",
           totalCapacity: `${(
             windCapacity +
-            solarCapacity +
-            batteryCapacity
+            solarCapacity 
           ).toFixed(2)}`,
           perUnitCost:
             combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"])

@@ -10,6 +10,7 @@ import {
   Modal,
   message,
   Spin,
+  Tag
 } from "antd";
 import { useDispatch } from "react-redux";
 import { getOffers } from "../../Redux/Slices/Consumer/offersSlice";
@@ -262,22 +263,27 @@ const Offers = () => {
     //       : record.generator_status;
     //   },
 
-    { 
+    {
       title: "Status",
       key: "status",
       width: "15%",
       render: (_, record) => {
         if (user_category === "Consumer") {
           return (record.consumer_status === "Offer Sent" || record.consumer_status === "Counter Offer Sent") 
-            ? `${record.consumer_status} - (Generator response awaited)` 
+            ? <>
+                {record.consumer_status} - <Tag color="blue">Generator response awaited</Tag>
+              </>
             : record.consumer_status || "";
         } else {
           return (record.generator_status === "Offer Sent" || record.generator_status === "Counter Offer Sent") 
-            ? `${record.generator_status} - (Consumer response awaited)` 
+            ? <>
+                {record.generator_status} - <Tag color="green">Consumer response awaited</Tag>
+              </>
             : record.generator_status || "";
         }
       },
     },
+
     // {
     //   title: "Bidding Window Date",
     //   dataIndex: "transaction_window_date",
