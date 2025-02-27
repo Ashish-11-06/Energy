@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Radio } from "antd";
+import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Radio, Upload, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import { UploadOutlined } from "@ant-design/icons";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -27,6 +28,8 @@ const PlanYourTradePage = () => {
     }))
   );
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
+  const [fileUploaded, setFileUploaded] = useState(false);
+  const [showTable, setShowTable] = useState(false);
 
   const handleContinue = () => {
     setIsModalVisible(true);
@@ -59,6 +62,13 @@ const PlanYourTradePage = () => {
     localStorage.setItem("selectedTechnology", selectedTechnology);
     localStorage.setItem("navigationSource", "PlanYourTradePage");
     navigate('/px/consumer/trading');
+  };
+
+  const handleFileUpload = (file) => {
+    message.success(`${file.name} uploaded successfully`);
+    setFileUploaded(true);
+    setAllFieldsFilled(true);
+    return false; // Prevent automatic upload
   };
 
   const columns = [
@@ -108,33 +118,52 @@ const PlanYourTradePage = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Plan Your Trade</h1>
-      <Form form={form} onFinish={onFinish} layout="vertical">
-        <Row gutter={16}>
-          <Col span={4}>{renderTable(part1)}</Col>
-          <Col span={4}>{renderTable(part2)}</Col>
-          <Col span={4}>{renderTable(part3)}</Col>
-          <Col span={4}>{renderTable(part4)}</Col>
-          <Col span={4}>{renderTable(part5)}</Col>
-          <Col span={4}>{renderTable(part6)}</Col>
-        </Row>
-
-        <Form.Item>
-          <Tooltip
-            title={!allFieldsFilled ? "All values are required" : ""}
-            placement="top"
-          >
-            <Button
-              type="primary"
-              htmlType="submit"
-              style={{ marginLeft: "85%" }}
-              onClick={handleContinue}
-              disabled={!allFieldsFilled}
-            >
-              Continue
-            </Button>
+      <Row gutter={16} style={{ marginBottom: "20px" ,marginLeft:'20%', marginRight:'15%'}}>
+        <Col>
+        <Tooltip title="Add details manually!" placement="bottom">
+          <Button onClick={() => setShowTable(!showTable)}>
+            {showTable ? "Add Details" : "Add Details"}
+          </Button>
           </Tooltip>
-        </Form.Item>
-      </Form>
+        </Col>
+        <span style={{marginTop:'10px', fontWeight:'bold',marginLeft:'20px',marginRight:'20px'}}>OR</span>
+        <Col>
+        <Tooltip title="Upload a bulk file for 96 blocks in a day!" placement="bottom">
+          <Upload beforeUpload={handleFileUpload} showUploadList={false}>
+            <Button icon={<UploadOutlined />}>Upload File</Button>
+          </Upload>
+          </Tooltip>
+        </Col>
+      </Row>
+      {showTable && (
+        <Form form={form} onFinish={onFinish} layout="vertical">
+          <Row gutter={16}>
+            <Col span={4}>{renderTable(part1)}</Col>
+            <Col span={4}>{renderTable(part2)}</Col>
+            <Col span={4}>{renderTable(part3)}</Col>
+            <Col span={4}>{renderTable(part4)}</Col>
+
+            <Col span={4}>{renderTable(part5)}</Col>
+            <Col span={4}>{renderTable(part6)}</Col>
+          </Row>
+        </Form>
+      )}
+      <Form.Item>
+        <Tooltip
+          title={!allFieldsFilled ? "Add details manually or upload the file" : ""}
+          placement="top"
+        >
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ marginLeft: "85%" }}
+            onClick={handleContinue}
+            disabled={!allFieldsFilled}
+          >
+            Continue
+          </Button>
+        </Tooltip>
+      </Form.Item>
       <Modal
         title="Select Technology"
         visible={isModalVisible}

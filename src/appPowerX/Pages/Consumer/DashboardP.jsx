@@ -57,7 +57,7 @@ const DashboardP = () => {
     labels: dashboardLine.length ? Array.from({ length: dashboardLine.length }, (_, i) => i + 1) : [],
     datasets: [
       {
-        label: "Consumption Over Time",
+        label: "Consumption Over Time (MWh)",
         data: dashboardLine,
         borderColor: "blue",
         backgroundColor: "rgba(0, 0, 255, 0.2)",
@@ -81,7 +81,7 @@ const DashboardP = () => {
       x: {
         title: {
           display: true,
-          text: "Blocks",
+          
         },
       },
     },
@@ -141,7 +141,7 @@ const DashboardP = () => {
   };
 
   return (
-    <div style={{ marginTop: "10px", padding: "3%" }}>
+    <div style={{ padding: "3%" }}>
       <Typography.Title level={3}>Your Consumption Pattern</Typography.Title>
       <Card style={{ height: "50%" }}>
         <Col span={24} style={{ marginBottom: "20px" }}>
@@ -154,7 +154,7 @@ const DashboardP = () => {
       <Row gutter={[16, 16]} justify="space-between">
         {/* First Column */}
         <Col span={8}>
-          <Typography.Title level={4}>Power X Detail</Typography.Title>
+          <Typography.Title level={4}>PowerX Detail</Typography.Title>
           <Col>
   <img 
     src={market} 

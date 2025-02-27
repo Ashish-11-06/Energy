@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Select, Table, Row, Col, Card } from 'antd';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { dayAheadData } from '../../Redux/slices/consumer/dayAheadSlice';
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
+// Register Chart.js components and plugins
+ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
 
 const { Option } = Select;
 
@@ -46,6 +47,39 @@ const DayAhead = () => {
     ],
   };
 
+  const options = {
+    responsive: true,
+    scales: {
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        ticks: {
+          autoSkip: false, // Ensure all ticks are shown
+        },
+      },
+      y: {
+        beginAtZero: true,
+      },
+    },
+    plugins: {
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+        },
+      },
+    },
+  };
+
   const columns = [
     {
       title: 'Details',
@@ -76,8 +110,8 @@ const DayAhead = () => {
     <div style={{ padding: '20px' }}>
       <h1>Day ahead Forecasted Market</h1>
       <Card style={{height: '500px', width: '100%'}}>
-        <div style={{ height: '500px', width: '100%', margin: '0 auto' }}>
-          <Line data={data} options={{ responsive: true }} style={{height: '300px', width: 'full',padding:'25px'}}/>
+        <div style={{ height: '500px', width: '100%' }}>
+          <Line data={data} options={options} style={{height: '300px', width: 'full',padding:'25px',marginLeft:'100px'}}/>
         </div>
       </Card>
       <h2></h2>

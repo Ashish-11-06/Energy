@@ -1,157 +1,183 @@
-import React, { useState } from "react";
-import { Form, Input, Select, Upload, Button, Col, Table, Row } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
+import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Radio, Upload, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import { UploadOutlined } from "@ant-design/icons";
 
-const { Option } = Select;
+const generateTimeLabels = () => {
+  const times = [];
+  for (let i = 0; i < 24; i++) {
+    for (let j = 0; j < 60; j += 15) {
+      const hour = i.toString().padStart(2, '0');
+      const minute = j.toString().padStart(2, '0');
+      times.push(`${hour}:${minute}`);
+    }
+  }
+  return times;
+};
 
 const PlanDayTradePage = () => {
   const [form] = Form.useForm();
   const [selectedTechnology, setSelectedTechnology] = useState("Solar");
   const navigate = useNavigate();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [tableData, setTableData] = useState(
+    generateTimeLabels().map((time, index) => ({
+      key: index,
+      time,
+      demand: null,
+    }))
+  );
+  const [allFieldsFilled, setAllFieldsFilled] = useState(false);
+  const [fileUploaded, setFileUploaded] = useState(false);
+  const [showTable, setShowTable] = useState(false);
+
+  const handleContinue = () => {
+    setIsModalVisible(true);
+  };
+
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
 
-  const [selectedType, setSelectedType] = useState("Solar");
   const handleChange = (value) => {
-    setSelectedType(value);
+    setSelectedTechnology(value);
   };
 
-  const handleTechnologyChange = (value) => {
-    setSelectedTechnology(value);
+  const handleInputChange = (value, key) => {
+    const newData = [...tableData];
+    const index = newData.findIndex((item) => key === item.key);
+    if (index > -1) {
+      newData[index].demand = value;
+      setTableData(newData);
+    }
+  };
+
+  useEffect(() => {
+    const allFilled = tableData.every((item) => item.demand !== null);
+    setAllFieldsFilled(allFilled);
+  }, [tableData]);
+
+  const handleModalOk = () => {
+    localStorage.setItem("tradeData", JSON.stringify(tableData));
+    localStorage.setItem("selectedTechnology", selectedTechnology);
+    localStorage.setItem("navigationSource", "PlanYourTradePage");
+    navigate('/px/generator/trading');
+  };
+
+  const handleFileUpload = (file) => {
+    message.success(`${file.name} uploaded successfully`);
+    setFileUploaded(true);
+    setAllFieldsFilled(true);
+    return false; // Prevent automatic upload
   };
 
   const columns = [
     {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
+      title: "Time",
+      dataIndex: "time",
+      key: "time",
     },
     {
-      title: "Generation",
-      dataIndex: "generation",
-      key: "generation",
+      title: "Demand",
+      dataIndex: "demand",
+      key: "demand",
+      render: (_, record) => (
+        <Input
+          value={record.demand}
+          onChange={(e) => handleInputChange(e.target.value, record.key)}
+        />
+      ),
     },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-
   ];
 
-  const tableData = [
-    {
-      key: "1",
-      date: "18-05-25",
-      generation: 200,
-      price:'3 rs'
-    },
-    {
-      key: "2",
-      date: "20-05-25",
-      generation: 200,
-         price:'4 rs'
-    },
-    {
-      key: "3",
-      date: "25-05-25",
-      generation: 100,
-         price:'2 rs'
-    },
-    {
-      key: "4",
-      date: "28-05-25",
-      generation: 150,
-         price:'5 rs'
-    },
- 
-  ];
-  const uploadProps = {
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    onChange({ file, fileList }) {
-      if (file.status !== "uploading") {
-        console.log(file, fileList);
-      }
-    },
+  const renderTable = (data) => (
+    <Table
+      columns={columns}
+      dataSource={data}
+      pagination={false}
+      bordered
+      size="small"
+      style={{ marginBottom: "20px" }}
+    />
+  );
+
+  const splitData = (data) => {
+    const sixth = Math.ceil(data.length / 6);
+    return [
+      data.slice(0, sixth),
+      data.slice(sixth, sixth * 2),
+      data.slice(sixth * 2, sixth * 3),
+      data.slice(sixth * 3, sixth * 4),
+      data.slice(sixth * 4, sixth * 5),
+      data.slice(sixth * 5),
+    ];
   };
+
+  const [part1, part2, part3, part4, part5, part6] = splitData(tableData);
 
   return (
     <div style={{ padding: "20px" }}>
-      {/* <h1>Plan Your Trade</h1> */}
-      <Form form={form} onFinish={onFinish} layout="vertical">
-        {/* <Form.Item label="Enter Your Demand" name="demand" rules={[{ required: true, message: 'Please input your demand!' }]}>
-          <Input placeholder="Enter demand" />
-        </Form.Item> */}
-        {/* 
-        <Form.Item label="Select Technology" name="technology" rules={[{ required: true, message: 'Please select a technology!' }]}>
-          <Select defaultValue="Solar" onChange={handleTechnologyChange}>
-            <Option value="Solar">Solar</Option>
-            <Option value="Non-solar">Non-solar</Option>
-            <Option value="Hydro">Hydro</Option>
-          </Select>
-        </Form.Item> */}
-        {/* <Select
-          defaultValue="Solar"
-          style={{ width: 120, marginLeft: "80%", marginBottom: "10px" }}
-          onChange={handleChange}
-        >
-          <Option value="Solar">Solar</Option>
-          <Option value="Non-solar">Non-solar</Option>
-          <Option value="Hydro">Hydro</Option>
-        </Select> */}
-
-        {/* <Form.Item label={`Price for ${selectedTechnology}`} name="price" rules={[{ required: true, message: 'Please input the price!' }]}>
-          <Input placeholder="Enter price" />
-        </Form.Item> */}
-
-        <Form.Item
-          
-          name="demand"
-          rules={[{ required: true, message: "Please input your demand!" }]}
-          style={{ marginBottom: "10px" }}
-        >
-            <p style={{fontSize:'30px'}}>Enter Your Generation</p>
-          {/* <Input placeholder="Enter demand" /> */}
-        </Form.Item>
-
-        <div style={{ padding: '20px' }}>
-      <Row gutter={16}>
-        {/* Table and Upload button in the same row */}
-        <Col span={12}>
-          <Table
-            columns={columns}
-            dataSource={tableData}
-            pagination={false}
-            bordered
-            style={{
-              width: '100%', // Set width to 100% so it fills the column
-              height: '400px',
-              overflowY: 'auto', // Makes the table scrollable
-            }}
-          />
+      <h1>Plan Your Trade</h1>
+      <Row gutter={16} style={{ marginBottom: "20px" ,marginLeft:'20%', marginRight:'15%'}}>
+        <Col>
+        <Tooltip title="Add details manually!" placement="bottom">
+          <Button onClick={() => setShowTable(!showTable)}>
+            {showTable ? "Add Details" : "Add Details"}
+          </Button>
+          </Tooltip>
         </Col>
-        
-        <Col span={12}>
-          <Form.Item label="Bulk Upload" name="upload">
-            <Upload {...uploadProps}>
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
-          </Form.Item>
+        <span style={{marginTop:'10px', fontWeight:'bold',marginLeft:'20px',marginRight:'20px'}}>OR</span>
+        <Col>
+        <Tooltip title="Upload a bulk file for 96 blocks in a day!" placement="bottom">
+          <Upload beforeUpload={handleFileUpload} showUploadList={false}>
+            <Button icon={<UploadOutlined />}>Upload File</Button>
+          </Upload>
+          </Tooltip>
         </Col>
       </Row>
-    </div>
+      {showTable && (
+        <Form form={form} onFinish={onFinish} layout="vertical">
+          <Row gutter={16}>
+            <Col span={4}>{renderTable(part1)}</Col>
+            <Col span={4}>{renderTable(part2)}</Col>
+            <Col span={4}>{renderTable(part3)}</Col>
+            <Col span={4}>{renderTable(part4)}</Col>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ marginLeft: "80%" }}>
+            <Col span={4}>{renderTable(part5)}</Col>
+            <Col span={4}>{renderTable(part6)}</Col>
+          </Row>
+        </Form>
+      )}
+      <Form.Item>
+        <Tooltip
+          title={!allFieldsFilled ? "Add details manually or upload the file" : ""}
+          placement="top"
+        >
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ marginLeft: "85%" }}
+            onClick={handleContinue}
+            disabled={!allFieldsFilled}
+          >
             Continue
           </Button>
-        </Form.Item>
-      </Form>
+        </Tooltip>
+      </Form.Item>
+      <Modal
+        title="Select Technology"
+        visible={isModalVisible}
+        onOk={handleModalOk}
+        onCancel={() => setIsModalVisible(false)}
+      >
+        <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
+          <Radio value="Solar">Solar</Radio>
+          <Radio value="Non-Solar">Non-Solar</Radio>
+          <Radio value="Hydro">Hydro</Radio>
+        </Radio.Group>
+      </Modal>
     </div>
   );
 };
 
-export default  PlanDayTradePage 
-  ;
+export default PlanDayTradePage;

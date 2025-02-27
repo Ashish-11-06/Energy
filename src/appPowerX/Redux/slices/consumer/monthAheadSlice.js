@@ -4,11 +4,11 @@ import monthAheadApi from "../../api/consumer/monthAheadApi";
 // Async thunk for fetching data
 export const fetchMonthAheadData = createAsyncThunk(
   "monthAheadData/fetchMonthAheadData",
-  async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
+  async (_, { rejectWithValue }) => {
     try {
       const response = await monthAheadApi.getmonthAhead();
       if (response.status === 200 && response.data) {
-        return response.data; // Ensure response contains valid data
+        return response.data;
       }
       throw new Error("Invalid response from server");
     } catch (error) {
@@ -16,13 +16,14 @@ export const fetchMonthAheadData = createAsyncThunk(
     }
   }
 );
+
 export const fetchMonthAheadLineData = createAsyncThunk(
   "monthAheadData/fetchMonthAheadLineData",
-  async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
+  async (_, { rejectWithValue }) => {
     try {
       const response = await monthAheadApi.getMonthAheadLineData();
       if (response.status === 200 && response.data) {
-        return response.data; // Ensure response contains valid data
+        return response.data;
       }
       throw new Error("Invalid response from server");
     } catch (error) {
@@ -30,13 +31,14 @@ export const fetchMonthAheadLineData = createAsyncThunk(
     }
   }
 );
+
 export const fetchTableMonthData = createAsyncThunk(
   "monthAheadData/fetchTableMonthData",
-  async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
+  async (_, { rejectWithValue }) => {
     try {
       const response = await monthAheadApi.tableMonthData();
       if (response.status === 200 && response.data) {
-        return response.data; // Ensure response contains valid data
+        return response.data;
       }
       throw new Error("Invalid response from server");
     } catch (error) {
@@ -44,13 +46,13 @@ export const fetchTableMonthData = createAsyncThunk(
     }
   }
 );
+
 export const addTableMonthData = createAsyncThunk(
   "monthAheadData/addTableMonthData",
-  async (newData, { rejectWithValue }) => { // Accepts new data to be posted
+  async (newData, { rejectWithValue }) => {
     try {
-      const response = await monthAheadApi.addTableMonthData(newData); // Send data in the request
-
-      if (response.status === 201 || response.status === 200) { // POST usually returns 201
+      const response = await monthAheadApi.addTableMonthData(newData);
+      if (response.status === 201 || response.status === 200) {
         return response.data;
       }
       throw new Error("Invalid response from server");
@@ -65,8 +67,8 @@ const monthAheadData = createSlice({
   name: "monthAheadData",
   initialState: {
     monthAheadData: [],
-   monthAheadLineData:[],
-   tableMonthData:[],
+    monthAheadLineData: [],
+    tableMonthData: [],
     status: "idle",
     error: null,
   },
@@ -116,6 +118,8 @@ const monthAheadData = createSlice({
       .addCase(addTableMonthData.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.tableMonthData.push(action.payload);
+        // Fetch the updated data
+        fetchTableMonthData();
       })
       .addCase(addTableMonthData.rejected, (state, action) => {
         state.status = "failed";

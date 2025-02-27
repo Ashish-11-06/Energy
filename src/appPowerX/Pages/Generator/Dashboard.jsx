@@ -14,8 +14,10 @@ import Title from "antd/es/typography/Title";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 import market from '../../assets/market.png';
 import statistics from '../../assets/statistics.png';
+import { useNavigate } from "react-router-dom";
 
 const DashboardPG = () => {
+  const navigate=useNavigate();
   const energyPortfolio = [
     { id: 1, type: "Solar", energy: 150, projects: 100 },
     { id: 2, type: "Wind", energy: 100, projects: 150 },
@@ -38,6 +40,15 @@ const DashboardPG = () => {
         barThickness: 60, // Adjust bar thickness
       },
     ],
+  };
+
+
+  const handleUpcomingMarket = () => {
+    navigate("/px/generator/month-ahead");
+  };
+
+  const handleMarketStatistics = () => {
+    navigate("/px/generator/statistical-information");
   };
 
   const doughnutData = {
@@ -113,11 +124,41 @@ const DashboardPG = () => {
       <Card style={{ margin: "20px" }}>
         <Row gutter={[16, 16]} justify="space-between">
           {/* First Column */}
-          <Col span={8}>
-            <Typography.Title level={4}>Power X Details</Typography.Title>
-            <Col><img src={market} alt="" style={{ height: '20px', width: '20px', marginRight: '5px' }} />Upcoming Market</Col>
-            <Col><img src={statistics} alt="" style={{ height: '20px', width: '20px', marginRight: '5px', marginTop: '5px' }} />Market Statistics</Col>
-          </Col>
+               <Col span={8}>
+                   <Typography.Title level={4}>PowerX Detail</Typography.Title>
+                   <Col>
+           <img 
+             src={market} 
+             alt=""  
+             style={{ height: '20px', width: '20px', marginRight: '5px' }} 
+           />
+           <span 
+             onClick={handleUpcomingMarket} 
+             style={{ cursor: 'pointer', color: 'black' }} // Default color
+             onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
+             onMouseLeave={(e) => e.target.style.color = 'black'}
+           >
+             Upcoming Market
+           </span>
+         </Col>
+         
+         <Col>
+           <img 
+             src={statistics}  
+             alt="" 
+             style={{ height: '20px', width: '20px', marginRight: '5px', marginTop: '5px' }} 
+           />
+           <span 
+             onClick={handleMarketStatistics} 
+             style={{ cursor: 'pointer', color: 'black' }} // Default color
+             onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
+             onMouseLeave={(e) => e.target.style.color = 'black'}
+           >
+             Market Statistics
+           </span>
+         </Col>
+         
+           </Col>
 
           {/* Second Column */}
           <Col span={8}>

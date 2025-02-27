@@ -72,6 +72,7 @@ import Subscription from './appPowerX/Pages/Consumer/Subscription';
 import LoginPage from './appPowerX/Pages/LoginPage';
 // import ProfileP from './appPowerX/Pages/Consumer/Profile';
 import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
+import NotificationG from './appPowerX/Pages/Generator/NotificationG';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -195,6 +196,7 @@ function App() {
         <Route path="statistical-information" element={<StatisticalInformationG />} />
         <Route path="statistical-day-information" element={<DayStatisticsInformation />} />
         <Route path="month-ahead" element={<MonthAheadG />} />
+        <Route path="notification" element={<NotificationG />} />
 
         <Route path="planning" element={<PlanningG />} />
         <Route path="trading" element={<TradingG />} />

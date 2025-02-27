@@ -123,14 +123,14 @@ navigate('/px/consumer/plan-month-trade');
         <Option value="Hydro">Hydro</Option>
       </Select> */}
 
-<Card>
+<Card  style={{width:'full'}}>
       {/* <h2>Model Statistics</h2> */}
-      <div style={{ height: '350px' ,width:'90%',margin:'0 auto'}}>
-        <Line data={data} style={{width:'80%'}} options={{ responsive: true }} />
+      <div style={{height:'60vh',width:'100%'}}>
+        <Line data={data} style={{width:'100%', marginLeft:'150px'}} options={{ responsive: true }} />
       </div>
       </Card>
       <h2></h2>
-      <Table columns={columns} dataSource={tableData} pagination={false} />
+      {/* <Table columns={columns} dataSource={tableData} pagination={false} /> */}
 
       <div style={{ padding: '20px' }}>
       <Row justify="space-between">

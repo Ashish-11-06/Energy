@@ -15,11 +15,13 @@ const { Option } = Select;
 const DayAhead = () => {
   const [tableData, setTableData] = useState([]);
   const navigate = useNavigate(); 
-  const [selectedType, setSelectedType] = useState(null); // Default: No chart displayed
+  const [selectedType, setSelectedType] = useState('MCP'); // Default: MCP chart displayed
   const dispatch = useDispatch();
   const [McvData, setMcvData] = useState('');
   const [foreCastedData, setForeCastedData] = useState('');
   const [pastData, setPastData] = useState('');
+  const [mcvForeCastedData, setMcvForeCastedData] = useState('');
+  const [mcvPastData, setMcvPastData] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,6 +34,19 @@ const DayAhead = () => {
       }
     };
     fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    const fetchMCP = async () => {
+      try {
+        const data = await dispatch(fetchMCPData()).unwrap();
+        setForeCastedData(data[0]?.data);
+        setPastData(data[1]?.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchMCP();
   }, [dispatch]);
 
   const handleChange = async (e) => {
@@ -60,7 +75,8 @@ const DayAhead = () => {
         const mcvData = await dispatch(fetchMCVData()).unwrap();
         setForeCastedData(mcpData[0]?.data);
         setPastData(mcpData[1]?.data);
-        setMcvData(mcvData);
+        setMcvForeCastedData(mcvData[0]?.data);
+        setMcvPastData(mcvData[1]?.data);
       } catch (error) {
         console.log(error);
       }
@@ -71,13 +87,13 @@ const DayAhead = () => {
     labels: Array.from({ length: 96 }, (_, i) => i + 1), // Generates labels [1, 2, 3, ..., 96]
     datasets: [
       {
-        label: "ForeCasted Values",
+        label: "ForeCasted MCV Data",
         data: foreCastedData,
         borderColor: "blue",
         fill: false,
       },
       {
-        label: "Past Values",
+        label: "Past MCV Data",
         data: pastData,
         borderColor: "red",
         fill: false,
@@ -89,15 +105,45 @@ const DayAhead = () => {
     labels: Array.from({ length: 96 }, (_, i) => i + 1),
     datasets: [
       {
-        label: 'ForeCasted Values',
+        label: 'ForeCasted MCP Data',
         data: foreCastedData,
         borderColor: 'green',
         fill: false,
       },
       {
-        label: 'Past Values',
+        label: 'Past MCP Data',
         data: pastData,
         borderColor: 'orange',
+        fill: false,
+      },
+    ],
+  };
+
+  const BothData = {
+    labels: Array.from({ length: 96 }, (_, i) => i + 1),
+    datasets: [
+      {
+        label: 'ForeCasted MCP Data',
+        data: foreCastedData,
+        borderColor: 'green',
+        fill: false,
+      },
+      {
+        label: 'Past MCP Data',
+        data: pastData,
+        borderColor: 'orange',
+        fill: false,
+      },
+      {
+        label: 'ForeCasted MCV Data',
+        data: mcvForeCastedData,
+        borderColor: 'blue',
+        fill: false,
+      },
+      {
+        label: 'Past MCV Data',
+        data: mcvPastData,
+        borderColor: 'red',
         fill: false,
       },
     ],
@@ -157,24 +203,14 @@ const DayAhead = () => {
             </Col>
           )}
           {selectedType === 'Both' && (
-            <>
-              <Col span={12} >
-                <Card style={{  backgroundColor: 'white' }}>
-                  <h3>MCP Data</h3>
-                  <div >
-                    <Line style={{height:'300px'}} data={MCPData} options={{ responsive: true, maintainAspectRatio: false }} />
-                  </div>
-                </Card>
-              </Col>
-              <Col span={12} >
-                <Card style={{  backgroundColor: 'white' }}>
-                  <h3>MCV Data</h3>
-                  <div >
-                    <Line style={{height:'300px'}} data={MCVData} options={{ responsive: true, maintainAspectRatio: false }} />
-                  </div>
-                </Card>
-              </Col>
-            </>
+            <Col span={24} >
+              <Card style={{  backgroundColor: 'white' }}>
+                <h3>MCP and MCV Data</h3>
+                <div >
+                  <Line style={{height:'300px'}} data={BothData} options={{ responsive: true, maintainAspectRatio: false }} />
+                </div>
+              </Card>
+            </Col>
           )}
         </Row>
       )}

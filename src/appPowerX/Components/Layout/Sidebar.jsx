@@ -38,7 +38,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Month Ahead', key: '/px/consumer/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Planning', key: '/px/consumer/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Trading', key: '/px/consumer/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Subscription ', key: '/px/consumer/powerx-subscription', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // { label: 'Subscription Plan', key: '/px/consumer/powerx-subscription', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Notification', key: '/px/consumer/notification-powerX', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
@@ -49,7 +49,9 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Month Ahead', key: '/px/generator/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Planning', key: '/px/generator/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Trading', key: '/px/generator/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
-    ];
+    { label: 'Notification', key: '/px/generator/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
+  
+  ];
 
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;

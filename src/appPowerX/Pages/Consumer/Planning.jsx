@@ -4,6 +4,7 @@ import 'antd/dist/reset.css'; // Import Ant Design styles
 import moment from 'moment';
 import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
 import { useDispatch } from 'react-redux';
+import './Planning.css'; // Import custom CSS for calendar styling
 
 const columns = [
   {
@@ -84,6 +85,7 @@ const Planning = () => {
                 onSelect={onSelect}
                 dateCellRender={dateCellRender}
                 className="custom-calendar"
+                bordered
               />
             </Card>
           </Col>

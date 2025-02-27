@@ -58,51 +58,51 @@ const Trading = () => {
       <Row gutter={[16, 16]}>
         {/* Total Section */}
         <Col span={6}>
-          <Card style={{ height: '150px', backgroundColor: '#669800' }}>
+          <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
             <Statistic title="TOTAL" value={493} suffix="+" />
           </Card>
         </Col>
 
         {/* Trading Volume Section */}
         <Col span={6}>
-          <Card style={{ height: '150px', backgroundColor: '#669800' }}>
+          <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
             <Statistic title="TRADING VOLUME" value={8.324} />
           </Card>
         </Col>
 
         {/* Price Per Unit Section */}
         <Col span={6}>
-          <Card style={{ height: '150px', backgroundColor: '#669800' }}>
+          <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
             <Statistic title="PRICE PER UNIT" value={6.203} />
           </Card>
         </Col>
 
         {/* Planning Costs Section */}
         <Col span={6}>
-          <Card style={{ height: '150px', backgroundColor: '#669800' }}>
+          <Card style={{ height: '100px', backgroundColor: '#669800' ,textAlign:'center'}}>
             <Statistic title="PLANNING COSTS" value={64900} />
           </Card>
         </Col>
       </Row>
 
-      <Card style={{ marginTop: '20px' }}>
-        <h2>Model Statistics</h2>
-        <div style={{ height: '48vh', width: '80%', margin: '0 auto', marginTop: '10px' }}>
-          <Line data={data} options={{ responsive: true }} />
-          <p style={{ marginLeft: '30%', padding: '10px', marginBottom: '10px' }}>
+      <Card style={{ marginTop: '20px',height:'400px' }}>
+        {/* <h2>Model Statistics</h2> */}
+        <div style={{ height: '350px', width: '100%', marginTop: '10px' }}>
+          <Line data={data} options={{ responsive: true, maintainAspectRatio: false }} style={{ height: '350px' }} />
+          {/* <p style={{ marginLeft: '30%', padding: '10px', marginBottom: '10px' }}>
             Plan vs Trade
-          </p>
+          </p> */}
         </div>
       </Card>
 
       {/* Chat with Expert Section */}
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
-          <Col>
+          {/* <Col>
             <Button onClick={handleTradingStatus}>Trading Status</Button>
-          </Col>
+          </Col> */}
           <Col>
-            <Button onClick={handleChat}>Chat with Expert</Button>
+            <Button onClick={handleChat} style={{marginLeft:'1000px'}}>Chat with Expert</Button>
           </Col>
         </Row>
       </div>
