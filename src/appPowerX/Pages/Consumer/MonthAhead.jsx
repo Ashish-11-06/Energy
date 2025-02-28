@@ -117,11 +117,14 @@ navigate('/px/consumer/plan-month-trade');
   return (
     <div style={{ padding: '20px' }}>
       <h1>Month ahead Forecasted Market</h1>
-      {/* <Select defaultValue="Solar" style={{ width: 120 ,marginLeft:'80%',marginBottom:'10px'}} onChange={handleChange}>
-        <Option value="Solar">Solar</Option>
-        <Option value="Non-solar">Non-solar</Option>
-        <Option value="Hydro">Hydro</Option>
-      </Select> */}
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '70%', marginBottom: '10px'}}>
+           <label htmlFor="" style={{ width: 120, fontWeight: 'bold', marginRight: '0px', fontSize: '20px' }}>Technology: </label>
+           <Select placeholder="Select Technology" style={{ width: 200 }} onChange={handleChange}>
+             <Option value="Solar">Solar</Option>
+             <Option value="Non-solar">Non-solar</Option>
+             <Option value="Hydro">Hydro</Option>
+           </Select>
+         </div>
 
 <Card  style={{width:'full'}}>
       {/* <h2>Model Statistics</h2> */}

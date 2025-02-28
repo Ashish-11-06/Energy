@@ -57,7 +57,7 @@ const DashboardP = () => {
     labels: dashboardLine.length ? Array.from({ length: dashboardLine.length }, (_, i) => i + 1) : [],
     datasets: [
       {
-        label: "Consumption Over Time (MWh)",
+        label: "Energy (MWh)",
         data: dashboardLine,
         borderColor: "blue",
         backgroundColor: "rgba(0, 0, 255, 0.2)",
@@ -142,7 +142,7 @@ const DashboardP = () => {
 
   return (
     <div style={{ padding: "3%" }}>
-      <Typography.Title level={3}>Your Consumption Pattern</Typography.Title>
+      <Typography.Title level={3}>Your Energy Consumption Pattern</Typography.Title>
       <Card style={{ height: "50%" }}>
         <Col span={24} style={{ marginBottom: "20px" }}>
           <div style={{ position: "relative", width: "80%", height: "300px", margin: "0 auto" }}>
@@ -159,7 +159,7 @@ const DashboardP = () => {
   <img 
     src={market} 
     alt=""  
-    style={{ height: '20px', width: '20px', marginRight: '5px' }} 
+    style={{ height: '20px', width: '20px', marginRight: '10px' }} 
   />
   <span 
     onClick={handleUpcomingMarket} 
@@ -171,13 +171,14 @@ const DashboardP = () => {
   </span>
 </Col>
 
-<Col>
+<Col style={{marginTop:'10px'}}>
   <img 
     src={statistics}  
     alt="" 
-    style={{ height: '20px', width: '20px', marginRight: '5px', marginTop: '5px' }} 
+    style={{ height: '20px', width: '20px', marginRight: '10px'}} 
   />
   <span 
+  
     onClick={handleMarketStatistics} 
     style={{ cursor: 'pointer', color: 'black' }} // Default color
     onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}

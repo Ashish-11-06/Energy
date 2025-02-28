@@ -93,34 +93,46 @@ console.log(tableDemandData);
       const res = await dispatch(addTableMonthData(data)).unwrap();
       console.log('Response from addTableMonthData:', res);
       setDataAdded(true);
-      if (res) {
-        console.log('Data added successfully');
-  
-        const message = `New demand added: ${demand}, Price: ${data.price} on date: ${data.Date}`;
-  
-        // Fetch the existing notification data from Redux state
-        const notifications = store.getState().notificationData.notificationData || [];
-        
-        // Find the last ID and increment it
-        const lastId = notifications.length > 0 ? Math.max(...notifications.map(n => n.id)) : 0;
-        const newId = lastId + 1;
-  
-        const notificationData = {
-          id: newId, // Auto-incremented ID
-          message: message,
+      if(res) {
+        const fetchData = async () => {
+          try {
+            const data = await dispatch(fetchTableMonthData());
+            console.log(data.payload); // Logging the fetched data
+             setTableDemandData(data.payload);
+          } catch (error) {
+            console.log(error);
+          }
         };
-  
-        // Dispatch updateNotificationData with new notification
-        const notificationRes = await dispatch(updateNotificationData(notificationData)).unwrap();
-        console.log('Notification Updated:', notificationRes);
-
-        // Fetch the updated table data
-        const updatedData = await dispatch(fetchTableMonthData()).unwrap();
-        setTableDemandData(updatedData);
-
-        // Enable the "Continue" button
-       
+        fetchData();
       }
+      // if (res) {
+      //   console.log('Data added successfully');
+  
+      //   const message = `New demand added: ${demand}, Price: ${data.price} on date: ${data.Date}`;
+  
+      //   // Fetch the existing notification data from Redux state
+      //   const notifications = store.getState().notificationData.notificationData || [];
+        
+      //   // Find the last ID and increment it
+      //   const lastId = notifications.length > 0 ? Math.max(...notifications.map(n => n.id)) : 0;
+      //   const newId = lastId + 1;
+  
+      //   const notificationData = {
+      //     id: newId, // Auto-incremented ID
+      //     message: message,
+      //   };
+  
+      //   // Dispatch updateNotificationData with new notification
+      //   const notificationRes = await dispatch(updateNotificationData(notificationData)).unwrap();
+      //   console.log('Notification Updated:', notificationRes);
+
+      //   // Fetch the updated table data
+      //   const updatedData = await dispatch(fetchTableMonthData()).unwrap();
+      //   setTableDemandData(updatedData);
+
+      //   // Enable the "Continue" button
+       
+      // }
     } catch (error) {
       console.error('Error:', error);
     }
