@@ -209,6 +209,10 @@ const CombinationPattern = () => {
             formatAndSetCombinations(response);
             setIsTableLoading(false);
             setFetchingCombinations(false);
+            window.scrollTo({
+              top: document.body.scrollHeight,
+              behavior: "smooth",
+            });
           },
           (errorMessage) => {
             // Handle network or other fetch errors
