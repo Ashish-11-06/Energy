@@ -37,12 +37,14 @@ const DayAhead = () => {
         data: tableData[0]?.MCP || [], // Updated data for MCP
         borderColor: 'blue',
         fill: false,
+        yAxisID: 'y-axis-mcp', // Assign to right Y-axis
       },
       {
         label: 'MCV (MWh)', // Label for MCY dataset
         data: tableData[0]?.MCV || [], // Updated data for MCY
         borderColor: 'green',
         fill: false,
+        yAxisID: 'y-axis-mcv', // Assign to left Y-axis
       },
     ],
   };
@@ -55,13 +57,45 @@ const DayAhead = () => {
         position: 'bottom',
         ticks: {
           autoSkip: false, // Ensure all ticks are shown
+          maxTicksLimit: 96, // Ensure at least 96 ticks are shown
+        },
+        title: {
+          display: true,
+          text: '96 blocks',
         },
       },
-      y: {
+      'y-axis-mcv': {
+        type: 'linear',
+        position: 'left',
         beginAtZero: true,
+        title: {
+          display: true,
+          text: 'MCV (MWh)',
+        },
+      },
+      'y-axis-mcp': {
+        type: 'linear',
+        position: 'right',
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'MCP (INR/MWh)',
+        },
+        grid: {
+          drawOnChartArea: false, // Only draw grid lines for one Y-axis
+        },
       },
     },
     plugins: {
+      legend: {
+        display: true,
+        position: 'bottom', // Position legends at the bottom
+        align: 'end', // Align legends to the right
+        labels: {
+          // usePointStyle: true, // Use point style for legend items
+          padding: 20, // Add padding around legend items
+        },
+      },
       zoom: {
         pan: {
           enabled: true,
@@ -108,7 +142,7 @@ const DayAhead = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Day ahead Forecasted Market</h1>
+      <h1>Market Forecast - Day Ahead</h1>
       <Card style={{height: '500px', width: '100%'}}>
         <div style={{ height: '500px', width: '100%' }}>
           <Line data={data} options={options} style={{height: '300px', width: 'full',padding:'25px',marginLeft:'100px'}}/>
@@ -120,7 +154,7 @@ const DayAhead = () => {
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
           <Col>
-            <Button onClick={handleStatistics}>Model Statistics</Button>
+            <Button onClick={handleStatistics}>Historical Trend</Button>
           </Col>
           <Col>
             <Button onClick={handleNextTrade}>Plan Your Next Day Trading</Button>

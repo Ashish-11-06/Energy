@@ -117,7 +117,7 @@ const PlanYourTradePage = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Plan Your Trade</h1>
+      <h1>Plan Your Trade (96 blocks)</h1>
       <Row gutter={16} style={{ marginBottom: "20px" ,marginLeft:'20%', marginRight:'15%'}}>
         <Col>
         <Tooltip title="Add details manually!" placement="bottom">

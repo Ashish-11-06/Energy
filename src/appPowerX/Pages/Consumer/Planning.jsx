@@ -71,7 +71,7 @@ const Planning = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Your Planning</h1>
+      <h1>Planning Calender</h1>
       <Row gutter={[0, 20]} justify="center">
         <Button style={{ marginLeft: '79%' }} onClick={handleToggleView}>
           {showTable ? 'Show Calendar' : 'Show Table'}

@@ -86,7 +86,7 @@ const DayAheadG = () => {
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
           <Col>
-            <Button onClick={handleStatistics}>Model Statistics</Button>
+            <Button onClick={handleStatistics}>Historical Trend</Button>
           </Col>
           <Col>
             <Button onClick={handleNextTrade}>Plan Your Next Day Trading</Button>

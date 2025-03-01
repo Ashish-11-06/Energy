@@ -33,23 +33,23 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 
 
   const consumerMenuItems = [
-    { label: 'Overview', key: '/px/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Day Ahead', key: '/px/consumer/day-ahead', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Month Ahead', key: '/px/consumer/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Planning', key: '/px/consumer/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Trading', key: '/px/consumer/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Dashboard', key: '/px/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Forecast Day Ahead', key: '/px/consumer/day-ahead', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Forecast Month Ahead', key: '/px/consumer/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Plan Your Trade', key: '/px/consumer/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Trade', key: '/px/consumer/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Subscription Plan', key: '/px/consumer/powerx-subscription', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Notification', key: '/px/consumer/notification-powerX', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Notifications', key: '/px/consumer/notification-powerX', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
   const generatorMenuItems = [
-    { label: 'Overview', key: '/px/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Day Ahead', key: '/px/generator/day-ahead', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Month Ahead', key: '/px/generator/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Planning', key: '/px/generator/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Trading', key: '/px/generator/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Notification', key: '/px/generator/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Dashboard', key: '/px/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Forecast Day Ahead', key: '/px/generator/day-ahead', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Forecast Month Ahead', key: '/px/generator/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Plan Your Trade', key: '/px/generator/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Trade', key: '/px/generator/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Notifications', key: '/px/generator/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
   
   ];
 

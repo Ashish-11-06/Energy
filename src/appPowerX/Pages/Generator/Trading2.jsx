@@ -93,9 +93,9 @@ const Trading2 = () => {
         </Col>
       </Row>
 
-      {/* Model Statistics */}
+      {/* Historical Trend */}
       <Card style={{ marginTop: "20px" }}>
-        <h2>Model Statistics</h2>
+        <h2>Historical Trend</h2>
         <div style={{ height: "300px", width: "80%", margin: "0 auto", marginTop: "10px" }}>
           <Line data={data} options={{ responsive: true, maintainAspectRatio: false }} />
           <h1 style={{ textAlign: "center", marginTop: "3%" }}>Plan vs Trade</h1>

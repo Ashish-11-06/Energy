@@ -86,7 +86,7 @@ const Trading = () => {
       </Row>
 
       <Card style={{ marginTop: '20px',height:'400px' }}>
-        {/* <h2>Model Statistics</h2> */}
+        {/* <h2>Historical Trend</h2> */}
         <div style={{ height: '350px', width: '100%', marginTop: '10px' }}>
           <Line data={data} options={{ responsive: true, maintainAspectRatio: false }} style={{ height: '350px' }} />
           {/* <p style={{ marginLeft: '30%', padding: '10px', marginBottom: '10px' }}>

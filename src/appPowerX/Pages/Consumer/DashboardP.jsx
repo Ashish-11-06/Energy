@@ -14,7 +14,10 @@ import {
 } from "chart.js";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchDashboardData, fetchDashboardLine } from "../../Redux/slices/consumer/dashboardSlice";
+import {
+  fetchDashboardData,
+  fetchDashboardLine,
+} from "../../Redux/slices/consumer/dashboardSlice";
 import market from "../../assets/market.png";
 import statistics from "../../assets/statistics.png";
 
@@ -54,7 +57,9 @@ const DashboardP = () => {
 
   // Line Chart Data
   const lineData = {
-    labels: dashboardLine.length ? Array.from({ length: dashboardLine.length }, (_, i) => i + 1) : [],
+    labels: dashboardLine.length
+      ? Array.from({ length: dashboardLine.length }, (_, i) => i + 1)
+      : [],
     datasets: [
       {
         label: "Energy (MWh)",
@@ -81,7 +86,6 @@ const DashboardP = () => {
       x: {
         title: {
           display: true,
-          
         },
       },
     },
@@ -126,8 +130,20 @@ const DashboardP = () => {
     datasets: [
       {
         data: [30, 20, 15, 25, 10],
-        backgroundColor: ["#3F8600", "#4CAF50", "#66BB6A", "#81C784", "#A5D6A7"],
-        hoverBackgroundColor: ["#2E7D32", "#388E3C", "#43A047", "#4CAF50", "#66BB6A"],
+        backgroundColor: [
+          "#3F8600",
+          "#4CAF50",
+          "#66BB6A",
+          "#81C784",
+          "#A5D6A7",
+        ],
+        hoverBackgroundColor: [
+          "#2E7D32",
+          "#388E3C",
+          "#43A047",
+          "#4CAF50",
+          "#66BB6A",
+        ],
       },
     ],
   };
@@ -142,18 +158,69 @@ const DashboardP = () => {
 
   return (
     <div style={{ padding: "3%" }}>
-      <Typography.Title level={3}>Your Energy Consumption Pattern</Typography.Title>
+      <Typography.Title level={3}>
+        Your Energy Consumption Pattern
+      </Typography.Title>
       <Card style={{ height: "50%" }}>
         <Col span={24} style={{ marginBottom: "20px" }}>
-          <div style={{ position: "relative", width: "80%", height: "300px", margin: "0 auto" }}>
-            {dashboardLine.length ? <Line data={lineData} options={lineOptions} /> : <p>Loading data...</p>}
+          <div
+            style={{
+              position: "relative",
+              width: "80%",
+              height: "300px",
+              margin: "0 auto",
+            }}
+          >
+            {dashboardLine.length ? (
+              <Line data={lineData} options={lineOptions} />
+            ) : (
+              <p>Loading data...</p>
+            )}
           </div>
         </Col>
       </Card>
+      <Card style={{marginTop:'10px'}}>
+        <Col span={24}>
+          <Typography.Title level={3} style={{textAlign:'center'}}>PowerX Details</Typography.Title>
+          <Row>
+          <Col span={12} style={{textAlign:'center'}}>
+            <img
+              src={market}
+              alt=""
+              style={{ height: "20px", width: "20px", marginRight: "10px" }}
+            />
+            <span
+              onClick={handleUpcomingMarket}
+              style={{ cursor: "pointer", color: "black" }} // Default color
+              onMouseEnter={(e) => (e.target.style.color = "rgb(154, 132, 6)")}
+              onMouseLeave={(e) => (e.target.style.color = "black")}
+            >
+             <b>Upcoming Market</b> 
+            </span>
+          </Col>
+
+          <Col span={12} style={{textAlign:'center'}}>
+            <img
+              src={statistics}
+              alt=""
+              style={{ height: "20px", width: "20px", marginRight: "10px" }}
+            />
+            <span
+              onClick={handleMarketStatistics}
+              style={{ cursor: "pointer", color: "black" }} // Default color
+              onMouseEnter={(e) => (e.target.style.color = "rgb(154, 132, 6)")}
+              onMouseLeave={(e) => (e.target.style.color = "black")}
+            >
+             <b> Market Statistics</b>
+            </span>
+          </Col>
+          </Row>
+        </Col>
+      </Card>
       <Card style={{ margin: "20px" }}>
-      <Row gutter={[16, 16]} justify="space-between">
-        {/* First Column */}
-        <Col span={8}>
+        <Row gutter={[16, 16]} justify="space-between">
+          {/* First Column */}
+          {/* <Col span={8}>
           <Typography.Title level={4}>PowerX Detail</Typography.Title>
           <Col>
   <img 
@@ -188,28 +255,62 @@ const DashboardP = () => {
   </span>
 </Col>
 
-  </Col>
+  </Col> */}
 
-        {/* Second Column */}
-        <Col span={8}>
-          <Typography.Title level={4}>Consumer States</Typography.Title>
-          <Col span={12} style={{ marginBottom: "20px" }}>
-          <div style={{ width: "100%", height: "100px", margin: "0 auto",justifyContent:'center',alignItems:'center',display:'flex',margin:'0 auto' }}>
-            <Doughnut data={doughnutData} options={chartDoughnutOptions} style={{justifyContent:'center',alignItems:'center',display:'flex',margin:'0 auto'}}/>
-            </div>
-    
+          {/* Second Column */}
+          <Col span={12}>
+            <Typography.Title level={4}>State wise Requirements</Typography.Title>
+            <Col span={12} style={{ marginBottom: "20px" }}>
+              <div
+                style={{
+                  width: "100%",
+                  height: "100px",
+                  margin: "0 auto",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  display: "flex",
+                  margin: "0 auto",
+                }}
+              >
+                <Doughnut
+                  data={doughnutData}
+                  options={chartDoughnutOptions}
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                    margin: "0 auto",
+                  }}
+                />
+              </div>
+            </Col>
           </Col>
-        </Col>
 
-        {/* Third Column */}
-        <Col span={8}>
-          <Typography.Title level={4}>Number of Trades Executed</Typography.Title>
-          <div style={{borderRadius:'50%',width:'150px',height:'100px',backgroundColor:'rgb(63, 134, 0)',justifyContent:'center',alignItems:'center',display:'flex',margin:'0 auto'}}>
-            <p style={{color:'white'}}>20+</p>
-          </div>
-        </Col>
-      </Row>
-    </Card>
+          {/* Third Column */}
+          <Col span={12}>
+            <Typography.Title level={4}>
+              Executed Trade Details
+            </Typography.Title>
+            <ul>
+              <li>Best Price: 4</li>
+            </ul>
+            {/* <div
+              style={{
+                borderRadius: "50%",
+                width: "150px",
+                height: "100px",
+                backgroundColor: "rgb(63, 134, 0)",
+                justifyContent: "center",
+                alignItems: "center",
+                display: "flex",
+                margin: "0 auto",
+              }}
+            >
+              <p style={{ color: "white" }}>20+</p>
+            </div> */}
+          </Col>
+        </Row>
+      </Card>
     </div>
   );
 };

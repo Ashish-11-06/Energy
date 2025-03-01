@@ -124,7 +124,7 @@ navigate('/px/generator/plan-month-trade-page');
       </Select> */}
 
 <Card  style={{width:'full'}}>
-      {/* <h2>Model Statistics</h2> */}
+      {/* <h2>Historical Trend</h2> */}
       <div style={{height:'60vh',width:'100%'}}>
         <Line data={data} style={{width:'100%', marginLeft:'150px'}} options={{ responsive: true }} />
       </div>
@@ -135,7 +135,7 @@ navigate('/px/generator/plan-month-trade-page');
       <div style={{ padding: '20px' }}>
       <Row justify="space-between">
         <Col>
-          <Button onClick={handleStatistics}>Model Statistics</Button>
+          <Button onClick={handleStatistics}>Historical Trend</Button>
         </Col>
         <Col>
           <Button onClick={handleNextTrade}>Plan Your Month Ahead Trading</Button>
