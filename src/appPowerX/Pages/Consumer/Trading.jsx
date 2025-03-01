@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Card, Statistic, Button, Row, Col } from 'antd';
 import 'antd/dist/reset.css'; // Import Ant Design styles
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { fetchTradingData } from '../../Redux/slices/consumer/tradingSlice';
+
+// Register Chart.js components and plugins
+ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
 
 const Trading = () => {
   const [tradeData, setTradeData] = useState({ plan: [], trade: [] });
@@ -42,6 +46,62 @@ const Trading = () => {
         fill: false,
       },
     ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'MWh',
+        },
+      },
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        min: 0,
+        max: 100,
+        title: {
+          display: true,
+          text: '96 time blocks',
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom', // Position legends at the bottom
+        align: 'end', // Align legends to the right
+        labels: {
+          padding: 20, // Add padding around legend items
+        },
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+        },
+      },
+      title: {
+        display: true,
+        text: 'Plan vs Trade Data',
+        font: {
+          size: 18,
+        },
+      },
+    },
   };
 
   const handleChat = () => {
@@ -88,7 +148,7 @@ const Trading = () => {
       <Card style={{ marginTop: '20px',height:'400px' }}>
         {/* <h2>Historical Trend</h2> */}
         <div style={{ height: '350px', width: '100%', marginTop: '10px' }}>
-          <Line data={data} options={{ responsive: true, maintainAspectRatio: false }} style={{ height: '350px' }} />
+          <Line data={data} options={options} style={{ height: '350px' }} />
           {/* <p style={{ marginLeft: '30%', padding: '10px', marginBottom: '10px' }}>
             Plan vs Trade
           </p> */}

@@ -32,7 +32,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category = user?.user_category;
 
-
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/px/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Forecast Day Ahead', key: '/px/consumer/day-ahead', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
@@ -112,6 +111,20 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               </Menu.Item>
             ))}
           </Menu>
+          <Button
+            type="primary"
+            onClick={() => navigate(`/${user_category}/dashboard`)}
+            style={{
+              position: 'absolute',
+              bottom: 20,
+              left: 20,
+              width: '80%',
+              backgroundColor: '#669800',
+              borderColor: '#669800',
+            }}
+          >
+            EXT
+          </Button>
         </Sider>
       ) : (
         <>
@@ -148,6 +161,20 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
                 </Menu.Item>
               ))}
             </Menu>
+            <Button
+              type="primary"
+              onClick={() => navigate('/ext')}
+              style={{
+                position: 'absolute',
+                bottom: 20,
+                left: 20,
+                width: '80%',
+                backgroundColor: '#669800',
+                borderColor: '#669800',
+              }}
+            >
+              Go to EXT
+            </Button>
           </Drawer>
         </>
       )}

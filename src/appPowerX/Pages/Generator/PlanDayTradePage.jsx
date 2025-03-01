@@ -95,7 +95,7 @@ const PlanDayTradePage = () => {
   };
 
   const handleDownloadTemplate = () => {
-    const worksheet = XLSX.utils.json_to_sheet(tableData.map(item => ({ Time: item.time, Generation: '' })));
+    const worksheet = XLSX.utils.json_to_sheet(tableData.map(item => ({ Time: item.time, Demand: '' })));
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
     XLSX.writeFile(workbook, 'trade_template.xlsx');
@@ -167,7 +167,7 @@ const PlanDayTradePage = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Plan Your Trade (96 blocks)</h1>
+      <h1>Plan Your Trade (96 time blocks)</h1>
       <Row gutter={16} style={{ marginBottom: "20px" ,marginLeft:'20%', marginRight:'15%'}}>
       <Card
       style={{

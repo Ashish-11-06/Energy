@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Select, Table, Row, Col, Card, Radio } from 'antd';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
 import { fetchDayAheadData, fetchMCPData, fetchMCVData } from '../../Redux/slices/consumer/dayAheadSlice';
 import { useDispatch } from 'react-redux';
 import './DayAhead.css';
 import { fetchAccuracyData } from '../../Redux/slices/consumer/monthAccuracySlice';
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
+// Register Chart.js components and plugins
+ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
 
 const { Option } = Select;
 
@@ -224,6 +225,33 @@ console.log(tableData);
                             text: 'MCP (INR/MWh)',
                           },
                         },
+                        x: {
+                          type: 'linear',
+                          position: 'bottom',
+                          min: 0,
+                          max: 100,
+                          title: {
+                            display: true,
+                            text: '96 time blocks',
+                          },
+                        },
+                      },
+                      plugins: {
+                        zoom: {
+                          pan: {
+                            enabled: true,
+                            mode: 'x',
+                          },
+                          zoom: {
+                            wheel: {
+                              enabled: true,
+                            },
+                            pinch: {
+                              enabled: true,
+                            },
+                            mode: 'x',
+                          },
+                        },
                       },
                     }} 
                   />
@@ -247,6 +275,33 @@ console.log(tableData);
                           title: {
                             display: true,
                             text: 'MCV (MWh)',
+                          },
+                        },
+                        x: {
+                          type: 'linear',
+                          position: 'bottom',
+                          min: 0,
+                          max: 100,
+                          title: {
+                            display: true,
+                            text: '96 time blocks',
+                          },
+                        },
+                      },
+                      plugins: {
+                        zoom: {
+                          pan: {
+                            enabled: true,
+                            mode: 'x',
+                          },
+                          zoom: {
+                            wheel: {
+                              enabled: true,
+                            },
+                            pinch: {
+                              enabled: true,
+                            },
+                            mode: 'x',
                           },
                         },
                       },
@@ -285,6 +340,33 @@ console.log(tableData);
                           },
                           grid: {
                             drawOnChartArea: false, // only want the grid lines for one axis to show up
+                          },
+                        },
+                        x: {
+                          type: 'linear',
+                          position: 'bottom',
+                          min: 0,
+                          max: 100,
+                          title: {
+                            display: true,
+                            text: '96 time blocks',
+                          },
+                        },
+                      },
+                      plugins: {
+                        zoom: {
+                          pan: {
+                            enabled: true,
+                            mode: 'x',
+                          },
+                          zoom: {
+                            wheel: {
+                              enabled: true,
+                            },
+                            pinch: {
+                              enabled: true,
+                            },
+                            mode: 'x',
                           },
                         },
                       },

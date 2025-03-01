@@ -62,7 +62,7 @@ const DayAhead = () => {
         },
         title: {
           display: true,
-          text: '96 blocks',
+          text: '96 time blocks',
         },
       },
       'y-axis-mcv': {

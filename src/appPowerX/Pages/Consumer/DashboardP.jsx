@@ -11,7 +11,9 @@ import {
   Title,
   Tooltip,
   Legend,
+  TimeScale
 } from "chart.js";
+import zoomPlugin from 'chartjs-plugin-zoom';
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -21,7 +23,7 @@ import {
 import market from "../../assets/market.png";
 import statistics from "../../assets/statistics.png";
 
-// Register required chart.js components
+// Register required chart.js components and plugins
 ChartJS.register(
   BarElement,
   CategoryScale,
@@ -30,7 +32,9 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TimeScale,
+  zoomPlugin
 );
 
 const DashboardP = () => {
@@ -84,8 +88,45 @@ const DashboardP = () => {
         },
       },
       x: {
+        type: 'linear',
+        position: 'bottom',
+        min: 0,
+        max: 100,
         title: {
           display: true,
+          text: '96 time blocks',
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom', // Position legends at the bottom
+        align: 'end', // Align legends to the right
+        labels: {
+          padding: 20, // Add padding around legend items
+        },
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+        },
+      },
+      title: {
+        display: true,
+        text: 'Energy Consumption Over Time',
+        font: {
+          size: 18,
         },
       },
     },
@@ -101,6 +142,62 @@ const DashboardP = () => {
         barThickness: 30,
       },
     ],
+  };
+
+  const barOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "MWh",
+        },
+      },
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        min: 0,
+        max: 100,
+        title: {
+          display: true,
+          text: 'Scale (0-100)',
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom', // Position legends at the bottom
+        align: 'end', // Align legends to the right
+        labels: {
+          padding: 20, // Add padding around legend items
+        },
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+        },
+      },
+      title: {
+        display: true,
+        text: 'Monthly Consumption',
+        font: {
+          size: 18,
+        },
+      },
+    },
   };
 
   const chartDoughnutOptions = {
@@ -120,6 +217,21 @@ const DashboardP = () => {
             let value = dataset.data[index] || 0;
             return `${label}: ${value}%`; // 🎯 Show label on hover only
           },
+        },
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
         },
       },
     },
@@ -179,86 +291,46 @@ const DashboardP = () => {
           </div>
         </Col>
       </Card>
-      <Card style={{marginTop:'10px'}}>
-        <Col span={24}>
-          <Typography.Title level={3} style={{textAlign:'center'}}>PowerX Details</Typography.Title>
-          <Row>
-          <Col span={12} style={{textAlign:'center'}}>
-            <img
-              src={market}
-              alt=""
-              style={{ height: "20px", width: "20px", marginRight: "10px" }}
-            />
-            <span
-              onClick={handleUpcomingMarket}
-              style={{ cursor: "pointer", color: "black" }} // Default color
-              onMouseEnter={(e) => (e.target.style.color = "rgb(154, 132, 6)")}
-              onMouseLeave={(e) => (e.target.style.color = "black")}
-            >
-             <b>Upcoming Market</b> 
-            </span>
-          </Col>
-
-          <Col span={12} style={{textAlign:'center'}}>
-            <img
-              src={statistics}
-              alt=""
-              style={{ height: "20px", width: "20px", marginRight: "10px" }}
-            />
-            <span
-              onClick={handleMarketStatistics}
-              style={{ cursor: "pointer", color: "black" }} // Default color
-              onMouseEnter={(e) => (e.target.style.color = "rgb(154, 132, 6)")}
-              onMouseLeave={(e) => (e.target.style.color = "black")}
-            >
-             <b> Market Statistics</b>
-            </span>
-          </Col>
-          </Row>
-        </Col>
-      </Card>
       <Card style={{ margin: "20px" }}>
         <Row gutter={[16, 16]} justify="space-between">
           {/* First Column */}
-          {/* <Col span={8}>
-          <Typography.Title level={4}>PowerX Detail</Typography.Title>
-          <Col>
-  <img 
-    src={market} 
-    alt=""  
-    style={{ height: '20px', width: '20px', marginRight: '10px' }} 
-  />
-  <span 
-    onClick={handleUpcomingMarket} 
-    style={{ cursor: 'pointer', color: 'black' }} // Default color
-    onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
-    onMouseLeave={(e) => e.target.style.color = 'black'}
-  >
-    Upcoming Market
-  </span>
-</Col>
+          <Col span={8}>
+            <Typography.Title level={4}>PowerX Detail</Typography.Title>
+            <Col>
+              <img 
+                src={market} 
+                alt=""  
+                style={{ height: '20px', width: '20px', marginRight: '10px' }} 
+              />
+              <span 
+                onClick={handleUpcomingMarket} 
+                style={{ cursor: 'pointer', color: 'black' }} // Default color
+                onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
+                onMouseLeave={(e) => e.target.style.color = 'black'}
+              >
+                Upcoming Market
+              </span>
+            </Col>
 
-<Col style={{marginTop:'10px'}}>
-  <img 
-    src={statistics}  
-    alt="" 
-    style={{ height: '20px', width: '20px', marginRight: '10px'}} 
-  />
-  <span 
-  
-    onClick={handleMarketStatistics} 
-    style={{ cursor: 'pointer', color: 'black' }} // Default color
-    onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
-    onMouseLeave={(e) => e.target.style.color = 'black'}
-  >
-    Market Statistics
-  </span>
-</Col>
-
-  </Col> */}
+            <Col style={{marginTop:'10px'}}>
+              <img 
+                src={statistics}  
+                alt="" 
+                style={{ height: '20px', width: '20px', marginRight: '10px'}} 
+              />
+              <span 
+                onClick={handleMarketStatistics} 
+                style={{ cursor: 'pointer', color: 'black' }} // Default color
+                onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
+                onMouseLeave={(e) => e.target.style.color = 'black'}
+              >
+                Market Statistics
+              </span>
+            </Col>
+          </Col>
 
           {/* Second Column */}
-          <Col span={12}>
+          <Col span={8}>
             <Typography.Title level={4}>State wise Requirements</Typography.Title>
             <Col span={12} style={{ marginBottom: "20px" }}>
               <div
@@ -268,8 +340,7 @@ const DashboardP = () => {
                   margin: "0 auto",
                   justifyContent: "center",
                   alignItems: "center",
-                  display: "flex",
-                  margin: "0 auto",
+                  display: "flex"
                 }}
               >
                 <Doughnut
@@ -287,27 +358,13 @@ const DashboardP = () => {
           </Col>
 
           {/* Third Column */}
-          <Col span={12}>
+          <Col span={8}>
             <Typography.Title level={4}>
               Executed Trade Details
             </Typography.Title>
             <ul>
               <li>Best Price: 4</li>
             </ul>
-            {/* <div
-              style={{
-                borderRadius: "50%",
-                width: "150px",
-                height: "100px",
-                backgroundColor: "rgb(63, 134, 0)",
-                justifyContent: "center",
-                alignItems: "center",
-                display: "flex",
-                margin: "0 auto",
-              }}
-            >
-              <p style={{ color: "white" }}>20+</p>
-            </div> */}
           </Col>
         </Row>
       </Card>
