@@ -18,8 +18,8 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
 
 
   const dataSource = [
-    { key: '1', label: 'RE Index', value: reIndex },
-    { key: '2', label: 'Annual Contracted Energy (million unit)', value: ipp?.annual_demand_met || 0 },
+    { key: '1', label: 'RE Index', value: 'A1' },
+    { key: '2', label: 'Annual Contracted Energy (million units)', value: ipp?.annual_demand_met || 0 },
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
     { key: '4', label: 'Per Unit Cost (INR/KWh)', value: ipp?.perUnitCost || "N/A" },
     { key: '5', label: 'OA Cost (INR/KWh)', value: ipp?.OACost || "N/A" },
@@ -101,7 +101,7 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
                       <Text strong>{item.label}</Text>
                     </Col>
                     <Col span={12}>
-                      <Text>: {item.value}</Text>
+                      <Text>: <p style={{marginLeft:'20%'}}>{item.value}</p></Text>
                     </Col>
                   </React.Fragment>
                 ))}

@@ -5,10 +5,8 @@ import './LandingPage.css';
 import video from '../assets/vecteezy_solar-panels-and-wind-turbines-green-energy-concept_6299246.mp4';
 import EXGLogo from '../assets/EXG.png'; // Import the logo image
 import { useDispatch } from 'react-redux';
-import { setLoginType } from '../Redux/actions';
 import { loginUser } from "../Redux/Slices/loginSlice";
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons'; // Import UserOutlined icon
-import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaCheckCircle } from 'react-icons/fa'; // Import social media and check icons
 import RegisterForm from '../Components/Modals/Registration/RegisterForm';
 import { fetchSubscriptionValidity } from '../Redux/Slices/Consumer/subscriptionEnrollSlice';
 
@@ -159,7 +157,7 @@ const response = await dispatch(fetchSubscriptionValidity(id));
 
   return (
     <App> {/* Wrap the component with App */}
-      <div className="landing-page">
+      <div className="landing-page" style={{padding:'5px'}}>
         {/* Background Video */}
         <video className="background-video" src={video} autoPlay muted loop />
         <div className="overlay" style={{ backgroundColor: 'rgba(3, 110, 11, 0.5)', backdropFilter: 'blur(5px)' }}></div>
@@ -174,37 +172,43 @@ const response = await dispatch(fetchSubscriptionValidity(id));
   </Row>
   <Row>
    {/* <h2 style={{justifyContent:'center'}}>Green Energy </h2> */}
-        <div className="content-container" style={{marginTop:'-25px'}}> 
-          <div className="text-content" >
-            
+        <div className="content-container" style={{marginTop:'-10px'}}> 
+          <div className="text-content"  >
+            <div style={{backgroundColor:'#669800',width:'600px'}}>
+            <p style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
+            <p style={{marginLeft:'5%',marginTop:'-30px',fontSize:'70px',fontWeight:'bolder'}}>MarketPlace</p>
+            </div>
+           <p style={{fontSize:'24px',width:'600px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators.</i></p>
             {/* <h2 className="animated-text">{animatedText}</h2> */}
             <ul >
               {/* <Row>
                 <Col span={12}> */}
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Comprehensive energy marketplace</li>
-              <li style={{fontSize:'20px'}} ><FaCheckCircle className="icon" /> Bridges the gap between energy </li>
+              {/* <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Comprehensive energy marketplace</li>
+              <li style={{fontSize:'20px'}} ><FaCheckCircle cssName="icon" /> Bridges the gap between energy </li>
               <li style={{fontSize:'20px'}}> consumers and generators</li>
               <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Enables informed decision-making</li>
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Seamless transactions</li>
+              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Seamless transactions</li> */}
               {/* </Col>
              <Col span={12}> */}
             
 
-              <li style={{fontSize:'20px'}} ><FaCheckCircle className="icon" /> Optimizes energy usage</li>
+              {/* <li style={{fontSize:'20px'}} ><FaCheckCircle className="icon" /> Optimizes energy usage</li>
               <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Forecasts trading opportunities</li>
               <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Streamlines billing processes</li>
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Monitors energy generation projects</li>
+              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Monitors energy generation projects</li> */}
               {/* </Col>
               </Row> */}
             </ul>
-
+<p style={{color:'white',fontWeight:'bold',marginTop:'10%',marginLeft:'-10%'}}>Fast track energy transition</p>
           </div>
 
        
           
           {/* Login Box */}
-          <div className="login-box">
-            
+          <div className="login-box" style={{marginLeft:'200px',
+          marginTop: '-70px'
+          }}>
+         
             <h2 className="login-title"><UserOutlined /> Login</h2> 
             <Form
               name="login"
@@ -237,8 +241,8 @@ const response = await dispatch(fetchSubscriptionValidity(id));
                 rules={[{ required: true, message: 'Please select your user type!' }]}
               >
                 <Radio.Group onChange={(e) => setUserType(e.target.value)} value={userType}>
-                  <Radio value="Consumer">Consumer</Radio>
-                  <Radio value="Generator">Generator</Radio>
+                  <Radio value="Consumer" style={{fontSize:'20px'}}>Consumer</Radio>
+                  <Radio value="Generator" style={{fontSize:'20px'}}>Generator</Radio>
                 </Radio.Group>
               </Form.Item>
 
@@ -284,7 +288,10 @@ const response = await dispatch(fetchSubscriptionValidity(id));
 
         {/* Footer */}
         <div className="footer">
-       <a href='WWW.EXGGLOBAL.COM' style={{zIndex:2000}}  alt='EXG Global'>WWW.EXGGLOBAL.COM</a> 
+       <a 
+      //  href='https://www.exgglobal.com' 
+       href='#' 
+       style={{zIndex:2000}}  alt='EXG Global'>WWW.EXGGLOBAL.COM</a> 
         </div>
 
         {/* Registration Modal */}

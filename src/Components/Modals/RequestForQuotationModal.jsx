@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Button,
@@ -32,28 +32,23 @@ const RequestForQuotationModal = ({
   const [minimumSupply, setMinimumSupply] = useState(18);
   const [contractedEnergy, setContractedEnergy] = useState(data?.annual_demand_met);
   const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
-  const [paymentSecurityDays, setPaymentSecurityDays] = useState(30); // New state
+  const [paymentSecurityDays, setPaymentSecurityDays] = useState(30);
   const [offerTariff, setOfferTariff] = useState(3.5);
   const [solarCapacity, setSolarCapacity] = useState(50);
   const [windCapacity, setWindCapacity] = useState(30);
   const [essCapacity, setEssCapacity] = useState(20);
 
-  const annualDemand=(data?.annualDemand)/1000;
-console.log('data',data?.annual_demand_met);
-console.log(fromModal);
-
-  // console.log('annual deman',annualDemand);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
-const user_category=user.user_category;
-console.log(data);
+  const user_category = user.user_category;
 
-// useEffect(() => {
-// setContractedEnergy(fromModal ? (data?.annual_demand_met ?? 0) : (contractedEnergy ?? 0));
-// }, [fromModal]);
+  useEffect(() => {
+    if (contractedEnergy) {
+      setMinimumSupply(((contractedEnergy * 80) / 100).toFixed(2));
+    }
+  }, [contractedEnergy]);
 
   const handleChatWithExpert = () => {
     navigate("/consumer/chat-page");
@@ -71,33 +66,30 @@ console.log(data);
       combination: data?.combination || "",
       term_of_ppa: ppaTerm || "",
       lock_in_period: lockInPeriod || "",
-      commencement_of_supply: data?.cod ? moment(data.cod).format("YYYY-MM-DD") : null, 
-      contracted_energy:contractedEnergy,
+      commencement_of_supply: data?.cod ? moment(data.cod).format("YYYY-MM-DD") : null,
+      contracted_energy: contractedEnergy,
       minimum_supply_obligation: minimumSupply || 0,
       payment_security_type: paymentSecurityType || "",
-      payment_security_day: paymentSecurityDays || 0, 
+      payment_security_day: paymentSecurityDays || 0,
     };
-    
+
     try {
-      // Wait for the dispatch to resolve
-      await dispatch(addTermsAndConditions(termsData)).unwrap(); // Use .unwrap() if using Redux Toolkit
+      await dispatch(addTermsAndConditions(termsData)).unwrap();
       message.success({
         content: "Terms and Conditions added successfully.",
-        duration: 6, // Show for 7 seconds
+        duration: 6,
       });
       message.success({
-        content: "Now you can continue journey for this demand in the offers section.",
-        duration: 8, // Show for 7 seconds
+        content: "Now you can continue your journey for this demand in the offers section.",
+        duration: 8,
       });
-      onCancel(); // Close the modal
+      onCancel();
     } catch (error) {
-      // Show error message
       message.error({
         content: error || "Failed to add Terms and Conditions.",
-        duration: 7, // Show for 7 seconds
+        duration: 7,
       });
     }
-  
   };
 
   return (
@@ -110,7 +102,7 @@ console.log(data);
         width={800}
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
-       <p><strong> Offer Tariff (INR/MW): </strong>{data.perUnitCost}</p>
+        <p><strong> Offer Tariff (INR/MW): </strong>{data.perUnitCost}</p>
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
           Standard Terms Sheet
         </Title>
@@ -142,40 +134,28 @@ console.log(data);
               <strong>Commencement of Supply:</strong>
               <DatePicker
                 style={{ width: "100%" }}
-                format="DD/MM/YYYY" // Set the display format to DD/MM/YYYY
+                format="DD/MM/YYYY"
                 disabledDate={(current) => {
-                  // Disable today and all past dates
                   return current && current <= moment().endOf('day');
                 }}
-                value={data.cod ? moment(data.cod, "YYYY-MM-DD") : moment("2024-08-31", "YYYY-MM-DD")} // Update date format
-                onChange={(date) => data.cod = date ? date.format("YYYY-MM-DD") : null} // Update data.cod on change
+                value={data.cod ? moment(data.cod, "YYYY-MM-DD") : moment("2024-08-31", "YYYY-MM-DD")}
+                onChange={(date) => data.cod = date ? date.format("YYYY-MM-DD") : null}
               />
             </Typography.Paragraph>
           </Col>
-          <Col span={12}>
-  <Typography.Paragraph>
-    <strong>Annual Contracted Energy (million units):</strong>
-    <InputNumber
-      min={0.1} // Allows float values starting from 0.1
-      step={0.1} // Enables input of both integers and decimals
-      value={contractedEnergy}
-      onChange={(value) => setContractedEnergy(value)}
-      style={{ width: "100%" }}
-    />
-  </Typography.Paragraph>
-</Col>
 
-          {/* <Col span={12}>
-            <Typography.Paragraph>
-              <strong>Offer Tariff (INR/Mw):</strong>
-              <InputNumber
-                min={1}
-                value={data.perUnitCost}
-                onChange={(value) => setContractedEnergy(value)}
-                style={{ width: "100%" }}
-              />
-            </Typography.Paragraph>
-          </Col> */}
+       <Col span={12}>
+                <Typography.Paragraph>
+                  <strong>Annual Contracted Energy (million units):</strong>
+                  <InputNumber
+                    min={0}
+                    value={contractedEnergy}
+                    onChange={(value) => setContractedEnergy(value)}
+                    style={{ width: "100%",color:"black" }}
+                  />
+                </Typography.Paragraph>
+              </Col>
+
           <Col span={12}>
             <Typography.Paragraph>
               <strong>Minimum Supply Obligation (million units):</strong>
@@ -201,20 +181,18 @@ console.log(data);
               </Select>
             </Typography.Paragraph>
           </Col>
-         
-        </Row>
-        <Col span={12}>
+          <Col span={12}>
             <Typography.Paragraph>
               <strong>Payment Security Days:</strong>
               <InputNumber
                 min={1}
                 value={paymentSecurityDays}
-                onChange={(value) => setPaymentSecurityDays(value)} // New input field
+                onChange={(value) => setPaymentSecurityDays(value)}
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
           </Col>
-        <Col span={12}>
+          {/* <Col span={12}>
             <Button
               block
               onClick={handleChatWithExpert}
@@ -223,13 +201,13 @@ console.log(data);
                 border: `1px solid #E6E8F1`,
                 color: "#001529",
                 fontSize: "14px",
-                marginTop:'6%'
+                marginTop: '6%'
               }}
             >
               Need Assistance ?
             </Button>
-          </Col>
-
+          </Col> */}
+        </Row>
         <Row justify="end" style={{ marginTop: "20px" }}>
           <Button
             type="primary"

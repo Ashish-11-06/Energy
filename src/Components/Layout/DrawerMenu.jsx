@@ -7,12 +7,10 @@ const DrawerMenu = ({ drawerVisible, toggleDrawer }) => {
   const location = useLocation();
 
   // Determine menu type based on URL
-  // const menuType = location.pathname.startsWith('/consumer') ? 'consumer' : 'generator';
-const menuType=JSON.parse(localStorage.getItem('user'))?.user?.user_category;
-// console.log(menuType);
+  const menuType = location.pathname.startsWith('/consumer') ? 'consumer' : 'generator';
 
   // Select menu items based on the type
-  const menuItems = menuType === 'Consumer' ? consumerMenuItems : generatorMenuItems;
+  const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
 // console.log("Menu items ",menuItems);
 
   return (

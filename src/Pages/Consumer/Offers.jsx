@@ -69,7 +69,7 @@ const Offers = () => {
   }, [dispatch, user.id, refresh]);
 
 
-  // console.log(ippData);
+  console.log(ippData);
 
   const showModal = (record) => {
     console.log(record);
@@ -161,6 +161,7 @@ const Offers = () => {
       title: "Combination ID",
       dataIndex: "combination",
       key: "combination",
+      width: '15%',
       render: (text) => {
         const transformCombination = (text) => {
           const parts = text.split("-");
@@ -245,27 +246,44 @@ const Offers = () => {
       key: "commencement_of_supply",
       render: (text) => moment(text).format("DD-MM-YYYY"),
     },
+
     // {
     //   title: "Tariff Category",
     //   dataIndex: "requirement",
     //   key: "tariffCategory",
     //   render: (text) => text.rq_tariff_category,
     // },
-    {
+    // {
+    //   title: "Status",
+    //   key: "status",
+    //   render: (_, record) => {
+    //     return user_category === "Consumer"
+    //       ? record.consumer_status `Generator response awaited`
+    //       : record.generator_status;
+    //   },
+
+    { 
       title: "Status",
       key: "status",
+      width: "15%",
       render: (_, record) => {
-        return user_category === "Consumer"
-          ? record.consumer_status
-          : record.generator_status;
+        if (user_category === "Consumer") {
+          return (record.consumer_status === "Offer Sent" || record.consumer_status === "Counter Offer Sent") 
+            ? `${record.consumer_status} - (Generator response awaited)` 
+            : record.consumer_status || "";
+        } else {
+          return (record.generator_status === "Offer Sent" || record.generator_status === "Counter Offer Sent") 
+            ? `${record.generator_status} - (Consumer response awaited)` 
+            : record.generator_status || "";
+        }
       },
     },
-    {
-      title: "Transaction Window Date",
-      dataIndex: "transaction_window_date",
-      key: "transaction_window_date",
-      render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
-    },
+    // {
+    //   title: "Bidding Window Date",
+    //   dataIndex: "transaction_window_date",
+    //   key: "transaction_window_date",
+    //   render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
+    // },
     {
       title: "Action",
       key: "action",
@@ -273,7 +291,7 @@ const Offers = () => {
         return (
           
             record.consumer_status === 'Accepted' || record.consumer_status === 'Rejected' ||  record.generator_status === 'Accepted' || record.generator_status === 'Rejected' ? (
-              <Button type="primary" disabled>
+              <Button type="primary" disabled  >
                 Offer Closed
               </Button>
             ) : (
@@ -281,7 +299,6 @@ const Offers = () => {
             Send Offer
           </Button>
             )
-          
           //   )
           // ) : user_category === 'Generator' ? (
           //   record.count === 1 && record.generator_status === 'Pending' ? (
@@ -297,13 +314,19 @@ const Offers = () => {
         );
       },
     },
+    {
+      title: "Bidding Window Date",
+      dataIndex: "transaction_window_date",
+      key: "transaction_window_date",
+      render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
+    },
   ];
 
   return (
     <div style={{ padding: "20px" }}>
       <Col span={24} style={{ marginLeft: "20px" }}>
         <Title level={3} style={{ color: "#001529" }}>
-          Offers
+          Offer Transaction Window
         </Title>
         <h4>( Total offers received and sent from you. )</h4>
       </Col>
@@ -369,7 +392,7 @@ const Offers = () => {
         <Table
           dataSource={filteredData}
           columns={columns}
-          
+          size="small"
           bordered
           loading={loading} // AntD's built-in loader
           pagination={false}

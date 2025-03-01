@@ -11,7 +11,7 @@ import {
   message,
   Tooltip,
 } from "antd";
-import React, { useState } from "react"; // Import useState along with React
+import React, { useState,useEffect } from "react"; // Import useState along with React
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
@@ -31,10 +31,10 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransactio
   const [lockInPeriod, setLockInPeriod] = useState(data.lock_in_period);
   // const [commencementOfSupply,setCommencementOfSupply ] = useState(data.commencement_of_supply);
   const navigate = useNavigate();
-  const [minimumSupply, setMinimumSupply] = useState(data.minimum_supply_obligation);
   const [contractedEnergy, setContractedEnergy] = useState(
     data.contracted_energy
   );
+  const [minimumSupply, setMinimumSupply] = useState(data.minimum_supply_obligation);
   const [paymentSecurityType, setPaymentSecurityType] = useState(
     data.payment_security_type
   );
@@ -53,6 +53,12 @@ let temp='';
   } else {
     temp="Consumer"
   }
+
+  useEffect(() => {
+    // Update minimumSupply to 80% of contractedEnergy and keep 2 decimal places
+    setMinimumSupply(((contractedEnergy * 80) / 100).toFixed(2));
+  }, [contractedEnergy]);
+  
 
   // Initialize the commencement date using moment
   const [commencementDate, setCommencementDate] = useState(() => {
@@ -215,7 +221,7 @@ let temp='';
       >
         <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
           <p style={{ margin: 0 }}>
-            Offer Tariff: {data?.offer_tariff ? data?.offer_tariff : 0}
+            Offer Tariff: <strong>{data?.offer_tariff ? data?.offer_tariff : 0}</strong> INR/kWh
           </p>
           {!fromTransaction ?(
             <>
@@ -325,7 +331,7 @@ let temp='';
               />
             </Typography.Paragraph>
           </Col>
-          <Col span={12}>
+          {/* <Col span={12}>
             <Button
               block
               onClick={handleChatWithExpert}
@@ -343,7 +349,7 @@ let temp='';
               />
               Need Assistance?
             </Button>
-          </Col>
+          </Col> */}
         </Row>
 
         <Row justify="end" style={{ marginTop: "20px" }}>

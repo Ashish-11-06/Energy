@@ -21,6 +21,7 @@ const GenerationPortfolio = () => {
   const [form] = Form.useForm();
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+const [editData,setEditData]=useState(selectedRecord);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -57,6 +58,14 @@ const alreadysubscribed=subscribed?.status;
     }
    
   };
+
+  const handleEdit=(record)=>{
+
+    console.log(record);
+    setEditData(record);
+    setIsModalVisible(true);
+  }
+console.log(editData);
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -116,6 +125,13 @@ const alreadysubscribed=subscribed?.status;
       key: 'cod',
       render: (text) => moment(text).format('DD-MM-YYYY'),  // Format date to DD-MM-YYYY
     },
+       {
+          title:'Edit Project',
+          key:'edit',
+          render:(text,record)=>(
+            <Button type="primary" onClick={()=>handleEdit(record)}>Edit</Button>
+          )
+        }
   ];
 
   if (alreadysubscribed) {
@@ -196,6 +212,7 @@ const alreadysubscribed=subscribed?.status;
           visible={isModalVisible}
           onClose={() => setIsModalVisible(false)}
           onAdd={handleAddEntry}
+          data={editData}
           user={user}
         />
 

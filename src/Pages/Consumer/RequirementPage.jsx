@@ -4,8 +4,9 @@ import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocati
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchRequirements } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
+import { fetchRequirements, updateRequirements } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
 import { addNewRequirement } from '../../Redux/Slices/Consumer/consumerRequirementSlice';
+
 import moment from 'moment';
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
 import { lastVisitedPage } from '../../Redux/Slices/Consumer/lastVisitedPageSlice';
@@ -16,12 +17,13 @@ const RequirementsPage = () => {
   const [selectedRequirement, setSelectedRequirement] = useState(null); // State to hold the selected requirement
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [username, setUsername] = useState(''); // State for info modal
+  const [isEdit,setEdit] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // Get location object
   const newUser = location.state?.new_user; // Get new_user from location state
   const dispatch = useDispatch();
   const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
-
+const [editData,setEditData]=useState(selectedRequirement);
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData=JSON.parse(localStorage.getItem('user')).user;
@@ -104,7 +106,7 @@ const RequirementsPage = () => {
       ),
     },
     {
-      title:'Edit',
+      title:'Edit Consumption Unit',
       key:'edit',
       render:(text,record)=>(
         <Button type="primary" onClick={()=>handleEdit(record)}>Edit</Button>
@@ -146,9 +148,14 @@ const RequirementsPage = () => {
   
 
   const handleEdit=(record)=>{
-    console.log();
-    
+    // console.log(record);
+    setEditData(record);
+    setEdit(true);
+    setIsModalVisible(true);
   }
+
+  // console.log(editData);
+  
 
 const handleAddDetails =(record) => {
   // console.log('clicked');
@@ -178,22 +185,30 @@ const handleAddDetails =(record) => {
 
   const showModal = () => {
     setIsModalVisible(true);
+    setEdit(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setSelectedRequirement(null); // Reset selected requirement on cancel
   };
 
   const handleSubmit = async (values) => {
     try {
       // console.log('values',values);
-      
-      // Call the API to add the requirement
       // const response = await consumerrequirementA.addNewRequirement(values);
-      // Dispatch the action to update Redux state
-      dispatch(addNewRequirement(values));
+     if(isEdit){
+      // console.log('user',id);
+      
+      
+      dispatch(updateRequirements({updatedData:values}));
       setIsModalVisible(false);
-      message.success('Requirement added successfully!');
+       message.success('Requirement updated successfully!');
+     } else {
+       dispatch(addNewRequirement(values));
+       setIsModalVisible(false);
+       message.success('Requirement added successfully!');
+     }
     } catch (error) {
       // console.log(error);
       message.error('Failed to add requirement');
@@ -275,11 +290,18 @@ const handleAddDetails =(record) => {
       >
         <p>Hi {username},</p>
        
-        <p>Welcome to the EXG. Please follow these steps to proceed:</p>
+        <p>Welcome to the EXT. Please follow these steps to proceed:</p>
         <ol>
           <li>Add your requirements by clicking the "Add Requirement +" button.</li>
           <li>Fill in the details shown in the form.</li>
-          <li>Use the tooltip option for each field for more information.</li>
+          <li>
+  Use the tooltip [
+  <Tooltip title="More information about this field">
+    <QuestionCircleOutlined />
+  </Tooltip> 
+  ]
+  option for each field for more information.
+</li>
           <li>You can add multiple requirements (demands).</li>
           <li>To continue, select a requirement and click the "Continue" button.</li>
         </ol>
@@ -327,6 +349,7 @@ const handleAddDetails =(record) => {
         open={isModalVisible}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
+        data={editData}
       />
      
     </div>

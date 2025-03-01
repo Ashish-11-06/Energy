@@ -1,19 +1,19 @@
+
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select, message, Tooltip } from 'antd'; // Import Tooltip
+import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select, message, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
-import { addProject } from '../../../Redux/Slices/Generator/portfolioSlice';
-import states from '../../../Data/States';
+import { addProject, updateProject } from '../../../Redux/Slices/Generator/portfolioSlice';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { fetchState } from '../../../Redux/Slices/Consumer/stateSlice';
 
-const AddPortfolioModal = ({ visible, onClose, user }) => {
+const AddPortfolioModal = ({ visible, onClose, user, data }) => {
   const [form] = Form.useForm();
   const [unit, setUnit] = useState('MW');
   const dispatch = useDispatch();
   const { status, error } = useSelector((state) => state.portfolio);
   const [loading, setLoading] = useState(false);
-   const [isState,setIsState]=useState([]);
+  const [isState, setIsState] = useState([]);
 
   useEffect(() => {
     if (status === 'failed' && error) {
@@ -28,43 +28,78 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
       }
       values.user = user.id;
       setLoading(true);
-      dispatch(addProject(values))
-        .unwrap()
-        .then(() => {
-          setLoading(false);
-          form.resetFields();
-          onClose();
-          message.success('Project added successfully!');
-        })
-        .catch((err) => {
-          setLoading(false);
-          message.error(err.message || 'Failed to add project. Please try again.');
-        });
+      if (data) {
+        console.log(values);
+        const id = data?.id;
+        console.log('id', id);
+    
+        const updatedValues = { ...values, id }; // Add data.id to values
+    
+        dispatch(updateProject(updatedValues))
+            .unwrap()
+            .then(() => {
+                setLoading(false);
+                form.resetFields();
+                onClose();
+                message.success('Project updated successfully!');
+            })
+            .catch((err) => {
+                setLoading(false);
+                message.error(err.message || 'Failed to update project. Please try again.');
+            });
+    }
+            else {
+          dispatch(addProject(values))
+          .unwrap()
+          .then(() => {
+            setLoading(false);
+            form.resetFields();
+            onClose();
+            message.success('Project added successfully!');
+          })
+          .catch((err) => {
+            setLoading(false);
+            message.error(err.message || 'Failed to add project. Please try again.');
+          });
+      }
+      
     }).catch((info) => {
       console.log('Validate Failed:', info);
     });
   };
 
-
   useEffect(() => {
     dispatch(fetchState())
       .then(response => {
-        // console.log(response.payload);
-        
         setIsState(response.payload);
-        //console.log(isState);
       })
       .catch(error => {
         console.error("Error fetching states:", error);
       });
   }, [dispatch]);
 
+  useEffect(() => {
+    if (data) {
+      form.setFieldsValue({
+        energy_type: data?.type,
+        state: data.state,
+        connectivity: data.connectivity,
+        total_install_capacity: data.total_install_capacity,
+        available_capacity: data.available_capacity,
+        cod: data.cod ? dayjs(data.cod) : null,
+      });
+      setUnit(data.energy_type === 'ESS' ? 'MWh' : 'MW'); // Set unit based on energy type
+    } else {
+      form.resetFields(); // Reset fields if no data is provided
+    }
+  }, [data, form]);
+
   const disablePastDates = (current) => {
     return current && current < dayjs().endOf('day');
   };
 
   const handleTechnologyChange = (value) => {
-    if (value === 'ess') {
+    if (value === 'ESS') {
       setUnit('MWh');
     } else {
       setUnit('MW');
@@ -83,17 +118,18 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
+            
               label={
                 <span>
                   Technology&nbsp;
                   <Tooltip title="Select the type of energy technology used for the project.">
-                  <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                    <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
               name="energy_type"
               rules={[{ required: true, message: 'Please select type!' }]} >
-              <Select placeholder="Select Type" onChange={handleTechnologyChange}>
+              <Select placeholder="Select Type" onChange={handleTechnologyChange} disabled={data?.type}>
                 <Select.Option value="Solar">Solar</Select.Option>
                 <Select.Option value="Wind">Wind</Select.Option>
                 <Select.Option value="ESS">ESS (Energy Storage System)</Select.Option>
@@ -101,31 +137,29 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
             </Form.Item>
           </Col>
 
-
-
-           <Col span={12}>
-                    <Form.Item
-                       label={
+          <Col span={12}>
+            <Form.Item
+              label={
                 <span>
                   State&nbsp;
                   <Tooltip title="State where the consumption unit is located or operates">
-                  <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                    <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
-                      name="state"
-                      rules={[{ required: true, message: "Please select your state!" }]}
-                    >
-                      
-                      <Select placeholder="Select your state" showSearch>
-                        {isState && isState.map((state, index) => (
-                          <Select.Option key={index} value={state}>
-                            {state}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
+              name="state"
+              rules={[{ required: true, message: "Please select your state!" }]}
+              
+            >
+              <Select placeholder="Select your state" showSearch disabled={data?.state}>
+                {isState && isState.map((state, index) => (
+                  <Select.Option key={index} value={state}>
+                    {state}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
 
           <Col span={12}>
             <Form.Item
@@ -133,7 +167,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
                 <span>
                   Connectivity&nbsp;
                   <Tooltip title="Select the type of connectivity for the project.">
-                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                    <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
@@ -155,7 +189,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
                 <span>
                   Total Install Capacity (in {unit})&nbsp;
                   <Tooltip title="Enter the total installed capacity of the project in megawatts.">
-                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                    <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
@@ -180,7 +214,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
                 <span>
                   Total Available Capacity (in {unit})&nbsp;
                   <Tooltip title="Enter the total available capacity of the project in megawatts.">
-                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                    <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
@@ -207,7 +241,7 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
                 <span>
                   COD (Commercial Operation Date)&nbsp;
                   <Tooltip title="Select the date when the project will start commercial operations.">
-                       <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                    <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>
               }
@@ -222,17 +256,18 @@ const AddPortfolioModal = ({ visible, onClose, user }) => {
         </Row>
 
         <Form.Item>
-          <Button
-            type="primary"
-            onClick={handleSubmit}
-            style={{ width: '100%' }}
-            loading={loading}
-          >
-            Add Entry
-          </Button>
-        </Form.Item>
+  <Button
+    type="primary"
+    onClick={handleSubmit}
+    style={{ width: '100%' }}
+    loading={loading}
+  >
+    {!data ? 'Add Entry' : 'Update Entry'}
+  </Button>
+</Form.Item>
       </Form>
     </Modal>
   );
 };
+
 export default AddPortfolioModal;

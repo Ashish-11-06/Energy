@@ -38,13 +38,10 @@ const TransactionWindow = () => {
   const contentRef = useRef();
   const [socket, setSocket] = useState(null); // Add this line to define the socket variable
   const [messages, setMessages] = useState([]); // Store incoming messages
-  const [currentTime, setCurrentTime] = useState(Date.now()); // Track current time
- 
+
   const location = useLocation();
 
   const navigate = useNavigate();
-  
-  const [deadline, setDeadline] = useState(null);
 
   // const { state } = location;  // this should contain your passed record
 
@@ -53,14 +50,6 @@ const TransactionWindow = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
@@ -84,28 +73,28 @@ const TransactionWindow = () => {
           console.log("newOffers", newOffers);
           setMessages(prevMessages => {
             const updatedMessages = [...prevMessages]; // Start with a copy of the previous messages
-
+        
             // Iterate over the keys in the new offers
             for (const offerKey in newOffers) {
-              if (newOffers.hasOwnProperty(offerKey)) {
-                // Check if the key already exists in any of the existing messages
-                const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
-
-                if (existingMessageIndex !== -1) {
-                  // Update the existing message
-                  updatedMessages[existingMessageIndex][offerKey] = {
-                    ...updatedMessages[existingMessageIndex][offerKey],
-                    ...newOffers[offerKey],
-                  };
-                } else {
-                  // If the key does not exist, you can choose to add it as a new message
-                  updatedMessages.push({ [offerKey]: newOffers[offerKey] });
+                if (newOffers.hasOwnProperty(offerKey)) {
+                    // Check if the key already exists in any of the existing messages
+                    const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
+        
+                    if (existingMessageIndex !== -1) {
+                        // Update the existing message
+                        updatedMessages[existingMessageIndex][offerKey] = {
+                            ...updatedMessages[existingMessageIndex][offerKey],
+                            ...newOffers[offerKey],
+                        };
+                    } else {
+                        // If the key does not exist, you can choose to add it as a new message
+                        updatedMessages.push({ [offerKey]: newOffers[offerKey] });
+                    }
                 }
-              }
             }
-
+        
             return updatedMessages; // Return the updated messages array
-          });
+        });
         }
       } catch (error) {
         console.error("❌ Error parsing message:", error);
@@ -122,7 +111,7 @@ const TransactionWindow = () => {
     };
   }, []);
 
-  // console.log(messages);
+  console.log(messages);
 
   useEffect(() => {
     // Sort IPP data by ascending value of tariff offer
@@ -130,49 +119,34 @@ const TransactionWindow = () => {
     setSortedIppData(sortedData);
   }, []);
 
+  const handleUser = (record) => {
+    if (userCategory === "consumer") {
+      message.success(`Offer sent to IPP ${record.ipp}`);
+    } else {
+      message.success(`Offer accepted of IPP ${record.ipp}`);
+    }
+  };
 
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
   const handleRejectTransaction = () => {
-    
-    const messageToSend = {
-      action: "reject",
-    };
-
-    // Send the message using the sendEvent function
-    sendEvent("rejectOffer", messageToSend);
-
     message.error(`Transaction rejected`);
-    navigate('/transaction-page');
+    navigate('/consumer/transaction-page');
   };
 
   const handleDownloadTransaction = async () => {
-    const input = document.getElementById("transaction-page"); // Ensure the entire page is captured
-    if (!input) {
-      message.error("Error: Unable to capture transaction details.");
-      return;
-    }
-  
-    try {
-      const canvas = await html2canvas(input, { scale: 2, useCORS: true });
-      const imgData = canvas.toDataURL("image/png");
-  
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-  
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save("transaction_details.pdf");
-  
-      message.success("Transaction details downloaded successfully!");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      message.error("Failed to generate PDF.");
-    }
+    const input = contentRef.current;
+    const canvas = await html2canvas(input, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("transaction_details.pdf");
   };
-  
 
   const handleAccept = (key) => {
     message.success("Offer accepted");
@@ -218,29 +192,10 @@ const TransactionWindow = () => {
     setOfferValue(value);
   };
 
-  useEffect(() => {
-    const calculatedDeadline = Date.now() + 60 * 1000; // 1 minute from now
-    setDeadline(calculatedDeadline);
-  }, []); // Runs only once on mount
-
-  const handleAcceptOffer = (msg) => {
-    // Construct the message object
-
-    console.log(msg);
-    const messageToSend = {
-      action: "select_generator",
-      selected_generator_id: msg.generator_id // Assuming msg.id contains the generator ID
-    };
-
-    // Send the message using the sendEvent function
-    sendEvent("acceptOffer", messageToSend);
-
-    // Optionally, you can also show a success message
-    message.success("Offer accepted for generator ID: " + msg.id);
-  };
+  const deadline = Date.now() + 3600 * 1000; // 1 hour from now
 
   return (
-    <div id="transaction-page" style={{ padding: "30px", backgroundColor: "" }}>
+    <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
       <Row gutter={[16, 16]} justify="center">
         <Card
           style={{
@@ -254,17 +209,17 @@ const TransactionWindow = () => {
               Term Sheet Details
             </Title>
             <Row gutter={[16, 16]}>
-              <Col style={{ fontSize: 'larger'}} span={8}><strong>Term of PPA (years) :  {record.t_term_of_ppa}</strong> </Col>
-              <Col style={{ fontSize: 'larger'}} span={8}><strong>Lock-in Period (years) : {record.t_lock_in_period}</strong></Col>
-              <Col style={{ fontSize: 'larger'}} span={8}><strong>Commencement of Supply : {moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</strong></Col>
+              <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
+              <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
+              <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-              <Col style={{ fontSize: 'larger'}} span={8}><strong>Contracted Energy (MW) : {record.t_contracted_energy}</strong></Col>
-              <Col style={{ fontSize: 'larger'}} span={8}><strong>Minimum Supply Obligation (million units) : {record.t_minimum_supply_obligation}</strong></Col>
-              <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security (days) : {record.t_payment_security_day}</strong></Col>
+              <Col span={8}><strong>Contracted Energy (MW): </strong>{record.t_contracted_energy}</Col>
+              <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{record.t_minimum_supply_obligation}</Col>
+              <Col span={8}><strong>Payment Security (days):</strong>{record.t_payment_security_day}</Col>
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-              <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security Type : {record.t_payment_security_type}</strong> </Col>
+              <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
             </Row>
             <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -272,10 +227,7 @@ const TransactionWindow = () => {
                 <Countdown title="Time Remaining" value={deadline} />
               </span>
             </Row>
-            <Row >
-              <Col style={{ fontSize: 'larger',color:'#9a8406'}} span={8}>Open Offer Tariff Value : {record?.offer_tariff ? record.offer_tariff : 0}</Col>
-              </Row>
-            {/* <div style={{ marginTop: "24px" }}>Offers from IPPs:</div> */}
+            <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
           </div>
 
           <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
@@ -289,54 +241,24 @@ const TransactionWindow = () => {
                 messages.map((messageObject, index) => {
                   // Iterate over each key in the messageObject
                   return Object.keys(messageObject).map((msgKey) => {
-                    const msg = messageObject[msgKey]; // Access the message using the key
-
-                    // Validate the message object
-                    if (msg && typeof msg === 'object') {
-                      return (
-
-
-                        <div>
-                          <Card
-                            key={msg.id || index}
-                            style={{
-                              marginBottom: "10px",
-                              // padding: "10px",
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "space-between",
-                              alignItems: "flex-start" // Aligns text to start
-                            }}
-                          >
-                            <div>
-                              <Text strong>IPP ID : <span style={{ fontSize: 'larger'}}> {msg.generator_username}</span> </Text> 
-                              <Text style={{margin: '150px'}} strong>Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406'}}>{msg.updated_tariff} INR/KWh </span></Text> 
-                              <Text strong>Time : <span style={{ fontSize: 'larger'}}>{moment(msg.timestamp).format("hh:mm A")}</span> </Text> 
-                            </div>
-
-
-                          </Card>
-                          <div style={{
-                            width: "98%", display: "flex", justifyContent: "flex-end",
-                            transform: 'translateY(-60px)',
-                            marginTop: "10px"
-                          }}>
-                            {/* Show Accept Offer button only if the deadline has passed */}
-                          {currentTime >= deadline && (
-                            <Button type="primary" onClick={() => handleAcceptOffer(msg)}>
-                              Accept Offer
-                            </Button>
-                          )}
-                          </div>
-                        </div>
-
-                      );
-                    } else {
-                      console.warn("Invalid message format:", messageObject);
-                      return null; // Return null if the message format is invalid
-                    }
+                      const msg = messageObject[msgKey]; // Access the message using the key
+          
+                      // Validate the message object
+                      if (msg && typeof msg === 'object') {
+                          return (
+                              <Card key={msg.id || index} style={{ marginBottom: "10px" }}>
+                                  <Text strong>IPP ID: </Text> {msg.generator_username} <br />
+                                  <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/KWH <br />
+                                  <Text strong>Time: </Text> {moment(msg.timestamp).format("hh:mm A")}
+                                
+                              </Card>
+                          );
+                      } else {
+                          console.warn("Invalid message format:", messageObject);
+                          return null; // Return null if the message format is invalid
+                      }
                   });
-                })
+              })
               )
             )}
           </div>

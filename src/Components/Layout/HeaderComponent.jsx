@@ -3,6 +3,7 @@ import { Button, Tooltip } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
 import { useLocation, Link, useNavigate } from "react-router-dom";
+
 import {
   UserOutlined,
   HomeOutlined,
@@ -21,9 +22,11 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const currentPath = location.pathname;
   const navigate = useNavigate(); // Add useNavigate hook
   let username = ""; // Use let instead of const
-  const subscriptionValidity = JSON.parse(localStorage.getItem("subscriptionPlanValidity"));
+  const subscriptionValidity = JSON.parse(
+    localStorage.getItem("subscriptionPlanValidity")
+  );
   const subscription = subscriptionValidity?.status;
-  const matchingConsumerId = localStorage.getItem('matchingConsumerId');
+  const matchingConsumerId = localStorage.getItem("matchingConsumerId");
   const [matchingConsumer, setMatchingConsumer] = useState("");
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
 
@@ -41,13 +44,16 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   };
 
   const user = getFromLocalStorage("user").user;
+  const user_category =
+    user?.user_category === "Consumer" ? "consumer" : "generator";
+
   if (user && user.company_representative) {
     username = user.company_representative;
   }
 
   const handleProfileClick = () => {
     navigate(
-      (user.user_category === 'Consumer')
+      user.user_category === "Consumer"
         ? "/consumer/profile"
         : "/generator/profile"
     );
@@ -55,7 +61,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
 
   const handleChatClick = () => {
     navigate(
-      (user.user_category === 'Consumer')
+      user.user_category === "Consumer"
         ? "/consumer/chat-page"
         : "/generator/chat-page"
     );
@@ -109,7 +115,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       label: "Update Profile Details",
       icon: <FileTextOutlined />,
       requiresSubscription: subscriptionRequires,
-      requiresMatchingConsumer: matchingConsumer,
+      // requiresMatchingConsumer: matchingConsumer,
     },
     {
       path: "/generator/combination-pattern",
@@ -120,9 +126,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     },
   ];
 
-  const steps = (user.user_category === 'Consumer')
-    ? consumerSteps
-    : generatorSteps;
+  const steps =
+    user.user_category === "Consumer" ? consumerSteps : generatorSteps;
 
   const currentStepIndex = steps.findIndex((step) => step.path === currentPath);
   const showProgress = [
@@ -198,8 +203,12 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
                   {steps.map((step, index) => {
-                    const isDisabled = step.requiresSubscription && step.requiresMatchingConsumer && subscription !== "active";
-                    const isMatchingConsumerMissing = step.requiresMatchingConsumer && matchingConsumer;
+                    const isDisabled =
+                      step.requiresSubscription &&
+                      step.requiresMatchingConsumer &&
+                      subscription !== "active";
+                    const isMatchingConsumerMissing =
+                      step.requiresMatchingConsumer && matchingConsumer;
 
                     return (
                       <div
@@ -207,7 +216,10 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                         key={index}
                         style={{ flex: 1, textAlign: "center" }}
                       >
-                        <span className="icon-label" style={{ fontSize: "10px" }}>
+                        <span
+                          className="icon-label"
+                          style={{ fontSize: "10px" }}
+                        >
                           {step.label}
                         </span>
 
@@ -270,29 +282,51 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
           )}
         </div>
         {/* Profile Icon */}
-        <span>
-          <Tooltip title={username}>
-            <img
-              src={userImage} // User profile image
-              alt="User "
-              style={{
-                position: "absolute",
-                right: 24,
-                top: 18,
-                marginRight: "50px",
-                zIndex: 1001,
-                backgroundColor: "white",
-                cursor: "pointer",
-                height: "30px",
-                padding: "5px",
-                width: "30px",
-                borderRadius: "50%", // Ensures a circular shape
-                objectFit: "cover", // Scales image to fill the circle properly
-                border: "1px solid green",
-              }}
-              onClick={handleProfileClick}
-            />
-          </Tooltip>
+        <span style={{ display: "flex", alignItems: "center" }}>
+          <p
+            style={{
+              position: "absolute",
+              right: 50,
+              top: "1px",
+              marginRight: "50px",
+              marginBottom: "60px",
+              marginLeft: "10px", // Optional: To add some space between the text and chat icon
+            }}
+          >
+            {user_category && username ? (
+              // Show Tooltip with "My Profile" when there's a valid user_category and username
+              <Tooltip title="My Profile" placement="top">
+                <p>
+                  Welcome,  <span onClick={()=> {navigate(`/${user_category}/profile`)}} style={{color:'rgb(154, 132, 6)'}}>{username}</span>
+                </p>
+                {/* <a href={`/${user_category}/profile`}>{username}!</a> */}
+              </Tooltip>
+            ) : (
+              // Show a different message if user_category or username is not available
+              <p>Welcome, Guest!</p>
+            )}
+          </p>
+
+          <img
+            src={userImage} // User profile image
+            alt="User "
+            style={{
+              position: "absolute",
+              right: 12,
+              top: 18,
+              marginRight: "50px",
+              zIndex: 1001,
+              backgroundColor: "white",
+              cursor: "pointer",
+              height: "30px",
+              padding: "5px",
+              width: "30px",
+              borderRadius: "50%", // Ensures a circular shape
+              objectFit: "cover", // Scales image to fill the circle properly
+              border: "1px solid green",
+            }}
+            onClick={handleProfileClick}
+          />
 
           <Tooltip title="Need Assistance?">
             <img
@@ -300,7 +334,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
               alt="Chat"
               style={{
                 position: "absolute",
-                right: 8,
+                right: 6,
                 top: 18,
                 marginRight: "20px",
                 zIndex: 1001,
