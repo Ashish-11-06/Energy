@@ -164,7 +164,7 @@ const DashboardPG = () => {
           <Col span={8}>
             <Typography.Title level={4}>Generator States</Typography.Title>
             <Col span={12} style={{ marginBottom: "20px" }}>
-              <div style={{ width: "100%", height: "100px", margin: "0 auto", justifyContent: 'center', alignItems: 'center', display: 'flex', margin: '0 auto' }}>
+              <div style={{ width: "100%", height: "100px", margin: "0 auto", justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
                 <Doughnut data={doughnutData} options={chartDoughnutOptions} style={{ justifyContent: 'center', alignItems: 'center', display: 'flex', margin: '0 auto' }} />
               </div>
             </Col>

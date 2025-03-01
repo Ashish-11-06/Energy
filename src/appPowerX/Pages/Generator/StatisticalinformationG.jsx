@@ -5,14 +5,15 @@ import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Toolt
 import { useNavigate } from "react-router-dom";
 import { fetchDayAheadData, fetchMCPData, fetchMCVData } from '../../Redux/slices/consumer/dayAheadSlice';
 import { useDispatch } from 'react-redux';
-import './StatisticalInformationG.css';
+// import './DayAhead.css';
+import { fetchAccuracyData } from '../../Redux/slices/consumer/monthAccuracySlice';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
 
 const { Option } = Select;
 
-const StatisticalInformationG = () => {
+const StatisticalinformationG = () => {
   const [tableData, setTableData] = useState([]);
   const navigate = useNavigate(); 
   const [selectedType, setSelectedType] = useState('MCP'); // Default: MCP chart displayed
@@ -26,15 +27,19 @@ const StatisticalInformationG = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await dispatch(fetchDayAheadData());
-        console.log(data.payload);
-        setTableData(Array.isArray(data.payload) ? data.payload : []); // Ensure data is an array
+        const data = await dispatch(fetchAccuracyData());
+        console.log(data.payload.data);
+        setTableData(Array.isArray(data.payload.data) ? data.payload.data : []);
+        // Ensure data is an array
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
   }, [dispatch]);
+
+console.log(tableData);
+
 
   useEffect(() => {
     const fetchMCP = async () => {
@@ -123,36 +128,55 @@ const StatisticalInformationG = () => {
     labels: Array.from({ length: 96 }, (_, i) => i + 1),
     datasets: [
       {
-        label: 'ForeCasted MCP Data',
+        label: 'ForeCasted MCP Data (INR/MWh)',
         data: foreCastedData,
         borderColor: 'green',
         fill: false,
+        yAxisID: 'y1',
       },
       {
-        label: 'Past MCP Data',
+        label: 'Past MCP Data (INR/MWh)',
         data: pastData,
         borderColor: 'orange',
         fill: false,
+        yAxisID: 'y1',
       },
       {
-        label: 'ForeCasted MCV Data',
+        label: 'ForeCasted MCV Data (MWh)',
         data: mcvForeCastedData,
         borderColor: 'blue',
         fill: false,
+        yAxisID: 'y2',
       },
       {
-        label: 'Past MCV Data',
+        label: 'Past MCV Data (MWh)',
         data: mcvPastData,
         borderColor: 'red',
         fill: false,
+        yAxisID: 'y2',
       },
     ],
   };
 
   const columns = [
     { title: 'Details', dataIndex: 'metric', key: 'metric' },
-    { title: 'MCP (INR/MWh)', dataIndex: 'mcp', key: 'mcp' },
-    { title: 'MCV (MWh)', dataIndex: 'mcy', key: 'mcy' },
+    { title: 'MCP', dataIndex: 'mcp', key: 'mcp' },
+    { title: 'MCV', dataIndex: 'mcv', key: 'mcv' },
+  ];
+
+  const dataSource = [
+    {
+      key: '1',
+      metric: 'Accuracy',
+      mcp: tableData.find(item => item.metric === 'MCP')?.accuracy || 'N/A',
+      mcv: tableData.find(item => item.metric === 'MCV')?.accuracy || 'N/A',
+    },
+    {
+      key: '2',
+      metric: 'Errors',
+      mcp: tableData.find(item => item.metric === 'MCP')?.errors || 'N/A',
+      mcv: tableData.find(item => item.metric === 'MCV')?.errors || 'N/A',
+    },
   ];
 
   const handleDay = () => navigate('/px/generator/day-ahead');
@@ -187,7 +211,22 @@ const StatisticalInformationG = () => {
               <Card style={{  backgroundColor: 'white' }}>
                 <h3>MCP Data</h3>
                 <div>
-                  <Line style={{height:'300px'}} data={MCPData} options={{ responsive: true, maintainAspectRatio: false }} />
+                  <Line 
+                    style={{height:'300px'}} 
+                    data={MCPData} 
+                    options={{ 
+                      responsive: true, 
+                      maintainAspectRatio: false,
+                      scales: {
+                        y: {
+                          title: {
+                            display: true,
+                            text: 'MCP (INR/MWh)',
+                          },
+                        },
+                      },
+                    }} 
+                  />
                 </div>
               </Card>
             </Col>
@@ -197,7 +236,22 @@ const StatisticalInformationG = () => {
               <Card style={{  backgroundColor: 'white' }}>
                 <h3>MCV Data</h3>
                 <div >
-                  <Line style={{height:'300px'}} data={MCVData} options={{ responsive: true, maintainAspectRatio: false }} />
+                  <Line 
+                    style={{height:'300px'}} 
+                    data={MCVData} 
+                    options={{ 
+                      responsive: true, 
+                      maintainAspectRatio: false,
+                      scales: {
+                        y: {
+                          title: {
+                            display: true,
+                            text: 'MCV (MWh)',
+                          },
+                        },
+                      },
+                    }} 
+                  />
                 </div>
               </Card>
             </Col>
@@ -207,7 +261,35 @@ const StatisticalInformationG = () => {
               <Card style={{  backgroundColor: 'white' }}>
                 <h3>MCP and MCV Data</h3>
                 <div >
-                  <Line style={{height:'300px'}} data={BothData} options={{ responsive: true, maintainAspectRatio: false }} />
+                  <Line 
+                    style={{height:'300px'}} 
+                    data={BothData} 
+                    options={{ 
+                      responsive: true, 
+                      maintainAspectRatio: false,
+                      scales: {
+                        y1: {
+                          type: 'linear',
+                          position: 'right',
+                          title: {
+                            display: true,
+                            text: 'MCP (INR/MWh)',
+                          },
+                        },
+                        y2: {
+                          type: 'linear',
+                          position: 'left',
+                          title: {
+                            display: true,
+                            text: 'MCV (MWh)',
+                          },
+                          grid: {
+                            drawOnChartArea: false, // only want the grid lines for one axis to show up
+                          },
+                        },
+                      },
+                    }} 
+                  />
                 </div>
               </Card>
             </Col>
@@ -216,7 +298,7 @@ const StatisticalInformationG = () => {
       )}
 
       {/* Table Display */}
-      {/* <Table columns={columns} dataSource={tableData} pagination={false} bordered style={{ marginTop: '20px' }} /> */}
+      <Table columns={columns} dataSource={dataSource} pagination={false} bordered style={{ marginTop: '20px' }} />
 
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>
@@ -233,4 +315,4 @@ const StatisticalInformationG = () => {
   );
 };
 
-export default StatisticalInformationG;
+export default StatisticalinformationG;

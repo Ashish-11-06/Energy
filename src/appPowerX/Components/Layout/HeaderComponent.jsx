@@ -19,6 +19,8 @@ const { Header } = Layout;
 const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const location = useLocation();
   const currentPath = location.pathname;
+  console.log('cc',currentPath);
+  
   const navigate = useNavigate(); // Add useNavigate hook
   let username = ""; // Use let instead of const
   const subscriptionValidity = JSON.parse(localStorage.getItem("subscriptionPlanValidity"));
@@ -26,7 +28,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const matchingConsumerId = localStorage.getItem('matchingConsumerId');
   const [matchingConsumer, setMatchingConsumer] = useState("");
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
-
+// const currentPath=localStorage.getItem('currentPath');
   useEffect(() => {
     setSubscriptionRequires(subscription !== "active");
   }, [subscription]);
@@ -61,82 +63,92 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     );
   };
 
-  const consumerSteps = [
+  const consumerDayAheadSteps = [
     {
-      path: "/consumer/requirement",
-      label: "Consumption Unit",
+      path: "/px/consumer/day-ahead",
+      label: "Forecast Day Ahead",
       icon: <UserOutlined />,
     },
     {
-      path: "/consumer/matching-ipp",
-      label: "Matching IPP",
+      path: "/px/consumer/plan-trade-page",
+      label: "Plan Next Day Trading",
       icon: <HomeOutlined />,
     },
     {
-      path: "/consumer/annual-saving",
-      label: "Annual Saving",
+      path: "/px/consumer/trading",
+      label: "Trade",
       icon: <FileTextOutlined />,
-    },
-    {
-      path: "/consumer/energy-consumption-table",
-      label: "Consumption Table",
-      icon: <BookOutlined />,
-      requiresSubscription: subscriptionRequires,
-      requiresMatchingConsumer: false,
-    },
-    {
-      path: "/consumer/consumption-pattern",
-      label: "Consumption Pattern",
-      icon: <WalletOutlined />,
-      requiresSubscription: true,
-      requiresMatchingConsumer: true,
     },
   ];
 
-  const generatorSteps = [
+  const consumerMonthAheadSteps = [
     {
-      path: "/generator/portfolio",
-      label: "Portfolio",
+      path: "/px/consumer/month-ahead",
+      label: "Forecast Month Ahead",
       icon: <UserOutlined />,
     },
     {
-      path: "/generator/matching-consumer",
-      label: "Matching consumer",
+      path: "/px/consumer/plan-month-trade",
+      label: "Plan Month Trading",
       icon: <HomeOutlined />,
     },
     {
-      path: "/generator/update-profile-details",
-      label: "Update Profile Details",
+      path: "/px/consumer/trading",
+      label: "Trade",
       icon: <FileTextOutlined />,
-      requiresSubscription: subscriptionRequires,
-      requiresMatchingConsumer: matchingConsumer,
+    },
+  ];
+
+  const generatorDayAheadSteps = [
+    {
+      path: "/px/generator/day-ahead",
+      label: "Forecast Day Ahead",
+      icon: <UserOutlined />,
     },
     {
-      path: "/generator/combination-pattern",
-      label: "Optimized Combination",
+      path: "/px/generator/plan-day-trade-page",
+      label: "Plan Next Day Trading",
+      icon: <HomeOutlined />,
+    },
+    {
+      path: "/px/generator/trading",
+      label: "Trade",
       icon: <FileTextOutlined />,
-      requiresSubscription: subscriptionRequires,
-      requiresMatchingConsumer: matchingConsumer,
+    },
+  ];
+
+  const generatorMonthAheadSteps = [
+    {
+      path: "/px/generator/month-ahead",
+      label: "Forecast Month Ahead",
+      icon: <UserOutlined />,
+    },
+    {
+      path: "/px/generator/plan-month-trade-page",
+      label: "Plan Month Trading",
+      icon: <HomeOutlined />,
+    },
+    {
+      path: "/px/generator/trading",
+      label: "Trade",
+      icon: <FileTextOutlined />,
     },
   ];
 
   const steps = (user.user_category === 'Consumer')
-    ? consumerSteps
-    : generatorSteps;
+    ? (currentPath.startsWith("/px/consumer/day-ahead") || currentPath.startsWith("/px/consumer/plan-trade-page") || currentPath.startsWith("/px/consumer/trading"))
+      ? consumerDayAheadSteps
+      : (currentPath.startsWith("/px/consumer/month-ahead") || currentPath.startsWith("/px/consumer/plan-month-trade"))
+      ? consumerMonthAheadSteps
+      : []
+    : (currentPath.startsWith("/px/generator/day-ahead") || currentPath.startsWith("/px/generator/plan-day-trade-page") || currentPath.startsWith("/px/generator/trading"))
+      ? generatorDayAheadSteps
+      : (currentPath.startsWith("/px/generator/month-ahead") || currentPath.startsWith("/px/generator/plan-month-trade-page"))
+      ? generatorMonthAheadSteps
+      : [];
 
   const currentStepIndex = steps.findIndex((step) => step.path === currentPath);
-  const showProgress = [
-    "/consumer/requirement",
-    "/consumer/matching-ipp",
-    "/consumer/annual-saving",
-    "/subscription-plan",
-    "/consumer/energy-consumption-table",
-    "/consumer/consumption-pattern",
-    "/generator/portfolio",
-    "/generator/matching-consumer",
-    "/generator/update-profile-details",
-    "/generator/combination-pattern",
-  ].includes(currentPath);
+  const showProgress = steps.length > 0;
 
   return (
     <Header

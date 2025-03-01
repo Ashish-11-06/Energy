@@ -85,6 +85,7 @@
 
 /* Completed step styling */
 .icon-circle.completed {
+  border-width: 3px;
   border-color: #669800
   ;
   color: #669800

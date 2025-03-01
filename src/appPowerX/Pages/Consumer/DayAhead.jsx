@@ -6,6 +6,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { dayAheadData } from '../../Redux/slices/consumer/dayAheadSlice';
+import { BlockOutlined, AppstoreOutlined, CheckCircleOutlined } from "@ant-design/icons";
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -111,6 +112,13 @@ const DayAhead = () => {
           mode: 'x',
         },
       },
+      title: {
+        display: true,
+        text: 'Day Ahead Market Forecast',
+        font: {
+          size: 18,
+        },
+      },
     },
   };
 
@@ -143,6 +151,11 @@ const DayAhead = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Market Forecast - Day Ahead</h1>
+      {/* <div style={{ display: "flex", gap: "15px", fontSize: "24px", color: "#669800" }}>
+      <BlockOutlined />   
+      <AppstoreOutlined /> 
+      <CheckCircleOutlined /> 
+    </div> */}
       <Card style={{height: '500px', width: '100%'}}>
         <div style={{ height: '500px', width: '100%' }}>
           <Line data={data} options={options} style={{height: '300px', width: 'full',padding:'25px',marginLeft:'100px'}}/>

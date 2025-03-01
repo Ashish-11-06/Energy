@@ -20,6 +20,7 @@ import notification from '../../../assets/notification.png';
 import offerSend from '../../../assets/offerSend.png';
 import notificationImg from '../../../assets/notification.png';
 import portfolio from '../../../assets/portfolio.png';
+import trade from '../../assets/trade.png';
 
 const { Sider } = Layout;
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Radio, Upload, message } from "antd";
+import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Radio, Upload, message, Card } from "antd";
 import { useNavigate } from "react-router-dom";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, DownloadOutlined, DownOutlined } from "@ant-design/icons";
+import * as XLSX from 'xlsx';
 
 const generateTimeLabels = () => {
   const times = [];
@@ -65,24 +66,71 @@ const PlanYourTradePage = () => {
   };
 
   const handleFileUpload = (file) => {
-    message.success(`${file.name} uploaded successfully`);
-    setFileUploaded(true);
-    setAllFieldsFilled(true);
+    const isExcel = file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    if (!isExcel) {
+      message.error("Please upload a valid Excel file.");
+      return false;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+      const updatedData = tableData.map((item, index) => ({
+        ...item,
+        demand: jsonData[index + 1] ? jsonData[index + 1][1] : null,
+      }));
+
+      setTableData(updatedData);
+      setFileUploaded(true);
+      setAllFieldsFilled(true);
+      message.success(`${file.name} uploaded successfully`);
+    };
+    reader.readAsArrayBuffer(file);
     return false; // Prevent automatic upload
   };
 
-  const columns = [
+  const handleDownloadTemplate = () => {
+    const worksheet = XLSX.utils.json_to_sheet(tableData.map(item => ({ Time: item.time, Demand: '' })));
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
+    XLSX.writeFile(workbook, 'trade_template.xlsx');
+  };
+
+  const handleFillBelow = (part) => {
+    const newData = [...tableData];
+    const firstValue = newData[part[0].key].demand;
+    part.forEach((item, index) => {
+      if (index > 0) {
+        newData[item.key].demand = firstValue;
+      }
+    });
+    setTableData(newData);
+  };
+
+  const columns = (part) => [
     {
       title: "Time",
       dataIndex: "time",
       key: "time",
     },
     {
-      title: "Demand",
+      title: (
+        <div>
+          Demand
+          <Button onClick={() => handleFillBelow(part)} style={{ marginLeft: '10px',height:'10px' }} icon={<DownOutlined style={{padding:'5px',height:'10px'}}/>}>
+            
+          </Button>
+        </div>
+      ),
       dataIndex: "demand",
       key: "demand",
       render: (_, record) => (
-        <Input
+          <Input
           value={record.demand}
           onChange={(e) => handleInputChange(e.target.value, record.key)}
         />
@@ -90,15 +138,17 @@ const PlanYourTradePage = () => {
     },
   ];
 
-  const renderTable = (data) => (
-    <Table
-      columns={columns}
-      dataSource={data}
-      pagination={false}
-      bordered
-      size="small"
-      style={{ marginBottom: "20px" }}
-    />
+  const renderTable = (data, partIndex) => (
+    <div>
+      <Table
+        columns={columns(data)}
+        dataSource={data}
+        pagination={false}
+        bordered
+        size="small"
+        style={{ marginBottom: "20px" }}
+      />
+    </div>
   );
 
   const splitData = (data) => {
@@ -119,32 +169,60 @@ const PlanYourTradePage = () => {
     <div style={{ padding: "20px" }}>
       <h1>Plan Your Trade (96 blocks)</h1>
       <Row gutter={16} style={{ marginBottom: "20px" ,marginLeft:'20%', marginRight:'15%'}}>
-        <Col>
+      <Card
+      style={{
+        width: 300,
+        borderRadius: "12px",
+        boxShadow: "4px 4px 12px rgba(0, 0, 0, 0.2)",
+        transform: "translateY(-2px)",
+        transition: "all 0.3s ease-in-out",
+        textAlign:'center'
+      }}
+      
+    >
+      <Col>
         <Tooltip title="Add details manually!" placement="bottom">
           <Button onClick={() => setShowTable(!showTable)}>
-            {showTable ? "Add Details" : "Add Details"}
+            {showTable ? "Add Details +" : "Add Details +"}
           </Button>
-          </Tooltip>
-        </Col>
-        <span style={{marginTop:'10px', fontWeight:'bold',marginLeft:'20px',marginRight:'20px'}}>OR</span>
+        </Tooltip>
+      </Col>
+    </Card>
+        <span style={{marginTop:'30px', fontWeight:'bold',marginLeft:'20px',marginRight:'20px'}}>OR</span>
+        <Card span={10}   style={{
+        width: 300,
+        borderRadius: "12px",
+        boxShadow: "4px 4px 12px rgba(0, 0, 0, 0.2)",
+        transform: "translateY(-2px)",
+        transition: "all 0.3s ease-in-out",
+        textAlign:'center'
+
+      }}>
+      <Row gutter={16} align="middle">
         <Col>
-        <Tooltip title="Upload a bulk file for 96 blocks in a day!" placement="bottom">
-          <Upload beforeUpload={handleFileUpload} showUploadList={false}>
-            <Button icon={<UploadOutlined />}>Upload File</Button>
-          </Upload>
+          <Tooltip title="Download template!" placement="bottom">
+            <Button icon={<DownloadOutlined />} onClick={handleDownloadTemplate} />
           </Tooltip>
         </Col>
+        <Col>
+          <Tooltip title="Upload a bulk file!" placement="bottom">
+            <Upload beforeUpload={handleFileUpload} showUploadList={false}>
+              <Button icon={<UploadOutlined />}>Upload File</Button>
+            </Upload>
+          </Tooltip>
+        </Col>
+      </Row>
+    </Card>
       </Row>
       {showTable && (
         <Form form={form} onFinish={onFinish} layout="vertical">
           <Row gutter={16}>
-            <Col span={4}>{renderTable(part1)}</Col>
-            <Col span={4}>{renderTable(part2)}</Col>
-            <Col span={4}>{renderTable(part3)}</Col>
-            <Col span={4}>{renderTable(part4)}</Col>
-
-            <Col span={4}>{renderTable(part5)}</Col>
-            <Col span={4}>{renderTable(part6)}</Col>
+            <Col span={4}>{renderTable(part1, 1)}</Col>
+            <Col span={4}>{renderTable(part2, 2)}</Col>
+            <Col span={4}>{renderTable(part3, 3)}</Col>
+            <Col span={4}>{renderTable(part4, 4)}</Col>
+            <Col span={4}>{renderTable(part5, 5)}</Col>
+            <Col span={4}>{renderTable(part6, 6)}</Col>
           </Row>
         </Form>
       )}
