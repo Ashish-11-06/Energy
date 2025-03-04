@@ -2,7 +2,7 @@ import axiosInstance from "../../axiosInstance";
 
 const dayAheadApi = {
   dayAheadData: async () => {
-    return axiosInstance.get('/next-day-predictions');
+    return axiosInstance.get('/dayAheadData');
   },
   addDayAheadData: async (dayAheadDemand) => {
     console.log(dayAheadDemand);

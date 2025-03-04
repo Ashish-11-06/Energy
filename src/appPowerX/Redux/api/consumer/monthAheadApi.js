@@ -6,7 +6,7 @@ const monthAheadApi = {
     return axiosInstance.get(`/month-ahead-predictions`, ); 
   },
   getMonthAheadLineData: () => {
-    return axiosInstance.get(`/month-ahead-predictions`, ); 
+    return axiosInstance.get(`/monthAheadLineData`, ); 
   },
   tableMonthData: () => {
     return axiosInstance.get(`/tableMonthData`, ); 

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Card, Col, Typography, Row } from "antd";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
