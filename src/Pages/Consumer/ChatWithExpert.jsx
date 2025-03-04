@@ -125,25 +125,22 @@
 
 // export default ChatWithExpert;
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Input, Button, Row, Col, Card, message } from "antd";
 import { SendOutlined } from "@ant-design/icons";
-import faqData from "../assets/data/faq.json"; // Adjust path as per your folder structure
+import { useMediaQuery } from "react-responsive"; // Import useMediaQuery
+import faqData from "../../faq.json"; // Ensure correct path
 
 const ChatWithExpert = () => {
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState([]);
-  
-  useEffect(() => {
-    setFaqData(faqData); // Directly set JSON data to state
-  }, []);
+  const isMobile = useMediaQuery({ maxWidth: 768 }); // Detect mobile view
 
   const findBestMatch = (userInput) => {
     const lowerCaseInput = userInput.toLowerCase();
-    const foundAnswer = faqData.find(item => 
+    const foundAnswer = faqData.find((item) =>
       lowerCaseInput.includes(item.question.toLowerCase())
     );
-    
     return foundAnswer || null;
   };
 
@@ -259,3 +256,4 @@ const ChatWithExpert = () => {
 };
 
 export default ChatWithExpert;
+

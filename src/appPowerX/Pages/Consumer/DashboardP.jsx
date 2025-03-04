@@ -132,17 +132,17 @@ const DashboardP = () => {
     },
   };
 
-  const barData = {
-    labels: dashboardData?.map((pattern) => pattern.month),
-    datasets: [
-      {
-        label: "Consumption (MWh)",
-        data: dashboardData.map((pattern) => pattern.value),
-        backgroundColor: "#669800",
-        barThickness: 30,
-      },
-    ],
-  };
+  // const barData = {
+  //   labels: dashboardData?.map((pattern) => pattern.month),
+  //   datasets: [
+  //     {
+  //       label: "Consumption (MWh)",
+  //       data: dashboardData.map((pattern) => pattern.value),
+  //       backgroundColor: "#669800",
+  //       barThickness: 30,
+  //     },
+  //   ],
+  // };
 
   const barOptions = {
     responsive: true,
