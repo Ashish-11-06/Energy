@@ -50,17 +50,17 @@ const CurrentPath = () => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem('user'))?.user || null;
   //  console.log(requirementId);
- const userId=user?.id;
+  const userId = user?.id;
 
 
   useEffect(() => {
-    const path=location.pathname;
+    const path = location.pathname;
     console.log("Current Path:", location.pathname);
-    const data={
-      last_visited_page:path,
-      user_id:userId
+    const data = {
+      last_visited_page: path,
+      user_id: userId
     }
-    const response=dispatch(lastVisitedPage(data));
+    const response = dispatch(lastVisitedPage(data));
     // console.log(response);
   }, [location]);
   return null; // This component does not need to render anything
@@ -78,12 +78,12 @@ function App() {
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
         <Route path="email/:token" element={<EmailVerification />} />
-          <Route path="what-we-offer" element={<WhatWeOffer />} />
+        <Route path="what-we-offer" element={<WhatWeOffer />} />
 
 
 
         {/* Routes with shared layout */}
-          <Route path="what-we-offer" element={<WhatWeOffer />} />
+        <Route path="what-we-offer" element={<WhatWeOffer />} />
         <Route element={<LayoutComponent />}>
           <Route path="offers" element={<OfferRecieved />} />
           <Route path="transaction-page" element={<TransactionMainPage />} />
@@ -133,6 +133,15 @@ function App() {
             <Route path="status" element={<StatusApproval />} />
           </Route>
         </Route>
+
+
+
+        {/* PowerX routes*/}
+        {/* <Route element={<pLayoutComponent />}> */}
+        <Route path="/px/*">
+          <Route path="dashboard" element={<DashboardG />} />
+        </Route>
+        {/* </Route> */}
       </Routes>
     </Router>
   );

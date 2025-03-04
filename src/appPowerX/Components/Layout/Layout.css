@@ -1,0 +1,10 @@
+.sider-desktop {
+    display: none;
+  }
+  
+  @media (min-width: 992px) {
+    .sider-desktop {
+      display: block;
+    }
+  }
+  
