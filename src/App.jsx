@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import  { useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch } from "react-redux";
@@ -14,7 +14,7 @@ import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
 import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
 import GenerationPortfolio from './Pages/Generator/GeneratorPortfolio';
 import MatchingConsumerPage from './Pages/Generator/MatchingConsumerPage';
-import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
+// import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
 import DashboardG from './Pages/Generator/Dashboard';
 import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
 import LoginC from './Pages/Consumer/LoginC';
@@ -37,7 +37,7 @@ import NotificationGenerator from './Pages/Generator/NotificationGenerator';
 import CombinationPattern from './Pages/Generator/CombinationPattern';
 import TransactionWindow from './Pages/Consumer/TransactionWindow';
 import TransactionMainPage from './Pages/Consumer/TransactionMainPage';
-import TransactionMainPageGen from './Pages/Generator/TransactionMainPageGen';
+// import TransactionMainPageGen from './Pages/Generator/TransactionMainPageGen';
 import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
 import RequirementsPage from './Pages/Consumer/RequirementPage';
 import InvoicePage from './Pages/InvoicePage';
@@ -57,7 +57,7 @@ import Trading from './appPowerX/Pages/Consumer/Trading';
 import DashboardPG from './appPowerX/Pages/Generator/Dashboard';
 import DayAheadG from './appPowerX/Pages/Generator/DayAheadG';
 import MonthAheadG from './appPowerX/Pages/Generator/MonthAheadG';
-import PlanYourTradePageG from './appPowerX/Pages/Generator/PlanYourMonthTradePageG';
+// import PlanYourTradePageG from './appPowerX/Pages/Generator/PlanYourMonthTradePageG';
 import StatisticalInformationG from './appPowerX/Pages/Generator/StatisticalinformationG';
 import PlanningG from './appPowerX/Pages/Generator/Planning';
 import TradingG from './appPowerX/Pages/Generator/TradingG';
@@ -90,7 +90,7 @@ const CurrentPath = () => {
       user_id: userId
     }
     const response = dispatch(lastVisitedPage(data));
-    // console.log(response);
+    console.log(response);
   }, [location]);
   return null; // This component does not need to render anything
 };

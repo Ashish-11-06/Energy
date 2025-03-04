@@ -1,4 +1,5 @@
-import  { useState, useEffect } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Radio, Upload, message, Card } from "antd";
 import { useNavigate } from "react-router-dom";
 import { UploadOutlined, DownloadOutlined, DownOutlined } from "@ant-design/icons";
@@ -35,7 +36,7 @@ const PlanYourTradePage = () => {
     }))
   );
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
-  // const [fileUploaded, setFileUploaded] = useState(false);
+  const [fileUploaded, setFileUploaded] = useState(false);
   const [showTable, setShowTable] = useState(false);
 
   const handleContinue = () => {
@@ -46,9 +47,9 @@ const PlanYourTradePage = () => {
     console.log("Received values of form: ", values);
   };
 
-  // const handleChange = (value) => {
-  //   setSelectedTechnology(value);
-  // };
+  const handleChange = (value) => {
+    setSelectedTechnology(value);
+  };
 
   const handleInputChange = (value, key) => {
     const newData = [...tableData];
@@ -129,7 +130,7 @@ const PlanYourTradePage = () => {
       }));
 
       setTableData(updatedData);
-      // setFileUploaded(true);
+      setFileUploaded(true);
       setAllFieldsFilled(true);
       message.success(`${file.name} uploaded successfully`);
     };
@@ -181,7 +182,7 @@ const PlanYourTradePage = () => {
     },
   ];
 
-  const renderTable = (data) => (
+  const renderTable = (data, partIndex) => (
     <div>
       <Table
         columns={columns(data)}
@@ -293,7 +294,7 @@ const PlanYourTradePage = () => {
       >
         <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
           <Radio value="Solar">Solar</Radio>
-          <Radio value="Wind">Wind</Radio>
+          <Radio value="Non-Solar">Non-Solar</Radio>
           <Radio value="Hydro">Hydro</Radio>
         </Radio.Group>
       </Modal>
