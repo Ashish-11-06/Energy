@@ -66,15 +66,15 @@ const CombinationPattern = () => {
       return;
     }
 
-    useEffect(() => {
-      if(!isTableLoading){
-        window.scrollTo({
-          top: document.body.scrollHeight,
-          behavior: "smooth",
-        });
-        // console.log('scrolled');
-      }
-    }, [isTableLoading, setIsTableLoading]);
+    // useEffect(() => {
+    //   if(!isTableLoading){
+    //     window.scrollTo({
+    //       top: document.body.scrollHeight,
+    //       behavior: "smooth",
+    //     });
+    //     // console.log('scrolled');
+    //   }
+    // }, [isTableLoading, setIsTableLoading]);
 
 
     const formattedCombinations = Object.entries(combinations).map(
@@ -156,22 +156,57 @@ const CombinationPattern = () => {
     (state) => state.optimizedCapacity.status
   );
 
-  // console.log('comn', combinationData);
+  // console.log('comn', combinationData);klklkl
 
-  useEffect(() => {
-    const fetchPatterns = async () => {
-      try {
-        if (
-          (!consumptionPatterns.length &&
-            consumptionPatternStatus === "idle") ||
-          consumptionPatternStatus === "failed"
-        ) {
-          await dispatch(fetchConsumptionPattern(selectedDemandId));
-        }
-      } catch (error) {
-        message.error("Failed to fetch consumption patterns.");
-      }
+  const increaseValue = () => {
+      setSliderValue((prev) => Math.min(prev + 1, 100)); // Increase by 5, max 100
     };
+  
+    const decreaseValue = () => {
+      setSliderValue((prev) => Math.max(prev - 1, 0)); // Decrease by 5, min 0
+    };
+  
+    useEffect(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }, [isTableLoading, setIsTableLoading]);
+  
+
+  // useEffect(() => {
+  //   const fetchPatterns = async () => {
+  //     try {
+  //       if (
+  //         (!consumptionPatterns.length &&
+  //           consumptionPatternStatus === "idle") ||
+  //         consumptionPatternStatus === "failed"
+  //       ) {
+  //         await dispatch(fetchConsumptionPattern(selectedDemandId));
+  //       }
+  //     } catch (error) {
+  //       message.error("Failed to fetch consumption patterns.");
+  //     }
+  //   };
+  
+  useEffect(() => {
+      const fetchPatterns = async () => {
+        try {
+          if (
+            (!consumptionPatterns.length &&
+              consumptionPatternStatus === "idle") ||
+            consumptionPatternStatus === "failed"
+          ) {
+            const response = await dispatch(
+              fetchConsumptionPattern(selectedDemandId)
+            );
+            console.log(response);
+            console.log(selectedDemandId);
+          }
+        } catch (error) {
+          message.error("Failed to fetch consumption patterns.");
+        }
+      };
 
     const loadCombinations = async () => {
       try {
@@ -180,7 +215,7 @@ const CombinationPattern = () => {
         setProgress(0); // Reset progress when starting a new fetch
 
         const modalData = {
-          requirement_id: selectedDemandId,
+          requirement_id: +selectedDemandId,
           optimize_capacity_user: user.user_category,
           user_id: user.id,
         };
@@ -217,7 +252,10 @@ const CombinationPattern = () => {
           }
         );
 
-       
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
       } catch (error) {
         console.error("Error in loadCombinations:", error);
         message.error("Failed to fetch combinations.");

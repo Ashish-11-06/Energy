@@ -128,19 +128,20 @@
 import React, { useState } from "react";
 import { Input, Button, Row, Col, Card, message } from "antd";
 import { SendOutlined } from "@ant-design/icons";
-import { useMediaQuery } from "react-responsive"; // Import useMediaQuery
-import faqData from "../../faq.json"; // Ensure correct path
+import { useMediaQuery } from "react-responsive";
+import faqData from "../../faq.json"; // Correctly imported JSON
 
 const ChatWithExpert = () => {
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState([]);
-  const isMobile = useMediaQuery({ maxWidth: 768 }); // Detect mobile view
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const findBestMatch = (userInput) => {
     const lowerCaseInput = userInput.toLowerCase();
     const foundAnswer = faqData.find((item) =>
       lowerCaseInput.includes(item.question.toLowerCase())
     );
+
     return foundAnswer || null;
   };
 
@@ -149,23 +150,59 @@ const ChatWithExpert = () => {
       message.error("Please enter a message!");
       return;
     }
-
+  
     const userMessage = { from: "user", text: messageInput };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
-
-    const foundAnswer = findBestMatch(messageInput);
-
-    const replyMessage = foundAnswer
-      ? { from: "system", text: foundAnswer.answer }
-      : { from: "system", text: "I'm not sure. Please try rewording your question." };
-
-    setTimeout(() => {
-      setMessages((prevMessages) => [...prevMessages, replyMessage]);
-    }, 500);
-
+  
+    const greetings = ["hi", "hello", "hey", "good morning", "good afternoon", "good evening"];
+    const exitMessages = ["bye", "exit", "goodbye", "see you", "quit"];
+  
+    const lowerCaseInput = messageInput.toLowerCase();
+  
+    if (greetings.some((greeting) => lowerCaseInput.includes(greeting))) {
+      setTimeout(() => {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { from: "system", text: "Hello! 😊 How can I assist you today?" },
+        ]);
+      }, 500);
+    } else if (exitMessages.some((exit) => lowerCaseInput.includes(exit))) {
+      setTimeout(() => {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { from: "system", text: "Thank you! Have a great day! 👋" },
+        ]);
+        setTimeout(() => {
+          window.history.back(); // Navigate back to the last visited page
+        }, 1000);
+      }, 500);
+    } else {
+      const foundAnswer = findBestMatch(messageInput);
+      
+      const replyMessage = foundAnswer
+        ? { from: "system", text: foundAnswer.answer }
+        : { 
+            from: "system", 
+            text: "I appreciate your question! 🤔 However, I don't have an exact answer for that. Could you try rewording it, or let me know how I can better assist you?" 
+          };
+  
+      setTimeout(() => {
+        setMessages((prevMessages) => [...prevMessages, replyMessage]);
+      }, 500);
+    }
+  
     setMessageInput("");
   };
-
+  
+  // Function to handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
+  };
+  
+  
+  
   return (
     <Row gutter={[16, 16]}>
       <Col span={isMobile ? 24 : 16} offset={isMobile ? 0 : 4}>
@@ -226,6 +263,7 @@ const ChatWithExpert = () => {
             <Input
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Type your message..."
               style={{
                 flex: 1,

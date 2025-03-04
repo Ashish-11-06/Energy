@@ -13,9 +13,10 @@ const TransactionMainPage = () => {
   const [transactions, setTransactions] = useState([]);
   const [RequirementContent, setRequirementContent] = useState(null);
   const [isRequirementModalVisible, setIsRequirementModalVisible] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-const [modalContent, setModalContent] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isRejected, setIsRejected] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -60,6 +61,9 @@ const [modalContent, setModalContent] = useState(null);
       try {
         const response = await dispatch(fetchTransactions(userId)).unwrap();
         setTransactions(response);
+        console.log("Transactions fetched successfully:", response);
+        if (response.some((transaction) => transaction.tariff_status === "reject")) {
+          setIsRejected(true);}
       } catch (error) {
         console.error("Error fetching transactions:", error);
       }
@@ -123,7 +127,7 @@ const [modalContent, setModalContent] = useState(null);
       render: (_, record) => (
         
         <>
-  <Button 
+  {/* <Button 
     type="primary" 
     style={{ backgroundColor: "#669800", borderColor: "#669800", width: "150px" }} 
     onClick={() => {
@@ -136,7 +140,32 @@ const [modalContent, setModalContent] = useState(null);
     }}
   >
   Open Window
-  </Button>
+  </Button> */}
+  <Button 
+  type="primary" 
+  style={{ 
+    backgroundColor: isRejected ? "#ccc" : "#669800", 
+    borderColor: isRejected ? "#ccc" : "#669800", 
+    width: "150px",
+    cursor: isRejected ? "not-allowed" : "pointer"
+  }} 
+  onClick={() => {
+    if (isRejected) return; // Prevent navigation if rejected
+
+    const user = JSON.parse(localStorage.getItem("user")).user;
+    const path = user.user_category === "Generator"
+      ? "/generator/transaction-window"
+      : "/consumer/transaction-window";
+  
+    navigate(path, { state: record });
+  }}
+  disabled={isRejected}
+>
+  Open Window
+</Button>
+
+{isRejected && <p style={{ color: "red", marginTop: "10px" }}>You have rejected this window.</p>}
+
   <br /><br />
 
   <Button 

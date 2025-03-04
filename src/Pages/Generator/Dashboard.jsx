@@ -293,7 +293,7 @@ const Dashboard = () => {
                           </div>
                         }
                         trigger="hover" // Show popover on hover
-                        placement="top" // Adjust position if needed
+                        placement="right" // Adjust position if needed
                       >
                         <span style={{ cursor: "pointer" }}>{value}</span>
                       </Popover>
