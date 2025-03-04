@@ -133,7 +133,7 @@ const DashboardP = () => {
   };
 
   const barData = {
-    labels: dashboardData.map((pattern) => pattern.month),
+    labels: dashboardData?.map((pattern) => pattern.month),
     datasets: [
       {
         label: "Consumption (MWh)",

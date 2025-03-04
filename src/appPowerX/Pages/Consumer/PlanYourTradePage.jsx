@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Radio, Upload, message, Card } from "antd";
 import { useNavigate } from "react-router-dom";
 import { UploadOutlined, DownloadOutlined, DownOutlined } from "@ant-design/icons";
 import * as XLSX from 'xlsx';
+import { useDispatch } from 'react-redux';
+import { addDayAheadData } from "../../Redux/slices/consumer/dayAheadSlice";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -20,6 +22,10 @@ const PlanYourTradePage = () => {
   const [form] = Form.useForm();
   const [selectedTechnology, setSelectedTechnology] = useState("Solar");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem('user')).user;
+  const user_id = user.id;
+  
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [tableData, setTableData] = useState(
     generateTimeLabels().map((time, index) => ({
@@ -29,7 +35,7 @@ const PlanYourTradePage = () => {
     }))
   );
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
-  const [fileUploaded, setFileUploaded] = useState(false);
+  // const [fileUploaded, setFileUploaded] = useState(false);
   const [showTable, setShowTable] = useState(false);
 
   const handleContinue = () => {
@@ -40,9 +46,9 @@ const PlanYourTradePage = () => {
     console.log("Received values of form: ", values);
   };
 
-  const handleChange = (value) => {
-    setSelectedTechnology(value);
-  };
+  // const handleChange = (value) => {
+  //   setSelectedTechnology(value);
+  // };
 
   const handleInputChange = (value, key) => {
     const newData = [...tableData];
@@ -58,11 +64,48 @@ const PlanYourTradePage = () => {
     setAllFieldsFilled(allFilled);
   }, [tableData]);
 
-  const handleModalOk = () => {
-    localStorage.setItem("tradeData", JSON.stringify(tableData));
-    localStorage.setItem("selectedTechnology", selectedTechnology);
-    localStorage.setItem("navigationSource", "PlanYourTradePage");
-    navigate('/px/consumer/trading');
+  const handleModalOk = async () => {
+    try {
+      const dayAheadDemand = {
+        consumer: user_id,
+        energy_type: selectedTechnology,
+        demand_data: tableData.map(item => {
+          let [hours, minutes] = item.time.split(":").map(Number); // Convert time to hours and minutes
+          minutes += 15; // Add 15 minutes
+      
+          if (minutes >= 60) {
+            hours += 1;
+            minutes -= 60;
+          }
+      
+          // Ensure hours do not exceed 23 (Reset to 00:00 if it becomes 24:00)
+          if (hours >= 24) {
+            hours = 0;
+          }
+      
+          let end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`; // Format time
+      
+          return {
+            start_time: item.time,
+            end_time: end_time,
+            demand: item.demand
+          };
+        })
+      };
+      
+      console.log(dayAheadDemand);
+      
+      const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+      console.log('res', res);
+      setIsModalVisible(false);
+      localStorage.setItem("tradeData", JSON.stringify(tableData));
+      localStorage.setItem("selectedTechnology", selectedTechnology);
+      localStorage.setItem("navigationSource", "PlanYourTradePage");
+      navigate('/px/consumer/trading');
+    } catch (error) {
+      console.log(error);
+      message.error("Failed to submit data. Please try again.");
+    }
   };
 
   const handleFileUpload = (file) => {
@@ -86,7 +129,7 @@ const PlanYourTradePage = () => {
       }));
 
       setTableData(updatedData);
-      setFileUploaded(true);
+      // setFileUploaded(true);
       setAllFieldsFilled(true);
       message.success(`${file.name} uploaded successfully`);
     };
@@ -138,7 +181,7 @@ const PlanYourTradePage = () => {
     },
   ];
 
-  const renderTable = (data, partIndex) => (
+  const renderTable = (data) => (
     <div>
       <Table
         columns={columns(data)}
@@ -250,7 +293,7 @@ const PlanYourTradePage = () => {
       >
         <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
           <Radio value="Solar">Solar</Radio>
-          <Radio value="Non-Solar">Non-Solar</Radio>
+          <Radio value="Wind">Wind</Radio>
           <Radio value="Hydro">Hydro</Radio>
         </Radio.Group>
       </Modal>

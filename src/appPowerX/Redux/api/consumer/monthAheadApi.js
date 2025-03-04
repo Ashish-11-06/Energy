@@ -3,10 +3,10 @@ import axiosInstance from "../../axiosInstance";
 
 const monthAheadApi = {
   getmonthAhead: () => {
-    return axiosInstance.get(`/monthAheadData`, ); 
+    return axiosInstance.get(`/month-ahead-predictions`, ); 
   },
   getMonthAheadLineData: () => {
-    return axiosInstance.get(`/monthAheadLineData`, ); 
+    return axiosInstance.get(`/month-ahead-predictions`, ); 
   },
   tableMonthData: () => {
     return axiosInstance.get(`/tableMonthData`, ); 

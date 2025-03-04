@@ -5,7 +5,7 @@ const notificationApi = {
     console.log(userId);
     console.log("User ID:", userId, typeof userId);
     const id = Number(userId); 
-    return axiosInstance.get(`/notifications?id=${id}`);
+    return axiosInstance.get(`/notifications/${id}`);
 },
   updateNotification: (data) => {
     return axiosInstance.patch(`/notification`, data); // Correct the endpoint

@@ -4,14 +4,32 @@ import dayAheadApi from "../../api/consumer/dayAhead";
 // Async thunk for fetching data
 export const fetchDayAheadData = createAsyncThunk(
   "dayAheadData/fetchDayAheadData",
-  async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
+  async (dayAheadDemand, { rejectWithValue }) => { // Correctly pass rejectWithValue here
+    console.log('ddd',dayAheadDemand);
+    
     try {
-      const response = await dayAheadApi.getDayAhead();
-      if (response.status === 200 && response.data) {
+      const response = await dayAheadApi.getDayAhead(dayAheadDemand);
+      if (response.status === 201 && response.data) {
         return response.data; // Ensure response contains valid data
       }
       throw new Error("Invalid response from server");
     } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+export const addDayAheadData = createAsyncThunk(
+  "dayAheadData/addDayAheadData",
+  async (dayAheadDemand, { rejectWithValue }) => { // Correctly pass rejectWithValue here
+    try {
+      const response = await dayAheadApi.addDayAheadData(dayAheadDemand);
+      if (response.status === 200 && response.data) {
+        return response.data; // Ensure response contains valid data
+      }
+      // throw new Error("Invalid response from server");
+    } catch (error) {
+      console.log('err',error.message);
+      
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
@@ -22,6 +40,8 @@ export const dayAheadData = createAsyncThunk(
   async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
     try {
       const response = await dayAheadApi.dayAheadData();
+      console.log('res',response);
+      
       if (response.status === 200 && response.data) {
         return response.data; // Ensure response contains valid data
       }
@@ -119,6 +139,18 @@ const dayAheadSlice = createSlice({
         state.mcpData = action.payload;
       })
       .addCase(fetchMCPData.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || "Failed to fetch data";
+      })
+      .addCase(addDayAheadData.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(addDayAheadData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.dayAheadData = action.payload;
+      })
+      .addCase(addDayAheadData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Failed to fetch data";
       });

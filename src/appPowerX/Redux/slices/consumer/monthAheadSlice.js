@@ -7,6 +7,8 @@ export const fetchMonthAheadData = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await monthAheadApi.getmonthAhead();
+      console.log('rrrrr',response);
+      
       if (response.status === 200 && response.data) {
         return response.data;
       }

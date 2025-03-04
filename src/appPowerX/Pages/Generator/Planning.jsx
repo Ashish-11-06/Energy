@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, Calendar, Card, Row, Col, Tooltip, Button } from 'antd';
 import 'antd/dist/reset.css'; // Import Ant Design styles
-import moment from 'moment';
+// import moment from 'moment';
 import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
 import { useDispatch } from 'react-redux';
 import './Planning.css'; // Import custom CSS for calendar styling
@@ -25,14 +25,14 @@ const columns = [
 ];
 
 const Planning = () => {
-  const [selectedDate, setSelectedDate] = useState(null);
+  // const [selectedDate, setSelectedDate] = useState(null);
   const [showTable, setShowTable] = useState(false);
   const [tableDemandData, setTableDemandData] = useState([]);
   const dispatch = useDispatch();
 
-  const onSelect = (date) => {
-    setSelectedDate(date);
-  };
+  // const onSelect = (date) => {
+  //   setSelectedDate(date);
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,7 +82,7 @@ const Planning = () => {
               <Calendar
                 style={{ height: 'full' }}
                 fullscreen={false}
-                onSelect={onSelect}
+                // onSelect={onSelect}
                 dateCellRender={dateCellRender}
                 className="custom-calendar"
                 bordered
