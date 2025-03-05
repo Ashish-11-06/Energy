@@ -95,8 +95,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       icon: <HomeOutlined />,
     },
     {
-      path: "/px/consumer/trading",
-      label: "Trade",
+      path: "/px/consumer/planning",
+      label: "Plan Your Trade",
       icon: <FileTextOutlined />,
     },
   ];

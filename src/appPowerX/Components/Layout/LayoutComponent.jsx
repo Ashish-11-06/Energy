@@ -1,10 +1,12 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Layout } from 'antd';
 import Sidebar from './Sidebar';
 import DrawerMenu from './DrawerMenu';
 import HeaderComponent from './HeaderComponent';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import MainHeader from './MainHeader';
+import { FaRobot } from 'react-icons/fa';
 
 const { Header, Content } = Layout;
 
@@ -12,7 +14,20 @@ const LayoutComponent = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
+  const user = JSON.parse(localStorage.getItem("user"))?.user || null;
+const navigate=useNavigate();
 
+  const isChatPage =
+  location.pathname === "/px/consumer/chat-page" ||
+  location.pathname === "/px/generator/chat-page";
+
+  const handleChatClick = () => {
+    navigate(
+      user.user_category === "Consumer"
+        ? "/px/chat-page"
+        : "/px/chat-page"
+    );
+  };
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 992);
@@ -85,6 +100,34 @@ const LayoutComponent = () => {
         <Content style={{  }}>
           <Outlet />
         </Content>
+          {user && !isChatPage && (
+                  <div
+                    style={{
+                      position: "fixed",
+                      bottom: "20px",
+                      right: "20px",
+                      zIndex: 1000,
+                    }}
+                  >
+                    <button
+                      onClick={handleChatClick}
+                      style={{
+                        color: "#FFFFFF",
+                        border: "none",
+                        borderRadius: "50px",
+                        padding: "12px 18px",
+                        fontSize: "16px",
+                        display: "flex",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
+                      }}
+                    >
+                      <FaRobot style={{ fontSize: "24px", marginRight: "8px" }} />
+                      <span>Need Assistance?</span>
+                    </button>
+                  </div>
+                )}
       </Layout>
     </Layout>
   );

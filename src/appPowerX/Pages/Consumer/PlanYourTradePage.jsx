@@ -1,8 +1,9 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Checkbox, Upload, message, Card, Select } from "antd";
 import { useNavigate } from "react-router-dom";
-import { UploadOutlined, DownloadOutlined, DownOutlined } from "@ant-design/icons";
+import { UploadOutlined, DownloadOutlined, DownOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import * as XLSX from 'xlsx';
 import { useDispatch } from 'react-redux';
 import { addDayAheadData } from "../../Redux/slices/consumer/dayAheadSlice";
@@ -24,12 +25,17 @@ const PlanYourTradePage = () => {
   const [form] = Form.useForm();
   const [selectedTechnology, setSelectedTechnology] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState(null);
-  const [price, setPrice] = useState(null);
+  const [price, setPrice] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem('user')).user;
   const user_id = user.id;
-  
+  const is_new_user = user?.is_new_user;
+console.log(user);
+const username=user?.company_representative;
+
+
+  const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [consumerRequirement, setConsumerRequirement] = useState(null);
   const [tableData, setTableData] = useState(
@@ -55,6 +61,19 @@ const PlanYourTradePage = () => {
     setSelectedTechnology(value);
   };
 
+  useEffect(() => {
+    if (is_new_user) {
+      setIsInfoModalVisible(true);
+    }
+  }, [is_new_user]);
+
+  const handleInfoModalOk = () => {
+    setIsInfoModalVisible(false);
+  };
+
+  const showInfoModal = () => {
+    setIsInfoModalVisible(true);
+  };
   const handleInputChange = (value, key) => {
     const newData = [...tableData];
     const index = newData.findIndex((item) => key === item.key);
@@ -106,7 +125,11 @@ useEffect(()=>{
             end_time: end_time,
             demand: item.demand
           };
-        })
+        }),
+        price: selectedTechnology.reduce((acc, tech) => {
+          acc[tech] = price[tech];
+          return acc;
+        }, {})
       };
       
       console.log(dayAheadDemand);
@@ -117,7 +140,7 @@ useEffect(()=>{
       // localStorage.setItem("tradeData", JSON.stringify(tableData));
       // localStorage.setItem("selectedTechnology", selectedTechnology);
       // localStorage.setItem("navigationSource", "PlanYourTradePage");
-      navigate('/px/consumer/planning');
+      navigate('/px/consumer/trading');
     } catch (error) {
       console.log(error);
       message.error("Failed to submit data. Please try again.");
@@ -330,7 +353,7 @@ useEffect(()=>{
             htmlType="submit"
             style={{ marginLeft: "85%" }}
             onClick={handleContinue}
-            disabled={!allFieldsFilled}
+            // disabled={!allFieldsFilled}
           >
             Continue
           </Button>
@@ -349,22 +372,66 @@ useEffect(()=>{
     {/* <Checkbox value="Hydro">Hydro</Checkbox> */}
   </Checkbox.Group>
 
-  {/* Input field for price */}
+
+  {/* Input fields for price */}
   <div style={{ marginTop: "15px" }}>
-    <label style={{ fontWeight: "bold" }}>Enter Price:</label>
-    <Input
-      type="number"
-      placeholder="Enter price"
-      value={price}
-      min={0}
-      onChange={(e) => setPrice(e.target.value)}
-      style={{ marginTop: "5px", width: "100%" }}
-    />
+    {selectedTechnology.includes("Solar") && (
+      <div>
+        <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
+        <Input
+          type="number"
+          placeholder="Enter solar price in INR"
+          value={price["Solar"] || ""}
+          min={0}
+          onChange={(e) => setPrice({ ...price, Solar: e.target.value })}
+          style={{ marginTop: "5px", width: "100%" }}
+        />
+      </div>
+    )}
+    {selectedTechnology.includes("Non-Solar") && (
+      <div>
+        <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
+        <Input
+          type="number"
+          placeholder="Enter non-solar price in INR"
+          value={price["Non-Solar"] || ""}
+          min={0}
+          onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
+          style={{ marginTop: "5px", width: "100%" }}
+        />
+      </div>
+    )}
   </div>
       </Modal>
-
+      <Modal
+        title="Welcome"
+        open={isInfoModalVisible}
+        onOk={handleInfoModalOk}
+        onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
+        okText="Got it"
+        footer={[
+          <Button key="submit" type="primary" onClick={handleInfoModalOk}>
+            Got it
+          </Button>,
+        ]}
+      >
+        <p>Hi {username},</p>
+       
+        <p>Welcome to the powerX. Please follow these steps to proceed:</p>
+        <ol>
+          <li>Select the consumption unit </li>
+          <li>Add your requirements by clicking the "Add Details +" button or Download template, fill  it and upload the document</li>
+          <li>Click on continue button</li>
+          <li>Select the technology and enter the price</li>
+          <li>Click on 'Ok' to proceed</li>
+      
+        </ol>
+        <p>Thank you!</p>
+      </Modal>
     </div>
+    
   );
+  
 };
 
 export default PlanYourTradePage;

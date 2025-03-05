@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { Card, Col, Typography, Row } from "antd";
 import { Bar } from "react-chartjs-2";

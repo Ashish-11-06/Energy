@@ -143,7 +143,7 @@ console.log(tableDemandData);
     localStorage.setItem("monthTradeData", JSON.stringify(demandData));
     localStorage.setItem("selectedMonth", selectedMonth);
     localStorage.setItem("navigationSource", "PlanMonthTrading");
-    navigate('/px/consumer/trading');
+    navigate('/px/consumer/planning');
   };
 
   const columnsMonth = [

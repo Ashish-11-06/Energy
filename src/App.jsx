@@ -197,6 +197,7 @@ function App() {
         <Route path="plan-day-trade-page" element={<PlanDayTradePage />} />
         <Route path="statistical-information" element={<StatisticalInformationG />} />
         <Route path="statistical-day-information" element={<DayStatisticsInformation />} />
+        {/* <Route path="statistical-day-information" element={<DayStatisticsInformation />} /> */}
         <Route path="month-ahead" element={<MonthAheadG />} />
         <Route path="notification" element={<NotificationG />} />
 
