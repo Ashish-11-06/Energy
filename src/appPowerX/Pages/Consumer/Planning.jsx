@@ -1,7 +1,6 @@
-import  { useState, useEffect } from 'react';
-import { Table, Calendar, Card, Row, Col, Tooltip, Button } from 'antd';
+import { useState, useEffect } from 'react';
+import { Table, Calendar, Card, Row, Col, Tooltip, Button, Spin } from 'antd';
 import 'antd/dist/reset.css'; // Import Ant Design styles
-// import moment from 'moment';
 import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
 import { useDispatch } from 'react-redux';
 import './Planning.css'; // Import custom CSS for calendar styling
@@ -25,14 +24,10 @@ const columns = [
 ];
 
 const Planning = () => {
-  // const [selectedDate, setSelectedDate] = useState(null);
   const [showTable, setShowTable] = useState(false);
   const [tableDemandData, setTableDemandData] = useState([]);
+  const [loading, setLoading] = useState(true); // State for loading spinner
   const dispatch = useDispatch();
-
-  // const onSelect = (date) => {
-  //   setSelectedDate(date);
-  // };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +37,8 @@ const Planning = () => {
         setTableDemandData(data.payload);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
       }
     };
     fetchData();
@@ -71,18 +68,19 @@ const Planning = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Planning Calender</h1>
+      <h1>Planning Calendar</h1>
       <Row gutter={[0, 20]} justify="center">
         <Button style={{ marginLeft: '79%' }} onClick={handleToggleView}>
           {showTable ? 'Show Calendar' : 'Show Table'}
         </Button>
-        {!showTable ? (
+        {loading ? (
+          <Spin tip="Loading..." style={{ marginTop: '20px' }} />
+        ) : !showTable ? (
           <Col span={24} style={{ textAlign: 'center', marginLeft: '10%' }}>
             <Card style={{ width: '90%', height: '70vh', alignItems: 'center', padding: '10px' }}>
               <Calendar
                 style={{ height: 'full' }}
                 fullscreen={false}
-                // onSelect={onSelect}
                 dateCellRender={dateCellRender}
                 className="custom-calendar"
                 bordered

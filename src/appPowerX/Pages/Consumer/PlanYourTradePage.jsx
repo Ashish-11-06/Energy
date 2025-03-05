@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Radio, Upload, message, Card } from "antd";
+import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Checkbox, Upload, message, Card, Select } from "antd";
 import { useNavigate } from "react-router-dom";
 import { UploadOutlined, DownloadOutlined, DownOutlined } from "@ant-design/icons";
 import * as XLSX from 'xlsx';
 import { useDispatch } from 'react-redux';
 import { addDayAheadData } from "../../Redux/slices/consumer/dayAheadSlice";
+import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequirementSlice";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -21,13 +22,16 @@ const generateTimeLabels = () => {
 
 const PlanYourTradePage = () => {
   const [form] = Form.useForm();
-  const [selectedTechnology, setSelectedTechnology] = useState("Solar");
+  const [selectedTechnology, setSelectedTechnology] = useState([]);
+  const [selectedUnit, setSelectedUnit] = useState(null);
+  const [price, setPrice] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem('user')).user;
   const user_id = user.id;
   
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [consumerRequirement, setConsumerRequirement] = useState(null);
   const [tableData, setTableData] = useState(
     generateTimeLabels().map((time, index) => ({
       key: index,
@@ -60,6 +64,17 @@ const PlanYourTradePage = () => {
     }
   };
 
+useEffect(()=>{
+  try {
+    const id=user_id;
+    const res=dispatch(fetchRequirements(id));
+    setConsumerRequirement(res);
+    console.log(res);
+  } catch (error) {
+    console.log(error);  
+  }
+},[user_id])
+
   useEffect(() => {
     const allFilled = tableData.every((item) => item.demand !== null);
     setAllFieldsFilled(allFilled);
@@ -91,7 +106,8 @@ const PlanYourTradePage = () => {
             end_time: end_time,
             demand: item.demand
           };
-        })
+        }),
+        price: price
       };
       
       console.log(dayAheadDemand);
@@ -209,40 +225,69 @@ const PlanYourTradePage = () => {
 
   const [part1, part2, part3, part4, part5, part6] = splitData(tableData);
 
+  // const consumptionUnits = ["Unit 1", "Unit 2", "Unit 3"]; // Dummy data for consumption units
+  const dummyConsumptionUnits = ["Unit 1", "Unit 2", "Unit 3"]; // Dummy data
+
+  const consumptionUnits = consumerRequirement && consumerRequirement.length > 0 
+    ? consumerRequirement 
+    : dummyConsumptionUnits;
   return (
     <div style={{ padding: "20px" }}>
       <h1>Plan Your Trade (96 time blocks)</h1>
-      <Row gutter={16} style={{ marginBottom: "20px" ,marginLeft:'20%', marginRight:'15%'}}>
-      <Card
+      <Col span={8}>
+    <Form.Item label="Select Consumption Unit">
+      <Select placeholder="Select a unit" onChange={(value) => setSelectedUnit(value)}>
+        {consumptionUnits.map((unit) => (
+          <Select.Option key={unit} value={unit}>
+            {unit}
+          </Select.Option>
+        ))}
+      </Select>
+    </Form.Item>
+  </Col>
+      <Row gutter={16} style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", marginLeft: "5%", marginRight: "5%" }}>
+  
+  {/* Select Consumption Unit */}
+
+
+  {/* Add Details Card */}
+  <Col span={8}>
+    <Card
       style={{
         width: 300,
         borderRadius: "12px",
         boxShadow: "4px 4px 12px rgba(0, 0, 0, 0.2)",
         transform: "translateY(-2px)",
         transition: "all 0.3s ease-in-out",
-        textAlign:'center'
+        textAlign: "center"
       }}
-      
     >
-      <Col>
-        <Tooltip title="Add details manually!" placement="bottom">
-          <Button onClick={() => setShowTable(!showTable)}>
-            {showTable ? "Add Details +" : "Add Details +"}
-          </Button>
-        </Tooltip>
-      </Col>
+      <Tooltip title="Add details manually!" placement="bottom">
+        <Button onClick={() => setShowTable(!showTable)}>
+          {showTable ? "Add Details +" : "Add Details +"}
+        </Button>
+      </Tooltip>
     </Card>
-        <span style={{marginTop:'30px', fontWeight:'bold',marginLeft:'20px',marginRight:'20px'}}>OR</span>
-        <Card span={10}   style={{
+  </Col>
+
+  {/* OR separator */}
+  <Col span={2} style={{ textAlign: "center", fontWeight: "bold",marginRight:"10px" }}>
+    <span>OR</span>
+  </Col>
+
+  {/* Upload Template Card */}
+  <Col span={8}>
+    <Card
+      style={{
         width: 300,
         borderRadius: "12px",
         boxShadow: "4px 4px 12px rgba(0, 0, 0, 0.2)",
         transform: "translateY(-2px)",
         transition: "all 0.3s ease-in-out",
-        textAlign:'center'
-
-      }}>
-      <Row gutter={16} align="middle">
+        textAlign: "center"
+      }}
+    >
+      <Row gutter={16} align="middle" justify="center">
         <Col>
           <Tooltip title="Download template!" placement="bottom">
             <Button icon={<DownloadOutlined />} onClick={handleDownloadTemplate} />
@@ -257,7 +302,10 @@ const PlanYourTradePage = () => {
         </Col>
       </Row>
     </Card>
-      </Row>
+  </Col>
+
+</Row>
+
       {showTable && (
         <Form form={form} onFinish={onFinish} layout="vertical">
           <Row gutter={16}>
@@ -287,17 +335,32 @@ const PlanYourTradePage = () => {
         </Tooltip>
       </Form.Item>
       <Modal
-        title="Select Technology"
-        visible={isModalVisible}
-        onOk={handleModalOk}
-        onCancel={() => setIsModalVisible(false)}
-      >
-        <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
-          <Radio value="Solar">Solar</Radio>
-          <Radio value="Non-Solar">Non-Solar</Radio>
-          <Radio value="Hydro">Hydro</Radio>
-        </Radio.Group>
-      </Modal>
+  title="Select Technology"
+  visible={isModalVisible}
+  onOk={handleModalOk}
+  onCancel={() => setIsModalVisible(false)}
+>
+  {/* Checkbox Group */}
+  <Checkbox.Group onChange={(checkedValues) => setSelectedTechnology(checkedValues)} value={selectedTechnology}>
+    <Checkbox value="Solar">Solar</Checkbox>
+    <Checkbox value="Non-Solar">Non-Solar</Checkbox>
+    <Checkbox value="Hydro">Hydro</Checkbox>
+  </Checkbox.Group>
+
+  {/* Input field for price */}
+  <div style={{ marginTop: "15px" }}>
+    <label style={{ fontWeight: "bold" }}>Enter Price:</label>
+    <Input
+      type="number"
+      placeholder="Enter price"
+      value={price}
+      min={0}
+      onChange={(e) => setPrice(e.target.value)}
+      style={{ marginTop: "5px", width: "100%" }}
+    />
+  </div>
+</Modal>
+
     </div>
   );
 };
