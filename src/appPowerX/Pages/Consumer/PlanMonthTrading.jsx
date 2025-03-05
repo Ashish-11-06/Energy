@@ -59,7 +59,7 @@ const PlanMonthTrading = () => {
       try {
         const data = await dispatch(fetchTableMonthData());
         console.log(data.payload); // Logging the fetched data
-         setTableDemandData(data.payload);
+         setTableDemandData(data.payload || []); // Ensure data is an array
       } catch (error) {
         console.log(error);
       }
@@ -99,7 +99,7 @@ console.log(tableDemandData);
           try {
             const data = await dispatch(fetchTableMonthData());
             console.log(data.payload); // Logging the fetched data
-             setTableDemandData(data.payload);
+             setTableDemandData(data.payload || []); // Ensure data is an array
           } catch (error) {
             console.log(error);
           }
@@ -226,7 +226,7 @@ console.log(tableDemandData);
       <Col span={12}>
         <Table
           columns={columnsMonth}
-          dataSource={tableDemandData}
+          dataSource={Array.isArray(tableDemandData) ? tableDemandData : []}
           pagination={false}
           bordered
           style={{

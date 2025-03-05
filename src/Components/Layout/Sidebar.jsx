@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Badge } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +23,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const notificationCount = useSelector((state) => state.notifications.count);
   const offerCount = useSelector((state) => state.notifications.offer);
   // const notificationCount = 9;
+const subscription=localStorage.getItem('subscriptionPlanValidity');
+// console.log(subscription);
 
   console.log(notificationCount);
 

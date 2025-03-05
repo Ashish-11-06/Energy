@@ -31,6 +31,27 @@ const MonthAhead = () => {
     fetchData();
   }, [dispatch]);
 
+  const detailDataSource = [
+    {
+      key: 'highest',
+      status: 'Highest',
+      mcp: 9000,
+      mcv: 3000,
+    },
+    {
+      key: 'lowest',
+      status: 'Lowest',
+      mcp: 5000,
+      mcv: 3000,
+    },
+    {
+      key: 'average',
+      status: 'Average',
+      mcp: 8000,
+      mcv: 3000,
+    },
+  ];
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -125,9 +146,9 @@ const MonthAhead = () => {
 
   const columns = [
     {
-      title: 'Details',
-      dataIndex: 'metric',
-      key: 'metric',
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
     },
     {
       title: 'MCP (INR/MWh)',
@@ -136,8 +157,8 @@ const MonthAhead = () => {
     },
     {
       title: 'MCV (MWh)',
-      dataIndex: 'mcy',
-      key: 'mcy',
+      dataIndex: 'mcv',
+      key: 'mcv',
     },
   ];
 
@@ -146,19 +167,19 @@ const MonthAhead = () => {
   };
 
   const handleStatistics = () => {
-    navigate('/px/consumer/statistical-information');
+    navigate('/px/consumer/statistical-information-month');
   };
 
   return (
     <div style={{ padding: '20px' }}>
       <h1>Market Forecast - Month Ahead</h1>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '70%', marginBottom: '10px'}}>
-        <label htmlFor="" style={{ width: 120, fontWeight: 'bold', marginRight: '0px', fontSize: '20px' }}>Technology: </label>
+        {/* <label htmlFor="" style={{ width: 120, fontWeight: 'bold', marginRight: '0px', fontSize: '20px' }}>Technology: </label>
         <Select placeholder="Select Technology" style={{ width: 200 }} >
           <Option value="Solar">Solar</Option>
           <Option value="Non-solar">Non-solar</Option>
           <Option value="Hydro">Hydro</Option>
-        </Select>
+        </Select> */}
       </div>
 
       <Card style={{ width: 'full' }}>
@@ -168,6 +189,7 @@ const MonthAhead = () => {
       </Card>
       <h2></h2>
       {/* <Table columns={columns} dataSource={tableData} pagination={false} /> */}
+      <Table columns={columns} dataSource={Array.isArray(tableData) && tableData.length ? tableData : detailDataSource} pagination={false} /> 
 
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">

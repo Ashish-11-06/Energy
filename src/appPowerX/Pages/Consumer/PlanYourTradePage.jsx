@@ -106,8 +106,7 @@ useEffect(()=>{
             end_time: end_time,
             demand: item.demand
           };
-        }),
-        price: price
+        })
       };
       
       console.log(dayAheadDemand);
@@ -115,10 +114,10 @@ useEffect(()=>{
       const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
       console.log('res', res);
       setIsModalVisible(false);
-      localStorage.setItem("tradeData", JSON.stringify(tableData));
-      localStorage.setItem("selectedTechnology", selectedTechnology);
-      localStorage.setItem("navigationSource", "PlanYourTradePage");
-      navigate('/px/consumer/trading');
+      // localStorage.setItem("tradeData", JSON.stringify(tableData));
+      // localStorage.setItem("selectedTechnology", selectedTechnology);
+      // localStorage.setItem("navigationSource", "PlanYourTradePage");
+      navigate('/px/consumer/planning');
     } catch (error) {
       console.log(error);
       message.error("Failed to submit data. Please try again.");
@@ -252,7 +251,7 @@ useEffect(()=>{
 
   {/* Add Details Card */}
   <Col span={8}>
-    <Card
+      <Card
       style={{
         width: 300,
         borderRadius: "12px",
@@ -261,12 +260,15 @@ useEffect(()=>{
         transition: "all 0.3s ease-in-out",
         textAlign: "center"
       }}
+      
     >
-      <Tooltip title="Add details manually!" placement="bottom">
-        <Button onClick={() => setShowTable(!showTable)}>
-          {showTable ? "Add Details +" : "Add Details +"}
-        </Button>
-      </Tooltip>
+      <Col>
+        <Tooltip title="Add details manually!" placement="bottom">
+          <Button onClick={() => setShowTable(!showTable)}>
+            {showTable ? "Add Details +" : "Add Details +"}
+          </Button>
+        </Tooltip>
+      </Col>
     </Card>
   </Col>
 
@@ -304,7 +306,7 @@ useEffect(()=>{
     </Card>
   </Col>
 
-</Row>
+      </Row>
 
       {showTable && (
         <Form form={form} onFinish={onFinish} layout="vertical">
@@ -335,16 +337,16 @@ useEffect(()=>{
         </Tooltip>
       </Form.Item>
       <Modal
-  title="Select Technology"
-  visible={isModalVisible}
-  onOk={handleModalOk}
-  onCancel={() => setIsModalVisible(false)}
->
+        title="Select Technology"
+        visible={isModalVisible}
+        onOk={handleModalOk}
+        onCancel={() => setIsModalVisible(false)}
+      >
   {/* Checkbox Group */}
   <Checkbox.Group onChange={(checkedValues) => setSelectedTechnology(checkedValues)} value={selectedTechnology}>
     <Checkbox value="Solar">Solar</Checkbox>
     <Checkbox value="Non-Solar">Non-Solar</Checkbox>
-    <Checkbox value="Hydro">Hydro</Checkbox>
+    {/* <Checkbox value="Hydro">Hydro</Checkbox> */}
   </Checkbox.Group>
 
   {/* Input field for price */}
@@ -359,7 +361,7 @@ useEffect(()=>{
       style={{ marginTop: "5px", width: "100%" }}
     />
   </div>
-</Modal>
+      </Modal>
 
     </div>
   );

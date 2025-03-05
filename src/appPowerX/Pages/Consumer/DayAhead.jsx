@@ -31,6 +31,44 @@ const DayAhead = () => {
     fetchData();
   }, [dispatch]);
 
+  const detailDataSource = [
+    {
+      key: 'highest',
+      status: 'Highest',
+      mcp: 9000,
+      mcv: 3000,
+    },
+    {
+      key: 'lowest',
+      status: 'Lowest',
+      mcp: 5000,
+      mcv: 3000,
+    },
+    {
+      key: 'average',
+      status: 'Average',
+      mcp: 8000,
+      mcv: 3000,
+    },
+  ];
+  const detailColumns = [
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+    },
+    {
+      title: 'MCP (INR/MWH)',
+      dataIndex: 'mcp',
+      key: 'mcp',
+    },
+    {
+      title: 'MCV (MWH)',
+      dataIndex: 'mcv',
+      key: 'mcv',
+    },
+  ];
+
   const data = {
     labels: Array.from({ length: 96 }, (_, i) => i + 1), // Updated X-axis labels
     datasets: [
@@ -125,9 +163,9 @@ const DayAhead = () => {
 
   const columns = [
     {
-      title: 'Details',
-      dataIndex: 'metric',
-      key: 'metric',
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
     },
     {
       title: 'MCP (INR/MWh)',
@@ -136,8 +174,8 @@ const DayAhead = () => {
     },
     {
       title: 'MCV (MWh)',
-      dataIndex: 'mcy',
-      key: 'mcy',
+      dataIndex: 'mcv',
+      key: 'mcv',
     },
   ];
 
@@ -152,18 +190,13 @@ const DayAhead = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Market Forecast - Day Ahead</h1>
-      {/* <div style={{ display: "flex", gap: "15px", fontSize: "24px", color: "#669800" }}>
-      <BlockOutlined />   
-      <AppstoreOutlined /> 
-      <CheckCircleOutlined /> 
-    </div> */}
       <Card style={{height: '500px', width: '100%'}}>
         <div style={{ height: '500px', width: '100%' }}>
           <Line data={data} options={options} style={{height: '300px', width: 'full',padding:'25px',marginLeft:'100px'}}/>
         </div>
       </Card>
       <h2></h2>
-      {/* <Table columns={columns} dataSource={Array.isArray(tableData) ? tableData : []} pagination={false} /> */}
+      <Table columns={columns} dataSource={Array.isArray(tableData) && tableData.length ? tableData : detailDataSource} pagination={false} /> 
 
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
