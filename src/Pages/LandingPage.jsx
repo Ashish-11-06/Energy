@@ -7,6 +7,7 @@ import video from '../assets/vecteezy_solar-panels-and-wind-turbines-green-energ
 import EXGLogo from '../assets/EXG.png'; // Import the logo image
 import { useDispatch } from 'react-redux';
 import { loginUser } from "../Redux/Slices/loginSlice";
+import { sendForgotPasswordOtp, verifyForgotPasswordOtp, setNewPassword } from "../Redux/Slices/loginSlice";
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons'; // Import UserOutlined icon
 import RegisterForm from '../Components/Modals/Registration/RegisterForm';
 import { fetchSubscriptionValidity } from '../Redux/Slices/Consumer/subscriptionEnrollSlice';
@@ -29,7 +30,12 @@ const LandingPage = () => {
   const [userType, setUserType] = useState('consumer');
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const textRef = useRef(""); 
+  const textRef = useRef("");
+  // const [loading, setLoading] = useState(false);
+  // const [otpVerified, setOtpVerified] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     const text = "Welcome to Energy Transition (EXT) Platform";
@@ -119,7 +125,6 @@ const response = await dispatch(fetchSubscriptionValidity(id));
   };
 
   const handleCreate = (values) => {
-    // console.log('Received values of form: ', values);
     setIsModalVisible(false);
   };
 
@@ -131,30 +136,59 @@ const response = await dispatch(fetchSubscriptionValidity(id));
     setIsForgotPasswordModalVisible(false);
   };
 
+  // const handleSendOtp = async (email) => {
+  //   setLoading(true);
+  //   setLoading(false);
+  //   setOtpSent(true);
+  //   setEmailForReset(email);
+  // };
+
+  // const handleVerifyOtp = async (values) => {
+  //   setLoading(true);
+  //   // Implement OTP verification logic here
+  //   setLoading(false);
+  //   setOtpVerified(true);
+  // };
+
+  // const handleResetPassword = async (values) => {
+  //   setLoading(true);
+  //   // Implement password reset logic here
+  //   setLoading(false);
+  //   setIsForgotPasswordModalVisible(false);
+  //   setOtpSent(false);
+  //   setOtpVerified(false);
+  //   message.success("Password reset successful!");
+  // };
+
   const handleSendOtp = async (email) => {
-    setLoading(true);
-    // Implement OTP sending logic here
-    setLoading(false);
-    setOtpSent(true);
     setEmailForReset(email);
+    dispatch(sendForgotPasswordOtp(email));
   };
 
-  const handleVerifyOtp = async (values) => {
-    setLoading(true);
-    // Implement OTP verification logic here
-    setLoading(false);
-    setOtpVerified(true);
+  const handleVerifyOtp = async (otp) => {
+    dispatch(verifyForgotPasswordOtp({ email: emailForReset, otp }));
   };
 
-  const handleResetPassword = async (values) => {
-    setLoading(true);
-    // Implement password reset logic here
-    setLoading(false);
-    setIsForgotPasswordModalVisible(false);
-    setOtpSent(false);
-    setOtpVerified(false);
-    message.success("Password reset successful!");
+  const handleResetPassword = async (newPassword) => {
+    dispatch(setNewPassword({ email: emailForReset, newPassword }));
   };
+
+  // ✅ Handle success messages
+  useEffect(() => {
+    if (otpVerified) message.success("OTP verified successfully!");
+    if (passwordResetSuccess) {
+      message.success("Password reset successful!");
+      setIsForgotPasswordModalVisible(false);
+    }
+  }, [otpVerified, passwordResetSuccess]);
+
+  // ✅ Handle errors from Redux
+  useEffect(() => {
+    if (error) {
+      message.error(error);
+    }
+  }, [error]);
+
 
   return (
     <App> {/* Wrap the component with App */}
@@ -168,18 +202,19 @@ const response = await dispatch(fetchSubscriptionValidity(id));
     <h1 style={{marginTop:'20px',color:'white',fontWeight:'bolder'}} >{animatedText}</h1>
     {/* <h1 style={{marginTop:'20px'}}>jnkm</h1> */}
     <div className="logo-container">
-            <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
+            {/* <img src={EXGLogo} alt="EXG Logo" className="exg-logo" /> */}
+            <img src={EXGLogo} alt="EXG Logo" className="exg-logo" style={{ width: '120px', height: '100px' }} />
           </div>
   </Row>
   <Row>
    {/* <h2 style={{justifyContent:'center'}}>Green Energy </h2> */}
         <div className="content-container" style={{marginTop:'-10px'}}> 
           <div className="text-content"  >
-            <div style={{backgroundColor:'#669800',width:'600px'}}>
+            <div style={{backgroundColor:'#669800',width:'600px'}}> 
             <p style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
             <p style={{marginLeft:'5%',marginTop:'-30px',fontSize:'70px',fontWeight:'bolder'}}>MarketPlace</p>
             </div>
-           <p style={{fontSize:'24px',width:'600px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators.</i></p>
+           <p style={{fontSize:'24px',width:'600px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators</i></p>
             {/* <h2 className="animated-text">{animatedText}</h2> */}
             <ul >
               {/* <Row>
@@ -200,13 +235,13 @@ const response = await dispatch(fetchSubscriptionValidity(id));
               {/* </Col>
               </Row> */}
             </ul>
-<p style={{color:'white',fontWeight:'bold',marginTop:'10%',marginLeft:'-10%'}}>Fast track energy transition</p>
+<p style={{color:'white',fontWeight:'bold',marginTop:'10%',marginLeft:'-10%'}}>Fast track your energy transition</p>
           </div>
 
        
           
           {/* Login Box */}
-          <div className="login-box" style={{marginLeft:'200px',
+          <div className="login-box" style={{marginLeft:'400px',
           marginTop: '-70px'
           }}>
          

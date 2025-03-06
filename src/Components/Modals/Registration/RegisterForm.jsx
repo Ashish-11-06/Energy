@@ -9,10 +9,34 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
   const [userId, setUserId] = useState();
   const [user_category, setUserCategory] = useState(""); // Define user_category state
   const [loading, setLoading] = useState(false); // Add loading state
+  const [cinValid, setCinValid] = useState(null);
   const dispatch = useDispatch();
 
 
   const restrictedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com', 'icloud.com', 'zoho.com', 'protonmail.com', 'mail.com', 'yandex.com', 'gmx.com'];
+
+  const countryPhoneRules = {
+    "+91": /^[6-9]\d{9}$/, // India - 10 digits
+    "+1": /^\d{10}$/, // USA, Canada - 10 digits
+    "+44": /^\d{10}$/, // UK - 10 digits
+    "+61": /^\d{9}$/, // Australia - 9 digits
+    "+971": /^\d{9}$/, // UAE - 9 digits
+    "+49": /^\d{10}$/, // Germany - 10 digits
+    "+33": /^\d{9}$/, // France - 9 digits
+    "+86": /^\d{11}$/, // China - 11 digits
+  };
+
+
+const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard CIN Format
+
+  const handleCINChange = (e) => {
+    const cinNumber = e.target.value.trim();
+    if (cinNumber === "") {
+      setCinValid(null); // Reset when empty
+    } else {
+      setCinValid(CIN_REGEX.test(cinNumber));
+    }
+  };
 
   const validateCompanyEmail = (_, value) => {
     if (!value) {
@@ -27,31 +51,54 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
     return Promise.resolve();
   };
 
-  const requestOtp = () => {
-    setLoading(true); // Set loading to true when request starts
-    form
-      .validateFields()
-      .then((values) => {
-        const payload = { ...values, user_category: user_category };
-        dispatch(registerUser(payload))
-          .unwrap()
-          .then((response) => {
-            console.log(response); // Log the response to check the data
-            setUserId(response.user_id); // Assuming the response contains a `user_id` field
-            message.success("OTP has been sent to your email and mobile!");
-            setOtpRequested(true);
-            setLoading(false); // Set loading to false when request completes
-          })
-          .catch((error) => {
-            message.error(`Failed to request OTP: ${error}`);
-            setLoading(false); // Set loading to false when request fails
-          });
-      })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
-        setLoading(false); // Set loading to false when validation fails
-      });
+  // const requestOtp = () => {
+  //   setLoading(true); // Set loading to true when request starts
+  //   form
+  //     .validateFields()
+  //     .then((values) => {
+  //       const payload = { ...values, user_category: user_category };
+  //       dispatch(registerUser(payload))
+  //         .unwrap()
+  //         .then((response) => {
+  //           console.log(response); // Log the response to check the data
+  //           setUserId(response.user_id); // Assuming the response contains a `user_id` field
+  //           message.success("OTP has been sent to your email and mobile!");
+  //           setOtpRequested(true);
+  //           setLoading(false); // Set loading to false when request completes
+  //         })
+  //         .catch((error) => {
+  //           message.error(`Failed to request OTP: ${error}`);
+  //           setLoading(false); // Set loading to false when request fails
+  //         });
+  //     })
+  //     .catch((info) => {
+  //       console.log("Validate Failed:", info);
+  //       setLoading(false); // Set loading to false when validation fails
+  //     });
 
+  // };
+
+  const requestOtp = async () => {
+    setLoading(true);
+    try {
+      const values = await form.validateFields();
+      const payload = { ...values, user_category: user_category };
+      const response = await dispatch(registerUser(payload)).unwrap();
+
+      if (response?.valid === false) {
+        message.error("Invalid CIN for the given company name.");
+      } else {
+        console.log("CIN is valid. OTP sent.");
+        setUserId(response.user_id);
+        message.success("OTP has been sent to your email and mobile!");
+        setOtpRequested(true);
+      }
+    } catch (error) {
+      console.error("❌ Error:", error);
+      message.error(error.message || "Invalide CIN");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -60,7 +107,7 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
   };
 
   const handleVerifyOtp = () => {
-    setLoading(true); // Set loading to true when request starts
+    setLoading(true); 
     form
       .validateFields(["email_otp", "mobile_otp"])
       .then((values) => {
@@ -76,19 +123,20 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
           .then(() => {
             message.success("OTP verified successfully!");
             onCreate(values);
-            setLoading(false); // Set loading to false when request completes
+            setLoading(false); 
           })
           .catch((error) => {
             message.error(`OTP verification failed: ${error}`);
-            setLoading(false); // Set loading to false when request fails
+            setLoading(false); 
           });
       })
       .catch((info) => {
         console.log("Validate Failed:", info);
-        setLoading(false); // Set loading to false when validation fails
+        setLoading(false); 
       });
   };
 
+  
   return (
     <Modal
       open={open}
@@ -123,8 +171,6 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
     </Form.Item>
   </Col>
 </Row>
-
-
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
@@ -147,6 +193,20 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
         </Row>
 
         <Row gutter={16}>
+      <Col span={12}>
+        <Form.Item
+          label="CIN Number"
+          name="cin_number"
+          rules={[{ required: true, message: "Please input your CIN number!" }]}
+          validateStatus={cinValid === null ? "" : cinValid ? "success" : "error"}
+          help={cinValid === false ? "Invalid CIN format" : ""}
+        >
+          <Input placeholder="Enter your CIN number" onChange={handleCINChange} />
+        </Form.Item>
+      </Col>
+    </Row>
+
+        <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               name="email"
@@ -160,7 +220,7 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-    <Form.Item
+    {/* <Form.Item
       name="mobile"
       label="Mobile"
       rules={[
@@ -170,7 +230,7 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
     >
       <Input.Group compact>
         <Form.Item name="countryCode" noStyle>
-          <Select style={{ width: "25%" }} defaultValue="+91"> {/* ✅ Default country code */}
+          <Select style={{ width: "25%" }} defaultValue="+91"> 
             <Select.Option value="+91">+91</Select.Option>
             <Select.Option value="+93">+93</Select.Option>
             <Select.Option value="+43">+43</Select.Option>
@@ -181,10 +241,47 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
           <Input style={{ width: "75%" }} maxLength={10} placeholder="Enter mobile number" />
         </Form.Item>
       </Input.Group>
-    </Form.Item>
+    </Form.Item> */}
+
+    <Form.Item 
+    label="Mobile">
+        <Input.Group compact>
+          <Form.Item name="countryCode" noStyle>
+            <Select style={{ width: "24%", marginRight: "8px" }} defaultValue="+91">
+              {Object.keys(countryPhoneRules).map((code) => (
+                <Select.Option key={code} value={code}>
+                  {code}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="mobile"
+            noStyle
+            rules={[
+              { required: true, message: "Please input the mobile number!" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  const selectedCode = getFieldValue("countryCode");
+                  const regex = countryPhoneRules[selectedCode];
+                  if (regex && regex.test(value)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(`Invalid number format for ${selectedCode}`)
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input style={{ width: "70%" }} placeholder="Enter mobile number" />
+          </Form.Item>
+        </Input.Group>
+        </Form.Item>
   </Col>
 
-        </Row>
+  </Row>
 
         <Row gutter={16}>
           <Col span={12}>
@@ -251,7 +348,7 @@ const RegisterForm = ({ open, onCancel, onCreate }) => {
           <Col span={24}>
             {!otpRequested ? (
               <Button type="primary" onClick={requestOtp} block loading={loading}>
-                Request OTP
+                Verify & Request OTP
               </Button>
             ) : (
               <Button type="primary" onClick={handleVerifyOtp} block loading={loading}>

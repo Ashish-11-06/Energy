@@ -1,6 +1,6 @@
 let socket = null; // Explicitly initialize socket as null
 
-const SOCKET_URL = 'ws://192.168.1.47:8001';
+const SOCKET_URL = 'ws://192.168.1.33:8001';
 const SOCKET_PATH = '/api/energy/ws/negotiation/';
 const FULL_URL = SOCKET_URL + SOCKET_PATH;
 
@@ -69,18 +69,18 @@ const FULL_URL = SOCKET_URL + SOCKET_PATH;
     };
     
 
-export const sendEvent = (event, data) => {
+export const sendEvent = (event) => {
     if (!socket) {
         console.error('Socket not initialized. Call connectWebSocket first.');
         return;
     }
+console.log(event);
+    // const message = {
+    //     event: event,
+    //     payload: data
+    // };
 
-    const message = {
-        event: event,
-        payload: data
-    };
-
-    socket.send(JSON.stringify(message));
+    socket.send(JSON.stringify(event));
 };
 
 // Optional: Add WebSocket disconnect functionality

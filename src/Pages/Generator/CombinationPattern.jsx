@@ -10,10 +10,11 @@ import {
   Slider,
   Button,
   Card,
+  Tooltip,
 } from "antd";
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { fetchOptimizedCombinations } from "../../Redux/Slices/Generator/optimizeCapacitySlice";
 import { fetchConsumptionPattern } from "../../Redux/Slices/Generator/ConsumptionPatternSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,11 +27,12 @@ import "./CombinationPattern.css"; // Import the custom CSS file
 const { Title, Text } = Typography;
 
 const CombinationPattern = () => {
-    //COMBINATION PATTERN SCROLLBAR
+  //COMBINATION PATTERN SCROLLBAR
   const [isTableLoading, setIsTableLoading] = useState(true);
   const [isIPPModalVisible, setIsIPPModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [dataSource, setDataSource] = useState([]);
+  const [value, setValue] = useState(65);
   const [selectedRow, setSelectedRow] = useState(null);
   const [fetchingCombinations, setFetchingCombinations] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -40,7 +42,7 @@ const CombinationPattern = () => {
 
   const location = useLocation();
   // const selectedDemandId = location.state?.selectedDemandId;
- const selectedDemandId= localStorage.getItem('matchingConsumerId')
+  const selectedDemandId = localStorage.getItem('matchingConsumerId')
   const reReplacement = state?.reReplacement;
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 
@@ -49,7 +51,7 @@ const CombinationPattern = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   // const user_category=user.user_category;
   // console.log(user_category);
-  const role=user.role;
+  const role = user.role;
   // console.log(user.id);
   const user_id = user.id;
 
@@ -63,6 +65,17 @@ const CombinationPattern = () => {
       setDataSource([]);
       return;
     }
+
+    useEffect(() => {
+      if(!isTableLoading){
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+        // console.log('scrolled');
+      }
+    }, [isTableLoading, setIsTableLoading]);
+
 
     const formattedCombinations = Object.entries(combinations).map(
       ([key, combination], index) => {
@@ -117,9 +130,9 @@ const CombinationPattern = () => {
           connectivity: combination.connectivity,
           states: combination.state,
 
-          status: combination?.terms_sheet_sent 
-          ? (combination?.sent_from_you === 1 ? "Already Sent" : "Already received") 
-          : "Send Quotation",  
+          status: combination?.terms_sheet_sent
+            ? (combination?.sent_from_you === 1 ? "Already Sent" : "Already received")
+            : "Send Quotation",
         };
       }
     );
@@ -143,22 +156,56 @@ const CombinationPattern = () => {
     (state) => state.optimizedCapacity.status
   );
 
-  // console.log('comn', combinationData);
+  // console.log('comn', combinationData);klklkl
 
-  useEffect(() => {
-    const fetchPatterns = async () => {
-      try {
-        if (
-          (!consumptionPatterns.length &&
-            consumptionPatternStatus === "idle") ||
-          consumptionPatternStatus === "failed"
-        ) {
-          await dispatch(fetchConsumptionPattern(selectedDemandId));
-        }
-      } catch (error) {
-        message.error("Failed to fetch consumption patterns.");
-      }
+  const increaseValue = () => {
+      setSliderValue((prev) => Math.min(prev + 1, 100)); // Increase by 5, max 100
     };
+  
+    const decreaseValue = () => {
+      setSliderValue((prev) => Math.max(prev - 1, 0)); // Decrease by 5, min 0
+    };
+  
+    useEffect(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }, [isTableLoading, setIsTableLoading]);
+  
+
+  // useEffect(() => {
+  //   const fetchPatterns = async () => {
+  //     try {
+  //       if (
+  //         (!consumptionPatterns.length &&
+  //           consumptionPatternStatus === "idle") ||
+  //         consumptionPatternStatus === "failed"
+  //       ) {
+  //         await dispatch(fetchConsumptionPattern(selectedDemandId));
+  //       }
+  //     } catch (error) {
+  //       message.error("Failed to fetch consumption patterns.");
+  //     }
+  //   };
+  
+  useEffect(() => {
+      const fetchPatterns = async () => {
+        try {
+          if (
+            (!consumptionPatterns.length &&
+              consumptionPatternStatus === "idle") ||
+            consumptionPatternStatus === "failed"
+          ) {
+            const response = await dispatch(
+              fetchConsumptionPattern(selectedDemandId)
+            );
+            // console.log(response);
+          }
+        } catch (error) {
+          message.error("Failed to fetch consumption patterns.");
+        }
+      };
 
     const loadCombinations = async () => {
       try {
@@ -167,7 +214,7 @@ const CombinationPattern = () => {
         setProgress(0); // Reset progress when starting a new fetch
 
         const modalData = {
-          requirement_id: selectedDemandId,
+          requirement_id: +selectedDemandId,
           optimize_capacity_user: user.user_category,
           user_id: user.id,
         };
@@ -189,6 +236,11 @@ const CombinationPattern = () => {
             formatAndSetCombinations(response);
             setIsTableLoading(false);
             setFetchingCombinations(false);
+            // Scroll to the bottom of the page
+            window.scrollTo({
+              top: document.body.scrollHeight,
+              behavior: "smooth",
+            });
           },
           (errorMessage) => {
             // Handle network or other fetch errors
@@ -199,7 +251,6 @@ const CombinationPattern = () => {
           }
         );
 
-        // Scroll to the bottom of the page
         window.scrollTo({
           top: document.body.scrollHeight,
           behavior: "smooth",
@@ -216,7 +267,7 @@ const CombinationPattern = () => {
 
     fetchPatterns();
     loadCombinations();
-  }, [dispatch, selectedDemandId, reReplacement]);
+  }, [dispatch, selectedDemandId]);
 
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
@@ -262,7 +313,7 @@ const CombinationPattern = () => {
   const handleRowClick = (record) => {
     setSelectedRow(record); // Record comes from the latest dataSource
     console.log(record);
-    
+
     setIsIPPModalVisible(true);
   };
 
@@ -287,12 +338,13 @@ const CombinationPattern = () => {
   };
 
   const handleOptimizeClick = async () => {
+    setValue(sliderValue);
     try {
       setIsTableLoading(true);
       setFetchingCombinations(true);
 
       const modalData = {
-        user_id:user_id,
+        user_id: user_id,
         requirement_id: selectedDemandId,
         optimize_capacity_user: user.user_category,
         re_replacement: sliderValue,
@@ -452,7 +504,11 @@ const CombinationPattern = () => {
       // width: 150,
       render: (text, record) =>
         text !== "Send Quotation" ? (
-          text
+          <Tooltip title="refer offer">
+            <Link to={`/offers`} style={{ textDecoration: "none", color: "#9A8406" }}>
+              {text}
+            </Link>
+          </Tooltip>
         ) : (
           <button
             style={{ padding: "2px 2px" }} // Minimize button size
@@ -542,7 +598,7 @@ const CombinationPattern = () => {
   // console.log(dataSource);
 
   return (
-    <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
       <Row
         justify="center"
         align="middle"
@@ -581,39 +637,87 @@ const CombinationPattern = () => {
         </Card>
 
         {/* Combination Table */}
-        <Col span={24}>
+        <Col span={24}
+         style={{
+          border: "1px solid #669800",
+          background: '#E6E8F1',
+          padding: '10px',
+        }}
+        >
+           <div>
+            <Title level={4} style={{ color: "#669800", background:'#f8f8f8', marginBottom: "10px", padding: '10px' }}>
+            Choose Your RE transition Goal!
+            </Title>
+          </div>
           <div style={{ marginBottom: "20px" }}>
             <Card>
               {/* <Text>RE Replacement Value: {sliderValue}%</Text> Display slider value */}
               <br />
-              <p>( You can change your RE Replacement from below bar. )</p>
-              <span>
-                <Slider
-                  min={0}
-                  max={100}
-                  marks={marks} // Add marks to the slider
-                  style={{ width: "80%", marginLeft: "5%" }}
-                  onChange={handleSliderChange}
-                  value={sliderValue}
-                  tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Control tooltip visibility
-                  trackStyle={{ height: 20 }} // Increase the thickness of the slider line
-                  handleStyle={{ height: 20, width: 20 }}// Increase the size of the handle
-                />
-                <Button
-                  type="primary"
-                  onClick={handleOptimizeClick}
-                  style={{ marginLeft: "90%", transform: "translateY(-46px)" }}
-                >
-                  Optimize
-                </Button>
-              </span>
-              <br />
-              {/* <p>( You can change your RE Replacement from above bar. )</p> */}
+              <p>(You can change your RE Replacement from below bar. )</p>
+             <span>
+                             <div
+                               style={{
+                                 position: "relative",
+                                 width: "80%",
+                                 marginLeft: "5%",
+                               }}
+                             >
+                               {/* Left Arrow Button (Positioned on the Slider Line) */}
+                               {/* <Button
+                                 onClick={decreaseValue}
+                                 icon={<LeftOutlined />}
+                                 style={{
+                                   position: "absolute",
+                                   left: `${(sliderValue / 100) * 84}%`, // Position based on slider value
+                                   top: "100%",
+                                   transform: "translate(-50%, -50%)",
+                                   zIndex: 10,
+                              
+                                 }}
+                               /> */}
+             
+                               <Slider
+                                 min={0}
+                                 max={100}
+                                 marks={marks} // Add marks to the slider
+                                 style={{ width: "80%", marginLeft: "5%" }}
+                                 onChange={handleSliderChange}
+                                 value={`${sliderValue}`}
+                                 tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Correct way to control tooltip visibility
+                                 trackStyle={{ height: 20 }} // Increase the thickness of the slider line
+                                 handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
+                               />
+                               {/* Right Arrow Button (Positioned on the Slider Line) */}
+                               {/* <Button
+                                 onClick={increaseValue}
+                                 icon={<RightOutlined />}
+                                 style={{
+                                   position: "absolute",
+                                   left: `${(sliderValue / 100) * 80}%`, // Position based on slider value
+                                   top: "100%",
+                                   transform: "translate(50%, -50%)",
+                                   zIndex: 10,
+                                   background: 'none !important',
+                                   marginLeft: "30px",
+                               
+                                 }}
+                               /> */}
+                             </div>
+                             <Button
+                               type="primary"
+                               onClick={handleOptimizeClick}
+                               style={{ marginLeft: "80%", transform: "translateY(-46px)" }}
+                             >
+                               Run Optimizer
+                             </Button>
+                           </span>
+                            <br />
+              {/* <p>(You can change your RE Replacement from above bar. )</p> */}
             </Card>
           </div>
           <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-              Optimized Combination for {sliderValue}% RE replacement
+              Optimized Combination for {value}% RE replacement
             </Title>
             {isTableLoading ? (
               <>

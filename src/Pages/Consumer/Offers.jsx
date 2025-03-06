@@ -10,6 +10,7 @@ import {
   Modal,
   message,
   Spin,
+  Tag
 } from "antd";
 import { useDispatch } from "react-redux";
 import { getOffers } from "../../Redux/Slices/Consumer/offersSlice";
@@ -161,7 +162,7 @@ const Offers = () => {
       title: "Combination ID",
       dataIndex: "combination",
       key: "combination",
-      width: '15%',
+      width: '12%',
       render: (text) => {
         const transformCombination = (text) => {
           const parts = text.split("-");
@@ -262,22 +263,27 @@ const Offers = () => {
     //       : record.generator_status;
     //   },
 
-    { 
+    {
       title: "Status",
       key: "status",
       width: "15%",
       render: (_, record) => {
         if (user_category === "Consumer") {
           return (record.consumer_status === "Offer Sent" || record.consumer_status === "Counter Offer Sent") 
-            ? `${record.consumer_status} - (Generator response awaited)` 
+            ? <>
+                {record.consumer_status} - <Tag color="blue">Generator response awaited</Tag>
+              </>
             : record.consumer_status || "";
         } else {
           return (record.generator_status === "Offer Sent" || record.generator_status === "Counter Offer Sent") 
-            ? `${record.generator_status} - (Consumer response awaited)` 
+            ? <>
+                {record.generator_status} - <Tag color="green">Consumer response awaited</Tag>
+              </>
             : record.generator_status || "";
         }
       },
     },
+
     // {
     //   title: "Bidding Window Date",
     //   dataIndex: "transaction_window_date",
@@ -318,6 +324,7 @@ const Offers = () => {
       title: "Bidding Window Date",
       dataIndex: "transaction_window_date",
       key: "transaction_window_date",
+      width: "10%",
       render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
     },
   ];
@@ -328,7 +335,7 @@ const Offers = () => {
         <Title level={3} style={{ color: "#001529" }}>
           Offer Transaction Window
         </Title>
-        <h4>( Total offers received and sent from you. )</h4>
+        <h4>(Total offers received and sent from you.)</h4>
       </Col>
 
       <Row
@@ -382,7 +389,7 @@ const Offers = () => {
 
       {error ? (
         <div style={{ color: "red", textAlign: "center" }}>{error}</div>
-      ) : loading ? ( // Show loader when data is being fetched
+      ) : loading ? (// Show loader when data is being fetched
         <div style={{ textAlign: "center", marginTop: "20px" }}>
           <Spin size="large" />
         </div>

@@ -35,24 +35,24 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
 
   const selectedProject = JSON.parse(JSON.stringify(project, null, 2));
   const [fileData, setFileData] = useState(null);
-  const [file, setFile] = useState('');
+  const [file, setFile] = useState("");
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [type, setType] = useState(selectedProject.type);
   const [isTemplateDownloaded, setIsTemplateDownloaded] = useState(false);
   const [isState, setIsState] = useState([]);
-const [solarFile,setSolarFile]=useState('');
-const [windFile,setWindFile]=useState('');
+  const [solarFile, setSolarFile] = useState("");
+  const [windFile, setWindFile] = useState("");
   // console.log(selectedProject.type);
 
   useEffect(() => {
-  if(user.solar_template_downloaded){
-    setIsTemplateDownloaded(true);
-  }
-  if(user.wind_template_downloaded){
-    setIsTemplateDownloaded(true);
-  }
-});
+    if (user.solar_template_downloaded) {
+      setIsTemplateDownloaded(true);
+    }
+    if (user.wind_template_downloaded) {
+      setIsTemplateDownloaded(true);
+    }
+  });
 
   // Function to download Excel template
   const downloadExcelTemplate = () => {
@@ -146,7 +146,7 @@ const [windFile,setWindFile]=useState('');
     const reader = new FileReader();
     reader.onloadend = () => {
       setFileData(reader.result);
-      console.log(file.name);   
+      console.log(file.name);
       setFile(file);
     };
     reader.readAsDataURL(file);
@@ -183,35 +183,66 @@ const [windFile,setWindFile]=useState('');
     setFileData(null);
   }, []);
 
-  const onSubmit = (values) => {
-    console.log("Form Values:", values);
-// console.log(values);
+  // const onSubmit = (values) => {
+  //   console.log("Form Values:", values);
+  //   // console.log(values);
 
-    const updatedValues = {
-      ...values,
-      id: selectedProject.id,
-      energy_type: values.type,
-      user: user.id,
-      cod: values.cod.format("YYYY-MM-DD"),
-      hourly_data: fileData ? fileData.split(",")[1] : null,
-      state: values.state,
-    };
+  //   const updatedValues = {
+  //     ...values,
+  //     id: selectedProject.id,
+  //     energy_type: values.type,
+  //     user: user.id,
+  //     cod: values.cod.format("YYYY-MM-DD"),
+  //     hourly_data: fileData ? fileData.split(",")[1] : null,
+  //     state: values.state,
+  //   };
 
-    console.log("Updated Form Values:", updatedValues);
-try {
-  dispatch(updateProject(updatedValues));
-  form.resetFields();
-  setFileData(null);
-  setFile('');
-  message.success("Form submitted successfully!");
-  localStorage.removeItem("matchingConsumerId");
-  onCancel();
-  // setFile('')
-} catch (error) {
-  console.log(error); 
-}
+  //   console.log("Updated Form Values:", updatedValues);
+  //   try {
+  //     dispatch(updateProject(updatedValues));
+  //     form.resetFields();
+  //     setFileData(null);
+  //     setFile("");
+  //     message.success("Form submitted successfully!");
+  //     localStorage.removeItem("matchingConsumerId");
+  //     onCancel();
+  //     // setFile('')
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
+  const onSubmit = async (values) => {
+  console.log("Form Values:", values);
+
+  const updatedValues = {
+    ...values,
+    id: selectedProject.id,
+    energy_type: values.type,
+    user: user.id,
+    cod: values.cod.format("YYYY-MM-DD"),
+    hourly_data: fileData ? fileData.split(",")[1] : null,
+    state: values.state,
   };
+
+  console.log("Updated Form Values:", updatedValues);
+
+  try {
+    const response = await dispatch(updateProject(updatedValues)).unwrap();
+    
+    message.success("Form submitted successfully!");
+    form.resetFields();
+    setFileData(null);
+    setFile('');
+    localStorage.removeItem("matchingConsumerId");
+    onCancel();
+  } catch (error) {
+    console.error("Error:", error); 
+    message.error("File upload failed: Please check the file format and try again.");
+  }
+};
+
+  
 
   return (
     <Form
@@ -252,11 +283,7 @@ try {
             label="State"
             rules={[{ required: true, message: "Please select the state!" }]}
           >
-            <Select
-              placeholder="Select your state"
-              showSearch
-              disabled
-            >
+            <Select placeholder="Select your state" showSearch disabled>
               {isState &&
                 isState.map((state, index) => (
                   <Select.Option key={index} value={state}>
@@ -438,11 +465,7 @@ try {
                     </Button>
                   </Tooltip>
                 ) : (
-                  <Button
-                    icon={<UploadOutlined />}
-                    style={{ width: "100%" }}
-                   
-                  >
+                  <Button icon={<UploadOutlined />} style={{ width: "100%" }}>
                     Upload Excel Sheet
                   </Button>
                 )}

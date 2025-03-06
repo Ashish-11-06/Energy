@@ -392,7 +392,7 @@ console.log(companyName);
                         Matching IPP
                         {/* {user_category=='Consumer' ?  (
                         <p>Matching IPP +</p>
-                        ) : ( <p>Matching Consumer</p>)
+                        ) : (<p>Matching Consumer</p>)
                       } */}
                       </li>
                       <li

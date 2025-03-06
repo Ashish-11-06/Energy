@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Popover } from "antd";
 import { Row, Col, Card, Statistic, Modal } from "antd";
 import {
   ArrowUpOutlined,
@@ -244,7 +245,7 @@ const Dashboard = () => {
                 <Card.Grid
                   style={{ width: "100%", height: "100%", textAlign: "center" }}
                 >
-                  <Statistic
+                  {/* <Statistic
                     title="Total States"
                     value={platformDetails.totalStates}
                     prefix={
@@ -261,14 +262,54 @@ const Dashboard = () => {
                       />
                     }
                     valueStyle={{ color: "#3f8600" }}
-                  />
+                  /> */}
+                   <Statistic
+                    title="Total States"
+                    value={platformDetails.totalStates}
+                    // value={platformDetails?.statesCovered || 0}  // Default to 0 if undefined
+                    prefix={
+                      <img
+                        src={state} // Ensure `state` is a valid image URL
+                        alt="State Icon"
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    valueRender={(value) => (
+                      <Popover
+                        content={
+                          <div style={{ padding: "10px", maxWidth: "200px" }}>
+                            <strong>States Covered:</strong>
+                            <ul style={{ paddingLeft: "20px", margin: "5px 0" }}>
+                              {states?.length > 0 ? (
+                                states.map((state, index) => <li key={index}>{state}</li>)
+                              ) : (
+                                <li>No states available</li>
+                              )}
+                            </ul>
+                          </div>
+                        }
+                        trigger="hover" // Show popover on hover
+                        placement="top" // Adjust position if needed
+                      >
+                        <span style={{ cursor: "pointer" }}>{value}</span>
+                      </Popover>
+                    )}
+                    valueStyle={{
+                      color: "#3f8600",
+                      display: "flex",
+                      alignItems: "center",
+                    }}/>
                 </Card.Grid>
               </Col>
             </Row>
           </Card>
         </Col>
       </Row>
-      <Modal
+      {/* <Modal
         open={stateModal}
         title="States Covered"
         onCancel={() => showStateModal(false)} // Close the modal when Cancel is clicked
@@ -279,7 +320,7 @@ const Dashboard = () => {
             <li key={index}>{state}</li>
           ))}
         </ul>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

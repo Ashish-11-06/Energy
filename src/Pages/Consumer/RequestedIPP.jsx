@@ -275,7 +275,7 @@ const RequestedIPP = () => {
       </Modal>
       {/* TermSheet component */}
      
-{modalContent&& ( <TermSheet
+{modalContent&& (<TermSheet
         visible={isQuotationModalVisible}
         onCancel={() => setIsQuotationModalVisible(false)} // Close the modal
         data={modalContent} // Pass the modalContent directly to the modal

@@ -57,6 +57,12 @@ const TransactionWindowgen = () => {
   const userCategory = user?.user_category;
   const record = location.state;
 
+  const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  const loggedInUserId = loggedInUser?.user?.id;
+  console.log("user",loggedInUser)
+  console.log("user id ",loggedInUserId)
+
+
   // const t = 13;
 
   useEffect(() => {
@@ -218,6 +224,8 @@ const TransactionWindowgen = () => {
 
   const deadline = Date.now() + 3600 * 1000; // 1 hour from now
 
+
+
   return (
     <div style={{ padding: "30px", }}>
       <Row gutter={[16, 16]} justify="center">
@@ -232,30 +240,58 @@ const TransactionWindowgen = () => {
              <Title level={2} style={{ textAlign: "center" }}>
                           Term Sheet Details
                         </Title>
-                        <Row gutter={[16, 16]}>
+                        {/* <Row gutter={[16, 16]}>
                         <Col style={{ fontSize: 'larger',color:'#9a8406', background: 'white'}} span={8}>Open Offer Tariff Value : <strong>{record?.offer_tariff ? record.offer_tariff : 0}</strong> INR/kWh</Col>
                        
                           <Col style={{ fontSize: 'larger'}} span={8}><strong>Term of PPA (years) :  {record.t_term_of_ppa}</strong> </Col>
                           <Col style={{ fontSize: 'larger'}} span={8}><strong>Lock-in Period (years) : {record.t_lock_in_period}</strong></Col>
-                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Commencement of Supply : {moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</strong></Col>
+                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Commencement of Supply : {moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</strong></Col> */}
                         {/* </Row> */}
                         {/* <Row gutter={[16, 16]} style={{ marginTop: "16px" }}> */}
-                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Contracted Energy (MW) : {record.t_contracted_energy}</strong></Col>
+                          {/* <Col style={{ fontSize: 'larger'}} span={8}><strong>Contracted Energy (MW) : {record.t_contracted_energy}</strong></Col>
                           <Col style={{ fontSize: 'larger'}} span={8}><strong>Minimum Supply Obligation (million units) : {record.t_minimum_supply_obligation}</strong></Col>
-                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security (days) : {record.t_payment_security_day}</strong></Col>
+                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security (days) : {record.t_payment_security_day}</strong></Col> */}
                         {/* </Row> */}
                         {/* <Row gutter={[16, 16]} style={{ marginTop: "16px" }}> */}
-                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security Type : {record.t_payment_security_type}</strong> </Col>
+                          {/* <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security Type : {record.t_payment_security_type}</strong> </Col>
+                        </Row> */}
+                         <Row gutter={[16, 16]}>
+                          <Col style={{ fontSize: 'larger',color:'#9a8406', background: 'white'}} span={8}>Open Offer Tariff Value : <strong>{record?.offer_tariff ? record.offer_tariff : 0}</strong> INR/kWh</Col>
+                          <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
+                          <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
+                          {/* <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col> */}
+                        </Row>
+                        <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+                          <Col span={8}><strong>Contracted Energy (MW): </strong>{record.t_contracted_energy}</Col>
+                          <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{record.t_minimum_supply_obligation}</Col>
+                          <Col span={8}><strong>Payment Security (days):</strong>{record.t_payment_security_day}</Col>
+                        </Row>
+                        <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+                          <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
+                          <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
                         </Row>
                         {/* <Row > */}
                             {/* </Row> */}
-                        <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
+                        {/* <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
                           <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <img src={time} alt="" style={{ height: '30px', width: '30px' }} />
-                            <Countdown title="Time Remaining" value={deadline} />
+                            <img src={time} alt="" style={{ height: '30px', width: '30px', filter: 'brightness(0) saturate(100%) invert(13%) sepia(85%) saturate(7484%) hue-rotate(1deg) brightness(91%) contrast(119%)'}} />
+                            <Countdown title="Time Remaining" value={deadline} valueStyle={{ color: 'red' }}/>
                           </span>
-                          
-                        </Row>
+                        </Row> */}
+                        <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
+                        <Col>
+                          <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div> 
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <img 
+                              src={time} 
+                              alt="" 
+                              style={{ height: '30px', width: '30px', filter: 'brightness(0) saturate(100%) invert(13%) sepia(85%) saturate(7484%) hue-rotate(1deg) brightness(91%) contrast(119%)' }} 
+                            />
+                            <Countdown value={deadline} valueStyle={{ color: 'red' }} />
+                          </span>
+                        </Col>
+                      </Row>
+
             <div style={{
               color: '#9A8406',
               marginRight: '10px'
@@ -263,12 +299,71 @@ const TransactionWindowgen = () => {
 
               You can submit/update tariffs within the specified time frame. After one hour, the consumer will decide which offer to select.
             </div>
-
-            <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
+            
+          {/* <div style={{ marginTop: "24px" }}>Offers from IPPs:</div> */}
+          </div>
+       
+          <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px"  }}>
+            <Title level={3}>Your Offers:</Title>
+            {messages.length === 0 ? (
+              <Text>No messages available.</Text>
+            ) : (
+              messages
+                .filter((messageObject) => Object.values(messageObject).some(msg => msg.generator_id === loggedInUserId))
+                .map((messageObject, index) =>
+                  Object.keys(messageObject).map((msgKey) => {
+                    const msg = messageObject[msgKey];
+                    console.log("Generator Username:", msg.generator_username);
+                    if (msg && typeof msg === "object" && msg.generator_id === loggedInUserId) {
+                      return (
+                        <Card
+                          key={msg.id || index}
+                          style={{
+                            marginBottom: "10px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start", // Aligns text to start
+                          }}
+                        >
+                          <div>
+                            <Text strong>
+                              IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span>
+                            </Text>
+                            <Text style={{ margin: '150px' }} strong>
+                              Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span>
+                            </Text>
+                            <Text strong>
+                              Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
+                            </Text>
+                          </div>
+                        </Card>
+                      );
+                    }
+                    return null;
+                  })
+                )
+            )}
+            <div style={{ display: "flex", justifyContent: "flex-end", width: "100%", marginTop: "10px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <InputNumber
+                  style={{ backgroundColor: "white", width: "150px" }}
+                  placeholder="Enter tariff value"
+                  value={tariffValue}
+                  onChange={handleTariffChange}
+                />
+                <Button
+                  onClick={handleSendTariff}
+                  disabled={tariffValue === null || tariffValue <= 0}
+                >
+                  Send Tariff
+                </Button>
+              </div>
+            </div>
           </div>
 
           <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
-            <Title level={3}>Offer tarrifs:</Title>
+            <Title level={3}>Other IPP offers:</Title>
             {messages.length === 0 ? (
               <Text>No messages available.</Text>
             ) : (
@@ -279,28 +374,31 @@ const TransactionWindowgen = () => {
                   // Iterate over each key in the messageObject
                   return Object.keys(messageObject).map((msgKey) => {
                     const msg = messageObject[msgKey]; // Access the message using the key
-
+                
                     // Validate the message object
-                    if (msg && typeof msg === 'object') {
+                    if (msg && typeof msg === 'object' && msg.generator_id !== loggedInUserId) {
                       return (
                         <Card
                           key={msg.id || index}
                           style={{
                             marginBottom: "10px",
-                            // padding: "10px",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "space-between",
-                            alignItems: "flex-start" // Aligns text to start
+                            alignItems: "flex-start", // Aligns text to start
                           }}
                         >
                           <div>
-                            <Text strong>IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span> </Text>
-                            <Text style={{ margin: '150px' }} strong>Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span></Text>
-                            <Text strong>Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span> </Text>
+                            <Text strong>
+                              IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span>
+                            </Text>
+                            <Text style={{ margin: '150px' }} strong>
+                              Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span>
+                            </Text>
+                            <Text strong>
+                              Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
+                            </Text>
                           </div>
-
-
                         </Card>
                       );
                     } else {
@@ -312,12 +410,11 @@ const TransactionWindowgen = () => {
               )
             )}
           </div>
-
           <br /><br />
 
           {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button> */}
-          <Row style={{ marginLeft: '60%' }}>
+          {/* <Row style={{ marginLeft: '60%' }}>
             <div style={{
               color: '#9A8406',
               marginRight: '10px'
@@ -337,7 +434,7 @@ const TransactionWindowgen = () => {
             >
               Send Tariff
             </Button>
-          </Row>
+          </Row> */}
         </Card>
 
       </Row>
