@@ -83,16 +83,30 @@ const username=user?.company_representative;
     }
   };
 
-useEffect(()=>{
-  try {
-    const id=user_id;
-    const res=dispatch(fetchRequirements(id));
-    setConsumerRequirement(res);
-    console.log(res);
-  } catch (error) {
-    console.log(error);  
-  }
-},[user_id])
+// useEffect(()=>{
+//   try {
+//     const id=user_id;
+//     const res=dispatch(fetchRequirements(id));
+//     setConsumerRequirement(res);
+//     console.log(res);
+//   } catch (error) {
+//     console.log(error);  
+//   }
+// },[user_id])
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const id = user_id;
+      const res = await dispatch(fetchRequirements(id)); // Wait for API response
+      setConsumerRequirement(res.payload); // Assuming response is stored in res.payload
+      console.log(res.payload);
+    } catch (error) {
+      console.log("Error fetching consumer requirements:", error);
+    }
+  };
+
+  fetchData();
+}, [user_id, dispatch]);
 
   useEffect(() => {
     const allFilled = tableData.every((item) => item.demand !== null);
