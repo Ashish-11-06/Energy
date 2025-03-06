@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Button, Select, Table, Row, Col, Card, Radio } from 'antd';
 import { Line } from 'react-chartjs-2';

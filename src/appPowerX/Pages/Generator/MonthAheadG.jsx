@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Button, Select, Table, Row, Col, Card } from 'antd';
 import { Line } from 'react-chartjs-2';
@@ -31,11 +32,17 @@ const MonthAheadG = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    console.log('month data');
+    
     const fetchData = async () => {
       try {
+        console.log('in Data');
+        
         const data = await dispatch(fetchMonthAheadLineData());
         setLineData(data.payload);
       } catch (error) {
+        console.log('errrrr');
+        
         console.log(error);
       }
     };
@@ -144,7 +151,8 @@ const MonthAheadG = () => {
     navigate('/px/generator/plan-month-trade-page');
       }
   const handleStatistics = () => {
-    navigate('/px/generator/statistical-information');
+    console.log('clicked');
+    navigate('/px/generator/statistical-month-information');
   };
 
   return (
