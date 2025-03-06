@@ -66,15 +66,15 @@ const CombinationPattern = () => {
       return;
     }
 
-    useEffect(() => {
-      if(!isTableLoading){
-        window.scrollTo({
-          top: document.body.scrollHeight,
-          behavior: "smooth",
-        });
-        // console.log('scrolled');
-      }
-    }, [isTableLoading, setIsTableLoading]);
+    // useEffect(() => {
+    //   if(!isTableLoading){
+    //     window.scrollTo({
+    //       top: document.body.scrollHeight,
+    //       behavior: "smooth",
+    //     });
+    //     // console.log('scrolled');
+    //   }
+    // }, [isTableLoading, setIsTableLoading]);
 
 
     const formattedCombinations = Object.entries(combinations).map(
@@ -200,7 +200,8 @@ const CombinationPattern = () => {
             const response = await dispatch(
               fetchConsumptionPattern(selectedDemandId)
             );
-            // console.log(response);
+            console.log(response);
+            console.log(selectedDemandId);
           }
         } catch (error) {
           message.error("Failed to fetch consumption patterns.");

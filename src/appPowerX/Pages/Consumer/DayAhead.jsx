@@ -73,14 +73,14 @@ const DayAhead = () => {
     labels: Array.from({ length: 96 }, (_, i) => i + 1), // Updated X-axis labels
     datasets: [
       {
-        label: 'MCP (INR/MWh)', // Label for MCP dataset
+        label: 'MCP (INR/MW)', // Label for MCP dataset
         data: tableData[0]?.MCP || [], // Updated data for MCP
         borderColor: 'blue',
         fill: false,
         yAxisID: 'y-axis-mcp', // Assign to right Y-axis
       },
       {
-        label: 'MCV (MWh)', // Label for MCY dataset
+        label: 'MCV (MW)', // Label for MCY dataset
         data: tableData[0]?.MCV || [], // Updated data for MCY
         borderColor: 'green',
         fill: false,
@@ -110,7 +110,7 @@ const DayAhead = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'MCV (MWh)',
+          text: 'MCV (MW)',
         },
       },
       'y-axis-mcp': {
@@ -119,7 +119,7 @@ const DayAhead = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'MCP (INR/MWh)',
+          text: 'MCP (INR/MW)',
         },
         grid: {
           drawOnChartArea: false, // Only draw grid lines for one Y-axis
