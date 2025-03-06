@@ -7,7 +7,7 @@ export const fetchConsumptionPattern = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await consumptionPatternApi.getConsumptionPattern(id);
-    
+      console.log(response.data);
       return response.data; // Assuming the API returns data in `response.data`
     } catch (error) {
       // Handle errors

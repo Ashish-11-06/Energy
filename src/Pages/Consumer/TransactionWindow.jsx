@@ -275,7 +275,9 @@ const TransactionWindow = () => {
     setOfferValue(value);
   };
 
-  const deadline = Date.now() + 3600 * 1000; // 1 hour from now
+  // const deadline = Date.now() + 3600 * 1000; // 1 hour from now
+  const deadline = Date.now() + 60 * 1000; 
+
 
   return (
     <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
