@@ -8,6 +8,7 @@ import * as XLSX from 'xlsx';
 import { useDispatch } from 'react-redux';
 import { addDayAheadData } from "../../Redux/slices/consumer/dayAheadSlice";
 import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequirementSlice";
+import {getAllProjectsById} from "../../Redux/slices/generator/portfolioSlice";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -37,7 +38,8 @@ const username=user?.company_representative;
 
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [consumerRequirement, setConsumerRequirement] = useState(null);
+  // const [consumerRequirement, setgeneratorPortfolio] = useState(null);
+  const [generatorPortfolio, setgeneratorPortfolio] = useState(null);
   const [tableData, setTableData] = useState(
     generateTimeLabels().map((time, index) => ({
       key: index,
@@ -87,18 +89,34 @@ const username=user?.company_representative;
 //   try {
 //     const id=user_id;
 //     const res=dispatch(fetchRequirements(id));
-//     setConsumerRequirement(res);
+//     setgeneratorPortfolio(res);
 //     console.log(res);
 //   } catch (error) {
 //     console.log(error);  
 //   }
 // },[user_id])
+
+// useEffect(() => {
+//   const fetchData = async () => {
+//     try {
+//       const id = user_id;
+//       const res = await dispatch(fetchRequirements(id)); // Wait for API response
+//       setgeneratorPortfolio(res.payload); // Assuming response is stored in res.payload
+//       console.log(res.payload);
+//     } catch (error) {
+//       console.log("Error fetching consumer requirements:", error);
+//     }
+//   };
+
+//   fetchData();
+// }, [user_id, dispatch]);
+
 useEffect(() => {
   const fetchData = async () => {
     try {
       const id = user_id;
-      const res = await dispatch(fetchRequirements(id)); // Wait for API response
-      setConsumerRequirement(res.payload); // Assuming response is stored in res.payload
+      const res = await dispatch(getAllProjectsById(id)); // Wait for API response
+      setgeneratorPortfolio(res.payload); // Assuming response is stored in res.payload
       console.log(res.payload);
     } catch (error) {
       console.log("Error fetching consumer requirements:", error);
@@ -190,12 +208,39 @@ useEffect(() => {
     return false; // Prevent automatic upload
   };
 
+  // const handleDownloadTemplate = () => {
+  //   const worksheet = XLSX.utils.json_to_sheet(tableData.map(item => ({ "Time Interval": item.time, "Generation": '' })));
+  //   const workbook = XLSX.utils.book_new();   
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
+  //   XLSX.writeFile(workbook, 'trade_template.xlsx');
+  // };
   const handleDownloadTemplate = () => {
-    const worksheet = XLSX.utils.json_to_sheet(tableData.map(item => ({ Time: item.time, Demand: '' })));
+    // Modify time format for the template
+    const formattedData = tableData.map((item, index) => ({
+      "Time Interval": index < tableData.length - 1 
+        ? `${item.time} - ${tableData[index + 1].time}`
+        : `${item.time} - 00:00`, // Last interval wraps around
+      "Generation": ''
+    }));
+  
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+  
+    // Make column headers bold
+    const range = XLSX.utils.decode_range(worksheet['!ref']);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cell = XLSX.utils.encode_cell({ r: 0, c: C });
+      if (worksheet[cell]) {
+        worksheet[cell].s = { font: { bold: true } };
+      }
+    }
+  
+    // Create workbook and download file
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
     XLSX.writeFile(workbook, 'trade_template.xlsx');
   };
+  
 
   const handleFillBelow = (part) => {
     const newData = [...tableData];
@@ -217,7 +262,7 @@ useEffect(() => {
     {
       title: (
         <div>
-          Demand
+          Generation
           <Button onClick={() => handleFillBelow(part)} style={{ marginLeft: '10px',height:'10px' }} icon={<DownOutlined style={{padding:'5px',height:'10px'}}/>}>
             
           </Button>
@@ -264,8 +309,8 @@ useEffect(() => {
   // const consumptionUnits = ["Unit 1", "Unit 2", "Unit 3"]; // Dummy data for consumption units
   const dummyConsumptionUnits = ["Unit 1", "Unit 2", "Unit 3"]; // Dummy data
 
-  const consumptionUnits = consumerRequirement && consumerRequirement.length > 0 
-    ? consumerRequirement 
+  const consumptionUnits =generatorPortfolio&& consumerRequirement.length > 0 
+    ?generatorPortfolio
     : dummyConsumptionUnits;
   return (
     <div style={{ padding: "20px" }}>
