@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 // import { useState, useEffect } from 'react';
 // import { Table, Calendar, Card, Row, Col, Tooltip, Button, Spin } from 'antd';
 // import 'antd/dist/reset.css'; // Import Ant Design styles
@@ -266,6 +268,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './Planning.css';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { fetchPlanningData } from '../../Redux/slices/consumer/planningSlice';
 
 dayjs.locale('en');
 
@@ -283,6 +286,8 @@ const Planning = () => {
   const [loading, setLoading] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const dispatch = useDispatch();
+  const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -306,6 +311,20 @@ const Planning = () => {
     const dateStr = dayjs(date).format('DD-MM-YYYY');
     return tableDemandData.filter(item => item.Date === dateStr);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const id = user_id; // Ensure `user_id` is defined in scope
+      try {
+        const res = await dispatch(fetchPlanningData(id));
+      } catch (error) {
+        console.error("Error fetching planning data:", error);
+      }
+    };
+  
+    fetchData(); // Call the function inside useEffect
+  }, [user_id, dispatch]); // Add dependencies if needed
+  
 
   const tileContent = ({ date }) => {
     const listData = getListData(date);

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Button, Select, Table, Row, Col, InputNumber, Tooltip, DatePicker } from 'antd';
 import { useNavigate } from "react-router-dom";
@@ -99,20 +100,20 @@ console.log(tableDemandData);
         const message = `New demand added: ${demand}, Price: ${data.price} on date: ${data.Date}`;
   
         // Fetch the existing notification data from Redux state
-        const notifications = store.getState().notificationData.notificationData || [];
+        // const notifications = store.getState().notificationData.notificationData || [];
         
         // Find the last ID and increment it
-        const lastId = notifications.length > 0 ? Math.max(...notifications.map(n => n.id)) : 0;
-        const newId = lastId + 1;
+        // const lastId = notifications.length > 0 ? Math.max(...notifications.map(n => n.id)) : 0;
+        // const newId = lastId + 1;
   
-        const notificationData = {
-          id: newId, // Auto-incremented ID
-          message: message,
-        };
+        // const notificationData = {
+        //   id: newId, // Auto-incremented ID
+        //   message: message,
+        // };
   
         // Dispatch updateNotificationData with new notification
-        const notificationRes = await dispatch(updateNotificationData(notificationData)).unwrap();
-        console.log('Notification Updated:', notificationRes);
+        // const notificationRes = await dispatch(updateNotificationData(notificationData)).unwrap();
+        // console.log('Notification Updated:', notificationRes);
 
         // Fetch the updated table data
         const updatedData = await dispatch(fetchTableMonthData()).unwrap();

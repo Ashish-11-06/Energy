@@ -63,7 +63,6 @@ import StatisticalInformationG from './appPowerX/Pages/Generator/Statisticalinfo
 import PlanningG from './appPowerX/Pages/Generator/Planning';
 import TradingG from './appPowerX/Pages/Generator/TradingG';
 import PlanYourMonthTradePageG from './appPowerX/Pages/Generator/PlanYourMonthTradePageG';
-import DayStatisticsInformation from './appPowerX/Pages/Generator/DayStatisticsInformation';
 import PlanDayTradePage from './appPowerX/Pages/Generator/PlanDayTradePage';
 import ChatPage from './appPowerX/Pages/ChatPage';
 import Trading2 from './appPowerX/Pages/Generator/Trading2';
@@ -75,6 +74,7 @@ import LoginPage from './appPowerX/Pages/LoginPage';
 import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
 import NotificationG from './appPowerX/Pages/Generator/NotificationG';
 import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
+import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -199,8 +199,9 @@ function App() {
         <Route path="plan-month-trade-page" element={<PlanYourMonthTradePageG />} />
         <Route path="plan-day-trade-page" element={<PlanDayTradePage />} />
         <Route path="statistical-information" element={<StatisticalInformationG />} />
-        <Route path="statistical-day-information" element={<DayStatisticsInformation />} />
         {/* <Route path="statistical-day-information" element={<DayStatisticsInformation />} /> */}
+        <Route path="statistical-month-information" element={<StatisticalInfoMonthG />} />
+
         <Route path="month-ahead" element={<MonthAheadG />} />
         <Route path="notification" element={<NotificationG />} />
 

@@ -1,8 +1,13 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Radio, Upload, message, Card } from "antd";
+import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Checkbox, Upload, message, Card, Select } from "antd";
 import { useNavigate } from "react-router-dom";
-import { UploadOutlined, DownloadOutlined, DownOutlined } from "@ant-design/icons";
+import { UploadOutlined, DownloadOutlined, DownOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import * as XLSX from 'xlsx';
+import { useDispatch } from 'react-redux';
+import { addDayAheadData } from "../../Redux/slices/consumer/dayAheadSlice";
+import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequirementSlice";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -16,11 +21,23 @@ const generateTimeLabels = () => {
   return times;
 };
 
-const PlanDayTradePage = () => {
+const PlanYourTradePage = () => {
   const [form] = Form.useForm();
-  const [selectedTechnology, setSelectedTechnology] = useState("Solar");
+  const [selectedTechnology, setSelectedTechnology] = useState([]);
+  const [selectedUnit, setSelectedUnit] = useState(null);
+  const [price, setPrice] = useState({});
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem('user')).user;
+  const user_id = user.id;
+  const is_new_user = user?.is_new_user;
+console.log(user);
+const username=user?.company_representative;
+
+
+  const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [consumerRequirement, setConsumerRequirement] = useState(null);
   const [tableData, setTableData] = useState(
     generateTimeLabels().map((time, index) => ({
       key: index,
@@ -44,6 +61,19 @@ const PlanDayTradePage = () => {
     setSelectedTechnology(value);
   };
 
+  useEffect(() => {
+    if (is_new_user) {
+      setIsInfoModalVisible(true);
+    }
+  }, [is_new_user]);
+
+  const handleInfoModalOk = () => {
+    setIsInfoModalVisible(false);
+  };
+
+  const showInfoModal = () => {
+    setIsInfoModalVisible(true);
+  };
   const handleInputChange = (value, key) => {
     const newData = [...tableData];
     const index = newData.findIndex((item) => key === item.key);
@@ -53,16 +83,82 @@ const PlanDayTradePage = () => {
     }
   };
 
+// useEffect(()=>{
+//   try {
+//     const id=user_id;
+//     const res=dispatch(fetchRequirements(id));
+//     setConsumerRequirement(res);
+//     console.log(res);
+//   } catch (error) {
+//     console.log(error);  
+//   }
+// },[user_id])
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const id = user_id;
+      const res = await dispatch(fetchRequirements(id)); // Wait for API response
+      setConsumerRequirement(res.payload); // Assuming response is stored in res.payload
+      console.log(res.payload);
+    } catch (error) {
+      console.log("Error fetching consumer requirements:", error);
+    }
+  };
+
+  fetchData();
+}, [user_id, dispatch]);
+
   useEffect(() => {
     const allFilled = tableData.every((item) => item.demand !== null);
     setAllFieldsFilled(allFilled);
   }, [tableData]);
 
-  const handleModalOk = () => {
-    localStorage.setItem("tradeData", JSON.stringify(tableData));
-    localStorage.setItem("selectedTechnology", selectedTechnology);
-    localStorage.setItem("navigationSource", "PlanYourTradePage");
-    navigate('/px/generator/trading');
+  const handleModalOk = async () => {
+    try {
+      const dayAheadDemand = {
+        consumer: user_id,
+        energy_type: selectedTechnology,
+        demand_data: tableData.map(item => {
+          let [hours, minutes] = item.time.split(":").map(Number); // Convert time to hours and minutes
+          minutes += 15; // Add 15 minutes
+      
+          if (minutes >= 60) {
+            hours += 1;
+            minutes -= 60;
+          }
+      
+          // Ensure hours do not exceed 23 (Reset to 00:00 if it becomes 24:00)
+          if (hours >= 24) {
+            hours = 0;
+          }
+      
+          let end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`; // Format time
+      
+          return {
+            start_time: item.time,
+            end_time: end_time,
+            demand: item.demand
+          };
+        }),
+        price: selectedTechnology.reduce((acc, tech) => {
+          acc[tech] = price[tech];
+          return acc;
+        }, {})
+      };
+      
+      console.log(dayAheadDemand);
+      
+      const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+      console.log('res', res);
+      setIsModalVisible(false);
+      // localStorage.setItem("tradeData", JSON.stringify(tableData));
+      // localStorage.setItem("selectedTechnology", selectedTechnology);
+      // localStorage.setItem("navigationSource", "PlanYourTradePage");
+      navigate('/px/consumer/trading');
+    } catch (error) {
+      console.log(error);
+      message.error("Failed to submit data. Please try again.");
+    }
   };
 
   const handleFileUpload = (file) => {
@@ -165,10 +261,33 @@ const PlanDayTradePage = () => {
 
   const [part1, part2, part3, part4, part5, part6] = splitData(tableData);
 
+  // const consumptionUnits = ["Unit 1", "Unit 2", "Unit 3"]; // Dummy data for consumption units
+  const dummyConsumptionUnits = ["Unit 1", "Unit 2", "Unit 3"]; // Dummy data
+
+  const consumptionUnits = consumerRequirement && consumerRequirement.length > 0 
+    ? consumerRequirement 
+    : dummyConsumptionUnits;
   return (
     <div style={{ padding: "20px" }}>
       <h1>Plan Your Trade (96 time blocks)</h1>
-      <Row gutter={16} style={{ marginBottom: "20px" ,marginLeft:'20%', marginRight:'15%'}}>
+      <Col span={8}>
+    <Form.Item label="Select Consumption Unit">
+      <Select placeholder="Select a unit" onChange={(value) => setSelectedUnit(value)}>
+        {consumptionUnits.map((unit) => (
+          <Select.Option key={unit} value={unit}>
+            {unit}
+          </Select.Option>
+        ))}
+      </Select>
+    </Form.Item>
+  </Col>
+      <Row gutter={16} style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", marginLeft: "5%", marginRight: "5%" }}>
+  
+  {/* Select Consumption Unit */}
+
+
+  {/* Add Details Card */}
+  <Col span={8}>
       <Card
       style={{
         width: 300,
@@ -176,7 +295,7 @@ const PlanDayTradePage = () => {
         boxShadow: "4px 4px 12px rgba(0, 0, 0, 0.2)",
         transform: "translateY(-2px)",
         transition: "all 0.3s ease-in-out",
-        textAlign:'center'
+        textAlign: "center"
       }}
       
     >
@@ -188,17 +307,26 @@ const PlanDayTradePage = () => {
         </Tooltip>
       </Col>
     </Card>
-        <span style={{marginTop:'30px', fontWeight:'bold',marginLeft:'20px',marginRight:'20px'}}>OR</span>
-        <Card span={10}   style={{
+  </Col>
+
+  {/* OR separator */}
+  <Col span={2} style={{ textAlign: "center", fontWeight: "bold",marginRight:"10px" }}>
+    <span>OR</span>
+  </Col>
+
+  {/* Upload Template Card */}
+  <Col span={8}>
+    <Card
+      style={{
         width: 300,
         borderRadius: "12px",
         boxShadow: "4px 4px 12px rgba(0, 0, 0, 0.2)",
         transform: "translateY(-2px)",
         transition: "all 0.3s ease-in-out",
-        textAlign:'center'
-
-      }}>
-      <Row gutter={16} align="middle">
+        textAlign: "center"
+      }}
+    >
+      <Row gutter={16} align="middle" justify="center">
         <Col>
           <Tooltip title="Download template!" placement="bottom">
             <Button icon={<DownloadOutlined />} onClick={handleDownloadTemplate} />
@@ -213,7 +341,10 @@ const PlanDayTradePage = () => {
         </Col>
       </Row>
     </Card>
+  </Col>
+
       </Row>
+
       {showTable && (
         <Form form={form} onFinish={onFinish} layout="vertical">
           <Row gutter={16}>
@@ -248,14 +379,73 @@ const PlanDayTradePage = () => {
         onOk={handleModalOk}
         onCancel={() => setIsModalVisible(false)}
       >
-        <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
-          <Radio value="Solar">Solar</Radio>
-          <Radio value="Non-Solar">Non-Solar</Radio>
-          <Radio value="Hydro">Hydro</Radio>
-        </Radio.Group>
+  {/* Checkbox Group */}
+  <Checkbox.Group onChange={(checkedValues) => setSelectedTechnology(checkedValues)} value={selectedTechnology}>
+    <Checkbox value="Solar">Solar</Checkbox>
+    <Checkbox value="Non-Solar">Non-Solar</Checkbox>
+    {/* <Checkbox value="Hydro">Hydro</Checkbox> */}
+  </Checkbox.Group>
+
+
+  {/* Input fields for price */}
+  <div style={{ marginTop: "15px" }}>
+    {selectedTechnology.includes("Solar") && (
+      <div>
+        <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
+        <Input
+          type="number"
+          placeholder="Enter solar price in INR"
+          value={price["Solar"] || ""}
+          min={0}
+          onChange={(e) => setPrice({ ...price, Solar: e.target.value })}
+          style={{ marginTop: "5px", width: "100%" }}
+        />
+      </div>
+    )}
+    {selectedTechnology.includes("Non-Solar") && (
+      <div>
+        <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
+        <Input
+          type="number"
+          placeholder="Enter non-solar price in INR"
+          value={price["Non-Solar"] || ""}
+          min={0}
+          onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
+          style={{ marginTop: "5px", width: "100%" }}
+        />
+      </div>
+    )}
+  </div>
+      </Modal>
+      <Modal
+        title="Welcome"
+        open={isInfoModalVisible}
+        onOk={handleInfoModalOk}
+        onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
+        okText="Got it"
+        footer={[
+          <Button key="submit" type="primary" onClick={handleInfoModalOk}>
+            Got it
+          </Button>,
+        ]}
+      >
+        <p>Hi {username},</p>
+       
+        <p>Welcome to the powerX. Please follow these steps to proceed:</p>
+        <ol>
+          <li>Select the consumption unit </li>
+          <li>Add your requirements by clicking the "Add Details +" button or Download template, fill  it and upload the document</li>
+          <li>Click on continue button</li>
+          <li>Select the technology and enter the price</li>
+          <li>Click on 'Ok' to proceed</li>
+      
+        </ol>
+        <p>Thank you!</p>
       </Modal>
     </div>
+    
   );
+  
 };
 
-export default PlanDayTradePage;
+export default PlanYourTradePage;
