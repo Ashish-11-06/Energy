@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { Form, Input, Button, Radio, Typography, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
@@ -115,8 +117,7 @@ const LoginPage = () => {
               </a>
             </p>
 
-            <p>
-              Don't have an account?{" "}
+            <p>Don't have an account?{" "}
               <a
                 onClick={() => setIsRegisterModalVisible(true)}
                 style={{

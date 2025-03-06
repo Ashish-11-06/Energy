@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Card, Statistic, Button, Row, Col } from 'antd';
 import 'antd/dist/reset.css'; // Import Ant Design styles

@@ -43,6 +43,7 @@ import RequirementsPage from './Pages/Consumer/RequirementPage';
 import InvoicePage from './Pages/InvoicePage';
 import { lastVisitedPage } from './Redux/Slices/Consumer/lastVisitedPageSlice';
 import EmailVerification from './Pages/EmailVerification';
+import StatusApproval from './Pages/TrackStatus';
 
 
 // powerX
@@ -73,6 +74,7 @@ import LoginPage from './appPowerX/Pages/LoginPage';
 // import ProfileP from './appPowerX/Pages/Consumer/Profile';
 import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
 import NotificationG from './appPowerX/Pages/Generator/NotificationG';
+import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -135,6 +137,7 @@ function App() {
             <Route path="notification" element={<Notification />} />
             <Route path="transaction-window" element={<TransactionWindow />} />
             <Route path="invoice" element={<InvoicePage />} />
+            <Route path="status" element={<StatusApproval />} />
           </Route>
 
           {/* Generator Routes */}
@@ -158,6 +161,7 @@ function App() {
             <Route path="notificationgen" element={<NotificationGenerator />} />
             <Route path="transaction-window" element={<TransactionWindowGen />} />
             <Route path="invoice" element={<InvoicePage />} />
+            <Route path="status" element={<StatusApproval />} />
           </Route>
         </Route>
 
@@ -178,6 +182,7 @@ function App() {
         <Route path="day-ahead" element={<DayAhead />} />
         <Route path="plan-trade-page" element={<PlanYourTradePage />} />
         <Route path="statistical-information" element={<StatisticalInformation />} />
+        <Route path="statistical-information-month" element={<StatisticalInfoMonth />} />
         <Route path="month-ahead" element={<MonthAhead />} />
         <Route path="plan-month-trade" element={<PlanMonthTrading/>} />
         <Route path="planning" element={<Planning />} />
@@ -195,6 +200,7 @@ function App() {
         <Route path="plan-day-trade-page" element={<PlanDayTradePage />} />
         <Route path="statistical-information" element={<StatisticalInformationG />} />
         <Route path="statistical-day-information" element={<DayStatisticsInformation />} />
+        {/* <Route path="statistical-day-information" element={<DayStatisticsInformation />} /> */}
         <Route path="month-ahead" element={<MonthAheadG />} />
         <Route path="notification" element={<NotificationG />} />
 

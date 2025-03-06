@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Button, Select, Table, Row, Col, InputNumber, Tooltip, DatePicker } from 'antd';
 import { useNavigate } from "react-router-dom";
@@ -58,7 +59,7 @@ const PlanMonthTrading = () => {
       try {
         const data = await dispatch(fetchTableMonthData());
         console.log(data.payload); // Logging the fetched data
-         setTableDemandData(data.payload);
+         setTableDemandData(data.payload || []); // Ensure data is an array
       } catch (error) {
         console.log(error);
       }
@@ -98,7 +99,7 @@ console.log(tableDemandData);
           try {
             const data = await dispatch(fetchTableMonthData());
             console.log(data.payload); // Logging the fetched data
-             setTableDemandData(data.payload);
+             setTableDemandData(data.payload || []); // Ensure data is an array
           } catch (error) {
             console.log(error);
           }
@@ -142,7 +143,7 @@ console.log(tableDemandData);
     localStorage.setItem("monthTradeData", JSON.stringify(demandData));
     localStorage.setItem("selectedMonth", selectedMonth);
     localStorage.setItem("navigationSource", "PlanMonthTrading");
-    navigate('/px/consumer/trading');
+    navigate('/px/consumer/planning');
   };
 
   const columnsMonth = [
@@ -225,7 +226,7 @@ console.log(tableDemandData);
       <Col span={12}>
         <Table
           columns={columnsMonth}
-          dataSource={tableDemandData}
+          dataSource={Array.isArray(tableDemandData) ? tableDemandData : []}
           pagination={false}
           bordered
           style={{

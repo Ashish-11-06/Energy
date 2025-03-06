@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Badge } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +23,9 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const notificationCount = useSelector((state) => state.notifications.notificationCount);
   const offerCount = useSelector((state) => state.notifications.offerCount);
   // const notificationCount = 9;
+  const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+  const subscription_type = subscription?.subscription_type;
+  console.log(subscription_type);
 
   // console.log(notificationCount);
 
@@ -31,6 +35,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 
   const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category = user?.user_category;
+  const is_new_user = user?.is_new_user;
+  console.log(is_new_user);
 
   useEffect(() => {
     // Dispatch the thunk to connect to the WebSocket
@@ -68,7 +74,9 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     {
-      label: (<span>Notification</span>), key: '/consumer/notification', icon: (
+      label: (<span>Notification</span>),
+      key: '/consumer/notification',
+      icon: (
         <Badge
           style={{
             transform: 'translate(50%, -50%)',
@@ -89,6 +97,14 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Track Status', key: '/consumer/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
+console.log(is_new_user);
+if(subscription_type === 'PRO') {
+  if (is_new_user==true) {
+    consumerMenuItems.push({ label: 'powerX', key: '/px/consumer/plan-trade-page' });
+  } else {
+    consumerMenuItems.push({ label: 'powerX', key: '/px/consumer/dashboard' });
+  }
+}
 
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
@@ -138,6 +154,13 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Track Status', key: '/generator/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
+  if(subscription_type === 'PRO') {
+    if (is_new_user==true) {
+      generatorMenuItems.push({ label: 'powerX', key: '/px/generator/day-ahead' });
+    } else {
+      generatorMenuItems.push({ label: 'powerX', key: '/px/generator/dashboard' });
+    }
+  }
 
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;

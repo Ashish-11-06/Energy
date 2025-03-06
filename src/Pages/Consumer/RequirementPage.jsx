@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Table, Button, message, Row, Col, Modal, Tooltip,Radio } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation

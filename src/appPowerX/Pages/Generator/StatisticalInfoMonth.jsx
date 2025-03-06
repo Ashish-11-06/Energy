@@ -15,7 +15,7 @@ ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend
 
 const { Option } = Select;
 
-const DayAhead = () => {
+const StatisticalInfoMonth = () => {
   const [tableData, setTableData] = useState([]);
   const navigate = useNavigate(); 
   const [selectedType, setSelectedType] = useState('MCP'); // Default: MCP chart displayed
@@ -91,7 +91,7 @@ console.log(tableData);
   };
 
   const MCVData = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1), // Generates labels [1, 2, 3, ..., 96]
+    labels: Array.from({ length: 31 }, (_, i) => i + 1), // Generates labels [1, 2, 3, ..., 31]
     datasets: [
       {
         label: "ForeCasted MCV Data",
@@ -109,7 +109,7 @@ console.log(tableData);
   };
 
   const MCPData = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1),
+    labels: Array.from({ length: 31 }, (_, i) => i + 1),
     datasets: [
       {
         label: 'ForeCasted MCP Data',
@@ -127,7 +127,7 @@ console.log(tableData);
   };
 
   const BothData = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1),
+    labels: Array.from({ length: 31 }, (_, i) => i + 1),
     datasets: [
       {
         label: 'ForeCasted MCP Data (INR/MWh)',
@@ -230,10 +230,10 @@ console.log(tableData);
                           type: 'linear',
                           position: 'bottom',
                           min: 0,
-                          max: 100,
+                          max: 31,
                           title: {
                             display: true,
-                            text: '96 time blocks',
+                            text: '31 time blocks',
                           },
                         },
                       },
@@ -282,10 +282,10 @@ console.log(tableData);
                           type: 'linear',
                           position: 'bottom',
                           min: 0,
-                          max: 100,
+                          max: 31,
                           title: {
                             display: true,
-                            text: '96 time blocks',
+                            text: '31 time blocks',
                           },
                         },
                       },
@@ -347,10 +347,10 @@ console.log(tableData);
                           type: 'linear',
                           position: 'bottom',
                           min: 0,
-                          max: 100,
+                          max: 31,
                           title: {
                             display: true,
-                            text: '96 time blocks',
+                            text: '31 time blocks',
                           },
                         },
                       },
@@ -398,4 +398,4 @@ console.log(tableData);
   );
 };
 
-export default DayAhead;
+export default StatisticalInfoMonth;

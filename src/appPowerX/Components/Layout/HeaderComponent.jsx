@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Button, Tooltip } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
@@ -93,8 +95,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       icon: <HomeOutlined />,
     },
     {
-      path: "/px/consumer/trading",
-      label: "Trade",
+      path: "/px/consumer/planning",
+      label: "Plan Your Trade",
       icon: <FileTextOutlined />,
     },
   ];

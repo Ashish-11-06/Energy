@@ -1,21 +1,21 @@
-.custom-calendar .ant-picker-cell-inner {
+/* .custom-calendar .ant-picker-cell-inner {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  min-width: 30px; /* Set a minimum width */
-  min-height: 30px; /* Set a minimum height */
+  min-width: 30px; 
+  min-height: 30px; 
   box-sizing: border-box;
 }
 
 .ant-picker-calendar .ant-picker-cell-selected {
-    /* background-color: #9A8406 !important; */
+    /* background-color: #9A8406 !important;  
     border-color: #669800 !important;
 }
 
 .ant-picker-calendar .ant-picker-content th {
-    font-size: 20px; /* Adjust font size for header */
+    font-size: 20px; 
     box-sizing: border-box;
     padding: 0;
     color: #669800;
@@ -26,4 +26,71 @@
     box-sizing: border-box;
     padding: 0;
     color: green;
-}
+} */
+
+/* .custom-calendar .ant-picker-cell-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-width: 30px;
+    min-height: 30px;
+    box-sizing: border-box;
+    border-radius: 50%; /* Make the hover effect circular 
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .custom-calendar .ant-picker-cell-inner:hover {
+    background-color: rgba(102, 152, 0, 0.2); /* Light green hover 
+    border-radius: 50%; /* Ensure it's circular 
+  }
+  
+  .ant-picker-calendar .ant-picker-cell-selected {
+    border-color: #669800 !important;
+  }
+  
+  .ant-picker-calendar .ant-picker-content th {
+    font-size: 20px;
+    box-sizing: border-box;
+    padding: 0;
+    color: #669800;
+    margin-bottom: 20px;
+  }
+  
+  :where(.css-dev-only-do-not-override-oqfneu).ant-picker-calendar .ant-picker-date-panel .ant-picker-content th {
+    box-sizing: border-box;
+    padding: 0;
+    color: green;
+  } */
+  .custom-calendar {
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+  }
+  
+  .react-calendar__tile {
+    position: relative;
+    text-align: center;
+    padding: 10px;
+    height: 60px;
+    font-weight: bold;
+  }
+  
+  .react-calendar__tile--now {
+    background: none !important; /* Remove default highlighting */
+  }
+  
+  .react-calendar__tile--active {
+    background-color: rgba(0, 150, 0, 0.3);
+    border-radius: 50%;
+  }
+  
+  .react-calendar__month-view__days__day {
+    color: black !important; /* Default date color (current month) */
+  }
+  
+  .react-calendar__month-view__days__day--neighboringMonth {
+    color: gray !important; /* Light black for previous/next month dates */
+  }
+  
