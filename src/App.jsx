@@ -44,6 +44,7 @@ import InvoicePage from './Pages/InvoicePage';
 import { lastVisitedPage } from './Redux/Slices/Consumer/lastVisitedPageSlice';
 import EmailVerification from './Pages/EmailVerification';
 import StatusApproval from './Pages/TrackStatus';
+import GeneratorInput from './Pages/Generator/GeneratorInput.jsx';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -128,7 +129,8 @@ function App() {
             <Route path="profile/portfolio" element={<PortfolioGen />} />
             <Route path="combination" element={<OptimizeCombination />} />
             <Route path="notificationgen" element={<NotificationGenerator />} />
-            <Route path="transaction-window" element={<TransactionWindowGen />} />
+            <Route path="transaction-window" element={<TransactionWindowGen />}/>
+            <Route path="generatorInput" element={<GeneratorInput />} />
             <Route path="invoice" element={<InvoicePage />} />
             <Route path="status" element={<StatusApproval />} />
           </Route>

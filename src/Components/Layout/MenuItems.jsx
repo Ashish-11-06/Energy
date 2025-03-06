@@ -34,6 +34,7 @@ export const generatorMenuItems = [
   // { key: '19', icon: <FileTextOutlined />, label: <Link to="/generator/update-profile-details">Update Profile Details</Link> },
   { key: '13', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/subscription-plan">Subscription Plan</Link> },
   { key: '15', icon: <img src={notification} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/notificationgen">Notification</Link> },
+  { key: '14', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/GeneratorInput">Analyse Modal</Link> },
   { key: '16', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/profile">Profile</Link> },
   { key: '17', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/status">Track Status</Link> }
 ];

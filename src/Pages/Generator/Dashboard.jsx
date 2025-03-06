@@ -307,7 +307,128 @@ const Dashboard = () => {
             </Row>
           </Card>
         </Col>
+        {/* Platform Details */}
+        <Col span={12}>
+          <Card
+            title="Capacity Sizing"
+            bordered={false}
+            style={{ backgroundColor: "white", height: "100%" }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col span={8}>
+                <Card.Grid
+                  style={{ width: "100%", height: "100%", textAlign: "center" }}
+                >
+                  <Statistic
+                    title="Solar Capacity"
+                    value={platformDetails.totalConsumers}
+                    prefix={
+                      <img
+                        src={totalIPP}
+                        alt=""
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    valueStyle={{ color: "#3f8600" }}
+                  />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid
+                  style={{ width: "100%", height: "100%", textAlign: "center" }}
+                 
+                >
+                  <Statistic
+                    title="Wind Capacity"
+                    value={platformDetails.totalDemands}
+                    prefix={
+                      <img
+                        src={demands}
+                        alt=""
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    valueStyle={{ color: "#3f8600" }}
+                  />
+                </Card.Grid>
+              </Col>
+              <Col span={8}>
+                <Card.Grid
+                  style={{ width: "100%", height: "100%", textAlign: "center" }}
+                >
+                  {/* <Statistic
+                    title="Total States"
+                    value={platformDetails.totalStates}
+                    prefix={
+                      <img
+                        src={state}
+                        alt=""
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                        hoverable
+                        onMouseEnter={() => showStateModal(true)}
+                      />
+                    }
+                    valueStyle={{ color: "#3f8600" }}
+                  /> */}
+                   <Statistic
+                    title="Ess Capacity"
+                    value={platformDetails.totalStates}
+                    // value={platformDetails?.statesCovered || 0}  // Default to 0 if undefined
+                    prefix={
+                      <img
+                        src={state} // Ensure `state` is a valid image URL
+                        alt="State Icon"
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    valueRender={(value) => (
+                      <Popover
+                        content={
+                          <div style={{ padding: "10px", maxWidth: "200px" }}>
+                            <strong>States Covered:</strong>
+                            <ul style={{ paddingLeft: "20px", margin: "5px 0" }}>
+                              {states?.length > 0 ? (
+                                states.map((state, index) => <li key={index}>{state}</li>)
+                              ) : (
+                                <li>No states available</li>
+                              )}
+                            </ul>
+                          </div>
+                        }
+                        trigger="hover" // Show popover on hover
+                        placement="right" // Adjust position if needed
+                      >
+                        <span style={{ cursor: "pointer" }}>{value}</span>
+                      </Popover>
+                    )}
+                    valueStyle={{
+                      color: "#3f8600",
+                      display: "flex",
+                      alignItems: "center",
+                    }}/>
+                </Card.Grid>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
       </Row>
+      
       {/* <Modal
         open={stateModal}
         title="States Covered"
