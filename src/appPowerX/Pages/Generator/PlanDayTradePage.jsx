@@ -285,7 +285,7 @@ const PlanYourTradePage = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Plan Your Trade (96 time blocks)</h1>
-      <Col span={8}>
+      <Col span={24}>
         <Form.Item label="Select Portfolio">
           <Select
             value={selectedState || undefined} // Ensures placeholder is visible when nothing is selected

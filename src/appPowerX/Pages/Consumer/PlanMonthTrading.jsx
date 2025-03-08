@@ -26,8 +26,6 @@ const PlanMonthTrading = () => {
     const [selectedRequirementId, setSelectedRequirementId] = useState(null);
       const [isModalVisible, setIsModalVisible] = useState(false);
       const [selectedTechnology, setSelectedTechnology] = useState([]);
-      const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
-      const [selectedUnitDetails, setSelectedUnitDetails] = useState(null);
     
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -161,12 +159,6 @@ console.log(tableDemandData);
     navigate('/px/consumer/planning');
   };
 
-  const handleDemandClick = (record) => {
-    const selectedRequirement = consumerRequirement.find(item => item.state === record.state);
-    setSelectedUnitDetails(selectedRequirement);
-    setIsDetailModalVisible(true);
-  };
-
   const columnsMonth = [
     {
       title: "Date",
@@ -177,13 +169,6 @@ console.log(tableDemandData);
       title: "Demand (MWh)",
       dataIndex: "demand",
       key: "demand",
-      render: (text, record) => (
-        <Tooltip title="Click to view details">
-          <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleDemandClick(record)}>
-            {text}
-          </span>
-        </Tooltip>
-      ),
     },
     {
       title: "Price",
@@ -377,21 +362,6 @@ console.log(tableDemandData);
             </div>
           )}
         </div>
-      </Modal>
-      <Modal
-        title="Consumption Unit Details"
-        visible={isDetailModalVisible}
-        onCancel={() => setIsDetailModalVisible(false)}
-        footer={null}
-      >
-        {selectedUnitDetails && (
-          <div>
-            <p><strong>State:</strong> {selectedUnitDetails.state}</p>
-            <p><strong>Industry:</strong> {selectedUnitDetails.industry}</p>
-            <p><strong>Contracted Demand:</strong> {selectedUnitDetails.contracted_demand} MWh</p>
-            <p><strong>Consumption Unit:</strong> {selectedUnitDetails.consumption_unit}</p>
-          </div>
-        )}
       </Modal>
     </div>
   );

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox } from 'antd';
 import 'antd/dist/reset.css';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
+import { fetchTableMonthData, addTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice'; // Correct import
 import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
@@ -140,6 +140,11 @@ const Planning = () => {
   };
 
   const handleModalOk = async () => {
+    if (!selectedRequirementId) {
+      message.error("Please select a valid consumption unit.");
+      return;
+    }
+
     const formattedDate = selectedDate.format('YYYY-MM-DD'); // Format the date correctly
     try {
       const newData = {
@@ -154,12 +159,12 @@ const Planning = () => {
 
       console.log(newData);
 
-      const res = await dispatch(addMonthData(newData)).unwrap();
+      const res = await dispatch(addTableMonthData(newData)).unwrap();
       if (res) {
         message.success("Data added successfully");
         const id = user_id; // Ensure `user_id` is defined in scope
         try {
-          const res = await dispatch(fetchPlanningData(id));
+          const res = await dispatch(fetchTableMonthData(id));
           console.log(res.payload);
           setTableDemandData(res.payload);
         } catch (error) {
@@ -319,7 +324,7 @@ const Planning = () => {
       <Modal
         title="Select Technology"
         visible={isModalVisible}
-        onOk={handleModalOk}
+        onOk={handleModalOk} // Call handleModalOk on OK button click
         onCancel={() => setIsModalVisible(false)}
       >
         {/* Checkbox Group */}
