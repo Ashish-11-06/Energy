@@ -187,12 +187,40 @@ const PlanYourTradePage = () => {
     return false; // Prevent automatic upload
   };
 
+  // const handleDownloadTemplate = () => {
+  //   const worksheet = XLSX.utils.json_to_sheet(tableData.map(item => ({ Time: item.time, Demand: '' })));
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
+  //   XLSX.writeFile(workbook, 'trade_template.xlsx');
+  // };
+
   const handleDownloadTemplate = () => {
-    const worksheet = XLSX.utils.json_to_sheet(tableData.map(item => ({ Time: item.time, Demand: '' })));
+    // Modify time format for the template
+    const formattedData = tableData.map((item, index) => ({
+      "Time Interval": index < tableData.length - 1 
+        ? `${item.time} - ${tableData[index + 1].time}`
+        : `${item.time} - 00:00`, // Last interval wraps around
+      "Demand": ''
+    }));
+  
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+  
+    // Make column headers bold
+    const range = XLSX.utils.decode_range(worksheet['!ref']);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cell = XLSX.utils.encode_cell({ r: 0, c: C });
+      if (worksheet[cell]) {
+        worksheet[cell].s = { font: { bold: true } };
+      }
+    }
+  
+    // Create workbook and download file
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
-    XLSX.writeFile(workbook, 'trade_template.xlsx');
+    XLSX.writeFile(workbook, 'Consumer_dayahead_trade_template.xlsx');
   };
+  
 
   const handleFillBelow = (part) => {
     const newData = [...tableData];

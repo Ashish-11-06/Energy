@@ -94,7 +94,6 @@ const Dashboard = () => {
 
   return (
     <div style={{ padding: "30px" }}>
-      hudsjh
       <Row gutter={[16, 16]} style={{ height: "400px" }}>
         {/* Generator Details */}
         <Col span={12}>
