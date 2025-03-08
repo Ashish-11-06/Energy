@@ -260,7 +260,7 @@ console.log(tableDemandData);
         </div>
 
         {/* Demand Input Section */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 , marginLeft:'-400px'}}>
           <label style={{ minWidth: '100px', fontSize: '16px' }}>Enter Demand <span style={{fontSize:'12px'}}>(MWh)</span>:</label>
           <input
             type="number"
@@ -281,7 +281,7 @@ console.log(tableDemandData);
         </div>
 
         {/* Price Input Section */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
+        {/* <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
           <label style={{ minWidth: '100px', fontSize: '16px' }}>Enter Price <span style={{fontSize:'12px'}}>(INR)</span>:</label>
           <input
             type="number"
@@ -298,7 +298,7 @@ console.log(tableDemandData);
               setAllFieldsFilled(e.target.value !== '' && selectedDate !== null && demand !== '');
             }}
           />
-        </div>
+        </div> */}
       </div>
 
       <Col span={12}>

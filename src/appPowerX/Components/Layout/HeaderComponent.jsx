@@ -299,7 +299,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
               // Show Tooltip with "My Profile" when there's a valid user_category and username
               <Tooltip title="My Profile" placement="top">
                 <p>
-                  Welcome,  <span onClick={()=> {navigate(`/${user_category}/profile`)}} style={{color:'rgb(154, 132, 6)'}}>{username}</span>
+                  Welcome,  <span onClick={()=> {navigate(`/px/${user_category}/profile`)}} style={{color:'rgb(154, 132, 6)'}}>{username}</span>
                 </p>
                 {/* <a href={`/${user_category}/profile`}>{username}!</a> */}
               </Tooltip>
