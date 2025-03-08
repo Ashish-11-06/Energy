@@ -4,9 +4,11 @@ import dashboardApi from "../../api/consumer/dashboardApi";
 // Async thunk for fetching data
 export const fetchDashboardData = createAsyncThunk(
   "dashboardData/fetchDashboardData",
-  async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
+  async (id, { rejectWithValue }) => { // Correctly pass rejectWithValue here
     try {
-      const response = await dashboardApi.fetchDashboard();  
+      console.log(id);
+      
+      const response = await dashboardApi.fetchDashboard(id);  
       if (response.status === 200 && response.data) {
         console.log('response in slice',response);
         return response.data; // Ensure response contains valid data
@@ -20,9 +22,9 @@ export const fetchDashboardData = createAsyncThunk(
 
 export const fetchDashboardLine = createAsyncThunk(
   "dashboardData/fetchDashboardLine",
-  async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
+  async (id, { rejectWithValue }) => { // Correctly pass rejectWithValue here
     try {
-      const response = await dashboardApi.fetchDashboardLine();  
+      const response = await dashboardApi.fetchDashboardLine(id);  
       if (response.status === 200 && response.data) {
         console.log('response in slice',response);
         return response.data; // Ensure response contains valid data

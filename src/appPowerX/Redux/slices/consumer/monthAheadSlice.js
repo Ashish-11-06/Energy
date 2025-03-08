@@ -49,6 +49,23 @@ export const fetchTableMonthData = createAsyncThunk(
   }
 );
 
+export const addMonthData = createAsyncThunk(
+  "monthAheadData/addMonthData",
+  async (newData, { rejectWithValue }) => {
+    console.log('slice',newData);
+    
+    try {
+      const response = await monthAheadApi.addMonthData(newData);
+      if (response.status === 201 || response.status === 200) {
+        return response.data;
+      }
+      throw new Error("Invalid response from server");
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 export const addTableMonthData = createAsyncThunk(
   "monthAheadData/addTableMonthData",
   async (newData, { rejectWithValue }) => {
@@ -89,41 +106,55 @@ const monthAheadData = createSlice({
         state.status = "failed";
         state.error = action.payload || "Failed to fetch data";
       })
-      .addCase(fetchMonthAheadLineData.pending, (state) => {
+      // .addCase(fetchMonthAheadLineData.pending, (state) => {
+      //   state.status = "loading";
+      //   state.error = null;
+      // })
+      // .addCase(fetchMonthAheadLineData.fulfilled, (state, action) => {
+      //   state.status = "succeeded";
+      //   state.monthAheadLineData = action.payload;
+      // })
+      // .addCase(fetchMonthAheadLineData.rejected, (state, action) => {
+      //   state.status = "failed";
+      //   state.error = action.payload || "Failed to fetch data";
+      // })
+      // .addCase(fetchTableMonthData.pending, (state) => {
+      //   state.status = "loading";
+      //   state.error = null;
+      // })
+      // .addCase(fetchTableMonthData.fulfilled, (state, action) => {
+      //   state.status = "succeeded";
+      //   state.tableMonthData = action.payload;
+      // })
+      // .addCase(fetchTableMonthData.rejected, (state, action) => {
+      //   state.status = "failed";
+      //   state.error = action.payload || "Failed to fetch data";
+      // })
+      // .addCase(addTableMonthData.pending, (state) => {
+      //   state.status = "loading";
+      //   state.error = null;
+      // })
+      // .addCase(addTableMonthData.fulfilled, (state, action) => {
+      //   state.status = "succeeded";
+      //   state.tableMonthData.push(action.payload);
+      //   // Fetch the updated data
+      //   fetchTableMonthData();
+      // })
+      // .addCase(addTableMonthData.rejected, (state, action) => {
+      //   state.status = "failed";
+      //   state.error = action.payload || "Failed to fetch data";
+      // })
+      .addCase(addMonthData.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchMonthAheadLineData.fulfilled, (state, action) => {
+      .addCase(addMonthData.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.monthAheadLineData = action.payload;
-      })
-      .addCase(fetchMonthAheadLineData.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload || "Failed to fetch data";
-      })
-      .addCase(fetchTableMonthData.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(fetchTableMonthData.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.tableMonthData = action.payload;
-      })
-      .addCase(fetchTableMonthData.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload || "Failed to fetch data";
-      })
-      .addCase(addTableMonthData.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(addTableMonthData.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.tableMonthData.push(action.payload);
+        state.monthAheadData.push(action.payload);
         // Fetch the updated data
         fetchTableMonthData();
       })
-      .addCase(addTableMonthData.rejected, (state, action) => {
+      .addCase(addMonthData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Failed to fetch data";
       });
