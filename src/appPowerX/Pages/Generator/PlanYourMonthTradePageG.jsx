@@ -1,15 +1,14 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Button, Select, Table, Row, Col, InputNumber, Tooltip, DatePicker } from 'antd';
+import { Button, Select, Table, Row, Col, InputNumber, Tooltip, DatePicker, Input, notification } from 'antd';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { addTableMonthData, fetchMonthAheadData, fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
-import { updateNotificationData } from '../../Redux/slices/consumer/notificationSlice';
+import { addTableMonthData, fetchTableMonthData } from '../../Redux/slices/generator/monthAheadSliceG';
+import { getAllProjectsById } from "../../Redux/slices/generator/portfolioSlice";
 
 const { Option } = Select;
 
 const PlanMonthTradePageG = () => {
-  const [tableData, setTableData] = useState('');
   const [tableDemandData, setTableDemandData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [demand, setDemand] = useState('');
@@ -18,11 +17,12 @@ const PlanMonthTradePageG = () => {
   const [demandData, setDemandData] = useState([]);
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
   const [dataAdded, setDataAdded] = useState(false);
+  const [selectedPortfolio, setSelectedPortfolio] = useState(null);
+  const [generatorPortfolio, setGeneratorPortfolio] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleChange = (value) => {
-
     setSelectedMonth(value);
     generateDemandData(value);
   };
@@ -44,30 +44,22 @@ const PlanMonthTradePageG = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await dispatch(fetchMonthAheadData());
-        console.log(data.payload); // Logging the fetched data
-        setTableData(data.payload);
+        const id = JSON.parse(localStorage.getItem('user')).user.id;
+        const res = await dispatch(getAllProjectsById(id)).unwrap();
+        const flattenedPortfolio = [
+          ...res.Solar.map(item => ({ id: item.id, type: 'Solar' })),
+          ...res.Wind.map(item => ({ id: item.id, type: 'Wind' })),
+          ...res.ESS.map(item => ({ id: item.id, type: 'ESS' }))
+        ];
+        setGeneratorPortfolio(flattenedPortfolio);
+        console.log(flattenedPortfolio);
       } catch (error) {
-        console.log(error);
+        console.log("Error fetching portfolio:", error);
       }
     };
+
     fetchData();
   }, [dispatch]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await dispatch(fetchTableMonthData());
-        console.log(data.payload); // Logging the fetched data
-         setTableDemandData(data.payload);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, [dispatch]);
-console.log(tableDemandData);
-
 
   const handleInputChange = (value, key) => {
     const newData = [...demandData];
@@ -85,42 +77,32 @@ console.log(tableDemandData);
 
   const handleAddData = async () => {
     const data = {
-      Date: selectedDate ? selectedDate.format('DD-MM-YYYY') : '',
-      demand: demand,
-      price: price
+      portfolio_id: selectedPortfolio.id,
+      portfolio_type: selectedPortfolio.type.toLowerCase(),
+      date: selectedDate ? selectedDate.format('YYYY-MM-DD') : '',
+      generation: parseFloat(demand),
+      price: parseFloat(price)
     };
-  
+
     try {
       const res = await dispatch(addTableMonthData(data)).unwrap();
       console.log('Response from addTableMonthData:', res);
       setDataAdded(true);
       if (res) {
         console.log('Data added successfully');
-  
-        const message = `New demand added: ${demand}, Price: ${data.price} on date: ${data.Date}`;
-  
-        // Fetch the existing notification data from Redux state
-        // const notifications = store.getState().notificationData.notificationData || [];
-        
-        // Find the last ID and increment it
-        // const lastId = notifications.length > 0 ? Math.max(...notifications.map(n => n.id)) : 0;
-        // const newId = lastId + 1;
-  
-        // const notificationData = {
-        //   id: newId, // Auto-incremented ID
-        //   message: message,
-        // };
-  
-        // Dispatch updateNotificationData with new notification
-        // const notificationRes = await dispatch(updateNotificationData(notificationData)).unwrap();
-        // console.log('Notification Updated:', notificationRes);
+
+        // Show success notification
+        notification.success({
+          message: 'Success',
+          description: 'Your data added successfully. Check in the planning section your planned data.',
+        });
 
         // Fetch the updated table data
         const updatedData = await dispatch(fetchTableMonthData()).unwrap();
         setTableDemandData(updatedData);
 
-        // Enable the "Continue" button
-       
+        // Navigate to planning page
+        navigate('/px/generator/planning');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -137,16 +119,16 @@ console.log(tableDemandData);
   const columnsMonth = [
     {
       title: "Date",
-      dataIndex: "Date",
-      key: "Date",
+      dataIndex: "date",
+      key: "date",
     },
     {
-      title: "Demand (MWh)",
-      dataIndex: "demand",
-      key: "demand",
+      title: "Generation (MWh)",
+      dataIndex: "generation",
+      key: "generation",
     },
     {
-      title: "Price",
+      title: "Price (INR)",
       dataIndex: "price",
       key: "price",
     },
@@ -156,6 +138,28 @@ console.log(tableDemandData);
     <div style={{ padding: '20px' }}>
       <h1>Plan Your Trade</h1>
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '10px', flexWrap: 'nowrap' }}>
+        {/* Portfolio Selection Section */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flex: 1 }}>
+          <label htmlFor="" style={{ minWidth: '100px', fontSize: '16px' }}>
+            Select Portfolio:
+          </label>
+          <Select
+            style={{ width: "150px", fontSize: '16px' }}
+            placeholder="Select Portfolio"
+            value={selectedPortfolio ? selectedPortfolio.id : undefined}
+            onChange={(value) => {
+              const selected = generatorPortfolio.find(item => item.id === value);
+              setSelectedPortfolio(selected);
+            }}
+          >
+            {generatorPortfolio.map(item => (
+              <Option key={item.id} value={item.id}>
+                {`${item.id}: ${item.type}`}
+              </Option>
+            ))}
+          </Select>
+        </div>
+
         {/* Date Picker Section */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flex: 1 }}>
           <label htmlFor="" style={{ minWidth: '100px', fontSize: '16px' }}>
@@ -171,10 +175,10 @@ console.log(tableDemandData);
 
         {/* Demand Input Section */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
-          <label style={{ minWidth: '100px', fontSize: '16px' }}>Enter Demand <span style={{fontSize:'12px'}}>(MWh)</span>:</label>
+          <label style={{ minWidth: '100px', fontSize: '16px' }}>Enter Generation <span style={{fontSize:'12px'}}>(MWh)</span>:</label>
           <input
             type="number"
-            placeholder="Enter demand"
+            placeholder="Enter generation"
             min={0}
             style={{
               width: "150px",
@@ -185,7 +189,7 @@ console.log(tableDemandData);
             }}
             onChange={(e) => {
               setDemand(e.target.value);
-              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null && price !== '');
+              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null && price !== '' && selectedPortfolio !== null);
             }}
           />
         </div>
@@ -205,7 +209,7 @@ console.log(tableDemandData);
             }}
             onChange={(e) => {
               setPrice(e.target.value);
-              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null && demand !== '');
+              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null && demand !== '' && selectedPortfolio !== null);
             }}
           />
         </div>
