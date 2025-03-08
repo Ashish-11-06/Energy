@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Modal,
@@ -29,6 +31,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
   const dispatch = useDispatch();
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
+  
   console.log(statee);
   
 // console.log(data);
@@ -84,7 +87,7 @@ useEffect(()=> {
     const formattedValues = {
       id : data?.id,
       user: user.id,
-      state: values.state,
+      state: values.state || 'Maharashtra',
       industry: values.industry === "other" ? customIndustry : values.industry,
       contracted_demand: values.contractedDemand,
       tariff_category: values.tariffCategory,
@@ -148,7 +151,7 @@ useEffect(()=> {
                 "State where the consumption unit is located or operates."
               )}
               name="state"
-              rules={[{ required: true, message: "Please select your state!" }]}
+              // rules={[{ required: true, message: "Please select your state!" }]}
             >
               <Select placeholder="Select your state" showSearch disabled={data?.state}>
                 {statee?.map((state, index) => (

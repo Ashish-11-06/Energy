@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import  { useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch } from "react-redux";
@@ -14,7 +14,7 @@ import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
 import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
 import GenerationPortfolio from './Pages/Generator/GeneratorPortfolio';
 import MatchingConsumerPage from './Pages/Generator/MatchingConsumerPage';
-import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
+// import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
 import DashboardG from './Pages/Generator/Dashboard';
 import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
 import LoginC from './Pages/Consumer/LoginC';
@@ -37,7 +37,7 @@ import NotificationGenerator from './Pages/Generator/NotificationGenerator';
 import CombinationPattern from './Pages/Generator/CombinationPattern';
 import TransactionWindow from './Pages/Consumer/TransactionWindow';
 import TransactionMainPage from './Pages/Consumer/TransactionMainPage';
-import TransactionMainPageGen from './Pages/Generator/TransactionMainPageGen';
+// import TransactionMainPageGen from './Pages/Generator/TransactionMainPageGen';
 import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
 import RequirementsPage from './Pages/Consumer/RequirementPage';
 import InvoicePage from './Pages/InvoicePage';
@@ -46,23 +46,54 @@ import EmailVerification from './Pages/EmailVerification';
 import StatusApproval from './Pages/TrackStatus';
 import Agreements from './Pages/Agreements';
 
+
+// powerX
+import PLayoutComponent from './appPowerX/Components/Layout/LayoutComponent';
+import DashboardP from './appPowerX/Pages/Consumer/DashboardP';
+import DayAhead from './appPowerX/Pages/Consumer/DayAhead';
+import PlanYourTradePage from './appPowerX/Pages/Consumer/PlanYourTradePage';
+import StatisticalInformation from './appPowerX/Pages/Consumer/StatisticalInformation';
+import MonthAhead from './appPowerX/Pages/Consumer/MonthAhead';
+import Planning from './appPowerX/Pages/Consumer/Planning';
+import Trading from './appPowerX/Pages/Consumer/Trading';
+import DashboardPG from './appPowerX/Pages/Generator/Dashboard';
+import DayAheadG from './appPowerX/Pages/Generator/DayAheadG';
+import MonthAheadG from './appPowerX/Pages/Generator/MonthAheadG';
+// import PlanYourTradePageG from './appPowerX/Pages/Generator/PlanYourMonthTradePageG';
+import StatisticalInformationG from './appPowerX/Pages/Generator/StatisticalinformationG';
+import PlanningG from './appPowerX/Pages/Generator/Planning';
+import TradingG from './appPowerX/Pages/Generator/TradingG';
+import PlanYourMonthTradePageG from './appPowerX/Pages/Generator/PlanYourMonthTradePageG';
+import PlanDayTradePage from './appPowerX/Pages/Generator/PlanDayTradePage';
+import ChatPage from './appPowerX/Pages/ChatPage';
+import Trading2 from './appPowerX/Pages/Generator/Trading2';
+import PlanMonthTrading from './appPowerX/Pages/Consumer/PlanMonthTrading';
+import NotificationP from './appPowerX/Pages/Consumer/Notification';
+import Subscription from './appPowerX/Pages/Consumer/Subscription';
+import LoginPage from './appPowerX/Pages/LoginPage';
+// import ProfileP from './appPowerX/Pages/Consumer/Profile';
+import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
+import NotificationG from './appPowerX/Pages/Generator/NotificationG';
+import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
+import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
+
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem('user'))?.user || null;
   //  console.log(requirementId);
- const userId=user?.id;
+  const userId = user?.id;
 
 
   useEffect(() => {
-    const path=location.pathname;
+    const path = location.pathname;
     console.log("Current Path:", location.pathname);
-    const data={
-      last_visited_page:path,
-      user_id:userId
+    const data = {
+      last_visited_page: path,
+      user_id: userId
     }
-    const response=dispatch(lastVisitedPage(data));
-    // console.log(response);
+    const response = dispatch(lastVisitedPage(data));
+    console.log(response);
   }, [location]);
   return null; // This component does not need to render anything
 };
@@ -79,12 +110,12 @@ function App() {
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
         <Route path="email/:token" element={<EmailVerification />} />
-          <Route path="what-we-offer" element={<WhatWeOffer />} />
+        <Route path="what-we-offer" element={<WhatWeOffer />} />
 
 
 
         {/* Routes with shared layout */}
-          <Route path="what-we-offer" element={<WhatWeOffer />} />
+        <Route path="what-we-offer" element={<WhatWeOffer />} />
         <Route element={<LayoutComponent />}>
           <Route path="offers" element={<OfferRecieved />} />
           <Route path="transaction-page" element={<TransactionMainPage />} />
@@ -135,7 +166,56 @@ function App() {
             <Route path="status" element={<StatusApproval />} />
           </Route>
         </Route>
-      </Routes>
+
+
+
+       {/* PowerX routes */}
+      <Route path="px-login" element={<LoginPage/>} />
+       <Route element={<PLayoutComponent />}>
+    <Route path="px">
+      
+      {/* Common Chat Page Route */}
+
+      <Route path="chat-page" element={<ChatPage />} />
+
+      {/* Consumer Routes */}
+      <Route path="consumer">
+        <Route path="dashboard" element={<DashboardP />} />
+        <Route path="day-ahead" element={<DayAhead />} />
+        <Route path="plan-trade-page" element={<PlanYourTradePage />} />
+        <Route path="statistical-information" element={<StatisticalInformation />} />
+        <Route path="statistical-information-month" element={<StatisticalInfoMonth />} />
+        <Route path="month-ahead" element={<MonthAhead />} />
+        <Route path="plan-month-trade" element={<PlanMonthTrading/>} />
+        <Route path="planning" element={<Planning />} />
+        <Route path="trading" element={<Trading />} />
+        <Route path="notification-powerX" element={<NotificationP/>} />
+        <Route path="powerx-subscription" element={<Subscription />} />
+        <Route path="profile" element={<ProfilePage />} />
+      </Route>
+
+      {/* Generator Routes */}
+      <Route path="generator">
+        <Route path="dashboard" element={<DashboardPG />} />
+        <Route path="day-ahead" element={<DayAheadG />} />
+        <Route path="plan-month-trade-page" element={<PlanYourMonthTradePageG />} />
+        <Route path="plan-day-trade-page" element={<PlanDayTradePage />} />
+        <Route path="statistical-information" element={<StatisticalInformationG />} />
+        {/* <Route path="statistical-day-information" element={<DayStatisticsInformation />} /> */}
+        <Route path="statistical-month-information" element={<StatisticalInfoMonthG />} />
+
+        <Route path="month-ahead" element={<MonthAheadG />} />
+        <Route path="notification" element={<NotificationG />} />
+
+        <Route path="planning" element={<PlanningG />} />
+        <Route path="trading" element={<TradingG />} />
+        <Route path="trading2" element={<Trading2 />} />
+
+      </Route>
+
+    </Route>
+  </Route>
+</Routes>
     </Router>
   );
 }
