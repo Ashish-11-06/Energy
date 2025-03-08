@@ -44,6 +44,7 @@ import InvoicePage from './Pages/InvoicePage';
 import { lastVisitedPage } from './Redux/Slices/Consumer/lastVisitedPageSlice';
 import EmailVerification from './Pages/EmailVerification';
 import StatusApproval from './Pages/TrackStatus';
+import Agreements from './Pages/Agreements';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -88,6 +89,7 @@ function App() {
           <Route path="offers" element={<OfferRecieved />} />
           <Route path="transaction-page" element={<TransactionMainPage />} />
           <Route path="subscription-plan" element={<SubscriptionPlans />} />
+          <Route path="agreements" element={<Agreements />} />
 
           {/* Consumer Routes */}
           <Route path="/consumer/*">
