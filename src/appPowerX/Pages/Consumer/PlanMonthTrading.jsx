@@ -275,7 +275,7 @@ console.log(tableDemandData);
             }}
             onChange={(e) => {
               setDemand(e.target.value);
-              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null && price !== '');
+              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null );
             }}
           />
         </div>
