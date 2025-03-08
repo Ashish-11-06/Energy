@@ -15,7 +15,7 @@ ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend
 
 const { Option } = Select;
 
-const DayAhead = () => {
+const StatisticalInformation = () => {
   const [tableData, setTableData] = useState([]);
   const navigate = useNavigate(); 
   const [selectedType, setSelectedType] = useState('MCP'); // Default: MCP chart displayed
@@ -42,15 +42,63 @@ const DayAhead = () => {
 
 console.log(tableData);
 
+const dummyMCVData = [
+  {
+    label: "ForeCasted Values",
+    data: [
+      4300, 3000, 2850, 3100, 2800, 3250, 3600, 4000, 3800, 3400, 3900, 4050, 3850, 3950, 4100, 4500, 4700, 4900, 5000, 5150, 5250, 5350, 5500, 5600, 5700, 5800, 5900, 6000, 5800, 5700, 5600, 5500, 5400, 5300, 5200, 5100, 5000, 4900, 4800, 4700, 4600, 4500, 4400, 4300, 4200, 4100, 4000, 3900, 3800, 3700, 3600, 3500, 3400, 3300, 3200, 3100, 3000, 2900, 2800, 2700, 2600, 2500, 2400, 2300, 2200, 2100, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 900, 800, 700, 2000, 5000, 4000, 2000, 1300, 4500, 3200, 3800, 4100, 2900, 3050, 2700, 3300, 2950, 4100, 4200
+    ],
+    id: "d5df"
+  },
+  {
+    label: "Past Values",
+    data: [
+      3000, 3000, 3000, 2088, 2341, 2800, 2900, 3000, 3200, 3300, 3100, 2800, 2500, 2900, 3050, 3150, 3250, 3350, 3450, 3550, 3650, 3750, 3850, 3950, 4050, 4150, 4250, 4350, 4450, 4550, 4650, 4750, 4850, 4950, 5050, 5150, 5250, 5350, 5450, 5550, 5650, 5750, 5850, 5950, 6050, 6150, 6250, 6350, 6450, 6550, 6650, 6750, 6850, 6950, 7050, 7150, 7250, 7350, 7450, 7550, 7650, 7750, 7850, 7950, 8050, 8150, 8250, 8350, 8450, 8550, 8650, 8750, 8850, 8950, 9050, 9150, 9250, 9350, 9450, 9550, 9650, 9750, 9850, 9950, 10050, 10150, 10250, 10350, 10450, 10550, 10650, 10750, 10850, 10950, 10050, 10000
+    ],
+    id: "83b6"
+  }
+];
+
+const dummyMCPData = [
+  {
+    label: "ForeCasted Values",
+    data: [
+      2.66, 4.92, 5.02, 6.53, 2.38, 6.25, 4.45, 3.51, 5.96, 3.23, 2.57, 2.09, 5.21, 3.98, 6.2, 5.77, 4.92, 5.21, 3.98, 4.74, 4.83, 5.96, 5.87, 3.89, 3.23, 4.55, 5.02, 7, 4.26, 6.72, 5.16, 2.75, 5.49, 3.13, 3.89, 2.47, 4.45, 4.36, 5.21, 5.07, 5.4, 5.58, 4.92, 6.34, 6.91, 5.3, 5.68, 5.21, 4.22, 5.58, 5.58, 4.26, 2.57, 5.11, 3.79, 2.19, 5.11, 4.41, 4.55, 6.06, 2.85, 6.81, 6.53, 4.17, 2.28, 3.32, 6.62, 5.3, 3.23, 2.94, 6.39, 6.29, 6.72, 5.11, 3.6, 2, 5.77, 6.43, 6.15, 4.08, 4.36, 4.08, 4.74, 6.62, 6.06, 4.12, 3.42, 4.03, 3.04, 5.4, 3.7, 6.06, 4.17, 6.81, 4.97, 4.64
+    ],
+    id: "cca7"
+  },
+  {
+    label: "Past Values",
+    data: [
+      2.93, 3.33, 4.61, 2.76, 4.67, 5.31, 4.67, 6.97, 4.23, 3.77, 3.93, 5.8, 3.37, 4.97, 4.03, 4.04, 3.59, 3.14, 3.59, 4.53, 3.02, 6.89, 2.89, 5.22, 4.22, 6.23, 6.05, 6.6, 6.35, 4.16, 6.96, 6.37, 4.43, 4.84, 4.53, 2.52, 3.95, 2.8, 5.33, 5.24, 6.87, 5.74, 4.58, 2.65, 3.24, 4.42, 4.9, 4.03, 4, 6.33, 2.58, 5.24, 5.23, 6.7, 6.21, 2.09, 2.36, 3.71, 6.2, 4.28, 4.01, 4.72, 3.72, 6.74, 2.95, 3.84, 6.21, 4.58, 6.89, 6.08, 4.84, 3.1, 2.59, 6.27, 3.73, 6.03, 4.32, 2.97, 2.13, 5.59, 4.75, 3.25, 4.68, 5.35, 3.72, 2.1, 6.52, 5.6, 2.32, 5.3, 5.86, 3.83, 4.56, 6.19, 3.83, 6.44
+    ],
+    id: "4e97"
+  }
+];
+
+const dummyAccuracyData = [
+  {
+    metric: "MCP",
+    accuracy: "80%",
+    errors: "20%"
+  },
+  {
+    metric: "MCV",
+    accuracy: "90%",
+    errors: "10%"
+  }
+];
 
   useEffect(() => {
     const fetchMCP = async () => {
       try {
         const data = await dispatch(fetchMCPData()).unwrap();
-        setForeCastedData(data[0]?.data);
-        setPastData(data[1]?.data);
+        setForeCastedData(data[0]?.data || dummyMCPData[0].data);
+        setPastData(data[1]?.data || dummyMCPData[1].data);
       } catch (error) {
         console.log(error);
+        setForeCastedData(dummyMCPData[0].data);
+        setPastData(dummyMCPData[1].data);
       }
     };
     fetchMCP();
@@ -63,29 +111,37 @@ console.log(tableData);
     if (value === 'MCP') {
       try {
         const data = await dispatch(fetchMCPData()).unwrap();
-        setForeCastedData(data[0]?.data);
-        setPastData(data[1]?.data);
+        setForeCastedData(data[0]?.data || dummyMCPData[0].data);
+        setPastData(data[1]?.data || dummyMCPData[1].data);
       } catch (error) {
         console.log(error);
+        setForeCastedData(dummyMCPData[0].data);
+        setPastData(dummyMCPData[1].data);
       }
     } else if (value === 'MCV') {
       try {
         const data = await dispatch(fetchMCVData()).unwrap();
-        setForeCastedData(data[0]?.data);
-        setPastData(data[1]?.data);
+        setForeCastedData(data[0]?.data || dummyMCVData[0].data);
+        setPastData(data[1]?.data || dummyMCVData[1].data);
       } catch (error) {
         console.log(error);
+        setForeCastedData(dummyMCVData[0].data);
+        setPastData(dummyMCVData[1].data);
       }
     } else if (value === 'Both') {
       try {
         const mcpData = await dispatch(fetchMCPData()).unwrap();
         const mcvData = await dispatch(fetchMCVData()).unwrap();
-        setForeCastedData(mcpData[0]?.data);
-        setPastData(mcpData[1]?.data);
-        setMcvForeCastedData(mcvData[0]?.data);
-        setMcvPastData(mcvData[1]?.data);
+        setForeCastedData(mcpData[0]?.data || dummyMCPData[0].data);
+        setPastData(mcpData[1]?.data || dummyMCPData[1].data);
+        setMcvForeCastedData(mcvData[0]?.data || dummyMCVData[0].data);
+        setMcvPastData(mcvData[1]?.data || dummyMCVData[1].data);
       } catch (error) {
         console.log(error);
+        setForeCastedData(dummyMCPData[0].data);
+        setPastData(dummyMCPData[1].data);
+        setMcvForeCastedData(dummyMCVData[0].data);
+        setMcvPastData(dummyMCVData[1].data);
       }
     }
   };
@@ -170,14 +226,14 @@ console.log(tableData);
     {
       key: '1',
       metric: 'Accuracy',
-      mcp: tableData.find(item => item.metric === 'MCP')?.accuracy || 'N/A',
-      mcv: tableData.find(item => item.metric === 'MCV')?.accuracy || 'N/A',
+      mcp: tableData.find(item => item.metric === 'MCP')?.accuracy || dummyAccuracyData.find(item => item.metric === 'MCP')?.accuracy || 'N/A',
+      mcv: tableData.find(item => item.metric === 'MCV')?.accuracy || dummyAccuracyData.find(item => item.metric === 'MCV')?.accuracy || 'N/A',
     },
     {
       key: '2',
       metric: 'Errors',
-      mcp: tableData.find(item => item.metric === 'MCP')?.errors || 'N/A',
-      mcv: tableData.find(item => item.metric === 'MCV')?.errors || 'N/A',
+      mcp: tableData.find(item => item.metric === 'MCP')?.errors || dummyAccuracyData.find(item => item.metric === 'MCP')?.errors || 'N/A',
+      mcv: tableData.find(item => item.metric === 'MCV')?.errors || dummyAccuracyData.find(item => item.metric === 'MCV')?.errors || 'N/A',
     },
   ];
 
@@ -398,4 +454,4 @@ console.log(tableData);
   );
 };
 
-export default DayAhead;
+export default StatisticalInformation;
