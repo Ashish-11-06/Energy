@@ -16,6 +16,27 @@ const { Option } = Select;
 
 const DayAhead = () => {
   const [tableData, setTableData] = useState([]);
+  const [statistiicsData, setStatisticsData] = useState([]);
+  const [detailDataSource, setDetailDataSource] = useState([
+    {
+      key: 'max',
+      status: 'Max',
+      mcp: 0,
+      mcv: 0,
+    },
+    {
+      key: 'min',
+      status: 'Min',
+      mcp: 0,
+      mcv: 0,
+    },
+    {
+      key: 'avg',
+      status: 'Avg',
+      mcp: 0,
+      mcv: 0,
+    },
+  ]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -23,7 +44,16 @@ const DayAhead = () => {
     const fetchData = async () => {
       try {
         const data = await dispatch(dayAheadData()).unwrap();
-        setTableData(data ? [data] : []); // Ensure data is an array
+        console.log('data', data.predictions);
+
+        const mcpData = data.predictions.map(item => item.mcp_prediction);
+        const mcvData = data.predictions.map(item => item.mcv_prediction);
+
+        setTableData([{ MCP: mcpData, MCV: mcvData }]); // Ensure data is an array
+
+        setStatisticsData(data.statistics);
+        console.log(data.statistics);
+        
       } catch (error) {
         console.log(error);
       }
@@ -31,26 +61,34 @@ const DayAhead = () => {
     fetchData();
   }, [dispatch]);
 
-  const detailDataSource = [
-    {
-      key: 'highest',
-      status: 'Highest',
-      mcp: 9000,
-      mcv: 3000,
-    },
-    {
-      key: 'lowest',
-      status: 'Lowest',
-      mcp: 5000,
-      mcv: 3000,
-    },
-    {
-      key: 'average',
-      status: 'Average',
-      mcp: 8000,
-      mcv: 3000,
-    },
-  ];
+  useEffect(() => {
+    if (statistiicsData.mcp && statistiicsData.mcv) {
+      setDetailDataSource([
+        {
+          key: 'max',
+          status: 'Maximum',
+          mcp: statistiicsData.mcp.max,
+          mcv: statistiicsData.mcv.max,
+        },
+        {
+          key: 'min',
+          status: 'Minimum',
+          mcp: statistiicsData.mcp.min,
+          mcv: statistiicsData.mcv.min,
+        },
+        {
+          key: 'avg',
+          status: 'Average',
+          mcp: statistiicsData.mcp.avg,
+          mcv: statistiicsData.mcv.avg,
+        },
+      ]);
+    }
+  }, [statistiicsData]);
+
+console.log('table data',detailDataSource);
+
+
   const detailColumns = [
     {
       title: 'Status',
@@ -196,8 +234,8 @@ const DayAhead = () => {
         </div>
       </Card>
       <h2></h2>
-      <Table columns={columns} dataSource={Array.isArray(tableData) && tableData.length ? tableData : detailDataSource} pagination={false} /> 
-
+      {/* <Table columns={columns} dataSource={Array.isArray(tableData) && tableData.length ? tableData : detailDataSource} pagination={false} />  */}
+<Table columns={detailColumns} dataSource={detailDataSource} pagination={false} />
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
           <Col>

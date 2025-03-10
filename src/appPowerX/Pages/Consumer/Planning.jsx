@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox } from 'antd';
 import 'antd/dist/reset.css';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { fetchTableMonthData, addTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice'; // Correct import
+import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice'; // Correct import
 import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
@@ -159,7 +159,7 @@ const Planning = () => {
 
       console.log(newData);
 
-      const res = await dispatch(addTableMonthData(newData)).unwrap();
+      const res = await dispatch(addMonthData(newData)).unwrap();
       if (res) {
         message.success("Data added successfully");
         const id = user_id; // Ensure `user_id` is defined in scope

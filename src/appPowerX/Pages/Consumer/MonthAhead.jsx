@@ -197,7 +197,7 @@ const MonthAhead = () => {
             <Button onClick={handleStatistics}>Historical Trend</Button>
           </Col>
           <Col>
-            {/* <Button onClick={handleNextTrade}>Plan Your Month Ahead Trading</Button> */}
+            <Button onClick={handleNextTrade}>Plan Your Month Ahead Trading</Button>
           </Col>
         </Row>
       </div>
