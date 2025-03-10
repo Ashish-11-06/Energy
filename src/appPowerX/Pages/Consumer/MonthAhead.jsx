@@ -1,21 +1,19 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Button, Select, Table, Row, Col, Card } from 'antd';
+import { Button, Table, Row, Col, Card } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { fetchMonthAheadData, fetchMonthAheadLineData } from '../../Redux/slices/consumer/monthAheadSlice';
+import { fetchMonthAheadData } from '../../Redux/slices/consumer/monthAheadSlice';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
 
-const { Option } = Select;
-
 const MonthAhead = () => {
-  const [tableData, setTableData] = useState('');
-  const [lineData, setLineData] = useState('');
+  const [tableData, setTableData] = useState([]);
+  const [lineData, setLineData] = useState({ labels: [], datasets: [] });
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -23,75 +21,77 @@ const MonthAhead = () => {
     const fetchData = async () => {
       try {
         const data = await dispatch(fetchMonthAheadData());
-        setTableData(data.payload);
+        const responseData = data.payload;
+
+        if (Array.isArray(responseData?.daily_data)) {
+          const mcvData = responseData.daily_data.map(item => item.mcv_prediction?.avg ?? 0);
+          const mcpData = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
+          const labels = Array.from({ length: 31 }, (_, i) => i + 1); // Creates an array [1, 2, ..., 31]
+
+          console.log("MCV Data:", mcvData);
+          console.log("MCP Data:", mcpData);
+          console.log("Labels:", labels);
+
+          setLineData({
+            labels,
+            datasets: [
+              {
+                label: 'MCP (INR/MWh)',
+                data: mcpData,
+                borderColor: 'blue',
+                fill: false,
+                yAxisID: 'y-axis-mcp',
+              },
+              {
+                label: 'MCV (MWh)',
+                data: mcvData,
+                borderColor: 'green',
+                fill: false,
+                yAxisID: 'y-axis-mcv',
+              },
+            ],
+          });
+
+          setTableData([
+            {
+              key: '1',
+              status: 'Highest',
+              mcp: responseData.overall_stats?.mcp_prediction?.highest ?? 0,
+              mcv: responseData.overall_stats?.mcv_prediction?.highest ?? 0,
+            },
+            {
+              key: '2',
+              status: 'Lowest',
+              mcp: responseData.overall_stats?.mcp_prediction?.lowest ?? 0,
+              mcv: responseData.overall_stats?.mcv_prediction?.lowest ?? 0,
+            },
+            {
+              key: '3',
+              status: 'Average',
+              mcp: responseData.overall_stats?.mcp_prediction?.average ?? 0,
+              mcv: responseData.overall_stats?.mcv_prediction?.average ?? 0,
+            },
+          ]);
+        } else {
+          console.error("Error: daily_data is missing or not an array", responseData);
+          setLineData({ labels: [], datasets: [] });
+        }
       } catch (error) {
-        console.log(error);
+        console.log("Error fetching data:", error);
       }
     };
+
     fetchData();
   }, [dispatch]);
-
-  const detailDataSource = [
-    {
-      key: 'highest',
-      status: 'Highest',
-      mcp: 9000,
-      mcv: 3000,
-    },
-    {
-      key: 'lowest',
-      status: 'Lowest',
-      mcp: 5000,
-      mcv: 3000,
-    },
-    {
-      key: 'average',
-      status: 'Average',
-      mcp: 8000,
-      mcv: 3000,
-    },
-  ];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await dispatch(fetchMonthAheadLineData());
-        setLineData(data.payload);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, [dispatch]);
-
-  const data = {
-    labels: Array.from({ length: 31 }, (_, i) => i + 1), // Updated X-axis labels
-    datasets: [
-      {
-        label: 'MCP (INR/MWh)', // Label for MCP dataset
-        data: lineData?.MCP, // Updated data for MCP
-        borderColor: 'blue',
-        fill: false,
-        yAxisID: 'y-axis-mcp', // Assign to right Y-axis
-      },
-      {
-        label: 'MCV (MWh)', // Label for MCY dataset
-        data: lineData?.MCV, // Updated data for MCY
-        borderColor: 'green',
-        fill: false,
-        yAxisID: 'y-axis-mcv', // Assign to left Y-axis
-      },
-    ],
-  };
 
   const options = {
     responsive: true,
     scales: {
       x: {
-        type: 'linear',
+        type: 'category', // Change to 'category' if using string labels
         position: 'bottom',
         ticks: {
-          autoSkip: false, // Ensure all ticks are shown
+          autoSkip: false,
         },
       },
       'y-axis-mcv': {
@@ -112,18 +112,18 @@ const MonthAhead = () => {
           text: 'MCP (INR/MWh)',
         },
         grid: {
-          drawOnChartArea: false, // Only draw grid lines for one Y-axis
+          drawOnChartArea: false,
         },
       },
     },
     plugins: {
       legend: {
         display: true,
-        position: 'bottom', // Position legends at the bottom
-        align: 'end', // Align legends to the right
+        position: 'bottom',
+        align: 'end',
         labels: {
-          usePointStyle: false, // Use point style for legend items
-          padding: 20, // Add padding around legend items
+          usePointStyle: false,
+          padding: 20,
         },
       },
       zoom: {
@@ -162,42 +162,23 @@ const MonthAhead = () => {
     },
   ];
 
-  const handleNextTrade = () => {
-    navigate('/px/consumer/plan-month-trade');
-  };
-
-  const handleStatistics = () => {
-    navigate('/px/consumer/statistical-information-month');
-  };
-
   return (
     <div style={{ padding: '20px' }}>
       <h1>Market Forecast - Month Ahead</h1>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '70%', marginBottom: '10px'}}>
-        {/* <label htmlFor="" style={{ width: 120, fontWeight: 'bold', marginRight: '0px', fontSize: '20px' }}>Technology: </label>
-        <Select placeholder="Select Technology" style={{ width: 200 }} >
-          <Option value="Solar">Solar</Option>
-          <Option value="Non-solar">Non-solar</Option>
-          <Option value="Hydro">Hydro</Option>
-        </Select> */}
-      </div>
-
       <Card style={{ width: 'full' }}>
-        <div style={{ height: '60vh', width: '100%' }}>
-          <Line data={data} options={options} style={{ width: '100%', marginLeft: '150px' }} />
+        <div style={{ height: '400px', width: '100%' }}>
+          {lineData.labels.length > 0 ? (
+            <Line data={lineData} options={options} />
+          ) : (
+            <p>Loading chart data...</p>
+          )}
         </div>
       </Card>
-      <h2></h2>
-      {/* <Table columns={columns} dataSource={tableData} pagination={false} /> */}
-      <Table columns={columns} dataSource={Array.isArray(tableData) && tableData.length ? tableData : detailDataSource} pagination={false} /> 
-
+      <Table columns={columns} dataSource={tableData} pagination={false} />
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
           <Col>
-            <Button onClick={handleStatistics}>Historical Trend</Button>
-          </Col>
-          <Col>
-            <Button onClick={handleNextTrade}>Plan Your Month Ahead Trading</Button>
+            <Button onClick={() => navigate('/px/consumer/statistical-information-month')}>Historical Trend</Button>
           </Col>
         </Row>
       </div>
