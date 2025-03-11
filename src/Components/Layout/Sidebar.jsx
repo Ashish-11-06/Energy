@@ -153,6 +153,7 @@ if(subscription_type === 'PRO') {
     },
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Track Status', key: '/generator/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
+    {label: 'Analyse Modal', key: '/generator/GeneratorInput', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />},
   ];
   if(subscription_type === 'PRO') {
     if (is_new_user==true) {
