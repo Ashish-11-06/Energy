@@ -1,46 +1,232 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Col, Typography, Row } from "antd";
-import { Bar } from "react-chartjs-2";
+import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   BarElement,
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
+  Title,
   Tooltip,
   Legend,
+  TimeScale
 } from "chart.js";
-import Title from "antd/es/typography/Title";
-// Register required chart.js components
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-import market from '../../assets/market.png';
-import statistics from '../../assets/statistics.png';
+import zoomPlugin from 'chartjs-plugin-zoom';
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import market from "../../assets/market.png";
+import statistics from "../../assets/statistics.png";
+import { fetchDashboardDataG, fetchDashboardLineG } from "../../Redux/slices/generator/dashboardSlice";
 
-const DashboardPG = () => {
+// Register required chart.js components and plugins
+ChartJS.register(
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale,
+  zoomPlugin
+);
+
+const Dashboard = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const energyPortfolio = [
-    { id: 1, type: "Solar", energy: 150, projects: 100 },
-    { id: 2, type: "Wind", energy: 100, projects: 150 },
-    { id: 3, type: "Ess", energy: 200, projects: 190 },
-  ];
+  const [dashboardData, setDashboardData] = useState({});
+  const [dashboardLine, setDashboardLine] = useState([]);
+  const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
+// console.log(user_id);
 
-  const barData = {
-    labels: energyPortfolio.map((item) => item.type), // X-axis labels
+  useEffect(() => {
+    const id = user_id;
+    const fetchData = async () => {
+      const res = await dispatch(fetchDashboardDataG(id));
+      setDashboardData(res.payload || {});
+    };
+    fetchData();
+  }, [dispatch]);
+
+  console.log(dashboardData);
+
+  useEffect(() => {
+    const id = user_id;
+    const fetchLineData = async () => {
+      const res = await dispatch(fetchDashboardLineG(id));
+      console.log(res.payload);
+      console.log('line data', res.payload);
+      
+      setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
+    };
+    fetchLineData();
+  }, [dispatch]);
+
+  // Extract generation values from dashboardLine
+  const generationValues = dashboardLine.map(item => item.generation);
+
+  // Line Chart Data
+  const lineData = {
+    labels: generationValues.length
+      ? Array.from({ length: generationValues.length }, (_, i) => i + 1)
+      : [],
     datasets: [
       {
-        label: "Energy in MW",
-        data: energyPortfolio.map((item) => item.energy), // Energy values
-        backgroundColor: "#669800", // Green color for energy
-        barThickness: 60, // Adjust bar thickness
-      },
-      {
-        label: "Number of Projects",
-        data: energyPortfolio.map((item) => item.projects), // Number of projects
-        backgroundColor: "#A5E67F", // Orange color for projects
-        barThickness: 60, // Adjust bar thickness
+        label: "Generation (MWh)",
+        data: generationValues,
+        borderColor: "blue",
+        backgroundColor: "rgba(0, 0, 255, 0.2)",
+        fill: true,
+        tension: 0.3, // Smooth curves
       },
     ],
+  };
+
+  const lineOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "MWh",
+        },
+      },
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        min: 0,
+        max: 100,
+        title: {
+          display: true,
+          text: '96 time blocks',
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom', // Position legends at the bottom
+        align: 'end', // Align legends to the right
+        labels: {
+          padding: 20, // Add padding around legend items
+        },
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+        },
+      },
+      title: {
+        display: true,
+        text: 'Energy Consumption Over Time',
+        font: {
+          size: 18,
+        },
+      },
+    },
+  };
+
+  // Extract state names, total install capacity, and available capacity from dashboardData
+  const solarData = dashboardData.solar || [];
+  const windData = dashboardData.wind || [];
+  const essData = dashboardData.ess || [];
+
+  const combinedData = [...solarData, ...windData, ...essData];
+
+  const stateLabels = combinedData.map(data => data.state);
+  const totalInstallCapacities = combinedData.map(data => data.total_install_capacity);
+  const availableCapacities = combinedData.map(data => data.available_capacity);
+
+  const doughnutData = {
+    labels: stateLabels,
+    datasets: [
+      {
+        data: availableCapacities,
+        backgroundColor: [
+          "#3F8600",
+          "#4CAF50",
+          "#66BB6A",
+          "#81C784",
+          "#A5D6A7",
+        ],
+        hoverBackgroundColor: [
+          "#2E7D32",
+          "#388E3C",
+          "#43A047",
+          "#4CAF50",
+          "#66BB6A",
+        ],
+      },
+    ],
+  };
+
+  const chartDoughnutOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false, // ❌ Hide legend below chart
+      },
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          label: function (tooltipItem) {
+            let index = tooltipItem.dataIndex;
+            let state = stateLabels[index];
+            let totalInstallCapacity = totalInstallCapacities[index];
+            let availableCapacity = availableCapacities[index];
+            return `${state}: Available Capacity: ${availableCapacity} MW, Total Install Capacity: ${totalInstallCapacity} MW`;
+          },
+        },
+        padding: 10,
+        bodyFont: {
+          size: 14,
+        },
+        boxWidth: 200,
+        boxHeight: 50,
+        displayColors: false,
+        multiKeyBackground: 'rgba(0,0,0,0)',
+        titleFont: {
+          size: 16,
+        },
+        bodySpacing: 10,
+        footerSpacing: 10,
+        footerFont: {
+          size: 14,
+        },
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+        },
+      },
+    },
   };
 
   const handleUpcomingMarket = () => {
@@ -51,61 +237,11 @@ const DashboardPG = () => {
     navigate("/px/generator/statistical-information");
   };
 
-  const stateData = {
-    labels: ["Maharashtra", "Gujarat", "Karnataka", "Tamil Nadu", "Rajasthan"],
-    datasets: [
-      {
-        label: "State-wise Distribution",
-        data: [30, 20, 15, 25, 10], // Percentage distribution
-        backgroundColor: "#669800", // Green color for bars
-        barThickness: 25, // Adjust bar thickness
-      },
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Value",
-        },
-      },
-      x: {
-        title: {
-          display: true,
-          text: "Energy Type",
-        },
-      },
-    },
-  };
-
-  const stateChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Percentage",
-        },
-      },
-      x: {
-        title: {
-          display: true,
-          text: "States",
-        },
-      },
-    },
-  };
-
   return (
-    <div style={{ marginTop: "10px", padding: "3%" }}>
-      <Typography.Title level={3}>Portfolio Details</Typography.Title>
+    <div style={{ padding: "3%" }}>
+      <Typography.Title level={3}>
+        Your Energy Consumption Pattern
+      </Typography.Title>
       <Card style={{ height: "50%" }}>
         <Col span={24} style={{ marginBottom: "20px" }}>
           <div
@@ -116,7 +252,11 @@ const DashboardPG = () => {
               margin: "0 auto",
             }}
           >
-            <Bar data={barData} options={chartOptions} />
+            {generationValues.length ? (
+              <Line data={lineData} options={lineOptions} />
+            ) : (
+              <p>Loading data...</p>
+            )}
           </div>
         </Col>
       </Card>
@@ -129,7 +269,7 @@ const DashboardPG = () => {
               <img 
                 src={market} 
                 alt=""  
-                style={{ height: '20px', width: '20px', marginRight: '5px' }} 
+                style={{ height: '20px', width: '20px', marginRight: '10px' }} 
               />
               <span 
                 onClick={handleUpcomingMarket} 
@@ -140,11 +280,12 @@ const DashboardPG = () => {
                 Upcoming Market
               </span>
             </Col>
-            <Col>
+
+            <Col style={{marginTop:'10px'}}>
               <img 
                 src={statistics}  
                 alt="" 
-                style={{ height: '20px', width: '20px', marginRight: '5px', marginTop: '5px' }} 
+                style={{ height: '20px', width: '20px', marginRight: '10px'}} 
               />
               <span 
                 onClick={handleMarketStatistics} 
@@ -159,17 +300,28 @@ const DashboardPG = () => {
 
           {/* Second Column */}
           <Col span={8}>
-            <Typography.Title level={4}>State-wise Distribution</Typography.Title>
-            <Col span={24} style={{ marginBottom: "20px" }}>
+            <Typography.Title level={4}>State wise Requirements</Typography.Title>
+            <Col span={12} style={{ marginBottom: "20px" }}>
               <div
                 style={{
-                  position: "relative",
                   width: "100%",
-                  height: "300px",
+                  height: "100px",
                   margin: "0 auto",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  display: "flex"
                 }}
               >
-                <Bar data={stateData} options={stateChartOptions} style={{height:'200px'}}/>
+                <Doughnut
+                  data={doughnutData}
+                  options={chartDoughnutOptions}
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                    margin: "0 auto",
+                  }}
+                />
               </div>
             </Col>
           </Col>
@@ -189,4 +341,4 @@ const DashboardPG = () => {
   );
 };
 
-export default DashboardPG;
+export default Dashboard;

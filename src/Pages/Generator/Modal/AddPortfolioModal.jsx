@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select, message, Tooltip } from 'antd';
@@ -148,7 +150,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
                 </span>
               }
               name="state"
-              rules={[{ required: true, message: "Please select your state!" }]}
+              // rules={[{ required: true, message: "Please select your state!" }]}
               
             >
               <Select placeholder="Select your state" showSearch disabled={data?.state}>

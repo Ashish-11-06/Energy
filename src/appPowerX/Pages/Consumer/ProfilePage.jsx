@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -67,25 +68,25 @@ console.log(userId);
   //   { key: 4, username: "pqr", email: "pqr@gmail.com", role: "View" },
   // ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await dispatch(fetchSubUserById(userId));
-        const users = res.payload; // Assuming the response is in the payload
-        const formattedUsers = users.map(user => ({
-          key: user.id,
-          username: user.email.split('@')[0], // Assuming username is the part before the email
-          email: user.email,
-          role: user.role,
-        }));
-        setUserDataSource(formattedUsers);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await dispatch(fetchSubUserById(userId));
+  //       const users = res.payload; // Assuming the response is in the payload
+  //       const formattedUsers = users.map(user => ({
+  //         key: user.id,
+  //         username: user.email.split('@')[0], // Assuming username is the part before the email
+  //         email: user.email,
+  //         role: user.role,
+  //       }));
+  //       setUserDataSource(formattedUsers);
+  //     } catch (error) {
+  //       console.error("Failed to fetch user data:", error);
+  //     }
+  //   };
 
-    fetchData();
-  }, [dispatch, userId]);
+  //   fetchData();
+  // }, [dispatch, userId]);
 
 
   const handleEditToggle = () => setIsModalVisible(true);
