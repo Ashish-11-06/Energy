@@ -16,23 +16,24 @@ const { Option } = Select;
 
 const DayAhead = () => {
   const [tableData, setTableData] = useState([]);
+  const [loading,setLoading] = useState(false);
   const [statistiicsData, setStatisticsData] = useState([]);
   const [detailDataSource, setDetailDataSource] = useState([
     {
       key: 'max',
-      status: 'Max',
+      status: 'Maximum',
       mcp: 0,
       mcv: 0,
     },
     {
       key: 'min',
-      status: 'Min',
+      status: 'Minimum',
       mcp: 0,
       mcv: 0,
     },
     {
       key: 'avg',
-      status: 'Avg',
+      status: 'Average',
       mcp: 0,
       mcv: 0,
     },
@@ -43,6 +44,7 @@ const DayAhead = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const data = await dispatch(dayAheadData()).unwrap();
         console.log('data', data.predictions);
 
@@ -52,10 +54,12 @@ const DayAhead = () => {
         setTableData([{ MCP: mcpData, MCV: mcvData }]); // Ensure data is an array
 
         setStatisticsData(data.statistics);
+        setLoading(false);
         console.log(data.statistics);
         
       } catch (error) {
         console.log(error);
+        setLoading(false);
       }
     };
     fetchData();
@@ -96,12 +100,12 @@ console.log('table data',detailDataSource);
       key: 'status',
     },
     {
-      title: 'MCP (INR/MWH)',
+      title: 'MCP (INR/MWh)',
       dataIndex: 'mcp',
       key: 'mcp',
     },
     {
-      title: 'MCV (MWH)',
+      title: 'MCV (MWh)',
       dataIndex: 'mcv',
       key: 'mcv',
     },
@@ -111,17 +115,23 @@ console.log('table data',detailDataSource);
     labels: Array.from({ length: 96 }, (_, i) => i + 1), // Updated X-axis labels
     datasets: [
       {
-        label: 'MCP (INR/MW)', // Label for MCP dataset
+        label: 'MCP (INR/MWh)', // Label for MCP dataset
         data: tableData[0]?.MCP || [], // Updated data for MCP
         borderColor: 'blue',
         fill: false,
+        font :{
+          weight: 'bold',
+        },
         yAxisID: 'y-axis-mcp', // Assign to right Y-axis
       },
       {
-        label: 'MCV (MW)', // Label for MCY dataset
+        label: 'MCV (MWh)', // Label for MCY dataset
         data: tableData[0]?.MCV || [], // Updated data for MCY
         borderColor: 'green',
         fill: false,
+        font :{
+          weight: 'bold',
+        },
         yAxisID: 'y-axis-mcv', // Assign to left Y-axis
       },
     ],
@@ -140,6 +150,10 @@ console.log('table data',detailDataSource);
         title: {
           display: true,
           text: '96 time blocks',
+          font: {
+            weight: 'bold',
+            size: 16,
+          }
         },
       },
       'y-axis-mcv': {
@@ -148,7 +162,10 @@ console.log('table data',detailDataSource);
         beginAtZero: true,
         title: {
           display: true,
-          text: 'MCV (MW)',
+          text: 'MCV (MWh)',
+          font: {
+            weight: 'bold', 
+          }
         },
       },
       'y-axis-mcp': {
@@ -157,7 +174,10 @@ console.log('table data',detailDataSource);
         beginAtZero: true,
         title: {
           display: true,
-          text: 'MCP (INR/MW)',
+          text: 'MCP (INR/MWh)',
+          font :{
+            weight: 'bold',
+          }
         },
         grid: {
           drawOnChartArea: false, // Only draw grid lines for one Y-axis
@@ -229,11 +249,16 @@ console.log('table data',detailDataSource);
     <div style={{ padding: '20px' }}>
       <h1>Market Forecast - Day Ahead</h1>
       <Card style={{height: '500px', width: '100%'}}>
-        <div style={{ height: '500px', width: '100%' }}>
-          <Line data={data} options={options} style={{height: '300px', width: 'full',padding:'25px',marginLeft:'100px'}}/>
-        </div>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            <p>Loading chart details...</p>
+          </div>
+        ) : (
+          <div style={{ height: '500px', width: '100%' }}>
+            <Line data={data} options={options} style={{height: '300px', width: 'full',padding:'25px',marginLeft:'100px'}}/>
+          </div>
+        )}
       </Card>
-      <h2></h2>
       {/* <Table columns={columns} dataSource={Array.isArray(tableData) && tableData.length ? tableData : detailDataSource} pagination={false} />  */}
 <Table columns={detailColumns} dataSource={detailDataSource} pagination={false} />
       <div style={{ padding: '20px' }}>

@@ -9,6 +9,8 @@ import {
   SolutionOutlined,
   TeamOutlined,
   FileTextOutlined,
+  HomeOutlined,
+  HomeFilled,
 } from '@ant-design/icons';
 import dash from '../../../assets/dashboard.png';
 import transaction from '../../../assets/transaction.png';
@@ -22,7 +24,7 @@ import offerSend from '../../../assets/offerSend.png';
 import notificationImg from '../../../assets/notification.png';
 import portfolio from '../../../assets/portfolio.png';
 import trade from '../../assets/trade.png';
-
+import home from '../../assets/home.png';
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
@@ -107,25 +109,32 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           </div>
           <Menu mode="inline" selectedKeys={[selectedKey]}>
             {menuItems.map((item) => (
-              <Menu.Item key={item.key} icon={item.icon}>
+              <Menu.Item key={item.key} icon={item.icon} style={{ marginBottom: '20px' }}>
                 <Link to={item.key}>{item.label}</Link>
               </Menu.Item>
             ))}
           </Menu>
           <Button
-            type="primary"
-            onClick={() => navigate(`/${user_category}/dashboard`)}
-            style={{
-              position: 'absolute',
-              bottom: 20,
-              left: 20,
-              width: '80%',
-              backgroundColor: '#669800',
-              borderColor: '#669800',
-            }}
-          >
-            EXT
-          </Button>
+      type="primary"
+      onClick={() => navigate(`/${user_category}/dashboard`)}
+      style={{
+        position: "absolute",
+        bottom: 20,
+        left: 20,
+        width: "80%",
+        backgroundColor: "#669800",
+        borderColor: "#669800",
+        padding: "5px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center", // Centers the content
+        gap: "8px", // Adds space between icon and text
+        height: "40px", // Ensures consistent height
+      }}
+    >
+      <HomeFilled style={{  fontSize: "18px", color: "white", height: "20px",marginRight:"5px" }} />
+      <span style={{ fontSize: "18px", lineHeight: "20px", color: "white" }}>EXT</span>
+    </Button>
         </Sider>
       ) : (
         <>
@@ -157,6 +166,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
                   key={item.key}
                   icon={item.icon}
                   onClick={() => closeDrawerAndNavigate(item.key)}
+                  style={{ marginBottom: '10px' }}
                 >
                   {item.label}
                 </Menu.Item>

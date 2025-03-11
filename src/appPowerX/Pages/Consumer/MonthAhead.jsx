@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Button, Table, Row, Col, Card } from 'antd';
 import { Line } from 'react-chartjs-2';
@@ -92,6 +93,10 @@ const MonthAhead = () => {
         ticks: {
           autoSkip: false,
         },
+        title: {
+          display: true,
+          text: 'Days',
+        },
       },
       'y-axis-mcv': {
         type: 'linear',
@@ -162,14 +167,16 @@ const MonthAhead = () => {
   ];
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '10px' }}>
       <h1>Market Forecast - Month Ahead</h1>
-      <Card style={{ width: 'full' }}>
+      <Card style={{ width: 'full',marginLeft:'0' }}>
         <div style={{ height: '400px', width: '100%' }}>
           {lineData.labels.length > 0 ? (
-            <Line data={lineData} options={options} />
+            <Line data={lineData} options={options} style={{marginLeft:'150px'}} />
           ) : (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
             <p>Loading chart data...</p>
+            </div>
           )}
         </div>
       </Card>

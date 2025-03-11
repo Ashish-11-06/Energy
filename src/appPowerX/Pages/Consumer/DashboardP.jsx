@@ -97,6 +97,9 @@ console.log(dashboardData);
         title: {
           display: true,
           text: "MWh",
+          font: {
+            weight: "bold",
+          },
         },
       },
       x: {
@@ -107,6 +110,9 @@ console.log(dashboardData);
         title: {
           display: true,
           text: '96 time blocks',
+          font: {
+            weight: 'bold',
+          }
         },
       },
     },
@@ -243,8 +249,8 @@ console.log(dashboardData);
         <Row gutter={[16, 16]} justify="space-between">
           {/* First Column */}
           <Col span={8}>
-            <Typography.Title level={4}>PowerX Detail</Typography.Title>
-            <Col>
+            <Typography.Title level={4}>PowerX Details</Typography.Title>
+            <Col style={{marginTop:'30px'}}>
               <img 
                 src={market} 
                 alt=""  
@@ -252,15 +258,15 @@ console.log(dashboardData);
               />
               <span 
                 onClick={handleUpcomingMarket} 
-                style={{ cursor: 'pointer', color: 'black' }} // Default color
+                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)' }} // Default color
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
-                onMouseLeave={(e) => e.target.style.color = 'black'}
+                onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
               >
                 Upcoming Market
               </span>
             </Col>
 
-            <Col style={{marginTop:'10px'}}>
+            <Col style={{marginTop:'30px'}}>
               <img 
                 src={statistics}  
                 alt="" 
@@ -268,9 +274,9 @@ console.log(dashboardData);
               />
               <span 
                 onClick={handleMarketStatistics} 
-                style={{ cursor: 'pointer', color: 'black' }} // Default color
+                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)' }} // Default color
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
-                onMouseLeave={(e) => e.target.style.color = 'black'}
+                onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
               >
                 Market Statistics
               </span>

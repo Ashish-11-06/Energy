@@ -8,7 +8,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { fetchTradingData } from '../../Redux/slices/consumer/tradingSlice';
-
+import './Trading.css';
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
 
@@ -48,12 +48,14 @@ const Trading = () => {
         data: tradeData.plan, // Updated data for Plan
         borderColor: 'blue',
         fill: false,
+        tension: 0.4, // Add tension for smooth curve
       },
       {
         label: 'Trade Data', // Label for Trade dataset
         data: tradeData.trade, // Updated data for Trade
         borderColor: 'green',
         fill: false,
+        tension: 0.4, // Add tension for smooth curve
       },
     ],
   };
@@ -125,32 +127,32 @@ const Trading = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} >
         {/* Total Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TOTAL" value={493} suffix="+" />
+            <Statistic title="TOTAL" value={493} suffix="+" style={{color:'white'}} />
           </Card>
         </Col>
 
         {/* Trading Volume Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TRADING VOLUME" value={8.324} />
+            <Statistic title="TRADING VOLUME" value={8.324} style={{color:'white'}} />
           </Card>
         </Col>
 
         {/* Price Per Unit Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="PRICE PER UNIT" value={6.203} />
+            <Statistic title="PRICE PER UNIT" value={6.203} style={{color:'white'}} />
           </Card>
         </Col>
 
         {/* Planning Costs Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800' ,textAlign:'center'}}>
-            <Statistic title="PLANNING COSTS" value={64900} />
+            <Statistic title="PLANNING COSTS" value={64900} style={{color:'white'}} />
           </Card>
         </Col>
       </Row>

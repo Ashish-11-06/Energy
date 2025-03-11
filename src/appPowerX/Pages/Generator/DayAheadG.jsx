@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Button, Select, Table, Row, Col, Card } from 'antd';
 import { Line } from 'react-chartjs-2';
@@ -17,18 +18,73 @@ const DayAheadG = () => {
   const [tableData, setTableData] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+ const [statistiicsData, setStatisticsData] = useState([]);
+  const [detailDataSource, setDetailDataSource] = useState([
+    {
+      key: 'max',
+      status: 'Max',
+      mcp: 0,
+      mcv: 0,
+    },
+    {
+      key: 'min',
+      status: 'Min',
+      mcp: 0,
+      mcv: 0,
+    },
+    {
+      key: 'avg',
+      status: 'Avg',
+      mcp: 0,
+      mcv: 0,
+    },
+  ]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await dispatch(dayAheadData()).unwrap();
-        setTableData(data ? [data] : []); // Ensure data is an array
+        console.log(data);
+        
+        const mcpData = data.predictions.map(item => item.mcp_prediction);
+        const mcvData = data.predictions.map(item => item.mcv_prediction);
+
+        setTableData([{ MCP: mcpData, MCV: mcvData }]);
+
+        setStatisticsData(data.statistics);
+
+        // setTableData(data ? [data] : []); // Ensure data is an array
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
   }, [dispatch]);
+console.log(statistiicsData);
+
+  useEffect(() => {
+    if (statistiicsData.mcp && statistiicsData.mcv) {
+      setDetailDataSource([
+        {
+          key: 'max',
+          status: 'Maximum',
+          mcp: statistiicsData.mcp.max,
+          mcv: statistiicsData.mcv.max,
+        },
+        {
+          key: 'min',
+          status: 'Minimum',
+          mcp: statistiicsData.mcp.min,
+          mcv: statistiicsData.mcv.min,
+        },
+        {
+          key: 'avg',
+          status: 'Average',
+          mcp: statistiicsData.mcp.avg,
+          mcv: statistiicsData.mcv.avg,
+        },
+      ]);
+    }
+  }, [statistiicsData]);
 
   const data = {
     labels: Array.from({ length: 96 }, (_, i) => i + 1), // Updated X-axis labels
@@ -122,11 +178,11 @@ const DayAheadG = () => {
     },
   };
 
-  const columns = [
+  const detailColumns = [
     {
-      title: 'Details',
-      dataIndex: 'metric',
-      key: 'metric',
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
     },
     {
       title: 'MCP (INR/MWh)',
@@ -135,10 +191,11 @@ const DayAheadG = () => {
     },
     {
       title: 'MCV (MWh)',
-      dataIndex: 'mcy',
-      key: 'mcy',
+      dataIndex: 'mcv',
+      key: 'mcv',
     },
   ];
+
 
   const handleNextTrade = () => {
     navigate('/px/generator/plan-day-trade-page');
@@ -162,6 +219,8 @@ const DayAheadG = () => {
         </div>
       </Card>
       <h2></h2>
+      <Table columns={detailColumns} dataSource={detailDataSource} pagination={false} />
+      
       {/* <Table columns={columns} dataSource={Array.isArray(tableData) ? tableData : []} pagination={false} /> */}
 
       <div style={{ padding: '20px' }}>

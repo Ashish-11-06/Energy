@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox } from 'antd';
+import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox, Radio } from 'antd';
 import 'antd/dist/reset.css';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
@@ -21,12 +21,10 @@ dayjs.locale('en');
 const Planning = () => {
   const navigate = useNavigate();
   const [showTable, setShowTable] = useState(true); // Set default to true
-  const [showInputFields, setShowInputFields] = useState(false); // State to manage input fields visibility
   const [selectedState, setSelectedState] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [demand, setDemand] = useState("");
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
-  const [consumerRequirement, setConsumerRequirement] = useState([]);
   const [tableDemandData, setTableDemandData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -107,7 +105,11 @@ const Planning = () => {
           </div>
         )}
         {listData.map(item => (
-          <Tooltip style={{ marginTop: '3%' }} key={item.id} title={`Demand: ${item.demand} MWh, Solar Price: ${item.price.Solar} INR, Non-Solar Price: ${item.price["Non-Solar"]} INR`}>
+          <Tooltip 
+            style={{ marginTop: '3%' }} 
+            key={item.id} 
+            title={`Generation: ${item.generation} MWh, ${item.content_type} Price: ${item.price} INR`}
+          >
             <div
               style={{
                 backgroundColor: '#669800',
@@ -128,6 +130,9 @@ const Planning = () => {
     );
   };
 
+  const handleChange = (e) => {
+    setSelectedTechnology(e.target.value);
+  };
   const handleToggleView = () => {
     setShowTable(!showTable);
   };
@@ -137,11 +142,12 @@ const Planning = () => {
   };
 
   const handleStateChange = (value) => {
-    const selectedRequirement = generatorPortfolio.find(item => item.state === value);
+    const selectedRequirement = generatorPortfolio.find(item => item.id === value);
     setSelectedRequirementId(selectedRequirement ? selectedRequirement.id : null);
-
-    setSelectedState(value);
+    setSelectedPortfolio(selectedRequirement);
+    setSelectedState(selectedRequirement ? selectedRequirement.state : "");
   };
+
 
   const handleAddData = () => {
     setIsInputModalVisible(false); // Hide input modal
@@ -149,10 +155,12 @@ const Planning = () => {
   };
 
   const handleModalOk = async () => {
+    console.log('clicked')
     const formattedDate = selectedDate.format('YYYY-MM-DD'); // Format the date correctly
     try {
+      console.log(selectedRequirementId);
       const data = {
-        portfolio_id: selectedPortfolio.id,
+        portfolio_id: selectedRequirementId,
         portfolio_type: selectedPortfolio.type.toLowerCase(),
         date: selectedDate ? selectedDate.format('YYYY-MM-DD') : '',
         generation: parseFloat(demand),
@@ -173,7 +181,7 @@ const Planning = () => {
         }
       }
       setIsModalVisible(false);
-      navigate('/px/consumer/planning');
+      navigate('/px/generator/planning');
     } catch (error) {
       console.log(error);
       message.error("Failed to submit data. Please try again.");
@@ -188,7 +196,7 @@ const Planning = () => {
 
   const columns = [
     { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 },
-    { title: 'Demand (MWh)', dataIndex: 'demand', key: 'demand', rowSpan: 2, render: (text, record) => (
+    { title: 'Generation', dataIndex: 'generation', key: 'generation', rowSpan: 2, render: (text, record) => (
         <Tooltip title="Click to view details">
           <span style={{ color: 'rgb(154, 132, 6)', cursor: 'pointer' }} onClick={() => handleDemandClick(record)}>
             {text}
@@ -200,11 +208,11 @@ const Planning = () => {
   ];
 
   const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => ({
-    key: item.requirement,
+    key: item.object_id,
     date: item.date,
-    demand: item.demand,
-    technology: `Solar: ${item.price?.Solar || 0} INR, Non-Solar: ${item.price?.["Non-Solar"] || 0} INR`,
-    price: `${item.price?.Solar || 0} INR (Solar), ${item.price?.["Non-Solar"] || 0} INR (Non-Solar)`,
+    generation: item.generation,
+    technology: `${item.content_type}: ${item.price} INR`,
+    price: `${item.price} INR (${item.content_type})`,
   })) : [];
 
   const handlePrevMonth = () => {
@@ -224,10 +232,10 @@ const Planning = () => {
     <div>
       <div style={{ padding: '20px' }}>
         <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
-          <h1 style={{ margin: 0 }}>Planning Calendar</h1>
+          <h1 style={{ margin: 0 }}>Energy Planner</h1>
           <Button style={{ marginRight: '-50%' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
           <Button onClick={handleAddDetailsClick}>
-            Plan for more 
+            Plan for more Days
           </Button>
         </Row>
         {loading ? (
@@ -271,16 +279,16 @@ const Planning = () => {
         footer={null} // Remove default footer
         onCancel={() => setIsInputModalVisible(false)}
       >
-        <Form.Item label="Select Consumption Unit" style={{ fontSize: '24px' }}>
+        <Form.Item label="Select Portfolio" style={{ fontSize: '24px' }}>
           <Select
-            value={selectedState || undefined}
+            value={selectedPortfolio ? selectedPortfolio.id : undefined}
             onChange={handleStateChange}
             style={{ width: "100%", borderColor: "#669800" }}
-            placeholder="Select Consumption Unit"
+            placeholder="Select Portfolio"
           >
             {generatorPortfolio.map(item => (
-              <Select.Option key={item.id} value={item.state}>
-                {`${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
+              <Select.Option key={item.id} value={item.id}>
+                {`${item.id}: ${item.type}`}
               </Select.Option>
             ))}
           </Select>
@@ -293,10 +301,10 @@ const Planning = () => {
             onChange={(date) => setSelectedDate(date)}
           />
         </Form.Item>
-        <Form.Item label="Enter Demand (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
+        <Form.Item label="Enter Generation (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
           <Input
             type="number"
-            placeholder="Enter demand"
+            placeholder="Enter generation"
             min={0}
             style={{
               width: "100%",
@@ -326,36 +334,23 @@ const Planning = () => {
         onOk={handleModalOk}
         onCancel={() => setIsModalVisible(false)}
       >
-        {/* Checkbox Group */}
-        <Checkbox.Group onChange={(checkedValues) => setSelectedTechnology(checkedValues)} value={selectedTechnology}>
-          <Checkbox value="Solar">"Solar"</Checkbox>
-          <Checkbox value="Non-Solar">"Non-Solar"</Checkbox>
-        </Checkbox.Group>
+        {/* Radio Group */}
+        <Radio.Group onChange={handleChange} value={selectedTechnology}>
+          <Radio value="Solar">Solar</Radio>
+          <Radio value="Wind">Wind</Radio>
+        </Radio.Group>
 
-        {/* Input fields for price */}
+        {/* Input field for price */}
         <div style={{ marginTop: "15px" }}>
-          {selectedTechnology.includes("Solar") && (
+          {selectedTechnology && (
             <div>
-              <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
+              <label style={{ fontWeight: "bold" }}>Enter {selectedTechnology} Price:</label>
               <Input
                 type="number"
-                placeholder="Enter solar price in INR"
-                value={price["Solar"] || ""}
+                placeholder={`Enter ${selectedTechnology} price in INR`}
+                value={price}
                 min={0}
-                onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
-                style={{ marginTop: "5px", width: "100%" }}
-              />
-            </div>
-          )}
-          {selectedTechnology.includes("Non-Solar") && (
-            <div>
-              <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
-              <Input
-                type="number"
-                placeholder="Enter non-solar price in INR"
-                value={price["Non-Solar"] || ""}
-                min={0}
-                onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
+                onChange={(e) => setPrice(e.target.value)}
                 style={{ marginTop: "5px", width: "100%" }}
               />
             </div>
