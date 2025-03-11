@@ -5,7 +5,7 @@ import { Modal, Button } from 'antd';
 
 // Reusable AgreementContent Component
 const AgreementContent = ({ dynamicData }) => (
-  <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', border: '2px solid black'  }}>
+  <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px' }}>
     <div style={{ fontFamily: 'Arial, sans-serif', textAlign: 'center', padding: '20px', lineHeight: 1.5 }}>
       <h3 style={{ margin: 0 }}>Terms Sheet (Terms)</h3>
       <p style={{ margin: '5px 0' }}>for Renewable Power Plant between</p>
@@ -23,7 +23,7 @@ const AgreementContent = ({ dynamicData }) => (
       </p>
     </div>
 
-    ................................................
+    {/* ................................................ */}
 
     {/* <h1>Term Sheet Agreement</h1>
     <p><strong>Generator Name:</strong> {dynamicData.generatorName}</p>
@@ -35,78 +35,77 @@ const AgreementContent = ({ dynamicData }) => (
     <p><strong>Lock-in Period:</strong> {dynamicData.lockInPeriod} years</p> */}
 
 
-    <p>XXX,</p>
+    <p className='page-break'>XXX,</p>
     <p>Insert details of its registered office <br /> ("Captive User")</p>
 
     <div style={{ textAlign: 'right' }}>
-      Date:
+      Date: {new Date().toLocaleDateString()}
     </div>
 
-    <h2>Indicative Heads of Terms for Open Access Captive Solar Project in Tamil Nadu</h2>
+    <h3><strong>Indicative Heads of Terms for Open Access Captive Solar Project in {dynamicData.projectSite}</strong></h3>
 
-    <p>Dear [Name],</p>
+    <p>Dear {dynamicData.userName || 'user'} </p>
 
     <p>Please find enclosed outline terms for the open access captive renewable project <div></div>
       ("Project") situated at [_], &lt;Generator State&gt;, India ("Project Site").</p>
 
-    <h3 class="section-title">1. Content of these heads of terms</h3>
+    <strong><p>1. Content of these heads of terms</p></strong>
 
-    <h4 class="subsection-title">1.1.</h4>
-    <p>The outline terms for the Proposed Transaction are set out in the Annexures and cover:</p>
-    <div class="indent">
+    <p>1.1. The outline terms for the Proposed Transaction are set out in the Annexures and cover:</p>
+    <div style={{ marginLeft: '25px' }}>
       <p>a) the term sheet for the power consumption agreement is set out in Part 1 of the Annex;</p>
       <p>b) the term sheet for the equity commitment is set out in Part 2 of the Annex; and</p>
       <p>c) the shareholding arrangements are set out in Part 3 of the Annex.</p>
+      <p>The Proposed Transaction remains subject to satisfactory due diligence by &lt;Generator&gt;, and to the agreement and signature by all relevant Captive User(s) of all legally binding agreements (the "Transaction Documents").</p>
     </div>
 
-    <p>The Proposed Transaction remains subject to satisfactory due diligence by &lt;Generator&gt;, and to the agreement and signature by all relevant Captive User(s) of all legally binding agreements (the "Transaction Documents").</p>
+    
+    <p>1.2. These heads of terms in the annexes ("Terms") are not exhaustive nor are they intended to be legally binding between &lt;Generator&gt; and the Captive User(s).¹ The Transaction Documents will contain more detailed terms and conditions on the rights, obligations and responsibilities of the parties, along with customary representations and warranties and indemnities.</p>
 
-    <h4 class="subsection-title">1.2.</h4>
-    <p>These heads of terms in the annexes ("Terms") are not exhaustive nor are they intended to be legally binding between &lt;Generator&gt; and the Captive User(s).¹ The Transaction Documents will contain more detailed terms and conditions on the rights, obligations and responsibilities of the parties, along with customary representations and warranties and indemnities.</p>
-
-    <h3 class="section-title"><strong>2. Exclusivity</strong></h3>
-
-    <h4 class="subsection-title">2.1.</h4>
-    <p>The definitions in this Paragraph 2.1 apply in this Paragraph 2:</p>
+    <p class="section-title"><strong>2. Exclusivity</strong></p>
+    <p >2.1. The definitions in this Paragraph 2.1 apply in this Paragraph 2:</p>
+    <div style={{ marginLeft: '25px' }}>
     <p><b>Exclusivity Period:</b> The period commencing on the date of execution of the Terms, and ending at the earlier of: (a) the execution of the last of the Transaction Documents; or (b) on the date falling 150 days after the date of execution of the.</p>
-
-
-    .....................
     <p>Terms; or (c) other such date to be agreed between &lt;Generator&gt; and the Captive User(s) in writing:</p>
     <p><strong>Restricted Activity:</strong> Negotiations in relation to power procurement activities through open access, captive or through power exchange. This does not include any existing transactions for which contracts have been executed prior to the execution of the Terms;</p>
     <p><strong>Third Party:</strong> Any person other than &lt;Generator&gt; (or any of their respective officers, employees, agents or advisers);</p>
     <p><strong>Third Party Negotiations:</strong> Any discussions or negotiations between a Third Party and the Captive User(s) or the Captive User's group, or any of its respective officers, employees, agents or advisers, relating to or otherwise concerning a Restricted Activity.</p>
-    <p><strong>2.2.</strong> The Captive User(s) agrees that for the duration of the Exclusivity Period, it will discuss and negotiate the Proposed Transaction with &lt;Generator&gt; on an exclusive basis. The Captive User(s) undertakes that for the duration of the Exclusivity Period, it will not (and will procure that no member of its group, nor any of their respective officers, employees, agents or advisers), directly or indirectly continue, enter into, re-start, solicit, initiate, respond to any inquiries, consider or participate in any Third Party Negotiations, in any manner whatsoever.</p>
-    <p><strong>2.3.</strong> On executing the Terms, the Captive User(s) will immediately terminate, or procure the termination of, any Third Party Negotiations taking place.</p>
-    <p><strong>3. Undertakings</strong></p>
-    <p><strong>3.1.</strong> Based on the Captive User's exclusivity undertakings (as set out in paragraph 2 above), &lt;Generator&gt; is committing costs and time to develop the Project at the Project Site through the feasibility stage. During the Exclusivity Period, &lt;Generator&gt; will use its reasonable endeavours to proceed with and develop the Project at the Project Site.</p>
-    <p><strong>3.2.</strong> For the purposes of operating the Project, an application for connectivity to the grid is required to be submitted to the DISCOM (Grid Application). The Parties agree that &lt;Generator&gt; will make such an application, and the Captive User(s) will provide necessary co-operation to <strong>&lt;Generator&gt;</strong> in procuring and maintaining the open access approval. </p>
-    <p><strong>3.3.</strong> The Captive User(s) undertakes to execute a consent letter addressed to the DISCOM (and any other documents as &lt;Generator&gt;may require) in the form required by &lt;Generator&gt;  </p>
-    <p><strong>3.4.</strong> In connection with the Grid Application, &lt;Generator&gt; shall be solely responsible for all fees and costs of such Grid Application.</p>
-    <p><strong>3.5.</strong> &lt;Generator&gt; shall, at appropriate intervals, keep the Captive User(s) and the EXG Global reasonably informed of the status of the development of the Project, status of other Captive User(s) and any other information reasonably required for the purposes of the Project.</p>
-    <p><strong>3.6.</strong> The Captive User(s) agrees to provide &lt;Generator&gt; such information as &lt;Generator&gt; may request related to the Proposed Transaction, including but not limited to any information to enable &lt;Generator&gt; to carry out due diligence on the Captive User(s) and/or its group. The Captive User(s) shall respond to any request by &lt;Generator&gt; under this paragraph as soon as reasonably practicable.</p>
-    <p><strong>3.7.</strong> The parties undertake to use their best endeavours to negotiate the Transaction Documents in good faith based on the Terms.    </p>
-    <p><strong>3.8.</strong> The parties undertake to use their best endeavours to conclude and enter into the Transaction Documents (and all ancillary documents) prior to the expiry of the Exclusivity Period.</p>
-  
+
+    </div>
+    {/* ================================================================================================================================================ */}
+
+    <p className='page-break'><strong>2.2.</strong> The Captive User(s) agrees that for the duration of the Exclusivity Period, it will discuss and negotiate the Proposed Transaction with &lt;Generator&gt; on an exclusive basis. The Captive User(s) undertakes that for the duration of the Exclusivity Period, it will not (and will procure that no member of its group, nor any of their respective officers, employees, agents or advisers), directly or indirectly continue, enter into, re-start, solicit, initiate, respond to any inquiries, consider or participate in any Third Party Negotiations, in any manner whatsoever.</p>
+    <p>2.3. On executing the Terms, the Captive User(s) will immediately terminate, or procure the termination of, any Third Party Negotiations taking place.</p>
+    <p> <b>3. Undertakings</b></p>
+    <div style={{marginLeft: '25px'}}>
+    <p>3.1. Based on the Captive User's exclusivity undertakings (as set out in paragraph 2 above), &lt;Generator&gt; is committing costs and time to develop the Project at the Project Site through the feasibility stage. During the Exclusivity Period, &lt;Generator&gt; will use its reasonable endeavours to proceed with and develop the Project at the Project Site.</p>
+    <p>3.2. For the purposes of operating the Project, an application for connectivity to the grid is required to be submitted to the DISCOM (Grid Application). The Parties agree that &lt;Generator&gt; will make such an application, and the Captive User(s) will provide necessary co-operation to <strong>&lt;Generator&gt;</strong> in procuring and maintaining the open access approval. </p>
+    <p>3.3. The Captive User(s) undertakes to execute a consent letter addressed to the DISCOM (and any other documents as &lt;Generator&gt;may require) in the form required by &lt;Generator&gt;  </p>
+    <p>3.4. In connection with the Grid Application, &lt;Generator&gt; shall be solely responsible for all fees and costs of such Grid Application.</p>
+    <p>3.5. &lt;Generator&gt; shall, at appropriate intervals, keep the Captive User(s) and the EXG Global reasonably informed of the status of the development of the Project, status of other Captive User(s) and any other information reasonably required for the purposes of the Project.</p>
+    <p>3.6. The Captive User(s) agrees to provide &lt;Generator&gt; such information as &lt;Generator&gt; may request related to the Proposed Transaction, including but not limited to any information to enable &lt;Generator&gt; to carry out due diligence on the Captive User(s) and/or its group. The Captive User(s) shall respond to any request by &lt;Generator&gt; under this paragraph as soon as reasonably practicable.</p>
+    <p>3.7. The parties undertake to use their best endeavours to negotiate the Transaction Documents in good faith based on the Terms.    </p>
+    <p>3.8. The parties undertake to use their best endeavours to conclude and enter into the Transaction Documents (and all ancillary documents) prior to the expiry of the Exclusivity Period.</p>
+   </div>
     <p><strong>4. Termination</strong></p>
-    
-    <p><strong>4.1.</strong>  
-   <p></p>Neither party may terminate the Terms prior to the expiry of the Exclusivity
-  Period, provided however, &lt;Generator&gt; may terminate this arrangement in
-  the following circumstances, by giving a reasonable notice to the Captive
-  User(s):
-  <br />
-   a) where the parameters make the investment non-viable for &lt;Generator&gt;,
-  as determined solely by &lt;Generator&gt;;
-  <br />
-   b) where the Captive User(s) fails to comply with its obligations under the
-  Terms, including, without limitation, its obligations in respect of
-  exclusivity, confidentiality, assisting &lt;Generator&gt; with the Grid
-  Application, and obligation to negotiate and conclude the Transaction
-  Documents in good faith; and
-  <br />
-  where the Captive User(s) fails to pass &lt;Generator&gt;’s due diligence relating to compliance and business ethics, as determined solely by &lt;Generator&gt;.
-  </p>
+
+    <p><strong>4.1.</strong>
+      <p></p>Neither party may terminate the Terms prior to the expiry of the Exclusivity
+      Period, provided however, &lt;Generator&gt; may terminate this arrangement in
+      the following circumstances, by giving a reasonable notice to the Captive
+      User(s):
+      <br />
+      a) where the parameters make the investment non-viable for &lt;Generator&gt;,
+      as determined solely by &lt;Generator&gt;;
+      <br />
+      b) where the Captive User(s) fails to comply with its obligations under the
+      Terms, including, without limitation, its obligations in respect of
+      exclusivity, confidentiality, assisting &lt;Generator&gt; with the Grid
+      Application, and obligation to negotiate and conclude the Transaction
+      Documents in good faith; and
+      <br />
+      where the Captive User(s) fails to pass &lt;Generator&gt;’s due diligence relating to compliance and business ethics, as determined solely by &lt;Generator&gt;.
+    </p>
 
     <p><strong>4.2.</strong>The termination by &lt;Generator&gt; of the Terms, in accordance with paragraph 4.1 above, shall be without any liability for &lt;Generator&gt; , &lt;Consumer&gt; and EXG Global. </p>
 
@@ -122,36 +121,7 @@ const AgreementContent = ({ dynamicData }) => (
 
     <p><strong>7. Governing law</strong></p>
     <p><strong>7.1 </strong>The Terms shall be governed by and construed in accordance with the law of India. Any claims or disputes arising out of or in connection with the Terms, will be referred to and finally resolved by arbitration in accordance with the (Indian) Arbitration and Conciliation Act, 1996. Each Party will appoint an arbitrator. The two arbitrators so appointed will appoint the third arbitrator. </p>
-    {/* <div>
-      <h2>Restricted Activity</h2>
-      <p>Negotiations in relation to power procurement activities through open access, captive or through power exchange. This does not include any existing transactions for which contracts have been executed prior to the execution of the Terms;</p>
-
-      <h2>Third Party</h2>
-      <p>Any person other than &lt;Generator&gt; (or any of their respective officers, employees, agents or advisers);</p>
-
-      <h2>Third Party Negotiations</h2>
-      <p>Any discussions or negotiations between a Third Party and the Captive User(s) or the Captive User’s group, or any of its respective officers, employees, agents or advisers, relating to or otherwise concerning a Restricted Activity.</p>
-
-      <h2>2.2. Exclusivity</h2>
-      <p>The Captive User(s) agrees that for the duration of the Exclusivity Period, it will discuss and negotiate the Proposed Transaction with &lt;Generator&gt; on an exclusive basis. The Captive User(s) undertakes that for the duration of the Exclusivity Period, it will not (and will procure that no member of its group, nor any of their respective officers, employees, agents or advisers), directly or indirectly continue, enter into, restart, solicit, initiate, respond to any inquiries, consider or participate in any Third Party Negotiations, in any manner whatsoever.</p>
-
-      <h2>2.3. Termination of Third Party Negotiations</h2>
-      <p>On executing the Terms, the Captive User(s) will immediately terminate, or procure the termination of, any Third Party Negotiations taking place.</p>
-
-      <h2>3. Undertakings</h2>
-      <p>3.1. Based on the Captive User’s exclusivity undertakings (as set out in paragraph 2 above), &lt;Generator&gt; is committing costs and time to develop the Project at the Project Site through the feasibility stage.<sup>2</sup> During the Exclusivity Period, &lt;Generator&gt; will use its reasonable endeavours to proceed with and develop the Project at the Project Site.<sup>3</sup></p>
-
-      <p>3.2. For the purposes of operating the Project, an application for connectivity to the grid is required to be submitted to the DISCOM (Grid Application). The Parties agree that &lt;Generator&gt; will make such an application, and the Captive User(s) will provide necessary co-operation to &lt;Generator&gt; in procuring and maintaining the open access approval.</p>
-
-      <hr />
-
-      <p><em>Note: The feasibility study will involve an approval from the DISCOM. ABC may consider including these aspects.</em></p>
-      <p><em>Note: A reference to the Project Site has been included for further clarity.</em></p>
-      <p><strong>Confidential Document:</strong> ______ 3</p>
-    </div> */}
-
-    {/* next page */}
-
+   
     <div>
       <h3>3.3.</h3>
       <p>The Captive User(s) undertakes to execute a consent letter addressed to the DISCOM (and any other documents as &lt;Generator&gt; may require) in the form required by &lt;Generator&gt;.</p>
@@ -627,15 +597,29 @@ const AgreementModal = ({ visible, onClose }) => {
 
     html2pdf()
       .set({
-        margin: 10,
+        margin: 15,
         filename: 'TermSheet.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
+        html2canvas: { scale: 2, useCORS: true }, // Ensure text is not rendered as an image
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: 'css', before: '.page-break' }, // Add page breaks
       })
       .from(element)
+      .toPdf()
+      .get('pdf')
+      .then((pdf) => {
+        const totalPages = pdf.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+          pdf.setPage(i);
+          pdf.setDrawColor(0, 0, 0); // Set border color
+          pdf.rect(5, 5, pdf.internal.pageSize.getWidth() - 10, pdf.internal.pageSize.getHeight() - 10); // Add border
+          pdf.setFontSize(10);
+          pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() - 40, pdf.internal.pageSize.getHeight() - 10); // Add page number
+        }
+      })
       .save();
   };
+
 
   return (
     <Modal

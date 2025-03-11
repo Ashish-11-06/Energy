@@ -183,6 +183,10 @@ const StatisticalInformationG = () => {
                         },
                       },
                       plugins: {
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
+                        },
                         zoom: {
                           pan: {
                             enabled: true,
@@ -235,6 +239,10 @@ const StatisticalInformationG = () => {
                         },
                       },
                       plugins: {
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
+                        },
                         zoom: {
                           pan: {
                             enabled: true,
@@ -300,6 +308,10 @@ const StatisticalInformationG = () => {
                         },
                       },
                       plugins: {
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
+                        },
                         zoom: {
                           pan: {
                             enabled: true,

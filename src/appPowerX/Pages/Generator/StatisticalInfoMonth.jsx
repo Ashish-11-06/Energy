@@ -181,8 +181,8 @@ console.log(tableData);
     },
   ];
 
-  const handleDay = () => navigate('/px/consumer/day-ahead');
-  const handleMonth = () => navigate('/px/consumer/month-ahead');
+  const handleDay = () => navigate('/px/generator/day-ahead');
+  const handleMonth = () => navigate('/px/generator/month-ahead');
 
   return (
     <div style={{ padding: '20px' }}>
@@ -253,6 +253,10 @@ console.log(tableData);
                             mode: 'x',
                           },
                         },
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
+                        },
                       },
                     }} 
                   />
@@ -304,6 +308,10 @@ console.log(tableData);
                             },
                             mode: 'x',
                           },
+                        },
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
                         },
                       },
                     }} 
@@ -369,6 +377,10 @@ console.log(tableData);
                             },
                             mode: 'x',
                           },
+                        },
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
                         },
                       },
                     }} 

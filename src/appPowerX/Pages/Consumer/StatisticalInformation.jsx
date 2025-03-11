@@ -53,6 +53,9 @@ const StatisticalInformation = () => {
         data: mcvForeCastedData.length ? mcvForeCastedData : Array(96).fill(null),
         borderColor: "blue",
         fill: false,
+         ticks: {
+                  color: 'blue', // Set scale number color for MCP
+                },
       },
       {
         label: "Past MCV Data",
@@ -90,6 +93,9 @@ const StatisticalInformation = () => {
         borderColor: 'green',
         fill: false,
         yAxisID: 'y1',
+         ticks: {
+                  color: 'green', // Set scale number color for MCP
+                },
       },
       {
         label: 'Past MCP Data (INR/MWh)',
@@ -113,6 +119,90 @@ const StatisticalInformation = () => {
         yAxisID: 'y2',
       },
     ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y1: {
+        type: 'linear',
+        position: 'right',
+        title: {
+          display: true,
+          text: 'MCP (INR/MWh)',
+        },
+        ticks: {
+          color: 'green', // Set scale number color for MCP
+          font: {
+            weight: 'bold',
+            // style: 'italic',
+          },
+          callback: function(value) {
+            return value; // Return the value without modification
+          },
+        },
+      
+      },
+      y2: {
+        type: 'linear',
+        position: 'left',
+        title: {
+          display: true,
+          text: 'MCV (MWh)',
+        },
+        grid: {
+          drawOnChartArea: false, // only want the grid lines for one axis to show up
+        },
+        ticks: {
+          color: 'blue', // Set scale number color for MCP
+          font: {
+            weight: 'bold',
+            // style: 'italic',
+          },
+          callback: function(value) {
+            return value; // Return the value without modification
+          },
+        },
+      
+      },
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        min: 0,
+        max: 100,
+        title: {
+          display: true,
+          text: '96 time blocks',
+        },
+      },
+    },
+    plugins: {
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+        },
+      },
+      legend: {
+        display: true,
+        position: 'bottom', // Position legends at the bottom
+        align: 'end', // Align legends to the right
+        labels: {
+          // usePointStyle: true, // Use point style for legend items
+          padding: 20, // Add padding around legend items
+        },
+      },
+    },
   };
 
   const columns = [
@@ -198,6 +288,15 @@ const StatisticalInformation = () => {
                             mode: 'x',
                           },
                         },
+                        legend: {
+                          display: true,
+                          position: 'bottom', // Position legends at the bottom
+                          align: 'end', // Align legends to the right
+                          labels: {
+                            // usePointStyle: true, // Use point style for legend items
+                            padding: 20, // Add padding around legend items
+                          },
+                        },
                       },
                     }} 
                   />
@@ -250,6 +349,15 @@ const StatisticalInformation = () => {
                             mode: 'x',
                           },
                         },
+                        legend: {
+                          display: true,
+                          position: 'bottom', // Position legends at the bottom
+                          align: 'end', // Align legends to the right
+                          labels: {
+                            // usePointStyle: true, // Use point style for legend items
+                            padding: 20, // Add padding around legend items
+                          },
+                        },
                       },
                     }} 
                   />
@@ -265,58 +373,7 @@ const StatisticalInformation = () => {
                   <Line 
                     style={{height:'300px'}} 
                     data={BothData} 
-                    options={{ 
-                      responsive: true, 
-                      maintainAspectRatio: false,
-                      scales: {
-                        y1: {
-                          type: 'linear',
-                          position: 'right',
-                          title: {
-                            display: true,
-                            text: 'MCP (INR/MWh)',
-                          },
-                        },
-                        y2: {
-                          type: 'linear',
-                          position: 'left',
-                          title: {
-                            display: true,
-                            text: 'MCV (MWh)',
-                          },
-                          grid: {
-                            drawOnChartArea: false, // only want the grid lines for one axis to show up
-                          },
-                        },
-                        x: {
-                          type: 'linear',
-                          position: 'bottom',
-                          min: 0,
-                          max: 100,
-                          title: {
-                            display: true,
-                            text: '96 time blocks',
-                          },
-                        },
-                      },
-                      plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                        },
-                      },
-                    }} 
+                    options={options} 
                   />
                 </div>
               </Card>
