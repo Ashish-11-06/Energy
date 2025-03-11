@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { dayAheadData } from '../../Redux/slices/consumer/dayAheadSlice';
 import { BlockOutlined, AppstoreOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { color } from 'framer-motion';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -48,7 +49,8 @@ const DayAhead = () => {
         const data = await dispatch(dayAheadData()).unwrap();
         console.log('data', data.predictions);
 
-        const mcpData = data.predictions.map(item => item.mcp_prediction);
+        const mcpDataOriginal = data.predictions.map(item => item.mcp_prediction);
+        const mcpData=mcpDataOriginal.reverse();
         const mcvData = data.predictions.map(item => item.mcv_prediction);
 
         setTableData([{ MCP: mcpData, MCV: mcvData }]); // Ensure data is an array
@@ -119,6 +121,7 @@ console.log('table data',detailDataSource);
         data: tableData[0]?.MCP || [], // Updated data for MCP
         borderColor: 'blue',
         fill: false,
+        color: 'blue',
         font :{
           weight: 'bold',
         },
@@ -129,6 +132,7 @@ console.log('table data',detailDataSource);
         data: tableData[0]?.MCV || [], // Updated data for MCY
         borderColor: 'green',
         fill: false,
+        color: 'green',
         font :{
           weight: 'bold',
         },
@@ -251,7 +255,7 @@ console.log('table data',detailDataSource);
       <Card style={{height: '500px', width: '100%'}}>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '20px' }}>
-            <p>Loading chart details...</p>
+            <p>Loading chart data...</p>
           </div>
         ) : (
           <div style={{ height: '500px', width: '100%' }}>

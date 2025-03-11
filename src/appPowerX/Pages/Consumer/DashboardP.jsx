@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Card, Col, Typography, Row } from "antd";
+import { Card, Col, Typography, Row, Table} from "antd";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -154,6 +154,26 @@ console.log(dashboardData);
   const stateLabels = dashboardData.map(data => data.state);
   const stateDemands = dashboardData.map(data => data.contracted_demand);
 
+  const stateColumn = [
+    {
+      title: 'State', // Added column title
+      key: 'State',
+      dataIndex: 'state', // Corrected dataIndex
+    },
+    {
+      title: 'Demand (MW)', // Added column title
+      key: 'Demand',
+      dataIndex: 'contracted_demand', // Corrected dataIndex
+    }
+  ];
+  
+    // Define stateData variable
+    const stateData = stateLabels.map((state, index) => ({
+      key: index,
+      state,
+      contracted_demand: stateDemands[index], // Corrected property name
+    }));
+
   const doughnutData = {
     labels: stateLabels,
     datasets: [
@@ -248,7 +268,7 @@ console.log(dashboardData);
       <Card style={{ margin: "20px" }}>
         <Row gutter={[16, 16]} justify="space-between">
           {/* First Column */}
-          <Col span={8}>
+          <Col span={12} style={{textAlign:'center'}}>  
             <Typography.Title level={4}>PowerX Details</Typography.Title>
             <Col style={{marginTop:'30px'}}>
               <img 
@@ -258,9 +278,10 @@ console.log(dashboardData);
               />
               <span 
                 onClick={handleUpcomingMarket} 
-                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)' }} // Default color
+                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)' ,fontSize:'15px'}} // Default color
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
                 onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
+            
               >
                 Upcoming Market
               </span>
@@ -274,7 +295,7 @@ console.log(dashboardData);
               />
               <span 
                 onClick={handleMarketStatistics} 
-                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)' }} // Default color
+                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)',fontSize:'15px' }} // Default color
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
                 onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
               >
@@ -284,7 +305,7 @@ console.log(dashboardData);
           </Col>
 
           {/* Second Column */}
-          <Col span={8}>
+          {/* <Col span={8}>
             <Typography.Title level={4}>State wise Requirements</Typography.Title>
             <Col span={12} style={{ marginBottom: "20px" }}>
               <div
@@ -309,17 +330,60 @@ console.log(dashboardData);
                 />
               </div>
             </Col>
-          </Col>
+          </Col> */}
 
           {/* Third Column */}
-          <Col span={8}>
+          <Col span={12} style={{textAlign:'center'}}>
             <Typography.Title level={4}>
               Executed Trade Details
             </Typography.Title>
             <ul>
-              <li>Best Price: 4</li>
+            Best Price: 4
+              {/* <li>Best Price: 4</li> */}
             </ul>
           </Col>
+        </Row>
+        </Card>
+      <Card style={{ margin: "20px" }}>
+      <Typography.Title level={3} style={{textAlign:'center'}}>State wise Requirements</Typography.Title>
+
+        <Row>
+        <Col span={12}>
+            {/* <Typography.Title level={4}>State wise Requirements</Typography.Title> */}
+            <Col  style={{ marginBottom: "20px" ,marginTop:'30px'}}>
+              <div
+                style={{
+                  width: "100%",
+                  height: "150px",
+                  margin: "0 auto",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  display: "flex"
+                }}
+              >
+                <Doughnut
+                  data={doughnutData}
+                  options={chartDoughnutOptions}
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                    margin: "0 auto",
+                  }}
+                />
+              </div>
+            </Col>
+          </Col>
+          <Col span={12}>
+        <Table 
+          columns={stateColumn} 
+          dataSource={stateData} 
+          pagination={false}
+          bordered
+          
+          // style={{width:'70%',textAlign:'center',marginLeft:'15%'}} 
+        />
+        </Col>
         </Row>
       </Card>
     </div>

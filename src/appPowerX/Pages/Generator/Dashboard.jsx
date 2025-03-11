@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Card, Col, Typography, Row } from "antd";
+import { Card, Col, Typography, Row, Table } from "antd"; // Added Table import
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -176,6 +176,32 @@ const Dashboard = () => {
     ],
   };
 
+const stateColumn = [
+  {
+    title: 'State', // Added column title
+    key: 'State',
+    dataIndex: 'state', // Corrected dataIndex
+  },
+  {
+    title: 'Total Install Capacity (MW)', // Added column title
+    key: 'Total Install Capacity',
+    dataIndex: 'totalInstallCapacity', // Corrected dataIndex
+  },
+  {
+    title: 'Available Capacity (MW)', // Added column title
+    key: 'Available Capacity',
+    dataIndex: 'availableCapacity', // Corrected dataIndex
+  }
+];
+
+  // Define stateData variable
+  const stateData = stateLabels.map((state, index) => ({
+    key: index,
+    state,
+    totalInstallCapacity: totalInstallCapacities[index],
+    availableCapacity: availableCapacities[index],
+  }));
+
   const chartDoughnutOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -263,9 +289,9 @@ const Dashboard = () => {
       <Card style={{ margin: "20px" }}>
         <Row gutter={[16, 16]} justify="space-between">
           {/* First Column */}
-          <Col span={8}>
-            <Typography.Title level={4}>PowerX Detail</Typography.Title>
-            <Col>
+          <Col span={12} style={{ marginBottom: "20px",textAlign:'center' }}>
+            <Typography.Title level={4}>PowerX Details</Typography.Title>
+            <Col style={{ marginBottom: "20px",marginTop:'20px' }}>
               <img 
                 src={market} 
                 alt=""  
@@ -273,15 +299,15 @@ const Dashboard = () => {
               />
               <span 
                 onClick={handleUpcomingMarket} 
-                style={{ cursor: 'pointer', color: 'black' }} // Default color
+                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)', fontSize:'15px' }} // Default color
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
-                onMouseLeave={(e) => e.target.style.color = 'black'}
+                onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
               >
                 Upcoming Market
               </span>
             </Col>
 
-            <Col style={{marginTop:'10px'}}>
+            <Col style={{marginTop:'30px'}}>
               <img 
                 src={statistics}  
                 alt="" 
@@ -289,9 +315,9 @@ const Dashboard = () => {
               />
               <span 
                 onClick={handleMarketStatistics} 
-                style={{ cursor: 'pointer', color: 'black' }} // Default color
+                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)', fontSize:'15px' }} // Default color
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
-                onMouseLeave={(e) => e.target.style.color = 'black'}
+                onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
               >
                 Market Statistics
               </span>
@@ -299,7 +325,7 @@ const Dashboard = () => {
           </Col>
 
           {/* Second Column */}
-          <Col span={8}>
+          {/* <Col span={8}>
             <Typography.Title level={4}>State wise Requirements</Typography.Title>
             <Col span={12} style={{ marginBottom: "20px" }}>
               <div
@@ -323,19 +349,55 @@ const Dashboard = () => {
                   }}
                 />
               </div>
+              <Table columns={stateColumn} dataSource={stateData} /> Added Table component
             </Col>
-          </Col>
+          </Col> */}
 
           {/* Third Column */}
-          <Col span={8}>
+          <Col span={12} style={{textAlign:'center'}}>
             <Typography.Title level={4}>
               Executed Trade Details
             </Typography.Title>
-            <ul>
-              <li>Best Price: 4</li>
+            <ul style={{marginTop:'20px'}}>
+            Best Price: 4
+              {/* <li>Best Price: 4</li> */}
             </ul>
           </Col>
         </Row>
+        </Card>
+      <Card style={{ margin: "20px" }}>
+      <Typography.Title level={3} style={{textAlign:'center'}}>State wise Requirements</Typography.Title>
+
+        <Row>
+        <Col span={12}>
+  {/* <Typography.Title level={4}>State wise Requirements</Typography.Title> */}
+  <div
+    style={{
+      width: "100%",
+      height: "150px",
+      display: "flex",
+      justifyContent: "center", // Centers horizontally
+      alignItems: "center", // Centers vertically
+      margin: "20px auto" // Keeps spacing consistent
+    }}
+  >
+    <Doughnut
+      data={doughnutData}
+      options={chartDoughnutOptions}
+      style={{
+        maxWidth: "100%",
+        maxHeight: "100%"
+      }}
+    />
+  </div>
+</Col>
+
+          <Col span={12}>
+          
+        <Table columns={stateColumn} dataSource={stateData} pagination={false} bo /> {/* Added Table component */}
+          </Col>
+        </Row>
+
       </Card>
     </div>
   );
