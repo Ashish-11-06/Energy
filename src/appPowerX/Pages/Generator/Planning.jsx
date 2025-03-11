@@ -234,7 +234,7 @@ const Planning = () => {
         <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
           <h1 style={{ margin: 0 }}>Energy Planner</h1>
           <Button style={{ marginRight: '-50%' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
-          <Button onClick={handleAddDetailsClick}>
+          <Button onClick={handleAddDetailsClick} style={{color:'black'}}>
             Plan for more Days
           </Button>
         </Row>

@@ -7,7 +7,6 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
 import { fetchModelStatistics } from '../../Redux/slices/consumer/modelStatisticsSlice';
 import { useDispatch } from 'react-redux';
-import './DayAhead.css';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -30,9 +29,9 @@ const StatisticalInformation = () => {
         const data = await dispatch(fetchModelStatistics());
         console.log(data.payload);
         setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
-        setForeCastedData(data.payload.next_day_predictions || []);
+        setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
         setPastData(data.payload.clean_data.map(item => item.mcp) || []);
-        setMcvForeCastedData(data.payload.next_day_predictions || []);
+        setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
         setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
       } catch (error) {
         console.log(error);

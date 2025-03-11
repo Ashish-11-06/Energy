@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { fetchPlanningData } from '../../Redux/slices/consumer/planningSlice';
 import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequirementSlice";
 import { addMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
+import { color } from 'framer-motion';
 
 dayjs.locale('en');
 
@@ -228,8 +229,8 @@ const Planning = () => {
         <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
           <h1 style={{ margin: 0 }}>Energy Planner</h1>
           <Button style={{ marginRight: '-50%' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
-          <Button onClick={handleAddDetailsClick}>
-            Plan for more 
+          <Button onClick={handleAddDetailsClick} style={{color:'black'}}>
+            Plan for more Days
           </Button>
         </Row>
         {loading ? (

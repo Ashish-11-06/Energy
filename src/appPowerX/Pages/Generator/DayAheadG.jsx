@@ -94,6 +94,9 @@ console.log(statistiicsData);
         data: tableData[0]?.MCP || [], // Updated data for MCP
         borderColor: 'blue',
         fill: false,
+        font:{
+          weight: 'bold',
+        },
         yAxisID: 'y-axis-mcp', // Assign to right Y-axis
       },
       {
@@ -101,6 +104,9 @@ console.log(statistiicsData);
         data: tableData[0]?.MCV || [], // Updated data for MCY
         borderColor: 'green',
         fill: false,
+        font:{
+          weight: 'bold',
+        },
         yAxisID: 'y-axis-mcv', // Assign to left Y-axis
       },
     ],
@@ -119,6 +125,10 @@ console.log(statistiicsData);
         title: {
           display: true,
           text: '96 time blocks',
+          font:{
+            weight: 'bold',
+            size: 16,
+          }
         },
       },
       'y-axis-mcv': {
@@ -128,6 +138,9 @@ console.log(statistiicsData);
         title: {
           display: true,
           text: 'MCV (MWh)',
+          font:{
+            weight: 'bold',
+          }
         },
       },
       'y-axis-mcp': {
@@ -137,6 +150,9 @@ console.log(statistiicsData);
         title: {
           display: true,
           text: 'MCP (INR/MWh)',
+          font:{
+            weight: 'bold',
+          }
         },
         grid: {
           drawOnChartArea: false, // Only draw grid lines for one Y-axis

@@ -69,6 +69,9 @@ const Trading = () => {
         title: {
           display: true,
           text: 'MWh',
+          font:{
+            weight:'bold',
+          }
         },
       },
       x: {
@@ -79,6 +82,10 @@ const Trading = () => {
         title: {
           display: true,
           text: '96 time blocks',
+          font:{
+            weight:'bold',
+            size:16,
+          }
         },
       },
     },
@@ -131,28 +138,28 @@ const Trading = () => {
         {/* Total Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TOTAL" value={493} suffix="+" style={{color:'white'}} />
+            <Statistic title="TOTAL" value={493} suffix="+" style={{color:'white',fontWeight:'bold'}} />
           </Card>
         </Col>
 
         {/* Trading Volume Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TRADING VOLUME" value={8.324} style={{color:'white'}} />
+            <Statistic title="TRADING VOLUME" value={8.324} style={{color:'white',fontWeight:'bold'}} />
           </Card>
         </Col>
 
         {/* Price Per Unit Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="PRICE PER UNIT" value={6.203} style={{color:'white'}} />
+            <Statistic title="PRICE PER UNIT" value={6.203} style={{color:'white',fontWeight:'bold'}} />
           </Card>
         </Col>
 
         {/* Planning Costs Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800' ,textAlign:'center'}}>
-            <Statistic title="PLANNING COSTS" value={64900} style={{color:'white'}} />
+            <Statistic title="PLANNING COSTS" value={64900} style={{color:'white',fontWeight:'bold'}} />
           </Card>
         </Col>
       </Row>
