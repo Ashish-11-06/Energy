@@ -84,7 +84,8 @@ const  GeneratorInput = () => {
   const [selectedTechnology, setSelectedTechnology] = useState(null);
   const [portfolioData, setPortfolioData] = useState([]);
   const [selectedPortfolios, setSelectedPortfolios] = useState([]);
-  const technologies = ["Solar", "Wind", "Hydro", "Biomass"];
+  const [isPortfolioModalVisible, setIsPortfolioModalVisible] = useState(false);
+  // const technologies = ["Solar", "Wind", "Hydro", "Biomass"];
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -364,7 +365,7 @@ const  GeneratorInput = () => {
       const user = JSON.parse(localStorage.getItem("user")).user;
       const response = await axios.get(`/energy/generation-portfolio/${user.id}`);
       setPortfolioData(response.data);
-      setIsModalVisible(true);
+      setIsPortfolioModalVisible(true); // Show portfolio modal
     } catch (error) {
       console.error("Error fetching portfolio data:", error);
       message.error("Failed to fetch portfolio data. Please try again.");
@@ -696,7 +697,7 @@ const  GeneratorInput = () => {
   };
 
   const handleOptimize = () => {
-    setIsModalVisible(false);
+    setIsPortfolioModalVisible(false);
     navigate("/Generator/GeneratorConsumptionPattern", {
       state: { selectedPortfolios },
     });
@@ -1067,12 +1068,12 @@ const  GeneratorInput = () => {
       </Modal>
       <Modal
         title="Select Technology from Your Portfolio"
-        open={isModalVisible}
+        open={isPortfolioModalVisible}
         onOk={handleOptimize}
-        onCancel={() => setIsModalVisible(false)}
+        onCancel={() => setIsPortfolioModalVisible(false)}
         okText="Optimize"
         footer={[
-          <Button key="back" onClick={() => setIsModalVisible(false)}>
+          <Button key="back" onClick={() => setIsPortfolioModalVisible(false)}>
             Cancel
           </Button>,
           <Button key="submit" type="primary" onClick={handleOptimize}>
