@@ -77,8 +77,8 @@ const AgreementContent = ({ dynamicData }) => (
     <p className='page-break'><strong>2.2.</strong> The Captive User(s) agrees that for the duration of the Exclusivity Period, it will discuss and negotiate the Proposed Transaction with &lt;Generator&gt; on an exclusive basis. The Captive User(s) undertakes that for the duration of the Exclusivity Period, it will not (and will procure that no member of its group, nor any of their respective officers, employees, agents or advisers), directly or indirectly continue, enter into, re-start, solicit, initiate, respond to any inquiries, consider or participate in any Third Party Negotiations, in any manner whatsoever.</p>
     <p>2.3. On executing the Terms, the Captive User(s) will immediately terminate, or procure the termination of, any Third Party Negotiations taking place.</p>
     <p> <b>3. Undertakings</b></p>
-   <div style={{marginLeft: '25px'}}>
-   <p>3.1. Based on the Captive User's exclusivity undertakings (as set out in paragraph 2 above), &lt;Generator&gt; is committing costs and time to develop the Project at the Project Site through the feasibility stage. During the Exclusivity Period, &lt;Generator&gt; will use its reasonable endeavours to proceed with and develop the Project at the Project Site.</p>
+    <div style={{marginLeft: '25px'}}>
+    <p>3.1. Based on the Captive User's exclusivity undertakings (as set out in paragraph 2 above), &lt;Generator&gt; is committing costs and time to develop the Project at the Project Site through the feasibility stage. During the Exclusivity Period, &lt;Generator&gt; will use its reasonable endeavours to proceed with and develop the Project at the Project Site.</p>
     <p>3.2. For the purposes of operating the Project, an application for connectivity to the grid is required to be submitted to the DISCOM (Grid Application). The Parties agree that &lt;Generator&gt; will make such an application, and the Captive User(s) will provide necessary co-operation to <strong>&lt;Generator&gt;</strong> in procuring and maintaining the open access approval. </p>
     <p>3.3. The Captive User(s) undertakes to execute a consent letter addressed to the DISCOM (and any other documents as &lt;Generator&gt;may require) in the form required by &lt;Generator&gt;  </p>
     <p>3.4. In connection with the Grid Application, &lt;Generator&gt; shall be solely responsible for all fees and costs of such Grid Application.</p>
@@ -121,36 +121,7 @@ const AgreementContent = ({ dynamicData }) => (
 
     <p><strong>7. Governing law</strong></p>
     <p><strong>7.1 </strong>The Terms shall be governed by and construed in accordance with the law of India. Any claims or disputes arising out of or in connection with the Terms, will be referred to and finally resolved by arbitration in accordance with the (Indian) Arbitration and Conciliation Act, 1996. Each Party will appoint an arbitrator. The two arbitrators so appointed will appoint the third arbitrator. </p>
-    {/* <div>
-      <h2>Restricted Activity</h2>
-      <p>Negotiations in relation to power procurement activities through open access, captive or through power exchange. This does not include any existing transactions for which contracts have been executed prior to the execution of the Terms;</p>
-
-      <h2>Third Party</h2>
-      <p>Any person other than &lt;Generator&gt; (or any of their respective officers, employees, agents or advisers);</p>
-
-      <h2>Third Party Negotiations</h2>
-      <p>Any discussions or negotiations between a Third Party and the Captive User(s) or the Captive User’s group, or any of its respective officers, employees, agents or advisers, relating to or otherwise concerning a Restricted Activity.</p>
-
-      <h2>2.2. Exclusivity</h2>
-      <p>The Captive User(s) agrees that for the duration of the Exclusivity Period, it will discuss and negotiate the Proposed Transaction with &lt;Generator&gt; on an exclusive basis. The Captive User(s) undertakes that for the duration of the Exclusivity Period, it will not (and will procure that no member of its group, nor any of their respective officers, employees, agents or advisers), directly or indirectly continue, enter into, restart, solicit, initiate, respond to any inquiries, consider or participate in any Third Party Negotiations, in any manner whatsoever.</p>
-
-      <h2>2.3. Termination of Third Party Negotiations</h2>
-      <p>On executing the Terms, the Captive User(s) will immediately terminate, or procure the termination of, any Third Party Negotiations taking place.</p>
-
-      <h2>3. Undertakings</h2>
-      <p>3.1. Based on the Captive User’s exclusivity undertakings (as set out in paragraph 2 above), &lt;Generator&gt; is committing costs and time to develop the Project at the Project Site through the feasibility stage.<sup>2</sup> During the Exclusivity Period, &lt;Generator&gt; will use its reasonable endeavours to proceed with and develop the Project at the Project Site.<sup>3</sup></p>
-
-      <p>3.2. For the purposes of operating the Project, an application for connectivity to the grid is required to be submitted to the DISCOM (Grid Application). The Parties agree that &lt;Generator&gt; will make such an application, and the Captive User(s) will provide necessary co-operation to &lt;Generator&gt; in procuring and maintaining the open access approval.</p>
-
-      <hr />
-
-      <p><em>Note: The feasibility study will involve an approval from the DISCOM. ABC may consider including these aspects.</em></p>
-      <p><em>Note: A reference to the Project Site has been included for further clarity.</em></p>
-      <p><strong>Confidential Document:</strong> ______ 3</p>
-    </div> */}
-
-    {/* next page */}
-
+   
     <div>
       <h3>3.3.</h3>
       <p>The Captive User(s) undertakes to execute a consent letter addressed to the DISCOM (and any other documents as &lt;Generator&gt; may require) in the form required by &lt;Generator&gt;.</p>
