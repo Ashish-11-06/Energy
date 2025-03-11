@@ -87,6 +87,9 @@ const MonthAheadG = () => {
           display: true,
           text: 'MCV (MWh)',
         },
+         ticks: {
+                  color: 'green', // Set scale number color for MCV
+                },
       },
       'y-axis-mcp': {
         type: 'linear',
@@ -99,6 +102,9 @@ const MonthAheadG = () => {
         grid: {
           drawOnChartArea: false, // Only draw grid lines for one Y-axis
         },
+         ticks: {
+                  color: 'blue', // Set scale number color for MCV
+                },
       },
     },
     plugins: {

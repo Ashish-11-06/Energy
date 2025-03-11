@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { dayAheadData } from '../../Redux/slices/consumer/dayAheadSlice';
 import { BlockOutlined, AppstoreOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { color } from 'framer-motion';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -130,11 +131,13 @@ console.log(statistiicsData);
             size: 16,
           }
         },
+        
       },
       'y-axis-mcv': {
         type: 'linear',
         position: 'left',
         beginAtZero: true,
+        color: 'green',
         title: {
           display: true,
           text: 'MCV (MWh)',
@@ -142,6 +145,9 @@ console.log(statistiicsData);
             weight: 'bold',
           }
         },
+         ticks: {
+                  color: 'green', // Set scale number color for MCV
+                },
       },
       'y-axis-mcp': {
         type: 'linear',
@@ -154,6 +160,9 @@ console.log(statistiicsData);
             weight: 'bold',
           }
         },
+         ticks: {
+                  color: 'blue', // Set scale number color for MCV
+                },
         grid: {
           drawOnChartArea: false, // Only draw grid lines for one Y-axis
         },

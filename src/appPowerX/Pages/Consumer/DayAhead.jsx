@@ -171,6 +171,9 @@ console.log('table data',detailDataSource);
             weight: 'bold', 
           }
         },
+        ticks: {
+          color: 'green', // Set scale number color for MCV
+        },
       },
       'y-axis-mcp': {
         type: 'linear',
@@ -185,6 +188,9 @@ console.log('table data',detailDataSource);
         },
         grid: {
           drawOnChartArea: false, // Only draw grid lines for one Y-axis
+        },
+        ticks: {
+          color: 'blue', // Set scale number color for MCP
         },
       },
     },
