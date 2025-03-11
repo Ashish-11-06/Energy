@@ -331,10 +331,10 @@ const StatisticalInformation = () => {
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
-          <Col style={{marginLeft:'75%'}}>
+          {/* <Col style={{marginLeft:'75%'}}>
             <Button onClick={handleMonth}>Month Ahead</Button>
-          </Col>
-          <Col>
+          </Col> */}
+          <Col style={{marginLeft:'85%'}}>
             <Button onClick={handleDay}>Day Ahead</Button>
           </Col>
         </Row>

@@ -195,7 +195,7 @@ const MonthAhead = () => {
             <Button onClick={() => navigate('/px/consumer/statistical-information-month')}>Historical Trend</Button>
           </Col>
           <Col>
-            <Button onClick={() => navigate('/px/consumer/planning')}>Plan Your Month Ahead Trading</Button>
+            <Button onClick={() => navigate('/px/consumer/planning')}>Schedule Trade</Button>
           </Col>
         </Row>
       </div>

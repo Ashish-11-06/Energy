@@ -260,13 +260,13 @@ const Planning = () => {
             </Card>
           </Col>
         )}
-        <Button
+        {/* <Button
           type="primary"
           style={{ position: 'fixed', right: '20px', bottom: '20px' }}
           onClick={() => navigate('/consumer/plan-month-trade')}
         >
           Plan for More Days
-        </Button>
+        </Button> */}
       </div>
       <Modal
         title="Plan for More Days"

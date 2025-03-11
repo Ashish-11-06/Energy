@@ -439,12 +439,12 @@ const dummyMCPData = [
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
-          <Col style={{marginLeft:'75%'}}>
+          <Col style={{marginLeft:'83%'}}>
             <Button onClick={handleMonth}>Month Ahead</Button>
           </Col>
-          <Col>
+          {/* <Col>
             <Button onClick={handleDay}>Day Ahead</Button>
-          </Col>
+          </Col> */}
         </Row>
       </div>
     </div>
