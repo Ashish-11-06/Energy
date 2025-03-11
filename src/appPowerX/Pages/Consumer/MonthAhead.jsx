@@ -25,7 +25,8 @@ const MonthAhead = () => {
 
         if (Array.isArray(responseData?.daily_data)) {
           const mcvData = responseData.daily_data.map(item => item.mcv_prediction?.avg ?? 0);
-          const mcpData = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
+          const mcpDataOriginal = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
+          const mcpData=mcpDataOriginal.reverse();
           const labels = Array.from({ length: 31 }, (_, i) => i + 1); // Creates an array [1, 2, ..., 31]
 
           console.log("MCV Data:", mcvData);
@@ -106,6 +107,9 @@ const MonthAhead = () => {
           display: true,
           text: 'MCV (MWh)',
         },
+         ticks: {
+                  color: 'green', // Set scale number color for MCP
+                },
       },
       'y-axis-mcp': {
         type: 'linear',
@@ -118,6 +122,9 @@ const MonthAhead = () => {
         grid: {
           drawOnChartArea: false,
         },
+         ticks: {
+                  color: 'blue', // Set scale number color for MCP
+                },
       },
     },
     plugins: {
@@ -185,6 +192,9 @@ const MonthAhead = () => {
         <Row justify="space-between">
           <Col>
             <Button onClick={() => navigate('/px/consumer/statistical-information-month')}>Historical Trend</Button>
+          </Col>
+          <Col>
+          <Button onClick={()=> navigate('/px/consumer/planning')}>Plan for more Days</Button>
           </Col>
         </Row>
       </div>
