@@ -14,7 +14,7 @@ const monthAheadApi = {
     return axiosInstance.get(`/monthAheadLineData`, ); 
   },
   tableMonthData: () => {
-    return axiosInstance.get(`/consumer-month-ahead-demand`, ); 
+    return axiosInstance.get(`/consumer-month-ahead-demand/${id}`, ); 
   },
   addTableMonthData: (data) => {
     return axiosInstance.post(`/tableMonthData`,data ); 

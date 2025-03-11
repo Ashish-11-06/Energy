@@ -276,7 +276,7 @@ console.log('table data',detailDataSource);
             <Button onClick={handleStatistics}>Historical Trend</Button>
           </Col>
           <Col>
-            <Button onClick={handleNextTrade}>Plan Your Next Day Trading</Button>
+            <Button onClick={handleNextTrade}>Set Up Next-Day Trade</Button>
           </Col>
         </Row>
       </div>

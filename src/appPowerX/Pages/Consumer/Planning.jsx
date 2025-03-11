@@ -230,7 +230,7 @@ const Planning = () => {
           <h1 style={{ margin: 0 }}>Energy Planner</h1>
           <Button style={{ marginRight: '-50%' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
           <Button onClick={handleAddDetailsClick} style={{color:'black'}}>
-            Plan for more Days
+          Schedule Trade
           </Button>
         </Row>
         {loading ? (

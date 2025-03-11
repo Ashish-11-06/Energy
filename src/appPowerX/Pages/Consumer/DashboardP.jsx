@@ -304,7 +304,7 @@ console.log(dashboardData);
             </Col>
           </Col>
 
-          {/* Second Column */}
+          {/* Second Column
           <Col span={8}>
             <Typography.Title level={4}>State-wise Energy Demand</Typography.Title>
             <Col span={12} style={{ marginBottom: "20px" }}>
@@ -330,7 +330,7 @@ console.log(dashboardData);
                 />
               </div>
             </Col>
-          </Col> 
+          </Col>  */}
 
           {/* Third Column */}
           <Col span={12} style={{textAlign:'center'}}>
