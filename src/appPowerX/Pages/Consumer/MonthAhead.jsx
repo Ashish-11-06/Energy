@@ -180,6 +180,7 @@ const MonthAhead = () => {
           )}
         </div>
       </Card>
+      <div style={{ margin: '20px 0' }}></div>
       <Table columns={columns} dataSource={tableData} pagination={false} />
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">

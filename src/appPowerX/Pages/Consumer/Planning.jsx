@@ -204,9 +204,10 @@ const Planning = () => {
     key: item.requirement,
     date: item.date,
     demand: item.demand,
-    technology: `Solar: ${item.price.Solar} INR, Non-Solar: ${item.price["Non-Solar"]} INR`,
-    price: `${item.price.Solar} INR (Solar), ${item.price["Non-Solar"]} INR (Non-Solar)`,
-  }));
+    technology: `Solar: ${item.price?.Solar ?? 0} INR, Non-Solar: ${item.price?.["Non-Solar"] ?? 0} INR`,
+    price: `${item.price?.Solar ?? 0} INR (Solar), ${item.price?.["Non-Solar"] ?? 0} INR (Non-Solar)`,
+}));
+
 
   const handlePrevMonth = () => {
     setCurrentMonth(dayjs(currentMonth).subtract(1, 'month').toDate());

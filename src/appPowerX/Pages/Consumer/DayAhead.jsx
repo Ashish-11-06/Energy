@@ -71,20 +71,20 @@ const DayAhead = () => {
         {
           key: 'max',
           status: 'Maximum',
-          mcp: statistiicsData.mcp.max,
-          mcv: statistiicsData.mcv.max,
+          mcp: statistiicsData.mcp.max.toFixed(2),
+          mcv: statistiicsData.mcv.max.toFixed(2),
         },
         {
           key: 'min',
           status: 'Minimum',
-          mcp: statistiicsData.mcp.min,
-          mcv: statistiicsData.mcv.min,
+          mcp: statistiicsData.mcp.min.toFixed(2),
+          mcv: statistiicsData.mcv.min.toFixed(2),
         },
         {
           key: 'avg',
           status: 'Average',
-          mcp: statistiicsData.mcp.avg,
-          mcv: statistiicsData.mcv.avg,
+          mcp: statistiicsData.mcp.avg.toFixed(2),
+          mcv: statistiicsData.mcv.avg.toFixed(2),
         },
       ]);
     }
@@ -100,12 +100,12 @@ console.log('table data',detailDataSource);
       key: 'status',
     },
     {
-      title: 'MCP (INR/MWh)',
+      title: 'Market Clearing Price (INR/MWh)',
       dataIndex: 'mcp',
       key: 'mcp',
     },
     {
-      title: 'MCV (MWh)',
+      title: 'Market Clearing Volume (MWh)',
       dataIndex: 'mcv',
       key: 'mcv',
     },
@@ -259,8 +259,13 @@ console.log('table data',detailDataSource);
           </div>
         )}
       </Card>
-      {/* <Table columns={columns} dataSource={Array.isArray(tableData) && tableData.length ? tableData : detailDataSource} pagination={false} />  */}
-<Table columns={detailColumns} dataSource={detailDataSource} pagination={false} />
+      <div style={{ margin: '20px 0' }}></div> {/* Add space between card and table */}
+      <Table 
+        columns={detailColumns} 
+        dataSource={detailDataSource} 
+        pagination={false} 
+        style={{ textAlign: 'center' }} // Center-align table content
+      />
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
           <Col>

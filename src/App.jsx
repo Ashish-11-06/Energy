@@ -45,6 +45,7 @@ import { lastVisitedPage } from './Redux/Slices/Consumer/lastVisitedPageSlice';
 import EmailVerification from './Pages/EmailVerification';
 import StatusApproval from './Pages/TrackStatus';
 import Agreements from './Pages/Agreements';
+import GeneratorInput from './Pages/Generator/GeneratorInput';
 
 
 // powerX

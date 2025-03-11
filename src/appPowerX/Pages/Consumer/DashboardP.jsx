@@ -192,7 +192,7 @@ console.log(dashboardData);
             let index = tooltipItem.dataIndex;
             let label = dataset.labels ? dataset.labels[index] : "";
             let value = dataset.data[index] || 0;
-            return `${label}: ${value} kW`; // 🎯 Show label on hover only
+            return `${label}: ${value} MW`; // 🎯 Show label on hover only
           },
         },
       },
@@ -225,7 +225,7 @@ console.log(dashboardData);
   return (
     <div style={{ padding: "3%" }}>
       <Typography.Title level={3}>
-        Your Energy Consumption Pattern
+        Energy Consumption Pattern
       </Typography.Title>
       <Card style={{ height: "50%" }}>
         <Col span={24} style={{ marginBottom: "20px" }}>
@@ -245,11 +245,11 @@ console.log(dashboardData);
           </div>
         </Col>
       </Card>
-      <Card style={{ margin: "20px" }}>
+      <Card style={{ margin: "2px" }}>
         <Row gutter={[16, 16]} justify="space-between">
           {/* First Column */}
           <Col span={8}>
-            <Typography.Title level={4}>PowerX Details</Typography.Title>
+            <Typography.Title level={4}>PowerX Overview</Typography.Title>
             <Col style={{marginTop:'30px'}}>
               <img 
                 src={market} 
@@ -285,7 +285,7 @@ console.log(dashboardData);
 
           {/* Second Column */}
           <Col span={8}>
-            <Typography.Title level={4}>State wise Requirements</Typography.Title>
+            <Typography.Title level={4}>State-wise Energy Demand</Typography.Title>
             <Col span={12} style={{ marginBottom: "20px" }}>
               <div
                 style={{
@@ -314,7 +314,7 @@ console.log(dashboardData);
           {/* Third Column */}
           <Col span={8}>
             <Typography.Title level={4}>
-              Executed Trade Details
+            Executed Trade Summary
             </Typography.Title>
             <ul>
               <li>Best Price: 4</li>
