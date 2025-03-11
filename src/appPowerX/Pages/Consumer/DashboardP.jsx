@@ -330,7 +330,7 @@ console.log(dashboardData);
                 />
               </div>
             </Col>
-          </Col> */}
+          </Col> 
 
           {/* Third Column */}
           <Col span={12} style={{textAlign:'center'}}>
