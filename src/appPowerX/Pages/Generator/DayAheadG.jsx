@@ -68,20 +68,20 @@ console.log(statistiicsData);
         {
           key: 'max',
           status: 'Maximum',
-          mcp: statistiicsData.mcp.max,
-          mcv: statistiicsData.mcv.max,
+          mcp: statistiicsData.mcp.max.toFixed(2),
+          mcv: statistiicsData.mcv.max.toFixed(2),
         },
         {
           key: 'min',
           status: 'Minimum',
-          mcp: statistiicsData.mcp.min,
-          mcv: statistiicsData.mcv.min,
+          mcp: statistiicsData.mcp.min.toFixed(2),
+          mcv: statistiicsData.mcv.min.toFixed(2),
         },
         {
           key: 'avg',
           status: 'Average',
-          mcp: statistiicsData.mcp.avg,
-          mcv: statistiicsData.mcv.avg,
+          mcp: statistiicsData.mcp.avg.toFixed(2),
+          mcv: statistiicsData.mcv.avg.toFixed(2),
         },
       ]);
     }

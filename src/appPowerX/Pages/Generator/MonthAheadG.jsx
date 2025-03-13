@@ -154,7 +154,7 @@ const MonthAheadG = () => {
   ];
 
   const handleNextTrade = () => {
-    navigate('/px/generator/plan-month-trade-page');
+    navigate('/px/generator/planning');
       }
   const handleStatistics = () => {
     console.log('clicked');
