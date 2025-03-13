@@ -7,6 +7,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
 import { fetchModelStatistics } from '../../Redux/slices/consumer/modelStatisticsSlice';
 import { useDispatch } from 'react-redux';
+import { BackwardFilled, BackwardOutlined } from '@ant-design/icons';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -147,7 +148,7 @@ const StatisticalInformationG = () => {
       <Radio.Group value={selectedType} onChange={handleChange}>
         <Radio value="MCP">MCP</Radio>
         <Radio value="MCV">MCV</Radio>
-        <Radio value="Both">Both</Radio>
+        {/* <Radio value="Both">Both</Radio> */}
       </Radio.Group>
 
       {/* Conditional Rendering of Graphs */}
@@ -342,13 +343,14 @@ const StatisticalInformationG = () => {
 
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>
+      <Col>
+            <Button style={{marginLeft:'90%'}} onClick={handleDay} icon={<BackwardOutlined />}>Back</Button>
+          </Col>
         <Row justify="space-between">
-          <Col style={{marginLeft:'75%'}}>
+          {/* <Col style={{marginLeft:'75%'}}>
             <Button onClick={handleMonth}>Month Ahead</Button>
-          </Col>
-          <Col>
-            <Button onClick={handleDay}>Day Ahead</Button>
-          </Col>
+          </Col> */}
+          
         </Row>
       </div>
     </div>

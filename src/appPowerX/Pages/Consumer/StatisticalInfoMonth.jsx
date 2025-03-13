@@ -179,39 +179,39 @@ const dummyMCPData = [
     ],
   };
 
-  const BothData = {
-    labels: Array.from({ length: 31 }, (_, i) => i + 1),
-    datasets: [
-      {
-        label: 'ForeCasted MCP Data (INR/MWh)',
-        data: foreCastedData,
-        borderColor: 'green',
-        fill: false,
-        yAxisID: 'y1',
-      },
-      {
-        label: 'Past MCP Data (INR/MWh)',
-        data: pastData,
-        borderColor: 'orange',
-        fill: false,
-        yAxisID: 'y1',
-      },
-      {
-        label: 'ForeCasted MCV Data (MWh)',
-        data: mcvForeCastedData,
-        borderColor: 'blue',
-        fill: false,
-        yAxisID: 'y2',
-      },
-      {
-        label: 'Past MCV Data (MWh)',
-        data: mcvPastData,
-        borderColor: 'red',
-        fill: false,
-        yAxisID: 'y2',
-      },
-    ],
-  };
+  // const BothData = {
+  //   labels: Array.from({ length: 31 }, (_, i) => i + 1),
+  //   datasets: [
+  //     {
+  //       label: 'ForeCasted MCP Data (INR/MWh)',
+  //       data: foreCastedData,
+  //       borderColor: 'green',
+  //       fill: false,
+  //       yAxisID: 'y1',
+  //     },
+  //     {
+  //       label: 'Past MCP Data (INR/MWh)',
+  //       data: pastData,
+  //       borderColor: 'orange',
+  //       fill: false,
+  //       yAxisID: 'y1',
+  //     },
+  //     {
+  //       label: 'ForeCasted MCV Data (MWh)',
+  //       data: mcvForeCastedData,
+  //       borderColor: 'blue',
+  //       fill: false,
+  //       yAxisID: 'y2',
+  //     },
+  //     {
+  //       label: 'Past MCV Data (MWh)',
+  //       data: mcvPastData,
+  //       borderColor: 'red',
+  //       fill: false,
+  //       yAxisID: 'y2',
+  //     },
+  //   ],
+  // };
 
   const columns = [
     { title: 'Details', dataIndex: 'metric', key: 'metric' },
@@ -255,7 +255,7 @@ const dummyMCPData = [
       <Radio.Group value={selectedType} onChange={handleChange}>
         <Radio value="MCP">MCP</Radio>
         <Radio value="MCV">MCV</Radio>
-        <Radio value="Both">Both</Radio>
+        {/* <Radio value="Both">Both</Radio> */}
       </Radio.Group>
 
       {/* Conditional Rendering of Graphs */}
@@ -383,7 +383,7 @@ const dummyMCPData = [
               </Card>
             </Col>
           )}
-          {selectedType === 'Both' && (
+          {/* {selectedType === 'Both' && (
             <Col span={24} >
               <Card style={{  backgroundColor: 'white' }}>
                 <h3>MCP and MCV Data</h3>
@@ -456,7 +456,7 @@ const dummyMCPData = [
                 </div>
               </Card>
             </Col>
-          )}
+          )} */}
         </Row>
       )}
 

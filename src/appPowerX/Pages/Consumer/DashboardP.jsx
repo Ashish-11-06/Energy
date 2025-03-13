@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Card, Col, Typography, Row, Table} from "antd";
+import { Card, Col, Typography, Row, Table, Spin} from "antd";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -43,6 +43,7 @@ const DashboardP = () => {
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState([]);
   const [dashboardLine, setDashboardLine] = useState([]);
+  const [loading,setLoading]=useState(false);
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
 // console.log(user_id);
 
@@ -61,9 +62,11 @@ console.log(dashboardData);
   useEffect(() => {
     const id=user_id;
     const fetchLineData = async () => {
+      setLoading(true);
       const res = await dispatch(fetchDashboardLine(id));
       console.log(res.payload);
       setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
+      setLoading(false);
     };
     fetchLineData();
   }, [dispatch]);
@@ -96,7 +99,7 @@ console.log(dashboardData);
         beginAtZero: true,
         title: {
           display: true,
-          text: "MWh",
+          text: "Energy (MWh)",
           font: {
             weight: "bold",
           },
@@ -125,21 +128,21 @@ console.log(dashboardData);
           padding: 20, // Add padding around legend items
         },
       },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x',
-        },
-      },
+      // zoom: {
+      //   pan: {
+      //     enabled: true,
+      //     mode: 'x',
+      //   },
+      //   zoom: {
+      //     wheel: {
+      //       enabled: true,
+      //     },
+      //     pinch: {
+      //       enabled: true,
+      //     },
+      //     mode: 'x',
+      //   },
+      // },
       title: {
         display: true,
         text: 'Energy Consumption Over Time',
@@ -216,21 +219,21 @@ console.log(dashboardData);
           },
         },
       },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x',
-        },
-      },
+      // zoom: {
+      //   pan: {
+      //     enabled: true,
+      //     mode: 'x',
+      //   },
+      //   zoom: {
+      //     wheel: {
+      //       enabled: true,
+      //     },
+      //     pinch: {
+      //       enabled: true,
+      //     },
+      //     mode: 'x',
+      //   },
+      // },
     },
   };
 
@@ -245,8 +248,50 @@ console.log(dashboardData);
   return (
     <div style={{ padding: "3%" }}>
       <Typography.Title level={3}>
-        Energy Consumption Pattern
+        Energy Demand Pattern
       </Typography.Title>
+      <Card style={{ margin: "20px" }}>
+      <Typography.Title level={3} style={{textAlign:'center'}}>State wise Requirements</Typography.Title>
+
+        <Row>
+        <Col span={12}>
+            {/* <Typography.Title level={4}>State wise Requirements</Typography.Title> */}
+            <Col  style={{ marginBottom: "20px" ,marginTop:'30px'}}>
+              <div
+                style={{
+                  width: "100%",
+                  height: "150px",
+                  margin: "0 auto",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  display: "flex"
+                }}
+              >
+                <Doughnut
+                  data={doughnutData}
+                  options={chartDoughnutOptions}
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                    margin: "0 auto",
+                  }}
+                />
+              </div>
+            </Col>
+          </Col>
+          <Col span={12}>
+        <Table 
+          columns={stateColumn} 
+          dataSource={stateData} 
+          pagination={false}
+          bordered
+          
+          // style={{width:'70%',textAlign:'center',marginLeft:'15%'}} 
+        />
+        </Col>
+        </Row>
+      </Card>
       <Card style={{ height: "50%" }}>
         <Col span={24} style={{ marginBottom: "20px" }}>
           <div
@@ -257,18 +302,19 @@ console.log(dashboardData);
               margin: "0 auto",
             }}
           >
-            {demandValues.length ? (
-              <Line data={lineData} options={lineOptions} />
+            {loading ? (
+              <Spin />
             ) : (
-              <p>Loading data...</p>
+              <Line data={lineData} options={lineOptions} />
             )}
           </div>
         </Col>
       </Card>
+      
       <Card style={{ margin: "2px" }}>
         <Row gutter={[16, 16]} justify="space-between">
           {/* First Column */}
-          <Col span={8}>
+          <Col span={12} style={{textAlign:'center'}}>
             <Typography.Title level={4}>PowerX Overview</Typography.Title>
             <Col style={{marginTop:'30px'}}>
               <img 
@@ -333,59 +379,19 @@ console.log(dashboardData);
           </Col>  */}
 
           {/* Third Column */}
-          <Col span={12} style={{textAlign:'center'}}>
+          <Col span={12} style={{textAlign:''}}>
             <Typography.Title level={4}>
             Executed Trade Summary
             </Typography.Title>
             <ul>
-            Best Price: 4
+            <li>Ask Price<span style={{fontSize:'12px'}}>(INR/MWh)</span> : 4</li>
+            <li>Executed Price <span style={{fontSize:'12px'}}>(INR/MWh)</span> : 4</li>
               {/* <li>Best Price: 4</li> */}
             </ul>
           </Col>
         </Row>
         </Card>
-      <Card style={{ margin: "20px" }}>
-      <Typography.Title level={3} style={{textAlign:'center'}}>State wise Requirements</Typography.Title>
-
-        <Row>
-        <Col span={12}>
-            {/* <Typography.Title level={4}>State wise Requirements</Typography.Title> */}
-            <Col  style={{ marginBottom: "20px" ,marginTop:'30px'}}>
-              <div
-                style={{
-                  width: "100%",
-                  height: "150px",
-                  margin: "0 auto",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  display: "flex"
-                }}
-              >
-                <Doughnut
-                  data={doughnutData}
-                  options={chartDoughnutOptions}
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                    display: "flex",
-                    margin: "0 auto",
-                  }}
-                />
-              </div>
-            </Col>
-          </Col>
-          <Col span={12}>
-        <Table 
-          columns={stateColumn} 
-          dataSource={stateData} 
-          pagination={false}
-          bordered
-          
-          // style={{width:'70%',textAlign:'center',marginLeft:'15%'}} 
-        />
-        </Col>
-        </Row>
-      </Card>
+      
     </div>
   );
 };

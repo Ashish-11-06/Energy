@@ -7,6 +7,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
 import { fetchModelStatistics } from '../../Redux/slices/consumer/modelStatisticsSlice';
 import { useDispatch } from 'react-redux';
+import { BackwardFilled, BackwardOutlined } from '@ant-design/icons';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -58,7 +59,7 @@ const StatisticalInformation = () => {
                 },
       },
       {
-        label: "Past MCV Data",
+        label: "Actual MCV Data",
         data: mcvPastData,
         borderColor: "red",
         fill: false,
@@ -76,7 +77,7 @@ const StatisticalInformation = () => {
         fill: false,
       },
       {
-        label: 'Past MCP Data',
+        label: 'Actual MCP Data',
         data: pastData,
         borderColor: 'orange',
         fill: false,
@@ -84,42 +85,42 @@ const StatisticalInformation = () => {
     ],
   };
 
-  const BothData = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1),
-    datasets: [
-      {
-        label: 'Forecast MCP Data (INR/MWh)',
-        data: foreCastedData.length ? foreCastedData : Array(96).fill(null),
-        borderColor: 'green',
-        fill: false,
-        yAxisID: 'y1',
-         ticks: {
-                  color: 'green', // Set scale number color for MCP
-                },
-      },
-      {
-        label: 'Past MCP Data (INR/MWh)',
-        data: pastData,
-        borderColor: 'orange',
-        fill: false,
-        yAxisID: 'y1',
-      },
-      {
-        label: 'Forecast MCV Data (MWh)',
-        data: mcvForeCastedData.length ? mcvForeCastedData : Array(96).fill(null),
-        borderColor: 'blue',
-        fill: false,
-        yAxisID: 'y2',
-      },
-      {
-        label: 'Past MCV Data (MWh)',
-        data: mcvPastData,
-        borderColor: 'red',
-        fill: false,
-        yAxisID: 'y2',
-      },
-    ],
-  };
+  // const BothData = {
+  //   labels: Array.from({ length: 96 }, (_, i) => i + 1),
+  //   datasets: [
+  //     {
+  //       label: 'Forecast MCP Data (INR/MWh)',
+  //       data: foreCastedData.length ? foreCastedData : Array(96).fill(null),
+  //       borderColor: 'green',
+  //       fill: false,
+  //       yAxisID: 'y1',
+  //        ticks: {
+  //                 color: 'green', // Set scale number color for MCP
+  //               },
+  //     },
+  //     {
+  //       label: 'Past MCP Data (INR/MWh)',
+  //       data: pastData,
+  //       borderColor: 'orange',
+  //       fill: false,
+  //       yAxisID: 'y1',
+  //     },
+  //     {
+  //       label: 'Forecast MCV Data (MWh)',
+  //       data: mcvForeCastedData.length ? mcvForeCastedData : Array(96).fill(null),
+  //       borderColor: 'blue',
+  //       fill: false,
+  //       yAxisID: 'y2',
+  //     },
+  //     {
+  //       label: 'Past MCV Data (MWh)',
+  //       data: mcvPastData,
+  //       borderColor: 'red',
+  //       fill: false,
+  //       yAxisID: 'y2',
+  //     },
+  //   ],
+  // };
 
   const options = {
     responsive: true,
@@ -237,7 +238,7 @@ const StatisticalInformation = () => {
       <Radio.Group value={selectedType} onChange={handleChange}>
         <Radio value="MCP">MCP</Radio>
         <Radio value="MCV">MCV</Radio>
-        <Radio value="Both">Both</Radio>
+        {/* <Radio value="Both">Both</Radio> */}
       </Radio.Group>
 
       {/* Conditional Rendering of Graphs */}
@@ -365,7 +366,7 @@ const StatisticalInformation = () => {
               </Card>
             </Col>
           )}
-          {selectedType === 'Both' && (
+          {/* {selectedType === 'Both' && (
             <Col span={24} >
               <Card style={{  backgroundColor: 'white' }}>
                 <h3>MCP and MCV Data</h3>
@@ -378,12 +379,12 @@ const StatisticalInformation = () => {
                 </div>
               </Card>
             </Col>
-          )}
+          )} */}
         </Row>
       )}
 
       {/* Table Display */}
-      <Table columns={columns} dataSource={dataSource} pagination={false} bordered style={{ marginTop: '20px' }} />
+      {/* <Table columns={columns} dataSource={dataSource} pagination={false} bordered style={{ marginTop: '20px' }} /> */}
 
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>
@@ -391,8 +392,8 @@ const StatisticalInformation = () => {
           {/* <Col style={{marginLeft:'75%'}}>
             <Button onClick={handleMonth}>Month Ahead</Button>
           </Col> */}
-          <Col style={{marginLeft:'85%'}}>
-            <Button onClick={handleDay}>Day Ahead</Button>
+          <Col style={{marginLeft:'90%'}}>
+            <Button onClick={handleDay} icon={<BackwardOutlined/>}>Back</Button>
           </Col>
         </Row>
       </div>

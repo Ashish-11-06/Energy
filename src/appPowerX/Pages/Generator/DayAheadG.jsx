@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Button, Select, Table, Row, Col, Card } from 'antd';
+import { Button, Select, Table, Row, Col, Card,Spin } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -20,6 +20,7 @@ const DayAheadG = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
  const [statistiicsData, setStatisticsData] = useState([]);
+ const [loading,setLoading] = useState(false);
   const [detailDataSource, setDetailDataSource] = useState([
     {
       key: 'max',
@@ -43,6 +44,8 @@ const DayAheadG = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+    setLoading(true);
+        
         const data = await dispatch(dayAheadData()).unwrap();
         console.log(data);
         
@@ -52,7 +55,7 @@ const DayAheadG = () => {
         setTableData([{ MCP: mcpData, MCV: mcvData }]);
 
         setStatisticsData(data.statistics);
-
+setLoading(false);
         // setTableData(data ? [data] : []); // Ensure data is an array
       } catch (error) {
         console.log(error);
@@ -238,11 +241,22 @@ console.log(statistiicsData);
       <AppstoreOutlined /> 
       <CheckCircleOutlined /> 
     </div> */}
-      <Card style={{height: '500px', width: '100%'}}>
+            <Card style={{height: '500px', width: '100%'}}>
+    {tableData.length === 0 && loading ? (
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          <Spin />
+        </div>
+      ) :(
         <div style={{ height: '500px', width: '100%' }}>
           <Line data={data} options={options} style={{height: '300px', width: 'full',padding:'25px',marginLeft:'100px'}}/>
         </div>
+      )}
       </Card>
+      {/* <Card style={{height: '500px', width: '100%'}}>
+        <div style={{ height: '500px', width: '100%' }}>
+          <Line data={data} options={options} style={{height: '300px', width: 'full',padding:'25px',marginLeft:'100px'}}/>
+        </div>
+      </Card> */}
       <h2></h2>
       <Table columns={detailColumns} dataSource={detailDataSource} pagination={false} />
       
