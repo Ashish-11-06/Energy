@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox } from 'antd';
+import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox, Radio } from 'antd';
 import 'antd/dist/reset.css';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice'; // Correct import
@@ -99,7 +99,7 @@ const Planning = () => {
           </div>
         )}
         {listData.map(item => (
-          <Tooltip style={{ marginTop: '3%' }} key={item.id} title={`Demand: ${item.demand} MWh, Solar Price: ${item.price.Solar} INR, Non-Solar Price: ${item.price["Non-Solar"]} INR`}>
+          <Tooltip style={{ marginTop: '3%' }} key={item.id} title={`Demand: ${item.demand} MWh, Solar Price: ${item.price.Solar} INR/MWh, Non-Solar Price: ${item.price["Non-Solar"]} INR/MWh`}>
             <div
               style={{
                 backgroundColor: '#669800',
@@ -130,6 +130,8 @@ const Planning = () => {
 
   const handleStateChange = (value) => {
     const selectedRequirement = consumerRequirement.find(item => item.state === value);
+    console.log(selectedRequirement);
+    
     setSelectedRequirementId(selectedRequirement ? selectedRequirement.id : null);
 
     setSelectedState(value);
@@ -152,7 +154,7 @@ const Planning = () => {
         requirement: selectedRequirementId,
         date: formattedDate,
         demand: Number(demand),
-        price: selectedTechnology.reduce((acc, tech) => {
+        price: (Array.isArray(selectedTechnology) ? selectedTechnology : [selectedTechnology]).reduce((acc, tech) => { 
           acc[tech] = parseFloat(price[tech]); // Convert price to number
           return acc;
         }, {})
@@ -185,9 +187,13 @@ const Planning = () => {
   const handleDemandClick = (record) => {
     const selectedRequirement = consumerRequirement.find(item => item.state === record.state);
     setSelectedUnitDetails(selectedRequirement);
+
+    
     setIsDetailModalVisible(true);
   };
 
+  console.log(selectedUnitDetails);
+  
   const columns = [
     { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 },
     { title: 'Demand (MWh)', dataIndex: 'demand', key: 'demand', rowSpan: 2, render: (text, record) => (
@@ -198,16 +204,16 @@ const Planning = () => {
         </Tooltip>
       ),
     },
-    { title: 'Technology & Price (INR)', dataIndex: 'technology', key: 'technology' },
+    { title: 'Technology & Price (INR/MWh)', dataIndex: 'technology', key: 'technology' },
   ];
 
-  const tableData = tableDemandData.map(item => ({
+  const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => ({
     key: item.requirement,
     date: item.date,
     demand: item.demand,
-    technology: `Solar: ${item.price?.Solar ?? 0} INR, Non-Solar: ${item.price?.["Non-Solar"] ?? 0} INR`,
+    technology: `Solar: ${item.price?.Solar ?? 0}, Non-Solar: ${item.price?.["Non-Solar"] ?? 0} `,
     price: `${item.price?.Solar ?? 0} INR (Solar), ${item.price?.["Non-Solar"] ?? 0} INR (Non-Solar)`,
-}));
+  })) : [];
 
 
   const handlePrevMonth = () => {
@@ -229,7 +235,7 @@ const Planning = () => {
         <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
           <h1 style={{ margin: 0 }}>Energy Planner</h1>
           <Button style={{ marginRight: '-50%' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
-          <Button onClick={handleAddDetailsClick} style={{color:'black'}}>
+          <Button onClick={handleAddDetailsClick} style={{color:'black',marginLeft:'10px'}}>
           Schedule Trade
           </Button>
         </Row>
@@ -330,40 +336,45 @@ const Planning = () => {
         onCancel={() => setIsModalVisible(false)}
       >
         {/* Checkbox Group */}
-        <Checkbox.Group onChange={(checkedValues) => setSelectedTechnology(checkedValues)} value={selectedTechnology}>
+        {/* <Checkbox.Group onChange={(checkedValues) => setSelectedTechnology(checkedValues)} value={selectedTechnology}>
           <Checkbox value="Solar">"Solar"</Checkbox>
           <Checkbox value="Non-Solar">"Non-Solar"</Checkbox>
-        </Checkbox.Group>
+        </Checkbox.Group> */}
+        <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
+          <Radio value="Solar">Solar</Radio>
+          <Radio value="Non-Solar">Non-Solar</Radio>
+        </Radio.Group>
 
         {/* Input fields for price */}
         <div style={{ marginTop: "15px" }}>
-          {selectedTechnology.includes("Solar") && (
-            <div>
-              <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
-              <Input
-                type="number"
-                placeholder="Enter solar price in INR"
-                value={price["Solar"] || ""}
-                min={0}
-                onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
-                style={{ marginTop: "5px", width: "100%" }}
-              />
-            </div>
-          )}
-          {selectedTechnology.includes("Non-Solar") && (
-            <div>
-              <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
-              <Input
-                type="number"
-                placeholder="Enter non-solar price in INR"
-                value={price["Non-Solar"] || ""}
-                min={0}
-                onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
-                style={{ marginTop: "5px", width: "100%" }}
-              />
-            </div>
-          )}
-        </div>
+                 {selectedTechnology === "Solar" && (
+                   <div>
+                     <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
+                     <Input
+                       type="number"
+                       placeholder="Enter solar price in INR/MWh"
+                       value={price["Solar"] || ""}
+                       min={0}
+                       onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
+                       style={{ marginTop: "5px", width: "100%" }}
+                     />
+                   </div>
+                 )}
+                 
+                 {selectedTechnology === "Non-Solar" && (
+                   <div>
+                     <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
+                     <Input
+                       type="number"
+                       placeholder="Enter non-solar price in INR/MWh"
+                       value={price["Non-Solar"] || ""}
+                       min={0}
+                       onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
+                       style={{ marginTop: "5px", width: "100%" }}
+                     />
+                   </div>
+                 )}
+               </div>
       </Modal>
       <Modal
         title="Consumption Unit Details"

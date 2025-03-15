@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Button, Select, Table, Row, Col, Card } from 'antd';
+import { Button, Select, Table, Row, Col, Card, Spin } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -261,6 +261,7 @@ console.log('table data',detailDataSource);
       <Card style={{height: '500px', width: '100%'}}>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '20px' }}>
+            <Spin />
             <p>Loading chart data...</p>
           </div>
         ) : (

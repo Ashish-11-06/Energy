@@ -287,6 +287,39 @@ const stateColumn = [
         </Col>
       </Card>
       <Card style={{ margin: "20px" }}>
+      <Typography.Title level={3} style={{textAlign:'center'}}>State wise Requirements</Typography.Title>
+
+        <Row>
+        <Col span={12}>
+  {/* <Typography.Title level={4}>State wise Requirements</Typography.Title> */}
+  <div
+    style={{
+      width: "100%",
+      height: "150px",
+      display: "flex",
+      justifyContent: "center", // Centers horizontally
+      alignItems: "center", // Centers vertically
+      margin: "20px auto" // Keeps spacing consistent
+    }}
+  >
+    <Doughnut
+      data={doughnutData}
+      options={chartDoughnutOptions}
+      style={{
+        maxWidth: "100%",
+        maxHeight: "100%"
+      }}
+    />
+  </div>
+</Col>
+          <Col span={12}>
+          
+        <Table columns={stateColumn} dataSource={stateData} pagination={false} bo /> {/* Added Table component */}
+          </Col>
+        </Row>
+
+      </Card>
+      <Card style={{ margin: "20px" }}>
         <Row gutter={[16, 16]} justify="space-between">
           {/* First Column */}
           <Col span={12} style={{ marginBottom: "20px",textAlign:'center' }}>
@@ -365,40 +398,7 @@ const stateColumn = [
           </Col>
         </Row>
         </Card>
-      <Card style={{ margin: "20px" }}>
-      <Typography.Title level={3} style={{textAlign:'center'}}>State wise Requirements</Typography.Title>
-
-        <Row>
-        <Col span={12}>
-  {/* <Typography.Title level={4}>State wise Requirements</Typography.Title> */}
-  <div
-    style={{
-      width: "100%",
-      height: "150px",
-      display: "flex",
-      justifyContent: "center", // Centers horizontally
-      alignItems: "center", // Centers vertically
-      margin: "20px auto" // Keeps spacing consistent
-    }}
-  >
-    <Doughnut
-      data={doughnutData}
-      options={chartDoughnutOptions}
-      style={{
-        maxWidth: "100%",
-        maxHeight: "100%"
-      }}
-    />
-  </div>
-</Col>
-
-          <Col span={12}>
-          
-        <Table columns={stateColumn} dataSource={stateData} pagination={false} bo /> {/* Added Table component */}
-          </Col>
-        </Row>
-
-      </Card>
+   
     </div>
   );
 };

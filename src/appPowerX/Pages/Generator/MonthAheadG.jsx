@@ -19,17 +19,87 @@ const MonthAheadG = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const data = await dispatch(fetchMonthAheadData());
+  //       setTableData(data.payload);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [dispatch]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await dispatch(fetchMonthAheadData());
-        setTableData(data.payload);
+        const responseData = data.payload;
+
+        if (Array.isArray(responseData?.daily_data)) {
+          const mcvData = responseData.daily_data.map(item => item.mcv_prediction?.avg ?? 0);
+          const mcpDataOriginal = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
+          const mcpData=mcpDataOriginal.reverse();
+          const labels = Array.from({ length: 31 }, (_, i) => i + 1); // Creates an array [1, 2, ..., 31]
+
+          console.log("MCV Data:", mcvData);
+          console.log("MCP Data:", mcpData);
+          console.log("Labels:", labels);
+
+          setLineData({
+            labels,
+            datasets: [
+              {
+                label: 'MCP (INR/MWh)',
+                data: mcpData,
+                borderColor: 'blue',
+                fill: false,
+                yAxisID: 'y-axis-mcp',
+              },
+              {
+                label: 'MCV (MWh)',
+                data: mcvData,
+                borderColor: 'green',
+                fill: false,
+                yAxisID: 'y-axis-mcv',
+              },
+            ],
+          });
+
+          setTableData([
+            {
+              key: '1',
+              status: 'Highest',
+              mcp: responseData.overall_stats?.mcp_prediction?.highest ?? 0,
+              mcv: responseData.overall_stats?.mcv_prediction?.highest ?? 0,
+            },
+            {
+              key: '2',
+              status: 'Lowest',
+              mcp: responseData.overall_stats?.mcp_prediction?.lowest ?? 0,
+              mcv: responseData.overall_stats?.mcv_prediction?.lowest ?? 0,
+            },
+            {
+              key: '3',
+              status: 'Average',
+              mcp: responseData.overall_stats?.mcp_prediction?.average ?? 0,
+              mcv: responseData.overall_stats?.mcv_prediction?.average ?? 0,
+            },
+          ]);
+        } else {
+          console.error("Error: daily_data is missing or not an array", responseData);
+          setLineData({ labels: [], datasets: [] });
+        }
       } catch (error) {
-        console.log(error);
+        console.log("Error fetching data:", error);
       }
     };
+
     fetchData();
   }, [dispatch]);
+
+console.log('table data',tableData);
 
   useEffect(() => {
     console.log('month data');
@@ -138,8 +208,8 @@ const MonthAheadG = () => {
   const columns = [
     {
       title: 'Details',
-      dataIndex: 'metric',
-      key: 'metric',
+      dataIndex: 'status',
+      key: 'status',
     },
     {
       title: 'MCP (INR/MWh)',
@@ -148,8 +218,8 @@ const MonthAheadG = () => {
     },
     {
       title: 'MCV (MWh)',
-      dataIndex: 'mcy',
-      key: 'mcy',
+      dataIndex: 'mcv',
+      key: 'mcv',
     },
   ];
 
@@ -165,20 +235,22 @@ const MonthAheadG = () => {
     <div style={{ padding: '20px' }}>
       <h1>Market Forecast - Month Ahead</h1>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '70%', marginBottom: '10px'}}>
-        <label htmlFor="" style={{ width: 120, fontWeight: 'bold', marginRight: '0px', fontSize: '20px' }}>Technology: </label>
+        {/* <label htmlFor="" style={{ width: 120, fontWeight: 'bold', marginRight: '0px', fontSize: '20px' }}>Technology: </label>
         <Select placeholder="Select Technology" style={{ width: 200 }} >
           <Option value="Solar">Solar</Option>
           <Option value="Non-solar">Non-solar</Option>
           <Option value="Hydro">Hydro</Option>
-        </Select>
+        </Select> */}
       </div>
 
-      <Card style={{ width: 'full' }}>
+      {/* <Card style={{ width: 'full' }}>
         <div style={{ height: '60vh', width: '100%' }}>
           <Line data={data} options={options} style={{ width: '100%', marginLeft: '150px' }} />
         </div>
-      </Card>
+      </Card> */}
       <h2></h2>
+      <Table columns={columns} dataSource={tableData} pagination={false} />
+      
       {/* <Table columns={columns} dataSource={tableData} pagination={false} /> */}
 
       <div style={{ padding: '20px' }}>
@@ -187,7 +259,7 @@ const MonthAheadG = () => {
             <Button onClick={handleStatistics}>Historical Trend</Button>
           </Col>
           <Col>
-            <Button onClick={handleNextTrade}>Plan Your Month Ahead Trading</Button>
+            <Button onClick={handleNextTrade}>Set Up Next-Day Trade</Button>
           </Col>
         </Row>
       </div>

@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Checkbox, Upload, message, Card, Select } from "antd";
+import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Checkbox, Upload, message, Card, Select, Radio } from "antd";
 import { useNavigate } from "react-router-dom";
 import { UploadOutlined, DownloadOutlined, DownOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import * as XLSX from 'xlsx';
@@ -116,6 +116,8 @@ const PlanYourTradePage = () => {
     console.log("Selected State:", selectedState);
     console.log("Selected Requirement ID:", selectedRequirementId);
     try {
+      console.log(price);
+      
       const dayAheadDemand = {
         requirement: selectedRequirementId,
         demand_data: tableData.map(item => {
@@ -140,8 +142,12 @@ const PlanYourTradePage = () => {
             demand: item.demand
           };
         }),
-        price: selectedTechnology.reduce((acc, tech) => {
+       
+        // Ensure selectedTechnology is an array
+        price: (Array.isArray(selectedTechnology) ? selectedTechnology : [selectedTechnology]).reduce((acc, tech) => { 
           acc[tech] = parseFloat(price[tech]); // Convert price to number
+          console.log(acc);
+          
           return acc;
         }, {})
       };
@@ -149,6 +155,8 @@ const PlanYourTradePage = () => {
       console.log(dayAheadDemand);
 
       const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+      message.success("Data submitted successfully");
+      
       console.log('res', res);
       setIsModalVisible(false);
       navigate('/px/consumer/trading');
@@ -393,6 +401,7 @@ const PlanYourTradePage = () => {
             htmlType="submit"
             style={{ marginLeft: "85%" }}
             onClick={handleContinue}
+            disabled={!allFieldsFilled}
           >
             Continue
           </Button>
@@ -404,15 +413,15 @@ const PlanYourTradePage = () => {
         onOk={handleModalOk}
         onCancel={() => setIsModalVisible(false)}
       >
-        {/* Checkbox Group */}
-        <Checkbox.Group onChange={(checkedValues) => setSelectedTechnology(checkedValues)} value={selectedTechnology}>
-          <Checkbox value="Solar">"Solar"</Checkbox>
-          <Checkbox value="Non-Solar">"Non-Solar"</Checkbox>
-        </Checkbox.Group>
+        {/* Radio Group */}
+        <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
+          <Radio value="Solar">Solar</Radio>
+          <Radio value="Non-Solar">Non-Solar</Radio>
+        </Radio.Group>
 
         {/* Input fields for price */}
         <div style={{ marginTop: "15px" }}>
-          {selectedTechnology.includes("Solar") && (
+          {selectedTechnology === "Solar" && (
             <div>
               <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
               <Input
@@ -425,7 +434,8 @@ const PlanYourTradePage = () => {
               />
             </div>
           )}
-          {selectedTechnology.includes("Non-Solar") && (
+          
+          {selectedTechnology === "Non-Solar" && (
             <div>
               <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
               <Input
