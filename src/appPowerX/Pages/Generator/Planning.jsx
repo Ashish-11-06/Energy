@@ -40,6 +40,9 @@ const Planning = () => {
   const [selectedUnitDetails, setSelectedUnitDetails] = useState(null);
   const [generatorPortfolio, setGeneratorPortfolio] = useState([]);
  const [selectedPortfolio, setSelectedPortfolio] = useState(null);
+ const [selectedInterval, setSelectedInterval] = useState(null); // Add state for selected interval
+ const [startDate, setStartDate] = useState(null); // Add state for start date
+ const [endDate, setEndDate] = useState(null); // Add state for end date
  
   useEffect(() => {
     const fetchData = async () => {
@@ -149,6 +152,17 @@ const Planning = () => {
     setSelectedState(selectedRequirement ? selectedRequirement.state : "");
   };
 
+  const handleDateIntervalChange = (value) => {
+    setSelectedInterval(value);
+    if (value === 'today') {
+      setSelectedDate(dayjs());
+    } else if (value === 'tomorrow') {
+      setSelectedDate(dayjs().add(1, 'day'));
+    } else if (value === 'next15days' || value === 'next30days') {
+      setStartDate(null); // Reset start date
+      setEndDate(null); // Reset end date
+    }
+  };
 
   const handleAddData = () => {
     setIsInputModalVisible(false); // Hide input modal
@@ -206,6 +220,7 @@ const Planning = () => {
       ),
     },
     { title: 'Technology & Price (INR)', dataIndex: 'technology', key: 'technology' },
+    {title:'Portfolio',dataIndex:'portfolio',key:'portfolio'}
   ];
 
   const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => ({
@@ -233,9 +248,11 @@ const Planning = () => {
     <div>
       <div style={{ padding: '20px' }}>
         <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
-          <h1 style={{ margin: 0 }}>Energy Planner</h1>
-          <Button style={{ marginRight: '-50%' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
-          <Button onClick={handleAddDetailsClick} style={{color:'black'}}>
+           <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+                  Energy Planner
+                </h1>
+          <Button style={{ marginRight: '-50%', backgroundColor: '#669800', borderColor: '#669800',height:'40px' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
+          <Button onClick={handleAddDetailsClick} style={{backgroundColor: '#ff5722', borderColor: '#ff5722',height:'40px'}}>
             Plan for more Days
           </Button>
         </Row>
@@ -266,13 +283,13 @@ const Planning = () => {
             </Card>
           </Col>
         )}
-        <Button
+        {/* <Button
           type="primary"
           style={{ position: 'fixed', right: '20px', bottom: '20px' }}
           onClick={() => navigate('/consumer/plan-month-trade')}
         >
           Plan for More Days
-        </Button>
+        </Button> */}
       </div>
       <Modal
         title="Plan for More Days"
@@ -294,14 +311,49 @@ const Planning = () => {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
-          <DatePicker
-            style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
-            format="DD/MM/YYYY"
-            disabledDate={(current) => current && current <= new Date()}
-            onChange={(date) => setSelectedDate(date)}
-          />
+        {
+          !selectedInterval && (
+            <Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+              <DatePicker
+                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
+                format="DD/MM/YYYY"
+                disabledDate={(current) => current && current <= new Date()}
+                onChange={(date) => setSelectedDate(date)}
+              />
+            </Form.Item>
+          )
+        }
+        <Form.Item label="Select Date Interval" style={{ fontSize: '24px' }}>
+          <Select
+            value={selectedInterval || undefined}
+            onChange={handleDateIntervalChange}
+            style={{ width: "100%", borderColor: "#669800" }}
+            placeholder="Select Date Interval"
+          >
+            <Select.Option key="next15days" value="next15days">Next 15 Days</Select.Option>
+            <Select.Option key="next30days" value="next30days">Next 30 Days</Select.Option>
+          </Select>
         </Form.Item>
+        {(selectedInterval === 'next15days' || selectedInterval === 'next30days') && (
+          <>
+            <Form.Item label="Select Start Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+              <DatePicker
+                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
+                format="DD/MM/YYYY"
+                disabledDate={(current) => current && current <= new Date()}
+                onChange={(date) => setStartDate(date)}
+              />
+            </Form.Item>
+            <Form.Item label="Select End Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+              <DatePicker
+                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
+                format="DD/MM/YYYY"
+                disabledDate={(current) => current && current <= new Date()}
+                onChange={(date) => setEndDate(date)}
+              />
+            </Form.Item>
+          </>
+        )}
         <Form.Item label="Enter Generation (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
           <Input
             type="number"

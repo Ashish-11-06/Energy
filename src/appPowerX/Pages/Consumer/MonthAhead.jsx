@@ -227,7 +227,7 @@ const MonthAhead = () => {
       // } */}
       </Card>
       {/* <Table columns={columns} dataSource={tableData} pagination={false} /> */}
-      <div style={{ padding: '20px', width: '80%' }}>
+      <div style={{ padding: '20px', width: '100%' }}>
         <Row justify="space-between">
           <Col>
             <Button onClick={() => navigate('/px/consumer/statistical-information-month')}>Historical Trend</Button>

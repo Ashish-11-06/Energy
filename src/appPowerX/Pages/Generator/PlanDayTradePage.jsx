@@ -38,6 +38,7 @@ const PlanYourTradePage = () => {
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [generatorPortfolio, setGeneratorPortfolio] = useState([]);
+  const [uploadModal, setUploadModal] = useState(false);
   const [tableData, setTableData] = useState(
     generateTimeLabels().map((time, index) => ({
       key: index,
@@ -50,7 +51,12 @@ const PlanYourTradePage = () => {
   const [showTable, setShowTable] = useState(false);
 
   const handleContinue = () => {
-    setIsModalVisible(true);
+    if(!fileUploaded) {
+      setIsModalVisible(true);
+    } else {
+      navigate('/px/track-status');
+    }
+    // setIsModalVisible(true);
   };
 
   const onFinish = (values) => {
@@ -162,6 +168,7 @@ const PlanYourTradePage = () => {
   };
 
   const handleFileUpload = (file) => {
+    setUploadModal(true);
     const isExcel = file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     if (!isExcel) {
       message.error("Please upload a valid Excel file.");
@@ -184,7 +191,9 @@ const PlanYourTradePage = () => {
       setTableData(updatedData);
       setFileUploaded(true);
       setAllFieldsFilled(true);
-      message.success(`${file.name} uploaded successfully`);
+       message.success(`${file.name} uploaded successfully, now you can check the status in 'Track Status' optionnnn`);
+           setUploadModal(false);
+      // message.success(`${file.name} uploaded successfully`);
     };
     reader.readAsArrayBuffer(file);
     return false; // Prevent automatic upload
@@ -350,9 +359,10 @@ const PlanYourTradePage = () => {
               </Col>
               <Col>
                 <Tooltip title="Upload a bulk file!" placement="bottom">
-                  <Upload beforeUpload={handleFileUpload} showUploadList={false}>
+                <Button icon={<UploadOutlined />} onClick={handleFileUpload}>Upload File</Button>
+                  {/* <Upload beforeUpload={handleFileUpload} showUploadList={false}>
                     <Button icon={<UploadOutlined />}>Upload File</Button>
-                  </Upload>
+                  </Upload> */}
                 </Tooltip>
               </Col>
             </Row>
@@ -442,6 +452,56 @@ const PlanYourTradePage = () => {
         </ol>
         <p>Thank you!</p>
       </Modal>
+        <Modal title="Select Technologyyy"
+              open={uploadModal}
+             
+              onCancel={() => setUploadModal(false)} 
+          
+              footer={[
+                <>
+      
+                <Upload beforeUpload={handleFileUpload} showUploadList={false}>
+                          <Button icon={<UploadOutlined />}>Upload File</Button>
+                        </Upload>
+                        <Button onClick={() => setUploadModal(false)} style={{marginLeft:'10px'}}>Cancel</Button>
+                        </>
+              ]}
+              >
+                <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
+                <Radio value="Solar">Solar</Radio>
+                <Radio value="Non-Solar">Non-Solar</Radio>
+              </Radio.Group>
+      
+              <div style={{ marginTop: "15px" }}>
+                {selectedTechnology === "Solar" && (
+                  <div>
+                    <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
+                    <Input
+                      type="number"
+                      placeholder="Enter solar price in INR"
+                      value={price["Solar"] || ""}
+                      min={0}
+                      onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
+                      style={{ marginTop: "5px", width: "100%" }}
+                    />
+                  </div>
+                )}
+                
+                {selectedTechnology === "Non-Solar" && (
+                  <div>
+                    <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
+                    <Input
+                      type="number"
+                      placeholder="Enter non-solar price in INR"
+                      value={price["Non-Solar"] || ""}
+                      min={0}
+                      onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
+                      style={{ marginTop: "5px", width: "100%" }}
+                    />
+                  </div>
+                )}
+              </div>
+            </Modal>
     </div>
   );
 

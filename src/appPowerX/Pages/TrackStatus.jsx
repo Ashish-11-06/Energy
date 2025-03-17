@@ -10,28 +10,48 @@ const approvals = [
 ];
 
 const TrackStatusP = () => {
+    const user = JSON.parse(localStorage.getItem('user')).user;
+    const user_category = user?.user_category;
 
-    const columns = [
+    const genColumns = [
         {
-        title:'Demand (MW)',
-        dataIndex: 'demand',
-    },
+            title:'Generation (MW)',
+            dataIndex: 'demand',
+        },
         {
-        title:'Demand Date',
-        dataIndex: 'demand_date',
-    },
-    {
-        title: 'Status',
-        dataIndex: 'status',
-    },
-];
+            title:'Generation Date',
+            dataIndex: 'demand_date',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+        },
+    ];
 
-const trackData=[
-    { demand: 200,demand_date:'15-03-2025', status: 'draft ' },
-    { demand: 300,demand_date:'16-03-2025', status: 'submitted to trader ' },
-    { demand: 400,demand_date:'17-03-2025', status: 'trade executed  ' },
-    { demand: 100,demand_date:'18-03-2025', status: 'cancel ' },
-]
+    const conColumns = [
+        {
+            title:'Demand (MW)',
+            dataIndex: 'demand',
+        },
+        {
+            title:'Demand Date',
+            dataIndex: 'demand_date',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+        },
+    ];
+
+    const columns = user_category === 'Consumer' ? conColumns : genColumns;
+
+    const trackData=[
+        { demand: 200,demand_date:'15-03-2025', status: 'draft ' },
+        { demand: 300,demand_date:'16-03-2025', status: 'submitted to trader ' },
+        { demand: 400,demand_date:'17-03-2025', status: 'trade executed  ' },
+        { demand: 100,demand_date:'18-03-2025', status: 'cancel ' },
+    ];
+
     return (
 
         <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}> {/* Changed background color and set minHeight */}

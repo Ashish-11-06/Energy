@@ -19,17 +19,14 @@ const MonthAheadG = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const data = await dispatch(fetchMonthAheadData());
-  //       setTableData(data.payload);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [dispatch]);
+  const start_date = new Date(); 
+  start_date.setDate(start_date.getDate() + 1); // Set to tomorrow
+  
+  const end_date = new Date(start_date); // Copy start_date
+  end_date.setDate(start_date.getDate() + 30);
+
+  const startDateString = start_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const endDateString = end_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +37,7 @@ const MonthAheadG = () => {
         if (Array.isArray(responseData?.daily_data)) {
           const mcvData = responseData.daily_data.map(item => item.mcv_prediction?.avg ?? 0);
           const mcpDataOriginal = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
-          const mcpData=mcpDataOriginal.reverse();
+          const mcpData = mcpDataOriginal.reverse();
           const labels = Array.from({ length: 31 }, (_, i) => i + 1); // Creates an array [1, 2, ..., 31]
 
           console.log("MCV Data:", mcvData);
@@ -99,112 +96,6 @@ const MonthAheadG = () => {
     fetchData();
   }, [dispatch]);
 
-console.log('table data',tableData);
-
-  useEffect(() => {
-    console.log('month data');
-    
-    const fetchData = async () => {
-      try {
-        console.log('in Data');
-        
-        const data = await dispatch(fetchMonthAheadLineData());
-        setLineData(data.payload);
-      } catch (error) {
-        console.log('errrrr');
-        
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, [dispatch]);
-
-  const data = {
-    labels: Array.from({ length: 31 }, (_, i) => i + 1), // Updated X-axis labels
-    datasets: [
-      {
-        label: 'MCP (INR/MWh)', // Label for MCP dataset
-        data: lineData?.MCP, // Updated data for MCP
-        borderColor: 'blue',
-        fill: false,
-        yAxisID: 'y-axis-mcp', // Assign to right Y-axis
-      },
-      {
-        label: 'MCV (MWh)', // Label for MCY dataset
-        data: lineData?.MCV, // Updated data for MCY
-        borderColor: 'green',
-        fill: false,
-        yAxisID: 'y-axis-mcv', // Assign to left Y-axis
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    scales: {
-      x: {
-        type: 'linear',
-        position: 'bottom',
-        ticks: {
-          autoSkip: false, // Ensure all ticks are shown
-        },
-      },
-      'y-axis-mcv': {
-        type: 'linear',
-        position: 'left',
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'MCV (MWh)',
-        },
-         ticks: {
-                  color: 'green', // Set scale number color for MCV
-                },
-      },
-      'y-axis-mcp': {
-        type: 'linear',
-        position: 'right',
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'MCP (INR/MWh)',
-        },
-        grid: {
-          drawOnChartArea: false, // Only draw grid lines for one Y-axis
-        },
-         ticks: {
-                  color: 'blue', // Set scale number color for MCV
-                },
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom', // Position legends at the bottom
-        align: 'end', // Align legends to the right
-        labels: {
-          usePointStyle: false, // Use point style for legend items
-          padding: 20, // Add padding around legend items
-        },
-      },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x',
-        },
-      },
-    },
-  };
-
   const columns = [
     {
       title: 'Details',
@@ -221,45 +112,37 @@ console.log('table data',tableData);
       dataIndex: 'mcv',
       key: 'mcv',
     },
+    {
+      title:'Date',
+      dataIndex: 'date',
+      key: 'date',
+    }
   ];
 
   const handleNextTrade = () => {
     navigate('/px/generator/planning');
-      }
+  };
+
   const handleStatistics = () => {
     console.log('clicked');
     navigate('/px/generator/statistical-month-information');
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Market Forecast - Month Ahead</h1>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '70%', marginBottom: '10px'}}>
-        {/* <label htmlFor="" style={{ width: 120, fontWeight: 'bold', marginRight: '0px', fontSize: '20px' }}>Technology: </label>
-        <Select placeholder="Select Technology" style={{ width: 200 }} >
-          <Option value="Solar">Solar</Option>
-          <Option value="Non-solar">Non-solar</Option>
-          <Option value="Hydro">Hydro</Option>
-        </Select> */}
-      </div>
-
-      {/* <Card style={{ width: 'full' }}>
-        <div style={{ height: '60vh', width: '100%' }}>
-          <Line data={data} options={options} style={{ width: '100%', marginLeft: '150px' }} />
-        </div>
-      </Card> */}
-      <h2></h2>
-      <Table columns={columns} dataSource={tableData} pagination={false} />
-      
-      {/* <Table columns={columns} dataSource={tableData} pagination={false} /> */}
-
-      <div style={{ padding: '20px' }}>
+    <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center'}}> {/* Changed background color and set minHeight */}
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800', fontWeight: 'bold' }}>
+        Market Forecast - Month Ahead <span style={{fontSize:'20px'}}>({startDateString} - {endDateString})</span>
+      </h1>     
+      <Card style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff', width: '100%' }}> {/* Updated shadow and card background color */}
+        <Table columns={columns} dataSource={tableData} pagination={false} bordered />
+      </Card>
+      <div style={{ padding: '20px', width: '100%' }}>
         <Row justify="space-between">
           <Col>
             <Button onClick={handleStatistics}>Historical Trend</Button>
           </Col>
           <Col>
-            <Button onClick={handleNextTrade}>Set Up Next-Day Trade</Button>
+            <Button onClick={handleNextTrade}>Schedule Trade</Button>
           </Col>
         </Row>
       </div>

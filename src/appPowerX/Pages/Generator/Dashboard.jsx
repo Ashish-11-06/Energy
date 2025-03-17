@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Card, Col, Typography, Row, Table } from "antd"; // Added Table import
+import { Card, Col, Typography, Row, Table, Spin } from "antd"; // Added Table import
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -40,9 +40,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState({});
   const [dashboardLine, setDashboardLine] = useState([]);
+  const [loading, setLoading] = useState(false);
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
 // console.log(user_id);
-
+const nextDay = new Date();
+nextDay.setDate(nextDay.getDate() + 1);
+const nextDayDate = nextDay.toLocaleDateString();
   useEffect(() => {
     const id = user_id;
     const fetchData = async () => {
@@ -57,11 +60,13 @@ const Dashboard = () => {
   useEffect(() => {
     const id = user_id;
     const fetchLineData = async () => {
+      setLoading(true);
       const res = await dispatch(fetchDashboardLineG(id));
       console.log(res.payload);
       console.log('line data', res.payload);
       
       setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
+      setLoading(false);
     };
     fetchLineData();
   }, [dispatch]);
@@ -104,7 +109,7 @@ const Dashboard = () => {
         max: 100,
         title: {
           display: true,
-          text: '96 time blocks',
+          text: 'Time (15-minute intervals)',
         },
       },
     },
@@ -117,24 +122,25 @@ const Dashboard = () => {
           padding: 20, // Add padding around legend items
         },
       },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x',
-        },
-      },
+      // zoom: {
+      //   pan: {
+      //     enabled: true,
+      //     mode: 'x',
+      //   },
+      //   zoom: {
+      //     wheel: {
+      //       enabled: true,
+      //     },
+      //     pinch: {
+      //       enabled: true,
+      //     },
+      //     mode: 'x',
+      //   },
+      // },
       title: {
         display: true,
-        text: 'Energy Consumption Over Time',
+        text: `Energy Demand for ${nextDayDate}`,
+
         font: {
           size: 18,
         },
@@ -194,6 +200,12 @@ const stateColumn = [
   }
 ];
 
+const cardStyle = {
+  margin: "20px",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  height: "400px", // Ensure all cards are the same height
+};
+
   // Define stateData variable
   const stateData = stateLabels.map((state, index) => ({
     key: index,
@@ -237,21 +249,21 @@ const stateColumn = [
           size: 14,
         },
       },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x',
-        },
-      },
+      // zoom: {
+      //   pan: {
+      //     enabled: true,
+      //     mode: 'x',
+      //   },
+      //   zoom: {
+      //     wheel: {
+      //       enabled: true,
+      //     },
+      //     pinch: {
+      //       enabled: true,
+      //     },
+      //     mode: 'x',
+      //   },
+      // },
     },
   };
 
@@ -265,9 +277,9 @@ const stateColumn = [
 
   return (
     <div style={{ padding: "3%" }}>
-      <Typography.Title level={3}>
-        Energy Demand Pattern
-      </Typography.Title>
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      Energy Demand Pattern
+      </h1>
       <Card style={{ margin: "20px" }}>
         <Typography.Title level={3} style={{textAlign:'center'}}>State wise Requirements</Typography.Title>
         {/* <Row>
@@ -336,7 +348,25 @@ const stateColumn = [
         
                 </Row>
       </Card>
-      {/* <Card style={{ height: "50%" }}>
+      <Card style={cardStyle}>
+        <Col span={24} style={{ marginBottom: "20px" }}>
+          <div
+            style={{
+              position: "relative",
+              width: "80%",
+              height: "300px",
+              margin: "0 auto",
+            }}
+          >
+            {loading ? (
+              <Spin />
+            ) : (
+              <Line data={lineData} options={lineOptions} />
+            )}
+          </div>
+        </Col>
+      </Card>
+       {/* <Card style={{ height: "50%" }}>
         <Col span={24} style={{ marginBottom: "20px" }}>
           <div
             style={{
@@ -353,7 +383,7 @@ const stateColumn = [
             )}
           </div>
         </Col>
-      </Card> */}
+      </Card>  */}
       
       <Card style={{ margin: "20px" }}>
         <Row gutter={[16, 16]} justify="space-between">

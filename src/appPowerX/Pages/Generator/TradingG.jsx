@@ -82,7 +82,7 @@ const Trading = () => {
         max: 100,
         title: {
           display: true,
-          text: '96 time blocks',
+          text: 'Time (15-minute intervals)',
           font:{ 
             weight: 'bold',
             size: 16,
@@ -139,28 +139,44 @@ const Trading = () => {
         {/* Total Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TOTAL" value={493} suffix="+" style={{color:'white',fontWeight:'bold'}} />
+            <Statistic title="TOTAL" value={493} suffix="+" style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
+    <span>
+      {value} <span style={{ fontSize: '12px' }}>MW</span>
+    </span>
+  )}/>
           </Card>
         </Col>
 
         {/* Trading Volume Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TRADING VOLUME" value={8.324} style={{color:'white',fontWeight:'bold'}} />
+            <Statistic title="TRADING VOLUME" value={8.324} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
+    <span>
+      {value} <span style={{ fontSize: '12px' }}>MW</span>
+    </span>
+  )}/>
           </Card>
         </Col>
 
         {/* Price Per Unit Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="PRICE PER UNIT" value={6.203} style={{color:'white',fontWeight:'bold'}} />
+            <Statistic title="PRICE PER UNIT" value={6.203} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
+    <span>
+      {value} <span style={{ fontSize: '12px' }}>MW</span>
+    </span>
+  )}/>
           </Card>
         </Col>
 
         {/* Planning Costs Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800' ,textAlign:'center'}}>
-            <Statistic title="PLANNING COSTS" value={64900} style={{color:'white',fontWeight:'bold'}} />
+            <Statistic title="PLANNING COSTS" value={64900} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
+    <span>
+      {value} <span style={{ fontSize: '12px' }}>MW</span>
+    </span>
+  )}/>
           </Card>
         </Col>
       </Row>
@@ -182,7 +198,7 @@ const Trading = () => {
             <Button onClick={handleTradingStatus}>Trading Status</Button>
           </Col> */}
           <Col>
-            <Button onClick={handleChat} style={{marginLeft:'1000px'}}>Chat with Expert</Button>
+            {/* <Button onClick={handleChat} style={{marginLeft:'1000px'}}>Chat with Expert</Button> */}
           </Col>
         </Row>
       </div>

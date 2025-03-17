@@ -21,6 +21,7 @@ const DayAheadG = () => {
   const dispatch = useDispatch();
   const [statistiicsData, setStatisticsData] = useState([]);
   const [loading, setLoading] = useState(false);
+   const [nextDay, setNextDay] = useState('');
   const [detailDataSource, setDetailDataSource] = useState([
     {
       key: 'max',
@@ -42,6 +43,13 @@ const DayAheadG = () => {
     },
   ]);
 
+   useEffect(() => {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      const options = { month: 'short', day: 'numeric' };
+      setNextDay(tomorrow.toLocaleDateString(undefined, options));
+    }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -204,27 +212,39 @@ const DayAheadG = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Market Forecast - Day Ahead</h1>
-      <Card style={{ height: '500px', width: '100%' }}>
-        {tableData.length === 0 && loading ? (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-            <Spin />
-          </div>
-        ) : (
-          <div style={{ height: '500px', width: '100%' }}>
-            <Line data={data} options={options} style={{ height: '300px', width: 'full', padding: '25px', marginLeft: '100px' }} />
-          </div>
-        )}
-      </Card>
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+             Market Forecast - Day Ahead <span style={{fontSize:'20px'}}>({nextDay})</span>
+           </h1>
+     <Card style={{height: '500px', width: '100%', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff' }}> {/* Updated shadow and card background color */}
+             {loading ? (
+               <div style={{ textAlign: 'center', padding: '20px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                 <Spin />
+                 <p>Loading chart data...</p>
+               </div>
+             ) : (
+               <div style={{ height: '500px', width: '100%' }}>
+                 <Line data={data} options={options} style={{height: '300px', width: 'full', padding: '25px', marginLeft: '100px'}}/>
+               </div>
+             )}
+           </Card>
       <h2></h2>
-      <Table columns={detailColumns} dataSource={detailDataSource} pagination={false} />
+        <Card style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff' }}> {/* Updated shadow and card background color */}
+              <Table 
+                columns={detailColumns} 
+                dataSource={detailDataSource} 
+                pagination={false} 
+                bordered
+                style={{ textAlign: 'center', backgroundColor: '#fff' }} // Center-align table content
+              />
+            </Card>
+      {/* <Table columns={detailColumns} dataSource={detailDataSource} pagination={false} /> */}
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
           <Col>
-            <Button onClick={handleStatistics}>Historical Trend</Button>
+            <Button type="primary" onClick={handleStatistics} style={{ borderRadius: '5px', backgroundColor: '#ff5722', borderColor: '#ff5722' }}>Historical Trend</Button>
           </Col>
           <Col>
-            <Button onClick={handleNextTrade}>Plan Your Next Day Trading</Button>
+            <Button type="primary" onClick={handleNextTrade} style={{ borderRadius: '5px', backgroundColor: '#ff5722', borderColor: '#ff5722' }}>Set Up Next-Day Trade</Button>
           </Col>
         </Row>
       </div>
