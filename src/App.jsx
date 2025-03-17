@@ -76,7 +76,7 @@ import LoginPage from './appPowerX/Pages/LoginPage';
 import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
 import NotificationG from './appPowerX/Pages/Generator/NotificationG';
 import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
-import WhatWeOfferP from './appPowerX/Pages/WhatWeOffer';
+// import WhatWeOfferP from './appPowerX/Pages/WhatWeOffer';
 // import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
 
 const CurrentPath = () => {

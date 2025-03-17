@@ -178,7 +178,7 @@ const MonthAhead = () => {
   ];
 
   return (
-    <div style={{ padding: '10px' }}>
+    <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}> {/* Changed background color and set minHeight */}
       <h1>Market Forecast - Month Ahead</h1>
       {/* <Card style={{ width: 'full',marginLeft:'0' }}>
         <div style={{ height: '400px', width: '100%' }}>
@@ -192,12 +192,16 @@ const MonthAhead = () => {
         </div>
       </Card> */}
       <div style={{ margin: '20px 0' }}></div>
-      {!loading ? (
-        lineData.labels.length > 0 ? (
-          <Table columns={columns} dataSource={tableData} pagination={false} bordered />
-        ) : (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-            <Spin />
+      {lineData.labels.length > 0 ? (
+              <Table 
+                columns={columns} 
+                dataSource={tableData} 
+                pagination={false} 
+                style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', width: '80%', backgroundColor: '#fff' }} // Updated shadow and table background color
+              />
+          ) : (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              <Spin />
             {/* <p>Loading chart data...</p> */}
           </div>
         )
@@ -207,7 +211,7 @@ const MonthAhead = () => {
         </div>
       )}
       {/* <Table columns={columns} dataSource={tableData} pagination={false} /> */}
-      <div style={{ padding: '20px' }}>
+      <div style={{ padding: '20px', width: '80%' }}>
         <Row justify="space-between">
           <Col>
             <Button onClick={() => navigate('/px/consumer/statistical-information-month')}>Historical Trend</Button>

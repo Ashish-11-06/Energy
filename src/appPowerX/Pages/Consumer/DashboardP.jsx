@@ -47,6 +47,16 @@ const DashboardP = () => {
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
 // console.log(user_id);
 
+  const nextDay = new Date();
+  nextDay.setDate(nextDay.getDate() + 1);
+  const nextDayDate = nextDay.toLocaleDateString();
+
+  const cardStyle = {
+    margin: "20px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    height: "400px", // Ensure all cards are the same height
+  };
+
   useEffect(() => {
     const id=user_id;
     const fetchData = async () => {
@@ -145,7 +155,7 @@ console.log(dashboardData);
       // },
       title: {
         display: true,
-        text: 'Energy Consumption Over Time',
+        text: `Energy Demand for ${nextDayDate}`,
         font: {
           size: 18,
         },
@@ -247,14 +257,10 @@ console.log(dashboardData);
 
   return (
     <div style={{ padding: "3%" }}>
-      <Typography.Title level={3}>
-        Energy Demand Pattern (15-03-2025)
-      </Typography.Title>
-      <Card style={{ margin: "20px" }}>
-      <Typography.Title level={3} style={{textAlign:'center'}}>State wise Requirements</Typography.Title>
-
+      <Card style={cardStyle}>
+        <Typography.Title level={3} style={{ textAlign: 'center' }}>State wise Requirements</Typography.Title>
         <Row>
-        <Col span={12}>
+          <Col span={12}>
             {/* <Typography.Title level={4}>State wise Requirements</Typography.Title> */}
             <Col  style={{ marginBottom: "20px" ,marginTop:'30px'}}>
               <div
@@ -281,18 +287,18 @@ console.log(dashboardData);
             </Col>
           </Col>
           <Col span={12}>
-        <Table 
-          columns={stateColumn} 
-          dataSource={stateData} 
-          pagination={false}
-          bordered
-          
-          // style={{width:'70%',textAlign:'center',marginLeft:'15%'}} 
-        />
-        </Col>
+            <Table 
+              columns={stateColumn} 
+              dataSource={stateData} 
+              pagination={false}
+              bordered
+              
+              // style={{width:'70%',textAlign:'center',marginLeft:'15%'}} 
+            />
+          </Col>
         </Row>
       </Card>
-      <Card style={{ height: "50%" }}>
+      <Card style={cardStyle}>
         <Col span={24} style={{ marginBottom: "20px" }}>
           <div
             style={{
@@ -310,13 +316,11 @@ console.log(dashboardData);
           </div>
         </Col>
       </Card>
-      
-      <Card style={{ margin: "2px" }}>
+      <Card style={cardStyle}>
         <Row gutter={[16, 16]} justify="space-between">
-          {/* First Column */}
-          <Col span={12} style={{textAlign:'center'}}>
+          <Col span={12} style={{ textAlign: 'center' }}>
             <Typography.Title level={4}>PowerX Overview</Typography.Title>
-            <Col style={{marginTop:'30px'}}>
+            <Col style={{ marginTop: '30px' }}>
               <img 
                 src={market} 
                 alt=""  
@@ -324,24 +328,22 @@ console.log(dashboardData);
               />
               <span 
                 onClick={handleUpcomingMarket} 
-                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)' ,fontSize:'15px'}} // Default color
+                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)', fontSize: '15px', fontWeight: 'bold' }} // Default color
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
                 onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
-            
               >
                 Upcoming Market
               </span>
             </Col>
-
-            <Col style={{marginTop:'30px'}}>
+            <Col style={{ marginTop: '30px' }}>
               <img 
                 src={statistics}  
                 alt="" 
-                style={{ height: '20px', width: '20px', marginRight: '10px'}} 
+                style={{ height: '20px', width: '20px', marginRight: '10px' }} 
               />
               <span 
                 onClick={handleMarketStatistics} 
-                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)',fontSize:'15px' }} // Default color
+                style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)', fontSize: '15px', fontWeight: 'bold' }} // Default color
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
                 onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
               >
@@ -349,49 +351,19 @@ console.log(dashboardData);
               </span>
             </Col>
           </Col>
-
-          {/* Second Column
-          <Col span={8}>
-            <Typography.Title level={4}>State-wise Energy Demand</Typography.Title>
-            <Col span={12} style={{ marginBottom: "20px" }}>
-              <div
-                style={{
-                  width: "100%",
-                  height: "100px",
-                  margin: "0 auto",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  display: "flex"
-                }}
-              >
-                <Doughnut
-                  data={doughnutData}
-                  options={chartDoughnutOptions}
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                    display: "flex",
-                    margin: "0 auto",
-                  }}
-                />
-              </div>
-            </Col>
-          </Col>  */}
-
-          {/* Third Column */}
-          <Col span={12} style={{textAlign:''}}>
-            <Typography.Title level={4}>
-            Executed Trade Summary
-            </Typography.Title>
-            <ul>
-            <li>Ask Price<span style={{fontSize:'12px'}}>(INR/MWh)</span> : 4</li>
-            <li>Executed Price <span style={{fontSize:'12px'}}>(INR/MWh)</span> : 4</li>
-              {/* <li>Best Price: 4</li> */}
+          <Col span={12} style={{ textAlign: 'center' }}>
+            <Typography.Title level={4}>Executed Trade Summary</Typography.Title>
+            <ul style={{ listStyleType: 'none', padding: 0 }}>
+              <li style={{ marginBottom: '10px' }}>
+                <strong>Ask Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
+              </li>
+              <li>
+                <strong>Executed Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
+              </li>
             </ul>
           </Col>
         </Row>
-        </Card>
-      
+      </Card>
     </div>
   );
 };
