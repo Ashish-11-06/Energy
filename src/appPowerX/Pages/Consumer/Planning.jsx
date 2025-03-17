@@ -230,20 +230,22 @@ const Planning = () => {
   };
 
   return (
-    <div>
+    <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', position: 'relative' }}> {/* Changed background color and set minHeight */}
       <div style={{ padding: '20px' }}>
         <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
           <h1 style={{ margin: 0 }}>Energy Planner</h1>
-          <Button style={{ marginRight: '-50%' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
-          <Button onClick={handleAddDetailsClick} style={{color:'black',marginLeft:'10px'}}>
+          <Button style={{ marginRight: '-50%', backgroundColor: '#388e3c', borderColor: '#388e3c' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
+          <Button onClick={handleAddDetailsClick} style={{color:'black',marginLeft:'10px', backgroundColor: '#ff5722', borderColor: '#ff5722' }}>
           Schedule Trade
           </Button>
         </Row>
         {loading ? (
-          <Spin tip="Loading..." style={{ marginTop: '20px' }} />
+          <div style={{ textAlign: 'center', padding: '20px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+            <Spin tip="Loading..." />
+          </div>
         ) : !showTable ? (
           <Col span={24}>
-            <Card style={{ width: '90%', margin: 'auto', padding: '10px' }}>
+            <Card style={{ width: '90%', margin: 'auto', padding: '10px', backgroundColor: '#fff' }}> {/* Updated card background color */}
               <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
                 <Button icon={<LeftOutlined />} onClick={handlePrevMonth} />
                 <h2>{dayjs(currentMonth).format('MMMM YYYY')}</h2>
@@ -261,7 +263,7 @@ const Planning = () => {
           </Col>
         ) : (
           <Col span={24}>
-            <Card style={{ width: '90%', margin: 'auto' }}>
+            <Card style={{ width: '90%', margin: 'auto', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff' }}> {/* Updated shadow and card background color */}
               <Table dataSource={tableData} columns={columns} pagination={false} bordered />
             </Card>
           </Col>

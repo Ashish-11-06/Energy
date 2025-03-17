@@ -1,4 +1,4 @@
- /* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars */
 
 import React from 'react'
 
@@ -251,21 +251,7 @@ export default StatisticalInfoMonthG
 //                         },
 //                       },
 //                       plugins: {
-//                         zoom: {
-//                           pan: {
-//                             enabled: true,
-//                             mode: 'x',
-//                           },
-//                           zoom: {
-//                             wheel: {
-//                               enabled: true,
-//                             },
-//                             pinch: {
-//                               enabled: true,
-//                             },
-//                             mode: 'x',
-//                           },
-//                         },
+//                         // Removed zoom plugin configuration
 //                       },
 //                     }} 
 //                   />
@@ -303,21 +289,7 @@ export default StatisticalInfoMonthG
 //                         },
 //                       },
 //                       plugins: {
-//                         zoom: {
-//                           pan: {
-//                             enabled: true,
-//                             mode: 'x',
-//                           },
-//                           zoom: {
-//                             wheel: {
-//                               enabled: true,
-//                             },
-//                             pinch: {
-//                               enabled: true,
-//                             },
-//                             mode: 'x',
-//                           },
-//                         },
+//                         // Removed zoom plugin configuration
 //                       },
 //                     }} 
 //                   />
@@ -368,21 +340,7 @@ export default StatisticalInfoMonthG
 //                         },
 //                       },
 //                       plugins: {
-//                         zoom: {
-//                           pan: {
-//                             enabled: true,
-//                             mode: 'x',
-//                           },
-//                           zoom: {
-//                             wheel: {
-//                               enabled: true,
-//                             },
-//                             pinch: {
-//                               enabled: true,
-//                             },
-//                             mode: 'x',
-//                           },
-//                         },
+//                         // Removed zoom plugin configuration
 //                       },
 //                     }} 
 //                   />

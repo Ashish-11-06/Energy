@@ -188,21 +188,6 @@ const StatisticalInformationG = () => {
                           position: 'bottom',
                           align: 'end',
                         },
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                        },
                       },
                     }} 
                   />
@@ -243,21 +228,6 @@ const StatisticalInformationG = () => {
                         legend: {
                           position: 'bottom',
                           align: 'end',
-                        },
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
                         },
                       },
                     }} 
@@ -313,21 +283,6 @@ const StatisticalInformationG = () => {
                           position: 'bottom',
                           align: 'end',
                         },
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                        },
                       },
                     }} 
                   />
@@ -345,16 +300,7 @@ const StatisticalInformationG = () => {
       <div style={{ padding: '20px' }}>
       <Col>
             <Button style={{marginLeft:'90%'}} onClick={handleDay} icon={<BackwardOutlined />}>Back</Button>
-          </Col>
-        <Row justify="space-between">
-          {/* <Col style={{marginLeft:'75%'}}>
-          {/* <Col style={{marginLeft:'75%'}}>
-            <Button onClick={handleMonth}>Month Ahead</Button>
-          </Col> */}
-          <Col style={{marginLeft:'82%'}}>
-            <Button onClick={handleDay}>Day Ahead</Button>
-          </Col>
-        </Row>
+      </Col>
       </div>
     </div>
   );

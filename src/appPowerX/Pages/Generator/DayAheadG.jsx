@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Button, Select, Table, Row, Col, Card,Spin } from 'antd';
+import { Button, Select, Table, Row, Col, Card, Spin } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
-import zoomPlugin from 'chartjs-plugin-zoom';
+// import zoomPlugin from 'chartjs-plugin-zoom'; // Removed zoom plugin import
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { dayAheadData } from '../../Redux/slices/consumer/dayAheadSlice';
@@ -11,7 +11,7 @@ import { BlockOutlined, AppstoreOutlined, CheckCircleOutlined } from "@ant-desig
 import { color } from 'framer-motion';
 
 // Register Chart.js components and plugins
-ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
+ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale);
 
 const { Option } = Select;
 
@@ -19,8 +19,8 @@ const DayAheadG = () => {
   const [tableData, setTableData] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
- const [statistiicsData, setStatisticsData] = useState([]);
- const [loading,setLoading] = useState(false);
+  const [statistiicsData, setStatisticsData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [detailDataSource, setDetailDataSource] = useState([
     {
       key: 'max',
@@ -41,11 +41,11 @@ const DayAheadG = () => {
       mcv: 0,
     },
   ]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-    setLoading(true);
-        
+        setLoading(true);
         const data = await dispatch(dayAheadData()).unwrap();
         console.log(data);
         
@@ -53,17 +53,14 @@ const DayAheadG = () => {
         const mcvData = data.predictions.map(item => item.mcv_prediction);
 
         setTableData([{ MCP: mcpData, MCV: mcvData }]);
-
         setStatisticsData(data.statistics);
-setLoading(false);
-        // setTableData(data ? [data] : []); // Ensure data is an array
+        setLoading(false);
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
   }, [dispatch]);
-console.log(statistiicsData);
 
   useEffect(() => {
     if (statistiicsData.mcp && statistiicsData.mcv) {
@@ -91,27 +88,27 @@ console.log(statistiicsData);
   }, [statistiicsData]);
 
   const data = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1), // Updated X-axis labels
+    labels: Array.from({ length: 96 }, (_, i) => i + 1),
     datasets: [
       {
-        label: 'MCP (INR/MWh)', // Label for MCP dataset
-        data: tableData[0]?.MCP || [], // Updated data for MCP
+        label: 'MCP (INR/MWh)',
+        data: tableData[0]?.MCP || [],
         borderColor: 'blue',
         fill: false,
-        font:{
+        font: {
           weight: 'bold',
         },
-        yAxisID: 'y-axis-mcp', // Assign to right Y-axis
+        yAxisID: 'y-axis-mcp',
       },
       {
-        label: 'MCV (MWh)', // Label for MCY dataset
-        data: tableData[0]?.MCV || [], // Updated data for MCY
+        label: 'MCV (MWh)',
+        data: tableData[0]?.MCV || [],
         borderColor: 'green',
         fill: false,
-        font:{
+        font: {
           weight: 'bold',
         },
-        yAxisID: 'y-axis-mcv', // Assign to left Y-axis
+        yAxisID: 'y-axis-mcv',
       },
     ],
   };
@@ -123,18 +120,17 @@ console.log(statistiicsData);
         type: 'linear',
         position: 'bottom',
         ticks: {
-          autoSkip: false, // Ensure all ticks are shown
-          maxTicksLimit: 96, // Ensure at least 96 ticks are shown
+          autoSkip: false,
+          maxTicksLimit: 96,
         },
         title: {
           display: true,
           text: '96 time blocks',
-          font:{
+          font: {
             weight: 'bold',
             size: 16,
-          }
+          },
         },
-        
       },
       'y-axis-mcv': {
         type: 'linear',
@@ -144,13 +140,13 @@ console.log(statistiicsData);
         title: {
           display: true,
           text: 'MCV (MWh)',
-          font:{
+          font: {
             weight: 'bold',
-          }
+          },
         },
-         ticks: {
-                  color: 'green', // Set scale number color for MCV
-                },
+        ticks: {
+          color: 'green',
+        },
       },
       'y-axis-mcp': {
         type: 'linear',
@@ -159,49 +155,23 @@ console.log(statistiicsData);
         title: {
           display: true,
           text: 'MCP (INR/MWh)',
-          font:{
+          font: {
             weight: 'bold',
-          }
+          },
         },
-         ticks: {
-                  color: 'blue', // Set scale number color for MCV
-                },
+        ticks: {
+          color: 'blue',
+        },
         grid: {
-          drawOnChartArea: false, // Only draw grid lines for one Y-axis
+          drawOnChartArea: false,
         },
       },
     },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom', // Position legends at the bottom
-        align: 'end', // Align legends to the right
-        labels: {
-          // usePointStyle: true, // Use point style for legend items
-          padding: 20, // Add padding around legend items
-        },
-      },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x',
-        },
-      },
-      title: {
-        display: true,
-        text: 'Day Ahead Market Forecast',
-        font: {
-          size: 18,
-        },
+    title: {
+      display: true,
+      text: 'Day Ahead Market Forecast',
+      font: {
+        size: 18,
       },
     },
   };
@@ -224,7 +194,6 @@ console.log(statistiicsData);
     },
   ];
 
-
   const handleNextTrade = () => {
     navigate('/px/generator/plan-day-trade-page');
   };
@@ -236,32 +205,19 @@ console.log(statistiicsData);
   return (
     <div style={{ padding: '20px' }}>
       <h1>Market Forecast - Day Ahead</h1>
-      {/* <div style={{ display: "flex", gap: "15px", fontSize: "24px", color: "#669800" }}>
-      <BlockOutlined />   
-      <AppstoreOutlined /> 
-      <CheckCircleOutlined /> 
-    </div> */}
-            <Card style={{height: '500px', width: '100%'}}>
-    {tableData.length === 0 && loading ? (
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          <Spin />
-        </div>
-      ) :(
-        <div style={{ height: '500px', width: '100%' }}>
-          <Line data={data} options={options} style={{height: '300px', width: 'full',padding:'25px',marginLeft:'100px'}}/>
-        </div>
-      )}
+      <Card style={{ height: '500px', width: '100%' }}>
+        {tableData.length === 0 && loading ? (
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            <Spin />
+          </div>
+        ) : (
+          <div style={{ height: '500px', width: '100%' }}>
+            <Line data={data} options={options} style={{ height: '300px', width: 'full', padding: '25px', marginLeft: '100px' }} />
+          </div>
+        )}
       </Card>
-      {/* <Card style={{height: '500px', width: '100%'}}>
-        <div style={{ height: '500px', width: '100%' }}>
-          <Line data={data} options={options} style={{height: '300px', width: 'full',padding:'25px',marginLeft:'100px'}}/>
-        </div>
-      </Card> */}
       <h2></h2>
       <Table columns={detailColumns} dataSource={detailDataSource} pagination={false} />
-      
-      {/* <Table columns={columns} dataSource={Array.isArray(tableData) ? tableData : []} pagination={false} /> */}
-
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
           <Col>

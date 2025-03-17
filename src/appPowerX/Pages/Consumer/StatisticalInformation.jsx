@@ -179,21 +179,6 @@ const StatisticalInformation = () => {
       },
     },
     plugins: {
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x',
-        },
-      },
       legend: {
         display: true,
         position: 'bottom', // Position legends at the bottom
@@ -274,21 +259,6 @@ const StatisticalInformation = () => {
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                        },
                         legend: {
                           display: true,
                           position: 'bottom', // Position legends at the bottom
@@ -335,21 +305,6 @@ const StatisticalInformation = () => {
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                        },
                         legend: {
                           display: true,
                           position: 'bottom', // Position legends at the bottom
