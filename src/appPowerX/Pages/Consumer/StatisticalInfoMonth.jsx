@@ -291,30 +291,30 @@ const dummyMCPData = [
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                          legend: {
-                            display: true,
-                            position: 'bottom', // Position legends at the bottom
-                            align: 'end', // Align legends to the right
-                            labels: {
-                              // usePointStyle: true, // Use point style for legend items
-                              padding: 20, // Add padding around legend items
-                            },
-                          },
-                        },
+                        // zoom: {
+                        //   pan: {
+                        //     enabled: true,
+                        //     mode: 'x',
+                        //   },
+                        //   zoom: {
+                        //     wheel: {
+                        //       enabled: true,
+                        //     },
+                        //     pinch: {
+                        //       enabled: true,
+                        //     },
+                        //     mode: 'x',
+                        //   },
+                        //   legend: {
+                        //     display: true,
+                        //     position: 'bottom', // Position legends at the bottom
+                        //     align: 'end', // Align legends to the right
+                        //     labels: {
+                        //       // usePointStyle: true, // Use point style for legend items
+                        //       padding: 20, // Add padding around legend items
+                        //     },
+                        //   },
+                        // },
                       },
                     }} 
                   />
@@ -352,30 +352,30 @@ const dummyMCPData = [
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                          legend: {
-                            display: true,
-                            position: 'bottom', // Position legends at the bottom
-                            align: 'end', // Align legends to the right
-                            labels: {
-                              // usePointStyle: true, // Use point style for legend items
-                              padding: 20, // Add padding around legend items
-                            },
-                          },
-                        },
+                        // zoom: {
+                        //   pan: {
+                        //     enabled: true,
+                        //     mode: 'x',
+                        //   },
+                        //   zoom: {
+                        //     wheel: {
+                        //       enabled: true,
+                        //     },
+                        //     pinch: {
+                        //       enabled: true,
+                        //     },
+                        //     mode: 'x',
+                        //   },
+                        //   legend: {
+                        //     display: true,
+                        //     position: 'bottom', // Position legends at the bottom
+                        //     align: 'end', // Align legends to the right
+                        //     labels: {
+                        //       // usePointStyle: true, // Use point style for legend items
+                        //       padding: 20, // Add padding around legend items
+                        //     },
+                        //   },
+                        // },
                       },
                     }} 
                   />

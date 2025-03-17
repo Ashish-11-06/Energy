@@ -76,6 +76,7 @@ import LoginPage from './appPowerX/Pages/LoginPage';
 import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
 import NotificationG from './appPowerX/Pages/Generator/NotificationG';
 import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
+import WhatWeOfferP from './appPowerX/Pages/WhatWeOffer';
 // import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
 
 const CurrentPath = () => {
@@ -179,6 +180,7 @@ function App() {
       {/* Common Chat Page Route */}
 
       <Route path="chat-page" element={<ChatPage />} />
+      {/* <Route path="what-we-offer" element={<WhatWeOfferP/>} /> */}
 
       {/* Consumer Routes */}
       <Route path="consumer">

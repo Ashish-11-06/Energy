@@ -14,12 +14,14 @@ ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend
 const MonthAhead = () => {
   const [tableData, setTableData] = useState([]);
   const [lineData, setLineData] = useState({ labels: [], datasets: [] });
+  const [loading,setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const data = await dispatch(fetchMonthAheadData());
         const responseData = data.payload;
 
@@ -73,6 +75,8 @@ const MonthAhead = () => {
               mcv: responseData.overall_stats?.mcv_prediction?.average ?? 0,
             },
           ]);
+
+          setLoading(false);
         } else {
           console.error("Error: daily_data is missing or not an array", responseData);
           setLineData({ labels: [], datasets: [] });
@@ -137,21 +141,21 @@ const MonthAhead = () => {
           padding: 20,
         },
       },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x',
-        },
-      },
+      // zoom: {
+      //   pan: {
+      //     enabled: true,
+      //     mode: 'x',
+      //   },
+      //   zoom: {
+      //     wheel: {
+      //       enabled: true,
+      //     },
+      //     pinch: {
+      //       enabled: true,
+      //     },
+      //     mode: 'x',
+      //   },
+      // },
     },
   };
 
@@ -188,14 +192,20 @@ const MonthAhead = () => {
         </div>
       </Card> */}
       <div style={{ margin: '20px 0' }}></div>
-      {lineData.labels.length > 0 ? (
-              <Table columns={columns} dataSource={tableData} pagination={false} />
-          ) : (
-            <div style={{ textAlign: 'center', padding: '20px' }}>
-              <Spin />
+      {!loading ? (
+        lineData.labels.length > 0 ? (
+          <Table columns={columns} dataSource={tableData} pagination={false} bordered />
+        ) : (
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            <Spin />
             {/* <p>Loading chart data...</p> */}
-            </div>
-          )}
+          </div>
+        )
+      ) : (
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          <Spin />
+        </div>
+      )}
       {/* <Table columns={columns} dataSource={tableData} pagination={false} /> */}
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">

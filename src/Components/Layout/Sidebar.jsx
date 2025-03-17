@@ -98,13 +98,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Track Status', key: '/consumer/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 console.log(is_new_user);
-if(subscription_type === 'PRO') {
-  if (is_new_user==true) {
-    consumerMenuItems.push({ label: 'powerX', key: '/px/consumer/plan-trade-page' });
-  } else {
-    consumerMenuItems.push({ label: 'powerX', key: '/px/consumer/dashboard' });
-  }
-}
 
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
@@ -155,16 +148,17 @@ if(subscription_type === 'PRO') {
     { label: 'Track Status', key: '/generator/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
     {label: 'Analyse Modal', key: '/generator/GeneratorInput', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />},
   ];
-  if(subscription_type === 'PRO') {
-    if (is_new_user==true) {
-      generatorMenuItems.push({ label: 'powerX', key: '/px/generator/day-ahead' });
-    } else {
-      generatorMenuItems.push({ label: 'powerX', key: '/px/generator/dashboard' });
-    }
-  }
 
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
+
+  if (subscription_type === 'PRO') {
+    if (is_new_user == true) {
+      menuItems.push({ label: 'powerX', key: menuType === 'consumer' ? '/px/consumer/plan-trade-page' : '/px/generator/day-ahead' });
+    } else {
+      menuItems.push({ label: 'powerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' });
+    }
+  }
 
   useEffect(() => {
     // Update selectedKey whenever the location changes

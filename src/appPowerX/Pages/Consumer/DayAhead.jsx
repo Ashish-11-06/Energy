@@ -204,21 +204,21 @@ console.log('table data',detailDataSource);
           padding: 20, // Add padding around legend items
         },
       },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x',
-        },
-      },
+      // zoom: {
+      //   pan: {
+      //     enabled: true,
+      //     mode: 'x',
+      //   },
+      //   zoom: {
+      //     wheel: {
+      //       enabled: true,
+      //     },
+      //     pinch: {
+      //       enabled: true,
+      //     },
+      //     mode: 'x',
+      //   },
+      // },
       title: {
         display: true,
         text: 'Day Ahead Market Forecast',
@@ -257,7 +257,7 @@ console.log('table data',detailDataSource);
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Market Forecast - Day Ahead</h1>
+      <h1>Market Forecast - Day Ahead (15-03-2025)</h1>
       <Card style={{height: '500px', width: '100%'}}>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '20px' }}>

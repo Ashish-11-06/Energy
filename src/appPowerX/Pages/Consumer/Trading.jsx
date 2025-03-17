@@ -98,21 +98,21 @@ const Trading = () => {
           padding: 20, // Add padding around legend items
         },
       },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x',
-        },
-      },
+      // zoom: {
+      //   pan: {
+      //     enabled: true,
+      //     mode: 'x',
+      //   },
+      //   zoom: {
+      //     wheel: {
+      //       enabled: true,
+      //     },
+      //     pinch: {
+      //       enabled: true,
+      //     },
+      //     mode: 'x',
+      //   },
+      // },
       title: {
         display: true,
         text: 'Plan vs Trade Data',
@@ -145,21 +145,34 @@ const Trading = () => {
         {/* Trading Volume Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TRADING VOLUME" value={8.324} style={{color:'white',fontWeight:'bold'}} />
+            <Statistic title="TRADING VOLUME" value={8.324} style={{color:'white',fontWeight:'bold'}}  formatter={(value) => (
+    <span>
+      {value} <span style={{ fontSize: '12px' }}>MW</span>
+    </span>
+  )}/>
           </Card>
         </Col>
 
         {/* Price Per Unit Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="PRICE PER UNIT" value={6.203} style={{color:'white',fontWeight:'bold'}} />
+            <Statistic title="ASK PRICE" value={3.4} style={{color:'white',fontWeight:'bold'}} formatter={(value) => (
+    <span>
+      {value} <span style={{ fontSize: '12px' }}>INR/MWh</span>
+    </span>
+  )}/> 
           </Card>
         </Col>
 
         {/* Planning Costs Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800' ,textAlign:'center'}}>
-            <Statistic title="PLANNING COSTS" value={64900} style={{color:'white',fontWeight:'bold'}} />
+            <Statistic title="EXECUTED PRICE"  value={3.6} style={{color:'white',fontWeight:'bold'}}  formatter={(value) => (
+    <span>
+      {value} <span style={{ fontSize: '12px' }}>INR/MWh</span>
+    </span>
+  )}/>
+            
           </Card>
         </Col>
       </Row>
@@ -175,16 +188,16 @@ const Trading = () => {
       </Card>
 
       {/* Chat with Expert Section */}
-      <div style={{ padding: '20px' }}>
-        <Row justify="space-between">
+      {/* <div style={{ padding: '20px' }}>
+        <Row justify="space-between"> */}
           {/* <Col>
             <Button onClick={handleTradingStatus}>Trading Status</Button>
           </Col> */}
-          <Col>
+          {/* <Col>
             <Button onClick={handleChat} style={{marginLeft:'1000px'}}>Chat with Expert</Button>
-          </Col>
-        </Row>
-      </div>
+          </Col> */}
+        {/* </Row>
+      </div> */}
     </div>
   );
 };

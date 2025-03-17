@@ -40,6 +40,18 @@ const Planning = () => {
   const [isInputModalVisible, setIsInputModalVisible] = useState(false); // Separate state for input modal
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [selectedUnitDetails, setSelectedUnitDetails] = useState(null);
+  const [selectedInterval, setSelectedInterval] = useState(null); // Add state for selected interval
+
+  const handleDateIntervalChange = (value) => {
+    setSelectedInterval(value);
+    if (value === 'today') {
+      setSelectedDate(dayjs());
+    } else if (value === 'tomorrow') {
+      setSelectedDate(dayjs().add(1, 'day'));
+    } else if (value === 'next15days') {
+      setSelectedDate(dayjs().add(15, 'day'));
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -294,13 +306,25 @@ const Planning = () => {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+        {/* <Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
           <DatePicker
             style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
             format="DD/MM/YYYY"
             disabledDate={(current) => current && current <= new Date()}
             onChange={(date) => setSelectedDate(date)}
           />
+        </Form.Item> */}
+        <Form.Item label="Select Date Interval" style={{ fontSize: '24px' }}>
+          <Select
+            value={selectedInterval || undefined}
+            onChange={handleDateIntervalChange}
+            style={{ width: "100%", borderColor: "#669800" }}
+            placeholder="Select Date Interval"
+          >
+            <Select.Option key="tomorrow" value="tomorrow">Tomorrow</Select.Option>
+            <Select.Option key="next15days" value="next15days">Next 15 Days</Select.Option>
+            <Select.Option key="next30days" value="next30days">Next 30 Days</Select.Option>
+          </Select>
         </Form.Item>
         <Form.Item label="Enter Demand (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
           <Input
