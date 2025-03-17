@@ -18,6 +18,15 @@ const MonthAhead = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const start_date = new Date(); 
+  start_date.setDate(start_date.getDate() + 1); // Set to tomorrow
+  
+  const end_date = new Date(start_date); // Copy start_date
+  end_date.setDate(start_date.getDate() + 30);
+
+  const startDateString = start_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const endDateString = end_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -175,11 +184,20 @@ const MonthAhead = () => {
       dataIndex: 'mcv',
       key: 'mcv',
     },
+    {
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+    },
+
   ];
 
   return (
-    <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}> {/* Changed background color and set minHeight */}
-      <h1>Market Forecast - Month Ahead</h1>
+    <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center'}}> {/* Changed background color and set minHeight */}
+      {/* <h1>Market Forecast - Month Ahead</h1> */}
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+        Market Forecast - Month Ahead <span style={{fontSize:'20px'}}>({startDateString} - {endDateString})</span>
+      </h1>
       {/* <Card style={{ width: 'full',marginLeft:'0' }}>
         <div style={{ height: '400px', width: '100%' }}>
           {lineData.labels.length > 0 ? (
@@ -191,25 +209,23 @@ const MonthAhead = () => {
           )}
         </div>
       </Card> */}
+      <Card style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff', width:'100%' }}> {/* Updated shadow and card background color */}
       <div style={{ margin: '20px 0' }}></div>
-      {lineData.labels.length > 0 ? (
+      {/* {lineData.labels.length > 0 ? ( */}
               <Table 
                 columns={columns} 
                 dataSource={tableData} 
                 pagination={false} 
-                style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', width: '80%', backgroundColor: '#fff' }} // Updated shadow and table background color
+                bordered
+                // style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', width: '80%', backgroundColor: '#fff' }} // Updated shadow and table background color
               />
-          ) : (
-            <div style={{ textAlign: 'center', padding: '20px' }}>
-              <Spin />
-            {/* <p>Loading chart data...</p> */}
-          </div>
-        )
-      ) : (
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          <Spin />
-        </div>
-      )}
+      {/* //     ) : (
+      //       <div style={{ textAlign: 'center', padding: '20px' }}>
+      //         <Spin />
+      //       </div>
+      //     )
+      // } */}
+      </Card>
       {/* <Table columns={columns} dataSource={tableData} pagination={false} /> */}
       <div style={{ padding: '20px', width: '80%' }}>
         <Row justify="space-between">

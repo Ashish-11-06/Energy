@@ -30,9 +30,12 @@ const NotificationP = () => {
 
   return (
     <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
-      <Title level={2} style={{ color: "#4B4B4B" }}>
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      Notifications
+      </h1>
+      {/* <Title level={2} style={{ color: "#4B4B4B" }}>
         Notifications
-      </Title>
+      </Title> */}
 
       <Row gutter={[16, 16]} justify="center">
       {(Array.isArray(notifications) ? notifications : []).map((notification) => (

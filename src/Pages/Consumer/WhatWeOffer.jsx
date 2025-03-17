@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, Statistic, Button, message, Spin } from 'antd';
 import { ThunderboltOutlined, DashboardOutlined, ApartmentOutlined, UserOutlined, LineChartOutlined } from '@ant-design/icons';
@@ -10,7 +11,7 @@ import TermsAndConditionModal from './Modal/TermsAndConditionModal';
 import { motion } from 'framer-motion';  // Import motion here
 import { FaRupeeSign } from 'react-icons/fa'; 
 import EXGLogo from '../../assets/EXG.png';
-
+// import './WhatWeOffer.css';
 
 const WhatWeOffer = () => {
   const navigate = useNavigate();
@@ -118,6 +119,7 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
                   title="Total projects"
                   bordered={false}
                   style={{
+                    color:'black',
                     width: '100%',
                     backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     borderRadius: '10px',
@@ -128,7 +130,7 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
                   <Statistic
                     value={data.total_portfolios}
                     prefix={<ThunderboltOutlined />}
-                    valueStyle={{ color: '#3f8600' }}
+                    valueStyle={{ color: 'black' }}
                     formatter={() => <CountUp start={0} end={data.total_portfolios} duration={3} />}
                   />
                 </Card>
@@ -150,8 +152,8 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
                   <Statistic
                     value={data.total_available_capacity}
                     prefix={<DashboardOutlined />}
-                    suffix="MW"
-                    valueStyle={{ color: '#cf1322' }}
+                    suffix={<span style={{ color: 'black' }}>MW</span>}
+                    valueStyle={{ color: 'black' }}
                     formatter={() => <CountUp start={0} end={data.total_available_capacity} duration={3} />}
                   />
                 </Card>
@@ -177,7 +179,7 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
                   <Statistic
                     value={data.consumer_count}
                     prefix={<UserOutlined />}
-                    valueStyle={{ color: '#3f8600' }}
+                    valueStyle={{ color: 'black' }}
                     formatter={() => <CountUp start={0} end={data.consumer_count} duration={3} />}
                   />
                 </Card>
@@ -199,8 +201,8 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
                   <Statistic
                     value={data.total_contracted_demand}
                     prefix={<LineChartOutlined />}
-                    suffix="MW"
-                    valueStyle={{ color: '#cf1322' }}
+                    suffix={<span style={{ color: 'black' }}>MW</span>}
+                    valueStyle={{ color: 'black' }}
                     formatter={() => <CountUp start={0} end={data.total_contracted_demand} duration={3} />}
                   />
                 </Card>
@@ -225,7 +227,7 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
                 value={data.unique_state_count}
                 // prefix={<ApartmentOutlined />}
                 prefix={<img src={map} alt="map" className="map" style={{ width: 40, height: 40 }} />}
-                valueStyle={{ color: '#1890ff' }}
+                valueStyle={{ color: 'black' }}
                 formatter={() => <CountUp start={0} end={data.unique_state_count} duration={3} />}
               />
             </Card>

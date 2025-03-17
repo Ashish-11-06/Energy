@@ -257,8 +257,8 @@ console.log('table data',detailDataSource);
 
   return (
     <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', position: 'relative' }}> {/* Changed background color and set minHeight */}
-      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#388e3c' }}>
-        Market Forecast - Day Ahead ({nextDay})
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+        Market Forecast - Day Ahead <span style={{fontSize:'20px'}}>({nextDay})</span>
       </h1>
       <Card style={{height: '500px', width: '100%', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff' }}> {/* Updated shadow and card background color */}
         {loading ? (
@@ -284,7 +284,7 @@ console.log('table data',detailDataSource);
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
           <Col>
-            <Button type="primary" onClick={handleStatistics} style={{ borderRadius: '5px', backgroundColor: '#388e3c', borderColor: '#388e3c' }}>Historical Trend</Button>
+            <Button type="primary" onClick={handleStatistics} style={{ borderRadius: '5px', backgroundColor: '#ff5722', borderColor: '#ff5722' }}>Historical Trend</Button>
           </Col>
           <Col>
             <Button type="primary" onClick={handleNextTrade} style={{ borderRadius: '5px', backgroundColor: '#ff5722', borderColor: '#ff5722' }}>Set Up Next-Day Trade</Button>

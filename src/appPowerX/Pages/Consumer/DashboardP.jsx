@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Card, Col, Typography, Row, Table, Spin} from "antd";
+import { Card, Col, Typography, Row, Table, Spin, message} from "antd";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -56,6 +56,12 @@ const DashboardP = () => {
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
     height: "400px", // Ensure all cards are the same height
   };
+  const cardThirdStyle = {
+    margin: "20px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    height: "250px", // Ensure all cards are the same height
+  };
+
 
   useEffect(() => {
     const id=user_id;
@@ -71,14 +77,25 @@ console.log(dashboardData);
 
   useEffect(() => {
     const id=user_id;
-    const fetchLineData = async () => {
-      setLoading(true);
-      const res = await dispatch(fetchDashboardLine(id));
-      console.log(res.payload);
-      setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
-      setLoading(false);
-    };
-    fetchLineData();
+    try {
+      const fetchLineData = async () => {
+        setLoading(true);
+        const res = await dispatch(fetchDashboardLine(id)); 
+        console.log(res.payload);
+        if(res.error){
+        message.error(res.payload);
+        } else {
+        setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
+        }
+        // setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
+        setLoading(false);
+      };
+      fetchLineData();
+    } catch (error) {
+      message.error(error.message); 
+      console.log(error);
+    }
+ 
   }, [dispatch]);
 
   // Extract demand values from dashboardLine
@@ -122,7 +139,7 @@ console.log(dashboardData);
         max: 100,
         title: {
           display: true,
-          text: '96 time blocks',
+          text: 'Time (15-minute intervals)',
           font: {
             weight: 'bold',
           }
@@ -257,6 +274,9 @@ console.log(dashboardData);
 
   return (
     <div style={{ padding: "3%" }}>
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      Energy Demand Pattern
+      </h1>
       <Card style={cardStyle}>
         <Typography.Title level={3} style={{ textAlign: 'center' }}>State wise Requirements</Typography.Title>
         <Row>
@@ -287,15 +307,16 @@ console.log(dashboardData);
             </Col>
           </Col>
           <Col span={12}>
-            <Table 
-              columns={stateColumn} 
-              dataSource={stateData} 
-              pagination={false}
-              bordered
-              
-              // style={{width:'70%',textAlign:'center',marginLeft:'15%'}} 
-            />
-          </Col>
+  <Table
+    columns={stateColumn}
+    dataSource={stateData}
+    pagination={false} // Disable pagination
+    bordered
+    scroll={{ x: true, y: 300 }} // Enables horizontal and vertical scrolling
+    style={{ maxHeight: "300px", overflowY: "auto" }} // Ensures the column does not exceed this height
+  />
+</Col>
+
         </Row>
       </Card>
       <Card style={cardStyle}>
@@ -316,7 +337,7 @@ console.log(dashboardData);
           </div>
         </Col>
       </Card>
-      <Card style={cardStyle}>
+      <Card style={cardThirdStyle}>
         <Row gutter={[16, 16]} justify="space-between">
           <Col span={12} style={{ textAlign: 'center' }}>
             <Typography.Title level={4}>PowerX Overview</Typography.Title>

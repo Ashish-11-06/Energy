@@ -9,6 +9,7 @@ import { fetchDayAheadData, fetchMCPData, fetchMCVData } from '../../Redux/slice
 import { useDispatch } from 'react-redux';
 import './DayAhead.css';
 import { fetchAccuracyData } from '../../Redux/slices/consumer/monthAccuracySlice';
+import { BackwardOutlined } from '@ant-design/icons';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -239,7 +240,10 @@ const dummyMCPData = [
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Model Statistical Information</h1>
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      Model Statistical Information
+      </h1>
+      {/* <h1>Model Statistical Information</h1> */}
 
       {/* Dropdown for Technology Selection */}
       {/* <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '70%', marginBottom: '10px'}}>
@@ -461,13 +465,14 @@ const dummyMCPData = [
       )}
 
       {/* Table Display */}
+      <Card style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff'}}>
       <Table columns={columns} dataSource={dataSource} pagination={false} bordered style={{ marginTop: '20px' }} />
-
+      </Card>
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
-          <Col style={{marginLeft:'83%'}}>
-            <Button onClick={handleMonth}>Month Ahead</Button>
+          <Col style={{marginLeft:'90%'}}>
+            <Button onClick={handleMonth} icon={<BackwardOutlined/>}>Back</Button>
           </Col>
           {/* <Col>
             <Button onClick={handleDay}>Day Ahead</Button>

@@ -41,6 +41,8 @@ const Planning = () => {
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [selectedUnitDetails, setSelectedUnitDetails] = useState(null);
   const [selectedInterval, setSelectedInterval] = useState(null); // Add state for selected interval
+  const [startDate, setStartDate] = useState(null); // Add state for start date
+  const [endDate, setEndDate] = useState(null); // Add state for end date
 
   const handleDateIntervalChange = (value) => {
     setSelectedInterval(value);
@@ -48,8 +50,9 @@ const Planning = () => {
       setSelectedDate(dayjs());
     } else if (value === 'tomorrow') {
       setSelectedDate(dayjs().add(1, 'day'));
-    } else if (value === 'next15days') {
-      setSelectedDate(dayjs().add(15, 'day'));
+    } else if (value === 'next15days' || value === 'next30days') {
+      setStartDate(null); // Reset start date
+      setEndDate(null); // Reset end date
     }
   };
 
@@ -209,22 +212,23 @@ const Planning = () => {
   const columns = [
     { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 },
     { title: 'Demand (MWh)', dataIndex: 'demand', key: 'demand', rowSpan: 2, render: (text, record) => (
-        <Tooltip title="Click to view details">
-          <span style={{ color: 'rgb(154, 132, 6)', cursor: 'pointer' }} onClick={() => handleDemandClick(record)}>
+        <Tooltip title="">
+          <span style={{  cursor: 'pointer' }} onClick={() => handleDemandClick(record)}>
             {text}
           </span>
         </Tooltip>
       ),
     },
     { title: 'Technology & Price (INR/MWh)', dataIndex: 'technology', key: 'technology' },
+    { title: 'Requirement', dataIndex: 'requirements', key: 'requirements' },
   ];
 
   const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => ({
     key: item.requirement,
     date: item.date,
     demand: item.demand,
-    technology: `Solar: ${item.price?.Solar ?? 0}, Non-Solar: ${item.price?.["Non-Solar"] ?? 0} `,
-    price: `${item.price?.Solar ?? 0} INR (Solar), ${item.price?.["Non-Solar"] ?? 0} INR (Non-Solar)`,
+    technology: `${item.price?.Solar ? `Solar: ${item.price.Solar}` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `Non-Solar: ${item.price["Non-Solar"]}` : ''}`,
+    price: `${item.price?.Solar ? `${item.price.Solar} INR (Solar)` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `${item.price["Non-Solar"]} INR (Non-Solar)` : ''}`,
   })) : [];
 
 
@@ -245,9 +249,12 @@ const Planning = () => {
     <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', position: 'relative' }}> {/* Changed background color and set minHeight */}
       <div style={{ padding: '20px' }}>
         <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
-          <h1 style={{ margin: 0 }}>Energy Planner</h1>
-          <Button style={{ marginRight: '-50%', backgroundColor: '#388e3c', borderColor: '#388e3c' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
-          <Button onClick={handleAddDetailsClick} style={{color:'black',marginLeft:'10px', backgroundColor: '#ff5722', borderColor: '#ff5722' }}>
+        <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+        Energy Planner
+      </h1>
+          {/* <h1 style={{ margin: 0 }}>Energy Planner</h1> */}
+          <Button style={{ marginRight: '-50%', backgroundColor: '#669800', borderColor: '#669800',height:'40px' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
+          <Button onClick={handleAddDetailsClick} style={{color:'black',marginLeft:'10px', backgroundColor: '#ff5722',height:'40px', borderColor: '#ff5722' }}>
           Schedule Trade
           </Button>
         </Row>
@@ -308,14 +315,19 @@ const Planning = () => {
             ))}
           </Select>
         </Form.Item>
-        {/* <Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+        {
+          !selectedInterval && (
+<Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
           <DatePicker
             style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
             format="DD/MM/YYYY"
             disabledDate={(current) => current && current <= new Date()}
             onChange={(date) => setSelectedDate(date)}
           />
-        </Form.Item> */}
+        </Form.Item>
+          )
+        }
+        
         <Form.Item label="Select Date Interval" style={{ fontSize: '24px' }}>
           <Select
             value={selectedInterval || undefined}
@@ -323,11 +335,30 @@ const Planning = () => {
             style={{ width: "100%", borderColor: "#669800" }}
             placeholder="Select Date Interval"
           >
-            <Select.Option key="tomorrow" value="tomorrow">Tomorrow</Select.Option>
             <Select.Option key="next15days" value="next15days">Next 15 Days</Select.Option>
             <Select.Option key="next30days" value="next30days">Next 30 Days</Select.Option>
           </Select>
         </Form.Item>
+        {(selectedInterval === 'next15days' || selectedInterval === 'next30days') && (
+          <>
+            <Form.Item label="Select Start Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+              <DatePicker
+                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
+                format="DD/MM/YYYY"
+                disabledDate={(current) => current && current <= new Date()}
+                onChange={(date) => setStartDate(date)}
+              />
+            </Form.Item>
+            <Form.Item label="Select End Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+              <DatePicker
+                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
+                format="DD/MM/YYYY"
+                disabledDate={(current) => current && current <= new Date()}
+                onChange={(date) => setEndDate(date)}
+              />
+            </Form.Item>
+          </>
+        )}
         <Form.Item label="Enter Demand (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
           <Input
             type="number"

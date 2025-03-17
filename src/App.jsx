@@ -76,7 +76,8 @@ import LoginPage from './appPowerX/Pages/LoginPage';
 import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
 import NotificationG from './appPowerX/Pages/Generator/NotificationG';
 import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
-// import WhatWeOfferP from './appPowerX/Pages/WhatWeOffer';
+import WhatWeOfferP from './appPowerX/Pages/WhatWeOfferP';
+import TrackStatusP from './appPowerX/Pages/TrackStatus';
 // import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
 
 const CurrentPath = () => {
@@ -174,13 +175,16 @@ function App() {
 
        {/* PowerX routes */}
       <Route path="px-login" element={<LoginPage/>} />
-       <Route element={<PLayoutComponent />}>
+
     <Route path="px">
+    <Route path="what-we-offer" element={<WhatWeOfferP/>} />
+
+       <Route element={<PLayoutComponent />}>
       
       {/* Common Chat Page Route */}
 
       <Route path="chat-page" element={<ChatPage />} />
-      {/* <Route path="what-we-offer" element={<WhatWeOfferP/>} /> */}
+      <Route path="track-status" element={<TrackStatusP/>} />
 
       {/* Consumer Routes */}
       <Route path="consumer">

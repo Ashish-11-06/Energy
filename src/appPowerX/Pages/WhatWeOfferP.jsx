@@ -1,29 +1,29 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import { Row, Col, Card, Statistic, Button, Spin } from 'antd';
-import { ThunderboltOutlined, DashboardOutlined, ApartmentOutlined, UserOutlined, LineChartOutlined } from '@ant-design/icons';
-import map from '../../assets/map.png';
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox, Radio, Statistic } from 'antd';
+import { ThunderboltOutlined, DashboardOutlined, UserOutlined, LineChartOutlined } from '@ant-design/icons';
 import CountUp from 'react-countup';
 import { motion } from 'framer-motion';
-import { FaRupeeSign } from 'react-icons/fa';
-import EXGLogo from '../../assets/EXG.png';
-import TermsAndConditionModal from './Modal/TermsAndConditionModal';
+import map from '../assets/map.png';
+import { useNavigate } from 'react-router-dom';
 
 const WhatWeOfferP = () => {
-  const navigate = useNavigate();
-  const [isModal, setIsModal] = useState(false);
-  const [count, setCount] = useState(0);
-  const [targetAmount, setTargetAmount] = useState(1000000); // Example target amount
-
-  const user_category = 'Consumer'; // Example user category
-
-  const handleContinue = () => {
-    setIsModal(true);
+    const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user')).user;
+    const user_category = user?.user_category;
+  
+  const data = {
+    total_portfolios: 10,
+    total_available_capacity: 500,
+    consumer_count: 200,
+    total_contracted_demand: 300,
+    unique_state_count: 5,
   };
-
-  const formatNumberWithCommas = (number) => {
-    return number.toLocaleString('en-IN');
+  const targetAmount = 1000000; // Dummy data
+  const isModal = false; // Dummy data
+  const handleContinue = () => {
+    // Dummy function
+    navigate('/px/consumer/plan-trade-page');
   };
 
   return (
@@ -38,7 +38,7 @@ const WhatWeOfferP = () => {
       }}
     >
       <div className="logo-container">
-        <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
+        <img src="path/to/logo.png" alt="EXG Logo" className="exg-logo" />
       </div>
       <div
         style={{
@@ -64,21 +64,26 @@ const WhatWeOfferP = () => {
               <Col xs={24} sm={12} md={8} lg={8}>
                 <Card
                   hoverable
-                  title="Total projects"
+                  title="Total Executed Trades"
                   bordered={false}
                   style={{
                     width: '100%',
                     backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     borderRadius: '10px',
                     border: `1px solid #E6E8F1`,
+                    color:'black',
                     marginTop: `10px`,
                   }}
                 >
                   <Statistic
-                    value={100} // Example value
+                  value={5}
+                    // value={data.total_portfolios}
                     prefix={<ThunderboltOutlined />}
-                    valueStyle={{ color: '#3f8600' }}
-                    formatter={() => <CountUp start={0} end={100} duration={3} />}
+                    valueStyle={{ color: 'black' }}
+                    formatter={() => <CountUp start={0}
+                    end={5}
+                    //  end={data.total_portfolios} 
+                     duration={3} />}
                   />
                 </Card>
               </Col>
@@ -97,11 +102,11 @@ const WhatWeOfferP = () => {
                   }}
                 >
                   <Statistic
-                    value={200} // Example value
+                    value={data.total_available_capacity}
                     prefix={<DashboardOutlined />}
                     suffix="MW"
                     valueStyle={{ color: '#cf1322' }}
-                    formatter={() => <CountUp start={0} end={200} duration={3} />}
+                    formatter={() => <CountUp start={0} end={data.total_available_capacity} duration={3} />}
                   />
                 </Card>
               </Col>
@@ -124,10 +129,10 @@ const WhatWeOfferP = () => {
                   }}
                 >
                   <Statistic
-                    value={300} // Example value
+                    value={data.consumer_count}
                     prefix={<UserOutlined />}
                     valueStyle={{ color: '#3f8600' }}
-                    formatter={() => <CountUp start={0} end={300} duration={3} />}
+                    formatter={() => <CountUp start={0} end={data.consumer_count} duration={3} />}
                   />
                 </Card>
               </Col>
@@ -146,11 +151,11 @@ const WhatWeOfferP = () => {
                   }}
                 >
                   <Statistic
-                    value={400} // Example value
+                    value={data.total_contracted_demand}
                     prefix={<LineChartOutlined />}
                     suffix="MW"
                     valueStyle={{ color: '#cf1322' }}
-                    formatter={() => <CountUp start={0} end={400} duration={3} />}
+                    formatter={() => <CountUp start={0} end={data.total_contracted_demand} duration={3} />}
                   />
                 </Card>
               </Col>
@@ -171,10 +176,10 @@ const WhatWeOfferP = () => {
               }}
             >
               <Statistic
-                value={10} // Example value
+                value={data.unique_state_count}
                 prefix={<img src={map} alt="map" className="map" style={{ width: 40, height: 40 }} />}
                 valueStyle={{ color: '#1890ff' }}
-                formatter={() => <CountUp start={0} end={10} duration={3} />}
+                formatter={() => <CountUp start={0} end={data.unique_state_count} duration={3} />}
               />
             </Card>
           </Col>
@@ -214,9 +219,11 @@ const WhatWeOfferP = () => {
           </Button>
         </div>
       </div>
-      <TermsAndConditionModal visible={isModal} user_category={user_category} onCancel={() => setIsModal(false)} />
+      <Modal visible={isModal} onCancel={() => console.log('Modal closed')}>
+        {/* Modal content */}
+      </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default WhatWeOfferP;
+export default WhatWeOfferP

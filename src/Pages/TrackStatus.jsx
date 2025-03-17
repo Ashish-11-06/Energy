@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import '../Pages/TrackStatus.css'; // Import the CSS file for styling
 

@@ -217,7 +217,10 @@ const StatisticalInformation = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Model Statistical Information</h1>
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      Model Statistical Information
+      </h1>
+      {/* <h1>Model Statistical Information</h1> */}
 
       {/* Radio Buttons for Chart Selection */}
       <Radio.Group value={selectedType} onChange={handleChange}>

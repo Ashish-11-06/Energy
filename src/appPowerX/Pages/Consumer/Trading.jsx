@@ -8,7 +8,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { fetchTradingData } from '../../Redux/slices/consumer/tradingSlice';
-import './Trading.css';
+// import './Trading.css';
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
 
@@ -81,7 +81,7 @@ const Trading = () => {
         max: 100,
         title: {
           display: true,
-          text: '96 time blocks',
+          text: 'Time (15-minute intervals)',
           font:{
             weight:'bold',
             size:16,
@@ -134,18 +134,18 @@ const Trading = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <Row gutter={[16, 16]} >
+      <Row gutter={[16, 16]} style={{marginTop:'30px'}}>
         {/* Total Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TOTAL" value={493} suffix="+" style={{color:'white',fontWeight:'bold'}} />
+            <Statistic title="TOTAL" value={493} suffix="+" valueStyle={{color:'white'}} style={{color:'white',fontWeight:'bold'}} />
           </Card>
         </Col>
 
         {/* Trading Volume Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TRADING VOLUME" value={8.324} style={{color:'white',fontWeight:'bold'}}  formatter={(value) => (
+            <Statistic title="TRADING VOLUME" value={8.324} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
     <span>
       {value} <span style={{ fontSize: '12px' }}>MW</span>
     </span>
@@ -156,9 +156,9 @@ const Trading = () => {
         {/* Price Per Unit Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="ASK PRICE" value={3.4} style={{color:'white',fontWeight:'bold'}} formatter={(value) => (
+            <Statistic title="ASK PRICE" value={3.4} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
     <span>
-      {value} <span style={{ fontSize: '12px' }}>INR/MWh</span>
+      {value} <span style={{ fontSize: '12px', color:'white' }}>INR/MWh</span>
     </span>
   )}/> 
           </Card>
@@ -167,7 +167,7 @@ const Trading = () => {
         {/* Planning Costs Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800' ,textAlign:'center'}}>
-            <Statistic title="EXECUTED PRICE"  value={3.6} style={{color:'white',fontWeight:'bold'}}  formatter={(value) => (
+            <Statistic title="EXECUTED PRICE"  value={3.6} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
     <span>
       {value} <span style={{ fontSize: '12px' }}>INR/MWh</span>
     </span>

@@ -270,7 +270,7 @@ const stateColumn = [
       </Typography.Title>
       <Card style={{ margin: "20px" }}>
         <Typography.Title level={3} style={{textAlign:'center'}}>State wise Requirements</Typography.Title>
-        <Row>
+        {/* <Row>
           <Col span={12}>
             <div
               style={{
@@ -295,9 +295,48 @@ const stateColumn = [
           <Col span={12}>
             <Table columns={stateColumn} dataSource={stateData} pagination={false} />
           </Col>
-        </Row>
+        </Row> */}
+          <Row>
+                  <Col span={12}>
+                    {/* <Typography.Title level={4}>State wise Requirements</Typography.Title> */}
+                    <Col  style={{ marginBottom: "20px" ,marginTop:'30px'}}>
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "150px",
+                          margin: "0 auto",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          display: "flex"
+                        }}
+                      >
+                        <Doughnut
+                          data={doughnutData}
+                          options={chartDoughnutOptions}
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                            display: "flex",
+                            margin: "0 auto",
+                          }}
+                        />
+                      </div>
+                    </Col>
+                  </Col>
+                  <Col span={12}>
+          <Table
+            columns={stateColumn}
+            dataSource={stateData}
+            pagination={false} // Disable pagination
+            bordered
+            scroll={{ x: true, y: 300 }} // Enables horizontal and vertical scrolling
+            style={{ maxHeight: "300px", overflowY: "auto" }} // Ensures the column does not exceed this height
+          />
+        </Col>
+        
+                </Row>
       </Card>
-      <Card style={{ height: "50%" }}>
+      {/* <Card style={{ height: "50%" }}>
         <Col span={24} style={{ marginBottom: "20px" }}>
           <div
             style={{
@@ -314,7 +353,8 @@ const stateColumn = [
             )}
           </div>
         </Col>
-      </Card>
+      </Card> */}
+      
       <Card style={{ margin: "20px" }}>
         <Row gutter={[16, 16]} justify="space-between">
           <Col span={12} style={{ marginBottom: "20px", textAlign: 'center' }}>
