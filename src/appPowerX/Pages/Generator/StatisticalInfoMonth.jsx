@@ -238,21 +238,21 @@ console.log(tableData);
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                        },
+                        // zoom: {
+                        //   pan: {
+                        //     enabled: true,
+                        //     mode: 'x',
+                        //   },
+                        //   zoom: {
+                        //     wheel: {
+                        //       enabled: true,
+                        //     },
+                        //     pinch: {
+                        //       enabled: true,
+                        //     },
+                        //     mode: 'x',
+                        //   },
+                        // },
                         legend: {
                           position: 'bottom',
                           align: 'end',
@@ -294,21 +294,21 @@ console.log(tableData);
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                        },
+                        // zoom: {
+                        //   pan: {
+                        //     enabled: true,
+                        //     mode: 'x',
+                        //   },
+                        //   zoom: {
+                        //     wheel: {
+                        //       enabled: true,
+                        //     },
+                        //     pinch: {
+                        //       enabled: true,
+                        //     },
+                        //     mode: 'x',
+                        //   },
+                        // },
                         legend: {
                           position: 'bottom',
                           align: 'end',
@@ -363,21 +363,21 @@ console.log(tableData);
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                        },
+                        // zoom: {
+                        //   pan: {
+                        //     enabled: true,
+                        //     mode: 'x',
+                        //   },
+                        //   zoom: {
+                        //     wheel: {
+                        //       enabled: true,
+                        //     },
+                        //     pinch: {
+                        //       enabled: true,
+                        //     },
+                        //     mode: 'x',
+                        //   },
+                        // },
                         legend: {
                           position: 'bottom',
                           align: 'end',
