@@ -217,11 +217,26 @@ console.log(is_new_user);
               </Menu.Item>
             ))}
           </Menu>
-          <div style={{ padding: "16px", textAlign: "center", marginTop: '40%' }}>
-            <Button type="primary" href={lastMenuItem.key} block>
-              {lastMenuItem.label}
-            </Button>
-          </div>
+          <div style={{
+    position: "absolute",
+    bottom: "20px",
+    left: "20px",
+    width: "80%",
+    backgroundColor: "rgb(102, 152, 0)",
+    borderColor: "rgb(102, 152, 0)",
+    padding: "5px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    height: "40px",
+    borderRadius:'10px'
+}}>
+    <Button type="primary" href={lastMenuItem.key} block>
+        {lastMenuItem.label}
+    </Button>
+</div>
+
         </Sider>
       ) : (
         <>
