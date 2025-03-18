@@ -153,13 +153,17 @@ console.log(is_new_user);
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
 
   
-  const lastMenuItem = { label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' };
+  // const lastMenuItem = { label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' };
+  const lastMenuItem = is_new_user 
+  ? { label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' }
+  : { label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' };
+
   // if (subscription_type === 'PRO') {
-  //   if (is_new_user == true) {
-  //     menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
-  //   } else {
-  //     menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' });
-  //   }
+    // if (is_new_user == true) {
+    //   menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
+    // } else {
+    //   menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' });
+    // }
   // }
 
   useEffect(() => {
