@@ -217,7 +217,7 @@ console.log(is_new_user);
               </Menu.Item>
             ))}
           </Menu>
-          <div style={{ padding: "16px", textAlign: "center", marginTop: '120%' }}>
+          <div style={{ padding: "16px", textAlign: "center", marginTop: '40%' }}>
             <Button type="primary" href={lastMenuItem.key} block>
               {lastMenuItem.label}
             </Button>
