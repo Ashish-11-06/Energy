@@ -67,7 +67,6 @@ import TradingG from './appPowerX/Pages/Generator/TradingG';
 import PlanYourMonthTradePageG from './appPowerX/Pages/Generator/PlanYourMonthTradePageG';
 import PlanDayTradePage from './appPowerX/Pages/Generator/PlanDayTradePage';
 import ChatPage from './appPowerX/Pages/ChatPage';
-import Trading2 from './appPowerX/Pages/Generator/Trading2';
 import PlanMonthTrading from './appPowerX/Pages/Consumer/PlanMonthTrading';
 import NotificationP from './appPowerX/Pages/Consumer/Notification';
 import Subscription from './appPowerX/Pages/Consumer/Subscription';
@@ -217,7 +216,6 @@ function App() {
 
         <Route path="planning" element={<PlanningG />} />
         <Route path="trading" element={<TradingG />} />
-        <Route path="trading2" element={<Trading2 />} />
 
       </Route>
 
