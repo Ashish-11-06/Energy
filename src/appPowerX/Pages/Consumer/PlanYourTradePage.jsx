@@ -163,7 +163,7 @@ const [uploadModal,setUploadModal]=useState(false);
       
       console.log('res', res);
       setIsModalVisible(false);
-      navigate('/px/consumer/trading');
+      navigate('/px/track-status');
     } catch (error) {
       console.log(error);
       message.error("Failed to submit data. Please try again.");

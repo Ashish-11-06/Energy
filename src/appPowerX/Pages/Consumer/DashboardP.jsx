@@ -44,12 +44,11 @@ const DashboardP = () => {
   const [dashboardData, setDashboardData] = useState([]);
   const [dashboardLine, setDashboardLine] = useState([]);
   const [loading,setLoading]=useState(false);
+  const [nextDay, setNextDay] = useState('');
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
 // console.log(user_id);
 
-  const nextDay = new Date();
-  nextDay.setDate(nextDay.getDate() + 1);
-  const nextDayDate = nextDay.toLocaleDateString();
+
 
   const cardStyle = {
     margin: "20px",
@@ -67,6 +66,8 @@ const DashboardP = () => {
     const id=user_id;
     const fetchData = async () => {
       const res = await dispatch(fetchDashboardData(id));
+      console.log(res.payload);
+      
       setDashboardData(res.payload || []);
     };
     fetchData();
@@ -81,6 +82,17 @@ console.log(dashboardData);
       const fetchLineData = async () => {
         setLoading(true);
         const res = await dispatch(fetchDashboardLine(id)); 
+        console.log(res);
+        
+        if (res.payload.length > 0) {
+          const dateStr = res.payload[0]?.date;
+          const date = new Date(dateStr);
+          
+          const options = { month: "long", day: "2-digit" };
+          const formattedDate = date.toLocaleDateString("en-US", options);
+    
+          setNextDay(formattedDate); // Example output: "February 01"
+        }
         console.log(res.payload);
         if(res.error){
         message.error(res.payload);
@@ -172,7 +184,7 @@ console.log(dashboardData);
       // },
       title: {
         display: true,
-        text: `Energy Demand for ${nextDayDate}`,
+        text: `Energy Demand (${nextDay})`, 
         font: {
           size: 18,
         },
@@ -312,8 +324,9 @@ console.log(dashboardData);
     dataSource={stateData}
     pagination={false} // Disable pagination
     bordered
+
     scroll={{ x: true, y: 300 }} // Enables horizontal and vertical scrolling
-    style={{ maxHeight: "300px", overflowY: "auto" }} // Ensures the column does not exceed this height
+    style={{ maxHeight: "300px", overflowY: "auto",textAlign:'center',justifyContent:'center',alignContent:'center' }} // Ensures the column does not exceed this height
   />
 </Col>
 
