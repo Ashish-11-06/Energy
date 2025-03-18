@@ -6,7 +6,8 @@ import DrawerMenu from './DrawerMenu';
 import HeaderComponent from './HeaderComponent';
 import { Outlet, useNavigate } from 'react-router-dom';
 import MainHeader from './MainHeader';
-import { FaRobot } from 'react-icons/fa';
+// import { FaRobot } from 'react-icons/fa';
+import intercomIcon from '../../assets/chatbot.svg';
 
 const { Header, Content } = Layout;
 
@@ -44,7 +45,7 @@ const navigate=useNavigate();
   const sidebarWidth = collapsed ? 80 : 250; // Adjust sidebar width based on collapsed state
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ minHeight: "100vh" }}>
       {/* Sidebar for larger screens */}
       {!isMobile && (
         <Sidebar
@@ -53,8 +54,8 @@ const navigate=useNavigate();
           isMobile={isMobile}
           style={{
             width: sidebarWidth,
-            position: 'fixed', // Fix sidebar position
-            height: '100%',
+            position: "fixed", // Fix sidebar position
+            height: "100%",
             zIndex: 10, // Ensure sidebar appears above content
           }}
         />
@@ -67,67 +68,77 @@ const navigate=useNavigate();
       <Layout
         style={{
           marginLeft: !isMobile ? sidebarWidth : 0, // Push content to the right when sidebar is visible
-          transition: 'margin-left 0.2s', // Smooth transition when collapsing or expanding the sidebar
+          transition: "margin-left 0.2s", // Smooth transition when collapsing or expanding the sidebar
         }}
       >
         {/* Header */}
         <Header
           style={{
-            // padding: '0 16px',
-            // display: 'flex',
-            alignItems: 'center',
-            backgroundColor: 'white',
-              //  backgroundColor:'#F5F6FB',
-            position: 'sticky',
+            alignItems: "center",
+            backgroundColor: "white",
+            position: "sticky",
             top: 0,
             zIndex: 1000, // Ensure header is above sidebar and content
-            height:'70px'
+            height: "70px",
           }}
         >
-          <HeaderComponent
-            isMobile={isMobile}
-            drawerVisible={drawerVisible}
-            toggleDrawer={toggleDrawer}
-          />
-          {/* <MainHeader 
-           isMobile={isMobile}
-           drawerVisible={drawerVisible}
-           toggleDrawer={toggleDrawer}
-          /> */}
+          <HeaderComponent isMobile={isMobile} drawerVisible={drawerVisible} toggleDrawer={toggleDrawer} />
         </Header>
 
         {/* Content */}
-        <Content style={{  }}>
+        <Content>
           <Outlet />
         </Content>
-          {user && !isChatPage && (
-                  <div
-                    style={{
-                      position: "fixed",
-                      bottom: "20px",
-                      right: "20px",
-                      zIndex: 1000,
-                    }}
-                  >
-                    <button
-                      onClick={handleChatClick}
-                      style={{
-                        color: "#FFFFFF",
-                        border: "none",
-                        borderRadius: "50px",
-                        padding: "12px 18px",
-                        fontSize: "16px",
-                        display: "flex",
-                        alignItems: "center",
-                        cursor: "pointer",
-                        boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
-                      }}
-                    >
-                      <FaRobot style={{ fontSize: "24px", marginRight: "8px" }} />
-                      <span>Need Assistance?</span>
-                    </button>
-                  </div>
-                )}
+
+        {/* Floating Chatbot Button (Only visible after login) */}
+        {user && !isChatPage &&(
+          <div
+            style={{
+              position: "fixed",
+              bottom: "20px",
+              right: "20px",
+              zIndex: 1000,
+            }}
+          >
+            {/* <button
+              onClick={handleChatClick}
+              style={{
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: "50px",
+                padding: "12px 18px",
+                fontSize: "16px",
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
+              }}
+            >
+              <FaRobot style={{ fontSize: "24px", marginRight: "8px" }} />
+              <span>Need Assistance?</span>
+            </button> */}
+             <button
+              onClick={handleChatClick}
+              style={{
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: "50px",
+                padding: "12px 18px",
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
+              }}
+            >
+              <img 
+                src={intercomIcon} 
+                alt="Chatbot" 
+                style={{ width: "35px", height: "35px", filter: "invert(1) sepia(1) saturate(0) brightness(1000%)"}} 
+              />
+              {/* <span>Need Assistance?</span> */}
+            </button>
+          </div>
+        )}
       </Layout>
     </Layout>
   );

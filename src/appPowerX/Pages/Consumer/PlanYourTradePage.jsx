@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Checkbox, Upload, message, Card, Select } from "antd";
+import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Checkbox, Upload, message, Card, Select, Radio } from "antd";
 import { useNavigate } from "react-router-dom";
 import { UploadOutlined, DownloadOutlined, DownOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import * as XLSX from 'xlsx';
@@ -48,9 +48,13 @@ const PlanYourTradePage = () => {
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
   const [fileUploaded, setFileUploaded] = useState(false);
   const [showTable, setShowTable] = useState(false);
-
+const [uploadModal,setUploadModal]=useState(false);
   const handleContinue = () => {
-    setIsModalVisible(true);
+    if(!fileUploaded) {
+      setIsModalVisible(true);
+    } else {
+      navigate('/px/track-status');
+    }
   };
 
   const onFinish = (values) => {
@@ -116,6 +120,8 @@ const PlanYourTradePage = () => {
     console.log("Selected State:", selectedState);
     console.log("Selected Requirement ID:", selectedRequirementId);
     try {
+      console.log(price);
+      
       const dayAheadDemand = {
         requirement: selectedRequirementId,
         demand_data: tableData.map(item => {
@@ -140,8 +146,12 @@ const PlanYourTradePage = () => {
             demand: item.demand
           };
         }),
-        price: selectedTechnology.reduce((acc, tech) => {
+       
+        // Ensure selectedTechnology is an array
+        price: (Array.isArray(selectedTechnology) ? selectedTechnology : [selectedTechnology]).reduce((acc, tech) => { 
           acc[tech] = parseFloat(price[tech]); // Convert price to number
+          console.log(acc);
+          
           return acc;
         }, {})
       };
@@ -149,6 +159,8 @@ const PlanYourTradePage = () => {
       console.log(dayAheadDemand);
 
       const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+      message.success("Data submitted successfully");
+      
       console.log('res', res);
       setIsModalVisible(false);
       navigate('/px/consumer/trading');
@@ -181,7 +193,8 @@ const PlanYourTradePage = () => {
       setTableData(updatedData);
       setFileUploaded(true);
       setAllFieldsFilled(true);
-      message.success(`${file.name} uploaded successfully`);
+      message.success(`${file.name} uploaded successfully, now you can check the status in 'Track Status' option`);
+     setUploadModal(false);
     };
     reader.readAsArrayBuffer(file);
     return false; // Prevent automatic upload
@@ -271,6 +284,9 @@ const PlanYourTradePage = () => {
     </div>
   );
 
+  const handleUploadFile=()=>{
+    setUploadModal(true);
+  }
   const splitData = (data) => {
     const sixth = Math.ceil(data.length / 6);
     return [
@@ -293,7 +309,10 @@ const PlanYourTradePage = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Plan Your Trade (96 time blocks)</h1>
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      Plan Your Trade (96 time blocks)
+      </h1>
+      {/* <h1>Plan Your Trade (96 time blocks)</h1> */}
       <Col span={24}>
       <Form.Item label="Select Consumption Unit">
   <Select
@@ -360,9 +379,10 @@ const PlanYourTradePage = () => {
               </Col>
               <Col>
                 <Tooltip title="Upload a bulk file!" placement="bottom">
-                  <Upload beforeUpload={handleFileUpload} showUploadList={false}>
+                <Button icon={<UploadOutlined />} onClick={handleUploadFile}>Upload File</Button>
+                  {/* <Upload beforeUpload={handleFileUpload} showUploadList={false}>
                     <Button icon={<UploadOutlined />}>Upload File</Button>
-                  </Upload>
+                  </Upload> */}
                 </Tooltip>
               </Col>
             </Row>
@@ -393,6 +413,7 @@ const PlanYourTradePage = () => {
             htmlType="submit"
             style={{ marginLeft: "85%" }}
             onClick={handleContinue}
+            disabled={!allFieldsFilled}
           >
             Continue
           </Button>
@@ -404,15 +425,15 @@ const PlanYourTradePage = () => {
         onOk={handleModalOk}
         onCancel={() => setIsModalVisible(false)}
       >
-        {/* Checkbox Group */}
-        <Checkbox.Group onChange={(checkedValues) => setSelectedTechnology(checkedValues)} value={selectedTechnology}>
-          <Checkbox value="Solar">"Solar"</Checkbox>
-          <Checkbox value="Non-Solar">"Non-Solar"</Checkbox>
-        </Checkbox.Group>
+        {/* Radio Group */}
+        <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
+          <Radio value="Solar">Solar</Radio>
+          <Radio value="Non-Solar">Non-Solar</Radio>
+        </Radio.Group>
 
         {/* Input fields for price */}
         <div style={{ marginTop: "15px" }}>
-          {selectedTechnology.includes("Solar") && (
+          {selectedTechnology === "Solar" && (
             <div>
               <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
               <Input
@@ -425,7 +446,8 @@ const PlanYourTradePage = () => {
               />
             </div>
           )}
-          {selectedTechnology.includes("Non-Solar") && (
+          
+          {selectedTechnology === "Non-Solar" && (
             <div>
               <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
               <Input
@@ -463,6 +485,56 @@ const PlanYourTradePage = () => {
           <li>Click on 'Ok' to proceed</li>
         </ol>
         <p>Thank you!</p>
+      </Modal>
+      <Modal title="Select Technology"
+        open={uploadModal}
+       
+        onCancel={() => setUploadModal(false)} 
+    
+        footer={[
+          <>
+
+          <Upload beforeUpload={handleFileUpload} showUploadList={false}>
+                    <Button icon={<UploadOutlined />}>Upload File</Button>
+                  </Upload>
+                  <Button onClick={() => setUploadModal(false)} style={{marginLeft:'10px'}}>Cancel</Button>
+                  </>
+        ]}
+        >
+          <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
+          <Radio value="Solar">Solar</Radio>
+          <Radio value="Non-Solar">Non-Solar</Radio>
+        </Radio.Group>
+
+        <div style={{ marginTop: "15px" }}>
+          {selectedTechnology === "Solar" && (
+            <div>
+              <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
+              <Input
+                type="number"
+                placeholder="Enter solar price in INR"
+                value={price["Solar"] || ""}
+                min={0}
+                onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
+                style={{ marginTop: "5px", width: "100%" }}
+              />
+            </div>
+          )}
+          
+          {selectedTechnology === "Non-Solar" && (
+            <div>
+              <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
+              <Input
+                type="number"
+                placeholder="Enter non-solar price in INR"
+                value={price["Non-Solar"] || ""}
+                min={0}
+                onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
+                style={{ marginTop: "5px", width: "100%" }}
+              />
+            </div>
+          )}
+        </div>
       </Modal>
     </div>
   );

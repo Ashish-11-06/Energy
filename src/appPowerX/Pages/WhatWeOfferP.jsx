@@ -1,81 +1,30 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
-import { Row, Col, Card, Statistic, Button, message, Spin } from 'antd';
-import { ThunderboltOutlined, DashboardOutlined, ApartmentOutlined, UserOutlined, LineChartOutlined } from '@ant-design/icons';
-import map from '../../assets/map.png';
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox, Radio, Statistic } from 'antd';
+import { ThunderboltOutlined, DashboardOutlined, UserOutlined, LineChartOutlined } from '@ant-design/icons';
 import CountUp from 'react-countup';
-import whatWeOffer from '../../Redux/api/whatWeOffer';
-import { useDispatch } from 'react-redux';
-import TermsAndConditionModal from './Modal/TermsAndConditionModal';
-import { motion } from 'framer-motion';  // Import motion here
-import { FaRupeeSign } from 'react-icons/fa'; 
-import EXGLogo from '../../assets/EXG.png';
-// import './WhatWeOffer.css';
+import { motion } from 'framer-motion';
+import map from '../assets/map.png';
+import { useNavigate } from 'react-router-dom';
 
-const WhatWeOffer = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [data, setData] = useState(null); // State to store the fetched data
-const [isModal,setIsModal] =useState(false);
-const [count, setCount] = useState(0);  // State to track the animated count
-const [targetAmount, setTargetAmount] = useState(0);  // State to hold the target amount
-
-
-  const user = JSON.parse(localStorage.getItem('user')).user;
-  const user_category = user.user_category;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await whatWeOffer.whatWeOffer();
-        setData(response.data); // Set the fetched data
-        setTargetAmount(response.data.amount_saved_annually); // Set targetAmount for animation
-        console.log(response);
-      } catch (error) {
-        console.error('Failed to fetch data from the server.', error);
-        message.error('Failed to fetch data from the server.');
-      }
-    };
-
-    fetchData();
-  }, [dispatch]);
-
-
-  useEffect(() => {
-    let start = 0;
-    const duration = 2000; // Animation duration in ms
-    const increment = Math.ceil(targetAmount / (duration / 50));
-
-    const interval = setInterval(() => {
-      start += increment;
-      if (start >= targetAmount) {
-        setCount(targetAmount);
-        clearInterval(interval);
-      } else {
-        setCount(start);
-      }
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, [targetAmount]);
-
+const WhatWeOfferP = () => {
+    const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user')).user;
+    const user_category = user?.user_category;
+  
+  const data = {
+    total_portfolios: 10,
+    total_available_capacity: 500,
+    consumer_count: 200,
+    total_contracted_demand: 300,
+    unique_state_count: 5,
+  };
+  const targetAmount = 1000000; // Dummy data
+  const isModal = false; // Dummy data
   const handleContinue = () => {
-    setIsModal(true);
-   // navigate('/consumer/requirement');
+    // Dummy function
+    navigate('/px/consumer/plan-trade-page');
   };
-
-  const formatNumberWithCommas = (number) => {
-    return number.toLocaleString('en-IN');
-  };
-
-  if (!data) {
-    return (
-      <Row justify="center" align="middle" style={{ height: "100vh" }}>
-        <Spin size="large" tip="Loading..." />
-      </Row>
-    );
-  }
 
   return (
     <div
@@ -86,12 +35,11 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
         color: 'black',
         height: '100vh',
         background: 'linear-gradient(to right, rgba(168, 191, 92, 0.57), rgb(196 212 165 / 15%))',
-
       }}
     >
-        <div className="logo-container">
-                  <img src={EXGLogo} alt="EXG Logo" className="exg-logo" />
-                </div>
+      <div className="logo-container">
+        <img src="path/to/logo.png" alt="EXG Logo" className="exg-logo" />
+      </div>
       <div
         style={{
           backgroundColor: '#F5F6FB',
@@ -100,7 +48,7 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
           borderRadius: '10px',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
           height: '78vh',
-          width: '100%' 
+          width: '100%'
         }}
       >
         <h1 style={{ textAlign: 'center', fontSize: '3rem', marginBottom: '30px', color: '#669800' }}>
@@ -116,22 +64,26 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
               <Col xs={24} sm={12} md={8} lg={8}>
                 <Card
                   hoverable
-                  title="Total projects"
+                  title="Total Executed Trades"
                   bordered={false}
                   style={{
-                    color:'black',
                     width: '100%',
                     backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     borderRadius: '10px',
                     border: `1px solid #E6E8F1`,
+                    color:'black',
                     marginTop: `10px`,
                   }}
                 >
                   <Statistic
-                    value={data.total_portfolios}
+                  value={5}
+                    // value={data.total_portfolios}
                     prefix={<ThunderboltOutlined />}
                     valueStyle={{ color: 'black' }}
-                    formatter={() => <CountUp start={0} end={data.total_portfolios} duration={3} />}
+                    formatter={() => <CountUp start={0}
+                    end={5}
+                    //  end={data.total_portfolios} 
+                     duration={3} />}
                   />
                 </Card>
               </Col>
@@ -152,8 +104,8 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
                   <Statistic
                     value={data.total_available_capacity}
                     prefix={<DashboardOutlined />}
-                    suffix={<span style={{ color: 'black' }}>MW</span>}
-                    valueStyle={{ color: 'black' }}
+                    suffix="MW"
+                    valueStyle={{ color: '#cf1322' }}
                     formatter={() => <CountUp start={0} end={data.total_available_capacity} duration={3} />}
                   />
                 </Card>
@@ -179,7 +131,7 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
                   <Statistic
                     value={data.consumer_count}
                     prefix={<UserOutlined />}
-                    valueStyle={{ color: 'black' }}
+                    valueStyle={{ color: '#3f8600' }}
                     formatter={() => <CountUp start={0} end={data.consumer_count} duration={3} />}
                   />
                 </Card>
@@ -201,8 +153,8 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
                   <Statistic
                     value={data.total_contracted_demand}
                     prefix={<LineChartOutlined />}
-                    suffix={<span style={{ color: 'black' }}>MW</span>}
-                    valueStyle={{ color: 'black' }}
+                    suffix="MW"
+                    valueStyle={{ color: '#cf1322' }}
                     formatter={() => <CountUp start={0} end={data.total_contracted_demand} duration={3} />}
                   />
                 </Card>
@@ -225,64 +177,53 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
             >
               <Statistic
                 value={data.unique_state_count}
-                // prefix={<ApartmentOutlined />}
                 prefix={<img src={map} alt="map" className="map" style={{ width: 40, height: 40 }} />}
-                valueStyle={{ color: 'black' }}
+                valueStyle={{ color: '#1890ff' }}
                 formatter={() => <CountUp start={0} end={data.unique_state_count} duration={3} />}
               />
             </Card>
           </Col>
         </Row>
 
-        {/* {user_category === 'Consumer' && (
+        {user_category === 'Consumer' && (
           <div style={{ textAlign: 'center', marginTop: '50px' }}>
             <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Did You Know?</h2>
-            <p style={{ fontSize: '1.5rem', marginBottom: '30px' }}>
-              The total amount consumers have saved <span style={{ fontWeight: 'bold', color: '#669800' }}>INR <span style={{fontSize:'30px'}}>{formatNumberWithCommas(data.amount_saved_annually)}</span> annually!</span>
-            </p>
+            <motion.div
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 1.2 }}
+              style={{ fontSize: '3rem', fontWeight: 'bold', color: '#669800', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <span style={{ fontSize: '3rem', marginRight: '5px' }}>INR</span>
+              <CountUp
+                start={0}
+                end={targetAmount}
+                duration={3}
+                separator=","
+              />
+            </motion.div>
+            <p className="mt-2 text-lg font-medium">saved annually by our consumers!</p>
           </div>
-        )} */}
-        {user_category === 'Consumer' && (
-              <div style={{ textAlign: 'center', marginTop: '50px' }}>
-                <h2 style={{ fontSize: '2rem', color: '#9A8406' }}>Did You Know?</h2>
-                <motion.div
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 1.2 }}
-                  style={{ fontSize: '3rem', fontWeight: 'bold', color: '#669800', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  {/* <FaRupeeSign style={{ fontSize: '3.5rem', marginRight: '5px' }} /> */}
-                  <span style={{ fontSize: '3rem', marginRight: '5px' }}>INR
-                  </span>
-                  <CountUp
-                    start={0}
-                    end={targetAmount}
-                    duration={3}
-                    separator=","
-                  />
-                </motion.div>
-                <p className="mt-2 text-lg font-medium">saved annually by our consumers!</p>
-              </div>
-            )}
+        )}
 
-          <div style={{ textAlign: 'center', marginTop: '30px' }}>
+        <div style={{ textAlign: 'center', marginTop: '30px' }}>
           <h6 style={{ fontSize: '1.4rem', color: '#9A8406', marginBottom: '20px' }}>
             Start Your Transition Journey
           </h6>
           <Button
             type="default"
-            style={{ padding: '10px 20px',height:'40px',marginBottom:'-120px', fontSize: '24px', borderColor: '#E6E8F1',marginLeft:'90%' }}
+            style={{ padding: '10px 20px', height: '40px', marginBottom: '-120px', fontSize: '24px', borderColor: '#E6E8F1', marginLeft: '90%' }}
             onClick={handleContinue}
           >
             Proceed {`>>`}
           </Button>
         </div>
       </div>
-      <TermsAndConditionModal visible={isModal} 
-      user_category = {user_category}
-      onCancel={() => setIsModal(false)} />
+      <Modal visible={isModal} onCancel={() => console.log('Modal closed')}>
+        {/* Modal content */}
+      </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default WhatWeOffer;
+export default WhatWeOfferP

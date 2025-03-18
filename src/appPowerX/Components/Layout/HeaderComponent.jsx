@@ -167,6 +167,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
         top: 0,
         zIndex: 1000,
         height: isMobile ? "70px" : "70px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", // Added shadow
       }}
     >
       {/* Drawer button visible on mobile */}

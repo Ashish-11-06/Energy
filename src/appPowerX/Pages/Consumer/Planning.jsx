@@ -1,9 +1,10 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { Table, Card, Row, Col, Tooltip, Button, Spin, message } from 'antd';
+import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox, Radio } from 'antd';
 import 'antd/dist/reset.css';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
+import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice'; // Correct import
 import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
@@ -12,23 +13,48 @@ import 'react-calendar/dist/Calendar.css';
 import './Planning.css';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { fetchPlanningData } from '../../Redux/slices/consumer/planningSlice';
+import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequirementSlice";
+import { addMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
+import { color } from 'framer-motion';
 
 dayjs.locale('en');
 
-const columns = [
-  { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 },
-  { title: 'Demand (MWh)', dataIndex: 'demand', key: 'demand', rowSpan: 2 },
-  { title: 'Technology & Price (INR)', dataIndex: 'technology', key: 'technology' },
-];
-
 const Planning = () => {
   const navigate = useNavigate();
-  const [showTable, setShowTable] = useState(false);
+  const [showTable, setShowTable] = useState(true); // Set default to true
+  const [showInputFields, setShowInputFields] = useState(false); // State to manage input fields visibility
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [demand, setDemand] = useState("");
+  const [allFieldsFilled, setAllFieldsFilled] = useState(false);
+  const [consumerRequirement, setConsumerRequirement] = useState([]);
   const [tableDemandData, setTableDemandData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [price, setPrice] = useState({});
+  const [selectedTechnology, setSelectedTechnology] = useState([]);
   const dispatch = useDispatch();
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
+  const [selectedRequirementId, setSelectedRequirementId] = useState(null);
+  const [isInputModalVisible, setIsInputModalVisible] = useState(false); // Separate state for input modal
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+  const [selectedUnitDetails, setSelectedUnitDetails] = useState(null);
+  const [selectedInterval, setSelectedInterval] = useState(null); // Add state for selected interval
+  const [startDate, setStartDate] = useState(null); // Add state for start date
+  const [endDate, setEndDate] = useState(null); // Add state for end date
+
+  const handleDateIntervalChange = (value) => {
+    setSelectedInterval(value);
+    if (value === 'today') {
+      setSelectedDate(dayjs());
+    } else if (value === 'tomorrow') {
+      setSelectedDate(dayjs().add(1, 'day'));
+    } else if (value === 'next15days' || value === 'next30days') {
+      setStartDate(null); // Reset start date
+      setEndDate(null); // Reset end date
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +74,19 @@ const Planning = () => {
     fetchData(); // Call the function inside useEffect
   }, [user_id, dispatch]); // Add dependencies if needed
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const id = user_id;
+        const res = await dispatch(fetchRequirements(id)); // Wait for API response
+        setConsumerRequirement(res.payload);
+      } catch (error) {
+        console.log("Error fetching consumer requirements:", error);
+      }
+    };
+    fetchData();
+  }, [user_id, dispatch]);
+
   const getListData = (date) => {
     const dateStr = dayjs(date).format('YYYY-MM-DD');
     return tableDemandData.filter(item => item.date === dateStr);
@@ -58,7 +97,7 @@ const Planning = () => {
     const isToday = dayjs(date).isSame(dayjs(), 'day');
 
     return (
-      <div style={{ position: 'relative', textAlign: 'center' ,marginTop:'15px'}}>
+      <div style={{ position: 'relative', textAlign: 'center', marginTop: '15px' }}>
         {isToday && (
           <div
             style={{
@@ -75,7 +114,7 @@ const Planning = () => {
           </div>
         )}
         {listData.map(item => (
-          <Tooltip style={{marginTop:'3%'}} key={item.id} title={`Demand: ${item.demand} MWh, Solar Price: ${item.price.Solar} INR, Non-Solar Price: ${item.price["Non-Solar"]} INR`}>
+          <Tooltip style={{ marginTop: '3%' }} key={item.id} title={`Demand: ${item.demand} MWh, Solar Price: ${item.price.Solar} INR/MWh, Non-Solar Price: ${item.price["Non-Solar"]} INR/MWh`}>
             <div
               style={{
                 backgroundColor: '#669800',
@@ -87,7 +126,7 @@ const Planning = () => {
                 bottom: '3px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                marginTop:'10px'
+                marginTop: '10px'
               }}
             />
           </Tooltip>
@@ -100,13 +139,98 @@ const Planning = () => {
     setShowTable(!showTable);
   };
 
-  const tableData = tableDemandData.map(item => ({
+  const handleAddDetailsClick = () => {
+    setIsInputModalVisible(true); // Show input modal when button is clicked
+  };
+
+  const handleStateChange = (value) => {
+    const selectedRequirement = consumerRequirement.find(item => item.state === value);
+    console.log(selectedRequirement);
+    
+    setSelectedRequirementId(selectedRequirement ? selectedRequirement.id : null);
+
+    setSelectedState(value);
+  };
+
+  const handleAddData = () => {
+    setIsInputModalVisible(false); // Hide input modal
+    setIsModalVisible(true); // Show technology modal
+  };
+
+  const handleModalOk = async () => {
+    if (!selectedRequirementId) {
+      message.error("Please select a valid consumption unit.");
+      return;
+    }
+
+    const formattedDate = selectedDate.format('YYYY-MM-DD'); // Format the date correctly
+    try {
+      const newData = {
+        requirement: selectedRequirementId,
+        date: formattedDate,
+        demand: Number(demand),
+        price: (Array.isArray(selectedTechnology) ? selectedTechnology : [selectedTechnology]).reduce((acc, tech) => { 
+          acc[tech] = parseFloat(price[tech]); // Convert price to number
+          return acc;
+        }, {})
+      };
+
+      console.log(newData);
+
+      const res = await dispatch(addMonthData(newData)).unwrap();
+      if (res) {
+        message.success("Data added successfully");
+        const id = user_id; // Ensure `user_id` is defined in scope
+        try {
+          const res = await dispatch(fetchTableMonthData(id));
+          console.log(res.payload);
+          setTableDemandData(res.payload);
+        } catch (error) {
+          console.error("Error fetching planning data:", error);
+        }
+
+      }
+      console.log('res', res);
+      setIsModalVisible(false);
+      navigate('/px/consumer/planning');
+    } catch (error) {
+      console.log(error);
+      message.error("Failed to submit data. Please try again.");
+    }
+  };
+
+  const handleDemandClick = (record) => {
+    const selectedRequirement = consumerRequirement.find(item => item.state === record.state);
+    setSelectedUnitDetails(selectedRequirement);
+
+    
+    setIsDetailModalVisible(true);
+  };
+
+  console.log(selectedUnitDetails);
+  
+  const columns = [
+    { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 },
+    { title: 'Demand (MWh)', dataIndex: 'demand', key: 'demand', rowSpan: 2, render: (text, record) => (
+        <Tooltip title="">
+          <span style={{  cursor: 'pointer' }} onClick={() => handleDemandClick(record)}>
+            {text}
+          </span>
+        </Tooltip>
+      ),
+    },
+    { title: 'Technology & Price (INR/MWh)', dataIndex: 'technology', key: 'technology' },
+    { title: 'Requirement', dataIndex: 'requirements', key: 'requirements' },
+  ];
+
+  const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => ({
     key: item.requirement,
     date: item.date,
     demand: item.demand,
-    technology: `Solar: ${item.price.Solar} INR, Non-Solar: ${item.price["Non-Solar"]} INR`,
-    price: `${item.price.Solar} INR (Solar), ${item.price["Non-Solar"]} INR (Non-Solar)`,
-  }));
+    technology: `${item.price?.Solar ? `Solar: ${item.price.Solar}` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `Non-Solar: ${item.price["Non-Solar"]}` : ''}`,
+    price: `${item.price?.Solar ? `${item.price.Solar} INR (Solar)` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `${item.price["Non-Solar"]} INR (Non-Solar)` : ''}`,
+  })) : [];
+
 
   const handlePrevMonth = () => {
     setCurrentMonth(dayjs(currentMonth).subtract(1, 'month').toDate());
@@ -122,45 +246,208 @@ const Planning = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
-        <h1 style={{ margin: 0 }}>Planning Calendar</h1>
-        <Button onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
-      </Row>
-      {loading ? (
-        <Spin tip="Loading..." style={{ marginTop: '20px' }} />
-      ) : !showTable ? (
-        <Col span={24}>
-          <Card style={{ width: '90%', margin: 'auto', padding: '10px' }}>
-            <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
-              <Button icon={<LeftOutlined />} onClick={handlePrevMonth} />
-              <h2>{dayjs(currentMonth).format('MMMM YYYY')}</h2>
-              <Tooltip title="You can plan for the current month only">
-                <Button icon={<RightOutlined />} onClick={handleNextMonth} />
-              </Tooltip>
-            </Row>
-            <Calendar
-              value={currentMonth}
-              onActiveStartDateChange={({ activeStartDate }) => setCurrentMonth(activeStartDate)}
-              tileContent={tileContent}
-              className="custom-calendar"
-            />
-          </Card>
-        </Col>
-      ) : (
-        <Col span={24}>
-          <Card style={{ width: '90%', margin: 'auto' }}>
-            <Table dataSource={tableData} columns={columns} pagination={false} bordered />
-          </Card>
-        </Col>
-      )}
-      <Button 
-        type="primary" 
-        style={{ position: 'fixed', right: '20px', bottom: '20px' }}
-        onClick={() => navigate('/consumer/plan-month-trade')} 
+    <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', position: 'relative' }}> {/* Changed background color and set minHeight */}
+      <div style={{ padding: '20px' }}>
+        <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
+        <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+        Energy Planner
+      </h1>
+          {/* <h1 style={{ margin: 0 }}>Energy Planner</h1> */}
+          <Button style={{ marginRight: '-50%', backgroundColor: '#669800', borderColor: '#669800',height:'40px' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
+          <Button onClick={handleAddDetailsClick} style={{color:'black',marginLeft:'10px', backgroundColor: '#ff5722',height:'40px', borderColor: '#ff5722' }}>
+          Schedule Trade
+          </Button>
+        </Row>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '20px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+            <Spin tip="Loading..." />
+          </div>
+        ) : !showTable ? (
+          <Col span={24}>
+            <Card style={{ width: '90%', margin: 'auto', padding: '10px', backgroundColor: '#fff' }}> {/* Updated card background color */}
+              <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
+                <Button icon={<LeftOutlined />} onClick={handlePrevMonth} />
+                <h2>{dayjs(currentMonth).format('MMMM YYYY')}</h2>
+                <Tooltip title="You can plan for the current month only">
+                  <Button icon={<RightOutlined />} onClick={handleNextMonth} />
+                </Tooltip>
+              </Row>
+              <Calendar
+                value={currentMonth}
+                onActiveStartDateChange={({ activeStartDate }) => setCurrentMonth(activeStartDate)}
+                tileContent={tileContent}
+                className="custom-calendar"
+              />
+            </Card>
+          </Col>
+        ) : (
+          <Col span={24}>
+            <Card style={{ width: '90%', margin: 'auto', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff' }}> {/* Updated shadow and card background color */}
+              <Table dataSource={tableData} columns={columns} pagination={false} bordered />
+            </Card>
+          </Col>
+        )}
+        {/* <Button
+          type="primary"
+          style={{ position: 'fixed', right: '20px', bottom: '20px' }}
+          onClick={() => navigate('/consumer/plan-month-trade')}
+        >
+          Plan for More Days
+        </Button> */}
+      </div>
+      <Modal
+        title="Plan for More Days"
+        visible={isInputModalVisible}
+        footer={null} // Remove default footer
+        onCancel={() => setIsInputModalVisible(false)}
       >
-        Plan for More Days
-      </Button>
+        <Form.Item label="Select Consumption Unit" style={{ fontSize: '24px' }}>
+          <Select
+            value={selectedState || undefined}
+            onChange={handleStateChange}
+            style={{ width: "100%", borderColor: "#669800" }}
+            placeholder="Select Consumption Unit"
+          >
+            {consumerRequirement.map(item => (
+              <Select.Option key={item.id} value={item.state}>
+                {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        {
+          !selectedInterval && (
+<Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+          <DatePicker
+            style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
+            format="DD/MM/YYYY"
+            disabledDate={(current) => current && current <= new Date()}
+            onChange={(date) => setSelectedDate(date)}
+          />
+        </Form.Item>
+          )
+        }
+        
+        <Form.Item label="Select Date Interval" style={{ fontSize: '24px' }}>
+          <Select
+            value={selectedInterval || undefined}
+            onChange={handleDateIntervalChange}
+            style={{ width: "100%", borderColor: "#669800" }}
+            placeholder="Select Date Interval"
+          >
+            <Select.Option key="next15days" value="next15days">Next 15 Days</Select.Option>
+            <Select.Option key="next30days" value="next30days">Next 30 Days</Select.Option>
+          </Select>
+        </Form.Item>
+        {(selectedInterval === 'next15days' || selectedInterval === 'next30days') && (
+          <>
+            <Form.Item label="Select Start Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+              <DatePicker
+                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
+                format="DD/MM/YYYY"
+                disabledDate={(current) => current && current <= new Date()}
+                onChange={(date) => setStartDate(date)}
+              />
+            </Form.Item>
+            <Form.Item label="Select End Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+              <DatePicker
+                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
+                format="DD/MM/YYYY"
+                disabledDate={(current) => current && current <= new Date()}
+                onChange={(date) => setEndDate(date)}
+              />
+            </Form.Item>
+          </>
+        )}
+        <Form.Item label="Enter Demand (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
+          <Input
+            type="number"
+            placeholder="Enter demand"
+            min={0}
+            style={{
+              width: "100%",
+              padding: "5px",
+              fontSize: "16px",
+              borderRadius: "5px",
+              border: "1px solid #ccc"
+            }}
+            onChange={(e) => {
+              setDemand(e.target.value);
+              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
+            }}
+          />
+        </Form.Item>
+        <Tooltip title={!allFieldsFilled ? "All fields are required" : ""} placement="top">
+          <Button onClick={handleAddData} disabled={!allFieldsFilled}>
+            Add Data
+          </Button>
+        </Tooltip>
+        <Button onClick={() => setIsInputModalVisible(false)} style={{ marginLeft: '10px' }}>
+          Cancel
+        </Button>
+      </Modal>
+      <Modal
+        title="Select Technology"
+        visible={isModalVisible}
+        onOk={handleModalOk} // Call handleModalOk on OK button click
+        onCancel={() => setIsModalVisible(false)}
+      >
+        {/* Checkbox Group */}
+        {/* <Checkbox.Group onChange={(checkedValues) => setSelectedTechnology(checkedValues)} value={selectedTechnology}>
+          <Checkbox value="Solar">"Solar"</Checkbox>
+          <Checkbox value="Non-Solar">"Non-Solar"</Checkbox>
+        </Checkbox.Group> */}
+        <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
+          <Radio value="Solar">Solar</Radio>
+          <Radio value="Non-Solar">Non-Solar</Radio>
+        </Radio.Group>
+
+        {/* Input fields for price */}
+        <div style={{ marginTop: "15px" }}>
+                 {selectedTechnology === "Solar" && (
+                   <div>
+                     <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
+                     <Input
+                       type="number"
+                       placeholder="Enter solar price in INR/MWh"
+                       value={price["Solar"] || ""}
+                       min={0}
+                       onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
+                       style={{ marginTop: "5px", width: "100%" }}
+                     />
+                   </div>
+                 )}
+                 
+                 {selectedTechnology === "Non-Solar" && (
+                   <div>
+                     <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
+                     <Input
+                       type="number"
+                       placeholder="Enter non-solar price in INR/MWh"
+                       value={price["Non-Solar"] || ""}
+                       min={0}
+                       onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
+                       style={{ marginTop: "5px", width: "100%" }}
+                     />
+                   </div>
+                 )}
+               </div>
+      </Modal>
+      <Modal
+        title="Consumption Unit Details"
+        visible={isDetailModalVisible}
+        onCancel={() => setIsDetailModalVisible(false)}
+        footer={null}
+      >
+        {selectedUnitDetails && (
+          <div>
+            <p><strong>State:</strong> {selectedUnitDetails.state}</p>
+            <p><strong>Industry:</strong> {selectedUnitDetails.industry}</p>
+            <p><strong>Contracted Demand:</strong> {selectedUnitDetails.contracted_demand} MWh</p>
+            <p><strong>Consumption Unit:</strong> {selectedUnitDetails.consumption_unit}</p>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

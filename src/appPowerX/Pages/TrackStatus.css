@@ -1,0 +1,76 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.status-approval {
+    background-color: white; /* White background */
+    min-height: 100vh;
+    padding: 20px;
+    color: black; /* Heading color black */
+}
+
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.back-button {
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.approvals {
+    margin-top: 20px;
+}
+
+.approval-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 20px; /* Add space between elements */
+}
+
+.status-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.status-dot.green {
+    background-color: green;
+}
+
+.status-dot.yellow {
+    background-color: yellow;
+}
+
+.status-dot.red {
+    background-color: red;
+}
+
+.status-dot.transparent {
+    background-color: transparent;
+}
+
+.approval-text {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd; /* Border for the text box */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #f9f9f9; /* Light background color */
+}
+
+.update-button {
+    background-color: rgb(7, 154, 7); /* Button background green */
+    color: white; /* Button text white */
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.update-button:hover {
+    background-color: #059905; /* Hover effect */
+}

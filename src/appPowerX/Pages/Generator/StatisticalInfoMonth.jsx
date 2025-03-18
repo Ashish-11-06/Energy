@@ -181,8 +181,8 @@ console.log(tableData);
     },
   ];
 
-  const handleDay = () => navigate('/px/consumer/day-ahead');
-  const handleMonth = () => navigate('/px/consumer/month-ahead');
+  const handleDay = () => navigate('/px/generator/day-ahead');
+  const handleMonth = () => navigate('/px/generator/month-ahead');
 
   return (
     <div style={{ padding: '20px' }}>
@@ -238,20 +238,24 @@ console.log(tableData);
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
+                        // zoom: {
+                        //   pan: {
+                        //     enabled: true,
+                        //     mode: 'x',
+                        //   },
+                        //   zoom: {
+                        //     wheel: {
+                        //       enabled: true,
+                        //     },
+                        //     pinch: {
+                        //       enabled: true,
+                        //     },
+                        //     mode: 'x',
+                        //   },
+                        // },
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
                         },
                       },
                     }} 
@@ -290,20 +294,24 @@ console.log(tableData);
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
+                        // zoom: {
+                        //   pan: {
+                        //     enabled: true,
+                        //     mode: 'x',
+                        //   },
+                        //   zoom: {
+                        //     wheel: {
+                        //       enabled: true,
+                        //     },
+                        //     pinch: {
+                        //       enabled: true,
+                        //     },
+                        //     mode: 'x',
+                        //   },
+                        // },
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
                         },
                       },
                     }} 
@@ -355,20 +363,24 @@ console.log(tableData);
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
+                        // zoom: {
+                        //   pan: {
+                        //     enabled: true,
+                        //     mode: 'x',
+                        //   },
+                        //   zoom: {
+                        //     wheel: {
+                        //       enabled: true,
+                        //     },
+                        //     pinch: {
+                        //       enabled: true,
+                        //     },
+                        //     mode: 'x',
+                        //   },
+                        // },
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
                         },
                       },
                     }} 

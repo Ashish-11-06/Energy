@@ -9,6 +9,7 @@ import { fetchDayAheadData, fetchMCPData, fetchMCVData } from '../../Redux/slice
 import { useDispatch } from 'react-redux';
 import './DayAhead.css';
 import { fetchAccuracyData } from '../../Redux/slices/consumer/monthAccuracySlice';
+import { BackwardOutlined } from '@ant-design/icons';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -179,39 +180,39 @@ const dummyMCPData = [
     ],
   };
 
-  const BothData = {
-    labels: Array.from({ length: 31 }, (_, i) => i + 1),
-    datasets: [
-      {
-        label: 'ForeCasted MCP Data (INR/MWh)',
-        data: foreCastedData,
-        borderColor: 'green',
-        fill: false,
-        yAxisID: 'y1',
-      },
-      {
-        label: 'Past MCP Data (INR/MWh)',
-        data: pastData,
-        borderColor: 'orange',
-        fill: false,
-        yAxisID: 'y1',
-      },
-      {
-        label: 'ForeCasted MCV Data (MWh)',
-        data: mcvForeCastedData,
-        borderColor: 'blue',
-        fill: false,
-        yAxisID: 'y2',
-      },
-      {
-        label: 'Past MCV Data (MWh)',
-        data: mcvPastData,
-        borderColor: 'red',
-        fill: false,
-        yAxisID: 'y2',
-      },
-    ],
-  };
+  // const BothData = {
+  //   labels: Array.from({ length: 31 }, (_, i) => i + 1),
+  //   datasets: [
+  //     {
+  //       label: 'ForeCasted MCP Data (INR/MWh)',
+  //       data: foreCastedData,
+  //       borderColor: 'green',
+  //       fill: false,
+  //       yAxisID: 'y1',
+  //     },
+  //     {
+  //       label: 'Past MCP Data (INR/MWh)',
+  //       data: pastData,
+  //       borderColor: 'orange',
+  //       fill: false,
+  //       yAxisID: 'y1',
+  //     },
+  //     {
+  //       label: 'ForeCasted MCV Data (MWh)',
+  //       data: mcvForeCastedData,
+  //       borderColor: 'blue',
+  //       fill: false,
+  //       yAxisID: 'y2',
+  //     },
+  //     {
+  //       label: 'Past MCV Data (MWh)',
+  //       data: mcvPastData,
+  //       borderColor: 'red',
+  //       fill: false,
+  //       yAxisID: 'y2',
+  //     },
+  //   ],
+  // };
 
   const columns = [
     { title: 'Details', dataIndex: 'metric', key: 'metric' },
@@ -239,7 +240,10 @@ const dummyMCPData = [
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Model Statistical Information</h1>
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      Model Statistical Information
+      </h1>
+      {/* <h1>Model Statistical Information</h1> */}
 
       {/* Dropdown for Technology Selection */}
       {/* <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '70%', marginBottom: '10px'}}>
@@ -255,7 +259,7 @@ const dummyMCPData = [
       <Radio.Group value={selectedType} onChange={handleChange}>
         <Radio value="MCP">MCP</Radio>
         <Radio value="MCV">MCV</Radio>
-        <Radio value="Both">Both</Radio>
+        {/* <Radio value="Both">Both</Radio> */}
       </Radio.Group>
 
       {/* Conditional Rendering of Graphs */}
@@ -291,21 +295,30 @@ const dummyMCPData = [
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                        },
+                        // zoom: {
+                        //   pan: {
+                        //     enabled: true,
+                        //     mode: 'x',
+                        //   },
+                        //   zoom: {
+                        //     wheel: {
+                        //       enabled: true,
+                        //     },
+                        //     pinch: {
+                        //       enabled: true,
+                        //     },
+                        //     mode: 'x',
+                        //   },
+                        //   legend: {
+                        //     display: true,
+                        //     position: 'bottom', // Position legends at the bottom
+                        //     align: 'end', // Align legends to the right
+                        //     labels: {
+                        //       // usePointStyle: true, // Use point style for legend items
+                        //       padding: 20, // Add padding around legend items
+                        //     },
+                        //   },
+                        // },
                       },
                     }} 
                   />
@@ -343,21 +356,30 @@ const dummyMCPData = [
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
-                        },
+                        // zoom: {
+                        //   pan: {
+                        //     enabled: true,
+                        //     mode: 'x',
+                        //   },
+                        //   zoom: {
+                        //     wheel: {
+                        //       enabled: true,
+                        //     },
+                        //     pinch: {
+                        //       enabled: true,
+                        //     },
+                        //     mode: 'x',
+                        //   },
+                        //   legend: {
+                        //     display: true,
+                        //     position: 'bottom', // Position legends at the bottom
+                        //     align: 'end', // Align legends to the right
+                        //     labels: {
+                        //       // usePointStyle: true, // Use point style for legend items
+                        //       padding: 20, // Add padding around legend items
+                        //     },
+                        //   },
+                        // },
                       },
                     }} 
                   />
@@ -365,7 +387,7 @@ const dummyMCPData = [
               </Card>
             </Col>
           )}
-          {selectedType === 'Both' && (
+          {/* {selectedType === 'Both' && (
             <Col span={24} >
               <Card style={{  backgroundColor: 'white' }}>
                 <h3>MCP and MCV Data</h3>
@@ -422,6 +444,15 @@ const dummyMCPData = [
                             },
                             mode: 'x',
                           },
+                          legend: {
+                            display: true,
+                            position: 'bottom', // Position legends at the bottom
+                            align: 'end', // Align legends to the right
+                            labels: {
+                              // usePointStyle: true, // Use point style for legend items
+                              padding: 20, // Add padding around legend items
+                            },
+                          },
                         },
                       },
                     }} 
@@ -429,22 +460,23 @@ const dummyMCPData = [
                 </div>
               </Card>
             </Col>
-          )}
+          )} */}
         </Row>
       )}
 
       {/* Table Display */}
+      <Card style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff'}}>
       <Table columns={columns} dataSource={dataSource} pagination={false} bordered style={{ marginTop: '20px' }} />
-
+      </Card>
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
-          <Col style={{marginLeft:'75%'}}>
-            <Button onClick={handleMonth}>Month Ahead</Button>
+          <Col style={{marginLeft:'90%'}}>
+            <Button onClick={handleMonth} icon={<BackwardOutlined/>}>Back</Button>
           </Col>
-          <Col>
+          {/* <Col>
             <Button onClick={handleDay}>Day Ahead</Button>
-          </Col>
+          </Col> */}
         </Row>
       </div>
     </div>

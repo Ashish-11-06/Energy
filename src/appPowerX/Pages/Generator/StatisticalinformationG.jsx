@@ -5,34 +5,35 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
-import { fetchDayAheadData, fetchMCPData, fetchMCVData } from '../../Redux/slices/consumer/dayAheadSlice';
+import { fetchModelStatistics } from '../../Redux/slices/consumer/modelStatisticsSlice';
 import { useDispatch } from 'react-redux';
-// import './DayAhead.css';
-import { fetchAccuracyData } from '../../Redux/slices/consumer/monthAccuracySlice';
+import { BackwardFilled, BackwardOutlined } from '@ant-design/icons';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
 
 const { Option } = Select;
 
-const StatisticalinformationG = () => {
+const StatisticalInformationG = () => {
   const [tableData, setTableData] = useState([]);
   const navigate = useNavigate(); 
   const [selectedType, setSelectedType] = useState('MCP'); // Default: MCP chart displayed
   const dispatch = useDispatch();
-  const [McvData, setMcvData] = useState('');
-  const [foreCastedData, setForeCastedData] = useState('');
-  const [pastData, setPastData] = useState('');
-  const [mcvForeCastedData, setMcvForeCastedData] = useState('');
-  const [mcvPastData, setMcvPastData] = useState('');
+  const [foreCastedData, setForeCastedData] = useState([]);
+  const [pastData, setPastData] = useState([]);
+  const [mcvForeCastedData, setMcvForeCastedData] = useState([]);
+  const [mcvPastData, setMcvPastData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await dispatch(fetchAccuracyData());
-        console.log(data.payload.data);
-        setTableData(Array.isArray(data.payload.data) ? data.payload.data : []);
-        // Ensure data is an array
+        const data = await dispatch(fetchModelStatistics());
+        console.log(data.payload);
+        setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
+        setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
+        setPastData(data.payload.clean_data.map(item => item.mcp) || []);
+        setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
+        setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
       } catch (error) {
         console.log(error);
       }
@@ -40,68 +41,23 @@ const StatisticalinformationG = () => {
     fetchData();
   }, [dispatch]);
 
-console.log(tableData);
-
-
-  useEffect(() => {
-    const fetchMCP = async () => {
-      try {
-        const data = await dispatch(fetchMCPData()).unwrap();
-        setForeCastedData(data[0]?.data);
-        setPastData(data[1]?.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchMCP();
-  }, [dispatch]);
-
-  const handleChange = async (e) => {
+  const handleChange = (e) => {
     const value = e.target.value;
     setSelectedType(value);
-
-    if (value === 'MCP') {
-      try {
-        const data = await dispatch(fetchMCPData()).unwrap();
-        setForeCastedData(data[0]?.data);
-        setPastData(data[1]?.data);
-      } catch (error) {
-        console.log(error);
-      }
-    } else if (value === 'MCV') {
-      try {
-        const data = await dispatch(fetchMCVData()).unwrap();
-        setForeCastedData(data[0]?.data);
-        setPastData(data[1]?.data);
-      } catch (error) {
-        console.log(error);
-      }
-    } else if (value === 'Both') {
-      try {
-        const mcpData = await dispatch(fetchMCPData()).unwrap();
-        const mcvData = await dispatch(fetchMCVData()).unwrap();
-        setForeCastedData(mcpData[0]?.data);
-        setPastData(mcpData[1]?.data);
-        setMcvForeCastedData(mcvData[0]?.data);
-        setMcvPastData(mcvData[1]?.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
   };
 
   const MCVData = {
     labels: Array.from({ length: 96 }, (_, i) => i + 1), // Generates labels [1, 2, 3, ..., 96]
     datasets: [
       {
-        label: "ForeCasted MCV Data",
-        data: foreCastedData,
+        label: "Forecast MCV Data",
+        data: mcvForeCastedData.length ? mcvForeCastedData : Array(96).fill(null),
         borderColor: "blue",
         fill: false,
       },
       {
         label: "Past MCV Data",
-        data: pastData,
+        data: mcvPastData,
         borderColor: "red",
         fill: false,
       },
@@ -112,8 +68,8 @@ console.log(tableData);
     labels: Array.from({ length: 96 }, (_, i) => i + 1),
     datasets: [
       {
-        label: 'ForeCasted MCP Data',
-        data: foreCastedData,
+        label: 'Forecast MCP Data',
+        data: foreCastedData.length ? foreCastedData : Array(96).fill(null),
         borderColor: 'green',
         fill: false,
       },
@@ -130,8 +86,8 @@ console.log(tableData);
     labels: Array.from({ length: 96 }, (_, i) => i + 1),
     datasets: [
       {
-        label: 'ForeCasted MCP Data (INR/MWh)',
-        data: foreCastedData,
+        label: 'Forecast MCP Data (INR/MWh)',
+        data: foreCastedData.length ? foreCastedData : Array(96).fill(null),
         borderColor: 'green',
         fill: false,
         yAxisID: 'y1',
@@ -144,8 +100,8 @@ console.log(tableData);
         yAxisID: 'y1',
       },
       {
-        label: 'ForeCasted MCV Data (MWh)',
-        data: mcvForeCastedData,
+        label: 'Forecast MCV Data (MWh)',
+        data: mcvForeCastedData.length ? mcvForeCastedData : Array(96).fill(null),
         borderColor: 'blue',
         fill: false,
         yAxisID: 'y2',
@@ -161,7 +117,7 @@ console.log(tableData);
   };
 
   const columns = [
-    { title: 'Details', dataIndex: 'metric', key: 'metric' },
+    { title: 'Details', dataIndex: 'metric', key: 'metric' , width: '30%'},
     { title: 'MCP', dataIndex: 'mcp', key: 'mcp' },
     { title: 'MCV', dataIndex: 'mcv', key: 'mcv' },
   ];
@@ -169,40 +125,30 @@ console.log(tableData);
   const dataSource = [
     {
       key: '1',
-      metric: 'Accuracy',
+      metric: 'Accuracy Level',
       mcp: tableData.find(item => item.metric === 'MCP')?.accuracy || 'N/A',
       mcv: tableData.find(item => item.metric === 'MCV')?.accuracy || 'N/A',
     },
     {
       key: '2',
-      metric: 'Errors',
+      metric: 'Error Percentage',
       mcp: tableData.find(item => item.metric === 'MCP')?.errors || 'N/A',
       mcv: tableData.find(item => item.metric === 'MCV')?.errors || 'N/A',
     },
   ];
 
-  const handleDay = () => navigate('/px/generator/day-ahead');
-  const handleMonth = () => navigate('/px/generator/month-ahead');
+  const handleDay = () => navigate('/px/consumer/day-ahead');
+  const handleMonth = () => navigate('/px/consumer/month-ahead');
 
   return (
     <div style={{ padding: '20px' }}>
       <h1>Model Statistical Information</h1>
 
-      {/* Dropdown for Technology Selection */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '70%', marginBottom: '10px'}}>
-        <label htmlFor="" style={{ width: 120, fontWeight: 'bold', marginRight: '0px', fontSize: '20px' }}>Technology: </label>
-        <Select placeholder="Select Technology" style={{ width: 200 }} onChange={handleChange}>
-          <Option value="Solar">Solar</Option>
-          <Option value="Non-solar">Non-solar</Option>
-          <Option value="Hydro">Hydro</Option>
-        </Select>
-      </div>
-
       {/* Radio Buttons for Chart Selection */}
       <Radio.Group value={selectedType} onChange={handleChange}>
         <Radio value="MCP">MCP</Radio>
         <Radio value="MCV">MCV</Radio>
-        <Radio value="Both">Both</Radio>
+        {/* <Radio value="Both">Both</Radio> */}
       </Radio.Group>
 
       {/* Conditional Rendering of Graphs */}
@@ -238,20 +184,9 @@ console.log(tableData);
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
                         },
                       },
                     }} 
@@ -290,20 +225,9 @@ console.log(tableData);
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
                         },
                       },
                     }} 
@@ -355,20 +279,9 @@ console.log(tableData);
                         },
                       },
                       plugins: {
-                        zoom: {
-                          pan: {
-                            enabled: true,
-                            mode: 'x',
-                          },
-                          zoom: {
-                            wheel: {
-                              enabled: true,
-                            },
-                            pinch: {
-                              enabled: true,
-                            },
-                            mode: 'x',
-                          },
+                        legend: {
+                          position: 'bottom',
+                          align: 'end',
                         },
                       },
                     }} 
@@ -385,17 +298,12 @@ console.log(tableData);
 
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>
-        <Row justify="space-between">
-          <Col style={{marginLeft:'75%'}}>
-            <Button onClick={handleMonth}>Month Ahead</Button>
-          </Col>
-          <Col>
-            <Button onClick={handleDay}>Day Ahead</Button>
-          </Col>
-        </Row>
+      <Col>
+            <Button style={{marginLeft:'90%'}} onClick={handleDay} icon={<BackwardOutlined />}>Back</Button>
+      </Col>
       </div>
     </div>
   );
 };
 
-export default StatisticalinformationG;
+export default StatisticalInformationG;

@@ -45,6 +45,7 @@ import { lastVisitedPage } from './Redux/Slices/Consumer/lastVisitedPageSlice';
 import EmailVerification from './Pages/EmailVerification';
 import StatusApproval from './Pages/TrackStatus';
 import Agreements from './Pages/Agreements';
+import GeneratorInput from './Pages/Generator/GeneratorInput';
 
 
 // powerX
@@ -75,7 +76,9 @@ import LoginPage from './appPowerX/Pages/LoginPage';
 import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
 import NotificationG from './appPowerX/Pages/Generator/NotificationG';
 import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
-import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
+import WhatWeOfferP from './appPowerX/Pages/WhatWeOfferP';
+import TrackStatusP from './appPowerX/Pages/TrackStatus';
+// import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
 
 const CurrentPath = () => {
   const location = useLocation(); // useLocation must be inside a component
@@ -161,7 +164,8 @@ function App() {
             <Route path="profile/portfolio" element={<PortfolioGen />} />
             <Route path="combination" element={<OptimizeCombination />} />
             <Route path="notificationgen" element={<NotificationGenerator />} />
-            <Route path="transaction-window" element={<TransactionWindowGen />} />
+            <Route path="transaction-window" element={<TransactionWindowGen />}/>
+            <Route path="generatorInput" element={<GeneratorInput />} />
             <Route path="invoice" element={<InvoicePage />} />
             <Route path="status" element={<StatusApproval />} />
           </Route>
@@ -171,12 +175,16 @@ function App() {
 
        {/* PowerX routes */}
       <Route path="px-login" element={<LoginPage/>} />
-       <Route element={<PLayoutComponent />}>
+
     <Route path="px">
+    <Route path="what-we-offer" element={<WhatWeOfferP/>} />
+
+       <Route element={<PLayoutComponent />}>
       
       {/* Common Chat Page Route */}
 
       <Route path="chat-page" element={<ChatPage />} />
+      <Route path="track-status" element={<TrackStatusP/>} />
 
       {/* Consumer Routes */}
       <Route path="consumer">
@@ -202,7 +210,7 @@ function App() {
         <Route path="plan-day-trade-page" element={<PlanDayTradePage />} />
         <Route path="statistical-information" element={<StatisticalInformationG />} />
         {/* <Route path="statistical-day-information" element={<DayStatisticsInformation />} /> */}
-        <Route path="statistical-month-information" element={<StatisticalInfoMonthG />} />
+        <Route path="statistical-month-information" element={<StatisticalInfoMonth />} />
 
         <Route path="month-ahead" element={<MonthAheadG />} />
         <Route path="notification" element={<NotificationG />} />

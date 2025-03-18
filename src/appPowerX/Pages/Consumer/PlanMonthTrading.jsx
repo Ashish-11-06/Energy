@@ -123,7 +123,7 @@ console.log(tableDemandData);
       const res = await dispatch(addMonthData(newData)).unwrap();
       console.log('res', res);
       setIsModalVisible(false);
-      navigate('/px/consumer/trading');
+      navigate('/px/consumer/planning');
     } catch (error) {
       console.log(error);
       message.error("Failed to submit data. Please try again.");
@@ -137,59 +137,6 @@ console.log(tableDemandData);
 
   const handleAddData = async () => {
     setIsModalVisible(true);
-    // const data = {
-    //   Date: selectedDate ? selectedDate.format('DD-MM-YYYY') : '',
-    //   demand: demand,
-    //   price: price
-    // };
-  
-    // try {
-    //   const res = await dispatch(addTableMonthData(data)).unwrap();
-    //   console.log('Response from addTableMonthData:', res);
-    //   setDataAdded(true);
-    //   if(res) {
-    //     const fetchData = async () => {
-    //       try {
-    //         const data = await dispatch(fetchTableMonthData());
-    //         console.log(data.payload); // Logging the fetched data
-    //          setTableDemandData(data.payload || []); // Ensure data is an array
-    //       } catch (error) {
-    //         console.log(error);
-    //       }
-    //     };
-    //     fetchData();
-    //   }
-    //   // if (res) {
-    //   //   console.log('Data added successfully');
-  
-    //   //   const message = `New demand added: ${demand}, Price: ${data.price} on date: ${data.Date}`;
-  
-    //   //   // Fetch the existing notification data from Redux state
-    //   //   const notifications = store.getState().notificationData.notificationData || [];
-        
-    //   //   // Find the last ID and increment it
-    //   //   const lastId = notifications.length > 0 ? Math.max(...notifications.map(n => n.id)) : 0;
-    //   //   const newId = lastId + 1;
-  
-    //   //   const notificationData = {
-    //   //     id: newId, // Auto-incremented ID
-    //   //     message: message,
-    //   //   };
-  
-    //   //   // Dispatch updateNotificationData with new notification
-    //   //   const notificationRes = await dispatch(updateNotificationData(notificationData)).unwrap();
-    //   //   console.log('Notification Updated:', notificationRes);
-
-    //   //   // Fetch the updated table data
-    //   //   const updatedData = await dispatch(fetchTableMonthData()).unwrap();
-    //   //   setTableDemandData(updatedData);
-
-    //   //   // Enable the "Continue" button
-       
-    //   // }
-    // } catch (error) {
-    //   console.error('Error:', error);
-    // }
   };
 
   const handleStateChange = (value) => {
@@ -199,6 +146,11 @@ console.log(tableDemandData);
     const selectedRequirement = consumerRequirement.find(item => item.state === value);
     setSelectedRequirementId(selectedRequirement ? selectedRequirement.id : null);
   };
+
+  // Add this useEffect to enable the "Add Data" button when all required fields are filled
+  useEffect(() => {
+    setAllFieldsFilled(selectedState !== "" && selectedDate !== null && demand !== '');
+  }, [selectedState, selectedDate, demand]);
 
   const handleNextTrade = () => {
     localStorage.setItem("monthTradeData", JSON.stringify(demandData));
@@ -228,8 +180,8 @@ console.log(tableDemandData);
   return (
     <div style={{ padding: '20px' }}>
       <h1>Plan Your Trade</h1>
-      <Col span={24}>
-      <Form.Item label="Select Consumption Unit">
+      <Col span={24} style={{ marginBottom: '20px',fontSize:'24px',marginLeft:'140px' }}>
+      <Form.Item label="Select Consumption Unit" style={{fontSize:'24px'}} >
   <Select
     value={selectedState || undefined} // Ensures placeholder is visible when nothing is selected
     onChange={handleStateChange}
@@ -245,9 +197,44 @@ console.log(tableDemandData);
 </Form.Item>
 
       </Col>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '10px', flexWrap: 'nowrap' }}>
+
+      <Row>
+<Col span={12}>
+<label htmlFor="" style={{ minWidth: '100px', fontSize: '16px' ,fontWeight:'600', marginLeft:'140px' }}>
+            Select Date : 
+          </label>
+          <DatePicker
+            style={{ width: "250px", fontSize: '16px', marginLeft:'10px',backgroundColor:'white' }}
+            format="DD/MM/YYYY"
+            disabledDate={(current) => current && current <= new Date()}
+            onChange={(date) => setSelectedDate(date)}
+          />
+          </Col>
+
+          <Col span={12}>
+          <label style={{ minWidth: '100px', fontSize: '16px' ,fontWeight:'600',marginLeft:'-80px'}}>Enter Demand <span style={{fontSize:'12px'}}>(MWh)</span> :</label>
+          <input
+            type="number"
+            placeholder="Enter demand"
+            min={0}
+            style={{
+              width: "250px",
+              padding: "5px",
+              fontSize: "16px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+              marginLeft:'10px'
+            }}
+            onChange={(e) => {
+              setDemand(e.target.value);
+              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null );
+            }}
+          />
+          </Col>
+        </Row>
+      {/* <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '10px', flexWrap: 'nowrap' }}> */}
         {/* Date Picker Section */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flex: 1 }}>
+        {/* <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flex: 1 }}>
           <label htmlFor="" style={{ minWidth: '100px', fontSize: '16px' }}>
             Select Date:
           </label>
@@ -257,10 +244,10 @@ console.log(tableDemandData);
             disabledDate={(current) => current && current <= new Date()}
             onChange={(date) => setSelectedDate(date)}
           />
-        </div>
+        </div> */}
 
         {/* Demand Input Section */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 , marginLeft:'-400px'}}>
+        {/* <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 , marginLeft:'-400px'}}>
           <label style={{ minWidth: '100px', fontSize: '16px' }}>Enter Demand <span style={{fontSize:'12px'}}>(MWh)</span>:</label>
           <input
             type="number"
@@ -278,7 +265,7 @@ console.log(tableDemandData);
               setAllFieldsFilled(e.target.value !== '' && selectedDate !== null );
             }}
           />
-        </div>
+        </div> */}
 
         {/* Price Input Section */}
         {/* <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
@@ -299,9 +286,9 @@ console.log(tableDemandData);
             }}
           />
         </div> */}
-      </div>
+      {/* </div> */}
 
-      <Col span={12}>
+      {/* <Col span={12}>
         <Table
           columns={columnsMonth}
           dataSource={Array.isArray(tableDemandData) ? tableDemandData : []}
@@ -314,7 +301,7 @@ console.log(tableDemandData);
             overflowY: 'auto', // Makes the table scrollable
           }}
         />
-      </Col>
+      </Col> */}
 
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">

@@ -8,7 +8,7 @@ import { Layout, Menu, Button, Drawer } from 'antd';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import dash from '../../assets/dashboard.png';
 import transaction from '../../assets/transaction.png';
-import subscription from '../../assets/subscription.png';
+import subscriptionImg from '../../assets/subscription.png';
 import consumption from '../../assets/consumption.png';
 import invoice from '../../assets/invoice.png';
 import profile from '../../assets/profile.png';
@@ -71,7 +71,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
         </Badge>
       )
     },
-    { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     {
       label: (<span>Notification</span>),
@@ -98,13 +98,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Track Status', key: '/consumer/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 console.log(is_new_user);
-if(subscription_type === 'PRO') {
-  if (is_new_user==true) {
-    consumerMenuItems.push({ label: 'powerX', key: '/px/consumer/plan-trade-page' });
-  } else {
-    consumerMenuItems.push({ label: 'powerX', key: '/px/consumer/dashboard' });
-  }
-}
 
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
@@ -153,17 +146,21 @@ if(subscription_type === 'PRO') {
     },
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Track Status', key: '/generator/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
+    {label: 'Analyse Modal', key: '/generator/GeneratorInput', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />},
   ];
-  if(subscription_type === 'PRO') {
-    if (is_new_user==true) {
-      generatorMenuItems.push({ label: 'powerX', key: '/px/generator/day-ahead' });
-    } else {
-      generatorMenuItems.push({ label: 'powerX', key: '/px/generator/dashboard' });
-    }
-  }
 
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
+
+  // menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
+  const lastMenuItem = menuItems[menuItems.length - 1];
+  if (subscription_type === 'PRO') {
+    if (is_new_user == true) {
+      menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
+    } else {
+      menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' });
+    }
+  }
 
   useEffect(() => {
     // Update selectedKey whenever the location changes
@@ -220,6 +217,11 @@ if(subscription_type === 'PRO') {
               </Menu.Item>
             ))}
           </Menu>
+          {/* <div style={{ padding: "16px", textAlign: "center",marginTop:'100%' }}>
+        <Button type="primary" href={lastMenuItem.key} block>
+          {lastMenuItem.label}
+        </Button>
+        </div> */}
         </Sider>
       ) : (
         <>
