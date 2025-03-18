@@ -320,10 +320,12 @@ useEffect(()=> {
                 "Contracted demand / Sanctioned load as per your electricity bill"
               )}
               name="contractedDemand"
+              
               rules={[{ required: true, message: "Please enter the contracted demand!" }]}
             >
               <Input
                 type="number"
+                min={0}
                 placeholder="Enter contracted demand in MW"
               />
             </Form.Item>

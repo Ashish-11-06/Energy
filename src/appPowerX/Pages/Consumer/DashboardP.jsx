@@ -193,8 +193,8 @@ console.log(dashboardData);
   };
 
   // Extract state names and their demands from dashboardData
-  const stateLabels = dashboardData.map(data => data.state);
-  const stateDemands = dashboardData.map(data => data.contracted_demand);
+  const stateLabels = dashboardData?.map(data => data.state);
+  const stateDemands = dashboardData?.map(data => data.contracted_demand);
 
   const stateColumn = [
     {

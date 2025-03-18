@@ -228,7 +228,7 @@ const StatisticalInformation = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
-      Model Statistical Information <span style={{fontSize:'20px'}}>({formattedDate})</span>
+      Statistical Insights <span style={{fontSize:'20px'}}>({formattedDate})</span>
       </h1>
       {/* <h1>Model Statistical Information</h1> */}
 

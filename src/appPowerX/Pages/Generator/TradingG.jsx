@@ -165,7 +165,7 @@ const Trading = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px",marginTop:'30px' }}>
       <Row gutter={[16, 16]}>
         {/* Total Section */}
         <Col span={6}>
