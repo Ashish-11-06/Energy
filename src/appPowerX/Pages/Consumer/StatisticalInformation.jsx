@@ -23,12 +23,22 @@ const StatisticalInformation = () => {
   const [pastData, setPastData] = useState([]);
   const [mcvForeCastedData, setMcvForeCastedData] = useState([]);
   const [mcvPastData, setMcvPastData] = useState([]);
+  const [formattedDate, setFormattedDate] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await dispatch(fetchModelStatistics());
         console.log(data.payload);
+        if (data?.payload?.date) {
+          const dateStr = data.payload.date;
+          const date = new Date(dateStr);
+    
+          const options = { month: "long", day: "numeric" };
+          const formatted = date.toLocaleDateString("en-US", options); 
+    
+          setFormattedDate(formatted); // Example output: "January 30"
+        }
         setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
         setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
         setPastData(data.payload.clean_data.map(item => item.mcp) || []);
@@ -218,7 +228,7 @@ const StatisticalInformation = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
-      Model Statistical Information
+      Model Statistical Information <span style={{fontSize:'20px'}}>({formattedDate})</span>
       </h1>
       {/* <h1>Model Statistical Information</h1> */}
 

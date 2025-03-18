@@ -152,15 +152,15 @@ console.log(is_new_user);
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
 
-  // menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
-  const lastMenuItem = menuItems[menuItems.length - 1];
-  if (subscription_type === 'PRO') {
-    if (is_new_user == true) {
-      menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
-    } else {
-      menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' });
-    }
-  }
+  
+  const lastMenuItem = { label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' };
+  // if (subscription_type === 'PRO') {
+  //   if (is_new_user == true) {
+  //     menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
+  //   } else {
+  //     menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' });
+  //   }
+  // }
 
   useEffect(() => {
     // Update selectedKey whenever the location changes
@@ -217,11 +217,11 @@ console.log(is_new_user);
               </Menu.Item>
             ))}
           </Menu>
-          {/* <div style={{ padding: "16px", textAlign: "center",marginTop:'100%' }}>
-        <Button type="primary" href={lastMenuItem.key} block>
-          {lastMenuItem.label}
-        </Button>
-        </div> */}
+          <div style={{ padding: "16px", textAlign: "center", marginTop: '120%' }}>
+            <Button type="primary" href={lastMenuItem.key} block>
+              {lastMenuItem.label}
+            </Button>
+          </div>
         </Sider>
       ) : (
         <>

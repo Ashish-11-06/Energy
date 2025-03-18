@@ -19,6 +19,7 @@ const DayAhead = () => {
   const [tableData, setTableData] = useState([]);
   const [loading,setLoading] = useState(false);
   const [statistiicsData, setStatisticsData] = useState([]);
+  const [nextDay, setNextDay] = useState('');
   const [detailDataSource, setDetailDataSource] = useState([
     {
       key: 'max',
@@ -39,24 +40,32 @@ const DayAhead = () => {
       mcv: 0,
     },
   ]);
-  const [nextDay, setNextDay] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-    const options = { month: 'short', day: 'numeric' };
-    setNextDay(tomorrow.toLocaleDateString(undefined, options));
-  }, []);
+  // useEffect(() => {
+  //   const today = new Date();
+  //   const tomorrow = new Date(today);
+  //   tomorrow.setDate(today.getDate() + 1);
+  //   const options = { month: 'short', day: 'numeric' };
+  //   setNextDay(tomorrow.toLocaleDateString(undefined, options));
+  // }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const data = await dispatch(dayAheadData()).unwrap();
-        console.log('data', data.predictions);
+        console.log('data', data.predictions.map(item=>item.date));
+        if (data?.predictions?.length > 0) {
+          const dateStr = data.predictions[0]?.date;
+          const date = new Date(dateStr);
+          
+          const options = { month: "long", day: "2-digit" };
+          const formattedDate = date.toLocaleDateString("en-US", options);
+    
+          setNextDay(formattedDate); // Example output: "February 01"
+        }
 
         const mcpDataOriginal = data.predictions.map(item => item.mcp_prediction);
         const mcpData=mcpDataOriginal.reverse();

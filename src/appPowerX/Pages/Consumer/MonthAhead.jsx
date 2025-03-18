@@ -7,6 +7,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { fetchMonthAheadData } from '../../Redux/slices/consumer/monthAheadSlice';
+import moment from 'moment';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -17,7 +18,10 @@ const MonthAhead = () => {
   const [loading,setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+const  [mcpHighestDate,setMcpHighestDate]=useState('');
+const  [mcpLowestDate,setMcpLowestDate]=useState('');
+const [mcvHighestDate,setMcvHighestDate]=useState('');
+const [mcvLowestDate,setMcvLowestDate]=useState('');
   const start_date = new Date(); 
   start_date.setDate(start_date.getDate() + 1); // Set to tomorrow
   
@@ -35,11 +39,19 @@ const MonthAhead = () => {
         const responseData = data.payload;
 
         if (Array.isArray(responseData?.daily_data)) {
+
           const mcvData = responseData.daily_data.map(item => item.mcv_prediction?.avg ?? 0);
           const mcpDataOriginal = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
           const mcpData=mcpDataOriginal.reverse();
           const labels = Array.from({ length: 31 }, (_, i) => i + 1); // Creates an array [1, 2, ..., 31]
+          setMcpHighestDate(moment(responseData.overall_stats?.mcp_prediction?.highest_date).format('DD-MM-YYYY'));
+          setMcpLowestDate(moment(responseData.overall_stats?.mcp_prediction?.lowest_date).format('DD-MM-YYYY'));
+          setMcvHighestDate(moment(responseData.overall_stats?.mcv_prediction?.highest_date).format('DD-MM-YYYY'));
+          setMcvLowestDate(moment(responseData.overall_stats?.mcv_prediction?.lowest_date).format('DD-MM-YYYY'));
 
+          console.log(responseData.overall_stats?.mcp_prediction?.highest_date);
+          
+          // setMcpLowestDate(responseData.overall_stats?.mcp_prediction?.lowest_date);
           console.log("MCV Data:", mcvData);
           console.log("MCP Data:", mcpData);
           console.log("Labels:", labels);
@@ -176,27 +188,53 @@ const MonthAhead = () => {
     },
     {
       title: 'MCP (INR/MWh)',
-      dataIndex: 'mcp',
-      key: 'mcp',
+      children: [
+        {
+          title: 'Value',
+          dataIndex: 'mcp',
+          key: 'mcp',
+        },
+        {
+          title: 'Date',
+          dataIndex: 'mcpDate',
+          key: 'mcpDate',
+          render: (text, record) => {
+            if (record.status === 'Highest') return mcpHighestDate;
+            if (record.status === 'Lowest') return mcpLowestDate;
+            return '-';
+          },
+        },
+      ],
     },
     {
       title: 'MCV (MWh)',
-      dataIndex: 'mcv',
-      key: 'mcv',
+      children: [
+        {
+          title: 'Value',
+          dataIndex: 'mcv',
+          key: 'mcv',
+        },
+        {
+          title: 'Date',
+          dataIndex: 'mcvDate',
+          key: 'mcvDate',
+          render: (text, record) => {
+            if (record.status === 'Highest') return mcvHighestDate;
+            if (record.status === 'Lowest') return mcvLowestDate;
+            return '-';
+          },
+        },
+      ],
     },
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-    },
-
   ];
+  
 
   return (
     <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center'}}> {/* Changed background color and set minHeight */}
       {/* <h1>Market Forecast - Month Ahead</h1> */}
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
-        Market Forecast - Month Ahead <span style={{fontSize:'20px'}}>({startDateString} - {endDateString})</span>
+        Market Forecast - Month Ahead
+         {/* <span style={{fontSize:'20px'}}>({startDateString} - {endDateString})</span> */}
       </h1>
       {/* <Card style={{ width: 'full',marginLeft:'0' }}>
         <div style={{ height: '400px', width: '100%' }}>

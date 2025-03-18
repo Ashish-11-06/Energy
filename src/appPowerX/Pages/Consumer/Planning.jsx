@@ -43,7 +43,7 @@ const Planning = () => {
   const [selectedInterval, setSelectedInterval] = useState(null); // Add state for selected interval
   const [startDate, setStartDate] = useState(null); // Add state for start date
   const [endDate, setEndDate] = useState(null); // Add state for end date
-
+const [requirementId, setRequirementId] = useState([]);
   const handleDateIntervalChange = (value) => {
     setSelectedInterval(value);
     if (value === 'today') {
@@ -64,6 +64,7 @@ const Planning = () => {
         const res = await dispatch(fetchPlanningData(id));
         console.log(res.payload);
         setTableDemandData(res.payload);
+        setRequirementId(res.payload.map(item => item.requirement));
       } catch (error) {
         console.error("Error fetching planning data:", error);
       } finally {
@@ -73,6 +74,7 @@ const Planning = () => {
 
     fetchData(); // Call the function inside useEffect
   }, [user_id, dispatch]); // Add dependencies if needed
+console.log(requirementId);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,6 +82,7 @@ const Planning = () => {
         const id = user_id;
         const res = await dispatch(fetchRequirements(id)); // Wait for API response
         setConsumerRequirement(res.payload);
+        console.log(res.payload);  
       } catch (error) {
         console.log("Error fetching consumer requirements:", error);
       }
@@ -220,16 +223,20 @@ const Planning = () => {
       ),
     },
     { title: 'Technology & Price (INR/MWh)', dataIndex: 'technology', key: 'technology' },
-    { title: 'Requirement', dataIndex: 'requirements', key: 'requirements' },
+    { title: 'Requirement Details', dataIndex: 'requirements', key: 'requirements' },
   ];
 
-  const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => ({
-    key: item.requirement,
-    date: item.date,
-    demand: item.demand,
-    technology: `${item.price?.Solar ? `Solar: ${item.price.Solar}` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `Non-Solar: ${item.price["Non-Solar"]}` : ''}`,
-    price: `${item.price?.Solar ? `${item.price.Solar} INR (Solar)` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `${item.price["Non-Solar"]} INR (Non-Solar)` : ''}`,
-  })) : [];
+  const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
+    const requirementDetails = consumerRequirement.find(req => req.id === item.requirement);
+    return {
+      key: item.requirement,
+      date: item.date,
+      demand: item.demand,
+      technology: `${item.price?.Solar ? `Solar: ${item.price.Solar}` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `Non-Solar: ${item.price["Non-Solar"]}` : ''}`,
+      price: `${item.price?.Solar ? `${item.price.Solar} INR (Solar)` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `${item.price["Non-Solar"]} INR (Non-Solar)` : ''}`,
+      requirements: requirementDetails ? `State: ${requirementDetails.state}, Industry: ${requirementDetails.industry}, Contracted Demand: ${requirementDetails.contracted_demand} MWh, Consumption Unit: ${requirementDetails.consumption_unit}` : 'N/A'
+    };
+  }) : [];
 
 
   const handlePrevMonth = () => {
