@@ -2,7 +2,7 @@ import axiosInstance from "../../axiosInstance";
 
 const dashboardApi ={
     fetchDashboard: (id) => {
-        console.log(id);
+        // console.log(id);
         
         return axiosInstance.get(`/consumer-dashboard/${id}`);
     },

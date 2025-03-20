@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Card, Col, Typography, Row, Table, Spin, message} from "antd";
+import { Card, Col, Typography, Row, Table, Spin, message, Modal} from "antd";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -45,10 +45,16 @@ const DashboardP = () => {
   const [dashboardLine, setDashboardLine] = useState([]);
   const [loading,setLoading]=useState(false);
   const [nextDay, setNextDay] = useState('');
+  const [showDueModal,setShowDueModal]=useState(false);
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
-// console.log(user_id);
+  const user=JSON.parse(localStorage.getItem('user')).user;
+  const is_due_date=user.is_due_date;
 
-
+  useEffect(() => {
+    if (is_due_date) {
+      setShowDueModal(true);
+    }
+  }, [is_due_date]);
 
   const cardStyle = {
     margin: "20px",
@@ -66,14 +72,14 @@ const DashboardP = () => {
     const id=user_id;
     const fetchData = async () => {
       const res = await dispatch(fetchDashboardData(id));
-      console.log(res.payload);
+      // console.log(res.payload);
       
       setDashboardData(res.payload || []);
     };
     fetchData();
   }, [dispatch]);
 
-console.log(dashboardData);
+// console.log(dashboardData);
 
 
   useEffect(() => {
@@ -82,7 +88,7 @@ console.log(dashboardData);
       const fetchLineData = async () => {
         setLoading(true);
         const res = await dispatch(fetchDashboardLine(id)); 
-        console.log(res);
+        // console.log(res);
         
         if (res.payload.length > 0) {
           const dateStr = res.payload[0]?.date;
@@ -93,7 +99,7 @@ console.log(dashboardData);
     
           setNextDay(formattedDate); // Example output: "February 01"
         }
-        console.log(res.payload);
+        // console.log(res.payload);
         if(res.error){
         message.error(res.payload);
         } else {
@@ -105,13 +111,17 @@ console.log(dashboardData);
       fetchLineData();
     } catch (error) {
       message.error(error.message); 
-      console.log(error);
+      // console.log(error);
     }
  
   }, [dispatch]);
 
   // Extract demand values from dashboardLine
   const demandValues = dashboardLine.map(item => item.demand);
+
+  const handleModalOk =()=> {
+      navigate('/px/consumer/planning')
+  }
 
   // Line Chart Data
   const lineData = {
@@ -398,6 +408,12 @@ console.log(dashboardData);
           </Col>
         </Row>
       </Card>
+      <Modal visible={showDueModal}  
+      onCancel={()=>setShowDueModal(false)}
+      onOk={handleModalOk}
+      >
+
+      </Modal>
     </div>
   );
 };

@@ -36,7 +36,7 @@ const ProfilePage = () => {
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
 const userId = initialUserData.id;
-console.log(userId);
+// console.log(userId);
 
   const navigate = useNavigate();
 

@@ -21,7 +21,7 @@ const { Header } = Layout;
 const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const location = useLocation();
   const currentPath = location.pathname;
-  console.log('cc',currentPath);
+  // console.log('cc',currentPath);
   
   const navigate = useNavigate(); // Add useNavigate hook
   let username = ""; // Use let instead of const
@@ -45,6 +45,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   };
 
   const user = getFromLocalStorage("user").user;
+  console.log(user);
+  
   if (user && user.company_representative) {
     username = user.company_representative;
   }

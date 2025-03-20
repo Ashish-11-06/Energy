@@ -15,7 +15,7 @@ import profile from '../../assets/profile.png';
 import offerSend from '../../assets/offerSend.png';
 import notificationImg from '../../assets/notification.png';
 import portfolio from '../../assets/portfolio.png';
-
+import track from '../../assets/track.png';
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
@@ -25,7 +25,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   // const notificationCount = 9;
   const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const subscription_type = subscription?.subscription_type;
-  console.log(subscription_type);
+  // console.log(subscription_type);
 
   // console.log(notificationCount);
 
@@ -36,7 +36,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category = user?.user_category;
   const is_new_user = user?.is_new_user;
-  console.log(is_new_user);
+  // console.log(is_new_user);
 
   useEffect(() => {
     // Dispatch the thunk to connect to the WebSocket
@@ -95,9 +95,9 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
       )
     },
     { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Track Status', key: '/consumer/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Track Status', key: '/consumer/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
-console.log(is_new_user);
+// console.log(is_new_user);
 
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },

@@ -12,7 +12,7 @@ const NotificationP = () => {
   const [notifications, setNotifications] = useState([]); // State to store notifications
 
   const userId = Number(JSON.parse(localStorage.getItem('user')).user.id);
-  console.log(userId);
+  // console.log(userId);
   
   
   useEffect(() => {
@@ -23,7 +23,7 @@ const NotificationP = () => {
           setNotifications(response.payload); // Adjust based on your actual response structure
         })
         .catch(error => {
-          console.error("Error fetching notifications:", error);
+          // console.error("Error fetching notifications:", error);
         });
    
   }, [dispatch]);

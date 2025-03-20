@@ -268,7 +268,7 @@ const [mcvLowestDate,setMcvLowestDate]=useState('');
       <div style={{ padding: '20px', width: '100%' }}>
         <Row justify="space-between">
           <Col>
-            <Button onClick={() => navigate('/px/consumer/statistical-information-month')}>Historical Trend</Button>
+            {/* <Button onClick={() => navigate('/px/consumer/statistical-information-month')}>Historical Trend</Button> */}
           </Col>
           <Col>
             <Button onClick={() => navigate('/px/consumer/planning')}>Schedule Trade</Button>

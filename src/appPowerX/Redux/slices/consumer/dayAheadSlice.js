@@ -5,7 +5,7 @@ import dayAheadApi from "../../api/consumer/dayAhead";
 export const fetchDayAheadData = createAsyncThunk(
   "dayAheadData/fetchDayAheadData",
   async (dayAheadDemand, { rejectWithValue }) => { // Correctly pass rejectWithValue here
-    console.log('ddd',dayAheadDemand);
+    // console.log('ddd',dayAheadDemand);
     
     try {
       const response = await dayAheadApi.getDayAhead(dayAheadDemand);
@@ -28,7 +28,7 @@ export const addDayAheadData = createAsyncThunk(
       }
       // throw new Error("Invalid response from server");
     } catch (error) {
-      console.log('err',error.message);
+      // console.log('err',error.message);
       
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -40,7 +40,7 @@ export const dayAheadData = createAsyncThunk(
   async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
     try {
       const response = await dayAheadApi.dayAheadData();
-      console.log('res',response);
+      // console.log('res',response);
       
       if (response.status === 200 && response.data) {
         return response.data; // Ensure response contains valid data

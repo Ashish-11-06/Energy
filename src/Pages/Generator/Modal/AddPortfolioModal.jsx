@@ -150,6 +150,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
                 </span>
               }
               name="state"
+              
               // rules={[{ required: true, message: "Please select your state!" }]}
               
             >

@@ -150,7 +150,7 @@ const [editData,setEditData]=useState(selectedRequirement);
   
 
   const handleEdit=(record)=>{
-    // console.log(record);
+    console.log(record);
     setEditData(record);
     setEdit(true);
     setIsModalVisible(true);

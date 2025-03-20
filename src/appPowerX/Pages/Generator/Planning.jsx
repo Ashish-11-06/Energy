@@ -50,10 +50,10 @@ const Planning = () => {
       const id = user_id; // Ensure `user_id` is defined in scope
       try {
         const res = await dispatch(fetchPlanningDataG(id));
-        console.log(res.payload);
+        // console.log(res.payload);
         setTableDemandData(Array.isArray(res.payload) ? res.payload : []);
       } catch (error) {
-        console.error("Error fetching planning data:", error);
+        // console.error("Error fetching planning data:", error);
       } finally {
         setLoading(false);
       }
@@ -73,9 +73,9 @@ const Planning = () => {
           ...res.ESS.map(item => ({ ...item, type: 'ESS' }))
         ];
         setGeneratorPortfolio(flattenedPortfolio);
-        console.log(flattenedPortfolio);
+        // console.log(flattenedPortfolio);
       } catch (error) {
-        console.log("Error fetching portfolio:", error);
+        // console.log("Error fetching portfolio:", error);
       }
     };
 
@@ -170,10 +170,10 @@ const Planning = () => {
   };
 
   const handleModalOk = async () => {
-    console.log('clicked')
+    // console.log('clicked')
     const formattedDate = selectedDate.format('YYYY-MM-DD'); // Format the date correctly
     try {
-      console.log(selectedRequirementId);
+      // console.log(selectedRequirementId);
       const data = {
         portfolio_id: selectedRequirementId,
         portfolio_type: selectedPortfolio.type.toLowerCase(),
@@ -181,24 +181,24 @@ const Planning = () => {
         generation: parseFloat(demand),
         price: parseFloat(price)
       }
-      console.log(data);
+      // console.log(data);
       const res = await dispatch(addTableMonthData(data)).unwrap();
-      console.log('Response from addTableMonthData:', res);
+      // console.log('Response from addTableMonthData:', res);
       if (res) {
         message.success("Data added successfully");
         const id = user_id; // Ensure `user_id` is defined in scope
         try {
           const res = await dispatch(fetchPlanningDataG(id));
-          console.log(res.payload);
+          // console.log(res.payload);
           setTableDemandData(Array.isArray(res.payload) ? res.payload : []);
         } catch (error) {
-          console.error("Error fetching planning data:", error);
+          // console.error("Error fetching planning data:", error);
         }
       }
       setIsModalVisible(false);
       navigate('/px/generator/planning');
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       message.error("Failed to submit data. Please try again.");
     }
   };
@@ -220,7 +220,39 @@ const Planning = () => {
       ),
     },
     { title: 'Technology & Price (INR)', dataIndex: 'technology', key: 'technology' },
-    {title:'Portfolio',dataIndex:'portfolio',key:'portfolio'}
+    {title:'Portfolio',dataIndex:'portfolio',key:'portfolio'},
+     {
+          title: 'Action', 
+          dataIndex: 'action', 
+          key: 'action',
+          render: (text, record) => {
+            const currentDate = new Date();
+            const currentDateStr = currentDate.toISOString().split('T')[0]; // Get YYYY-MM-DD
+            const currentTimeStr = currentDate.toTimeString().split(' ')[0]; // Get HH:MM:SS
+        
+            // Convert both dates to Date objects
+            const recordDate = new Date(record.date); // Ensure record.date is in YYYY-MM-DD format
+            const currentDateOnly = new Date(currentDateStr); // Convert current date to Date object
+            
+            // Compare full DateTime when needed
+            const isBeforeDeadline = (
+              recordDate > currentDateOnly || 
+              (recordDate.getTime() === currentDateOnly.getTime() && currentTimeStr < '10:30:00')
+            );
+        
+            // console.log("Comparing:", record.date, currentDateStr, currentTimeStr, isBeforeDeadline);
+        
+            return isBeforeDeadline ? (
+              <Button type="primary" onClick={() => {
+                // console.log("Upload Data clicked for:", record);
+              }}>
+                Upload Data
+              </Button>
+            ) : (
+              <Button disabled>Upload Data</Button>
+            );
+          }
+        }
   ];
 
   const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => ({
@@ -253,7 +285,7 @@ const Planning = () => {
                 </h1>
           <Button style={{ marginRight: '-50%', backgroundColor: '#669800', borderColor: '#669800',height:'40px' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
           <Button onClick={handleAddDetailsClick} style={{backgroundColor: '#ff5722', borderColor: '#ff5722',height:'40px'}}>
-            Plan for more Days
+            Schedule Trade
           </Button>
         </Row>
         {loading ? (

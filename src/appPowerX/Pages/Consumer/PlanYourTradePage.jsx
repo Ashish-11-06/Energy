@@ -95,9 +95,9 @@ const [uploadModal,setUploadModal]=useState(false);
         const res = await dispatch(fetchRequirements(id)); // Wait for API response
         const states = res.payload.map(item => item.state);
         setConsumerRequirement(res.payload);
-        console.log(res.payload);
+        // console.log(res.payload);
       } catch (error) {
-        console.log("Error fetching consumer requirements:", error);
+        // console.log("Error fetching consumer requirements:", error);
       }
     };
     fetchData();
@@ -117,10 +117,10 @@ const [uploadModal,setUploadModal]=useState(false);
   }, [tableData]);
 
   const handleModalOk = async () => {
-    console.log("Selected State:", selectedState);
-    console.log("Selected Requirement ID:", selectedRequirementId);
+    // console.log("Selected State:", selectedState);
+    // console.log("Selected Requirement ID:", selectedRequirementId);
     try {
-      console.log(price);
+      // console.log(price);
       
       const dayAheadDemand = {
         requirement: selectedRequirementId,
@@ -150,22 +150,22 @@ const [uploadModal,setUploadModal]=useState(false);
         // Ensure selectedTechnology is an array
         price: (Array.isArray(selectedTechnology) ? selectedTechnology : [selectedTechnology]).reduce((acc, tech) => { 
           acc[tech] = parseFloat(price[tech]); // Convert price to number
-          console.log(acc);
+          // console.log(acc);
           
           return acc;
         }, {})
       };
 
-      console.log(dayAheadDemand);
+      // console.log(dayAheadDemand);
 
       const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
       message.success("Data submitted successfully");
       
-      console.log('res', res);
+      // console.log('res', res);
       setIsModalVisible(false);
       navigate('/px/track-status');
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       message.error("Failed to submit data. Please try again.");
     }
   };

@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { Modal, Form, Input, Button, Row, Col, Select, message } from "antd";
 import { addSubUser } from "../../../Redux/Slices/Consumer/registerSlice";
@@ -108,7 +110,7 @@ const AddUserModal = ({ isVisible, onCancel, onSave, editableData, edit }) => {
                 { pattern: /^[0-9]{10}$/, message: "Mobile number must be 10 digits!" },
               ]}
             >
-              <Input type="number" placeholder="Enter mobile number" style={{ backgroundColor: 'white' }} />
+              <Input type="phone" placeholder="Enter mobile number" style={{ backgroundColor: 'white' }} />
             </Form.Item>
           </Col>
         </Row>

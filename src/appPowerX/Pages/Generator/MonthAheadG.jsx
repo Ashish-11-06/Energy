@@ -139,7 +139,7 @@ const MonthAheadG = () => {
       <div style={{ padding: '20px', width: '100%' }}>
         <Row justify="space-between">
           <Col>
-            <Button onClick={handleStatistics}>Historical Trend</Button>
+            {/* <Button onClick={handleStatistics}>Historical Trend</Button> */}
           </Col>
           <Col>
             <Button onClick={handleNextTrade}>Schedule Trade</Button>

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // src/features/notificationSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getNotification, getOffer } from '../api/websocketConf'; // Ensure this points to your WebSocket URL
@@ -11,14 +12,14 @@ export const connectWebSocket = createAsyncThunk(
   'notification/connectWebSocket',
   async (userId, { dispatch }) => {
     if (notificationSocket) {
-      console.log('Notification WebSocket already connected');
+      // console.log('Notification WebSocket already connected');
       return;
     }
 
     notificationSocket = new WebSocket(getNotification(userId));
 
     notificationSocket.onopen = () => {
-      console.log('Connected to Notification WebSocket server');
+      // console.log('Connected to Notification WebSocket server');
     };
 
     notificationSocket.onmessage = (event) => {
@@ -29,11 +30,11 @@ export const connectWebSocket = createAsyncThunk(
     };
 
     notificationSocket.onerror = (error) => {
-      console.error('Notification WebSocket error:', error);
+      // console.error('Notification WebSocket error:', error);
     };
 
     notificationSocket.onclose = () => {
-      console.log('Disconnected from Notification WebSocket server');
+      // console.log('Disconnected from Notification WebSocket server');
       notificationSocket = null;
     };
   }
@@ -44,14 +45,14 @@ export const connectOfferSocket = createAsyncThunk(
   'notification/connectOfferSocket',
   async (userId, { dispatch }) => {
     if (offerSocket) {
-      console.log('Offer WebSocket already connected');
+      // console.log('Offer WebSocket already connected');
       return;
     }
 
     offerSocket = new WebSocket(getOffer(userId));
 
     offerSocket.onopen = () => {
-      console.log('Connected to Offer WebSocket server');
+      // console.log('Connected to Offer WebSocket server');
     };
 
     offerSocket.onmessage = (event) => {
@@ -62,11 +63,11 @@ export const connectOfferSocket = createAsyncThunk(
     };
 
     offerSocket.onerror = (error) => {
-      console.error('Offer WebSocket error:', error);
+      // console.error('Offer WebSocket error:', error);
     };
 
     offerSocket.onclose = () => {
-      console.log('Disconnected from Offer WebSocket server');
+      // console.log('Disconnected from Offer WebSocket server');
       offerSocket = null;
     };
   }
@@ -79,12 +80,12 @@ export const disconnectWebSocket = createAsyncThunk(
     if (notificationSocket) {
       notificationSocket.close();
       notificationSocket = null;
-      console.log('Notification WebSocket connection closed');
+      // console.log('Notification WebSocket connection closed');
     }
     if (offerSocket) {
       offerSocket.close();
       offerSocket = null;
-      console.log('Offer WebSocket connection closed');
+      // console.log('Offer WebSocket connection closed');
     }
   }
 );

@@ -18,6 +18,22 @@ export const fetchModelStatistics = createAsyncThunk(
   }
 );
 
+export const fetchModelStatisticsMonth = createAsyncThunk(
+  "tradingData/fetchModelStatisticsMonth",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await modelStatisticsApi.modelStatisticsMonth();
+      if (response.status === 200 && response.data) {
+        console.log('response in slice', response.data);
+        return response.data; // Ensure response contains valid data
+      }
+      throw new Error("Invalid response from server");
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 // Slice for trading data
 const modelStatisticsSlice = createSlice({
   name: "modelStatistics",
@@ -38,6 +54,18 @@ const modelStatisticsSlice = createSlice({
         state.modelStatistics = action.payload;
       })
       .addCase(fetchModelStatistics.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || "Failed to fetch data";
+      })
+      .addCase(fetchModelStatisticsMonth.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchModelStatisticsMonth.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.modelStatistics = action.payload;
+      })
+      .addCase(fetchModelStatisticsMonth.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Failed to fetch data";
       });

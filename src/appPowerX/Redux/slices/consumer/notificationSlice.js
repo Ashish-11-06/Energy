@@ -5,13 +5,13 @@ import notificationApi from "../../api/consumer/notificationApi";
 export const getNotificationData = createAsyncThunk(
   "notificationData/getNotificationData",
   async (userId, { rejectWithValue }) => { // Accept message as parameter
-    console.log('user',userId);
+    // console.log('user',userId);
     try {
-        console.log("User ID:", userId, typeof userId);
+        // console.log("User ID:", userId, typeof userId);
         const response = await notificationApi.getNotification(Number(userId)); 
 
       if (response.status === 200 && response.data) {
-        console.log("Updated notification:", response.data);
+        // console.log("Updated notification:", response.data);
         return response.data;
       }
       throw new Error("Invalid response from server");
@@ -27,7 +27,7 @@ export const updateNotificationData = createAsyncThunk(
       const response = await notificationApi.updateNotification({ message }); // Ensure PATCH request
 
       if (response.status === 200 && response.data) {
-        console.log("Updated notification:", response.data);
+        // console.log("Updated notification:", response.data);
         return response.data;
       }
       throw new Error("Invalid response from server");

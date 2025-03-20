@@ -6,6 +6,7 @@ import CountUp from 'react-countup';
 import { motion } from 'framer-motion';
 import map from '../assets/map.png';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/EXG.png';
 
 const WhatWeOfferP = () => {
     const navigate = useNavigate();
@@ -38,7 +39,7 @@ const WhatWeOfferP = () => {
       }}
     >
       <div className="logo-container">
-        <img src="path/to/logo.png" alt="EXG Logo" className="exg-logo" />
+        <img src={logo} alt="EXG Logo" className="exg-logo" />
       </div>
       <div
         style={{

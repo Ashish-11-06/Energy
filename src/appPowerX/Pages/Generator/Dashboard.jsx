@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Card, Col, Typography, Row, Table, Spin } from "antd"; // Added Table import
+import { Card, Col, Typography, Row, Table, Spin, message } from "antd"; // Added Table import
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -42,6 +42,7 @@ const Dashboard = () => {
   const [dashboardLine, setDashboardLine] = useState([]);
   const [loading, setLoading] = useState(false);
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
+  var formattedDate = '';
 // console.log(user_id);
 const nextDay = new Date();
 nextDay.setDate(nextDay.getDate() + 1);
@@ -55,25 +56,35 @@ const nextDayDate = nextDay.toLocaleDateString();
     fetchData();
   }, [dispatch]);
 
-  console.log(dashboardData);
+  // console.log(dashboardData);
 
   useEffect(() => {
     const id = user_id;
     const fetchLineData = async () => {
       setLoading(true);
-      const res = await dispatch(fetchDashboardLineG(id));
-      console.log(res.payload);
-      console.log('line data', res.payload);
-      
-      setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
+      const res = await dispatch(fetchDashboardLineG(id)); 
+      if(res.error) {
+        message.error('hhhh');
+      } else  {    
+        setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
+      }
       setLoading(false);
     };
     fetchLineData();
   }, [dispatch]);
 
   // Extract generation values from dashboardLine
-  const generationValues = dashboardLine.map(item => item.generation);
+  const firstDate = dashboardLine[0]?.date;
+    const generationValues = dashboardLine.map(item => item.generation);
 
+    if (firstDate) {
+      const dateObj = new Date(firstDate);
+    formattedDate = dateObj.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+      // console.log(formattedDate); // Output: March 21
+  } else {
+      // console.log("No date available");
+  }
+  
   // Line Chart Data
   const lineData = {
     labels: generationValues.length
@@ -139,7 +150,7 @@ const nextDayDate = nextDay.toLocaleDateString();
       // },
       title: {
         display: true,
-        text: `Energy Demand for ${nextDayDate}`,
+        text: `Energy Demand for ${formattedDate}`,
 
         font: {
           size: 18,

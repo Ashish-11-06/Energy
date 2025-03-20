@@ -55,7 +55,7 @@ const DayAheadG = () => {
       try {
         setLoading(true);
         const data = await dispatch(dayAheadData()).unwrap();
-        console.log(data);
+        // console.log(data);
         
         const mcpData = data.predictions.map(item => item.mcp_prediction);
         const mcvData = data.predictions.map(item => item.mcv_prediction);

@@ -56,7 +56,7 @@ const DayAhead = () => {
       try {
         setLoading(true);
         const data = await dispatch(dayAheadData()).unwrap();
-        console.log('data', data.predictions.map(item=>item.date));
+        // console.log('data', data.predictions.map(item=>item.date));
         if (data?.predictions?.length > 0) {
           const dateStr = data.predictions[0]?.date;
           const date = new Date(dateStr);
@@ -75,10 +75,10 @@ const DayAhead = () => {
 
         setStatisticsData(data.statistics);
         setLoading(false);
-        console.log(data.statistics);
+        // console.log(data.statistics);
         
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         setLoading(false);
       }
     };
@@ -110,7 +110,7 @@ const DayAhead = () => {
     }
   }, [statistiicsData]);
 
-console.log('table data',detailDataSource);
+// console.log('table data',detailDataSource);
 
 
   const detailColumns = [

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import  { useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -89,13 +90,13 @@ const CurrentPath = () => {
 
   useEffect(() => {
     const path = location.pathname;
-    console.log("Current Path:", location.pathname);
+    // console.log("Current Path:", location.pathname);
     const data = {
       last_visited_page: path,
       user_id: userId
     }
     const response = dispatch(lastVisitedPage(data));
-    console.log(response);
+    // console.log(response);
   }, [location]);
   return null; // This component does not need to render anything
 };

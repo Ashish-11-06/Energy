@@ -32,7 +32,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
   
-  console.log(statee);
+  // console.log(data);
   
 // console.log(data);
 
@@ -47,7 +47,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
 
 useEffect(()=> {
   const res=dispatch(fetchState());
-  console.log(res);
+  // console.log(res);
   
 },[dispatch])
 
@@ -55,7 +55,8 @@ useEffect(()=> {
     if (data) {
       form.setFieldsValue({
         id:data?.id,
-        state: data.state,
+        state:'Maharashtra',
+        // state: data.state,
         consumption_unit: data.consumption_unit,
         industry: data.industry,
         contractedDemand: data.contracted_demand,
@@ -97,7 +98,7 @@ useEffect(()=> {
       annual_electricity_consumption: values.annual_electricity_consumption,
     };
 
-    console.log(formattedValues);
+    // console.log(formattedValues);
     
     onSubmit(formattedValues);
     form.resetFields();
@@ -358,7 +359,7 @@ useEffect(()=> {
             >
               <DatePicker
                 style={{ width: "100%" }}
-                format="DD/MM/YYYY" // Set the display format to DD/MM/YYYY
+                // format="DD/MM/YYYY" // Set the display format to DD/MM/YYYY
                 disabledDate={(current) => {
                   // Disable today and all past dates
                   return current && current <= new Date();

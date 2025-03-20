@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox, Radio } from 'antd';
+import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox, Radio, Upload } from 'antd';
 import 'antd/dist/reset.css';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice'; // Correct import
@@ -62,11 +62,11 @@ const [requirementId, setRequirementId] = useState([]);
       const id = user_id; // Ensure `user_id` is defined in scope
       try {
         const res = await dispatch(fetchPlanningData(id));
-        console.log(res.payload);
+        // console.log(res.payload);
         setTableDemandData(res.payload);
         setRequirementId(res.payload.map(item => item.requirement));
       } catch (error) {
-        console.error("Error fetching planning data:", error);
+        // console.error("Error fetching planning data:", error);
       } finally {
         setLoading(false);
       }
@@ -74,7 +74,7 @@ const [requirementId, setRequirementId] = useState([]);
 
     fetchData(); // Call the function inside useEffect
   }, [user_id, dispatch]); // Add dependencies if needed
-console.log(requirementId);
+// console.log(requirementId);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,9 +82,9 @@ console.log(requirementId);
         const id = user_id;
         const res = await dispatch(fetchRequirements(id)); // Wait for API response
         setConsumerRequirement(res.payload);
-        console.log(res.payload);  
+        // console.log(res.payload);  
       } catch (error) {
-        console.log("Error fetching consumer requirements:", error);
+        // console.log("Error fetching consumer requirements:", error);
       }
     };
     fetchData();
@@ -148,7 +148,7 @@ console.log(requirementId);
 
   const handleStateChange = (value) => {
     const selectedRequirement = consumerRequirement.find(item => item.state === value);
-    console.log(selectedRequirement);
+    // console.log(selectedRequirement);
     
     setSelectedRequirementId(selectedRequirement ? selectedRequirement.id : null);
 
@@ -178,7 +178,7 @@ console.log(requirementId);
         }, {})
       };
 
-      console.log(newData);
+      // console.log(newData);
 
       const res = await dispatch(addMonthData(newData)).unwrap();
       if (res) {
@@ -186,18 +186,18 @@ console.log(requirementId);
         const id = user_id; // Ensure `user_id` is defined in scope
         try {
           const res = await dispatch(fetchTableMonthData(id));
-          console.log(res.payload);
+          // console.log(res.payload);
           setTableDemandData(res.payload);
         } catch (error) {
-          console.error("Error fetching planning data:", error);
+          // console.error("Error fetching planning data:", error);
         }
 
       }
-      console.log('res', res);
+      // console.log('res', res);
       setIsModalVisible(false);
       navigate('/px/consumer/planning');
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       message.error("Failed to submit data. Please try again.");
     }
   };
@@ -210,13 +210,18 @@ console.log(requirementId);
     setIsDetailModalVisible(true);
   };
 
-  console.log(selectedUnitDetails);
+  // console.log(selectedUnitDetails);
   
   const columns = [
     { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 },
-    { title: 'Demand (MWh)', dataIndex: 'demand', key: 'demand', rowSpan: 2, render: (text, record) => (
+    { 
+      title: 'Demand (MWh)', 
+      dataIndex: 'demand', 
+      key: 'demand', 
+      rowSpan: 2, 
+      render: (text, record) => (
         <Tooltip title="">
-          <span style={{  cursor: 'pointer' }} onClick={() => handleDemandClick(record)}>
+          <span style={{ cursor: 'pointer' }} onClick={() => handleDemandClick(record)}>
             {text}
           </span>
         </Tooltip>
@@ -224,7 +229,43 @@ console.log(requirementId);
     },
     { title: 'Technology & Price (INR/MWh)', dataIndex: 'technology', key: 'technology' },
     { title: 'Requirement Details', dataIndex: 'requirements', key: 'requirements' },
+    {
+      title: 'Action', 
+      dataIndex: 'action', 
+      key: 'action',
+      render: (text, record) => {
+        const currentDate = new Date();
+        const currentDateStr = currentDate.toISOString().split('T')[0]; // Get YYYY-MM-DD
+        const currentTimeStr = currentDate.toTimeString().split(' ')[0]; // Get HH:MM:SS
+    
+        // Convert both dates to Date objects
+        const recordDate = new Date(record.date); // Ensure record.date is in YYYY-MM-DD format
+        const currentDateOnly = new Date(currentDateStr); // Convert current date to Date object
+        
+        // Compare full DateTime when needed
+        const isBeforeDeadline = (
+          recordDate > currentDateOnly || 
+          (recordDate.getTime() === currentDateOnly.getTime() && currentTimeStr < '10:30:00')
+        );
+    
+        // console.log("Comparing:", record.date, currentDateStr, currentTimeStr, isBeforeDeadline);
+    
+        return isBeforeDeadline ? (
+          <Upload>
+          <Button type="primary" onClick={() => {
+            // console.log("Upload Data clicked for:", record);
+          }}>
+            Upload Data
+          </Button>
+          </Upload>
+        ) : (
+          <Button disabled>Upload Data</Button>
+        );
+      }
+    }
+    
   ];
+  
 
   const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
     const requirementDetails = consumerRequirement.find(req => req.id === item.requirement);

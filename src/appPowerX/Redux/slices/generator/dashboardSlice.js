@@ -7,11 +7,11 @@ export const fetchDashboardDataG = createAsyncThunk(
   "dashboardData/fetchDashboardData",
   async (id, { rejectWithValue }) => { // Correctly pass rejectWithValue here
     try {
-      console.log(id);
+      // console.log(id);
       
       const response = await dashboardApi.fetchDashboardG(id);  
       if (response.status === 200 && response.data) {
-        console.log('response in slice',response);
+        // console.log('response in slice',response);
         return response.data; // Ensure response contains valid data
       }
       throw new Error("Invalid response from server");
@@ -27,7 +27,7 @@ export const fetchDashboardLineG = createAsyncThunk(
     try {
       const response = await dashboardApi.fetchDashboardLineG(id);  
       if (response.status === 200 && response.data) {
-        console.log('response in slice',response);
+        // console.log('response in slice',response);
         return response.data; // Ensure response contains valid data
       }
       throw new Error("Invalid response from server");

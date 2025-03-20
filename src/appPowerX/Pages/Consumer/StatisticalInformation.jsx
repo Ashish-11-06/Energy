@@ -5,10 +5,9 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
-import { fetchModelStatistics } from '../../Redux/slices/consumer/modelStatisticsSlice';
+import { fetchModelStatistics, fetchModelStatisticsMonth } from '../../Redux/slices/consumer/modelStatisticsSlice';
 import { useDispatch } from 'react-redux';
 import { BackwardFilled, BackwardOutlined } from '@ant-design/icons';
-
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
 
@@ -24,32 +23,80 @@ const StatisticalInformation = () => {
   const [mcvForeCastedData, setMcvForeCastedData] = useState([]);
   const [mcvPastData, setMcvPastData] = useState([]);
   const [formattedDate, setFormattedDate] = useState("");
+  // const [data,setDate]=useState([]);
+  const [selectedForecast, setSelectedForecast] = useState('day'); // Default: Day Ahead
+  var technology = '';
+  const dummyMonthAheadData = {
+    mcp: Array(96).fill(50), // Dummy MCP data for Month Ahead
+    mcv: Array(96).fill(100), // Dummy MCV data for Month Ahead
+  };
+
+  const handleForecastChange = (value) => {
+    setSelectedForecast(value);
+  };
+if(selectedForecast === 'day'){
+   technology = 'Day Ahead';
+} else {
+   technology = 'Month Ahead';
+}
+
+const dummyAccuracyData = [
+  {
+    metric: "MCP",
+    accuracy: "80%",
+    errors: "20%"
+  },
+  {
+    metric: "MCV",
+    accuracy: "90%",
+    errors: "10%"
+  }
+];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await dispatch(fetchModelStatistics());
-        console.log(data.payload);
-        if (data?.payload?.date) {
-          const dateStr = data.payload.date;
-          const date = new Date(dateStr);
-    
-          const options = { month: "long", day: "numeric" };
-          const formatted = date.toLocaleDateString("en-US", options); 
-    
-          setFormattedDate(formatted); // Example output: "January 30"
+        if (selectedForecast === 'currentDay') {
+          const data = await dispatch(fetchModelStatistics());
+          console.log(data.payload);
+          if (data?.payload?.date) {
+            const dateStr = data.payload.date;
+            const date = new Date(dateStr);
+
+            const options = { month: "long", day: "numeric" };
+            const formatted = date.toLocaleDateString("en-US", options);
+
+            setFormattedDate(formatted); // Example output: "January 30"
+          }
+          setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
+          setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
+          setPastData(data.payload.clean_data.map(item => item.mcp) || []);
+          setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
+          setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
+        } else if (selectedForecast === 'next30Day') {
+          const data = await dispatch(fetchModelStatisticsMonth());
+          console.log(data.payload);
+          if (data?.payload?.date) {
+            const dateStr = data.payload.date;
+            const date = new Date(dateStr);
+
+            const options = { month: "long", day: "numeric" };
+            const formatted = date.toLocaleDateString("en-US", options);
+
+            setFormattedDate(formatted); // Example output: "January 30"
+          }
+          setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
+          setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
+          setPastData(data.payload.clean_data.map(item => item.mcp) || []);
+          setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
+          setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
         }
-        setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
-        setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
-        setPastData(data.payload.clean_data.map(item => item.mcp) || []);
-        setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
-        setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
-  }, [dispatch]);
+  }, [dispatch, selectedForecast]);
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -60,7 +107,7 @@ const StatisticalInformation = () => {
     labels: Array.from({ length: 96 }, (_, i) => i + 1), // Generates labels [1, 2, 3, ..., 96]
     datasets: [
       {
-        label: "Forecast MCV Data",
+        label: "Past MCV Data",
         data: mcvForeCastedData.length ? mcvForeCastedData : Array(96).fill(null),
         borderColor: "blue",
         fill: false,
@@ -81,7 +128,7 @@ const StatisticalInformation = () => {
     labels: Array.from({ length: 96 }, (_, i) => i + 1),
     datasets: [
       {
-        label: 'Forecast MCP Data',
+        label: 'Past MCP Data',
         data: foreCastedData.length ? foreCastedData : Array(96).fill(null),
         borderColor: 'green',
         fill: false,
@@ -230,6 +277,16 @@ const StatisticalInformation = () => {
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
       Statistical Insights <span style={{fontSize:'20px'}}>({formattedDate})</span>
       </h1>
+      {/* Dropdown for Forecast Selection */}
+      <label htmlFor="" style={{fontWeight:'600',marginRight:'10px',fontSize:'18px'}}>Select Forecast</label>
+      <Select
+        defaultValue="day"
+        style={{ width: 200, marginBottom: '20px', marginRight: '20px' }}
+        onChange={handleForecastChange}
+      >
+        <Option value="currentDay">Current day</Option>
+        <Option value="next30Day">Last 30 days</Option>
+      </Select>
       {/* <h1>Model Statistical Information</h1> */}
 
       {/* Radio Buttons for Chart Selection */}
@@ -291,7 +348,7 @@ const StatisticalInformation = () => {
           {selectedType === 'MCV' && (
             <Col span={24} >
               <Card style={{  backgroundColor: 'white' }}>
-                <h3>MCV Data</h3>
+                <h3> MCV Data</h3>
                 <div >
                   <Line 
                     style={{height:'300px'}} 
@@ -352,7 +409,7 @@ const StatisticalInformation = () => {
       )}
 
       {/* Table Display */}
-      {/* <Table columns={columns} dataSource={dataSource} pagination={false} bordered style={{ marginTop: '20px' }} /> */}
+      <Table columns={columns} dataSource={dummyAccuracyData} pagination={false} bordered style={{ marginTop: '20px' }} />
 
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>

@@ -60,7 +60,7 @@ const PlanYourTradePage = () => {
   };
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
   };
 
   const handleChange = (e) => {
@@ -101,9 +101,9 @@ const PlanYourTradePage = () => {
           ...res.ESS.map(item => ({ ...item, type: 'ESS' }))
         ];
         setGeneratorPortfolio(flattenedPortfolio);
-        console.log(flattenedPortfolio);
+        // console.log(flattenedPortfolio);
       } catch (error) {
-        console.log("Error fetching portfolio:", error);
+        // console.log("Error fetching portfolio:", error);
       }
     };
 
@@ -124,8 +124,8 @@ const PlanYourTradePage = () => {
   }, [tableData]);
 
   const handleModalOk = async () => {
-    console.log("Selected State:", selectedState);
-    console.log("Selected Portfolio ID:", selectedPortfolioId);
+    // console.log("Selected State:", selectedState);
+    // console.log("Selected Portfolio ID:", selectedPortfolioId);
     try {
       const dayAheadDemand = {
         model: selectedTechnology === "Solar" ? "solarportfolio" : "windportfolio",
@@ -154,15 +154,15 @@ const PlanYourTradePage = () => {
           };
         })
       };
-
+// 
       console.log(dayAheadDemand);
 
       const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
-      console.log('res', res);
+      // console.log('res', res);
       setIsModalVisible(false);
       navigate('/px/consumer/trading');
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       message.error("Failed to submit data. Please try again.");
     }
   };

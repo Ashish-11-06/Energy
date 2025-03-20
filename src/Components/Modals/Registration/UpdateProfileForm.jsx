@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Form,
@@ -298,7 +300,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
-            label="Available Capacity"
+            label="Available Capacity (MW)"
             name="available_capacity"
             rules={[{ required: true, message: "Please input the capacity!" }]}
           >
@@ -308,7 +310,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
         <Col span={12}>
           <Form.Item
             name="total_install_capacity"
-            label="Total Install Capacity"
+            label="Total Install Capacity (MW)"
             rules={[
               {
                 required: true,
@@ -325,7 +327,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
         <Col span={12}>
           <Form.Item
             name="capital_cost"
-            label="Capital Cost"
+            label="Capital Cost (INR)"
             rules={[
               {
                 required: type === "ESS",
