@@ -213,7 +213,7 @@ const response = await dispatch(fetchSubscriptionValidity(id));
           <div className="text-content"  >
             <div style={{backgroundColor:'#669800',width:'600px'}}> 
             <p style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
-            <p style={{marginLeft:'5%',marginTop:'-30px',fontSize:'70px',fontWeight:'bolder'}}>MarketPlace testing by ash</p>
+            <p style={{marginLeft:'5%',marginTop:'-30px',fontSize:'70px',fontWeight:'bolder'}}>MarketPlace</p>
             </div>
            <p style={{fontSize:'24px',width:'600px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators</i></p>
             {/* <h2 className="animated-text">{animatedText}</h2> */}
