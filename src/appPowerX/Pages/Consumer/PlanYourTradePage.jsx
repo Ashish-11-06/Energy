@@ -256,8 +256,10 @@ const [uploadModal,setUploadModal]=useState(false);
       title: (
         <div>
           Demand
+          <Tooltip title="Fill below to apply same demand for all time intervals">
           <Button onClick={() => handleFillBelow(part)} style={{ marginLeft: '10px', height: '10px' }} icon={<DownOutlined style={{ padding: '5px', height: '10px' }} />}>
           </Button>
+          </Tooltip>
         </div>
       ),
       dataIndex: "demand",

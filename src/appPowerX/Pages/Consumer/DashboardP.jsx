@@ -408,11 +408,13 @@ const DashboardP = () => {
           </Col>
         </Row>
       </Card>
-      <Modal visible={showDueModal}  
-      onCancel={()=>setShowDueModal(false)}
-      onOk={handleModalOk}
+      <Modal 
+        open={showDueModal}  
+        onCancel={() => setShowDueModal(false)}
+        onOk={handleModalOk}
+        title="Upload 96 times block data"
       >
-
+        <p>Your due date is tomorrow at 10 AM. Please upload the data before the deadline..</p>
       </Modal>
     </div>
   );

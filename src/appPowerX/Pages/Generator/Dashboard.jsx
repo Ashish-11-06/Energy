@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Card, Col, Typography, Row, Table, Spin, message } from "antd"; // Added Table import
+import { Card, Col, Typography, Row, Table, Spin, message,Modal } from "antd"; // Added Table import
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import market from "../../assets/market.png";
 import statistics from "../../assets/statistics.png";
 import { fetchDashboardDataG, fetchDashboardLineG } from "../../Redux/slices/generator/dashboardSlice";
+import { error } from "pdf-lib";
 
 // Register required chart.js components and plugins
 ChartJS.register(
@@ -42,6 +43,9 @@ const Dashboard = () => {
   const [dashboardLine, setDashboardLine] = useState([]);
   const [loading, setLoading] = useState(false);
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
+  const user=JSON.parse(localStorage.getItem('user')).user;
+  const is_due_date=user.is_due_date;
+    const [showDueModal,setShowDueModal]=useState(false);
   var formattedDate = '';
 // console.log(user_id);
 const nextDay = new Date();
@@ -57,14 +61,20 @@ const nextDayDate = nextDay.toLocaleDateString();
   }, [dispatch]);
 
   // console.log(dashboardData);
-
+  useEffect(() => {
+    if (is_due_date) {
+      setShowDueModal(true);
+    }
+  }, [is_due_date]);
   useEffect(() => {
     const id = user_id;
     const fetchLineData = async () => {
       setLoading(true);
       const res = await dispatch(fetchDashboardLineG(id)); 
       if(res.error) {
-        message.error('hhhh');
+        console.log(error);
+        
+        // message.error(error);
       } else  {    
         setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
       }
@@ -101,6 +111,10 @@ const nextDayDate = nextDay.toLocaleDateString();
       },
     ],
   };
+
+  const handleModalOk =()=> {
+    navigate('/px/generator/planning')
+}
 
   const lineOptions = {
     responsive: true,
@@ -441,6 +455,14 @@ const cardStyle = {
           </Col>
         </Row>
       </Card>
+      <Modal 
+              open={showDueModal}  
+              onCancel={() => setShowDueModal(false)}
+              onOk={handleModalOk}
+              title="Upload 96 times block data"
+            >
+              <p>Your due date is tomorrow at 10 AM. Please upload the data before the deadline..</p>
+            </Modal>
     </div>
   );
 };

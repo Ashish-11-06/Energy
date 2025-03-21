@@ -42,12 +42,12 @@ if(selectedForecast === 'day'){
 
 const dummyAccuracyData = [
   {
-    metric: "MCP",
+    metric: "Accuracy",
     accuracy: "80%",
     errors: "20%"
   },
   {
-    metric: "MCV",
+    metric: "Errors",
     accuracy: "90%",
     errors: "10%"
   }
@@ -107,7 +107,7 @@ const dummyAccuracyData = [
     labels: Array.from({ length: 96 }, (_, i) => i + 1), // Generates labels [1, 2, 3, ..., 96]
     datasets: [
       {
-        label: "Past MCV Data",
+        label: "Forecast MCV Data",
         data: mcvForeCastedData.length ? mcvForeCastedData : Array(96).fill(null),
         borderColor: "blue",
         fill: false,
@@ -128,7 +128,7 @@ const dummyAccuracyData = [
     labels: Array.from({ length: 96 }, (_, i) => i + 1),
     datasets: [
       {
-        label: 'Past MCP Data',
+        label: 'Forecast MCP Data',
         data: foreCastedData.length ? foreCastedData : Array(96).fill(null),
         borderColor: 'green',
         fill: false,
@@ -250,8 +250,8 @@ const dummyAccuracyData = [
 
   const columns = [
     { title: 'Details', dataIndex: 'metric', key: 'metric' , width: '30%'},
-    { title: 'MCP', dataIndex: 'mcp', key: 'mcp' },
-    { title: 'MCV', dataIndex: 'mcv', key: 'mcv' },
+    { title: 'MCP (INR/MWh)', dataIndex: 'mcp', key: 'mcp' },
+    { title: 'MCV (MWh)', dataIndex: 'mcv', key: 'mcv' },
   ];
 
   const dataSource = [
@@ -280,7 +280,7 @@ const dummyAccuracyData = [
       {/* Dropdown for Forecast Selection */}
       <label htmlFor="" style={{fontWeight:'600',marginRight:'10px',fontSize:'18px'}}>Select Forecast</label>
       <Select
-        defaultValue="day"
+        defaultValue="currentDay"
         style={{ width: 200, marginBottom: '20px', marginRight: '20px' }}
         onChange={handleForecastChange}
       >
@@ -409,7 +409,7 @@ const dummyAccuracyData = [
       )}
 
       {/* Table Display */}
-      <Table columns={columns} dataSource={dummyAccuracyData} pagination={false} bordered style={{ marginTop: '20px' }} />
+      {/* <Table columns={columns} dataSource={dummyAccuracyData} pagination={false} bordered style={{ marginTop: '20px' }} /> */}
 
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>

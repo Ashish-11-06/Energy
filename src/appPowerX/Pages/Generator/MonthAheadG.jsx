@@ -7,6 +7,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { fetchMonthAheadData, fetchMonthAheadLineData } from '../../Redux/slices/consumer/monthAheadSlice';
+import moment from 'moment';
 
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -18,6 +19,11 @@ const MonthAheadG = () => {
   const [lineData, setLineData] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+    const [loading,setLoading] = useState(true);
+  const  [mcpHighestDate,setMcpHighestDate]=useState('');
+  const  [mcpLowestDate,setMcpLowestDate]=useState('');
+  const [mcvHighestDate,setMcvHighestDate]=useState('');
+  const [mcvLowestDate,setMcvLowestDate]=useState('');
 
   const start_date = new Date(); 
   start_date.setDate(start_date.getDate() + 1); // Set to tomorrow
@@ -31,15 +37,24 @@ const MonthAheadG = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const data = await dispatch(fetchMonthAheadData());
         const responseData = data.payload;
 
         if (Array.isArray(responseData?.daily_data)) {
+
           const mcvData = responseData.daily_data.map(item => item.mcv_prediction?.avg ?? 0);
           const mcpDataOriginal = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
-          const mcpData = mcpDataOriginal.reverse();
+          const mcpData=mcpDataOriginal.reverse();
           const labels = Array.from({ length: 31 }, (_, i) => i + 1); // Creates an array [1, 2, ..., 31]
+          setMcpHighestDate(moment(responseData.overall_stats?.mcp_prediction?.highest_date).format('DD-MM-YYYY'));
+          setMcpLowestDate(moment(responseData.overall_stats?.mcp_prediction?.lowest_date).format('DD-MM-YYYY'));
+          setMcvHighestDate(moment(responseData.overall_stats?.mcv_prediction?.highest_date).format('DD-MM-YYYY'));
+          setMcvLowestDate(moment(responseData.overall_stats?.mcv_prediction?.lowest_date).format('DD-MM-YYYY'));
 
+          console.log(responseData.overall_stats?.mcp_prediction?.highest_date);
+          
+          // setMcpLowestDate(responseData.overall_stats?.mcp_prediction?.lowest_date);
           console.log("MCV Data:", mcvData);
           console.log("MCP Data:", mcpData);
           console.log("Labels:", labels);
@@ -84,6 +99,8 @@ const MonthAheadG = () => {
               mcv: responseData.overall_stats?.mcv_prediction?.average ?? 0,
             },
           ]);
+
+          setLoading(false);
         } else {
           console.error("Error: daily_data is missing or not an array", responseData);
           setLineData({ labels: [], datasets: [] });
@@ -96,6 +113,75 @@ const MonthAheadG = () => {
     fetchData();
   }, [dispatch]);
 
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const data = await dispatch(fetchMonthAheadData());
+  //       const responseData = data.payload;
+
+  //       if (Array.isArray(responseData?.daily_data)) {
+  //         const mcvData = responseData.daily_data.map(item => item.mcv_prediction?.avg ?? 0);
+  //         const mcpDataOriginal = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
+  //         const mcpData = mcpDataOriginal.reverse();
+  //         const labels = Array.from({ length: 31 }, (_, i) => i + 1); // Creates an array [1, 2, ..., 31]
+
+  //         console.log("MCV Data:", mcvData);
+  //         console.log("MCP Data:", mcpData);
+  //         console.log("Labels:", labels);
+
+  //         setLineData({
+  //           labels,
+  //           datasets: [
+  //             {
+  //               label: 'MCP (INR/MWh)',
+  //               data: mcpData,
+  //               borderColor: 'blue',
+  //               fill: false,
+  //               yAxisID: 'y-axis-mcp',
+  //             },
+  //             {
+  //               label: 'MCV (MWh)',
+  //               data: mcvData,
+  //               borderColor: 'green',
+  //               fill: false,
+  //               yAxisID: 'y-axis-mcv',
+  //             },
+  //           ],
+  //         });
+
+  //         setTableData([
+  //           {
+  //             key: '1',
+  //             status: 'Highest',
+  //             mcp: responseData.overall_stats?.mcp_prediction?.highest ?? 0,
+  //             mcv: responseData.overall_stats?.mcv_prediction?.highest ?? 0,
+  //           },
+  //           {
+  //             key: '2',
+  //             status: 'Lowest',
+  //             mcp: responseData.overall_stats?.mcp_prediction?.lowest ?? 0,
+  //             mcv: responseData.overall_stats?.mcv_prediction?.lowest ?? 0,
+  //           },
+  //           {
+  //             key: '3',
+  //             status: 'Average',
+  //             mcp: responseData.overall_stats?.mcp_prediction?.average ?? 0,
+  //             mcv: responseData.overall_stats?.mcv_prediction?.average ?? 0,
+  //           },
+  //         ]);
+  //       } else {
+  //         console.error("Error: daily_data is missing or not an array", responseData);
+  //         setLineData({ labels: [], datasets: [] });
+  //       }
+  //     } catch (error) {
+  //       console.log("Error fetching data:", error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [dispatch]);
+
   const columns = [
     {
       title: 'Details',
@@ -104,19 +190,44 @@ const MonthAheadG = () => {
     },
     {
       title: 'MCP (INR/MWh)',
-      dataIndex: 'mcp',
-      key: 'mcp',
+      children: [
+        {
+          title: 'Value',
+          dataIndex: 'mcp',
+          key: 'mcp',
+        },
+        {
+          title: 'Date',
+          dataIndex: 'mcpDate',
+          key: 'mcpDate',
+          render: (text, record) => {
+            if (record.status === 'Highest') return mcpHighestDate;
+            if (record.status === 'Lowest') return mcpLowestDate;
+            return '-';
+          },
+        },
+      ],
     },
     {
       title: 'MCV (MWh)',
-      dataIndex: 'mcv',
-      key: 'mcv',
+      children: [
+        {
+          title: 'Value',
+          dataIndex: 'mcv',
+          key: 'mcv',
+        },
+        {
+          title: 'Date',
+          dataIndex: 'mcvDate',
+          key: 'mcvDate',
+          render: (text, record) => {
+            if (record.status === 'Highest') return mcvHighestDate;
+            if (record.status === 'Lowest') return mcvLowestDate;
+            return '-';
+          },
+        },
+      ],
     },
-    {
-      title:'Date',
-      dataIndex: 'date',
-      key: 'date',
-    }
   ];
 
   const handleNextTrade = () => {
