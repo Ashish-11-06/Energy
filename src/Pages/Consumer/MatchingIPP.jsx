@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -63,6 +65,16 @@ const MatchingIPP = () => {
 
   const columns = [
     {
+      title: "Select",
+      key: "select",
+      render:(text, record) => (
+      <Radio
+          checked={selectedRow === record}
+          onChange={() => handleRowSelect(record)} 
+        />
+      ),
+    } ,
+    {
       title: 'Sr. No',
       dataIndex: 'srNo', // or any unique key you prefer for the row
       render: (text, record, index) => index + 1, // This will display the serial number
@@ -82,17 +94,8 @@ const MatchingIPP = () => {
       title: "Total Available Capacity (MW)",
       dataIndex: "available_capacity",
       key: "available_capacity",
-    },
-      {
-         title: "Select",
-         key: "select",
-         render:(text, record) => (
-         <Radio
-             checked={selectedRow === record}
-             onChange={() => handleRowSelect(record)} 
-           />
-         ),
-       }  
+    }
+      
   ];
 
   if (status === "loading") {

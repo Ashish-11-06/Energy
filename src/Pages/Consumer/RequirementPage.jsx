@@ -54,6 +54,16 @@ const [editData,setEditData]=useState(selectedRequirement);
   // Define columns for the table (Remove selection column)
   const columns = [
     {
+      title: "Select",
+      key: "select",
+      render: (text, record) => (
+        <Radio
+          checked={selectedRequirement?.id === record.id}
+          onChange={() => handleRowSelect(record)} 
+        />
+      ),
+    },
+    {
       title: 'Sr No',
       dataIndex: 'srNo',
       key: 'srNo',
@@ -114,17 +124,8 @@ const [editData,setEditData]=useState(selectedRequirement);
         <Button type="primary" onClick={()=>handleEdit(record)}>Edit</Button>
       )
     }
-    ,
-    {
-      title: "Select",
-      key: "select",
-      render: (text, record) => (
-        <Radio
-          checked={selectedRequirement?.id === record.id}
-          onChange={() => handleRowSelect(record)} 
-        />
-      ),
-    }
+    
+   
     ,    
   ];
   

@@ -137,7 +137,7 @@ console.log(editData);
   if (alreadysubscribed) {
     columns.push(
       {
-        title: 'Updated',
+        title: 'Portfolio Updated',
         dataIndex: 'updated',
         key: 'updated',
         render: (text) => (

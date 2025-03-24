@@ -135,7 +135,7 @@ const TransactionWindowgen = () => {
       // Show confirmation modal
       Modal.confirm({
         title: "Confirm Tariff Value",
-        content: `Are you sure you want to send the tariff value: ${tariffValue} INR/KWH?`,
+        content: `Are you sure you want to send the tariff value: ${tariffValue} INR/kWh?`,
         onOk: () => {
           console.log("Sending Tariff Value: ", tariffValue);
           // Send the tariff value after confirmation

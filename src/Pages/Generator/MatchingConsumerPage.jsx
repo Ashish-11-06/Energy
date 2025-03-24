@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Table, Radio, Button, message, Input, Select, Modal,Row,Col,Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons'; // Import the Eye icon
@@ -29,7 +30,7 @@ const MatchingConsumerPage = () => {
   const { Matchingconsumers, status, error } = useSelector((state) => state.matchingConsumer);
 
     const dataSource = [
-      {key:'1',label:<strong>RE Index</strong>, value:modalConsumerDetails?.REindex || 'A2'},
+      {key:'1',label:<strong>Credit Rating</strong>, value:modalConsumerDetails?.REindex || 'A2'},
       { key: '2', label: <strong>Consumer</strong>, value: modalConsumerDetails?.user__username},
       { key: '3', label: <strong>State</strong>, value: modalConsumerDetails?.state },
       { key: '4', label: <strong>Demand</strong>, value: modalConsumerDetails?.total_contracted_demand },
@@ -94,6 +95,17 @@ const MatchingConsumerPage = () => {
   // Define the columns for the table
   const columns = [
     {
+      title: 'Select',
+      key: 'select',
+      render: (text, record) => (
+        <Radio
+        onChange={(e) => handleRadioChange(e, record.id)} // Use a unique identifier (e.g., record.id)
+        checked={selectedConsumer === record.id} // Ensure the selection logic matches
+      />
+     
+      ),
+    },
+    {
       title: 'Consumer ID',
       dataIndex: 'user__username',
       key: 'user__username', // Use a unique key for each row
@@ -128,17 +140,7 @@ const MatchingConsumerPage = () => {
         </Button>
       ),
     },
-    {
-      title: 'Select',
-      key: 'select',
-      render: (text, record) => (
-        <Radio
-        onChange={(e) => handleRadioChange(e, record.id)} // Use a unique identifier (e.g., record.id)
-        checked={selectedConsumer === record.id} // Ensure the selection logic matches
-      />
-     
-      ),
-    },
+   
   ];
 
   const showModal = (consumer) => {
@@ -255,7 +257,7 @@ const MatchingConsumerPage = () => {
                 {dataSource.map(item => (
                   <React.Fragment key={item.key}>
                     <Col span={12}>
-                      <p strong>{item.label}</p>
+                      <p >{item.label}</p>
                     </Col>
                     <Col span={12}>
                       <p>: {item.value}</p>

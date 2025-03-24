@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Modal,
@@ -37,6 +39,7 @@ const RequestForQuotationModal = ({
   const [solarCapacity, setSolarCapacity] = useState(50);
   const [windCapacity, setWindCapacity] = useState(30);
   const [essCapacity, setEssCapacity] = useState(20);
+  const [perUnitCost,setPerUnitCost] =useState(data.perUnitCost);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -102,7 +105,15 @@ const RequestForQuotationModal = ({
         width={800}
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
-        <p><strong> Offer Tariff (INR/MW): </strong>{data.perUnitCost}</p>
+        <p><strong> Offer Tariff (INR/MW): </strong>
+        <InputNumber 
+        min={1}
+        value={perUnitCost}
+        onChange={
+          (value) => { setPerUnitCost(value)}
+        }
+        />
+        </p>
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
           Standard Terms Sheet
         </Title>

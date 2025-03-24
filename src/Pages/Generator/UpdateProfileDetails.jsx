@@ -60,7 +60,7 @@ const UpdateProfileDetails = () => {
       },
     },
     {
-      title: 'Updated',
+      title: 'Profile Updated',
       dataIndex: 'updated',
       key: 'updated',
       render: (text) => (
@@ -130,7 +130,7 @@ const UpdateProfileDetails = () => {
       {allUpdated && (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
           <Button type="primary" onClick={handleProceed}>
-            Optimize Capacity
+            Optimize Capacity for Consumer Demand
           </Button>
         </div>
       )}

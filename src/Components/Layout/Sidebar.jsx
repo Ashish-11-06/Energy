@@ -16,6 +16,7 @@ import offerSend from '../../assets/offerSend.png';
 import notificationImg from '../../assets/notification.png';
 import portfolio from '../../assets/portfolio.png';
 import track from '../../assets/track.png';
+import not from '../../assets/not.png';
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
@@ -26,7 +27,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const subscription_type = subscription?.subscription_type;
   // console.log(subscription_type);
-
+// const subscription_type='FREE';
   // console.log(notificationCount);
 
   const location = useLocation();
@@ -53,7 +54,12 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { 
+      label: 'Transaction Window', 
+      key: '/transaction-page', 
+      icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
+      disabled: subscription_type === 'FREE' // Disables only if subscription is FREE
+    },
     {
       label: (<span>Offers</span>), 
       key: '/offers', 
@@ -87,7 +93,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           overflowCount={5}
         >
           <img
-            src={notificationImg}
+            src={not}
             alt="Notification"
             style={{ width: '20px', height: '20px' }}
           />
@@ -102,7 +108,14 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Portfolio', key: '/generator/portfolio', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Find Consumer', key: '/generator/matching-consumer', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> }, 
+    {label: 'Capacity Sizing', key: '/generator/GeneratorInput', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />},
+    { 
+      label: 'Transaction Window', 
+      key: '/transaction-page', 
+      icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
+      disabled: subscription_type === 'FREE' // Disables only if subscription is FREE
+    },
     // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
     {
       label: (<span>Offers</span>), 
@@ -123,7 +136,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     },
      // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
     // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
-    { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     {
       label: (<span>Notification</span>), key: '/consumer/notification', icon: (
@@ -137,7 +150,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           overflowCount={5}
         >
           <img
-            src={notificationImg}
+            src={not}
             alt="Notification"
             style={{ width: '20px', height: '20px' }}
           />
@@ -145,8 +158,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
       )
     },
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Track Status', key: '/generator/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
-    {label: 'Analyse Modal', key: '/generator/GeneratorInput', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />},
+    { label: 'Track Status', key: '/generator/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
@@ -216,7 +228,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           </div>
           <Menu mode="inline" selectedKeys={[selectedKey]}>
             {menuItems.map((item) => (
-              <Menu.Item key={item.key} icon={item.icon}>
+              <Menu.Item key={item.key} icon={item.icon} disabled={item.disabled}>
                 <Link to={item.key}>{item.label}</Link>
               </Menu.Item>
             ))}
@@ -272,6 +284,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
                   key={item.key}
                   icon={item.icon}
                   onClick={() => closeDrawerAndNavigate(item.key)}
+                  disabled={item.disabled}
                 >
                   {item.label}
                 </Menu.Item>

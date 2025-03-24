@@ -27,7 +27,17 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
     { key: '7', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
     { key: '8', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
     { key: '9', label: 'Total Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
+    { key: '10', label: 'Consumer Pseudo Name', value: ipp?.totalCapacity || "N/A" },
+    { key: '11', label: 'Consumer Credit Rating', value: ipp?.totalCapacity || "N/A" },
+    { key: '12', label: 'Annual Energy (MW)', value: ipp?.totalCapacity || "N/A" },
+    {}
   ];
+
+  // const consumerDetails =[
+  //   { key: '1', label: 'Consumer Name', value: ipp?.consumerName},
+  //   { key: '2', label: 'Consumer ID', value: ipp?.consumerId },
+  //   { key: '3', label: 'Demand (MWh)', value: ipp?.demand}
+  // ]
 
   const mapToBaseType = (value) => {
     if (!value) return null;
@@ -137,7 +147,7 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
                 margin: "2px auto 0",
               }}
             >
-              Request for Quotation
+              Send Quotation
             </Button>
           </Col>
         </Row>

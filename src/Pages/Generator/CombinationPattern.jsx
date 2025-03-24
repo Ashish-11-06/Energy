@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-catch */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -11,6 +13,7 @@ import {
   Button,
   Card,
   Tooltip,
+  Modal,
 } from "antd";
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
@@ -37,6 +40,7 @@ const CombinationPattern = () => {
   const [fetchingCombinations, setFetchingCombinations] = useState(false);
   const [progress, setProgress] = useState(0);
   const [combinationData, setCombinationData] = useState([]);
+  const [tryREreplacement,setTryREreplacement]=useState(false);
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -141,7 +145,11 @@ const CombinationPattern = () => {
     console.log("formatting com");
     setDataSource(formattedCombinations);
   };
-
+useEffect(()=> {
+if(dataSource?.length<=0) {
+  setTryREreplacement(true);
+}
+},[dataSource])
   // Redux selectors
   const consumptionPatterns = useSelector(
     (state) => state.consumptionPattern?.patterns || []
@@ -764,6 +772,7 @@ const CombinationPattern = () => {
                 rowClassName={() => "custom-row"} // Add a custom row class
               />
             ) : (
+              <>
               <div
                 style={{
                   padding: "20px",
@@ -779,6 +788,10 @@ const CombinationPattern = () => {
                 No optimized combinations available at the moment. Please try
                 again later.
               </div>
+              <Modal title='Please try again'>
+                
+                </Modal>
+              </>
             )}
           </Card>
         </Col>
@@ -808,6 +821,14 @@ const CombinationPattern = () => {
           />
         )}
       </Row>
+      {/* <Modal 
+  open={tryREreplacement}
+  onOk={() => setTryREreplacement(false)}
+  cancelButtonProps={{ style: { display: "none" } }} // Hides cancel button
+>
+  Try for lower RE Replacement
+</Modal> */}
+
     </div>
   );
 };

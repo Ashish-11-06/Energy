@@ -192,6 +192,11 @@ const TransactionMainPage = () => {
       
       ),
     },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+    }
   ];
 
   return (

@@ -38,6 +38,7 @@ const PlanYourTradePage = () => {
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [consumerRequirement, setConsumerRequirement] = useState([]);
+  const [isTableShow,setTableShow]=useState(false);
   const [tableData, setTableData] = useState(
     generateTimeLabels().map((time, index) => ({
       key: index,
@@ -49,13 +50,50 @@ const PlanYourTradePage = () => {
   const [fileUploaded, setFileUploaded] = useState(false);
   const [showTable, setShowTable] = useState(false);
 const [uploadModal,setUploadModal]=useState(false);
-  const handleContinue = () => {
-    if(!fileUploaded) {
-      setIsModalVisible(true);
-    } else {
+  const handleContinue = async () => {
+    if (!allFieldsFilled) {
+      message.error("Please fill all fields or upload a file.");
+      return;
+    }
+  
+    try {
+      const dayAheadDemand = {
+        requirement: selectedRequirementId,
+        demand_data: tableData.map(item => {
+          let [hours, minutes] = item.time.split(":").map(Number);
+          minutes += 15;
+  
+          if (minutes >= 60) {
+            hours += 1;
+            minutes -= 60;
+          }
+  
+          if (hours >= 24) {
+            hours = 0;
+          }
+  
+          let end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  
+          return {
+            start_time: item.time,
+            end_time: end_time,
+            demand: item.demand
+          };
+        }),
+        price: (Array.isArray(selectedTechnology) ? selectedTechnology : [selectedTechnology]).reduce((acc, tech) => {
+          acc[tech] = parseFloat(price[tech]);
+          return acc;
+        }, {})
+      };
+  
+      await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+      message.success("Data submitted successfully");
       navigate('/px/track-status');
+    } catch (error) {
+      message.error("Failed to submit data. Please try again.");
     }
   };
+  
 
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
@@ -116,59 +154,15 @@ const [uploadModal,setUploadModal]=useState(false);
     setAllFieldsFilled(allFilled);
   }, [tableData]);
 
-  const handleModalOk = async () => {
-    // console.log("Selected State:", selectedState);
-    // console.log("Selected Requirement ID:", selectedRequirementId);
-    try {
-      // console.log(price);
-      
-      const dayAheadDemand = {
-        requirement: selectedRequirementId,
-        demand_data: tableData.map(item => {
-          let [hours, minutes] = item.time.split(":").map(Number); // Convert time to hours and minutes
-          minutes += 15; // Add 15 minutes
-
-          if (minutes >= 60) {
-            hours += 1;
-            minutes -= 60;
-          }
-
-          // Ensure hours do not exceed 23 (Reset to 00:00 if it becomes 24:00)
-          if (hours >= 24) {
-            hours = 0;
-          }
-
-          let end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`; // Format time
-
-          return {
-            start_time: item.time,
-            end_time: end_time,
-            demand: item.demand
-          };
-        }),
-       
-        // Ensure selectedTechnology is an array
-        price: (Array.isArray(selectedTechnology) ? selectedTechnology : [selectedTechnology]).reduce((acc, tech) => { 
-          acc[tech] = parseFloat(price[tech]); // Convert price to number
-          // console.log(acc);
-          
-          return acc;
-        }, {})
-      };
-
-      // console.log(dayAheadDemand);
-
-      const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
-      message.success("Data submitted successfully");
-      
-      // console.log('res', res);
-      setIsModalVisible(false);
-      navigate('/px/track-status');
-    } catch (error) {
-      // console.log(error);
-      message.error("Failed to submit data. Please try again.");
-    }
+  const handleModalOk = () => {
+    setShowTable(true); // Show the table after modal "Ok"
+    setIsModalVisible(false);
   };
+  
+
+const handleTableShow = () => {
+  renderTable();
+}
 
   const handleFileUpload = (file) => {
     const isExcel = file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -309,6 +303,10 @@ const [uploadModal,setUploadModal]=useState(false);
     ? consumerRequirement
     : dummyConsumptionUnits;
 
+  const handleAddDetails = () => {
+    setIsModalVisible(true); // Show the "Select Technology" modal
+  };
+
   return (
     <div style={{ padding: "20px" }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
@@ -348,9 +346,10 @@ const [uploadModal,setUploadModal]=useState(false);
           >
             <Col>
               <Tooltip title="Add details manually!" placement="bottom">
-                <Button onClick={() => setShowTable(!showTable)}>
-                  {showTable ? "Add Details +" : "Add Details +"}
-                </Button>
+                {/* <Button onClick={() => setShowTable(!showTable)}>
+                  {showTable ? "Add  Details +" : "Add Details +"}
+                </Button> */}
+                <Button onClick={handleAddDetails}>Add Details +</Button>
               </Tooltip>
             </Col>
           </Card>
@@ -437,10 +436,10 @@ const [uploadModal,setUploadModal]=useState(false);
         <div style={{ marginTop: "15px" }}>
           {selectedTechnology === "Solar" && (
             <div>
-              <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
+              <label style={{ fontWeight: "bold" }}>Enter Solar Price (INR/kWh):</label>
               <Input
                 type="number"
-                placeholder="Enter solar price in INR"
+                placeholder="Enter solar price in INR/kWh"
                 value={price["Solar"] || ""}
                 min={0}
                 onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
@@ -451,7 +450,7 @@ const [uploadModal,setUploadModal]=useState(false);
           
           {selectedTechnology === "Non-Solar" && (
             <div>
-              <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
+              <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price (INR/kWh):</label>
               <Input
                 type="number"
                 placeholder="Enter non-solar price in INR"

@@ -327,7 +327,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
         <Col span={12}>
           <Form.Item
             name="capital_cost"
-            label="Capital Cost (INR)"
+            label="Capital Cost (INR/MWh)"
             rules={[
               {
                 required: type === "ESS",

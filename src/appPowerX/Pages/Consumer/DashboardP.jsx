@@ -376,7 +376,7 @@ const DashboardP = () => {
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
                 onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
               >
-                Upcoming Market
+                Plan Your Energy for the Month
               </span>
             </Col>
             <Col style={{ marginTop: '30px' }}>
@@ -391,7 +391,7 @@ const DashboardP = () => {
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
                 onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
               >
-                Market Statistics
+               Execute trade for next day
               </span>
             </Col>
           </Col>
@@ -401,8 +401,14 @@ const DashboardP = () => {
               <li style={{ marginBottom: '10px' }}>
                 <strong>Ask Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
               </li>
-              <li>
+              <li style={{ marginBottom: '10px' }}>
                 <strong>Executed Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
+              </li>
+              <li style={{ marginBottom: '10px' }}>
+                <strong>Ask Volume</strong> <span style={{ fontSize: '12px' }}>(kW)</span>: 200
+              </li>
+              <li>
+                <strong>Executed Volume</strong> <span style={{ fontSize: '12px' }}>(kW)</span>: 4
               </li>
             </ul>
           </Col>
