@@ -311,7 +311,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
               <p>Welcome, Guest!</p>
             )}
           </p>
-
+{/* 
 <Tooltip title="My Profile" placement="top">
           <img
             src={userImage} // User profile image
@@ -333,7 +333,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
             }}
             onClick={handleProfileClick}
           />
-          </Tooltip>
+          </Tooltip> */}
 
           <Tooltip title="Need Assistance?">
             <img

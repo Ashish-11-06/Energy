@@ -304,7 +304,7 @@ console.log(companyName);
         {loading ? (
           <Spin size="large" />
         ) : (
-          subscriptionPlan.map((plan) => (
+          subscriptionPlan?.map((plan) => (
             <Col key={plan.id} xs={24} sm={8} md={8}>
               <Card
                 hoverable

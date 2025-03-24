@@ -44,7 +44,7 @@ const TermSheet = ({
   console.log(JSON.stringify(data, null, 2)); // Pretty print with 2 spaces for indentation
 
   const handleChatWithExpert = () => {
-    navigate("/consumer/chat-page");
+    navigate("/chat-page");
   };
 
   const handleSendToIPPs = () => {

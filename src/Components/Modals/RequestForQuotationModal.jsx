@@ -54,7 +54,7 @@ const RequestForQuotationModal = ({
   }, [contractedEnergy]);
 
   const handleChatWithExpert = () => {
-    navigate("/consumer/chat-page");
+    navigate("/chat-page");
   };
 
   const handleSendToIPPs = () => {

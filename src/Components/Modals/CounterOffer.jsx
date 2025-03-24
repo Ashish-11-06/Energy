@@ -74,7 +74,7 @@ let temp='';
   };
 
   const handleChatWithExpert = () => {
-    navigate("/consumer/chat-page");
+    navigate("/chat-page");
   };
 
   const handleTarrif = async () => {
