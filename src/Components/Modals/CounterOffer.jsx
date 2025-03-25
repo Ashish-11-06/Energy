@@ -131,9 +131,12 @@ let temp='';
         title: "Confirm Rejection",
         content: "Are you sure, you want to reject this request?",
         okText: "Yes, Reject",
-        cancelText: "Cancel",
+        cancelText: "Counter Offer",
         onOk: async () => {
           await updateStatus(action);
+        },
+        onCancel: () => {
+          handleContinue();
         },
       });
     } else {
@@ -238,9 +241,9 @@ let temp='';
   </p>
   {!fromTransaction ? (
     <>
-      {data?.generator_status !== "Rejected" && data?.generator_status !== "Accepted" && (
+      {(data?.generator_status !== "Rejected" && data?.generator_status !== "Accepted")  || ( data?.consumer_status !== "Rejected" && data?.consumer_status !== "Accepted") && (
         <>
-          {((data?.from_whom === "Consumer" &&
+          {((data?.from_whom === "Consumer" || data?.from_whom === "Generator" &&
             data?.count % 2 === 0 &&
             data?.count <= 4) ||
             (data?.from_whom === "Generator" &&
@@ -406,9 +409,10 @@ let temp='';
                 data?.count % 2 === 1 &&
                 data?.count <= 4) ? (
                 <>
-                  <Button onClick={() => handleStatusUpdate("Rejected")}>
-                    Reject
-                  </Button>
+                 <Button type="primary" danger onClick={() => handleStatusUpdate("Rejected")}>
+  Reject
+</Button>
+
                   <Button
                     style={{ marginLeft: "10px" }}
                     onClick={handleTarrif}
@@ -473,7 +477,7 @@ let temp='';
                 data?.count % 2 === 1 &&
                 data?.count < 4) ? (
                 <>
-                  <Button onClick={() => handleStatusUpdate("Rejected")}>
+                  <Button type="primary" danger onClick={() => handleStatusUpdate("Rejected")}>
                     Reject
                   </Button>
                   <Button
@@ -525,11 +529,11 @@ let temp='';
           ) : null} 
 
 
-      <Button type="text" onClick={showModal}>
+        </Row>
+        <Button type="text" style={{marginTop:'20px'}} onClick={showModal}>
              View in Detail
             </Button>
             <AgreementModal visible={modalVisible} onClose={handleCloseModal} />
-        </Row>
         <Modal
           title={"Negotiate Tariff"}
           open={tarrifModal}

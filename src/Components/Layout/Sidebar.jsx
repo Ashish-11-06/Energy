@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Badge } from 'antd';
+import { Badge, message, Tooltip } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { connectWebSocket, connectOfferSocket } from '../../Redux/Slices/notificationSlice';
 import PropTypes from 'prop-types';
@@ -58,7 +58,9 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
       label: 'Transaction Window', 
       key: '/transaction-page', 
       icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
-      disabled: subscription_type === 'FREE' // Disables only if subscription is FREE
+      disabled: subscription_type === 'FREE'
+      
+      // Disables only if subscription is FREE
     },
     {
       label: (<span>Offers</span>), 
@@ -194,6 +196,14 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     navigate(url);
   };
 
+  const handleMenuClick = (item) => {
+    if (item.disabled) {
+      message.warning('Please subscribe to access this feature.');
+      return;
+    }
+    navigate(item.key);
+  };
+
   return (
     <>
       {!isMobile ? (
@@ -228,9 +238,18 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           </div>
           <Menu mode="inline" selectedKeys={[selectedKey]}>
             {menuItems.map((item) => (
-              <Menu.Item key={item.key} icon={item.icon} disabled={item.disabled}>
-                <Link to={item.key}>{item.label}</Link>
-              </Menu.Item>
+              <Tooltip
+                title={item.disabled ? 'Please subscribe to access this feature.' : ''}
+                key={item.key}
+              >
+                <Menu.Item key={item.key} icon={item.icon} disabled={item.disabled} onClick={() => !item.disabled && handleMenuClick(item)}>
+                  {item.disabled ? (
+                    item.label // Render label only if disabled
+                  ) : (
+                    <Link to={item.key}>{item.label}</Link> // Render Link if not disabled
+                  )}
+                </Menu.Item>
+              </Tooltip>
             ))}
           </Menu>
           <div style={{
@@ -280,14 +299,23 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           >
             <Menu mode="inline" selectedKeys={[selectedKey]}>
               {menuItems.map((item) => (
-                <Menu.Item
+                <Tooltip
+                  title={item.disabled ? 'Please subscribe to access this feature.' : ''}
                   key={item.key}
-                  icon={item.icon}
-                  onClick={() => closeDrawerAndNavigate(item.key)}
-                  disabled={item.disabled}
                 >
-                  {item.label}
-                </Menu.Item>
+                  <Menu.Item
+                    key={item.key}
+                    icon={item.icon}
+                    onClick={() => !item.disabled && handleMenuClick(item)}
+                    disabled={item.disabled}
+                  >
+                    {item.disabled ? (
+                      item.label // Render label only if disabled
+                    ) : (
+                      <Link to={item.key}>{item.label}</Link> // Render Link if not disabled
+                    )}
+                  </Menu.Item>
+                </Tooltip>
               ))}
             </Menu>
           </Drawer>

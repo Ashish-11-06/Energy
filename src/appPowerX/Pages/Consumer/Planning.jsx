@@ -27,7 +27,7 @@ const Planning = () => {
   const [demand, setDemand] = useState("");
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
   const [consumerRequirement, setConsumerRequirement] = useState([]);
-  const [tableDemandData, setTableDemandData] = useState([]);
+  const [tableDemandData, setTableDemandData] = useState([]); // Ensure it's initialized as an empty array
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -91,11 +91,12 @@ const [requirementId, setRequirementId] = useState([]);
 
   const getListData = (date) => {
     const dateStr = dayjs(date).format('YYYY-MM-DD');
+    if (!Array.isArray(tableDemandData)) return []; // Ensure tableDemandData is an array
     return tableDemandData.filter(item => item.date === dateStr);
   };
 
   const tileContent = (value) => {
-    console.log('date clicked');
+    // console.log('date clicked');
     
     const date = value.toDate();
     const listData = getListData(date);

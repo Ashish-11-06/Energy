@@ -77,6 +77,7 @@ import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
 import NotificationG from './appPowerX/Pages/Generator/NotificationG';
 import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
 import WhatWeOfferP from './appPowerX/Pages/WhatWeOfferP';
+import TrackStatusP from './appPowerX/Pages/TrackStatus';
 import ProtectedRoute from './ProtectedRoute';
 
 // import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
@@ -187,7 +188,7 @@ function App() {
       {/* Common Chat Page Route */}
 
       <Route path="chat-page" element={<ChatPage />} />
-      {/* <Route path="track-status" element={<TrackStat/>} /> */}
+      <Route path="track-status" element={<TrackStatusP/>} />
 
       {/* Consumer Routes */}
       <Route path="consumer">

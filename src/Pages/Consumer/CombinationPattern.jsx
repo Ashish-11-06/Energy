@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-useless-catch */
 import React, { useState, useEffect } from "react"; 
 import {
   Table,
@@ -11,6 +13,7 @@ import {
   Button,
   Card,
   Tooltip,
+  Modal,
 } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
 
@@ -39,6 +42,7 @@ const CombinationPattern = () => {
   const [fetchingCombinations, setFetchingCombinations] = useState(false);
   const [progress, setProgress] = useState(0);
   const [combinationData, setCombinationData] = useState([]);
+  const [tryLowerModal,setTryLowerModal]=useState(false);
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -325,6 +329,7 @@ const CombinationPattern = () => {
       }
     } catch (error) {
       console.error("Error in handleOptimizeClick:", error);
+      setTryLowerModal(true);
       message.error("Failed to fetch combinations.");
     } finally {
       setFetchingCombinations(false);
@@ -749,6 +754,9 @@ const CombinationPattern = () => {
             type="generator"
           />
         )}
+        <Modal open={tryLowerModal} onOk={()=> setTryLowerModal(false)} footer={null}>
+<p>Please try in lower RE Replacement</p>
+        </Modal>
       </Row>
     </div>
   );

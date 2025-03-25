@@ -23,6 +23,7 @@ import {
 } from "../../Redux/slices/consumer/dashboardSlice";
 import market from "../../assets/market.png";
 import statistics from "../../assets/statistics.png";
+import { dayAheadData } from "../../Redux/slices/consumer/dayAheadSlice";
 
 // Register required chart.js components and plugins
 ChartJS.register(
@@ -43,9 +44,13 @@ const DashboardP = () => {
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState([]);
   const [dashboardLine, setDashboardLine] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [statistiicsData, setStatisticsData] = useState([]);
+  const [detailDataSource, setDetailDataSource] = useState([]);
   const [loading,setLoading]=useState(false);
   const [nextDay, setNextDay] = useState('');
   const [showDueModal,setShowDueModal]=useState(false);
+  const [showLineGraph, setShowLineGraph] = useState(true); // New state to control line graph visibility
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
   const user=JSON.parse(localStorage.getItem('user')).user;
   const is_due_date=user.is_due_date;
@@ -66,6 +71,11 @@ const DashboardP = () => {
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
     height: "250px", // Ensure all cards are the same height
   };
+  const cardForecastGraph ={
+    margin: "20px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    height: "500px"
+  }
 
 
   useEffect(() => {
@@ -88,9 +98,11 @@ const DashboardP = () => {
       const fetchLineData = async () => {
         setLoading(true);
         const res = await dispatch(fetchDashboardLine(id)); 
-        // console.log(res);
-        
-        if (res.payload.length > 0) {
+        if(res.payload === 'No demand data available for the next day') {
+console.log('no data');
+setShowLineGraph(false); // Hide line graph card
+        } else {
+setShowLineGraph(true); // Show line graph card
           const dateStr = res.payload[0]?.date;
           const date = new Date(dateStr);
           
@@ -101,7 +113,7 @@ const DashboardP = () => {
         }
         // console.log(res.payload);
         if(res.error){
-        message.error(res.payload);
+        // message.error(res.payload);
         } else {
         setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
         }
@@ -110,15 +122,181 @@ const DashboardP = () => {
       };
       fetchLineData();
     } catch (error) {
-      message.error(error.message); 
+      // message.error(error.message); 
       // console.log(error);
     }
  
   }, [dispatch]);
 
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          setLoading(true);
+          const data = await dispatch(dayAheadData()).unwrap();
+          // console.log('data', data.predictions.map(item=>item.date));
+          if (data?.predictions?.length > 0) {
+            const dateStr = data.predictions[0]?.date;
+            const date = new Date(dateStr);
+            
+            const options = { month: "long", day: "2-digit" };
+            const formattedDate = date.toLocaleDateString("en-US", options);
+      
+            setNextDay(formattedDate); // Example output: "February 01"
+          }
+  
+          const mcpDataOriginal = data.predictions.map(item => item.mcp_prediction);
+          const mcpData=mcpDataOriginal.reverse();
+          const mcvData = data.predictions.map(item => item.mcv_prediction);
+  
+          setTableData([{ MCP: mcpData, MCV: mcvData }]); // Ensure data is an array
+  
+          setStatisticsData(data.statistics);
+          setLoading(false);
+          // console.log(data.statistics);
+          
+        } catch (error) {
+          // console.log(error);
+          setLoading(false);
+        }
+      };
+      fetchData();
+    }, [dispatch]);
+
+      useEffect(() => {
+        if (statistiicsData.mcp && statistiicsData.mcv) {
+          setDetailDataSource([
+            {
+              key: 'max',
+              status: 'Maximum',
+              mcp: statistiicsData.mcp.max.toFixed(2),
+              mcv: statistiicsData.mcv.max.toFixed(2),
+            },
+            {
+              key: 'min',
+              status: 'Minimum',
+              mcp: statistiicsData.mcp.min.toFixed(2),
+              mcv: statistiicsData.mcv.min.toFixed(2),
+            },
+            {
+              key: 'avg',
+              status: 'Average',
+              mcp: statistiicsData.mcp.avg.toFixed(2),
+              mcv: statistiicsData.mcv.avg.toFixed(2),
+            },
+          ]);
+        }
+      }, [statistiicsData]);
+
+        const data = {
+          labels: Array.from({ length: 96 }, (_, i) => i + 1), // Ensure X-axis shows values from 1 to 96
+          datasets: [
+            {
+              label: 'MCP (INR/MWh)', // Label for MCP dataset
+              data: tableData[0]?.MCP || [], // Updated data for MCP
+              borderColor: 'blue',
+              fill: false,
+              color: 'blue',
+              font :{
+                weight: 'bold',
+              },
+              yAxisID: 'y-axis-mcp', // Assign to right Y-axis
+            },
+            {
+              label: 'MCV (MWh)', // Label for MCY dataset
+              data: tableData[0]?.MCV || [], // Updated data for MCY
+              borderColor: 'green',
+              fill: false,
+              color: 'green',
+              font :{
+                weight: 'bold',
+              },
+              yAxisID: 'y-axis-mcv', // Assign to left Y-axis
+            },
+          ],
+        };
+
   // Extract demand values from dashboardLine
   const demandValues = dashboardLine.map(item => item.demand);
 
+   const options = {
+      responsive: true,
+      scales: {
+        x: {
+          type: 'linear',
+          position: 'bottom',
+          min: 1, // Set minimum value for x-axis
+          max: 96, // Set maximum value for x-axis
+          ticks: {
+            callback: function(value) {
+              return value; // Show all values from 1 to 96
+            },
+            autoSkip: false, // Ensure all ticks are shown
+            maxTicksLimit: 96, // Ensure at least 96 ticks are shown
+          },
+          title: {
+            display: true,
+            text: 'Time (15-minute intervals)',
+            font: {
+              weight: 'bold',
+              size: 16,
+            }
+          },
+        },
+        'y-axis-mcv': {
+          type: 'linear',
+          position: 'left',
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'MCV (MWh)',
+            font: {
+              weight: 'bold', 
+            }
+          },
+          ticks: {
+            color: 'green', // Set scale number color for MCV
+          },
+        },
+        'y-axis-mcp': {
+          type: 'linear',
+          position: 'right',
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'MCP (INR/MWh)',
+            font :{
+              weight: 'bold',
+            }
+          },
+          grid: {
+            drawOnChartArea: false, // Only draw grid lines for one Y-axis
+          },
+          ticks: {
+            color: 'blue', // Set scale number color for MCP
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom', // Position legends at the bottom
+          align: 'end', // Align legends to the right
+          labels: {
+            // usePointStyle: true, // Use point style for legend items
+            padding: 20, // Add padding around legend items
+          },
+        },
+        // Removed zoom plugin configuration
+        title: {
+          display: true,
+          text: 'Day Ahead Market Forecast',
+          font: {
+            size: 18,
+          },
+        },
+      },
+    };
   const handleModalOk =()=> {
       navigate('/px/consumer/planning')
   }
@@ -342,24 +520,40 @@ const DashboardP = () => {
 
         </Row>
       </Card>
-      <Card style={cardStyle}>
-        <Col span={24} style={{ marginBottom: "20px" }}>
-          <div
-            style={{
-              position: "relative",
-              width: "80%",
-              height: "300px",
-              margin: "0 auto",
-            }}
-          >
-            {loading ? (
-              <Spin />
-            ) : (
-              <Line data={lineData} options={lineOptions} />
-            )}
+      {showLineGraph && dashboardLine.length > 0 && ( // Ensure data is present before rendering
+        <Card style={cardStyle}>
+          <Col span={24} style={{ marginBottom: "20px" }}>
+            <div
+              style={{
+                position: "relative",
+                width: "80%",
+                height: "300px",
+                margin: "0 auto",
+              }}
+            >
+                {loading ? (
+                  <Spin />
+                ) : (
+                  <Line data={lineData} options={lineOptions} />
+                )}
+            </div>
+          </Col>
+        </Card>
+      )}
+
+ <Card style={cardForecastGraph}> {/* Updated shadow and card background color */}
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '20px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+            <Spin />
+            <p>Loading Day Ahead Merket Forecast Data...</p>
           </div>
-        </Col>
+        ) : (
+          <div style={{ height: '500px', width: '100%' }}>
+            <Line data={data} options={options} style={{height: '300px', width: 'full', padding: '25px', marginLeft: '100px'}}/>
+          </div>
+        )}
       </Card>
+
       <Card style={cardThirdStyle}>
         <Row gutter={[16, 16]} justify="space-between">
           <Col span={12} style={{ textAlign: 'center' }}>
@@ -402,11 +596,12 @@ const DashboardP = () => {
                 <strong>Ask Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
               </li>
               <li style={{ marginBottom: '10px' }}>
-                <strong>Executed Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
-              </li>
-              <li style={{ marginBottom: '10px' }}>
                 <strong>Ask Volume</strong> <span style={{ fontSize: '12px' }}>(kW)</span>: 200
               </li>
+              <li style={{ marginBottom: '10px' }}>
+                <strong>Executed Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
+              </li>
+             
               <li>
                 <strong>Executed Volume</strong> <span style={{ fontSize: '12px' }}>(kW)</span>: 4
               </li>

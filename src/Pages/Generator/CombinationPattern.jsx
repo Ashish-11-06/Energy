@@ -825,7 +825,6 @@ if(dataSource?.length<=0) {
             type="generator"
           />
         )}
-      </Row>
       {/* <Modal 
   open={tryREreplacement}
   onOk={() => setTryREreplacement(false)}
@@ -833,6 +832,7 @@ if(dataSource?.length<=0) {
 >
   Try for lower RE Replacement
 </Modal> */}
+      </Row>
 
     </div>
   );

@@ -49,13 +49,15 @@ const TransactionWindowgen = () => {
 
   const navigate = useNavigate();
 
-  // const { state } = location;  // this should contain your passed record
+  //  const { state } = location;  // this should contain your passed record
 
   // console.log(state);  // Check if the state is available here
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
+  // console.log(record);
+  
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const loggedInUserId = loggedInUser?.user?.id;
@@ -278,6 +280,17 @@ const TransactionWindowgen = () => {
                             <Countdown title="Time Remaining" value={deadline} valueStyle={{ color: 'red' }}/>
                           </span>
                         </Row> */}
+                         <hr />
+
+<p style={{fontWeight:'bold',fontSize:'16px'}}>Combination Details</p>
+
+<Row gutter={[16, 16]}>
+
+<Col span={8}><strong>Solar Capacity (MW): </strong>{record.c_optimal_solar_capacity}</Col>
+<Col span={8}><strong>Wind Capacity: </strong>{record.c_optimal_wind_capacity}</Col>
+<Col span={8}><strong>ESS Capacity: </strong>{record.c_optimal_battery_capacity}</Col>
+</Row>
+
                         <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
                         <Col>
                           <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div> 

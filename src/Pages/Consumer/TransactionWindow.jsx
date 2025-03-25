@@ -54,7 +54,7 @@ const TransactionWindow = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
-console.log('hii',record);
+// console.log('hii',record);
 
   // useEffect(() => {
   //   // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
@@ -319,7 +319,7 @@ console.log('hii',record);
                 <Countdown title="Time Remaining" value={deadline} />
               </span>
             </Row> */}
-            <hr />
+            {/* <hr />
 
               <p style={{fontWeight:'bold'}}>Consumer Details</p>
               <br />
@@ -328,7 +328,7 @@ console.log('hii',record);
               <Col span={8}><strong>Solar Capacity (MW): </strong>{record.c_optimal_solar_capacity}</Col>
               <Col span={8}><strong>Wind Capacity: </strong>{record.c_optimal_wind_capacity}</Col>
               <Col span={8}><strong>ESS Capacity: </strong>{record.c_optimal_battery_capacity}</Col>
-            </Row>
+            </Row> */}
 
             <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
               <Col>

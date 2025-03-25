@@ -16,7 +16,7 @@ import EditProfileModal from "./Modal/EditProfileModal";
 import dayjs from "dayjs";
 import AddUserModal from "./Modal/AddUserModal";
 import { render } from "less";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { useDispatch } from "react-redux";
@@ -260,7 +260,7 @@ const ProfilePage = () => {
               <Button type="primary" onClick={handleEditToggle}>
                 Edit Profile
               </Button>
-              <Button type="primary" onClick={handleLogOut}>
+              <Button type="primary" icon={<LogoutOutlined  />} onClick={handleLogOut}>
                 Log out
               </Button>
             </Row>
