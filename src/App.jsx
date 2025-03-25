@@ -102,9 +102,9 @@ import ProtectedRoute from './ProtectedRoute';
 //   }, [location]);
 //   return null; // This component does not need to render anything
 // };
-
 function App() {
   return (
+
     <Router>
       {/* <CurrentPath /> Ensure this is rendered inside JSX */}
       <Routes>
@@ -127,12 +127,12 @@ function App() {
           <Route path="transaction-page" element={<TransactionMainPage />} />
           <Route path="subscription-plan" element={<SubscriptionPlans />} />
           <Route path="agreements" element={<Agreements />} />
+          <Route path="chat-page" element={<ChatWithExpert />} />
 
           {/* Consumer Routes */}
           <Route path="/consumer/*">
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="matching-ipp" element={<MatchingIPP />} />
-            <Route path="chat-page" element={<ChatWithExpert />} />
             <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
             <Route path="consumption-pattern" element={<CombinationPatternC />} />
             <Route path="project-details" element={<IppProjectDetails />} />
@@ -157,7 +157,6 @@ function App() {
             {/* <Route path="subscription-plan" element={<SubscriptionPlanG />} /> */}
             <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
             <Route path="update-profile-details" element={<UpdateProfileDetails />} />
-            <Route path="chat-page" element={<ChatWithExpert />} />
             <Route path="combination-pattern" element={<CombinationPattern />} />
             <Route path="requested-ipp-gen" element={<RequestedIPPOfGen />} />
             <Route path="consumer-requests" element={<OfferRecievedFromCons />} />

@@ -221,22 +221,6 @@
 }
 
 /* Medium Laptops / Desktops (up to 1024px wide) */
-@media (max-width: 1024px) {
-  .content-container {
-    flex-direction: row;
-    padding: 5vw;
-  }
-
-  .text-content {
-    width: 50vw;
-    font-size: 2.5vw;
-  }
-
-  .login-box {
-    width: 40vw;
-    max-width: 350px;
-  }
-}
 
 /* Desktops and Laptops (1024px - 1440px wide) */
 @media (min-width: 1024px) and (max-width: 1440px) {

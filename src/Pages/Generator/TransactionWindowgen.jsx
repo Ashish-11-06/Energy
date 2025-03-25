@@ -405,9 +405,22 @@ const TransactionWindowgen = () => {
                             <Text strong>
                               IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span>
                             </Text>
-                            <Text style={{ margin: '150px' }} strong>
+                            {/* <Text style={{ margin: '150px' }} strong>
                               Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span>
-                            </Text>
+                            </Text> */}
+
+                            <div>
+                              <Text strong>
+                                Offer Tariff:{" "}
+                                <span style={{ fontSize: "larger", color: "#9A8406" }}>
+                                  {msg.updated_tariff} INR/kWh{" "}
+                                </span>
+                              </Text>
+                              <Text type={isIncrease ? "success" : "danger"} style={{ marginLeft: "8px" }}>
+                                {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
+                              </Text>
+                            </div>
+
                             <Text strong>
                               Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
                             </Text>
@@ -415,7 +428,7 @@ const TransactionWindowgen = () => {
                         </Card>
                       );
                     } else {
-                      console.warn("Invalid message format:", messageObject);
+                      // console.warn("Invalid message format:", messageObject);
                       return null; // Return null if the message format is invalid
                     }
                   });

@@ -55,7 +55,7 @@ console.log(data);
   }, [contractedEnergy]);
 
   const handleChatWithExpert = () => {
-    navigate("/consumer/chat-page");
+    navigate("/chat-page");
   };
 
   const handleSendToIPPs = () => {

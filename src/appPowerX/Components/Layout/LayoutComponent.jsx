@@ -20,7 +20,7 @@ const navigate=useNavigate();
 
   const isChatPage =
   location.pathname === "/px/consumer/chat-page" ||
-  location.pathname === "/px/generator/chat-page";
+  location.pathname === "/px/chat-page";
 
   const handleChatClick = () => {
     navigate(

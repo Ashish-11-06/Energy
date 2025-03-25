@@ -81,27 +81,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    {
-      label: (<span>Notification</span>),
-      key: '/consumer/notification',
-      icon: (
-        <Badge
-          style={{
-            transform: 'translate(50%, -50%)',
-            minWidth: '15px',
-            height: '15px'
-          }}
-          count={notificationCount}
-          overflowCount={5}
-        >
-          <img
-            src={not}
-            alt="Notification"
-            style={{ width: '20px', height: '20px' }}
-          />
-        </Badge>
-      )
-    },
     { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Track Status', key: '/consumer/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
@@ -140,25 +119,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    {
-      label: (<span>Notification</span>), key: '/consumer/notification', icon: (
-        <Badge
-          style={{
-            transform: 'translate(50%, -50%)',
-            minWidth: '15px',
-            height: '15px'
-          }}
-          count={notificationCount}
-          overflowCount={5}
-        >
-          <img
-            src={not}
-            alt="Notification"
-            style={{ width: '20px', height: '20px' }}
-          />
-        </Badge>
-      )
-    },
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Track Status', key: '/generator/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];

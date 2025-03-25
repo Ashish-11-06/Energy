@@ -39,14 +39,14 @@ const LayoutComponent = () => {
   const handleChatClick = () => {
     navigate(
       user.user_category === "Consumer"
-        ? "/consumer/chat-page"
-        : "/generator/chat-page"
+        ? "/chat-page"
+        : "/chat-page"
     );
   };
 
   const isChatPage =
-  location.pathname === "/consumer/chat-page" ||
-  location.pathname === "/generator/chat-page" ||
+  location.pathname === "/chat-page" ||
+  location.pathname === "/chat-page" ||
   location.pathname === "/consumer/energy-consumption-table" ||
   location.pathname === "/generator/energy-consumption-table";
 

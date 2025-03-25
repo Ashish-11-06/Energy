@@ -211,11 +211,11 @@ const response = await dispatch(fetchSubscriptionValidity(id));
    {/* <h2 style={{justifyContent:'center'}}>Green Energy </h2> */}
         <div className="content-container" style={{marginTop:'-10px'}}> 
           <div className="text-content"  >
-            <div className='energy-title' style={{backgroundColor:'#669800',width:'600px'}}> 
+            <div className='energy-title' style={{backgroundColor:'#669800',width:'160%'}}> 
             <p className='green-title' style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
             <p className='marketplace' style={{marginLeft:'5%',marginTop:'-30px',fontWeight:'bolder'}}>MarketPlace</p>
             </div>
-           <p style={{fontSize:'24px',width:'600px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators</i></p>
+           <p style={{fontSize:'24px',width:'130%',marginTop:'-5px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators</i></p>
             {/* <h2 className="animated-text">{animatedText}</h2> */}
             <ul >
               {/* <Row>
@@ -242,7 +242,7 @@ const response = await dispatch(fetchSubscriptionValidity(id));
        
           
           {/* Login Box */}
-          <div className="login-box" style={{marginLeft:'400px',
+          <div className="login-box" style={{
           marginTop: '-70px'
           }}>
          

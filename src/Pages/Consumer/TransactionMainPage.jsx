@@ -132,27 +132,12 @@ console.log('consumer',extractedData);
       render: (text) => moment(text).format('hh:mm A'),
     },
     {
-      title: 'Action (open)',
+      title: 'Action',
       key: 'action',
       width: 200,
       render: (_, record) => (
         
-        
         <>
-  {/* <Button 
-    type="primary" 
-    style={{ backgroundColor: "#669800", borderColor: "#669800", width: "150px" }} 
-    onClick={() => {
-      const user = JSON.parse(localStorage.getItem("user")).user;
-      const path = user.user_category === "Generator"
-        ? "/generator/transaction-window"
-        : "/consumer/transaction-window";
-    
-      navigate(path, { state: record });
-    }}
-  >
-  Open Window
-  </Button> */}
   <Button 
   type="primary" 
   style={{ 
@@ -206,8 +191,8 @@ console.log('consumer',extractedData);
     },
     {
       title: "Status",
-      dataIndex: "status",
-      key: "status",
+      dataIndex: "tariff_status",
+      key: "tariff_status",
     }
   ];
 
