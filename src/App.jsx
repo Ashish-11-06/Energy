@@ -100,9 +100,9 @@ import TrackStatusP from './appPowerX/Pages/TrackStatus';
 //   }, [location]);
 //   return null; // This component does not need to render anything
 // };
-
 function App() {
   return (
+
     <Router>
       {/* <CurrentPath /> Ensure this is rendered inside JSX */}
       <Routes>
