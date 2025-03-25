@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Button, Select, Table, Row, Col, Card, Radio } from 'antd';
+import { Button, Select, Table, Row, Col, Card, Radio, message } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -58,7 +58,7 @@ const dummyAccuracyData = [
       try {
         if (selectedForecast === 'currentDay') {
           const data = await dispatch(fetchModelStatistics());
-          console.log(data.payload);
+          // console.log(data.payload);
           if (data?.payload?.date) {
             const dateStr = data.payload.date;
             const date = new Date(dateStr);
@@ -75,7 +75,7 @@ const dummyAccuracyData = [
           setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
         } else if (selectedForecast === 'next30Day') {
           const data = await dispatch(fetchModelStatisticsMonth());
-          console.log(data.payload);
+          // console.log(data.payload);
           if (data?.payload?.date) {
             const dateStr = data.payload.date;
             const date = new Date(dateStr);
@@ -92,7 +92,8 @@ const dummyAccuracyData = [
           setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
         }
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
       }
     };
     fetchData();

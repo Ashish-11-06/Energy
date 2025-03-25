@@ -154,8 +154,8 @@ const PlanYourTradePage = () => {
           };
         })
       };
-// 
-      console.log(dayAheadDemand);
+
+      // console.log(dayAheadDemand);
 
       const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
       // console.log('res', res);

@@ -77,7 +77,8 @@ import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
 import NotificationG from './appPowerX/Pages/Generator/NotificationG';
 import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
 import WhatWeOfferP from './appPowerX/Pages/WhatWeOfferP';
-import TrackStatusP from './appPowerX/Pages/TrackStatus';
+import ProtectedRoute from './ProtectedRoute';
+
 // import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
 
 // const CurrentPath = () => {
@@ -107,11 +108,12 @@ function App() {
       {/* <CurrentPath /> Ensure this is rendered inside JSX */}
       <Routes>
         {/* Public routes */}
-        <Route path="/consumer/login" element={<LoginC />} />
-        <Route path="/generator/login" element={<LoginG />} />
+        {/* <Route path="/consumer/login" element={<LoginC />} />
+        <Route path="/generator/login" element={<LoginG />} /> */}
 
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
+        <Route element={< ProtectedRoute/>}>
         <Route path="email/:token" element={<EmailVerification />} />
         <Route path="what-we-offer" element={<WhatWeOffer />} />
 
@@ -169,6 +171,7 @@ function App() {
             <Route path="status" element={<StatusApproval />} />
           </Route>
         </Route>
+        </Route>
 
 
 
@@ -183,7 +186,7 @@ function App() {
       {/* Common Chat Page Route */}
 
       <Route path="chat-page" element={<ChatPage />} />
-      <Route path="track-status" element={<TrackStatusP/>} />
+      {/* <Route path="track-status" element={<TrackStat/>} /> */}
 
       {/* Consumer Routes */}
       <Route path="consumer">

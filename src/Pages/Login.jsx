@@ -24,7 +24,7 @@ const Login = () => {
     try {
       const response = await login(credentials);
       const data = response.payload.data;
-      console.log(data);
+      // console.log(data);
 
       if (data.role === 'consumer') {
         message.success('Login successful!');
@@ -40,7 +40,7 @@ const Login = () => {
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
+    // console.log('Failed:', errorInfo);
   };
 
   const showModal = () => {

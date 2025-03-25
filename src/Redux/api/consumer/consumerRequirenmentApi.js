@@ -8,7 +8,7 @@ const consumerrequirementApi = {
         return axiosInstance.post('/accounts/register', userData);
     },
     updaterequirement: (updatedData) => {
-        console.log(updatedData);
+        // console.log(updatedData);
         
         return axiosInstance.put(`/energy/consumer-requirements/${updatedData.id}`, updatedData);
     },

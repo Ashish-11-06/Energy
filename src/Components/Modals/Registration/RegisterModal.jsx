@@ -20,7 +20,7 @@ const RegisterModal = ({ open, onCancel, type }) => {
   }, [open]);
 
   const onFinish = (values) => {
-    console.log('Form Submitted:', values);
+    // console.log('Form Submitted:', values);
     // Check if both OTPs are verified before proceeding
     if (otpVerified && emailOtpVerified) {
       message.success("Registration successful!");

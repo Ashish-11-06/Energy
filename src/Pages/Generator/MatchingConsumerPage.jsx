@@ -51,7 +51,7 @@ const MatchingConsumerPage = () => {
 
   // Handle radio button change for selecting a consumer
   const handleRadioChange = (e, key) => {
-    console.log(key);
+    // console.log(key);
     localStorage.setItem('matchingConsumerId',key);
     const data={
           user_id:user.id,

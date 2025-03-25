@@ -41,7 +41,7 @@ const TermSheet = ({
 
   const user = JSON.parse(localStorage.getItem("user")).user;
 
-  console.log(JSON.stringify(data, null, 2)); // Pretty print with 2 spaces for indentation
+  // console.log(JSON.stringify(data, null, 2)); // Pretty print with 2 spaces for indentation
 
   const handleChatWithExpert = () => {
     navigate("/chat-page");
@@ -52,7 +52,7 @@ const TermSheet = ({
     onCancel();
   };
 
-  console.log(user);
+  // console.log(user);
 
   const handleContinue = async () => {
     // Create termsData with only updated fields
@@ -75,7 +75,7 @@ const TermSheet = ({
       const userId = user.id; // User ID
       const termSheetId = data.id; // Term Sheet ID
   
-      console.log("Updated termsData:", termsData); // Log the updated data for debugging
+      // console.log("Updated termsData:", termsData); // Log the updated data for debugging
   
       // Dispatch the updated data
       await dispatch(updateTermsAndConditions({ userId, termSheetId, termsData })).unwrap();

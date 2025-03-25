@@ -94,7 +94,7 @@ const LandingPage = () => {
 // console.log('jello from landing');
 const response = await dispatch(fetchSubscriptionValidity(id));
                     setSubscriptionPlanValidity(response.payload);
-                    console.log(response.payload);
+                    // console.log(response.payload);
             
             localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
           
@@ -211,9 +211,9 @@ const response = await dispatch(fetchSubscriptionValidity(id));
    {/* <h2 style={{justifyContent:'center'}}>Green Energy </h2> */}
         <div className="content-container" style={{marginTop:'-10px'}}> 
           <div className="text-content"  >
-            <div style={{backgroundColor:'#669800',width:'600px'}}> 
-            <p style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
-            <p style={{marginLeft:'5%',marginTop:'-30px',fontSize:'70px',fontWeight:'bolder'}}>MarketPlace</p>
+            <div className='energy-title' style={{backgroundColor:'#669800',width:'600px'}}> 
+            <p className='green-title' style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
+            <p className='marketplace' style={{marginLeft:'5%',marginTop:'-30px',fontWeight:'bolder'}}>MarketPlace</p>
             </div>
            <p style={{fontSize:'24px',width:'600px',marginTop:'-50px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators</i></p>
             {/* <h2 className="animated-text">{animatedText}</h2> */}

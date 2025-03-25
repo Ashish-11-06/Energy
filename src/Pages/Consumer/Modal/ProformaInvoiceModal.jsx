@@ -82,7 +82,7 @@ const ProformaInvoiveModal = ({
 
   const handlePayment = async () => {
     try {
-      console.log("selectedPlanId", selectedPlan);
+      // console.log("selectedPlanId", selectedPlan);
 
       const amount = selectedPlan?.subscription?.price;
       const orderResponse = await dispatch(
@@ -111,13 +111,13 @@ const ProformaInvoiveModal = ({
               amount: orderResponse.data.amount,
               subscription: selectedPlanId,
             };
-            console.log("payment data", paymentData);
+            // console.log("payment data", paymentData);
 
             try {
               const completeResponse = await dispatch(
                 completeRazorpayPayment(paymentData)
               ).unwrap();
-              console.log(completeResponse);
+              // console.log(completeResponse);
 
               if (completeResponse) {
                 message.success("Payment successful! Subscription activated.");
@@ -129,13 +129,14 @@ const ProformaInvoiveModal = ({
                  const id=userId;
                 try { const response =await dispatch(fetchSubscriptionValidity(id));
                 setSubscriptionPlanValidity(response.payload);
-                console.log(response);
+                // console.log(response);
                 localStorage.setItem(
                   "subscriptionPlanValidity",
                   JSON.stringify(response.payload)
                 );
                 } catch (error) {
-                  console.log(error);
+                  message.error(error);
+                  // console.log(error);
                   
                 }
 

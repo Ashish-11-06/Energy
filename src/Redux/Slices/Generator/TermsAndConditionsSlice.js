@@ -5,15 +5,15 @@ import termsAndConditionsApi from '../../api/generator/termsAndConditionsApi';
 export const addTermsAndConditions = createAsyncThunk(
   'termsAndConditions/fetchById',
   async (termsData, { rejectWithValue }) => {
-    console.log(`klkkklklk`)
+    // console.log(`klkkklklk`)
     try {
-      console.log(`klkkklklk`, termsData)
+      // console.log(`klkkklklk`, termsData)
       const response = await termsAndConditionsApi.addTermsAndConditions(termsData);
-      console.log(`klkkklklk`, response)
+      // console.log(`klkkklklk`, response)
       return response.data; // Assuming the API returns data in `response.data`
     } catch (error) {
       // Handle errors
-      console.log(`klkkklklk`, error)
+      // console.log(`klkkklklk`, error)
       return rejectWithValue(
         error.response?.data?.error || 'Failed to add terms and conditions'
       );
@@ -25,10 +25,10 @@ export const updateTermsAndConditions = createAsyncThunk(
   'termsAndConditions/updateById',
   async ({ userId, termSheetId, termsData }, { rejectWithValue }) => {
     try {
-      console.log('Updating terms and conditions:', termsData, userId, termSheetId);
+      // console.log('Updating terms and conditions:', termsData, userId, termSheetId);
       const response = await termsAndConditionsApi.updateTermsAndConditions(userId, termSheetId, termsData);
       
-      console.log('API Response:', response);
+      // console.log('API Response:', response);
       
       // Ensure response.data contains the correct data
       if (!response || !response.data) {
@@ -51,11 +51,11 @@ export const updateTermsAndConditions = createAsyncThunk(
 export const addStatus = createAsyncThunk(
   'termsAndConditions/postStatus',
   async (termsData, { rejectWithValue }) => {
-    console.log(`klkkklklk`)
+    // console.log(`klkkklklk`)
     try {
-      console.log(`klkkklklk`, termsData)
+      // console.log(`klkkklklk`, termsData)
       const response = await termsAndConditionsApi.addStatus(termsData);
-      console.log(`klkkklklk`, response)
+      // console.log(`klkkklklk`, response)
       return response.data; // Assuming the API returns data in `response.data`
     } catch (error) {
       // Handle errors

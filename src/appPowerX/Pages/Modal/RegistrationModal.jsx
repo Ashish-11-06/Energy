@@ -25,7 +25,7 @@ const RegistrationModal = ({ visible, onCancel }) => {
   };
 
   const onFinish = (values) => {
-    console.log('Form Submitted:', values);
+    // console.log('Form Submitted:', values);
     // Check if it's a consumer type
     if (selection === "consumer") {
       // Simulate OTP request process (in real life, you'd make an API call here)

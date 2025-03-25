@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import moment from "moment"; // Ensure moment is imported
 import {
   Modal,
@@ -18,18 +20,28 @@ import { updateTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndC
 import { addStatus } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
 import chat from "../../assets/need.png";
 import { negotiateTariff } from "../../Redux/Slices/Consumer/negotiateTariffSlice";
+import AgreementModal from "./AgreementModal";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransaction }) => {
-  console.log(fromTransaction);
-  console.log(data);
+  // console.log(fromTransaction);
+  // console.log(data);
   const term_sheet_id=data.id;
   
   // console.log(data);
   const [ppaTerm, setPpaTerm] = useState(data.term_of_ppa);
   const [lockInPeriod, setLockInPeriod] = useState(data.lock_in_period);
   // const [commencementOfSupply,setCommencementOfSupply ] = useState(data.commencement_of_supply);
+    const [modalVisible, setModalVisible] = useState(false);
+  
+    const showModal = () => {
+      setModalVisible(true);
+    };
+  
+    const handleCloseModal = () => {
+      setModalVisible(false);
+    };
   const navigate = useNavigate();
   const [contractedEnergy, setContractedEnergy] = useState(
     data.contracted_energy
@@ -78,7 +90,7 @@ let temp='';
   };
 
   const handleTarrif = async () => {
-    console.log("modal");
+    // console.log("modal");
     setTarrifModal(true);
   };
 
@@ -93,14 +105,15 @@ let temp='';
       terms_sheet_id: term_sheet_id,
       offer_tariff: offerTariff
     };
-  console.log(data);  
+  // console.log(data);  
     try {
       const response = dispatch(negotiateTariff(data));  
-      console.log("Response:", response);
+      // console.log("Response:", response);
       message.success("Tariff negotiated ");
       updateStatus("Accepted");
     } catch (error) {
-      console.error("Error negotiating tariff:", error);
+       message.error(error);
+      // console.error("Error negotiating tariff:", error);
     }
     setTarrifModal(false);
   };
@@ -108,9 +121,9 @@ let temp='';
   // console.log(data);
 
   const handleStatusUpdate = async (action) => {
-    console.log(action);
-    console.log(user.id);
-    console.log(data.id);
+    // console.log(action);
+    // console.log(user.id);
+    // console.log(data.id);
   
     // If action is 'rejected', show a confirmation popup
     if (action === "Rejected") {
@@ -169,7 +182,7 @@ let temp='';
     setOfferTariff(value); // Update the offer tariff value in the state
   };
 
-  // console.log(commencementDate);
+  console.log(commencementDate);
   // Handle form submission
   const handleContinue = async () => {
     const termSheetId = data.id;
@@ -219,18 +232,30 @@ let temp='';
         width={800}
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
-        <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
-          <p style={{ margin: 0 }}>
-            Offer Tariff: <strong>{data?.offer_tariff ? data?.offer_tariff : 0}</strong> INR/kWh
-          </p>
-          {!fromTransaction ?(
-            <>
-          <Button style={{ marginLeft: "auto" }} onClick={handleTarrif}>
-            Negotiate Tariff
-          </Button>
-          </>
-          ): null}
-        </span>
+      <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
+  <p style={{ margin: 0 }}>
+    Offer Tariff: <strong>{data?.offer_tariff ? data?.offer_tariff : 0}</strong> INR/kWh
+  </p>
+  {!fromTransaction ? (
+    <>
+      {data?.generator_status !== "Rejected" && data?.generator_status !== "Accepted" && (
+        <>
+          {((data?.from_whom === "Consumer" &&
+            data?.count % 2 === 0 &&
+            data?.count <= 4) ||
+            (data?.from_whom === "Generator" &&
+              data?.count % 2 === 1 &&
+              data?.count <= 4)) && (
+            <Button style={{ marginLeft: "auto" }} onClick={handleTarrif}>
+              Negotiate Tariff
+            </Button>
+          )}
+        </>
+      )}
+    </>
+  ) : null}
+</span>
+
 
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
           Standard Terms Sheet
@@ -351,6 +376,7 @@ let temp='';
             </Button>
           </Col> */}
         </Row>
+        
 
         <Row justify="end" style={{ marginTop: "20px" }}>
           {/* <Button
@@ -499,7 +525,10 @@ let temp='';
           ) : null} 
 
 
-      
+      <Button type="text" onClick={showModal}>
+             View in Detail
+            </Button>
+            <AgreementModal visible={modalVisible} onClose={handleCloseModal} />
         </Row>
         <Modal
           title={"Negotiate Tariff"}

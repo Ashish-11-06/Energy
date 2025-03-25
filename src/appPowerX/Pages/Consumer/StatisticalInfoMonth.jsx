@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Button, Select, Table, Row, Col, Card, Radio } from 'antd';
+import { Button, Select, Table, Row, Col, Card, Radio, message } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -44,18 +44,19 @@ const StatisticalInfoMonth = () => {
     const fetchData = async () => {
       try {
         const data = await dispatch(fetchAccuracyData());
-        console.log(data.payload.data);
+        // console.log(data.payload.data);
         setTableData(Array.isArray(data.payload.data) ? data.payload.data : dummyAccuracyData);
         // Ensure data is an array
       } catch (error) {
-        console.log(error);
-        setTableData(dummyAccuracyData);
+        message.error(error);
+        // console.log(error);
+        // setTableData(dummyAccuracyData);
       }
     };
     fetchData();
   }, [dispatch]);
 
-console.log(tableData);
+// console.log(tableData);
 
 const dummyMCVData = [
   {
@@ -94,7 +95,8 @@ const dummyMCPData = [
         setForeCastedData(data[0]?.data || dummyMCPData[0].data);
         setPastData(data[1]?.data || dummyMCPData[1].data);
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
         setForeCastedData(dummyMCPData[0].data);
         setPastData(dummyMCPData[1].data);
       }
@@ -112,7 +114,8 @@ const dummyMCPData = [
         setForeCastedData(data[0]?.data || dummyMCPData[0].data);
         setPastData(data[1]?.data || dummyMCPData[1].data);
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
         setForeCastedData(dummyMCPData[0].data);
         setPastData(dummyMCPData[1].data);
       }
@@ -122,7 +125,8 @@ const dummyMCPData = [
         setForeCastedData(data[0]?.data || dummyMCVData[0].data);
         setPastData(data[1]?.data || dummyMCVData[1].data);
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
         setForeCastedData(dummyMCVData[0].data);
         setPastData(dummyMCVData[1].data);
       }
@@ -135,7 +139,8 @@ const dummyMCPData = [
         setMcvForeCastedData(mcvData[0]?.data || dummyMCVData[0].data);
         setMcvPastData(mcvData[1]?.data || dummyMCVData[1].data);
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
         setForeCastedData(dummyMCPData[0].data);
         setPastData(dummyMCPData[1].data);
         setMcvForeCastedData(dummyMCVData[0].data);

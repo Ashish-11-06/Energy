@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Button, Select, Table, Row, Col, Card, Spin } from 'antd';
+import { Button, Select, Table, Row, Col, Card, Spin, message } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 // import zoomPlugin from 'chartjs-plugin-zoom'; // Removed zoom plugin import
@@ -64,7 +64,8 @@ const DayAheadG = () => {
         setStatisticsData(data.statistics);
         setLoading(false);
       } catch (error) {
-        console.log(error);
+        message.error(error)
+        // console.log(error);
       }
     };
     fetchData();

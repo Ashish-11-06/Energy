@@ -12,10 +12,10 @@ const EnergyOptimizationPage = () => {
   const navigate = useNavigate(); // Initialize navigate hook
 
   const handleSubmit = () => {
-    console.log({
-      selectedConsumer,
-      optimize,
-    });
+    // console.log({
+    //   selectedConsumer,
+    //   optimize,
+    // });
     alert("Submitted");
     navigate('/generator/update-profile-details'); // Navigate to the renamed page for the generator
   };

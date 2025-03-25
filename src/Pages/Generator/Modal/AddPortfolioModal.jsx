@@ -31,9 +31,9 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
       values.user = user.id;
       setLoading(true);
       if (data) {
-        console.log(values);
+        // console.log(values);
         const id = data?.id;
-        console.log('id', id);
+        // console.log('id', id);
     
         const updatedValues = { ...values, id }; // Add data.id to values
     
@@ -66,7 +66,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
       }
       
     }).catch((info) => {
-      console.log('Validate Failed:', info);
+      // console.log('Validate Failed:', info);
     });
   };
 

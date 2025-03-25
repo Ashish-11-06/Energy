@@ -72,12 +72,12 @@ const SubscriptionPlans = () => {
   const [orderId, setOrderId] = useState(null);
 
 const companyName=userData[0]?.company;
-console.log(companyName);
+// console.log(companyName);
 
 
   const handleSelectPlan = (id, plan) => {
     setSelectedPlan(plan);
-    console.log(selectedPlan);
+    // console.log(selectedPlan);
 
     // const currentDate = moment().format("YYYY-MM-DD");
     // setSelectedPlanId(id);
@@ -99,7 +99,7 @@ console.log(companyName);
       try {
         const response = await dispatch(fetchPerformaById(userId)).unwrap();
         setPerformaResponse(response);
-        console.log(response);
+        // console.log(response);
 
         // setCompanyName(response.company_name);
         // setGstinNumber(response.gst_number);
@@ -141,7 +141,7 @@ console.log(companyName);
   }, [dispatch]);
 
   const handleGenerateProforma = async (values) => {
-    console.log(values);
+    // console.log(values);
     const performaData = {
       company_name: values.companyName,
       company_address: values.companyAddress,

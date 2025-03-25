@@ -8,7 +8,7 @@ export const fetchTradingData = createAsyncThunk(
     try {
       const response = await tradingApi.fetchTrading();
       if (response.status === 200 && response.data) {
-        console.log('response in slice', response.data);
+        // console.log('response in slice', response.data);
         return response.data; // Ensure response contains valid data
       }
       throw new Error("Invalid response from server");

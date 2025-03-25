@@ -6,7 +6,7 @@ const monthAheadApi = {
     return axiosInstance.get(`/month-ahead-predictions`, ); 
   },
   addMonthData: (newData) => {
-    console.log('api',newData);
+    // console.log('api',newData);
     
     return axiosInstance.post(`/consumer-month-ahead-demand`,newData );
   },

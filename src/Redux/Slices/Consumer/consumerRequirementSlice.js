@@ -27,7 +27,7 @@ export const updateRequirements = createAsyncThunk(
     'consumerRequirement/updateRequirements',
     async ({updatedData}, { rejectWithValue }) => {
         try {
-            console.log(updatedData);
+            // console.log(updatedData);
             
             const response = await consumerrequirementApi.updaterequirement(updatedData); // Assuming API call to fetch requirements by id
      
@@ -103,7 +103,7 @@ const consumerRequirementSlice = createSlice({
                 // console.log(action.payload);
                 const index = state.requirements.findIndex(req => req.id === action.payload.id);
                 if (index !== -1) {
-                    console.log('slice',action.payload)
+                    // console.log('slice',action.payload)
                     state.requirements[index] = action.payload;
                 }
             })

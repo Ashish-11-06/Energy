@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../Redux/Slices/loginSlice";
@@ -34,7 +35,7 @@ const useLoginHooks = () => {
   };
 
   const handleCreate = (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
     setIsModalVisible(false);
   };
 

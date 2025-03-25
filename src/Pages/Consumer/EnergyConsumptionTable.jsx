@@ -386,11 +386,11 @@ const EnergyConsumptionTable = () => {
         monthly_bill_amount: item.monthlyBill,
       }));
       // Call the API to add the requirement
-      console.log(values);
+      // console.log(values);
 
       const response = await dispatch(addConsumption(values)).unwrap();
 
-      console.log("resssss", response);
+      // console.log("resssss", response);
 
       message.success({
         content: "Monthly data added successfully!",

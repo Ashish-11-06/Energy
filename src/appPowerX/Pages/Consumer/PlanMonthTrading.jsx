@@ -58,9 +58,10 @@ const PlanMonthTrading = () => {
         const res = await dispatch(fetchRequirements(id)); // Wait for API response
         const states = res.payload.map(item => item.state);
         setConsumerRequirement(res.payload);
-        console.log(res.payload);
+        // console.log(res.payload);
       } catch (error) {
-        console.log("Error fetching consumer requirements:", error);
+        message.error(error);
+        // console.log("Error fetching consumer requirements:", error);
       }
     };
     fetchData();
@@ -70,10 +71,10 @@ const PlanMonthTrading = () => {
     const fetchData = async () => {
       try {
         const data = await dispatch(fetchMonthAheadData());
-        console.log(data.payload); // Logging the fetched data
+        // console.log(data.payload); // Logging the fetched data
         setTableData(data.payload);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     };
     fetchData();
@@ -83,15 +84,16 @@ const PlanMonthTrading = () => {
     const fetchData = async () => {
       try {
         const data = await dispatch(fetchTableMonthData());
-        console.log(data.payload); // Logging the fetched data
+        // console.log(data.payload); // Logging the fetched data
          setTableDemandData(data.payload || []); // Ensure data is an array
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
       }
     };
     fetchData();
   }, [dispatch]);
-console.log(tableDemandData);
+// console.log(tableDemandData);
 
 
   const handleInputChange = (value, key) => {
@@ -104,8 +106,8 @@ console.log(tableDemandData);
   };
 
   const handleModalOk = async () => {
-    console.log("Selected State:", selectedState);
-    console.log("Selected Requirement ID:", selectedRequirementId);
+    // console.log("Selected State:", selectedState);
+    // console.log("Selected Requirement ID:", selectedRequirementId);
     const formattedDate = selectedDate.format('YYYY-MM-DD'); // Format the date correctly
     try {
       const newData = {
@@ -118,14 +120,15 @@ console.log(tableDemandData);
         }, {})
       };
 
-      console.log(newData);
+      // console.log(newData);
 
       const res = await dispatch(addMonthData(newData)).unwrap();
-      console.log('res', res);
+      // console.log('res', res);
       setIsModalVisible(false);
       navigate('/px/consumer/planning');
     } catch (error) {
-      console.log(error);
+      message.error(error);
+      // console.log(error);
       message.error("Failed to submit data. Please try again.");
     }
   };

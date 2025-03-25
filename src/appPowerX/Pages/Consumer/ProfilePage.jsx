@@ -106,7 +106,7 @@ const userId = initialUserData.id;
 
   const handleSaveUser = (values) => {
     setIsUserModal(false);
-    console.log("User saved:", values);
+    // console.log("User saved:", values);
 
     // Ensure `values` is an object before updating state
     if (values && typeof values === "object") {
@@ -118,7 +118,7 @@ const userId = initialUserData.id;
   };  
   const handleEdit = (record) => {
     setEditaleData(record);
-    console.log(record);
+    // console.log(record);
     setIsUserModal(true);
     setEditValue(true);
     form.resetFields();

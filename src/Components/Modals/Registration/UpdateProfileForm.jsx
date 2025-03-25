@@ -29,7 +29,7 @@ const { Title, Text } = Typography;
 const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
-  console.log(fromPortfolio);
+  // console.log(fromPortfolio);
 
   const project_type = project.type;
   const solar_template_downloaded = user.solar_template_downloaded;
@@ -101,7 +101,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
     dispatch(templateDownload(templateData))
       .unwrap()
       .then((response) => {
-        console.log("Template download info:", response);
+        // console.log("Template download info:", response);
 
         // Retrieve user data from localStorage
         let userData = JSON.parse(localStorage.getItem("user"));
@@ -148,7 +148,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       setFileData(reader.result);
-      console.log(file.name);
+      // console.log(file.name);
       setFile(file);
     };
     reader.readAsDataURL(file);
@@ -215,7 +215,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
   // };
 
   const onSubmit = async (values) => {
-  console.log("Form Values:", values);
+  // console.log("Form Values:", values);
 
   const updatedValues = {
     ...values,
@@ -227,7 +227,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
     state: values.state,
   };
 
-  console.log("Updated Form Values:", updatedValues);
+  // console.log("Updated Form Values:", updatedValues);
 
   try {
     const response = await dispatch(updateProject(updatedValues)).unwrap();
@@ -270,7 +270,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
               onChange={(value) => {
                 setType(value);
                 form.setFieldsValue({ type: value });
-                console.log("Selected type:", value);
+                // console.log("Selected type:", value);
               }}
             >
               <Option value="Solar">Solar</Option>

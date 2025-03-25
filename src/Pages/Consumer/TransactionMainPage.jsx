@@ -17,6 +17,7 @@ const TransactionMainPage = () => {
   const [modalContent, setModalContent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isRejected, setIsRejected] = useState(false);
+  const [consumerDetails,setConsumerDetails]=useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -25,7 +26,7 @@ const TransactionMainPage = () => {
 
   const showRequirementModal = (record) => {
     setRequirementContent(record);
-    // console.log(RequirementContent);
+    console.log(RequirementContent);
 
     setIsRequirementModalVisible(true);
   };
@@ -61,6 +62,16 @@ const TransactionMainPage = () => {
       try {
         const response = await dispatch(fetchTransactions(userId)).unwrap();
         setTransactions(response);
+        console.log(response.c_optimal_battery_capacity);
+        
+        const extractedData = response.map((item) => ({
+          c_optimal_solar_capacity: item.c_optimal_solar_capacity,
+          c_optimal_wind_capacity: item.c_optimal_wind_capacity,
+          c_optimal_battery_capacity: item.c_optimal_battery_capacity,
+        }));
+console.log('consumer',extractedData);
+
+       setConsumerDetails(extractedData);
         console.log("Transactions fetched successfully:", response);
         if (response.some((transaction) => transaction.tariff_status === "reject")) {
           setIsRejected(true);}
@@ -73,7 +84,7 @@ const TransactionMainPage = () => {
     fetchData();
   }, [dispatch, userId]);
 
-// console.log(RequirementContent);
+ console.log(consumerDetails);
 
 
   const columns = [
@@ -125,6 +136,7 @@ const TransactionMainPage = () => {
       key: 'action',
       width: 200,
       render: (_, record) => (
+        
         <>
   <Button 
   type="primary" 

@@ -61,7 +61,7 @@ const Trading = () => {
     const fetchData = async () => {
       try {
         const res = await dispatch(fetchTradingData()).unwrap(); // Await the dispatched action
-        console.log(res); // Now you can safely access payload
+        // console.log(res); // Now you can safely access payload
         setTradeData(res || tradingData);
       } catch (error) {
         console.error("Error fetching trading data:", error);
@@ -157,11 +157,11 @@ const Trading = () => {
 
   const handleChat = () => {
     navigate("/px/chat-page");
-    console.log("Chat with Expert");
+    // console.log("Chat with Expert");
   };
 
   const handleTradingStatus = () => {
-    console.log("Trading Status");
+    // console.log("Trading Status");
   };
 
   return (

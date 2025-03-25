@@ -5,7 +5,7 @@ import negotiateTariffApi from "../../api/consumer/negotiateTariffApi";
 export const negotiateTariff = createAsyncThunk(
   "negotiateTariff/negotiateTariff",
   async (data, { rejectWithValue }) => {
-    console.log(data);
+    // console.log(data);
     
     try {
       const response = await negotiateTariffApi.negotiateTariff(data);

@@ -223,9 +223,7 @@ const WhatWeOfferP = () => {
           </Button>
         </div>
       </div>
-      <Modal visible={isModal} onCancel={() => console.log('Modal closed')}>
-        {/* Modal content */}
-      </Modal>
+    
     </div>
   )
 }

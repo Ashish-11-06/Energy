@@ -81,7 +81,7 @@ const [checkPortfolio,setCheckPortfolio]=useState([]);
   }
 
   const handleRecordCheck =(value) => {
-    console.log(value?.id);
+    // console.log(value?.id);
       setCheckPortfolio(value?.id);
   }
 

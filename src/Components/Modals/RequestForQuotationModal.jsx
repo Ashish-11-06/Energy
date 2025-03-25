@@ -40,6 +40,7 @@ const RequestForQuotationModal = ({
   const [windCapacity, setWindCapacity] = useState(30);
   const [essCapacity, setEssCapacity] = useState(20);
   const [perUnitCost,setPerUnitCost] =useState(data.perUnitCost);
+console.log(data);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
