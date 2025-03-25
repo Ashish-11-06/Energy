@@ -41,6 +41,7 @@ const CombinationPattern = () => {
   const [progress, setProgress] = useState(0);
   const [combinationData, setCombinationData] = useState([]);
   const [tryREreplacement,setTryREreplacement]=useState(false);
+  const [consumerDetails,setConsumerDetails]=useState('');
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -70,6 +71,7 @@ const CombinationPattern = () => {
       return;
     }
 
+
     // useEffect(() => {
     //   if(!isTableLoading){
     //     window.scrollTo({
@@ -87,10 +89,10 @@ const CombinationPattern = () => {
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
         const batteryCapacity =
           combination["Optimal Battery Capacity (MW)"] || 0;
-        console.log("format", combination);
+        // console.log("format", combination);
         const annual_demand_met = combination["Annual Demand Met"] || 0;
-        console.log(annual_demand_met);
-        console.log("status", combination.terms_sheet_sent);
+        // console.log(annual_demand_met);
+        // console.log("status", combination.terms_sheet_sent);
 
         return {
           key: index + 1,
@@ -142,7 +144,7 @@ const CombinationPattern = () => {
     );
 
     // console.log('tech',tech);
-    console.log("formatting com");
+    // console.log("formatting com");
     setDataSource(formattedCombinations);
   };
 useEffect(()=> {
@@ -209,7 +211,8 @@ if(dataSource?.length<=0) {
               fetchConsumptionPattern(selectedDemandId)
             );
             console.log(response);
-            console.log(selectedDemandId);
+            setConsumerDetails(response.payload?.consumer_details)
+            // console.log(selectedDemandId);
           }
         } catch (error) {
           message.error("Failed to fetch consumption patterns.");
@@ -267,6 +270,7 @@ if(dataSource?.length<=0) {
       } catch (error) {
         console.error("Error in loadCombinations:", error);
         message.error("Failed to fetch combinations.");
+        setTryREreplacement(true);
         setIsTableLoading(false);
         setFetchingCombinations(false);
       }
@@ -321,7 +325,7 @@ if(dataSource?.length<=0) {
 
   const handleRowClick = (record) => {
     setSelectedRow(record); // Record comes from the latest dataSource
-    console.log(record);
+    // console.log(record);
 
     setIsIPPModalVisible(true);
   };
@@ -368,7 +372,7 @@ if(dataSource?.length<=0) {
           fetchOptimizedCombinations(modalData)
         ).unwrap();
 
-        console.log(combinations, "combinations");
+        // console.log(combinations, "combinations");
 
         // Reformat combinations based on the latest slider value
         formatAndSetCombinations(combinations, sliderValue);
@@ -803,6 +807,7 @@ if(dataSource?.length<=0) {
             // reReplacement={sliderValue} // Pass the latest slider value
             ipp={selectedRow}
             combination={combinationData}
+            consumerDetails={consumerDetails}
             // combination={combinationData}         // Ensure selectedRow is updated
             reIndex={re_index} // Pass re_index to the modal
             onClose={handleIPPCancel}

@@ -5,9 +5,9 @@ import planningApi from "../../api/generator/planningApi";
 export const fetchPlanningDataG = createAsyncThunk(
   "planningData/fetchPlanningData",
   async (id, { rejectWithValue }) => { // Accept message as parameter
-    console.log('user',id);
+    // console.log('user',id);
     try {
-        console.log("User ID:", id, typeof id);
+        // console.log("User ID:", id, typeof id);
         const response = await planningApi.getPlanningData(Number(id)); 
 
       if (response.status === 200 && response.data) {

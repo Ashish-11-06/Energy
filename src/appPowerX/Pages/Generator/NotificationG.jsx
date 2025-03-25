@@ -12,7 +12,7 @@ const NotificationG = () => {
   const [notifications, setNotifications] = useState([]); // State to store notifications
 
   const userId = Number(JSON.parse(localStorage.getItem('user')).user.id);
-  console.log(userId);
+  // console.log(userId);
   
   
   useEffect(() => {

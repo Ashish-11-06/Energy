@@ -6,12 +6,12 @@ export const addConsumption = createAsyncThunk(
   'monthlyConsumption/addConsumption',
   async (monthlyData, { rejectWithValue }) => {
     try {
-      console.log(monthlyData);
+      // console.log(monthlyData);
       // Make API call to add a new requirement
       const response = await monthlyConsumptionApi.monthlyconsumptionData(monthlyData);
       return response.data;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       // Handle errors
       return rejectWithValue(error.response?.data?.error || 'Failed to add monthly consumption data');
     }

@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import dayAheadApi from "../../api/generator/dayAheadG";
+import { message } from "antd";
 
 // Async thunk for fetching data
 export const fetchDayAheadData = createAsyncThunk(
   "dayAheadData/fetchDayAheadData",
   async (dayAheaGeneration, { rejectWithValue }) => { // Correctly pass rejectWithValue here
-    console.log('ddd',dayAheadGeneration);
+    // console.log('ddd',dayAheadGeneration);
     
     try {
       const response = await dayAheadApi.getDayAhead(dayAheadGeneration);
@@ -28,7 +29,8 @@ export const addDayAheadData = createAsyncThunk(
       }
       // throw new Error("Invalid response from server");
     } catch (error) {
-      console.log('err',error.message);
+      message.error(error)
+      // console.log('err',error.message);
       
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -40,7 +42,7 @@ export const dayAheadData = createAsyncThunk(
   async (_, { rejectWithValue }) => { // Correctly pass rejectWithValue here
     try {
       const response = await dayAheadApi.dayAheadData();
-      console.log('res',response);
+      // console.log('res',response);
       
       if (response.status === 200 && response.data) {
         return response.data; // Ensure response contains valid data

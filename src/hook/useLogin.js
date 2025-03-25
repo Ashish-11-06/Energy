@@ -12,7 +12,7 @@ const useLogin = () => {
     setLoginError(null); // Reset any previous error
 
     try {
-      console.log("dispatch");
+      // console.log("dispatch");
       const resultAction = await dispatch(loginUser(credentials)); // Dispatch login action
 //  console.log(resultAction);
     //   if (loginUser.fulfilled.match(resultAction)) {

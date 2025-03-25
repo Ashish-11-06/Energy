@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Button, Select, Table, Row, Col, Card, Radio } from 'antd';
+import { Button, Select, Table, Row, Col, Card, Radio, message } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -30,17 +30,18 @@ const StatisticalInfoMonth = () => {
     const fetchData = async () => {
       try {
         const data = await dispatch(fetchAccuracyData());
-        console.log(data.payload.data);
+        // console.log(data.payload.data);
         setTableData(Array.isArray(data.payload.data) ? data.payload.data : []);
         // Ensure data is an array
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
       }
     };
     fetchData();
   }, [dispatch]);
 
-console.log(tableData);
+// console.log(tableData);
 
 
   useEffect(() => {
@@ -50,7 +51,8 @@ console.log(tableData);
         setForeCastedData(data[0]?.data);
         setPastData(data[1]?.data);
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
       }
     };
     fetchMCP();
@@ -66,7 +68,8 @@ console.log(tableData);
         setForeCastedData(data[0]?.data);
         setPastData(data[1]?.data);
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
       }
     } else if (value === 'MCV') {
       try {
@@ -74,7 +77,8 @@ console.log(tableData);
         setForeCastedData(data[0]?.data);
         setPastData(data[1]?.data);
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
       }
     } else if (value === 'Both') {
       try {
@@ -85,7 +89,8 @@ console.log(tableData);
         setMcvForeCastedData(mcvData[0]?.data);
         setMcvPastData(mcvData[1]?.data);
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
       }
     }
   };

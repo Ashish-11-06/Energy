@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Col, Row, Typography, Select, Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
@@ -93,7 +94,7 @@ const RequestedIPP = () => {
 
   // Function to increase progress using the button
   const handleProgress = () => {
-    console.log("clicked");
+    // console.log("clicked");
     if (progress < 100) {
       setProgress(progress + 20); // Increase progress
     }
@@ -260,7 +261,7 @@ const RequestedIPP = () => {
 
             {modalContent?.generator_status !== 'Rejected' && modalContent?.generator_status !== 'Accepted' && (
               <>
-                {console.log('ippju')}
+                {/* {console.log('ippju')} */}
                 {modalContent?.from_whom === 'Consumer' && modalContent?.count % 2 === 0 && modalContent?.count < 4 && (
                   <>
                     <Button onClick={() => handleStatusUpdate('Rejected')}>Reject</Button>

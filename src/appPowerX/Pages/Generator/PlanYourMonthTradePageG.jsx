@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Button, Select, Table, Row, Col, InputNumber, Tooltip, DatePicker, Input, notification } from 'antd';
+import { Button, Select, Table, Row, Col, InputNumber, Tooltip, DatePicker, Input, notification, message } from 'antd';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { addTableMonthData, fetchTableMonthData } from '../../Redux/slices/generator/monthAheadSliceG';
@@ -52,9 +52,10 @@ const PlanMonthTradePageG = () => {
           ...res.ESS.map(item => ({ id: item.id, type: 'ESS' }))
         ];
         setGeneratorPortfolio(flattenedPortfolio);
-        console.log(flattenedPortfolio);
+        // console.log(flattenedPortfolio);
       } catch (error) {
-        console.log("Error fetching portfolio:", error);
+        message.error(error)
+        // console.log("Error fetching portfolio:", error);
       }
     };
 
@@ -86,10 +87,10 @@ const PlanMonthTradePageG = () => {
 
     try {
       const res = await dispatch(addTableMonthData(data)).unwrap();
-      console.log('Response from addTableMonthData:', res);
+      // console.log('Response from addTableMonthData:', res);
       setDataAdded(true);
       if (res) {
-        console.log('Data added successfully');
+        // console.log('Data added successfully');
 
         // Show success notification
         notification.success({

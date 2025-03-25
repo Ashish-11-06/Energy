@@ -70,10 +70,10 @@ const Offers = () => {
   }, [dispatch, user.id, refresh]);
 
 
-  console.log(ippData);
+  // console.log(ippData);
 
   const showModal = (record) => {
-    console.log(record);
+    // console.log(record);
     setModalContent(record);
     setIsModalVisible(true);
   };
@@ -89,9 +89,9 @@ const Offers = () => {
     setIsCombinationModalVisible(true);
   };
   const showRequirementModal = (record) => {
-    console.log(record);
+    // console.log(record);
     setRequirementContent(record);
-    console.log(requirementContent);
+    // console.log(requirementContent);
     setIsRequirementModalVisible(true);
   };
   // console.log(requirementContent);
@@ -149,7 +149,7 @@ const Offers = () => {
       })
     : [];
 
-  console.log(filteredData);
+  // console.log(filteredData);
 
   const columns = [
     {
@@ -297,8 +297,8 @@ const Offers = () => {
         return (
           
             record.consumer_status === 'Accepted' || record.consumer_status === 'Rejected' ||  record.generator_status === 'Accepted' || record.generator_status === 'Rejected' ? (
-              <Button type="primary" disabled  >
-                Offer Closed
+              <Button type="primary" onClick={() => showModal(record)}>
+               View Details
               </Button>
             ) : (
           <Button type="primary" onClick={() => showModal(record)}>

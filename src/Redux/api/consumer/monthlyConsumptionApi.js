@@ -3,7 +3,7 @@ import axiosInstance from "../../axiosInstance";
 const monthlyconsumptionApi = {
 
     monthlyconsumptionData: (monthlyData) => {
-        console.log(monthlyData);
+        // console.log(monthlyData);
         return axiosInstance.post('/energy/monthly-consumption', monthlyData);
     },
     getMonthlyConsumption: (id) => {

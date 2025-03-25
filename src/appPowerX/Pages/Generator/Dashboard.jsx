@@ -72,7 +72,8 @@ const nextDayDate = nextDay.toLocaleDateString();
       setLoading(true);
       const res = await dispatch(fetchDashboardLineG(id)); 
       if(res.error) {
-        console.log(error);
+        message.error(error)
+        // console.log(error);
         
         // message.error(error);
       } else  {    

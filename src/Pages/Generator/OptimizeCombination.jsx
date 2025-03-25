@@ -8,7 +8,7 @@ const OptimizeCombination = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const user = JSON.parse(localStorage.getItem("user")).user;
-console.log(user);
+// console.log(user);
 
   const data = [
     {

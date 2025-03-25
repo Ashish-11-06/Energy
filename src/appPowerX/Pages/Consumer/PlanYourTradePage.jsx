@@ -96,7 +96,7 @@ const [uploadModal,setUploadModal]=useState(false);
   
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
   };
 
   const handleChange = (value) => {

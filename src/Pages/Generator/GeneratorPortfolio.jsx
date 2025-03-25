@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Typography, Modal,Form } from 'antd';
+import { Table, Button, Typography, Modal,Form, message } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
@@ -54,18 +54,19 @@ const alreadysubscribed=subscribed?.status;
       });
       setIsUpdateModalVisible(true);
     } catch (error) {
-      console.log(error);
+      message.error(error);
+      // console.log(error);
     }
    
   };
 
   const handleEdit=(record)=>{
 
-    console.log(record);
+    // console.log(record);
     setEditData(record);
     setIsModalVisible(true);
   }
-console.log(editData);
+// console.log(editData);
 
   const handleCancel = () => {
     setIsModalVisible(false);

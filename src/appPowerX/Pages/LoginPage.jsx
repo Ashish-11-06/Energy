@@ -45,7 +45,7 @@ const LoginPage = () => {
   };
 
   const handleCreateAccount = (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
     setIsRegisterModalVisible(false);
   };
 

@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Card,Button, Row,Col,Typography,
@@ -73,9 +75,9 @@ const company=userData[0]?.company;
       subscription:id,
       start_date:currentDate
     }
-console.log(id);
+// console.log(id);
 const response=dispatch(subscriptionEnroll(subscriptionData));
-console.log(response);
+// console.log(response);
 
     setIsQuotationVisible(true); // Show the quotation view after selection
   };
@@ -98,7 +100,7 @@ console.log(response);
        });
    }, [dispatch]);
    
-   console.log(subscriptionPlan);
+  //  console.log(subscriptionPlan);
    
 
   // useEffect(()=> {
@@ -145,7 +147,7 @@ console.log(response);
   
     try {
       const response = await dispatch(createPerformaById({ id: userId, performaData })).unwrap();
-      console.log("Created Performa:", response);
+      // console.log("Created Performa:", response);
       
       // Show success message
       message.success("Performa invoice generated successfully!")
@@ -153,7 +155,7 @@ console.log(response);
       setIsProformaVisible(true);
       setIsQuotationVisible(false);
     } catch (error) {
-      console.error("Failed to create performa:", error);
+      // console.error("Failed to create performa:", error);
       
       // Show error message
       message.error("Failed to generate Performa invoice. Please try again.")
@@ -169,7 +171,7 @@ console.log(response);
         // isPaymentVisible(true)
       })
       .catch((errorInfo) => {
-        console.log(errorInfo);
+        // console.log(errorInfo);
         setFormError("");
       });
   };
@@ -247,7 +249,7 @@ console.log(response);
         setIsProformaVisible(true); // Show the proforma modal
       })
       .catch((errorInfo) => {
-        console.log("Validation failed:", errorInfo);
+        // console.log("Validation failed:", errorInfo);
       });
   };
 

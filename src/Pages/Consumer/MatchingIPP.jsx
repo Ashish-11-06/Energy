@@ -41,15 +41,15 @@ const MatchingIPP = () => {
   };
 
   const handleRadioChange = (id) => {
-    console.log("hhj");
+    // console.log("hhj");
     
-    console.log(record);
+    // console.log(record);
     setSelectedRow(id); // Set the selected record, replacing previous selection
     
   };
   
   const handleRowSelect = (record) => {
-    console.log('ss',record);
+    // console.log('ss',record);
     
     setSelectedRow(record); // Only allow single selection
   }

@@ -19,11 +19,11 @@ export const verifyUser = createAsyncThunk('registerUser/verifyUser', async (dat
         try {
             // Call your API for user registration
             const response = await userApi.verifyEmail(data); // Replace with your actual API call
-            console.log(response);
+            // console.log(response);
             return response.data; // Return the response from the API (user data or token)
         } catch (error) {
             // Handle any error during the registration process
-            console.log(error.response.data.error);
+            // console.log(error.response.data.error);
             return rejectWithValue(error.response.data.error ? error.response.data.error : 'Failed to verify Email');
         }
     }

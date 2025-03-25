@@ -7,7 +7,7 @@ const useRegisterUser = () => {
 
   // Function to handle user registration
   const register = async (userDetails) => {
-    console.log(userDetails);
+    // console.log(userDetails);
     try {
       // Dispatch the registerUser action with user details
       const action = await dispatch(registerUser(userDetails));

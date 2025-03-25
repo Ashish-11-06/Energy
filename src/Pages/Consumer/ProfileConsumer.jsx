@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -36,7 +37,7 @@ const ProfilePage = () => {
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
   const userId = initialUserData.id;
-  console.log(userId);
+  // console.log(userId);
 
   const navigate = useNavigate();
 
@@ -107,7 +108,7 @@ const ProfilePage = () => {
 
   const handleSaveUser = (values) => {
     setIsUserModal(false);
-    console.log("User saved:", values);
+    // console.log("User saved:", values);
 
     // Ensure `values` is an object before updating state
     if (values && typeof values === "object") {
@@ -119,7 +120,7 @@ const ProfilePage = () => {
   };
   const handleEdit = (record) => {
     setEditaleData(record);
-    console.log(record);
+    // console.log(record);
     setIsUserModal(true);
     setEditValue(true);
     form.resetFields();

@@ -7,7 +7,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await registerApi.registerUser(userData);
-      console.log('respones',response);
+      // console.log('respones',response);
       
       if (response && response.data) {
         if(response.data.error){
@@ -21,7 +21,7 @@ export const registerUser = createAsyncThunk(
         return rejectWithValue('Unexpected response structure');
       }
     } catch (error) {
-      console.log('error',error);
+      // console.log('error',error);
       // Handle errors if the request fails
       return rejectWithValue(
         error.response?.data?.error || 'Failed to register user'
@@ -33,10 +33,10 @@ export const registerUser = createAsyncThunk(
 export const addSubUser = createAsyncThunk(
   'User/CreateUser',
   async ({ id, userData }, { rejectWithValue }) => {
-    console.log('hi from add sub user');
+    // console.log('hi from add sub user');
     try {
       const response = await registerApi.addSubUser(id, userData);
-      console.log('response', response);
+      // console.log('response', response);
       
       if (response?.data) {
         if (response.data.error) {
@@ -47,7 +47,7 @@ export const addSubUser = createAsyncThunk(
         return rejectWithValue('Unexpected response structure');
       }
     } catch (error) {
-      console.log('error', error);
+      // console.log('error', error);
       return rejectWithValue(error.response?.data?.error || 'Failed to add user');
     }
   }

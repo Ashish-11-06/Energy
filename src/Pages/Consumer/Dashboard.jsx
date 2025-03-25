@@ -27,7 +27,7 @@ const Dashboard = () => {
       try {
         const response = await DashboardApi.getConsumerDashboardData(userId);
         const data = response.data;
-        console.log(data);
+        // console.log(data);
         setStates(data?.states);
         setConsumerDetails({
           // energyPurchased: data.energy_purchased_from || 0,

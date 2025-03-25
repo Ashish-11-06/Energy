@@ -25,7 +25,7 @@ const Login = () => {
     setLoading(true);
     try {
       const loginData = { ...values };
-      console.log(values);
+      // console.log(values);
 
       const resultAction = await dispatch(loginUser(loginData));
 
@@ -34,7 +34,7 @@ const Login = () => {
 
         const user = resultAction.payload.user;
         const id = user.id;
-        console.log(id);
+        // console.log(id);
 
        
 
@@ -46,17 +46,17 @@ const Login = () => {
           }
         } else if (user.user_category === 'Consumer') {
           if (user.is_new_user) {
-            console.log('New user:', user.is_new_user);
+            // console.log('New user:', user.is_new_user);
             navigate('/consumer/what-we-offer', { state: { isNewUser: user.is_new_user } });
           } else {
-            console.log('New user:', user.is_new_user);
+            // console.log('New user:', user.is_new_user);
             navigate('/consumer/dashboard');
           }
         }
 
         const response = await dispatch(fetchSubscriptionValidity(id));
         setSubscriptionPlanValidity(response.payload);
-        console.log(response.payload);
+        // console.log(response.payload);
 
         localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
 
@@ -64,7 +64,7 @@ const Login = () => {
         message.error(resultAction.payload || 'Login failed. Please try again.');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      // console.error('Login error:', error);
       message.error('An error occurred during login. Please try again.');
     } finally {
       setLoading(false);
@@ -72,7 +72,7 @@ const Login = () => {
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
+    // console.log('Failed:', errorInfo);
     message.error('Please check your inputs and try again.');
   };
 
@@ -85,7 +85,7 @@ const Login = () => {
   };
 
   const handleCreate = (values) => {
-    console.log('Received values of form: ', values);
+    // console.log('Received values of form: ', values);
     setIsModalVisible(false);
   };
 
@@ -100,7 +100,7 @@ const Login = () => {
 
   const handlePasswordReset = (email) => {
     // Send password reset logic (you should handle the request in the backend)
-    console.log(`Password reset link sent to ${email}`);
+    // console.log(`Password reset link sent to ${email}`);
     message.success('Password reset link has been sent to your email!');
     closeForgotPasswordModal();  // Close the modal after the action
   };
