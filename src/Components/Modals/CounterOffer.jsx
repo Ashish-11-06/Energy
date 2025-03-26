@@ -34,6 +34,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransactio
   const [lockInPeriod, setLockInPeriod] = useState(data.lock_in_period);
   // const [commencementOfSupply,setCommencementOfSupply ] = useState(data.commencement_of_supply);
     const [modalVisible, setModalVisible] = useState(false);
+    const [isFieldEdited, setIsFieldEdited] = useState(false); // Track if any field is edited
   
     const showModal = () => {
       setModalVisible(true);
@@ -223,13 +224,18 @@ let temp='';
     }
   };
 
+  const handleFieldChange = (setter) => (value) => {
+    setter(value);
+    setIsFieldEdited(true); // Mark as edited when any field changes
+  };
+
   return (
     <div>
       <Modal
         title={
           <Text style={{ color: "#001529", fontSize: "18px" }}>Quotation</Text>
         }
-        visible={visible}
+        open={visible}
         onCancel={onCancel}
         footer={null}
         width={800}
@@ -271,7 +277,7 @@ let temp='';
                 min={1}
                 value={ppaTerm}
                 disabled={fromTransaction}
-                onChange={(value) => setPpaTerm(value)}
+                onChange={handleFieldChange(setPpaTerm)} // Use handleFieldChange
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -283,7 +289,7 @@ let temp='';
                 min={1}
                 value={lockInPeriod}
                 disabled={fromTransaction}
-                onChange={(value) => setLockInPeriod(value)}
+                onChange={handleFieldChange(setLockInPeriod)} // Use handleFieldChange
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -302,7 +308,10 @@ let temp='';
                 }
                 format="DD-MM-YYYY" // Format the date
                 // value={commencementDate} // Use moment date here
-                onChange={handleDateChange} // Update the state on date change
+                onChange={(date) => {
+                  handleDateChange(date);
+                  setIsFieldEdited(true); // Mark as edited
+                }} // Update the state on date change
                 disabled={fromTransaction}
                 style={{ width: "100%" }}
               />
@@ -314,7 +323,7 @@ let temp='';
               <InputNumber
                 min={0}
                 value={contractedEnergy}
-                onChange={(value) => setContractedEnergy(value)}
+                onChange={handleFieldChange(setContractedEnergy)} // Use handleFieldChange
                 disabled={fromTransaction}
                 style={{ width: "100%",color:"black" }}
               />
@@ -326,7 +335,7 @@ let temp='';
               <InputNumber
                 min={0}
                 value={minimumSupply}
-                onChange={(value) => setMinimumSupply(value)}
+                onChange={handleFieldChange(setMinimumSupply)} // Use handleFieldChange
                 disabled={fromTransaction}
                 style={{ width: "100%" }}
               />
@@ -338,7 +347,10 @@ let temp='';
               <Select
                 value={paymentSecurityType}
                 disabled={fromTransaction}
-                onChange={(value) => setPaymentSecurityType(value)}
+                onChange={(value) => {
+                  setPaymentSecurityType(value);
+                  setIsFieldEdited(true); // Mark as edited
+                }}
                 style={{ width: "100%" }}
               >
                 <Option value="Bank Guarantee">Bank Guarantee</Option>
@@ -354,7 +366,7 @@ let temp='';
                 min={1}
                 value={paymentSecurityDays}
                 disabled={fromTransaction}
-                onChange={(value) => setPaymentSecurityDays(value)}
+                onChange={handleFieldChange(setPaymentSecurityDays)} // Use handleFieldChange
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -409,13 +421,14 @@ let temp='';
                 data?.count % 2 === 1 &&
                 data?.count <= 4) ? (
                 <>
-                 <Button type="primary" danger onClick={() => handleStatusUpdate("Rejected")}>
+                 <Button type="primary" danger onClick={() => handleStatusUpdate("Rejected")} disabled={isFieldEdited}>
   Reject
 </Button>
 
                   <Button
                     style={{ marginLeft: "10px" }}
                     onClick={handleTarrif}
+                    disabled={isFieldEdited}
                   >
                     Accept
                   </Button>
@@ -477,12 +490,13 @@ let temp='';
                 data?.count % 2 === 1 &&
                 data?.count < 4) ? (
                 <>
-                  <Button type="primary" danger onClick={() => handleStatusUpdate("Rejected")}>
+                  <Button type="primary" danger onClick={() => handleStatusUpdate("Rejected")} disabled={isFieldEdited}>
                     Reject
                   </Button>
                   <Button
                     style={{ marginLeft: "10px" }}
                     onClick={handleTarrif}
+                    disabled={isFieldEdited}
                   >
                     Accept
                   </Button>

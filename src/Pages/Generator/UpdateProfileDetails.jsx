@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Table, Button, Modal, Form } from 'antd';
+import { Typography, Table, Button, Modal, Form, Progress } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -63,16 +63,21 @@ const UpdateProfileDetails = () => {
       title: 'Profile Updated',
       dataIndex: 'updated',
       key: 'updated',
-      render: (text) => (
-        <div style={{ textAlign: 'center' }}>
-          {text ? (
-            <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
-          ) : (
-            <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
-          )}
-        </div>
-      ),
-    },
+      render: (text) => {
+        const progressValue = text ? 100 : 50;
+    
+        return (
+          <div style={{ textAlign: 'center' }}>
+            <Progress
+              percent={progressValue}
+              status={progressValue === 100 ? 'active' : 50}
+              strokeColor={progressValue === 100 ? 'green' : 'red'}
+            />
+          </div>
+        );
+      },
+    }
+,    
     {
       title: 'Action',
       key: 'action',

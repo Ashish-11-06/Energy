@@ -103,7 +103,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
               <Text strong>RE Replacement</Text>
             </Col>
             <Col span={12}>
-              <Text>:{combinationContent?.re_replacement|| "A1"}</Text>
+              <Text>: {combinationContent?.re_replacement|| "A1"}</Text>
             </Col>
             <Col span={12}>
               <Text strong>RE Index</Text>

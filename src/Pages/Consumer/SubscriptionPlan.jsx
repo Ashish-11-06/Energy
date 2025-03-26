@@ -61,8 +61,20 @@ const SubscriptionPlans = () => {
   );
   const alreadySubscribed = subscription?.subscription_type;
 
-  // console.log(subscription.subscription_type);
+  const time_remaining = alreadySubscribed === 'FREE' ? (() => {
+    const endDate = new Date(subscription?.end_date);
+    const now = new Date();
+  
+    const diffMs = endDate - now; // Difference in milliseconds
+    if (diffMs <= 0) return "Expired"; // Handle expiration
+  
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  
+    return `${days} days, ${hours} hours`;
+  })() : ' ';
 
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userData = useState(JSON.parse(localStorage.getItem("user")).user);
@@ -366,6 +378,11 @@ const companyName=userData[0]?.company;
                 <Text className="price">
                   {plan.price} <p style={{ fontSize: "18px" }}>INR</p>
                 </Text>
+                {plan.subscription_type === "FREE" && alreadySubscribed === "FREE" ? (
+                  <p style={{fontSize:'12px'}}>Time Remaining: <span style={{color:'red'}}>{time_remaining}</span> </p>
+                ) : (
+                  null
+                )}
                 <p>
                   <strong>Duration:</strong> {plan.duration_in_days} days
                 </p>
@@ -493,6 +510,7 @@ const companyName=userData[0]?.company;
                   )}
                   {plan.subscription_type === "FREE" && (
                     <>
+                   
                       <li
                         style={{
                           display: "flex",

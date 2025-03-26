@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Typography, Modal,Form, message } from 'antd';
+import { Table, Button, Typography, Modal,Form, message, Progress } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
@@ -143,11 +143,16 @@ const alreadysubscribed=subscribed?.status;
         key: 'updated',
         render: (text) => (
           <div style={{ textAlign: 'center' }}>
-            {text ? (
+            <Progress
+            percent={text ? 100 : 50}
+            status={text ? 'active' : 50}
+            strokeColor={text ? 'green' : 'red'}
+          />
+            {/* {text ? (
               <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
             ) : (
               <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
-            )}
+            )} */}
           </div>
         ),
       },

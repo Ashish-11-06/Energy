@@ -20,17 +20,50 @@ import state from "../../assets/state.png";
 import solar from "../../assets/solar.avif";
 import battery from "../../assets/battery.webp";
 import wind from "../../assets/wind.jpg";
+import { loginUser } from "../../Redux/Slices/loginSlice";
+import SubscriptionDueModal from "../../Components/Modals/SubscriptionDueModal";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [generatorDetails, setGeneratorDetails] = useState({});
   const [profileDetails, setProfileDetails] = useState({});
   const [platformDetails, setPlatformDetails] = useState({});
   const [stateModal, showStateModal] = useState(false);
+  const [subscriptionDueModal,showSubscriptionDueModal]=useState(false);
   const [states, setStates] = useState([]);
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userId = user.id;
 
+  const navigate = useNavigate();
+  const subscription = JSON.parse(
+    localStorage.getItem("subscriptionPlanValidity")
+  );
+  const alreadySubscribed = subscription?.subscription_type;
+
+  const time_remaining = alreadySubscribed  ? (() => {
+    const endDate = new Date(subscription?.end_date);
+    const now = new Date();
+  
+    const diffMs = endDate - now; // Difference in milliseconds
+    if (diffMs <= 0) return "Expired"; // Handle expiration
+  
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  
+    return `${days} days, ${hours} hours`;
+  })() : ' ';
+
+  console.log(time_remaining);
+  
+  useEffect (() => {
+    if(time_remaining=== 'Expired'){
+      console.log('expired');
+      
+      showSubscriptionDueModal(true);
+  }
+},[time_remaining]
+)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -62,6 +95,10 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
+
+const handleNavigateSubscription=() => {
+  navigate('/subscription');
+}
 
   const barData = {
     labels: [
@@ -429,6 +466,10 @@ const Dashboard = () => {
         </Col>
       </Row>
       
+<SubscriptionDueModal open={subscriptionDueModal} onCancel={() => showSubscriptionDueModal(false)} onConfirm={() => showSubscriptionDueModal(false)} onOk={handleNavigateSubscription} />
+
+
+
       {/* <Modal
         open={stateModal}
         title="States Covered"
