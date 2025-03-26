@@ -186,7 +186,7 @@ let temp='';
     setOfferTariff(value); // Update the offer tariff value in the state
   };
 
-  console.log(commencementDate);
+  // console.log(commencementDate);
   // Handle form submission
   const handleContinue = async () => {
     const termSheetId = data.id;
@@ -422,12 +422,12 @@ let temp='';
                 data?.count <= 4) ? (
                 <>
                 <Button
-  style={{
-    color: "#ff5858",
-    borderColor: "#ff5858",
-    backgroundColor: "transparent",
-  }}
-  className="reject-button"
+  // style={{
+  //   color: "#ff5858",
+  //   borderColor: "#ff5858",
+  //   backgroundColor: "transparent",
+  // }}
+  className="red-btn"
   onClick={() => handleStatusUpdate("Rejected")}
   disabled={isFieldEdited}
 >

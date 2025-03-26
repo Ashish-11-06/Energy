@@ -1,7 +1,7 @@
 let socket = null; // Explicitly initialize socket as null
 
-const SOCKET_URL = 'ws://192.168.1.71:8001';
-const SOCKET_PATH = '/api/energy/ws/negotiation/';
+const SOCKET_URL = 'ws://15.207.188.206:8000';
+const SOCKET_PATH = '/api/energy/ws/test-negotiation/';
 const FULL_URL = SOCKET_URL + SOCKET_PATH;
 
     export const connectWebSocket = (user_id, tariff_id) => {
@@ -70,6 +70,7 @@ const FULL_URL = SOCKET_URL + SOCKET_PATH;
     
 
 export const sendEvent = (event) => {
+    console.log('event sent');
     if (!socket) {
         console.error('Socket not initialized. Call connectWebSocket first.');
         return;

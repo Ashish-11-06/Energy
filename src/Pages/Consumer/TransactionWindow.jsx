@@ -54,136 +54,105 @@ const TransactionWindow = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
-// console.log('hii',record);
+  
+  const start_time = 10; // 10 AM
+  const end_time = 11; // 11 AM
+  
+  // Get today's date
+  const today = new Date();
+  
+  // Set start and end time in today's date
+  const startDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), start_time, 0, 0);
+  const endDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), end_time, 0, 0);
+  
+  // Set deadline for countdown (milliseconds)
+  const deadline = endDateTime.getTime();
 
-  // useEffect(() => {
-  //   // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
-  //   const newSocket = connectWebSocket(user.id, record.tariff_id);
-  //   setSocket(newSocket);
 
-  //   console.log(newSocket, socket);
+  const deadlineTime = () => {
+    const now = Date.now(); // Get current time
+    const remainingTime = deadline - now; // Calculate remaining time
+  
+    if (remainingTime <= 0 || now < startDateTime.getTime()) {
+      return 0; // Return 0 if time is up or before the start time
+    }
+  
+    // console.log(remainingTime);
+    return remainingTime; // Return remaining time in milliseconds
+  };
 
-  //   const onMessageHandler = (event) => {
-  //     console.log("📩 event jkjkjkjkjkjkjkjkjkj:", event);
-  //     try {
+// console.log(deadlineTime);
 
-  //       const data = JSON.parse(event.data); // Parse the JSON message
-  //       console.log("ll", data);
 
-  //       if (data.offers) {
-  //         console.log("data.offers", data.offers);
-  //         setMessages([data.offers]); // Append new message to state
-  //       } else {
-  //         const newOffers = data; // Assuming data is the new offers object
-  //         console.log("newOffers", newOffers);
-  //         setMessages(prevMessages => {
-  //           const updatedMessages = [...prevMessages]; // Start with a copy of the previous messages
-
-  //           // Iterate over the keys in the new offers
-  //           for (const offerKey in newOffers) {
-  //             if (newOffers.hasOwnProperty(offerKey)) {
-  //               // Check if the key already exists in any of the existing messages
-  //               const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
-
-  //               if (existingMessageIndex !== -1) {
-  //                 // Update the existing message
-  //                 updatedMessages[existingMessageIndex][offerKey] = {
-  //                   ...updatedMessages[existingMessageIndex][offerKey],
-  //                   ...newOffers[offerKey],
-  //                 };
-  //               } else {
-  //                 // If the key does not exist, you can choose to add it as a new message
-  //                 updatedMessages.push({ [offerKey]: newOffers[offerKey] });
-  //               }
-  //             }
-  //           }
-
-  //           return updatedMessages; // Return the updated messages array
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("❌ Error parsing message:", error);
-  //     }
-  //   };
-
-  //   if (newSocket) {
-  //     // console.log("Subscribing to messages...");
-  //     newSocket.onmessage = onMessageHandler;
-  //   }
-
-  //   return () => {
-  //     // disconnectWebSocket();
-  //   };
-  // }, []);
   useEffect(() => {
     // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
     const newSocket = connectWebSocket(user.id, record.tariff_id);
     setSocket(newSocket);
 
     const sendEvent = (action, data) => {
-        if (newSocket && newSocket.readyState === WebSocket.OPEN) {
-            newSocket.send(JSON.stringify({ action, ...data }));
-            // console.log("📤 Sent WebSocket message:", { action, ...data });
-        } else {
-            // console.error("⚠️ WebSocket is not open. Cannot send message.");
-        }
+      if (newSocket && newSocket.readyState === WebSocket.OPEN) {
+        newSocket.send(JSON.stringify({ action, ...data }));
+        // console.log("📤 Sent WebSocket message:", { action, ...data });
+      } else {
+        // console.error("⚠️ WebSocket is not open. Cannot send message.");
+      }
     };
 
     const onMessageHandler = (event) => {
-        // console.log("📩 WebSocket event received:", event);
+      // console.log("📩 WebSocket event received:", event);
 
-        try {
-            const data = JSON.parse(event.data);
-            // console.log("Parsed Data:", data);
+      try {
+        const data = JSON.parse(event.data);
+        // console.log("Parsed Data:", data);
 
-            if (data.action === "rejectTransaction") {
-                setTransactions((prevTransactions) =>
-                    prevTransactions.map((transaction) =>
-                        transaction.window_id === data.transactionId
-                            ? { ...transaction, tariff_status: "Rejected" }
-                            : transaction
-                    )
-                );
-            } else if (data.offers) {
-                // console.log("data.offers", data.offers);
-                setMessages([data.offers]);
-            } else {
-                const newOffers = data;
-                // console.log("newOffers", newOffers);
-                setMessages(prevMessages => {
-                    const updatedMessages = [...prevMessages];
+        if (data.action === "rejectTransaction") {
+          setTransactions((prevTransactions) =>
+            prevTransactions.map((transaction) =>
+              transaction.window_id === data.transactionId
+                ? { ...transaction, tariff_status: "Rejected" }
+                : transaction
+            )
+          );
+        } else if (data.offers) {
+          // console.log("data.offers", data.offers);
+          setMessages([data.offers]);
+        } else {
+          const newOffers = data;
+          // console.log("newOffers", newOffers);
+          setMessages(prevMessages => {
+            const updatedMessages = [...prevMessages];
 
-                    for (const offerKey in newOffers) {
-                        if (newOffers.hasOwnProperty(offerKey)) {
-                            const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
+            for (const offerKey in newOffers) {
+              if (newOffers.hasOwnProperty(offerKey)) {
+                const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
 
-                            if (existingMessageIndex !== -1) {
-                                updatedMessages[existingMessageIndex][offerKey] = {
-                                    ...updatedMessages[existingMessageIndex][offerKey],
-                                    ...newOffers[offerKey],
-                                };
-                            } else {
-                                updatedMessages.push({ [offerKey]: newOffers[offerKey] });
-                            }
-                        }
-                    }
-
-                    return updatedMessages;
-                });
+                if (existingMessageIndex !== -1) {
+                  updatedMessages[existingMessageIndex][offerKey] = {
+                    ...updatedMessages[existingMessageIndex][offerKey],
+                    ...newOffers[offerKey],
+                  };
+                } else {
+                  updatedMessages.push({ [offerKey]: newOffers[offerKey] });
+                }
+              }
             }
-        } catch (error) {
-            console.error("❌ Error parsing WebSocket message:", error);
+
+            return updatedMessages;
+          });
         }
+      } catch (error) {
+        console.error("❌ Error parsing WebSocket message:", error);
+      }
     };
 
     if (newSocket) {
-        newSocket.onmessage = onMessageHandler;
+      newSocket.onmessage = onMessageHandler;
     }
 
     return () => {
-        newSocket.close();
+      newSocket.close();
     };
-}, []);
+  }, []);
 
 
   // console.log(messages);
@@ -206,23 +175,25 @@ const TransactionWindow = () => {
     setIsModalVisible(false);
   };
 
-  const handleRejectTransaction = (transactionId) => {
+  const handleRejectTransaction = () => {
     Modal.confirm({
-        title: 'Are you sure you want to reject this transaction?',
-        content: 'It will not be visible to you again if rejected.',
-        okText: 'Yes, Reject',
-        cancelText: 'Cancel',
-        onOk: () => {
-            // Send the reject action through WebSocket
-            sendEvent({ action: "reject" });
-            message.error('Transaction rejected');
-            navigate('/transaction-page');
-        },
+      title: 'Are you sure you want to reject this transaction?',
+      content: 'It will not be visible to you again if rejected.',
+      okText: 'Yes, Reject',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        try {
+          // Attempt to send the reject action through WebSocket
+          await sendEvent({ action: "reject" });
+          message.error('Transaction rejected');
+          navigate('/transaction-page');
+        } catch (error) {
+          console.error('Error rejecting transaction:', error);
+          message.error('Failed to reject the transaction. Please try again.');
+        }
+      },
     });
-};
-
-
-
+  };
   
   const handleDownloadTransaction = async () => {
     const input = contentRef.current;
@@ -281,11 +252,11 @@ const TransactionWindow = () => {
   };
 
   // const deadline = Date.now() + 3600 * 1000; // 1 hour from now
-  const deadline = Date.now() + 60 * 1000; 
+  // const deadline = Date.now() + 60 * 1000;
 
 
   return (
-    <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
+    <div style={{ padding: "30px" }}>
       <Row gutter={[16, 16]} justify="center">
         <Card
           style={{
@@ -313,23 +284,7 @@ const TransactionWindow = () => {
               <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
               <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
             </Row>
-            {/* <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <img src={time} alt="" style={{ height: '30px', width: '30px' }} />
-                <Countdown title="Time Remaining" value={deadline} />
-              </span>
-            </Row> */}
-            {/* <hr />
-
-              <p style={{fontWeight:'bold'}}>Consumer Details</p>
-              <br />
-            <Row gutter={[16, 16]} style={{ marginTop: "6px" }}>
            
-              <Col span={8}><strong>Solar Capacity (MW): </strong>{record.c_optimal_solar_capacity}</Col>
-              <Col span={8}><strong>Wind Capacity: </strong>{record.c_optimal_wind_capacity}</Col>
-              <Col span={8}><strong>ESS Capacity: </strong>{record.c_optimal_battery_capacity}</Col>
-            </Row> */}
-
             <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
               <Col>
                 <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div>
@@ -339,7 +294,11 @@ const TransactionWindow = () => {
                     alt=""
                     style={{ height: '30px', width: '30px', filter: 'brightness(0) saturate(100%) invert(13%) sepia(85%) saturate(7484%) hue-rotate(1deg) brightness(91%) contrast(119%)' }}
                   />
-                  <Countdown value={deadline} valueStyle={{ color: 'red' }} />
+                  {Date.now() < startDateTime.getTime() ? (
+                    <Text style={{ color: 'red' }}>Countdown starts at 10:00 AM</Text>
+                  ) : (
+                    <Countdown value={deadline} valueStyle={{ color: 'red' }} />
+                  )}
                 </span>
               </Col>
             </Row>
@@ -362,7 +321,7 @@ const TransactionWindow = () => {
                     // Validate the message object
                     if (msg && typeof msg === 'object') {
                       const openOfferTariff = record.offer_tariff; // Use backend-provided value
-                      const tariffChange =  openOfferTariff - msg.updated_tariff;
+                      const tariffChange = openOfferTariff - msg.updated_tariff;
                       const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
                       const isIncrease = tariffChange > 0;
                       return (
@@ -404,43 +363,12 @@ const TransactionWindow = () => {
               )
             )}
           </div>
-          {/* <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
-            <Title level={3}>Offer Tariffs:</Title>
-            {messages.length === 0 ? (
-                <Text>No messages available.</Text>
-            ) : (
-                messages.map((messageObject, index) => {
-                    return Object.keys(messageObject).map((msgKey) => {
-                        const msg = messageObject[msgKey]; 
-
-                        if (msg && typeof msg === 'object' && record?.offer_tariff) { 
-                            const openOfferTariff = record.offer_tariff; // Use backend-provided value
-                            const tariffChange = msg.updated_tariff - openOfferTariff;
-                            const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
-                            const isIncrease = tariffChange > 0;
-
-                            return (
-                                <Card key={msg.id || index} style={{ marginBottom: "10px" }}>
-                                    <Text strong>IPP ID: </Text> {msg.generator_username} <br />
-                                    <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/kWh <br />
-                                    <Text strong>Time: </Text> {moment(msg.timestamp).format("hh:mm A")} <br />
-                                    <Text strong>Change: </Text> 
-                                    <Text type={isIncrease ? "success" : "danger"}>
-                                        {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
-                                    </Text>
-                                </Card>
-                            );
-                        } else {
-                            return null; // Do not render anything if record.offer_tariff is missing
-                        }
-                    });
-                })
-            )}
-        </div> */}
           <br /><br />
 
           {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button> */}
-          <Button onClick={() => handleRejectTransaction(transactionId)}>Reject Transaction</Button>
+          <Button
+           className="red-btn"
+            onClick={() => handleRejectTransaction(transactionId)}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
         </Card>
 

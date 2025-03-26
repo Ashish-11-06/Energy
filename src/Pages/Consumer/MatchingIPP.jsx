@@ -108,10 +108,9 @@ const MatchingIPP = () => {
           height: "100vh",
         }}
       >
-        <div style={{ position: 'relative' }}>
-        <Spin size="large" tip="Loading IPP details..." spinning={true} />
-        {/* <Spin size="large" tip="Loading IPP details..." /> */}
-        </div>
+        <Spin size="large" tip="Loading" spinning={true}>
+          <div /> {/* Add an empty div to ensure proper nesting */}
+        </Spin>
       </div>
     );
   }

@@ -101,7 +101,7 @@ const InvoicePage = () => {
   }, [dispatch, userId]);
   // console.log(selectedPlan);
 
-  console.log(invoice);
+  // console.log(invoice);
 
 
   return (
@@ -110,14 +110,15 @@ const InvoicePage = () => {
         <h1>Invoices</h1>
         {loading ? (
           <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "60vh", // Full height of the viewport
-          }}
-        >
-          <Spin spinning={loading} tip="Loading..." />
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "60vh", // Full height of the viewport
+              width: "100%", // Full width of the container
+            }}
+          >
+            <Spin spinning={loading} tip="Loading..." />
           </div>
         ) : (
           <Table

@@ -256,3 +256,13 @@ button:focus, .ant-btn:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: #669800; /* Scrollbar color on hover */
 }
+
+.red-btn {
+  background-color: #ff5858;
+  color: white;
+  border: none;
+}
+
+.red-btn:hover {
+  background-color: #e34c4c !important;
+}

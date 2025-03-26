@@ -28,6 +28,7 @@ const Dashboard = () => {
     localStorage.getItem("subscriptionPlanValidity")
   );
   const alreadySubscribed = subscription?.subscription_type;
+// console.log(subscription);
 
 const time_remaining = alreadySubscribed ? (() => {
     const endDate = new Date(subscription?.end_date);
@@ -38,33 +39,22 @@ const time_remaining = alreadySubscribed ? (() => {
     now.setHours(0, 0, 0, 0);
 
     const diffMs = endDate - now; // Difference in milliseconds
-    // console.log(diffMs);
 
     if (diffMs < 0) return "Expired"; // Only consider past dates as expired
-    if(86400  < diffMs >0) return 'Expiring';
+    if (diffMs >= 0 && diffMs < 86400000) return "Expiring"; // Less than 1 day in milliseconds
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
     return { days, hours, formatted: `${days} days, ${hours} hours` };
 })() : { days: null, hours: null, formatted: ' ' };
 
-// console.log(time_remaining.days);
-// console.log(time_remaining);
-
- 
-
-  // console.log(time_remaining);
-  
-  // useEffect(() => {
-  //   showSubscriptionDueModal(true);
-  // })
-  useEffect (() => {
-    if(time_remaining=== 'Expired' || time_remaining=== 'Expiring' ){
-      // console.log('expired');    
+  useEffect(() => {
+    if (time_remaining === "Expired" || time_remaining === "Expiring") {
       showSubscriptionDueModal(true);
-  }
-},[time_remaining])
+    }
+  }, [time_remaining])
 
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
