@@ -43,8 +43,6 @@ const TransactionWindow = () => {
   const [socket, setSocket] = useState(null); // Add this line to define the socket variable
   const [messages, setMessages] = useState([]); // Store incoming messages
 
-  const [hover, setHover] = useState();
-
   const location = useLocation();
 
   const navigate = useNavigate();
@@ -56,67 +54,7 @@ const TransactionWindow = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
-  // console.log('hii',record);
-
-  // useEffect(() => {
-  //   // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
-  //   const newSocket = connectWebSocket(user.id, record.tariff_id);
-  //   setSocket(newSocket);
-
-  //   console.log(newSocket, socket);
-
-  //   const onMessageHandler = (event) => {
-  //     console.log("📩 event jkjkjkjkjkjkjkjkjkj:", event);
-  //     try {
-
-  //       const data = JSON.parse(event.data); // Parse the JSON message
-  //       console.log("ll", data);
-
-  //       if (data.offers) {
-  //         console.log("data.offers", data.offers);
-  //         setMessages([data.offers]); // Append new message to state
-  //       } else {
-  //         const newOffers = data; // Assuming data is the new offers object
-  //         console.log("newOffers", newOffers);
-  //         setMessages(prevMessages => {
-  //           const updatedMessages = [...prevMessages]; // Start with a copy of the previous messages
-
-  //           // Iterate over the keys in the new offers
-  //           for (const offerKey in newOffers) {
-  //             if (newOffers.hasOwnProperty(offerKey)) {
-  //               // Check if the key already exists in any of the existing messages
-  //               const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
-
-  //               if (existingMessageIndex !== -1) {
-  //                 // Update the existing message
-  //                 updatedMessages[existingMessageIndex][offerKey] = {
-  //                   ...updatedMessages[existingMessageIndex][offerKey],
-  //                   ...newOffers[offerKey],
-  //                 };
-  //               } else {
-  //                 // If the key does not exist, you can choose to add it as a new message
-  //                 updatedMessages.push({ [offerKey]: newOffers[offerKey] });
-  //               }
-  //             }
-  //           }
-
-  //           return updatedMessages; // Return the updated messages array
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("❌ Error parsing message:", error);
-  //     }
-  //   };
-
-  //   if (newSocket) {
-  //     // console.log("Subscribing to messages...");
-  //     newSocket.onmessage = onMessageHandler;
-  //   }
-
-  //   return () => {
-  //     // disconnectWebSocket();
-  //   };
-  // }, []);
+  
   useEffect(() => {
     // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
     const newSocket = connectWebSocket(user.id, record.tariff_id);
@@ -208,20 +146,26 @@ const TransactionWindow = () => {
     setIsModalVisible(false);
   };
 
-  const handleRejectTransaction = (transactionId) => {
+  const handleRejectTransaction = () => {
     Modal.confirm({
       title: 'Are you sure you want to reject this transaction?',
       content: 'It will not be visible to you again if rejected.',
       okText: 'Yes, Reject',
       cancelText: 'Cancel',
-      onOk: () => {
-        // Send the reject action through WebSocket
-        sendEvent({ action: "reject" });
-        message.error('Transaction rejected');
-        navigate('/transaction-page');
+      onOk: async () => {
+        try {
+          // Attempt to send the reject action through WebSocket
+          await sendEvent({ action: "reject" });
+          message.error('Transaction rejected');
+          navigate('/transaction-page');
+        } catch (error) {
+          console.error('Error rejecting transaction:', error);
+          message.error('Failed to reject the transaction. Please try again.');
+        }
       },
     });
   };
+  
 
 
 
@@ -315,23 +259,7 @@ const TransactionWindow = () => {
               <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
               <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
             </Row>
-            {/* <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <img src={time} alt="" style={{ height: '30px', width: '30px' }} />
-                <Countdown title="Time Remaining" value={deadline} />
-              </span>
-            </Row> */}
-            {/* <hr />
-
-              <p style={{fontWeight:'bold'}}>Consumer Details</p>
-              <br />
-            <Row gutter={[16, 16]} style={{ marginTop: "6px" }}>
            
-              <Col span={8}><strong>Solar Capacity (MW): </strong>{record.c_optimal_solar_capacity}</Col>
-              <Col span={8}><strong>Wind Capacity: </strong>{record.c_optimal_wind_capacity}</Col>
-              <Col span={8}><strong>ESS Capacity: </strong>{record.c_optimal_battery_capacity}</Col>
-            </Row> */}
-
             <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
               <Col>
                 <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div>
@@ -406,39 +334,6 @@ const TransactionWindow = () => {
               )
             )}
           </div>
-          {/* <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
-            <Title level={3}>Offer Tariffs:</Title>
-            {messages.length === 0 ? (
-                <Text>No messages available.</Text>
-            ) : (
-                messages.map((messageObject, index) => {
-                    return Object.keys(messageObject).map((msgKey) => {
-                        const msg = messageObject[msgKey]; 
-
-                        if (msg && typeof msg === 'object' && record?.offer_tariff) { 
-                            const openOfferTariff = record.offer_tariff; // Use backend-provided value
-                            const tariffChange = msg.updated_tariff - openOfferTariff;
-                            const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
-                            const isIncrease = tariffChange > 0;
-
-                            return (
-                                <Card key={msg.id || index} style={{ marginBottom: "10px" }}>
-                                    <Text strong>IPP ID: </Text> {msg.generator_username} <br />
-                                    <Text strong>Offer Tariff: </Text> {msg.updated_tariff} INR/kWh <br />
-                                    <Text strong>Time: </Text> {moment(msg.timestamp).format("hh:mm A")} <br />
-                                    <Text strong>Change: </Text> 
-                                    <Text type={isIncrease ? "success" : "danger"}>
-                                        {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
-                                    </Text>
-                                </Card>
-                            );
-                        } else {
-                            return null; // Do not render anything if record.offer_tariff is missing
-                        }
-                    });
-                })
-            )}
-        </div> */}
           <br /><br />
 
           {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button> */}
