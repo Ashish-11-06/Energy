@@ -196,13 +196,13 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           >
             Menu
           </div>
-          <Menu mode="inline" selectedKeys={[selectedKey]} style={{marginLeft:'15px'}}>
+          <Menu mode="inline" selectedKeys={[selectedKey]} >
             {menuItems.map((item) => (
               <Tooltip
                 title={item.disabled ? 'Please subscribe to access this feature.' : ''}
                 key={item.key}
               >
-                <Menu.Item key={item.key} icon={item.icon} disabled={item.disabled} onClick={() => !item.disabled && handleMenuClick(item)}>
+                <Menu.Item key={item.key} icon={item.icon} style={{padding:'10px'}} disabled={item.disabled} onClick={() => !item.disabled && handleMenuClick(item)}>
                   {item.disabled ? (
                     item.label // Render label only if disabled
                   ) : (
