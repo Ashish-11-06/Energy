@@ -17,7 +17,9 @@ export const templateDownload = createAsyncThunk(
       } else {
         return rejectWithValue("Unexpected response structure");
       }
+
     } catch (error) {
+      console.log("Error:", error);
       return rejectWithValue(error.response?.data?.message || "Failed to fetch template");
     }
   }

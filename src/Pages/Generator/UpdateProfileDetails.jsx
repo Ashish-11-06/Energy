@@ -111,6 +111,10 @@ const UpdateProfileDetails = () => {
     setRefreshData(prev => !prev); // Toggle refreshData to trigger useEffect
   };
 
+  const handleErrorCloseModal = () => {
+    setIsModalVisible(false);
+  };
+
   const allUpdated = structuredProjects.every(item => item.updated);
 
   const handleProceed = () => {
@@ -152,6 +156,7 @@ const UpdateProfileDetails = () => {
           project={selectedRecord}
           form={form} 
           onCancel={handleCancel}
+          onErrorCloseModal={handleErrorCloseModal}
         />
       </Modal>
     </div>

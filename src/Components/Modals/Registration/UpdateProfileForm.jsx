@@ -26,7 +26,7 @@ import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 const { Option } = Select;
 const { Title, Text } = Typography;
 
-const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
+const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorCloseModal }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
   // console.log(fromPortfolio);
@@ -59,9 +59,11 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
   // Function to download Excel template
   const downloadExcelTemplate = () => {
     const wb = XLSX.utils.book_new();
+    const hours = Array.from({ length: 8760 }, (_, i) => [i + 1, ""]); // Generate 8760 rows for Hour column
     const ws = XLSX.utils.aoa_to_sheet([
-      ["Hourly Data", "Annual Generation Potential (MWh)"],
-    ]); // Template Headers
+      ["Hour", "Expected Generation(MWh)"], // Template Headers
+      ...hours, // Add 8760 rows
+    ]);
     XLSX.utils.book_append_sheet(wb, ws, "Template");
     XLSX.writeFile(wb, "template.xlsx");
 
@@ -185,64 +187,33 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio }) => {
     setFileData(null);
   }, []);
 
-  // const onSubmit = (values) => {
-  //   console.log("Form Values:", values);
-  //   // console.log(values);
-
-  //   const updatedValues = {
-  //     ...values,
-  //     id: selectedProject.id,
-  //     energy_type: values.type,
-  //     user: user.id,
-  //     cod: values.cod.format("YYYY-MM-DD"),
-  //     hourly_data: fileData ? fileData.split(",")[1] : null,
-  //     state: values.state,
-  //   };
-
-  //   console.log("Updated Form Values:", updatedValues);
-  //   try {
-  //     dispatch(updateProject(updatedValues));
-  //     form.resetFields();
-  //     setFileData(null);
-  //     setFile("");
-  //     message.success("Form submitted successfully!");
-  //     localStorage.removeItem("matchingConsumerId");
-  //     onCancel();
-  //     // setFile('')
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const onSubmit = async (values) => {
-  // console.log("Form Values:", values);
+    const updatedValues = {
+      ...values,
+      id: selectedProject.id,
+      energy_type: values.type,
+      user: user.id,
+      cod: values.cod.format("YYYY-MM-DD"),
+      hourly_data: fileData ? fileData.split(",")[1] : null,
+      state: values.state,
+    };
 
-  const updatedValues = {
-    ...values,
-    id: selectedProject.id,
-    energy_type: values.type,
-    user: user.id,
-    cod: values.cod.format("YYYY-MM-DD"),
-    hourly_data: fileData ? fileData.split(",")[1] : null,
-    state: values.state,
+    try {
+      console.log("Updated Values:", updatedValues);
+      const response = await dispatch(updateProject(updatedValues)).unwrap();
+      console.log("Response kkkkk:", response);
+      message.success("Form submitted successfully!");
+      form.resetFields();
+      setFileData(null);
+      setFile('');
+      localStorage.removeItem("matchingConsumerId");
+      onCancel();
+    } catch (error) {
+      console.log("Error:", error); 
+      message.error(error);
+      onErrorCloseModal(); // Close modal on error
+    }
   };
-
-  // console.log("Updated Form Values:", updatedValues);
-
-  try {
-    const response = await dispatch(updateProject(updatedValues)).unwrap();
-    
-    message.success("Form submitted successfully!");
-    form.resetFields();
-    setFileData(null);
-    setFile('');
-    localStorage.removeItem("matchingConsumerId");
-    onCancel();
-  } catch (error) {
-    console.error("Error:", error); 
-    message.error("File upload failed: Please check the file format and try again.");
-  }
-};
 
   
 
