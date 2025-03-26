@@ -421,9 +421,19 @@ let temp='';
                 data?.count % 2 === 1 &&
                 data?.count <= 4) ? (
                 <>
-                 <Button type="primary" danger onClick={() => handleStatusUpdate("Rejected")} disabled={isFieldEdited}>
+                <Button
+  style={{
+    color: "#ff5858",
+    borderColor: "#ff5858",
+    backgroundColor: "transparent",
+  }}
+  className="reject-button"
+  onClick={() => handleStatusUpdate("Rejected")}
+  disabled={isFieldEdited}
+>
   Reject
 </Button>
+
 
                   <Button
                     style={{ marginLeft: "10px" }}

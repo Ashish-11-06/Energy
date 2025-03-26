@@ -196,7 +196,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           >
             Menu
           </div>
-          <Menu mode="inline" selectedKeys={[selectedKey]}>
+          <Menu mode="inline" selectedKeys={[selectedKey]} style={{marginLeft:'15px'}}>
             {menuItems.map((item) => (
               <Tooltip
                 title={item.disabled ? 'Please subscribe to access this feature.' : ''}

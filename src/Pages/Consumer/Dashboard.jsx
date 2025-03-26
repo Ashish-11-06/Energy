@@ -5,13 +5,14 @@ import { DatabaseOutlined, ProfileOutlined } from "@ant-design/icons";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 import DashboardApi from "../../Redux/api/dashboard";
-
 import offerSend from "../../assets/offerSend.png";
 import state from "../../assets/state.png";
 import totalIPP from "../../assets/totalIPP.png";
 import availableCapacity from "../../assets/capacity.png";
 import demands from "../../assets/capacityAvailable.png";
 import consumption from "../../assets/consumption.png";
+import SubscriptionDueModal from "../../Components/Modals/SubscriptionDueModal";
+import { useNavigate } from "react-router-dom";
 
 
 const Dashboard = () => {
@@ -19,8 +20,50 @@ const Dashboard = () => {
   const [platformDetails, setPlatformDetails] = useState({});
   const [stateModal, showStateModal] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")).user;
+  const [subscriptionDueModal,showSubscriptionDueModal]=useState(false);
   const userId = user.id;
   const [states, setStates] = useState([]);
+  const navigate=useNavigate();
+  const subscription = JSON.parse(
+    localStorage.getItem("subscriptionPlanValidity")
+  );
+  const alreadySubscribed = subscription?.subscription_type;
+
+const time_remaining = alreadySubscribed ? (() => {
+    const endDate = new Date(subscription?.end_date);
+    const now = new Date();
+
+    // Normalize both dates to midnight (00:00:00) for an accurate comparison
+    endDate.setHours(0, 0, 0, 0);
+    now.setHours(0, 0, 0, 0);
+
+    const diffMs = endDate - now; // Difference in milliseconds
+    // console.log(diffMs);
+
+    if (diffMs < 0) return "Expired"; // Only consider past dates as expired
+    if(86400  < diffMs >0) return 'Expiring';
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+    return { days, hours, formatted: `${days} days, ${hours} hours` };
+})() : { days: null, hours: null, formatted: ' ' };
+
+// console.log(time_remaining.days);
+// console.log(time_remaining);
+
+ 
+
+  // console.log(time_remaining);
+  
+  // useEffect(() => {
+  //   showSubscriptionDueModal(true);
+  // })
+  useEffect (() => {
+    if(time_remaining=== 'Expired' || time_remaining=== 'Expiring' ){
+      // console.log('expired');    
+      showSubscriptionDueModal(true);
+  }
+},[time_remaining])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +100,9 @@ const Dashboard = () => {
   const handleStateClose = () => {
     showStateModal(false);
   };
-
+  const handleNavigateSubscription=() => {
+    navigate('/subscription-plan');
+  }
   const barData = {
     labels: ["Demand", "Offer Received", "Transactions Closed"],
     datasets: [
@@ -391,6 +436,8 @@ const Dashboard = () => {
           ))}
         </ul>
       </Modal>
+      <SubscriptionDueModal time_remaining={time_remaining} open={subscriptionDueModal} onCancel={() => showSubscriptionDueModal(false)} onConfirm={() => showSubscriptionDueModal(false)} onOk={handleNavigateSubscription} />
+
     </div>
   );
 };

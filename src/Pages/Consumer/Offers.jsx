@@ -283,43 +283,72 @@ const Offers = () => {
         }
       },
     },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => {
+        const isCounterOfferSent =
+          (user_category === "Consumer" && record.consumer_status === "Counter Offer Sent") ||
+          (user_category === "Generator" && record.generator_status === "Counter Offer Sent");
 
+        const isAcceptedOrRejected =
+          record.consumer_status === "Accepted" || record.consumer_status === "Rejected" ||
+          record.generator_status === "Accepted" || record.generator_status === "Rejected";
+
+        if (isCounterOfferSent || isAcceptedOrRejected) {
+          return (
+            <Button type="primary" onClick={() => showModal(record)}>
+              View Details
+            </Button>
+          );
+        } else {
+          return (
+            <Button type="primary" onClick={() => showModal(record)}>
+              Send Offer
+            </Button>
+          );
+        }
+      },
+    },
+    
     // {
     //   title: "Bidding Window Date",
     //   dataIndex: "transaction_window_date",
     //   key: "transaction_window_date",
     //   render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
     // },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => {
-        return (
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (_, record) => {
+    //     return (
           
-            record.consumer_status === 'Accepted' || record.consumer_status === 'Rejected' ||  record.generator_status === 'Accepted' || record.generator_status === 'Rejected' ? (
-              <Button type="primary" onClick={() => showModal(record)}>
-               View Details
-              </Button>
-            ) : (
-          <Button type="primary" onClick={() => showModal(record)}>
-            Send Offer
-          </Button>
-            )
-          //   )
-          // ) : user_category === 'Generator' ? (
-          //   record.count === 1 && record.generator_status === 'Pending' ? (
-          //     <Button type="primary" disabled>
-          //       Counter Offer
-          //     </Button>
-          //   ) : (
-          //     <Button type="primary" onClick={() => showModal(record)}>
-          //       Counter Offer
-          //     </Button>
-          //   )
-          // ) : null // This covers the case when user_category is neither 'Consumer' nor 'Generator'
-        );
-      },
-    },
+    //         record.consumer_status === 'Accepted' || record.consumer_status === 'Rejected' ||  record.generator_status === 'Accepted' || record.generator_status === 'Rejected'   ? (
+    //           {(user_category=== 'Consumer' && record.consumer_status==='Counter Offer Sent') || (user_category === 'Generator' && record.generator_status==='Counter Offer Sent') ? (
+    //           <Button type="primary" onClick={() => showModal(record)}>
+    //            View Details
+    //           </Button>
+    //           ): null}
+    //         ) : (
+    //       <Button type="primary" onClick={() => showModal(record)}>
+    //         Send Offer
+    //       </Button>
+    //         )
+    //       //   )
+    //       // ) : user_category === 'Generator' ? (
+    //       //   record.count === 1 && record.generator_status === 'Pending' ? (
+    //       //     <Button type="primary" disabled>
+    //       //       Counter Offer
+    //       //     </Button>
+    //       //   ) : (
+    //       //     <Button type="primary" onClick={() => showModal(record)}>
+    //       //       Counter Offer
+    //       //     </Button>
+    //       //   )
+    //       // ) : null // This covers the case when user_category is neither 'Consumer' nor 'Generator'
+    //     );
+    //   },
+    // },
     {
       title: "Bidding Window Date",
       dataIndex: "transaction_window_date",
@@ -357,7 +386,7 @@ const Offers = () => {
       value={searchText}
       onChange={handleSearchChange}
       style={{
-        width: 200,
+        width: 300,
         border: "1px solid #6698005c",
         borderRadius: "5px",
         height: 30,
@@ -366,7 +395,7 @@ const Offers = () => {
       }}
     />
   </Col>
-  <Col>
+  {/* <Col>
     <Select
       placeholder="Filter by Status"
       onChange={handleStatusChange}
@@ -383,7 +412,7 @@ const Offers = () => {
       <Option value="Rejected">Rejected</Option>
       <Option value="Negotiated">Negotiated</Option>
     </Select>
-  </Col>
+  </Col> */}
 </Row>
 
 

@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 import "./HeaderComponent.css"; // Add custom styles for header component
 import chat from "../../assets/need.png";
-import NotificationIcon from "../../assets/not.png";
+import NotificationIcon from "../../assets/not.jpg";
 import { useSelector } from "react-redux";
 
 const { Header } = Layout;
@@ -332,8 +332,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
               alt="Notification"
               style={{
                 cursor: "pointer",
-                height: "30px",
-                width: "30px",
+                height: "35px",
+                width: "35px",
                 margin: "0 45px 2px 0px",   
                 padding: "5px", 
                 borderRadius: "50%",
