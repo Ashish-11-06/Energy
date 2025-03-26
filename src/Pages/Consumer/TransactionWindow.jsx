@@ -285,7 +285,7 @@ const TransactionWindow = () => {
 
 
   return (
-    <div style={{ padding: "30px", backgroundColor: "#f5f6fb" }}>
+    <div style={{ padding: "30px" }}>
       <Row gutter={[16, 16]} justify="center">
         <Card
           style={{
@@ -440,7 +440,13 @@ const TransactionWindow = () => {
           <br /><br />
 
           {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button> */}
-          <Button onClick={() => handleRejectTransaction(transactionId)}>Reject Transaction</Button>
+          <Button
+           style={{
+            backgroundColor: hover ? "#ff1e1e" : "#ff5858",
+            color: "#fff",
+            border: "none",
+          }}
+          onClick={() => handleRejectTransaction(transactionId)}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
         </Card>
 

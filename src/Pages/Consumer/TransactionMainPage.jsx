@@ -148,35 +148,34 @@ console.log(openWindowTime, isWithinTimeWindow);
         <>
           <Tooltip
             title={
-              !isWithinTimeWindow
-                ? 'Transaction Window is only available between 10:00 AM and 11:00 AM'
-                : ''
+              record.tariff_status !== 'Active'
+                ? 'Transaction Window is closed'
+                : 'open transaction window'
             }
           >
             <Button
               type="primary"
               style={{
                 backgroundColor:
-                  record.tariff_status === 'Active' && isWithinTimeWindow
+                  record.tariff_status === 'Active' 
                     ? '#669800'
                     : '#ccc',
                 borderColor:
-                  record.tariff_status === 'Active' && isWithinTimeWindow
+                  record.tariff_status === 'Active' 
                     ? '#669800'
                     : '#ccc',
                 width: '150px',
                 cursor:
-                  record.tariff_status === 'Active' && isWithinTimeWindow
+                  record.tariff_status === 'Active' 
                     ? 'pointer'
                     : 'not-allowed',
+                color:' #fafafa'
               }}
               onClick={() => {
-                if (
-                  record.tariff_status !== 'Active' ||
-                  !isWithinTimeWindow
-                )
-                  return; // Prevent navigation if not active or outside time window
-
+                // if (
+                //   record.tariff_status !== 'Active'
+                // )
+                //   return; // Prevent navigation if not active or outside time window
                 const user = JSON.parse(localStorage.getItem('user')).user;
                 const path =
                   user.user_category === 'Generator'
@@ -186,7 +185,7 @@ console.log(openWindowTime, isWithinTimeWindow);
                 navigate(path, { state: record });
               }}
               disabled={
-                record.tariff_status !== 'Active' || !isWithinTimeWindow
+                record.tariff_status !== 'Active'
               } // Ensure correct condition for enabling/disabling
             >
               Open Window
