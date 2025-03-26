@@ -1,3 +1,7 @@
+/* eslint-disable no-unreachable */
+/* eslint-disable no-undef */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Typography, message } from "antd";
 import { useDispatch } from "react-redux";

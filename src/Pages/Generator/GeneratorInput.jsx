@@ -209,26 +209,7 @@ const [checkPortfolio,setCheckPortfolio]=useState([]);
         alignItems: "center",
       }}
     >
-      <Card style={{
-          marginTop: "20px",
-          width: "100%",
-          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-          overflow: "hidden",
-          backgroundColor: "#fff",
-        }}>
-        <Table
-          dataSource={Structuredprojects.map((project, index) => ({
-            ...project,
-            key: index,
-          }))}
-          columns={columns}
-          pagination={false}
-          bordered
-          loading={status === "loading"}
-        />
-      </Card>
-      <Card
+       <Card
         style={{
           marginTop: "20px",
           width: "100%",
@@ -264,7 +245,8 @@ const [checkPortfolio,setCheckPortfolio]=useState([]);
               </Tooltip>
             </Upload>
             <Title level={4} style={{ color: "#669800", background:'#f8f8f8', marginBottom: "10px", padding: '10px',marginLeft:'20px' }}>
-            Choose the portfolios to be processed in the model execution.
+            {/* Choose the portfolios to be processed in the model execution. */}
+            Upload the consumption data
             </Title>
           </div>
           {activeButton === "csv" && uploadedFileName && (
@@ -275,6 +257,34 @@ const [checkPortfolio,setCheckPortfolio]=useState([]);
        
         </Col>
       </Card>
+      <Card style={{
+          marginTop: "20px",
+          width: "100%",
+          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
+          borderRadius: "10px",
+          overflow: "hidden",
+          backgroundColor: "#fff",
+        }}>
+          <span><p>Select the portfolios to be processed in the model execution and run the Optimizer Model</p>
+          {/* <h2>Available Generation Portfolio</h2> */}
+          <Button style={{ position: 'absolute', right: '0' }}>
+  Run Optimizer
+</Button>
+</span>
+        <Table
+          dataSource={Structuredprojects.map((project, index) => ({
+            ...project,
+            key: index,
+          }))}
+          columns={columns}
+          pagination={false}
+          bordered
+          style={{marginTop:'60px'}}
+          loading={status === "loading"}
+        />
+      </Card>
+     
+     
     </div>
   );
 };

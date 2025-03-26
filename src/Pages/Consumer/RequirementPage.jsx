@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Table, Button, message, Row, Col, Modal, Tooltip,Radio } from 'antd';
+import { Table, Button, message, Row, Col, Modal, Tooltip,Radio, App } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
@@ -265,97 +265,98 @@ const handleAddDetails =(record) => {
   };
 
   return (
-    
-    <div style={{ padding: 20 }}>
-      <h2 >Consumption Unit</h2>
+    <App> {/* Wrap the entire component with App */}
+      <div style={{ padding: 20 }}>
+        <h2>Consumption Unit</h2>
 
-      <Tooltip title="Help">
-        <Button
-          shape="circle"
+        <Tooltip title="Help">
+          <Button
+            shape="circle"
+          
+            icon={<QuestionCircleOutlined />}
+            onClick={showInfoModal}
+            style={{ position: 'absolute', top: 80, right: 30,zIndex:1000 }}
+          />
+        </Tooltip>
+
+        <Modal
+          title="Welcome"
+          open={isInfoModalVisible}
+          onOk={handleInfoModalOk}
+          onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
+          okText="Got it"
+          footer={[
+            <Button key="submit" type="primary" onClick={handleInfoModalOk}>
+              Got it
+            </Button>,
+          ]}
+        >
+          <p>Hi {username},</p>
         
-          icon={<QuestionCircleOutlined />}
-          onClick={showInfoModal}
-          style={{ position: 'absolute', top: 80, right: 30,zIndex:1000 }}
+          <p>Welcome to the EXT. Please follow these steps to proceed:</p>
+          <ol>
+            <li>Add your requirements by clicking the "Add Requirement +" button.</li>
+            <li>Fill in the details shown in the form.</li>
+            <li>
+    Use the tooltip [
+    <Tooltip title="More information about this field">
+      <QuestionCircleOutlined />
+    </Tooltip> 
+    ]
+    option for each field for more information.
+  </li>
+            <li>You can add multiple requirements (demands).</li>
+            <li>To continue, select a requirement and click the "Continue" button.</li>
+          </ol>
+          <p>Thank you!</p>
+        </Modal>
+
+        <Table
+          columns={columns}
+          dataSource={requirements}
+          pagination={false}
+          bordered
+          loading={status === 'loading'}
+          // onRow={(record) => ({
+          //   onClick: () => handleRowSelect(record), // Make entire row clickable
+          // })}
+          rowClassName={(record) =>
+            selectedRequirement && record.id === selectedRequirement.id ? 'selected-row' : ''
+          }
         />
-      </Tooltip>
 
-      <Modal
-        title="Welcome"
-        open={isInfoModalVisible}
-        onOk={handleInfoModalOk}
-        onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
-        okText="Got it"
-        footer={[
-          <Button key="submit" type="primary" onClick={handleInfoModalOk}>
-            Got it
-          </Button>,
-        ]}
-      >
-        <p>Hi {username},</p>
-       
-        <p>Welcome to the EXT. Please follow these steps to proceed:</p>
-        <ol>
-          <li>Add your requirements by clicking the "Add Requirement +" button.</li>
-          <li>Fill in the details shown in the form.</li>
-          <li>
-  Use the tooltip [
-  <Tooltip title="More information about this field">
-    <QuestionCircleOutlined />
-  </Tooltip> 
-  ]
-  option for each field for more information.
-</li>
-          <li>You can add multiple requirements (demands).</li>
-          <li>To continue, select a requirement and click the "Continue" button.</li>
-        </ol>
-        <p>Thank you!</p>
-      </Modal>
-
-      <Table
-        columns={columns}
-        dataSource={requirements}
-        pagination={false}
-        bordered
-        loading={status === 'loading'}
-        // onRow={(record) => ({
-        //   onClick: () => handleRowSelect(record), // Make entire row clickable
-        // })}
-        rowClassName={(record) =>
-          selectedRequirement && record.id === selectedRequirement.id ? 'selected-row' : ''
-        }
-      />
-
-      <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
-        <Col>
-        {role!='view' ?(
-          <Button type="primary" onClick={showModal} style={{ width: 160 }}>
-            Add Requirement +
-          </Button>
-        ):null}
-        </Col>
-        <Col>
-          <Tooltip title={!selectedRequirement ? 'Please select a consumption unit' : ''}>
-            <Button
-              type="default"
-              onClick={handleContinue}
-              style={{ width: 160 }}
-              disabled={!selectedRequirement} // Disable "Continue" if no row is selected
-            >
-              Continue
+        <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
+          <Col>
+          {role!='view' ?(
+            <Button type="primary" onClick={showModal} style={{ width: 160 }}>
+              Add Requirement +
             </Button>
-          </Tooltip>
-        </Col>
-      </Row>
+          ):null}
+          </Col>
+          <Col>
+            <Tooltip title={!selectedRequirement ? 'Please select a consumption unit' : ''}>
+              <Button
+                type="default"
+                onClick={handleContinue}
+                style={{ width: 160 }}
+                disabled={!selectedRequirement} // Disable "Continue" if no row is selected
+              >
+                Continue
+              </Button>
+            </Tooltip>
+          </Col>
+        </Row>
 
-      {/* Modal for adding new requirement */}
-      <RequirementForm
-        open={isModalVisible}
-        onCancel={handleCancel}
-        onSubmit={handleSubmit}
-        data={editData}
-      />
-     
-    </div>
+        {/* Modal for adding new requirement */}
+        <RequirementForm
+          open={isModalVisible}
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+          data={editData}
+        />
+      
+      </div>
+    </App>
   );
 };
 

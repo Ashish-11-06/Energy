@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Badge, message, Tooltip } from 'antd';
+import { Badge } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { connectWebSocket, connectOfferSocket } from '../../Redux/Slices/notificationSlice';
 import PropTypes from 'prop-types';
@@ -16,7 +16,6 @@ import offerSend from '../../assets/offerSend.png';
 import notificationImg from '../../assets/notification.png';
 import portfolio from '../../assets/portfolio.png';
 import track from '../../assets/track.png';
-import not from '../../assets/not.png';
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
@@ -27,7 +26,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const subscription_type = subscription?.subscription_type;
   // console.log(subscription_type);
-// const subscription_type='FREE';
+
   // console.log(notificationCount);
 
   const location = useLocation();
@@ -54,14 +53,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { 
-      label: 'Transaction Window', 
-      key: '/transaction-page', 
-      icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
-      disabled: subscription_type === 'FREE'
-      
-      // Disables only if subscription is FREE
-    },
+    { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     {
       label: (<span>Offers</span>), 
       key: '/offers', 
@@ -81,6 +73,28 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // {
+    //   label: (<span>Notification</span>),
+    //   key: '/consumer/notification',
+    //   icon: (
+    //     <Badge
+    //       style={{
+    //         transform: 'translate(50%, -50%)',
+    //         minWidth: '15px',
+    //         height: '15px'
+    //       }}
+    //       count={notificationCount}
+    //       overflowCount={5}
+    //     >
+    //       <img
+    //         src={notificationImg}
+    //         alt="Notification"
+    //         style={{ width: '20px', height: '20px' }}
+    //       />
+    //     </Badge>
+    //   )
+    // },
+    
     { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Track Status', key: '/consumer/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
@@ -89,14 +103,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Portfolio', key: '/generator/portfolio', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Find Consumer', key: '/generator/matching-consumer', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> }, 
     {label: 'Capacity Sizing', key: '/generator/GeneratorInput', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />},
-    { 
-      label: 'Transaction Window', 
-      key: '/transaction-page', 
-      icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
-      disabled: subscription_type === 'FREE' // Disables only if subscription is FREE
-    },
+    { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
     {
       label: (<span>Offers</span>), 
@@ -119,8 +127,28 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // {
+    //   label: (<span>Notification</span>), key: '/consumer/notification', icon: (
+    //     <Badge
+    //       style={{
+    //         transform: 'translate(50%, -50%)',
+    //         minWidth: '15px',
+    //         height: '15px'
+    //       }}
+    //       count={notificationCount}
+    //       overflowCount={5}
+    //     >
+    //       <img
+    //         src={notificationImg}
+    //         alt="Notification"
+    //         style={{ width: '20px', height: '20px' }}
+    //       />
+    //     </Badge>
+    //   )
+    // },
+    
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Track Status', key: '/generator/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Track Status', key: '/generator/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
@@ -156,14 +184,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     navigate(url);
   };
 
-  const handleMenuClick = (item) => {
-    if (item.disabled) {
-      message.warning('Please subscribe to access this feature.');
-      return;
-    }
-    navigate(item.key);
-  };
-
   return (
     <>
       {!isMobile ? (
@@ -196,20 +216,11 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           >
             Menu
           </div>
-          <Menu mode="inline" selectedKeys={[selectedKey]} >
+          <Menu mode="inline" selectedKeys={[selectedKey]}>
             {menuItems.map((item) => (
-              <Tooltip
-                title={item.disabled ? 'Please subscribe to access this feature.' : ''}
-                key={item.key}
-              >
-                <Menu.Item key={item.key} icon={item.icon} style={{padding:'10px'}} disabled={item.disabled} onClick={() => !item.disabled && handleMenuClick(item)}>
-                  {item.disabled ? (
-                    item.label // Render label only if disabled
-                  ) : (
-                    <Link to={item.key}>{item.label}</Link> // Render Link if not disabled
-                  )}
-                </Menu.Item>
-              </Tooltip>
+              <Menu.Item key={item.key} icon={item.icon}>
+                <Link to={item.key}>{item.label}</Link>
+              </Menu.Item>
             ))}
           </Menu>
           <div style={{
@@ -259,23 +270,13 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           >
             <Menu mode="inline" selectedKeys={[selectedKey]}>
               {menuItems.map((item) => (
-                <Tooltip
-                  title={item.disabled ? 'Please subscribe to access this feature.' : ''}
+                <Menu.Item
                   key={item.key}
+                  icon={item.icon}
+                  onClick={() => closeDrawerAndNavigate(item.key)}
                 >
-                  <Menu.Item
-                    key={item.key}
-                    icon={item.icon}
-                    onClick={() => !item.disabled && handleMenuClick(item)}
-                    disabled={item.disabled}
-                  >
-                    {item.disabled ? (
-                      item.label // Render label only if disabled
-                    ) : (
-                      <Link to={item.key}>{item.label}</Link> // Render Link if not disabled
-                    )}
-                  </Menu.Item>
-                </Tooltip>
+                  {item.label}
+                </Menu.Item>
               ))}
             </Menu>
           </Drawer>

@@ -55,6 +55,35 @@ const TransactionWindow = () => {
   const userCategory = user?.user_category;
   const record = location.state;
   
+  const start_time = 10; // 10 AM
+  const end_time = 11; // 11 AM
+  
+  // Get today's date
+  const today = new Date();
+  
+  // Set start and end time in today's date
+  const startDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), start_time, 0, 0);
+  const endDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), end_time, 0, 0);
+  
+  // Set deadline for countdown (milliseconds)
+  const deadline = endDateTime.getTime();
+
+
+  const deadlineTime = () => {
+    const now = Date.now(); // Get current time
+    const remainingTime = deadline - now; // Calculate remaining time
+  
+    if (remainingTime <= 0 || now < startDateTime.getTime()) {
+      return 0; // Return 0 if time is up or before the start time
+    }
+  
+    // console.log(remainingTime);
+    return remainingTime; // Return remaining time in milliseconds
+  };
+
+// console.log(deadlineTime);
+
+
   useEffect(() => {
     // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
     const newSocket = connectWebSocket(user.id, record.tariff_id);
@@ -166,10 +195,6 @@ const TransactionWindow = () => {
     });
   };
   
-
-
-
-
   const handleDownloadTransaction = async () => {
     const input = contentRef.current;
     const canvas = await html2canvas(input, { scale: 2 });
@@ -227,7 +252,7 @@ const TransactionWindow = () => {
   };
 
   // const deadline = Date.now() + 3600 * 1000; // 1 hour from now
-  const deadline = Date.now() + 60 * 1000;
+  // const deadline = Date.now() + 60 * 1000;
 
 
   return (
@@ -269,7 +294,11 @@ const TransactionWindow = () => {
                     alt=""
                     style={{ height: '30px', width: '30px', filter: 'brightness(0) saturate(100%) invert(13%) sepia(85%) saturate(7484%) hue-rotate(1deg) brightness(91%) contrast(119%)' }}
                   />
-                  <Countdown value={deadline} valueStyle={{ color: 'red' }} />
+                  {Date.now() < startDateTime.getTime() ? (
+                    <Text style={{ color: 'red' }}>Countdown starts at 10:00 AM</Text>
+                  ) : (
+                    <Countdown value={deadline} valueStyle={{ color: 'red' }} />
+                  )}
                 </span>
               </Col>
             </Row>
