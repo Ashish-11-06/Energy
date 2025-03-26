@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { Modal, Typography, Row, Col, Button, Card, Table } from "antd";
 import RequestForQuotationModal from "../../../Components/Modals/RequestForQuotationModal";
@@ -5,10 +7,10 @@ import moment from 'moment';
 
 const { Title, Text } = Typography;
 
-const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => {
+const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation,consumerDetails }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
-  console.log(ipp.states);
+  console.log(ipp);
 
   const showQuotationModal = () => {
     setIsQuotationModalVisible(true);
@@ -18,7 +20,6 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
 
 
   const dataSource = [
-    { key: '1', label: 'RE Index', value: 'A1' },
     { key: '2', label: 'Annual Contracted Energy (million units)', value: ipp?.annual_demand_met || 0 },
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
     { key: '4', label: 'Per Unit Cost (INR/KWh)', value: ipp?.perUnitCost || "N/A" },
@@ -27,6 +28,9 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
     { key: '7', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
     { key: '8', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
     { key: '9', label: 'Total Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
+    { key: '10', label: 'Consumer Pseudo Name', value: consumerDetails?.username || "N/A" },
+    { key: '11', label: 'Consumer Credit Rating', value: consumerDetails?.credit_rating ===null? "A2" : consumerDetails?.credit_rating },
+    {}
   ];
 
   const mapToBaseType = (value) => {
@@ -60,7 +64,7 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
   }));
   
 
-  console.log(ipp?.technology);
+  // console.log(ipp?.technology);
 
   const technologyColumns = [
     { title: 'Technology', dataIndex: 'name', key: 'name' },
@@ -94,7 +98,7 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
                 IPP Project Details
               </Title>
 
-              <Row justify="center" gutter={[16, 16]}>
+              <Row justify="center" style={{rowGap:'4px'}}>
                 {dataSource.map(item => (
                   <React.Fragment key={item.key}>
                     <Col span={12}>
@@ -137,7 +141,7 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation }) => 
                 margin: "2px auto 0",
               }}
             >
-              Request for Quotation
+              Send Quotation
             </Button>
           </Col>
         </Row>

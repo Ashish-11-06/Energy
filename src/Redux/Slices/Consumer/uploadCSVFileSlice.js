@@ -39,7 +39,7 @@ const uploadCSVFileSlice = createSlice({
       .addCase(uploadCSV.fulfilled, (state, action) => {
         state.loading = false;  // Set loading to false after adding successfully
         state.csv = action.payload; // Add new data to
-        console.log(action.payload);
+        // console.log(action.payload);
       })
       .addCase(uploadCSV.rejected, (state, action) => {
         state.loading = false;  // Set loading to false after failed add

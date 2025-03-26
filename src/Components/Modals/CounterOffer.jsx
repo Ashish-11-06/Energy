@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import moment from "moment"; // Ensure moment is imported
 import {
   Modal,
@@ -18,18 +20,29 @@ import { updateTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndC
 import { addStatus } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
 import chat from "../../assets/need.png";
 import { negotiateTariff } from "../../Redux/Slices/Consumer/negotiateTariffSlice";
+import AgreementModal from "./AgreementModal";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransaction }) => {
-  console.log(fromTransaction);
-  console.log(data);
+  // console.log(fromTransaction);
+  // console.log(data);
   const term_sheet_id=data.id;
   
   // console.log(data);
   const [ppaTerm, setPpaTerm] = useState(data.term_of_ppa);
   const [lockInPeriod, setLockInPeriod] = useState(data.lock_in_period);
   // const [commencementOfSupply,setCommencementOfSupply ] = useState(data.commencement_of_supply);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [isFieldEdited, setIsFieldEdited] = useState(false); // Track if any field is edited
+  
+    const showModal = () => {
+      setModalVisible(true);
+    };
+  
+    const handleCloseModal = () => {
+      setModalVisible(false);
+    };
   const navigate = useNavigate();
   const [contractedEnergy, setContractedEnergy] = useState(
     data.contracted_energy
@@ -74,11 +87,11 @@ let temp='';
   };
 
   const handleChatWithExpert = () => {
-    navigate("/consumer/chat-page");
+    navigate("/chat-page");
   };
 
   const handleTarrif = async () => {
-    console.log("modal");
+    // console.log("modal");
     setTarrifModal(true);
   };
 
@@ -93,14 +106,15 @@ let temp='';
       terms_sheet_id: term_sheet_id,
       offer_tariff: offerTariff
     };
-  console.log(data);  
+  // console.log(data);  
     try {
       const response = dispatch(negotiateTariff(data));  
-      console.log("Response:", response);
+      // console.log("Response:", response);
       message.success("Tariff negotiated ");
       updateStatus("Accepted");
     } catch (error) {
-      console.error("Error negotiating tariff:", error);
+       message.error(error);
+      // console.error("Error negotiating tariff:", error);
     }
     setTarrifModal(false);
   };
@@ -108,9 +122,9 @@ let temp='';
   // console.log(data);
 
   const handleStatusUpdate = async (action) => {
-    console.log(action);
-    console.log(user.id);
-    console.log(data.id);
+    // console.log(action);
+    // console.log(user.id);
+    // console.log(data.id);
   
     // If action is 'rejected', show a confirmation popup
     if (action === "Rejected") {
@@ -118,9 +132,12 @@ let temp='';
         title: "Confirm Rejection",
         content: "Are you sure, you want to reject this request?",
         okText: "Yes, Reject",
-        cancelText: "Cancel",
+        cancelText: "Counter Offer",
         onOk: async () => {
           await updateStatus(action);
+        },
+        onCancel: () => {
+          handleContinue();
         },
       });
     } else {
@@ -169,7 +186,7 @@ let temp='';
     setOfferTariff(value); // Update the offer tariff value in the state
   };
 
-  // console.log(commencementDate);
+  console.log(commencementDate);
   // Handle form submission
   const handleContinue = async () => {
     const termSheetId = data.id;
@@ -207,30 +224,47 @@ let temp='';
     }
   };
 
+  const handleFieldChange = (setter) => (value) => {
+    setter(value);
+    setIsFieldEdited(true); // Mark as edited when any field changes
+  };
+
   return (
     <div>
       <Modal
         title={
           <Text style={{ color: "#001529", fontSize: "18px" }}>Quotation</Text>
         }
-        visible={visible}
+        open={visible}
         onCancel={onCancel}
         footer={null}
         width={800}
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
-        <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
-          <p style={{ margin: 0 }}>
-            Offer Tariff: <strong>{data?.offer_tariff ? data?.offer_tariff : 0}</strong> INR/kWh
-          </p>
-          {!fromTransaction ?(
-            <>
-          <Button style={{ marginLeft: "auto" }} onClick={handleTarrif}>
-            Negotiate Tariff
-          </Button>
-          </>
-          ): null}
-        </span>
+      <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
+  <p style={{ margin: 0 }}>
+    Offer Tariff: <strong>{data?.offer_tariff ? data?.offer_tariff : 0}</strong> INR/kWh
+  </p>
+  {!fromTransaction ? (
+    <>
+      {(data?.generator_status !== "Rejected" && data?.generator_status !== "Accepted")  || ( data?.consumer_status !== "Rejected" && data?.consumer_status !== "Accepted") && (
+        <>
+          {((data?.from_whom === "Consumer" || data?.from_whom === "Generator" &&
+            data?.count % 2 === 0 &&
+            data?.count <= 4) ||
+            (data?.from_whom === "Generator" &&
+              data?.count % 2 === 1 &&
+              data?.count <= 4)) && (
+            <Button style={{ marginLeft: "auto" }} onClick={handleTarrif}>
+              Negotiate Tariff
+            </Button>
+          )}
+        </>
+      )}
+    </>
+  ) : null}
+</span>
+
 
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
           Standard Terms Sheet
@@ -243,7 +277,7 @@ let temp='';
                 min={1}
                 value={ppaTerm}
                 disabled={fromTransaction}
-                onChange={(value) => setPpaTerm(value)}
+                onChange={handleFieldChange(setPpaTerm)} // Use handleFieldChange
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -255,7 +289,7 @@ let temp='';
                 min={1}
                 value={lockInPeriod}
                 disabled={fromTransaction}
-                onChange={(value) => setLockInPeriod(value)}
+                onChange={handleFieldChange(setLockInPeriod)} // Use handleFieldChange
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -274,7 +308,10 @@ let temp='';
                 }
                 format="DD-MM-YYYY" // Format the date
                 // value={commencementDate} // Use moment date here
-                onChange={handleDateChange} // Update the state on date change
+                onChange={(date) => {
+                  handleDateChange(date);
+                  setIsFieldEdited(true); // Mark as edited
+                }} // Update the state on date change
                 disabled={fromTransaction}
                 style={{ width: "100%" }}
               />
@@ -286,7 +323,7 @@ let temp='';
               <InputNumber
                 min={0}
                 value={contractedEnergy}
-                onChange={(value) => setContractedEnergy(value)}
+                onChange={handleFieldChange(setContractedEnergy)} // Use handleFieldChange
                 disabled={fromTransaction}
                 style={{ width: "100%",color:"black" }}
               />
@@ -298,7 +335,7 @@ let temp='';
               <InputNumber
                 min={0}
                 value={minimumSupply}
-                onChange={(value) => setMinimumSupply(value)}
+                onChange={handleFieldChange(setMinimumSupply)} // Use handleFieldChange
                 disabled={fromTransaction}
                 style={{ width: "100%" }}
               />
@@ -310,7 +347,10 @@ let temp='';
               <Select
                 value={paymentSecurityType}
                 disabled={fromTransaction}
-                onChange={(value) => setPaymentSecurityType(value)}
+                onChange={(value) => {
+                  setPaymentSecurityType(value);
+                  setIsFieldEdited(true); // Mark as edited
+                }}
                 style={{ width: "100%" }}
               >
                 <Option value="Bank Guarantee">Bank Guarantee</Option>
@@ -326,7 +366,7 @@ let temp='';
                 min={1}
                 value={paymentSecurityDays}
                 disabled={fromTransaction}
-                onChange={(value) => setPaymentSecurityDays(value)}
+                onChange={handleFieldChange(setPaymentSecurityDays)} // Use handleFieldChange
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>
@@ -351,6 +391,7 @@ let temp='';
             </Button>
           </Col> */}
         </Row>
+        
 
         <Row justify="end" style={{ marginTop: "20px" }}>
           {/* <Button
@@ -380,12 +421,24 @@ let temp='';
                 data?.count % 2 === 1 &&
                 data?.count <= 4) ? (
                 <>
-                  <Button onClick={() => handleStatusUpdate("Rejected")}>
-                    Reject
-                  </Button>
+                <Button
+  style={{
+    color: "#ff5858",
+    borderColor: "#ff5858",
+    backgroundColor: "transparent",
+  }}
+  className="reject-button"
+  onClick={() => handleStatusUpdate("Rejected")}
+  disabled={isFieldEdited}
+>
+  Reject
+</Button>
+
+
                   <Button
                     style={{ marginLeft: "10px" }}
                     onClick={handleTarrif}
+                    disabled={isFieldEdited}
                   >
                     Accept
                   </Button>
@@ -447,12 +500,13 @@ let temp='';
                 data?.count % 2 === 1 &&
                 data?.count < 4) ? (
                 <>
-                  <Button onClick={() => handleStatusUpdate("Rejected")}>
+                  <Button type="primary" danger onClick={() => handleStatusUpdate("Rejected")} disabled={isFieldEdited}>
                     Reject
                   </Button>
                   <Button
                     style={{ marginLeft: "10px" }}
                     onClick={handleTarrif}
+                    disabled={isFieldEdited}
                   >
                     Accept
                   </Button>
@@ -499,8 +553,11 @@ let temp='';
           ) : null} 
 
 
-      
         </Row>
+        <Button type="text" style={{marginTop:'20px'}} onClick={showModal}>
+             View in Detail
+            </Button>
+            <AgreementModal visible={modalVisible} onClose={handleCloseModal} />
         <Modal
           title={"Negotiate Tariff"}
           open={tarrifModal}

@@ -11,7 +11,7 @@ export const consumptionBill = createAsyncThunk(
         month,
         bill_file,
       });
-      console.log('response', response);
+      // console.log('response', response);
       
       if (response && response.data) {
         if(response.data.error){

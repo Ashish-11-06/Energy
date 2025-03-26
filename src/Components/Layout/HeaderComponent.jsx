@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Tooltip } from "antd";
+import { Badge, Button, Tooltip } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -13,7 +13,8 @@ import {
 } from "@ant-design/icons";
 import "./HeaderComponent.css"; // Add custom styles for header component
 import chat from "../../assets/need.png";
-import userImage from "../../assets/profile.png";
+import NotificationIcon from "../../assets/not.jpg";
+import { useSelector } from "react-redux";
 
 const { Header } = Layout;
 
@@ -29,6 +30,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const matchingConsumerId = localStorage.getItem("matchingConsumerId");
   const [matchingConsumer, setMatchingConsumer] = useState("");
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
+  const notificationCount = useSelector((state) => state.notifications.notificationCount);
 
   useEffect(() => {
     setSubscriptionRequires(subscription !== "active");
@@ -51,20 +53,18 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     username = user.company_representative;
   }
 
-  const handleProfileClick = () => {
+ 
+
+  const handleNotificationClick = () => {
     navigate(
       user.user_category === "Consumer"
-        ? "/consumer/profile"
-        : "/generator/profile"
+        ? "/consumer/notification"
+        : "/generator/notification"
     );
   };
 
   const handleChatClick = () => {
-    navigate(
-      user.user_category === "Consumer"
-        ? "/consumer/chat-page"
-        : "/generator/chat-page"
-    );
+    navigate('/chat-page');
   };
 
   const consumerSteps = [
@@ -193,9 +193,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                 <div
                   className="horizontal-line"
                   style={{
-                    "--progress-width": `${
-                      (currentStepIndex / (steps.length - 1)) * 100
-                    }%`,
+                    "--progress-width": `${(currentStepIndex / (steps.length - 1)) * 100
+                      }%`,
                   }}
                 ></div>
                 <div
@@ -256,9 +255,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                         ) : (
                           <Link to={step.path}>
                             <div
-                              className={`icon-circle ${
-                                index <= currentStepIndex ? "completed" : ""
-                              }`}
+                              className={`icon-circle ${index <= currentStepIndex ? "completed" : ""
+                                }`}
                               style={{
                                 margin: "0 auto",
                                 transform:
@@ -295,38 +293,59 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
           >
             {user_category && username ? (
               // Show Tooltip with "My Profile" when there's a valid user_category and username
-              <Tooltip title="My Profile" placement="top">
-                <p>
-                  Welcome,  <span onClick={()=> {navigate(`/${user_category}/profile`)}} style={{color:'rgb(154, 132, 6)'}}>{username}</span>
-                </p>
-                {/* <a href={`/${user_category}/profile`}>{username}!</a> */}
-              </Tooltip>
+
+              <p>
+                Welcome,  <span onClick={() => { navigate(`/${user_category}/profile`) }} style={{ color: 'rgb(154, 132, 6)', cursor: "pointer", }}>{username}</span>
+              </p>
+
+
             ) : (
               // Show a different message if user_category or username is not available
               <p>Welcome, Guest!</p>
             )}
           </p>
 
-          <img
-            src={userImage} // User profile image
-            alt="User "
+          <Tooltip 
+          style={{
+           right: 50,
+          
+         
+           
+          }}
+          title="Notifications">
+          <Badge
             style={{
               position: "absolute",
-              right: 12,
-              top: 18,
-              marginRight: "50px",
-              zIndex: 1001,
-              backgroundColor: "white",
+              right: 50,
+              top: 28,
+              // zIndex: 1001,
               cursor: "pointer",
-              height: "30px",
-              padding: "5px",
-              width: "30px",
-              borderRadius: "50%", // Ensures a circular shape
-              objectFit: "cover", // Scales image to fill the circle properly
               border: "1px solid green",
+           
+             
             }}
-            onClick={handleProfileClick}
-          />
+            count={notificationCount}
+          overflowCount={10}
+          >
+            <img
+              src={NotificationIcon}
+              alt="Notification"
+              style={{
+                cursor: "pointer",
+                height: "35px",
+                width: "35px",
+                margin: "0 45px 2px 0px",   
+                padding: "5px", 
+                borderRadius: "50%",
+                border: "1px solid green",
+                objectFit: "cover", // Prevents image distortion
+                backgroundColor: "white", // Ensures the image is visible
+              }}
+              onClick={handleNotificationClick}
+            />
+          </Badge>
+          </Tooltip>
+
 
           <Tooltip title="Need Assistance?">
             <img
@@ -334,14 +353,14 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
               alt="Chat"
               style={{
                 position: "absolute",
-                right: 6,
+                right: 3,
                 top: 18,
                 marginRight: "20px",
                 zIndex: 1001,
                 backgroundColor: "white",
                 cursor: "pointer",
-                height: "30px",
-                width: "30px",
+                height: "32px",
+                width: "32px",
                 padding: "5px",
                 borderRadius: "50%",
                 border: "1px solid green",

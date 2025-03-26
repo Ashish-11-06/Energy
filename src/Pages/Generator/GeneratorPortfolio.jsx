@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Typography, Modal,Form } from 'antd';
+import { Table, Button, Typography, Modal,Form, message, Progress } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
@@ -54,18 +54,19 @@ const alreadysubscribed=subscribed?.status;
       });
       setIsUpdateModalVisible(true);
     } catch (error) {
-      console.log(error);
+      message.error(error);
+      // console.log(error);
     }
    
   };
 
   const handleEdit=(record)=>{
 
-    console.log(record);
+    // console.log(record);
     setEditData(record);
     setIsModalVisible(true);
   }
-console.log(editData);
+// console.log(editData);
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -137,16 +138,21 @@ console.log(editData);
   if (alreadysubscribed) {
     columns.push(
       {
-        title: 'Updated',
+        title: 'Portfolio Updated',
         dataIndex: 'updated',
         key: 'updated',
         render: (text) => (
           <div style={{ textAlign: 'center' }}>
-            {text ? (
+            <Progress
+            percent={text ? 100 : 50}
+            status={text ? 'active' : 50}
+            strokeColor={text ? 'green' : 'red'}
+          />
+            {/* {text ? (
               <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
             ) : (
               <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
-            )}
+            )} */}
           </div>
         ),
       },

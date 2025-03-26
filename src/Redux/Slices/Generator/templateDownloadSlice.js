@@ -5,9 +5,9 @@ export const templateDownload = createAsyncThunk(
   "template/fetchById",
   async (templateData, { rejectWithValue }) => {
     try {
-      console.log("Request Sent:", templateData);
+      // console.log("Request Sent:", templateData);
       const response = await templateDownloadApi.templateDownload(templateData);
-      console.log("API Response:", response);
+      // console.log("API Response:", response);
 
       if (response?.data) {
         if (response.data.error) {

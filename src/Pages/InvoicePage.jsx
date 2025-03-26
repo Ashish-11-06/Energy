@@ -86,13 +86,13 @@ const InvoicePage = () => {
       try {
         const response = await dispatch(fetchPerformaById(userId)).unwrap();
         setInvoice(response);
-        console.log(response);
+        // console.log(response);
 
 
         setLoading(false);
 
       } catch (err) {
-        console.log(err);
+        // console.log(err);
         message.error(err.message || "Failed to fetch performa.");
       }
     };

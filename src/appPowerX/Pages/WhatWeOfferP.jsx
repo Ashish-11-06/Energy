@@ -53,6 +53,9 @@ const WhatWeOfferP = () => {
         }}
       >
         <h1 style={{ textAlign: 'center', fontSize: '3rem', marginBottom: '30px', color: '#669800' }}>
+          PowerX
+        </h1>
+        <h1 style={{ textAlign: 'center', fontSize: '3rem', marginBottom: '30px', color: '#669800' }}>
           What We Offer
         </h1>
         <p style={{ textAlign: 'center', fontSize: '1.2rem', marginBottom: '40px', color: '#9A8406' }}>
@@ -220,9 +223,7 @@ const WhatWeOfferP = () => {
           </Button>
         </div>
       </div>
-      <Modal visible={isModal} onCancel={() => console.log('Modal closed')}>
-        {/* Modal content */}
-      </Modal>
+    
     </div>
   )
 }

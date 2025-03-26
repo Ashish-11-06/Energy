@@ -78,40 +78,43 @@ import NotificationG from './appPowerX/Pages/Generator/NotificationG';
 import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
 import WhatWeOfferP from './appPowerX/Pages/WhatWeOfferP';
 import TrackStatusP from './appPowerX/Pages/TrackStatus';
+import ProtectedRoute from './ProtectedRoute';
+
 // import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
 
-const CurrentPath = () => {
-  const location = useLocation(); // useLocation must be inside a component
-  const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem('user'))?.user || null;
-  //  console.log(requirementId);
-  const userId = user?.id;
+// const CurrentPath = () => {
+//   const location = useLocation(); // useLocation must be inside a component
+//   const dispatch = useDispatch();
+//   const user = JSON.parse(localStorage.getItem('user'))?.user || null;
+//   //  console.log(requirementId);
+//   const userId = user?.id;
 
 
-  useEffect(() => {
-    const path = location.pathname;
-    // console.log("Current Path:", location.pathname);
-    const data = {
-      last_visited_page: path,
-      user_id: userId
-    }
-    const response = dispatch(lastVisitedPage(data));
-    // console.log(response);
-  }, [location]);
-  return null; // This component does not need to render anything
-};
-
+//   useEffect(() => {
+//     const path = location.pathname;
+//     // console.log("Current Path:", location.pathname);
+//     const data = {
+//       last_visited_page: path,
+//       user_id: userId
+//     }
+//     const response = dispatch(lastVisitedPage(data));
+//     // console.log(response);
+//   }, [location]);
+//   return null; // This component does not need to render anything
+// };
 function App() {
   return (
+
     <Router>
-      <CurrentPath /> {/* Ensure this is rendered inside JSX */}
+      {/* <CurrentPath /> Ensure this is rendered inside JSX */}
       <Routes>
         {/* Public routes */}
-        <Route path="/consumer/login" element={<LoginC />} />
-        <Route path="/generator/login" element={<LoginG />} />
+        {/* <Route path="/consumer/login" element={<LoginC />} />
+        <Route path="/generator/login" element={<LoginG />} /> */}
 
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
+        <Route element={< ProtectedRoute/>}>
         <Route path="email/:token" element={<EmailVerification />} />
         <Route path="what-we-offer" element={<WhatWeOffer />} />
 
@@ -124,12 +127,12 @@ function App() {
           <Route path="transaction-page" element={<TransactionMainPage />} />
           <Route path="subscription-plan" element={<SubscriptionPlans />} />
           <Route path="agreements" element={<Agreements />} />
+          <Route path="chat-page" element={<ChatWithExpert />} />
 
           {/* Consumer Routes */}
           <Route path="/consumer/*">
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="matching-ipp" element={<MatchingIPP />} />
-            <Route path="chat-page" element={<ChatWithExpert />} />
             <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
             <Route path="consumption-pattern" element={<CombinationPatternC />} />
             <Route path="project-details" element={<IppProjectDetails />} />
@@ -154,7 +157,6 @@ function App() {
             {/* <Route path="subscription-plan" element={<SubscriptionPlanG />} /> */}
             <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
             <Route path="update-profile-details" element={<UpdateProfileDetails />} />
-            <Route path="chat-page" element={<ChatWithExpert />} />
             <Route path="combination-pattern" element={<CombinationPattern />} />
             <Route path="requested-ipp-gen" element={<RequestedIPPOfGen />} />
             <Route path="consumer-requests" element={<OfferRecievedFromCons />} />
@@ -169,6 +171,7 @@ function App() {
             <Route path="invoice" element={<InvoicePage />} />
             <Route path="status" element={<StatusApproval />} />
           </Route>
+        </Route>
         </Route>
 
 

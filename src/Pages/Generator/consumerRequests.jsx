@@ -48,7 +48,7 @@ const ConsumerRequests = () => {
       ...prevValues,
       [key]: newTariff,
     }));
-    console.log(`Updated Tariff for IPP ${key}:`, newTariff);
+    // console.log(`Updated Tariff for IPP ${key}:`, newTariff);
   };
 
   return (

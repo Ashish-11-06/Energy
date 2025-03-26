@@ -7,7 +7,7 @@ export const addScada = createAsyncThunk(
   async ({ id, file }, { rejectWithValue }) => {
     try {
       const response = await uploadScadaFileApi.addScada({ id, file });
-      console.log('response', response);
+      // console.log('response', response);
 
       if (response && response.data) {
         if (response.data.error) {

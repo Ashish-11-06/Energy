@@ -8,8 +8,7 @@ import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice
 import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import { Calendar as AntdCalendar } from 'antd'; // Import Ant Design Calendar
 import './Planning.css';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { fetchPlanningData } from '../../Redux/slices/consumer/planningSlice';
@@ -28,7 +27,7 @@ const Planning = () => {
   const [demand, setDemand] = useState("");
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
   const [consumerRequirement, setConsumerRequirement] = useState([]);
-  const [tableDemandData, setTableDemandData] = useState([]);
+  const [tableDemandData, setTableDemandData] = useState([]); // Ensure it's initialized as an empty array
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -92,15 +91,34 @@ const [requirementId, setRequirementId] = useState([]);
 
   const getListData = (date) => {
     const dateStr = dayjs(date).format('YYYY-MM-DD');
+    if (!Array.isArray(tableDemandData)) return []; // Ensure tableDemandData is an array
     return tableDemandData.filter(item => item.date === dateStr);
   };
 
-  const tileContent = ({ date }) => {
+  const tileContent = (value) => {
+    // console.log('date clicked');
+    
+    const date = value.toDate();
     const listData = getListData(date);
     const isToday = dayjs(date).isSame(dayjs(), 'day');
-
+    const isPastDate = dayjs(date).isBefore(dayjs(), 'day');
+  
     return (
-      <div style={{ position: 'relative', textAlign: 'center', marginTop: '15px' }}>
+      <div
+        style={{
+          position: 'relative',
+          textAlign: 'center',
+          marginTop: '15px',
+          cursor: isPastDate ? 'not-allowed' : 'pointer',
+          opacity: isPastDate ? 0.5 : 1,
+        }}
+        onClick={() => {
+          if (!isPastDate) {
+            setSelectedDate(dayjs(date)); // Set the selected date
+            setIsModalVisible(true); // Open the "Select Technology" modal
+          }
+        }}
+      >
         {isToday && (
           <div
             style={{
@@ -117,7 +135,10 @@ const [requirementId, setRequirementId] = useState([]);
           </div>
         )}
         {listData.map(item => (
-          <Tooltip style={{ marginTop: '3%' }} key={item.id} title={`Demand: ${item.demand} MWh, Solar Price: ${item.price.Solar} INR/MWh, Non-Solar Price: ${item.price["Non-Solar"]} INR/MWh`}>
+          <Tooltip
+            key={item.id}
+            title={`Demand: ${item.demand} MWh, Solar Price: ${item.price.Solar} INR/MWh, Non-Solar Price: ${item.price["Non-Solar"]} INR/MWh`}
+          >
             <div
               style={{
                 backgroundColor: '#669800',
@@ -129,7 +150,7 @@ const [requirementId, setRequirementId] = useState([]);
                 bottom: '3px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                marginTop: '10px'
+                marginTop: '10px',
               }}
             />
           </Tooltip>
@@ -211,6 +232,11 @@ const [requirementId, setRequirementId] = useState([]);
   };
 
   // console.log(selectedUnitDetails);
+
+  const handleDateClick = (date) => {
+    setSelectedDate(date.format("YYYY-MM-DD")); // Store selected date
+    setIsModalVisible(true); // Open modal
+  };
   
   const columns = [
     { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 },
@@ -311,7 +337,22 @@ const [requirementId, setRequirementId] = useState([]);
             <Spin tip="Loading..." />
           </div>
         ) : !showTable ? (
+          
           <Col span={24}>
+             <Form.Item label="Select Consumption Unit" style={{ fontSize: '24px' }}>
+          <Select
+            value={selectedState || undefined}
+            onChange={handleStateChange}
+            style={{ width: "80%", borderColor: "#669800" }}
+            placeholder="Select Consumption Unit"
+          >
+            {consumerRequirement.map(item => (
+              <Select.Option key={item.id} value={item.state}>
+                {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
             <Card style={{ width: '90%', margin: 'auto', padding: '10px', backgroundColor: '#fff' }}> {/* Updated card background color */}
               <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
                 <Button icon={<LeftOutlined />} onClick={handlePrevMonth} />
@@ -320,11 +361,14 @@ const [requirementId, setRequirementId] = useState([]);
                   <Button icon={<RightOutlined />} onClick={handleNextMonth} />
                 </Tooltip>
               </Row>
-              <Calendar
-                value={currentMonth}
-                onActiveStartDateChange={({ activeStartDate }) => setCurrentMonth(activeStartDate)}
-                tileContent={tileContent}
-                className="custom-calendar"
+             
+              <AntdCalendar
+                value={dayjs(currentMonth)}
+                onPanelChange={(date) => setCurrentMonth(date.toDate())}
+                onSelect={handleDateClick}
+                
+                cellRender={(value) => tileContent(value)}
+                style={{ '--cell-size': '20px'}} // Add custom CSS variable for cell size
               />
             </Card>
           </Col>
@@ -376,7 +420,7 @@ const [requirementId, setRequirementId] = useState([]);
           )
         }
         
-        <Form.Item label="Select Date Interval" style={{ fontSize: '24px' }}>
+        {/* <Form.Item label="Select Date Interval" style={{ fontSize: '24px' }}>
           <Select
             value={selectedInterval || undefined}
             onChange={handleDateIntervalChange}
@@ -386,7 +430,7 @@ const [requirementId, setRequirementId] = useState([]);
             <Select.Option key="next15days" value="next15days">Next 15 Days</Select.Option>
             <Select.Option key="next30days" value="next30days">Next 30 Days</Select.Option>
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         {(selectedInterval === 'next15days' || selectedInterval === 'next30days') && (
           <>
             <Form.Item label="Select Start Date" style={{ fontSize: '16px', fontWeight: '600' }}>
@@ -461,7 +505,7 @@ const [requirementId, setRequirementId] = useState([]);
                        value={price["Solar"] || ""}
                        min={0}
                        onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
-                       style={{ marginTop: "5px", width: "100%" }}
+                       style={{ marginTop: "5px", width: "100%",marginBottom:'20px' }}
                      />
                    </div>
                  )}
@@ -475,11 +519,31 @@ const [requirementId, setRequirementId] = useState([]);
                        value={price["Non-Solar"] || ""}
                        min={0}
                        onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
-                       style={{ marginTop: "5px", width: "100%" }}
+                       style={{ marginTop: "5px", width: "100%",marginBottom:'20px' }}
                      />
                    </div>
                  )}
                </div>
+               {/* <Form.Item label="Enter Demand (MWh)" style={{ fontSize: '16px', fontWeight: '600',marginTop:'10px' }}>
+                <br /> */}
+                <label style={{ fontSize: '14px', fontWeight: '700',marginTop:'3s0px' }}>Enter Demand (MWh):</label>
+          <Input
+            type="number"
+            placeholder="Enter demand"
+            min={0}
+            style={{
+              width: "100%",
+              padding: "5px",
+              fontSize: "16px",
+              borderRadius: "5px",
+              border: "1px solid #ccc"
+            }}
+            onChange={(e) => {
+              setDemand(e.target.value);
+              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
+            }}
+          />
+        {/* </Form.Item> */}
       </Modal>
       <Modal
         title="Consumption Unit Details"

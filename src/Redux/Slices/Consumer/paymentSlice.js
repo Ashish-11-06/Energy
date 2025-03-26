@@ -22,7 +22,7 @@ export const completeRazorpayPayment = createAsyncThunk(
       const response = await paymentAPI.completePayment(paymentData);
       return response.data;
     } catch (error) {
-      console.log(error.response?.data?.error?.non_field_errors);
+      // console.log(error.response?.data?.error?.non_field_errors);
       
       return rejectWithValue(error.response?.data?.message || error.message);
     }

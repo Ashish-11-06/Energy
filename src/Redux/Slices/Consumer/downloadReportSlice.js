@@ -7,7 +7,7 @@ export const fetchReport = createAsyncThunk(
   async ({ requirementId, userId }) => {
     try {
       const response = await downloadReportApi.report({ requirementId, userId }); // Pass object correctly
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching report:", error);

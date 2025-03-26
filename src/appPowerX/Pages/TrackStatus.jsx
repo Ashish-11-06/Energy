@@ -38,6 +38,10 @@ const TrackStatusP = () => {
             dataIndex: 'demand_date',
         },
         {
+            title:'Consumption Unit Details',
+            dataIndex: 'consumption_unit_details',
+        },
+        {
             title: 'Status',
             dataIndex: 'status',
         },
@@ -46,10 +50,10 @@ const TrackStatusP = () => {
     const columns = user_category === 'Consumer' ? conColumns : genColumns;
 
     const trackData=[
-        { demand: 200,demand_date:'15-03-2025', status: 'draft ' },
-        { demand: 300,demand_date:'16-03-2025', status: 'submitted to trader ' },
-        { demand: 400,demand_date:'17-03-2025', status: 'trade executed  ' },
-        { demand: 100,demand_date:'18-03-2025', status: 'cancel ' },
+        { demand: 200,demand_date:'15-03-2025', status: 'draft ',consumption_unit_details:'State: Maharashtra, Industry: energy, Contracted Demand: 80 MWh, Consumption Unit: ewr' },
+        { demand: 300,demand_date:'16-03-2025', status: 'submitted to trader ',consumption_unit_details:'State: Madhya Pradesh, Industry: energy, Contracted Demand: 180 MWh, Consumption Unit: ewr' },
+        { demand: 400,demand_date:'17-03-2025', status: 'trade executed  ',consumption_unit_details:'State: Maharashtra, Industry: energy, Contracted Demand: 100 MWh, Consumption Unit: pune' },
+        { demand: 100,demand_date:'18-03-2025', status: 'trade failed ' ,consumption_unit_details:'State: Madhya Pradesh, Industry: energy, Contracted Demand: 150 MWh, Consumption Unit: ewr'},
     ];
 
     return (

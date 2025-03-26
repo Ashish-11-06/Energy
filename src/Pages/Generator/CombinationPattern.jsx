@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-catch */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -11,6 +13,7 @@ import {
   Button,
   Card,
   Tooltip,
+  Modal,
 } from "antd";
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
@@ -37,6 +40,8 @@ const CombinationPattern = () => {
   const [fetchingCombinations, setFetchingCombinations] = useState(false);
   const [progress, setProgress] = useState(0);
   const [combinationData, setCombinationData] = useState([]);
+  const [tryREreplacement,setTryREreplacement]=useState(false);
+  const [consumerDetails,setConsumerDetails]=useState('');
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -66,6 +71,7 @@ const CombinationPattern = () => {
       return;
     }
 
+
     // useEffect(() => {
     //   if(!isTableLoading){
     //     window.scrollTo({
@@ -83,10 +89,10 @@ const CombinationPattern = () => {
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
         const batteryCapacity =
           combination["Optimal Battery Capacity (MW)"] || 0;
-        console.log("format", combination);
+        // console.log("format", combination);
         const annual_demand_met = combination["Annual Demand Met"] || 0;
-        console.log(annual_demand_met);
-        console.log("status", combination.terms_sheet_sent);
+        // console.log(annual_demand_met);
+        // console.log("status", combination.terms_sheet_sent);
 
         return {
           key: index + 1,
@@ -138,10 +144,14 @@ const CombinationPattern = () => {
     );
 
     // console.log('tech',tech);
-    console.log("formatting com");
+    // console.log("formatting com");
     setDataSource(formattedCombinations);
   };
-
+useEffect(()=> {
+if(dataSource?.length<=0) {
+  setTryREreplacement(true);
+}
+},[dataSource])
   // Redux selectors
   const consumptionPatterns = useSelector(
     (state) => state.consumptionPattern?.patterns || []
@@ -201,7 +211,8 @@ const CombinationPattern = () => {
               fetchConsumptionPattern(selectedDemandId)
             );
             console.log(response);
-            console.log(selectedDemandId);
+            setConsumerDetails(response.payload?.consumer_details)
+            // console.log(selectedDemandId);
           }
         } catch (error) {
           message.error("Failed to fetch consumption patterns.");
@@ -259,6 +270,7 @@ const CombinationPattern = () => {
       } catch (error) {
         console.error("Error in loadCombinations:", error);
         message.error("Failed to fetch combinations.");
+        setTryREreplacement(true);
         setIsTableLoading(false);
         setFetchingCombinations(false);
       }
@@ -313,7 +325,7 @@ const CombinationPattern = () => {
 
   const handleRowClick = (record) => {
     setSelectedRow(record); // Record comes from the latest dataSource
-    console.log(record);
+    // console.log(record);
 
     setIsIPPModalVisible(true);
   };
@@ -360,7 +372,7 @@ const CombinationPattern = () => {
           fetchOptimizedCombinations(modalData)
         ).unwrap();
 
-        console.log(combinations, "combinations");
+        // console.log(combinations, "combinations");
 
         // Reformat combinations based on the latest slider value
         formatAndSetCombinations(combinations, sliderValue);
@@ -764,6 +776,7 @@ const CombinationPattern = () => {
                 rowClassName={() => "custom-row"} // Add a custom row class
               />
             ) : (
+              <>
               <div
                 style={{
                   padding: "20px",
@@ -779,6 +792,10 @@ const CombinationPattern = () => {
                 No optimized combinations available at the moment. Please try
                 again later.
               </div>
+              <Modal title='Please try again'>
+                
+                </Modal>
+              </>
             )}
           </Card>
         </Col>
@@ -790,6 +807,7 @@ const CombinationPattern = () => {
             // reReplacement={sliderValue} // Pass the latest slider value
             ipp={selectedRow}
             combination={combinationData}
+            consumerDetails={consumerDetails}
             // combination={combinationData}         // Ensure selectedRow is updated
             reIndex={re_index} // Pass re_index to the modal
             onClose={handleIPPCancel}
@@ -807,7 +825,15 @@ const CombinationPattern = () => {
             type="generator"
           />
         )}
+      {/* <Modal 
+  open={tryREreplacement}
+  onOk={() => setTryREreplacement(false)}
+  cancelButtonProps={{ style: { display: "none" } }} // Hides cancel button
+>
+  Try for lower RE Replacement
+</Modal> */}
       </Row>
+
     </div>
   );
 };

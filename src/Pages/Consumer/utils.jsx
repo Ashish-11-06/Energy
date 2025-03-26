@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 import html2pdf from 'html2pdf.js'; // Import html2pdf.js
 import EXGLogo from '../../../src/assets/EXG_green.png';
 
 export const generatePDF = (pdfElement, requirementId, reportResponse) => {
-  console.log(reportResponse);
+  // console.log(reportResponse);
   const options = {
     margin: [0.5, 0.5],
     filename: `Annual_Savings_Report_${requirementId || 'default'}.pdf`,
@@ -15,7 +16,7 @@ export const generatePDF = (pdfElement, requirementId, reportResponse) => {
 };
 
 export const createPdfContent = (annualSavingResponse) => {
-  console.log(annualSavingResponse);
+  // console.log(annualSavingResponse);
 
   return `
   <body style="font-family: 'Inter', sans-serif; background-color: #F5F6FB; margin: 0; padding: 0;">

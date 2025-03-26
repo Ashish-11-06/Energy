@@ -70,7 +70,7 @@ const OfferRecievedFromCons = () => {
     return statusMatch && searchMatch;
   });
 
-  console.log(JSON.stringify(modalContent, null, 2));
+  // console.log(JSON.stringify(modalContent, null, 2));
 
 
   const columns = [

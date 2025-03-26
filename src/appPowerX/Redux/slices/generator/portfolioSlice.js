@@ -69,7 +69,7 @@ const portfolioSlice = createSlice({
 
         // Add the new project to the respective energy type array
         state.projects[energy_type].push(newProject);
-        console.log("Updated projects state:", state.projects); // Log the updated state after adding the project
+        // console.log("Updated projects state:", state.projects); // Log the updated state after adding the project
       })
       .addCase(addProject.rejected, (state, action) => {
         state.status = 'failed';
@@ -85,7 +85,7 @@ const portfolioSlice = createSlice({
         const { energy_type } = action.payload;
         const updatedProject = action.payload;
 
-        console.log("Updating project:", updatedProject); // Log the updated project
+        // console.log("Updating project:", updatedProject); // Log the updated project
 
         const index = state.projects[energy_type]?.findIndex(
           (project) => project.id === updatedProject.id
@@ -94,7 +94,7 @@ const portfolioSlice = createSlice({
           state.projects[energy_type][index] = updatedProject;
         }
 
-        console.log("Updated projects state:", state.projects); // Log the state after updating
+        // console.log("Updated projects state:", state.projects); // Log the state after updating
       })
       .addCase(updateProject.rejected, (state, action) => {
         state.status = 'failed';
@@ -109,14 +109,14 @@ const portfolioSlice = createSlice({
         state.status = 'succeeded';
         const { energy_type } = action.payload;
 
-        console.log("Deleting project with ID:", action.payload.id); // Log the project being deleted
+        // console.log("Deleting project with ID:", action.payload.id); // Log the project being deleted
 
         // Filter out the project from the respective energy type array
         state.projects[energy_type] = state.projects[energy_type].filter(
           (project) => project.id !== action.payload.id
         );
 
-        console.log("Updated projects state:", state.projects); // Log the state after deleting
+        // console.log("Updated projects state:", state.projects); // Log the state after deleting
       })
       .addCase(deleteProject.rejected, (state, action) => {
         state.status = 'failed';

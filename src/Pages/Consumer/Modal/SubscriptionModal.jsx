@@ -8,7 +8,7 @@ const { Title, Text } = Typography;
 
 const SubscriptionModal = ({ visible, plan, onClose }) => {
   const dispatch = useDispatch();
-console.log(plan);
+// console.log(plan);
 
   const handlePayment = async () => {
     try {

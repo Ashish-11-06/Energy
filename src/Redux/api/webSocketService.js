@@ -1,6 +1,6 @@
 let socket = null; // Explicitly initialize socket as null
 
-const SOCKET_URL = 'ws://15.207.188.206:8000';
+const SOCKET_URL = 'ws://192.168.1.71:8001';
 const SOCKET_PATH = '/api/energy/ws/negotiation/';
 const FULL_URL = SOCKET_URL + SOCKET_PATH;
 
@@ -26,20 +26,20 @@ const FULL_URL = SOCKET_URL + SOCKET_PATH;
     
         // Handling incoming messages
         socket.onmessage = (event) => {
-            console.log('📩 Raw message received:', event);
+            // console.log('📩 Raw message received:', event);
     
             try {
                 const data = event.data; // Parse the JSON message
-                console.log('📩 Parsed message from server:', data);
+                // console.log('📩 Parsed message from server:', data);
     
                 // Check the type of the message and handle it accordingly
                 if (data.type === "previous_offers") {
-                    console.log('Received previous offers:', data.offers);
+                    // console.log('Received previous offers:', data.offers);
                 } else {
-                    console.log('Received unexpected message:', data);
+                    // console.log('Received unexpected message:', data);
                 }
             } catch (error) {
-                console.error('❌ Error parsing message:', error);
+                // console.error('❌ Error parsing message:', error);
             }
         };
         return socket;
@@ -53,11 +53,11 @@ const FULL_URL = SOCKET_URL + SOCKET_PATH;
     
         // Using addEventListener to subscribe to events
         socket.addEventListener("message", (event) => {
-            console.log('📩 Message event received:', event);
+            // console.log('📩 Message event received:', event);
     
             try {
                 const data = event.data; // Parse the JSON message
-                console.log('📩 Parsed message:', data);
+                // console.log('📩 Parsed message:', data);
     
                 if (data.event === event) {
                     callback(data.payload);
@@ -74,7 +74,7 @@ export const sendEvent = (event) => {
         console.error('Socket not initialized. Call connectWebSocket first.');
         return;
     }
-console.log(event);
+// console.log(event);
     // const message = {
     //     event: event,
     //     payload: data
@@ -87,7 +87,7 @@ console.log(event);
 export const disconnectWebSocket = () => {
     if (socket) {
         socket.close();
-        console.log('🔌 WebSocket connection closed');
+        // console.log('🔌 WebSocket connection closed');
     } else {
         console.warn('⚠️ Socket not initialized or already disconnected.');
     }

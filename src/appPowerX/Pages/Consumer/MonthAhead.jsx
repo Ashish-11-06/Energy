@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Row, Col, Card,Spin } from 'antd';
+import { Button, Table, Row, Col, Card,Spin, message } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -49,12 +49,12 @@ const [mcvLowestDate,setMcvLowestDate]=useState('');
           setMcvHighestDate(moment(responseData.overall_stats?.mcv_prediction?.highest_date).format('DD-MM-YYYY'));
           setMcvLowestDate(moment(responseData.overall_stats?.mcv_prediction?.lowest_date).format('DD-MM-YYYY'));
 
-          console.log(responseData.overall_stats?.mcp_prediction?.highest_date);
+          // console.log(responseData.overall_stats?.mcp_prediction?.highest_date);
           
           // setMcpLowestDate(responseData.overall_stats?.mcp_prediction?.lowest_date);
-          console.log("MCV Data:", mcvData);
-          console.log("MCP Data:", mcpData);
-          console.log("Labels:", labels);
+          // console.log("MCV Data:", mcvData);
+          // console.log("MCP Data:", mcpData);
+          // console.log("Labels:", labels);
 
           setLineData({
             labels,
@@ -103,7 +103,8 @@ const [mcvLowestDate,setMcvLowestDate]=useState('');
           setLineData({ labels: [], datasets: [] });
         }
       } catch (error) {
-        console.log("Error fetching data:", error);
+        message.error(error);
+        // console.log("Error fetching data:", error);
       }
     };
 

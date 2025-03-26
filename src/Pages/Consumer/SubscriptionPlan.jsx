@@ -61,8 +61,20 @@ const SubscriptionPlans = () => {
   );
   const alreadySubscribed = subscription?.subscription_type;
 
-  // console.log(subscription.subscription_type);
+  const time_remaining = alreadySubscribed === 'FREE' ? (() => {
+    const endDate = new Date(subscription?.end_date);
+    const now = new Date();
+  
+    const diffMs = endDate - now; // Difference in milliseconds
+    if (diffMs <= 0) return "Expired"; // Handle expiration
+  
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  
+    return `${days} days, ${hours} hours`;
+  })() : ' ';
 
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userData = useState(JSON.parse(localStorage.getItem("user")).user);
@@ -72,12 +84,12 @@ const SubscriptionPlans = () => {
   const [orderId, setOrderId] = useState(null);
 
 const companyName=userData[0]?.company;
-console.log(companyName);
+// console.log(companyName);
 
 
   const handleSelectPlan = (id, plan) => {
     setSelectedPlan(plan);
-    console.log(selectedPlan);
+    // console.log(selectedPlan);
 
     // const currentDate = moment().format("YYYY-MM-DD");
     // setSelectedPlanId(id);
@@ -99,7 +111,7 @@ console.log(companyName);
       try {
         const response = await dispatch(fetchPerformaById(userId)).unwrap();
         setPerformaResponse(response);
-        console.log(response);
+        // console.log(response);
 
         // setCompanyName(response.company_name);
         // setGstinNumber(response.gst_number);
@@ -141,7 +153,7 @@ console.log(companyName);
   }, [dispatch]);
 
   const handleGenerateProforma = async (values) => {
-    console.log(values);
+    // console.log(values);
     const performaData = {
       company_name: values.companyName,
       company_address: values.companyAddress,
@@ -304,7 +316,7 @@ console.log(companyName);
         {loading ? (
           <Spin size="large" />
         ) : (
-          subscriptionPlan.map((plan) => (
+          subscriptionPlan?.map((plan) => (
             <Col key={plan.id} xs={24} sm={8} md={8}>
               <Card
                 hoverable
@@ -366,6 +378,11 @@ console.log(companyName);
                 <Text className="price">
                   {plan.price} <p style={{ fontSize: "18px" }}>INR</p>
                 </Text>
+                {plan.subscription_type === "FREE" && alreadySubscribed === "FREE" ? (
+                  <p style={{fontSize:'12px'}}>Time Remaining: <span style={{color:'red'}}>{time_remaining}</span> </p>
+                ) : (
+                  null
+                )}
                 <p>
                   <strong>Duration:</strong> {plan.duration_in_days} days
                 </p>
@@ -493,6 +510,7 @@ console.log(companyName);
                   )}
                   {plan.subscription_type === "FREE" && (
                     <>
+                   
                       <li
                         style={{
                           display: "flex",

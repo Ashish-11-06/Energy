@@ -49,18 +49,20 @@ const TransactionWindowgen = () => {
 
   const navigate = useNavigate();
 
-  // const { state } = location;  // this should contain your passed record
+  //  const { state } = location;  // this should contain your passed record
 
   // console.log(state);  // Check if the state is available here
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
+  // console.log(record);
+  
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const loggedInUserId = loggedInUser?.user?.id;
-  console.log("user",loggedInUser)
-  console.log("user id ",loggedInUserId)
+  // console.log("user",loggedInUser)
+  // console.log("user id ",loggedInUserId)
 
 
   // const t = 13;
@@ -68,25 +70,25 @@ const TransactionWindowgen = () => {
   useEffect(() => {
     // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
     const newSocket = connectWebSocket(user.id, record.tariff_id);
-    console.log(newSocket);
+    // console.log(newSocket);
     
     setSocket(newSocket);
 
-    console.log(newSocket, socket);
+    // console.log(newSocket, socket);
 
     const onMessageHandler = (event) => {
-      console.log("📩 event jkjkjkjkjkjkjkjkjkj:", event);
+      // console.log("📩 event jkjkjkjkjkjkjkjkjkj:", event);
       try {
 
         const data = JSON.parse(event.data); // Parse the JSON message
-        console.log("ll", data);
+        // console.log("ll", data);
 
         if (data.offers) {
-          console.log("data.offers", data.offers);
+          // console.log("data.offers", data.offers);
           setMessages([data.offers]); // Append new message to state
         } else {
           const newOffers = data; // Assuming data is the new offers object
-          console.log("newOffers", newOffers);
+          // console.log("newOffers", newOffers);
           setMessages(prevMessages => {
             const updatedMessages = [...prevMessages]; // Start with a copy of the previous messages
 
@@ -135,9 +137,9 @@ const TransactionWindowgen = () => {
       // Show confirmation modal
       Modal.confirm({
         title: "Confirm Tariff Value",
-        content: `Are you sure you want to send the tariff value: ${tariffValue} INR/KWH?`,
+        content: `Are you sure you want to send the tariff value: ${tariffValue} INR/kWh?`,
         onOk: () => {
-          console.log("Sending Tariff Value: ", tariffValue);
+          // console.log("Sending Tariff Value: ", tariffValue);
           // Send the tariff value after confirmation
           const messageToSend = {
             updated_tariff: tariffValue,
@@ -145,7 +147,7 @@ const TransactionWindowgen = () => {
           sendEvent(messageToSend);
         },
         onCancel: () => {
-          console.log("Tariff value sending cancelled");
+          // console.log("Tariff value sending cancelled");
         },
       });
     } else {
@@ -278,6 +280,17 @@ const TransactionWindowgen = () => {
                             <Countdown title="Time Remaining" value={deadline} valueStyle={{ color: 'red' }}/>
                           </span>
                         </Row> */}
+                         <hr />
+
+<p style={{fontWeight:'bold',fontSize:'16px'}}>Combination Details</p>
+
+<Row gutter={[16, 16]}>
+
+<Col span={8}><strong>Solar Capacity (MW): </strong>{record.c_optimal_solar_capacity}</Col>
+<Col span={8}><strong>Wind Capacity: </strong>{record.c_optimal_wind_capacity}</Col>
+<Col span={8}><strong>ESS Capacity: </strong>{record.c_optimal_battery_capacity}</Col>
+</Row>
+
                         <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
                         <Col>
                           <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div> 
@@ -313,7 +326,7 @@ const TransactionWindowgen = () => {
                 .map((messageObject, index) =>
                   Object.keys(messageObject).map((msgKey) => {
                     const msg = messageObject[msgKey];
-                    console.log("Generator Username:", msg.generator_username);
+                    // console.log("Generator Username:", msg.generator_username);
                     if (msg && typeof msg === "object" && msg.generator_id === loggedInUserId) {
                       return (
                         <Card
@@ -392,9 +405,22 @@ const TransactionWindowgen = () => {
                             <Text strong>
                               IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span>
                             </Text>
-                            <Text style={{ margin: '150px' }} strong>
+                            {/* <Text style={{ margin: '150px' }} strong>
                               Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span>
-                            </Text>
+                            </Text> */}
+
+                            <div>
+                              <Text strong>
+                                Offer Tariff:{" "}
+                                <span style={{ fontSize: "larger", color: "#9A8406" }}>
+                                  {msg.updated_tariff} INR/kWh{" "}
+                                </span>
+                              </Text>
+                              <Text type={isIncrease ? "success" : "danger"} style={{ marginLeft: "8px" }}>
+                                {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
+                              </Text>
+                            </div>
+
                             <Text strong>
                               Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
                             </Text>
@@ -402,7 +428,7 @@ const TransactionWindowgen = () => {
                         </Card>
                       );
                     } else {
-                      console.warn("Invalid message format:", messageObject);
+                      // console.warn("Invalid message format:", messageObject);
                       return null; // Return null if the message format is invalid
                     }
                   });

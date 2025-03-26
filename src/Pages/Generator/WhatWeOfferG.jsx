@@ -74,7 +74,7 @@ const WhatWeOfferG = () => {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Card
                             hoverable
-                            title="Total Demands"
+                            title="Total Capacity"
                             bordered={false}
                             style={{
                                 width: '100%',

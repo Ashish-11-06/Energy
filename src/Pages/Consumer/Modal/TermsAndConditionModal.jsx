@@ -112,7 +112,7 @@ const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
               checked={isChecked}
               onChange={handleCheckboxChange}
             />
-            <span style={{ marginRight: "10px" }}>
+            <span style={{ marginRight: "10px",color:'rgb(154, 132, 6)' }}>
               {" "}
               Accept terms and conditions
             </span>

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Button, Select, Table, Row, Col, Card, Radio } from 'antd';
+import { Button, Select, Table, Row, Col, Card, Radio, message } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -42,12 +42,12 @@ if(selectedForecast === 'day'){
 
 const dummyAccuracyData = [
   {
-    metric: "MCP",
+    metric: "Accuracy",
     accuracy: "80%",
     errors: "20%"
   },
   {
-    metric: "MCV",
+    metric: "Errors",
     accuracy: "90%",
     errors: "10%"
   }
@@ -58,7 +58,7 @@ const dummyAccuracyData = [
       try {
         if (selectedForecast === 'currentDay') {
           const data = await dispatch(fetchModelStatistics());
-          console.log(data.payload);
+          // console.log(data.payload);
           if (data?.payload?.date) {
             const dateStr = data.payload.date;
             const date = new Date(dateStr);
@@ -75,7 +75,7 @@ const dummyAccuracyData = [
           setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
         } else if (selectedForecast === 'next30Day') {
           const data = await dispatch(fetchModelStatisticsMonth());
-          console.log(data.payload);
+          // console.log(data.payload);
           if (data?.payload?.date) {
             const dateStr = data.payload.date;
             const date = new Date(dateStr);
@@ -92,7 +92,8 @@ const dummyAccuracyData = [
           setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
         }
       } catch (error) {
-        console.log(error);
+        message.error(error);
+        // console.log(error);
       }
     };
     fetchData();
@@ -107,7 +108,7 @@ const dummyAccuracyData = [
     labels: Array.from({ length: 96 }, (_, i) => i + 1), // Generates labels [1, 2, 3, ..., 96]
     datasets: [
       {
-        label: "Past MCV Data",
+        label: "Forecast MCV Data",
         data: mcvForeCastedData.length ? mcvForeCastedData : Array(96).fill(null),
         borderColor: "blue",
         fill: false,
@@ -128,7 +129,7 @@ const dummyAccuracyData = [
     labels: Array.from({ length: 96 }, (_, i) => i + 1),
     datasets: [
       {
-        label: 'Past MCP Data',
+        label: 'Forecast MCP Data',
         data: foreCastedData.length ? foreCastedData : Array(96).fill(null),
         borderColor: 'green',
         fill: false,
@@ -250,8 +251,8 @@ const dummyAccuracyData = [
 
   const columns = [
     { title: 'Details', dataIndex: 'metric', key: 'metric' , width: '30%'},
-    { title: 'MCP', dataIndex: 'mcp', key: 'mcp' },
-    { title: 'MCV', dataIndex: 'mcv', key: 'mcv' },
+    { title: 'MCP (INR/MWh)', dataIndex: 'mcp', key: 'mcp' },
+    { title: 'MCV (MWh)', dataIndex: 'mcv', key: 'mcv' },
   ];
 
   const dataSource = [
@@ -280,7 +281,7 @@ const dummyAccuracyData = [
       {/* Dropdown for Forecast Selection */}
       <label htmlFor="" style={{fontWeight:'600',marginRight:'10px',fontSize:'18px'}}>Select Forecast</label>
       <Select
-        defaultValue="day"
+        defaultValue="currentDay"
         style={{ width: 200, marginBottom: '20px', marginRight: '20px' }}
         onChange={handleForecastChange}
       >
@@ -409,7 +410,7 @@ const dummyAccuracyData = [
       )}
 
       {/* Table Display */}
-      <Table columns={columns} dataSource={dummyAccuracyData} pagination={false} bordered style={{ marginTop: '20px' }} />
+      {/* <Table columns={columns} dataSource={dummyAccuracyData} pagination={false} bordered style={{ marginTop: '20px' }} /> */}
 
       {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>

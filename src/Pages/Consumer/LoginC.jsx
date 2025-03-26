@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { Form, Input, Button, Modal, message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +16,7 @@ const LoginC = ({user_category}) => {
   const [otpVerified, setOtpVerified] = useState(false);
   const [emailForReset, setEmailForReset] = useState("");
   // const [isNewUser,setNewUser]=useState(false);
-console.log('user_category',user_category);
+// console.log('user_category',user_category);
 
 
   const navigate = useNavigate(); 
@@ -66,7 +67,7 @@ console.log('user_category',user_category);
     setLoading(true);
     try {
       const response = await dispatch(loginUser(credentials)).unwrap();
-      console.log('response', response.user.is_new_user);
+      // console.log('response', response.user.is_new_user);
       const new_user = response.user.is_new_user;
 
       setLoading(false);
@@ -86,7 +87,7 @@ console.log('user_category',user_category);
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    // console.log("Failed:", errorInfo);
   };
 
   return (

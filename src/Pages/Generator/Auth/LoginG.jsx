@@ -41,7 +41,7 @@ const LoginG = () => {
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
+    // console.log('Failed:', errorInfo);
     message.error('Please check your inputs and try again.');
   };
 
@@ -54,7 +54,7 @@ const LoginG = () => {
   };
 
   const handleCreate = (values) => {
-    console.log('Received values of form: ', values);
+    // console.log('Received values of form: ', values);
     setIsModalVisible(false);
   };
 

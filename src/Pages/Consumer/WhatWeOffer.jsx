@@ -31,7 +31,7 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
         const response = await whatWeOffer.whatWeOffer();
         setData(response.data); // Set the fetched data
         setTargetAmount(response.data.amount_saved_annually); // Set targetAmount for animation
-        console.log(response);
+        // console.log(response);
       } catch (error) {
         console.error('Failed to fetch data from the server.', error);
         message.error('Failed to fetch data from the server.');
@@ -188,7 +188,7 @@ const [targetAmount, setTargetAmount] = useState(0);  // State to hold the targe
               <Col xs={24} sm={12} md={8} lg={8}>
                 <Card
                   hoverable
-                  title="Total Demands"
+                  title="Total Capacity"
                   bordered={false}
                   style={{
                     width: '100%',

@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Typography, Row, Col, Spin, Modal } from 'antd';
+import { Table, Button, Typography, Row, Col, Spin, Modal, Tooltip } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { fetchTransactions } from '../../Redux/Slices/Transaction/transactionWindowSlice';
 import { useDispatch } from 'react-redux';
@@ -17,15 +18,27 @@ const TransactionMainPage = () => {
   const [modalContent, setModalContent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isRejected, setIsRejected] = useState(false);
+  const [consumerDetails,setConsumerDetails]=useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+const openWindow=new Date();
+const openWindowTime = moment(openWindow).format('HH:mm:ss');
+const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
+  moment('10:00:00', 'HH:mm:ss'),
+  moment('11:00:00', 'HH:mm:ss'),
+  null,
+  '[)'
+);
+console.log(openWindowTime, isWithinTimeWindow);
+
 
   const user = JSON.parse(localStorage.getItem('user')).user;
   const userId = user.id;
 
   const showRequirementModal = (record) => {
     setRequirementContent(record);
-    // console.log(RequirementContent);
+    console.log(RequirementContent);
 
     setIsRequirementModalVisible(true);
   };
@@ -61,8 +74,19 @@ const TransactionMainPage = () => {
       try {
         const response = await dispatch(fetchTransactions(userId)).unwrap();
         setTransactions(response);
-        console.log("Transactions fetched successfully:", response);
+        console.log(response.c_optimal_battery_capacity);
+        
+        const extractedData = response.map((item) => ({
+          c_optimal_solar_capacity: item.c_optimal_solar_capacity,
+          c_optimal_wind_capacity: item.c_optimal_wind_capacity,
+          c_optimal_battery_capacity: item.c_optimal_battery_capacity,
+        }));
+// console.log('consumer',extractedData);
+
+       setConsumerDetails(extractedData);
+        // console.log("Transactions fetched successfully:", response);
         if (response.some((transaction) => transaction.tariff_status === "reject")) {
+          
           setIsRejected(true);}
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -72,10 +96,6 @@ const TransactionMainPage = () => {
 
     fetchData();
   }, [dispatch, userId]);
-
-// console.log(RequirementContent);
-
-
   const columns = [
     {
       title: "Sr. No.",
@@ -121,78 +141,84 @@ const TransactionMainPage = () => {
       render: (text) => moment(text).format('hh:mm A'),
     },
     {
-      title: 'Action (open)',
+      title: 'Action',
       key: 'action',
       width: 200,
       render: (_, record) => (
-        
         <>
-  {/* <Button 
-    type="primary" 
-    style={{ backgroundColor: "#669800", borderColor: "#669800", width: "150px" }} 
-    onClick={() => {
-      const user = JSON.parse(localStorage.getItem("user")).user;
-      const path = user.user_category === "Generator"
-        ? "/generator/transaction-window"
-        : "/consumer/transaction-window";
-    
-      navigate(path, { state: record });
-    }}
-  >
-  Open Window
-  </Button> */}
-  <Button 
-  type="primary" 
-  style={{ 
-    backgroundColor: isRejected ? "#ccc" : "#669800", 
-    borderColor: isRejected ? "#ccc" : "#669800", 
-    width: "150px",
-    cursor: isRejected ? "not-allowed" : "pointer"
-  }} 
-  onClick={() => {
-    if (isRejected) return; // Prevent navigation if rejected
+          <Tooltip
+            title={
+              !isWithinTimeWindow
+                ? 'Transaction Window is only available between 10:00 AM and 11:00 AM'
+                : ''
+            }
+          >
+            <Button
+              type="primary"
+              style={{
+                backgroundColor:
+                  record.tariff_status === 'Active' && isWithinTimeWindow
+                    ? '#669800'
+                    : '#ccc',
+                borderColor:
+                  record.tariff_status === 'Active' && isWithinTimeWindow
+                    ? '#669800'
+                    : '#ccc',
+                width: '150px',
+                cursor:
+                  record.tariff_status === 'Active' && isWithinTimeWindow
+                    ? 'pointer'
+                    : 'not-allowed',
+              }}
+              onClick={() => {
+                if (
+                  record.tariff_status !== 'Active' ||
+                  !isWithinTimeWindow
+                )
+                  return; // Prevent navigation if not active or outside time window
 
-    const user = JSON.parse(localStorage.getItem("user")).user;
-    const path = user.user_category === "Generator"
-      ? "/generator/transaction-window"
-      : "/consumer/transaction-window";
-  
-    navigate(path, { state: record });
-  }}
-  disabled={isRejected}
->
-  Open Window
-</Button>
+                const user = JSON.parse(localStorage.getItem('user')).user;
+                const path =
+                  user.user_category === 'Generator'
+                    ? '/generator/transaction-window'
+                    : '/consumer/transaction-window';
 
-{isRejected && <p style={{ color: "red", marginTop: "10px" }}>You have rejected this window.</p>}
-
-  <br /><br />
-
-  <Button 
-    type="primary" 
-    style={{ backgroundColor: "#88B04B", borderColor: "#88B04B", width: "150px" }} 
-    onClick={() => {
-      // console.log('Navigating with state:', record);
-      handleTermSheet(record)
-    }}
-  >
-    View Termsheet
-  </Button>
-  <br /><br />
-
-  {/* <Button 
-    type="primary" 
-    style={{ backgroundColor: "#A7C957", borderColor: "#A7C957", width: "150px" }} 
-    onClick={() => navigate(/consumer/transaction-window/${record.key})}
-  >
-     View Demand  
-  </Button> */}
-
-      </>
-      
+                navigate(path, { state: record });
+              }}
+              disabled={
+                record.tariff_status !== 'Active' || !isWithinTimeWindow
+              } // Ensure correct condition for enabling/disabling
+            >
+              Open Window
+            </Button>
+          </Tooltip>
+          <br />
+          <br />
+          <Button
+            type="primary"
+            style={{
+              backgroundColor: '#88B04B',
+              borderColor: '#88B04B',
+              width: '150px',
+            }}
+            onClick={() => {
+              handleTermSheet(record);
+            }}
+          >
+            View Termsheet
+          </Button>
+          <br />
+          <br />
+        </>
       ),
     },
+    {
+      title: "Status",
+      dataIndex: "tariff_status",
+      key: "tariff_status",
+    }
   ];
+
 
   return (
     <div style={{ padding: '20px' }}>

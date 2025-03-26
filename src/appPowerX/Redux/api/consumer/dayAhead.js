@@ -5,7 +5,7 @@ const dayAheadApi = {
     return axiosInstance.get('/next-day-predictions');
   },
   addDayAheadData: async (dayAheadDemand) => {
-    console.log(dayAheadDemand);
+    // console.log(dayAheadDemand);
     
     return axiosInstance.post('/consumer-day-ahead-demand', dayAheadDemand);
   },
@@ -15,7 +15,7 @@ const dayAheadApi = {
   mcvData: async () => {
     try {
       const response = await axiosInstance.get(`/MCVData`);
-      console.log('res', response);
+      // console.log('res', response);
       return response.data; // Ensure only data is returned
     } catch (error) {
       console.error("Error fetching MCV Data:", error);
@@ -25,7 +25,7 @@ const dayAheadApi = {
   mcpData: async () => {
     try {
       const response = await axiosInstance.get(`/MCPData`);
-      console.log('res', response);
+      // console.log('res', response);
       return response.data; // Ensure only data is returned
     } catch (error) {
       console.error("Error fetching MCP Data:", error);

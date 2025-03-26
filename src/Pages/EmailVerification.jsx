@@ -24,7 +24,7 @@ const EmailVerification = () => {
   
     try {
       const response = await dispatch(verifyUser(data)).unwrap();
-      console.log(response);
+      // console.log(response);
       message.success(response.message || 'Email verified successfully', 8);
       navigate('/');
     } catch (err) {

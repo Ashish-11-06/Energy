@@ -88,7 +88,7 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
       if (response?.valid === false) {
         message.error("Invalid CIN for the given company name.");
       } else {
-        console.log("CIN is valid. OTP sent.");
+        // console.log("CIN is valid. OTP sent.");
         setUserId(response.user_id);
         message.success("OTP has been sent to your email and mobile!");
         setOtpRequested(true);
@@ -116,8 +116,8 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
           mobile_otp: values.mobile_otp,
           user_id: userId,
         };
-        console.log(userId);
-        console.log(otp);
+        // console.log(userId);
+        // console.log(otp);
         dispatch(verifyOtp(otp))
           .unwrap()
           .then(() => {
@@ -131,7 +131,7 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
           });
       })
       .catch((info) => {
-        console.log("Validate Failed:", info);
+        // console.log("Validate Failed:", info);
         setLoading(false); 
       });
   };

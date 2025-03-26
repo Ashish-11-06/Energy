@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Card, Col, Typography, Row, Table, Spin, message } from "antd"; // Added Table import
+import { Card, Col, Typography, Row, Table, Spin, message,Modal } from "antd"; // Added Table import
 import { Bar, Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -20,6 +20,8 @@ import { useNavigate } from "react-router-dom";
 import market from "../../assets/market.png";
 import statistics from "../../assets/statistics.png";
 import { fetchDashboardDataG, fetchDashboardLineG } from "../../Redux/slices/generator/dashboardSlice";
+import { error } from "pdf-lib";
+import { dayAheadData } from "../../Redux/slices/generator/dayAheadSliceG";
 
 // Register required chart.js components and plugins
 ChartJS.register(
@@ -40,13 +42,21 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState({});
   const [dashboardLine, setDashboardLine] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [statistiicsData, setStatisticsData] = useState([]);
   const [loading, setLoading] = useState(false);
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
+  const user=JSON.parse(localStorage.getItem('user')).user;
+  const [showLineGraph, setShowLineGraph] = useState(true); // New state to control line graph visibility
+  const is_due_date=user.is_due_date;
+  const [showDueModal,setShowDueModal]=useState(false);
+  const [nextDay, setNextDay] = useState('');
+    
   var formattedDate = '';
 // console.log(user_id);
-const nextDay = new Date();
-nextDay.setDate(nextDay.getDate() + 1);
-const nextDayDate = nextDay.toLocaleDateString();
+// const nextDay = new Date();
+// nextDay.setDate(nextDay.getDate() + 1);
+// const nextDayDate = nextDay.toLocaleDateString();
   useEffect(() => {
     const id = user_id;
     const fetchData = async () => {
@@ -57,14 +67,36 @@ const nextDayDate = nextDay.toLocaleDateString();
   }, [dispatch]);
 
   // console.log(dashboardData);
-
+  useEffect(() => {
+    if (is_due_date) {
+      setShowDueModal(true);
+    }
+  }, [is_due_date]);
   useEffect(() => {
     const id = user_id;
     const fetchLineData = async () => {
       setLoading(true);
       const res = await dispatch(fetchDashboardLineG(id)); 
+      if(res.payload === 'No demand data available for the next day') {
+        console.log('no data');
+        setShowLineGraph(false); // Hide line graph card
+                } else {
+        setShowLineGraph(true); // Show line graph card
+                  const dateStr = res.payload[0]?.date;
+                  const date = new Date(dateStr);
+                  
+                  const options = { month: "long", day: "2-digit" };
+                  const formattedDate = date.toLocaleDateString("en-US", options);
+            
+                  setNextDay(formattedDate); // Example output: "February 01"
+                }
+                setLoading(false);
+
       if(res.error) {
-        message.error('hhhh');
+        // message.error(error)
+        // console.log(error);
+        
+        // message.error(error);
       } else  {    
         setDashboardLine(Array.isArray(res.payload) ? res.payload : []);
       }
@@ -73,6 +105,28 @@ const nextDayDate = nextDay.toLocaleDateString();
     fetchLineData();
   }, [dispatch]);
 
+
+  
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          setLoading(true);
+          const data = await dispatch(dayAheadData()).unwrap();
+          // console.log(data);
+          
+          const mcpData = data.predictions.map(item => item.mcp_prediction);
+          const mcvData = data.predictions.map(item => item.mcv_prediction);
+  
+          setTableData([{ MCP: mcpData, MCV: mcvData }]);
+          setStatisticsData(data.statistics);
+          setLoading(false);
+        } catch (error) {
+          message.error(error)
+          // console.log(error);
+        }
+      };
+      fetchData();
+    }, [dispatch]);
   // Extract generation values from dashboardLine
   const firstDate = dashboardLine[0]?.date;
     const generationValues = dashboardLine.map(item => item.generation);
@@ -102,6 +156,10 @@ const nextDayDate = nextDay.toLocaleDateString();
     ],
   };
 
+  const handleModalOk =()=> {
+    navigate('/px/generator/planning')
+}
+
   const lineOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -123,6 +181,7 @@ const nextDayDate = nextDay.toLocaleDateString();
           text: 'Time (15-minute intervals)',
         },
       },
+
     },
     plugins: {
       legend: {
@@ -131,6 +190,13 @@ const nextDayDate = nextDay.toLocaleDateString();
         align: 'end', // Align legends to the right
         labels: {
           padding: 20, // Add padding around legend items
+        },
+        title: {
+          display: true,
+          text: `Energy Demand (${nextDay})`, 
+          font: {
+            size: 18,
+          },
         },
       },
       // zoom: {
@@ -216,6 +282,11 @@ const cardStyle = {
   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   height: "400px", // Ensure all cards are the same height
 };
+const cardForecastGraph = {
+  margin: "20px",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  height: "500px", // Ensure all cards are the same height
+};
 
   // Define stateData variable
   const stateData = stateLabels.map((state, index) => ({
@@ -224,6 +295,107 @@ const cardStyle = {
     totalInstallCapacity: totalInstallCapacities[index],
     availableCapacity: availableCapacities[index],
   }));
+
+  const data = {
+    labels: Array.from({ length: 96 }, (_, i) => i + 1),
+    datasets: [
+      {
+        label: 'MCP (INR/MWh)',
+        data: tableData[0]?.MCP || [],
+        borderColor: 'blue',
+        fill: false,
+        font: {
+          weight: 'bold',
+        },
+        yAxisID: 'y-axis-mcp',
+      },
+      {
+        label: 'MCV (MWh)',
+        data: tableData[0]?.MCV || [],
+        borderColor: 'green',
+        fill: false,
+        font: {
+          weight: 'bold',
+        },
+        yAxisID: 'y-axis-mcv',
+      },
+    
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    scales: {
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        ticks: {
+          autoSkip: false,
+          maxTicksLimit: 96,
+        },
+        title: {
+          display: true,
+          text: '96 time blocks',
+          font: {
+            weight: 'bold',
+            size: 16,
+          },
+        },
+      },
+      'y-axis-mcv': {
+        type: 'linear',
+        position: 'left',
+        beginAtZero: true,
+        color: 'green',
+        title: {
+          display: true,
+          text: 'MCV (MWh)',
+          font: {
+            weight: 'bold',
+          },
+        },
+        ticks: {
+          color: 'green',
+        },
+      },
+      'y-axis-mcp': {
+        type: 'linear',
+        position: 'right',
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'MCP (INR/MWh)',
+          font: {
+            weight: 'bold',
+          },
+        },
+        ticks: {
+          color: 'blue',
+        },
+        grid: {
+          drawOnChartArea: false,
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom', // Position legends at the bottom
+        align: 'end', // Align legends to the right
+        labels: {
+          // usePointStyle: true, // Use point style for legend items
+          padding: 20, // Add padding around legend items
+        },
+      },
+      title: {
+        display: true,
+        text: `Day Ahead Market Forecast`,
+        font: {
+          size: 18,
+        },
+      },
+    },
+  };
 
   const chartDoughnutOptions = {
     responsive: true,
@@ -359,7 +531,30 @@ const cardStyle = {
         
                 </Row>
       </Card>
-      <Card style={cardStyle}>
+
+  {showLineGraph && dashboardLine.length > 0 && ( // Ensure data is present before rendering
+        <Card style={cardStyle}>
+          <Col span={24} style={{ marginBottom: "20px" }}>
+            <div
+              style={{
+                position: "relative",
+                width: "80%",
+                height: "300px",
+                margin: "0 auto",
+              }}
+            >
+                {loading ? (
+                  <Spin />
+                ) : (
+                  <Line data={lineData} options={lineOptions} />
+                )}
+            </div>
+          </Col>
+        </Card>
+      )}
+
+
+      {/* <Card style={cardStyle}>
         <Col span={24} style={{ marginBottom: "20px" }}>
           <div
             style={{
@@ -376,7 +571,7 @@ const cardStyle = {
             )}
           </div>
         </Col>
-      </Card>
+      </Card> */}
        {/* <Card style={{ height: "50%" }}>
         <Col span={24} style={{ marginBottom: "20px" }}>
           <div
@@ -395,6 +590,18 @@ const cardStyle = {
           </div>
         </Col>
       </Card>  */}
+              <Card style={cardForecastGraph} >
+                   {loading ? (
+                     <div style={{ textAlign: 'center', padding: '20px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                       <Spin />
+                       <p>Loading Day Ahead Merket Forecast Data...</p>
+                       </div>
+                   ) : (
+                     <div style={{ height: '500px', width: '100%' }}>
+                       <Line data={data} options={options} style={{height: '300px', width: 'full', padding: '25px', marginLeft: '100px'}}/>
+                     </div>
+                   )}
+                 </Card>
       
       <Card style={{ margin: "20px" }}>
         <Row gutter={[16, 16]} justify="space-between">
@@ -412,7 +619,7 @@ const cardStyle = {
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
                 onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
               >
-                Upcoming Market
+                 Plan Your Energy for the Month
               </span>
             </Col>
             <Col style={{ marginTop: '30px' }}>
@@ -427,20 +634,40 @@ const cardStyle = {
                 onMouseEnter={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
                 onMouseLeave={(e) => e.target.style.color = 'rgb(154, 132, 6)'}
               >
-                Market Statistics
+                 Execute trade for next day
               </span>
             </Col>
           </Col>
           <Col span={12} style={{ textAlign: 'center' }}>
             <Typography.Title level={4}>
-              Executed Trade Details
+              Executed Trade Summary
             </Typography.Title>
-            <ul style={{ marginTop: '20px' }}>
-              Best Price: 4
+            <ul style={{ listStyleType: 'none', padding: 0 }}>
+              <li style={{ marginBottom: '10px' }}>
+                <strong>Ask Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
+              </li>
+              <li style={{ marginBottom: '10px' }}>
+                <strong>Ask Volume</strong> <span style={{ fontSize: '12px' }}>(kW)</span>: 200
+              </li>
+              <li style={{ marginBottom: '10px' }}>
+                <strong>Executed Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
+              </li>
+             
+              <li>
+                <strong>Executed Volume</strong> <span style={{ fontSize: '12px' }}>(kW)</span>: 4
+              </li>
             </ul>
           </Col>
         </Row>
       </Card>
+      <Modal 
+              open={showDueModal}  
+              onCancel={() => setShowDueModal(false)}
+              onOk={handleModalOk}
+              title="Upload 96 times block data"
+            >
+              <p>Your due date is tomorrow at 10 AM. Please upload the data before the deadline..</p>
+            </Modal>
     </div>
   );
 };

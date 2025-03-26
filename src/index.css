@@ -139,6 +139,22 @@ button:focus, .ant-btn:focus {
     border-color: #E6E8F1 !important; /* Default border color for radio circle */
     background-color: #FFFFFF !important; /* Default background color for radio circle */
   }
+
+  .ant-radio-wrapper .ant-radio-inner {
+    box-sizing: border-box;
+    position: relative;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    display: block;
+    width: 18px;
+    height: 18px;
+    background-color: #f5f6fb;
+    border-color: #b0b0b0 !important;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
   
   /* Custom Select component styles */
   .ant-select-selector {

@@ -1,10 +1,12 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React from "react"; 
 import { Modal, Button, Row, Col, Card, Typography } from "antd";
 
 const { Text } = Typography;
 
 const CombinationModal = ({ open, onCancel, combinationContent }) => {
-  console.log(combinationContent?.state);
+  // console.log(combinationContent?.state);
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 //   console.log(user_category);
@@ -101,7 +103,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
               <Text strong>RE Replacement</Text>
             </Col>
             <Col span={12}>
-              <Text>:{combinationContent?.re_replacement|| "A1"}</Text>
+              <Text>: {combinationContent?.re_replacement|| "A1"}</Text>
             </Col>
             <Col span={12}>
               <Text strong>RE Index</Text>

@@ -1,3 +1,6 @@
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from 'react-router-dom';
 import {
@@ -11,6 +14,7 @@ import {
   InputNumber,
   Statistic,
 } from "antd";
+
 import { useParams, useNavigate } from "react-router-dom";
 import ippData from "../../Data/IPPData.js";
 import {
@@ -50,6 +54,7 @@ const TransactionWindow = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
+// console.log('hii',record);
 
   // useEffect(() => {
   //   // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
@@ -111,25 +116,25 @@ const TransactionWindow = () => {
   //   };
   // }, []);
   useEffect(() => {
-    console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
+    // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
     const newSocket = connectWebSocket(user.id, record.tariff_id);
     setSocket(newSocket);
 
     const sendEvent = (action, data) => {
         if (newSocket && newSocket.readyState === WebSocket.OPEN) {
             newSocket.send(JSON.stringify({ action, ...data }));
-            console.log("📤 Sent WebSocket message:", { action, ...data });
+            // console.log("📤 Sent WebSocket message:", { action, ...data });
         } else {
-            console.error("⚠️ WebSocket is not open. Cannot send message.");
+            // console.error("⚠️ WebSocket is not open. Cannot send message.");
         }
     };
 
     const onMessageHandler = (event) => {
-        console.log("📩 WebSocket event received:", event);
+        // console.log("📩 WebSocket event received:", event);
 
         try {
             const data = JSON.parse(event.data);
-            console.log("Parsed Data:", data);
+            // console.log("Parsed Data:", data);
 
             if (data.action === "rejectTransaction") {
                 setTransactions((prevTransactions) =>
@@ -140,11 +145,11 @@ const TransactionWindow = () => {
                     )
                 );
             } else if (data.offers) {
-                console.log("data.offers", data.offers);
+                // console.log("data.offers", data.offers);
                 setMessages([data.offers]);
             } else {
                 const newOffers = data;
-                console.log("newOffers", newOffers);
+                // console.log("newOffers", newOffers);
                 setMessages(prevMessages => {
                     const updatedMessages = [...prevMessages];
 
@@ -181,7 +186,7 @@ const TransactionWindow = () => {
 }, []);
 
 
-  console.log(messages);
+  // console.log(messages);
 
   useEffect(() => {
     // Sort IPP data by ascending value of tariff offer
@@ -314,6 +319,17 @@ const TransactionWindow = () => {
                 <Countdown title="Time Remaining" value={deadline} />
               </span>
             </Row> */}
+            {/* <hr />
+
+              <p style={{fontWeight:'bold'}}>Consumer Details</p>
+              <br />
+            <Row gutter={[16, 16]} style={{ marginTop: "6px" }}>
+           
+              <Col span={8}><strong>Solar Capacity (MW): </strong>{record.c_optimal_solar_capacity}</Col>
+              <Col span={8}><strong>Wind Capacity: </strong>{record.c_optimal_wind_capacity}</Col>
+              <Col span={8}><strong>ESS Capacity: </strong>{record.c_optimal_battery_capacity}</Col>
+            </Row> */}
+
             <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
               <Col>
                 <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div>

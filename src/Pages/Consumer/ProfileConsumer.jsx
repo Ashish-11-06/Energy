@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -15,7 +16,7 @@ import EditProfileModal from "./Modal/EditProfileModal";
 import dayjs from "dayjs";
 import AddUserModal from "./Modal/AddUserModal";
 import { render } from "less";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { useDispatch } from "react-redux";
@@ -36,7 +37,7 @@ const ProfilePage = () => {
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
   const userId = initialUserData.id;
-  console.log(userId);
+  // console.log(userId);
 
   const navigate = useNavigate();
 
@@ -107,7 +108,7 @@ const ProfilePage = () => {
 
   const handleSaveUser = (values) => {
     setIsUserModal(false);
-    console.log("User saved:", values);
+    // console.log("User saved:", values);
 
     // Ensure `values` is an object before updating state
     if (values && typeof values === "object") {
@@ -119,7 +120,7 @@ const ProfilePage = () => {
   };
   const handleEdit = (record) => {
     setEditaleData(record);
-    console.log(record);
+    // console.log(record);
     setIsUserModal(true);
     setEditValue(true);
     form.resetFields();
@@ -259,7 +260,7 @@ const ProfilePage = () => {
               <Button type="primary" onClick={handleEditToggle}>
                 Edit Profile
               </Button>
-              <Button type="primary" onClick={handleLogOut}>
+              <Button type="primary" icon={<LogoutOutlined  />} onClick={handleLogOut}>
                 Log out
               </Button>
             </Row>
