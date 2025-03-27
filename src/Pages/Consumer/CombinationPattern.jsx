@@ -45,6 +45,7 @@ const CombinationPattern = () => {
   const [tryLowerModal,setTryLowerModal]=useState(false);
   const { state } = useLocation();
   const navigate = useNavigate();
+  const [dataSourceError, setdataSourceError] = useState();
 
   const selectedDemandId = localStorage.getItem("selectedRequirementId");
   const reReplacement = state?.reReplacement;
@@ -723,8 +724,8 @@ const CombinationPattern = () => {
                   textAlign: "center",
                 }}
               >
-                No optimized combinations available at the moment. Please try
-                again later.
+                {console.log(dataSourceError)}
+              {dataSourceError}
               </div>
             )}
           </Card>
