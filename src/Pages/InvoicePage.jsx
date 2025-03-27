@@ -16,14 +16,16 @@ const InvoicePage = () => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userId = user.id;
-
+const [freeStatus,setFreeStatus]=useState('')
   const viewInvoice = (record) => {
     // Implement the logic to view the invoice details
     setIsProformaVisible(true);
     // console.log(`Viewing invoice ${record}`);
     setSelectedPlan(record);
     setSubscriptionType(record.subscription.subscripton_type)
+// console.log('hhh');
 
+    console.log(invoice);
     
   };
   const closeProforma = () => {
@@ -63,11 +65,11 @@ const InvoicePage = () => {
       title: 'Status',
       dataIndex: 'payment_status',
       key: 'status',
-      // render: status => (
-      //   <Tag color={status === 'Paid' ? 'green' : 'volcano'}>
-      //     {status.toUpperCase()}
-      //   </Tag>
-      // ),
+      render: (status) => (
+        <Tag color={status === 'Paid' ? 'green' : 'volcano'}>
+          {status.toUpperCase()}
+        </Tag>
+      ),
     },
     {
       title: 'Actions',
@@ -85,24 +87,19 @@ const InvoicePage = () => {
       setLoading(true);
       try {
         const response = await dispatch(fetchPerformaById(userId)).unwrap();
-        setInvoice(response);
-        // console.log(response);
-
-
+        const updatedInvoices = response.map((item) => ({
+          ...item,
+          payment_status: item.subscription?.subscription_type === 'FREE' ? 'Paid' : item.payment_status,
+        }));
+        setInvoice(updatedInvoices);
         setLoading(false);
-
       } catch (err) {
-        // console.log(err);
         message.error(err.message || "Failed to fetch performa.");
       }
     };
 
     fetchPerforma();
   }, [dispatch, userId]);
-  // console.log(selectedPlan);
-
-  // console.log(invoice);
-
 
   return (
     <>
@@ -123,8 +120,7 @@ const InvoicePage = () => {
         ) : (
           <Table
             style={{ marginTop: 16, padding: "20px" }}
-            // dataSource={Array.isArray(invoice) ? invoice : []} // Ensuring it's an array
-            dataSource={invoice} // Ensuring it's an array
+            dataSource={invoice} // Updated dataSource with computed payment_status
             columns={columns}
             rowKey="id"
             pagination={false}

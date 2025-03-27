@@ -32,6 +32,10 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
   const notificationCount = useSelector((state) => state.notifications.notificationCount);
 
+const isMatchingIPP = localStorage.getItem("isMatching") === "true";
+console.log(isMatchingIPP);
+
+
   useEffect(() => {
     setSubscriptionRequires(subscription !== "active");
   }, [subscription]);
@@ -56,11 +60,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
  
 
   const handleNotificationClick = () => {
-    navigate(
-      user.user_category === "Consumer"
-        ? "/consumer/notification"
-        : "/generator/notification"
-    );
+    navigate('/notification');
   };
 
   const handleChatClick = () => {
@@ -82,6 +82,9 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
       path: "/consumer/annual-saving",
       label: "Annual Saving",
       icon: <FileTextOutlined />,
+      requiresSubscription: subscriptionRequires,
+      requiresMatchingConsumer: false,
+      isDisabled: !isMatchingIPP, 
     },
     {
       path: "/consumer/energy-consumption-table",
@@ -222,8 +225,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
                           {step.label}
                         </span>
 
-                        {isMatchingConsumerMissing ? (
-                          <Tooltip title="">
+                        {isMatchingConsumerMissing || step.isDisabled ? ( // Check for isDisabled
+                          <Tooltip title={step.isDisabled ? "Matching IPP required" : ""}>
                             <div
                               className="icon-circle disabled"
                               style={{

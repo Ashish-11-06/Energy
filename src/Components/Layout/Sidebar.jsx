@@ -72,7 +72,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
       )
     },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Invoice', key: '/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     // {
     //   label: (<span>Notification</span>),
     //   key: '/consumer/notification',
@@ -126,7 +126,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
      // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
     // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Invoice', key: '/consumer/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Invoice', key: '/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     // {
     //   label: (<span>Notification</span>), key: '/consumer/notification', icon: (
     //     <Badge

@@ -3,7 +3,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Typography, message } from "antd";
+import { Modal, Button, Typography, message, Tooltip } from "antd";
 import { useDispatch } from "react-redux";
 import html2canvas from "html2canvas";
 import LOGO from "../../../assets/EXG_green.png";
@@ -101,6 +101,8 @@ const ProformaInvoiveModal = ({
   //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
   // //  console.log(selected_plan);
   //  const invoiceDetails=selectedPlan;
+const selectedRequirementId=localStorage.getItem('selectedRequirementId');
+console.log(selectedRequirementId);
 
   const [subscriptionPlanValidity, setSubscriptionPlanValidity] = useState([]);
   const navigate = useNavigate();
@@ -477,13 +479,22 @@ const ProformaInvoiveModal = ({
                   Download PDF
                 </Button>
                 {fromSubscription && (
-                  <Button
-                    key="generate"
-                    type="primary"
-                    onClick={handleFreeContinue}
+                  <Tooltip
+                    title={
+                      !selectedRequirementId
+                        ? "To continue further, select a requirement first."
+                        : ""
+                    }
                   >
-                    Continue
-                  </Button>
+                    <Button
+                      key="generate"
+                      type="primary"
+                      onClick={handleFreeContinue}
+                      disabled={!selectedRequirementId}
+                    >
+                      Continue
+                    </Button>
+                  </Tooltip>
                 )}
               </>
             ) : (
@@ -507,13 +518,22 @@ const ProformaInvoiveModal = ({
               Download PDF
             </Button>
             {fromSubscription && (
-              <Button
-                key="generate"
-                type="primary"
-                onClick={handleFreeContinue}
+              <Tooltip
+                title={
+                  !selectedRequirementId
+                    ? "To continue further, select a requirement first."
+                    : ""
+                }
               >
-                Continue
-              </Button>
+                <Button
+                  key="generate"
+                  type="primary"
+                  onClick={handleFreeContinue}
+                  disabled={!selectedRequirementId}
+                >
+                  Continue
+                </Button>
+              </Tooltip>
             )}
           </>
         ),
