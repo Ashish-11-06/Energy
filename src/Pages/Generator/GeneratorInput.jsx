@@ -41,6 +41,7 @@ import { addScada } from "../../Redux/Slices/Consumer/uploadScadaSlice";
 import { uploadCSV } from "../../Redux/Slices/Consumer/uploadCSVFileSlice";
 import { getAllProjectsById } from "../../Redux/Slices/Generator/portfolioSlice";
 import moment from "moment";
+import { fetchCapacitySizing } from "../../Redux/Slices/Generator/capacitySizingSlice";
 
 const { Title } = Typography;
 
@@ -73,7 +74,8 @@ const [checkPortfolio,setCheckPortfolio]=useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user")).user;
-
+// console.log(user);
+const user_id=user?.id;
   const { status, projects } = useSelector((state) => state.portfolio);
 
   if (status === "idle") {
@@ -142,7 +144,13 @@ const [checkPortfolio,setCheckPortfolio]=useState([]);
   ];
   
   // console.log(checkPortfolio);
-  
+ const handleRunOptimizer =() => {
+const modalData={
+  user_id:user_id,
+}
+  const res=dispatch(fetchCapacitySizing(modalData));
+  // navigate('/generator/combination-pattern')
+ } 
   const handleCSVUpload = async (file) => {
     try {
       // Validate the CSV file format
@@ -209,26 +217,7 @@ const [checkPortfolio,setCheckPortfolio]=useState([]);
         alignItems: "center",
       }}
     >
-      <Card style={{
-          marginTop: "20px",
-          width: "100%",
-          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-          overflow: "hidden",
-          backgroundColor: "#fff",
-        }}>
-        <Table
-          dataSource={Structuredprojects.map((project, index) => ({
-            ...project,
-            key: index,
-          }))}
-          columns={columns}
-          pagination={false}
-          bordered
-          loading={status === "loading"}
-        />
-      </Card>
-      <Card
+       <Card
         style={{
           marginTop: "20px",
           width: "100%",
@@ -264,7 +253,8 @@ const [checkPortfolio,setCheckPortfolio]=useState([]);
               </Tooltip>
             </Upload>
             <Title level={4} style={{ color: "#669800", background:'#f8f8f8', marginBottom: "10px", padding: '10px',marginLeft:'20px' }}>
-            Choose the portfolios to be processed in the model execution.
+            {/* Choose the portfolios to be processed in the model execution. */}
+            Upload the consumption data
             </Title>
           </div>
           {activeButton === "csv" && uploadedFileName && (
@@ -275,6 +265,34 @@ const [checkPortfolio,setCheckPortfolio]=useState([]);
        
         </Col>
       </Card>
+      <Card style={{
+          marginTop: "20px",
+          width: "100%",
+          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
+          borderRadius: "10px",
+          overflow: "hidden",
+          backgroundColor: "#fff",
+        }}>
+          <span><p>Select the portfolios to be processed in the model execution and run the Optimizer Model</p>
+          {/* <h2>Available Generation Portfolio</h2> */}
+          <Button style={{ position: 'absolute', right: '0' }} onClick={handleRunOptimizer}>
+  Run Optimizer
+</Button>
+</span>
+        <Table
+          dataSource={Structuredprojects.map((project, index) => ({
+            ...project,
+            key: index,
+          }))}
+          columns={columns}
+          pagination={false}
+          bordered
+          style={{marginTop:'60px'}}
+          loading={status === "loading"}
+        />
+      </Card>
+     
+     
     </div>
   );
 };

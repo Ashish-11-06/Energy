@@ -53,7 +53,7 @@ const Dashboard = () => {
     // console.log(diffMs);
 
     if (diffMs < 0) return "Expired"; // Only consider past dates as expired
-    if(86400  < diffMs >0) return 'Expiring';
+    if (diffMs >= 0 && diffMs < 86400000) return "Expiring"; // Less than 1 day in milliseconds
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 

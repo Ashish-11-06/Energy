@@ -55,7 +55,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     navigate(
       (user.user_category === 'Consumer')
         ? "/px/consumer/profile"
-        : "/px/generator/profile"
+        : "/px/generator/profile-gen"
     );
   };
 

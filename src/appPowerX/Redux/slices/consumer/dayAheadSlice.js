@@ -78,8 +78,6 @@ export const fetchMCPData = createAsyncThunk(
 );
 
 
-
-
 // Slice for matching IPP
 const dayAheadSlice = createSlice({
   name: "tableData",

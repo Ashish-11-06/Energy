@@ -23,6 +23,7 @@ const UpdateProfileDetails = () => {
   const location = useLocation();
   const { projects } = useSelector(state => state.portfolio);
   const selectedConsumer = localStorage.getItem('matchingConsumerId');
+  const [lastUploadedFiles, setLastUploadedFiles] = useState({}); // State to track last uploaded files
 
   useEffect(() => {
     const id = user.id; 
@@ -111,10 +112,22 @@ const UpdateProfileDetails = () => {
     setRefreshData(prev => !prev); // Toggle refreshData to trigger useEffect
   };
 
+  const handleErrorCloseModal = () => {
+    setIsModalVisible(false);
+  };
+
   const allUpdated = structuredProjects.every(item => item.updated);
 
   const handleProceed = () => {
     navigate('/generator/combination-pattern', { state: { selectedConsumer } });
+  };
+
+  // Update the last uploaded file for a specific project
+  const updateLastUploadedFile = (projectId, fileName) => {
+    setLastUploadedFiles((prev) => ({
+      ...prev,
+      [projectId]: fileName,
+    }));
   };
 
   return (
@@ -152,6 +165,9 @@ const UpdateProfileDetails = () => {
           project={selectedRecord}
           form={form} 
           onCancel={handleCancel}
+          onErrorCloseModal={handleErrorCloseModal}
+          lastUploadedFile={lastUploadedFiles[selectedRecord?.id]} // Pass the last uploaded file
+          updateLastUploadedFile={updateLastUploadedFile} // Pass the update function
         />
       </Modal>
     </div>

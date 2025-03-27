@@ -351,12 +351,19 @@ useEffect(()=> {
                 "Contracted demand / Sanctioned load as per your electricity bill"
               )}
               name="contractedDemand"
-              
-              rules={[{ required: true, message: "Please enter the contracted demand!" }]}
+              rules={[
+                { required: true, message: "Please enter the contracted demand!" },
+                {
+                  validator: (_, value) =>
+                    value > 0
+                      ? Promise.resolve()
+                      : Promise.reject(new Error("Contracted demand must be greater than 0!")),
+                },
+              ]}
             >
               <Input
                 type="number"
-                min={0}
+                min={1}
                 placeholder="Enter contracted demand in MW"
               />
             </Form.Item>
@@ -369,10 +376,19 @@ useEffect(()=> {
                 "Enter the annual electricity consumption in megawatt-hours."
               )}
               name="annual_electricity_consumption"
-              rules={[{ required: true, message: "Please enter the annual electricity consumption!" }]}
+              rules={[
+                { required: true, message: "Please enter the annual electricity consumption!" },
+                {
+                  validator: (_, value) =>
+                    value > 0
+                      ? Promise.resolve()
+                      : Promise.reject(new Error("Annual electricity consumption must be greater than 0!")),
+                },
+              ]}
             >
               <Input
                 type="number"
+                min={1}
                 placeholder="Enter annual electricity consumption in MWh"
               />
             </Form.Item>

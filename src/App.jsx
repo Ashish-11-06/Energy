@@ -42,7 +42,6 @@ import TransactionMainPage from './Pages/Consumer/TransactionMainPage';
 import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
 import RequirementsPage from './Pages/Consumer/RequirementPage';
 import InvoicePage from './Pages/InvoicePage';
-import { lastVisitedPage } from './Redux/Slices/Consumer/lastVisitedPageSlice';
 import EmailVerification from './Pages/EmailVerification';
 import StatusApproval from './Pages/TrackStatus';
 import Agreements from './Pages/Agreements';
@@ -79,6 +78,7 @@ import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMont
 import WhatWeOfferP from './appPowerX/Pages/WhatWeOfferP';
 import TrackStatusP from './appPowerX/Pages/TrackStatus';
 import ProtectedRoute from './ProtectedRoute';
+import ProfileGen from './appPowerX/Pages/Generator/ProfileGen';
 
 // import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
 
@@ -128,6 +128,9 @@ function App() {
           <Route path="subscription-plan" element={<SubscriptionPlans />} />
           <Route path="agreements" element={<Agreements />} />
           <Route path="chat-page" element={<ChatWithExpert />} />
+          <Route path="notification" element={<Notification />} />
+          <Route path="invoice" element={<InvoicePage />} />
+
 
           {/* Consumer Routes */}
           <Route path="/consumer/*">
@@ -142,9 +145,7 @@ function App() {
             <Route path="profile" element={<ProfileConsumer />} />
             <Route path="requested-ipp" element={<RequestedIPP />} />
             <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
-            <Route path="notification" element={<Notification />} />
             <Route path="transaction-window" element={<TransactionWindow />} />
-            <Route path="invoice" element={<InvoicePage />} />
             <Route path="status" element={<StatusApproval />} />
           </Route>
 
@@ -167,9 +168,7 @@ function App() {
             <Route path="combination" element={<OptimizeCombination />} />
             <Route path="notificationgen" element={<NotificationGenerator />} />
             <Route path="transaction-window" element={<TransactionWindowGen />}/>
-            <Route path="generatorInput" element={<GeneratorInput />} />
-            <Route path="invoice" element={<InvoicePage />} />
-            <Route path="status" element={<StatusApproval />} />
+            <Route path="generatorInput" element={<GeneratorInput />} />            <Route path="status" element={<StatusApproval />} />
           </Route>
         </Route>
         </Route>
@@ -217,6 +216,7 @@ function App() {
 
         <Route path="month-ahead" element={<MonthAheadG />} />
         <Route path="notification" element={<NotificationG />} />
+        <Route path="profile" element={<ProfileGen />} />
 
         <Route path="planning" element={<PlanningG />} />
         <Route path="trading" element={<TradingG />} />

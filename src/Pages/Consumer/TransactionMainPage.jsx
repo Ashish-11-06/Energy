@@ -30,7 +30,7 @@ const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
   null,
   '[)'
 );
-console.log(openWindowTime, isWithinTimeWindow);
+// console.log(openWindowTime, isWithinTimeWindow);
 
 
   const user = JSON.parse(localStorage.getItem('user')).user;
@@ -38,7 +38,7 @@ console.log(openWindowTime, isWithinTimeWindow);
 
   const showRequirementModal = (record) => {
     setRequirementContent(record);
-    console.log(RequirementContent);
+    // console.log(RequirementContent);
 
     setIsRequirementModalVisible(true);
   };
@@ -74,7 +74,7 @@ console.log(openWindowTime, isWithinTimeWindow);
       try {
         const response = await dispatch(fetchTransactions(userId)).unwrap();
         setTransactions(response);
-        console.log(response.c_optimal_battery_capacity);
+        // console.log(response.c_optimal_battery_capacity);
         
         const extractedData = response.map((item) => ({
           c_optimal_solar_capacity: item.c_optimal_solar_capacity,

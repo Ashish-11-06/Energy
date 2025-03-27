@@ -18,14 +18,28 @@ const MatchingIPP = () => {
     (state) => state.matchingIPP
   );
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
+  const [isMatching, setIsMatching] = useState(false); // Add state for isMatching
 
   useEffect(() => {
-    // const requirementId = location.state?.selectedRequirement?.id;
     const requirementId = localStorage.getItem('selectedRequirementId');
     if (requirementId) {
-      dispatch(fetchMatchingIPPById(requirementId));
+      try {
+        dispatch(fetchMatchingIPPById(requirementId)).then((res) => {
+          // console.log(res.payload.length);
+          
+          if (res.payload && res.payload.length > 0) {
+            setIsMatching(true); 
+          } else {
+            setIsMatching(false);
+          }
+          localStorage.setItem('isMatching', isMatching);
+
+        });
+      } catch (error) {
+        console.log(error);
+      }
     } else {
-      console.error("Requirement ID not found in location state.");
+      // console.error("Requirement ID not found in location state.");
     }
   }, [location, dispatch]);
 
@@ -41,19 +55,13 @@ const MatchingIPP = () => {
   };
 
   const handleRadioChange = (id) => {
-    // console.log("hhj");
-    
-    // console.log(record);
     setSelectedRow(id); // Set the selected record, replacing previous selection
-    
   };
   
   const handleRowSelect = (record) => {
-    // console.log('ss',record);
-    
     setSelectedRow(record); // Only allow single selection
   }
-  // console.log('selectedRow',selectedRow); 
+
   const handleContinue = () => {
     if (selectedRow) {
       const requirementId = location.state?.selectedRequirement?.id;
@@ -62,6 +70,7 @@ const MatchingIPP = () => {
       message.error('Please select a single matching IPP before continuing.');
     }
   };
+// console.log(isMatching);
 
   const columns = [
     {
@@ -108,10 +117,9 @@ const MatchingIPP = () => {
           height: "100vh",
         }}
       >
-        <div style={{ position: 'relative' }}>
-        <Spin size="large" tip="Loading IPP details..." spinning={true} />
-        {/* <Spin size="large" tip="Loading IPP details..." /> */}
-        </div>
+        <Spin size="large" tip="Loading" spinning={true}>
+          <div /> {/* Add an empty div to ensure proper nesting */}
+        </Spin>
       </div>
     );
   }

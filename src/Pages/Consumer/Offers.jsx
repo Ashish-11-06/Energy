@@ -446,7 +446,6 @@ const Offers = () => {
           visible={isModalVisible}
           data={modalContent}
           onCancel={handleCloseModal}
-          type="generator"
           selectedDemandId={modalContent.requirement.rq_id}
         />
       )}

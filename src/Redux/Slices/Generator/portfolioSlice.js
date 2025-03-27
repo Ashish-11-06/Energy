@@ -14,9 +14,15 @@ export const addProject = createAsyncThunk('portfolio/addProject', async (newPro
 });
 
 // Async thunk to update a project
-export const updateProject = createAsyncThunk('portfolio/updateProject', async (updatedProject) => {
-  const response = await generatorPortfolioApi.updateProject(updatedProject); // Use API method
-  return response.data;  // Assuming API returns the updated project
+export const updateProject = createAsyncThunk('portfolio/updateProject', async (updatedProject,  { rejectWithValue }) => {
+  try {
+    const response = await generatorPortfolioApi.updateProject(updatedProject); // Use API method
+    return response.data;  // Assuming API returns the updated project
+  } catch (error) {
+    return rejectWithValue(
+      error.response?.data?.error || 'Failed to fetch combinations'
+    ); // Return the error if the request fails
+  }
 });
 
 // Async thunk to delete a project

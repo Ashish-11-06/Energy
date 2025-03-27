@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Table, Button, message, Row, Col, Modal, Tooltip, Radio } from 'antd';
+import { Table, Button, message, Row, Col, Modal, Tooltip,Radio, App, Spin, Skeleton } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
@@ -11,7 +11,6 @@ import { addNewRequirement } from '../../Redux/Slices/Consumer/consumerRequireme
 
 import moment from 'moment';
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
-import { lastVisitedPage } from '../../Redux/Slices/Consumer/lastVisitedPageSlice';
 
 const RequirementsPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -25,7 +24,8 @@ const RequirementsPage = () => {
   const newUser = location.state?.new_user; // Get new_user from location state
   const dispatch = useDispatch();
   const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
-  const [editData, setEditData] = useState(selectedRequirement);
+const [editData,setEditData]=useState(selectedRequirement);
+const [loading,setLoading]= useState(false);
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData = JSON.parse(localStorage.getItem('user')).user;
@@ -54,6 +54,14 @@ const RequirementsPage = () => {
   // Define columns for the table (Remove selection column)
   const columns = [
     {
+      title: 'Sr No',
+      dataIndex: 'srNo',
+      key: 'srNo',
+      render: (text, record, index) => (
+        <span key={record.id || index}>{index + 1}</span> // Wrapping in a span with key
+      ),
+    },
+    {
       title: "Select",
       key: "select",
       render: (text, record) => (
@@ -63,14 +71,7 @@ const RequirementsPage = () => {
         />
       ),
     },
-    {
-      title: 'Sr No',
-      dataIndex: 'srNo',
-      key: 'srNo',
-      render: (text, record, index) => (
-        <span key={record.id || index}>{index + 1}</span> // Wrapping in a span with key
-      ),
-    },
+   
     {
       title: 'State',
       dataIndex: 'state',
@@ -143,12 +144,9 @@ const RequirementsPage = () => {
         </Button>
       ),
     };
-
-    // Find the index of "Select" column and insert before it
-    const selectColumnIndex = columns.findIndex(col => col.key === "select");
-    if (selectColumnIndex !== -1) {
-      columns.splice(selectColumnIndex, 0, addDetailsColumn);
-    }
+  
+    // Push the column to the end of the columns array
+    columns.push(addDetailsColumn);
   }
 
   console.log(requirements);
@@ -190,7 +188,6 @@ const RequirementsPage = () => {
       user_id: userData.id,
       selected_requirement_id: record.id
     }
-    const res = dispatch(lastVisitedPage(data));
     message.success(`You selected record of state '${record.state}'`);
     // console.log(selectedRequirement);  
     // localStorage.setItem('selectedRequirementId', JSON.stringify(record.id));
@@ -262,10 +259,11 @@ const RequirementsPage = () => {
       setIsInfoModalVisible(true);
     }
 
-    // Fetch requirements if not present in the state
+    // Show loader while fetching requirements
     if (requirements.length === 0) {
+      setLoading(true);
       const id = user.user.id;
-      dispatch(fetchRequirements(id));
+      dispatch(fetchRequirements(id)).finally(() => setLoading(false));
     }
   }, [dispatch, requirements.length, newUser]);
 
@@ -278,97 +276,111 @@ const RequirementsPage = () => {
   };
 
   return (
+    <App> {/* Wrap the entire component with App */}
+      <div style={{ padding: 20 }}>
+        <h2>Consumption Unit</h2>
 
-    <div style={{ padding: 20 }}>
-      <h2 >Consumption Unit</h2>
+        <Tooltip title="Help">
+          <Button
+            shape="circle"
+          
+            icon={<QuestionCircleOutlined />}
+            onClick={showInfoModal}
+            style={{ position: 'absolute', top: 80, right: 30,zIndex:1000 }}
+          />
+        </Tooltip>
 
-      <Tooltip title="Help">
-        <Button
-          shape="circle"
+        <Modal
+          title="Welcome"
+          open={isInfoModalVisible}
+          onOk={handleInfoModalOk}
+          onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
+          okText="Got it"
+          footer={[
+            <Button key="submit" type="primary" onClick={handleInfoModalOk}>
+              Got it
+            </Button>,
+          ]}
+        >
+          <p>Hi {username},</p>
+        
+          <p>Welcome to the EXT. Please follow these steps to proceed:</p>
+          <ol>
+            <li>Add your requirements by clicking the "Add Requirement +" button.</li>
+            <li>Fill in the details shown in the form.</li>
+            <li>
+    Use the tooltip [
+    <Tooltip title="More information about this field">
+      <QuestionCircleOutlined />
+    </Tooltip> 
+    ]
+    option for each field for more information.
+  </li>
+            <li>You can add multiple requirements (demands).</li>
+            <li>To continue, select a requirement and click the "Continue" button.</li>
+          </ol>
+          <p>Thank you!</p>
+        </Modal>
 
-          icon={<QuestionCircleOutlined />}
-          onClick={showInfoModal}
-          style={{ position: 'absolute', top: 80, right: 30, zIndex: 1000 }}
-        />
-      </Tooltip>
-
-      <Modal
-        title="Welcome"
-        open={isInfoModalVisible}
-        onOk={handleInfoModalOk}
-        onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
-        okText="Got it"
-        footer={[
-          <Button key="submit" type="primary" onClick={handleInfoModalOk}>
-            Got it
-          </Button>,
-        ]}
-      >
-        <p>Hi {username},</p>
-
-        <p>Welcome to the EXT. Please follow these steps to proceed:</p>
-        <ol>
-          <li>Add your requirements by clicking the "Add Requirement +" button.</li>
-          <li>Fill in the details shown in the form.</li>
-          <li>
-            Use the tooltip [
-            <Tooltip title="More information about this field">
-              <QuestionCircleOutlined />
-            </Tooltip>
-            ]
-            option for each field for more information.
-          </li>
-          <li>You can add multiple requirements (demands).</li>
-          <li>To continue, select a requirement and click the "Continue" button.</li>
-        </ol>
-        <p>Thank you!</p>
-      </Modal>
-
-      <Table
-        columns={columns}
-        dataSource={requirements}
-        pagination={false}
-        bordered
-        loading={status === 'loading'}
-        // onRow={(record) => ({
-        //   onClick: () => handleRowSelect(record), // Make entire row clickable
-        // })}
-        rowClassName={(record) =>
-          selectedRequirement && record.id === selectedRequirement.id ? 'selected-row' : ''
-        }
+<div>
+  {loading ? (
+    <div style={{ position: 'relative' }}>
+      {/* <Skeleton active paragraph={{ rows: 4 }} title={false} /> */}
+      <Spin
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
       />
+    </div>
+  ) : (
+    <Table
+      columns={columns}
+      dataSource={requirements}
+      pagination={false}
+      bordered
+      loading={status === 'loading'}
+      rowClassName={(record) =>
+        selectedRequirement && record.id === selectedRequirement.id ? 'selected-row' : ''
+      }
+    />
+  )}
+</div>
 
-      <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
-        <Col>
-          {role != 'view' ? (
+        <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
+          <Col>
+          {role!='view' ?(
             <Button type="primary" onClick={showModal} style={{ width: 160 }}>
               Add Requirement +
             </Button>
-          ) : null}
-        </Col>
-        <Col>
-          <Tooltip title={!selectedRequirement ? 'Please select a consumption unit' : ''}>
-            <Button
-              type="default"
-              onClick={handleContinue}
-              style={{ width: 160 }}
-              disabled={!selectedRequirement} // Disable "Continue" if no row is selected
-            >
-              Continue
-            </Button>
-          </Tooltip>
-        </Col>
-      </Row>
+          ):null}
+          </Col>
+          <Col>
+            <Tooltip title={!selectedRequirement ? 'Please select a consumption unit' : ''}>
+              <Button
+                type="default"
+                onClick={handleContinue}
+                style={{ width: 160 }}
+                disabled={!selectedRequirement} // Disable "Continue" if no row is selected
+              >
+                Continue
+              </Button>
+            </Tooltip>
+          </Col>
+        </Row>
 
-      {/* Modal for adding new requirement */}
-      <RequirementForm
-        open={isModalVisible}
-        onCancel={handleCancel}
-        onSubmit={handleSubmit}
-        data={editData}
-      />
-
-    </div>
+        {/* Modal for adding new requirement */}
+        <RequirementForm
+          open={isModalVisible}
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+          data={editData}
+        />
+      
+      </div>
+    </App>
   );
 };
 
