@@ -201,7 +201,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
               <InputNumber
                 style={{ width: '100%' }}
                 placeholder={`Energy Capacity in ${unit}`}
-                min={0}
+                min={1}
                 onKeyDown={(e) => {
                   if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
                     e.preventDefault();
@@ -226,7 +226,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
               <InputNumber
                 style={{ width: '100%' }}
                 placeholder={`Energy Capacity in ${unit}`}
-                min={0}
+                min={1}
                 onKeyDown={(e) => {
                   if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
                     e.preventDefault();

@@ -79,6 +79,7 @@ import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMont
 import WhatWeOfferP from './appPowerX/Pages/WhatWeOfferP';
 import TrackStatusP from './appPowerX/Pages/TrackStatus';
 import ProtectedRoute from './ProtectedRoute';
+import ProfileGen from './appPowerX/Pages/Generator/ProfileGen';
 
 // import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
 
@@ -218,6 +219,7 @@ function App() {
 
         <Route path="month-ahead" element={<MonthAheadG />} />
         <Route path="notification" element={<NotificationG />} />
+        <Route path="profile" element={<ProfileGen />} />
 
         <Route path="planning" element={<PlanningG />} />
         <Route path="trading" element={<TradingG />} />

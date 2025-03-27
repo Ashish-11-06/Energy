@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
+import dayjs from "dayjs";
 import {
   Modal,
   Form,
@@ -32,7 +33,35 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
   
-  // console.log(data);
+
+ 
+
+  console.log(data);
+
+  useEffect(() => {
+    if (data) {
+      form.setFieldsValue({
+        id:data?.id,
+        state:'Maharashtra',
+        // state: data.state,
+        consumption_unit: data.consumption_unit,
+        industry: data.industry,
+        contractedDemand: data.contracted_demand,
+        tariffCategory: data.tariff_category,
+
+        voltageLevel: data.voltage_level,
+        annual_electricity_consumption: data.annual_electricity_consumption,
+        procurement: data.procurement_date
+  ? dayjs(data.procurement_date, "YYYY-MM-DD")  // Ensure it is a valid dayjs object
+  : null,
+        });
+      console.log(data);
+      setSelectedIndustry(data.industry);
+      setSubIndustries(industryy[data.industry] || []);
+    } else {
+      form.resetFields(); // Reset fields if no data is provided
+    }
+  }, [data, form, industryy]);
   
 // console.log(data);
 
@@ -62,9 +91,13 @@ useEffect(()=> {
         contractedDemand: data.contracted_demand,
         tariffCategory: data.tariff_category,
         voltageLevel: data.voltage_level,
+        subIndustry: data.subIndustry,
         annual_electricity_consumption: data.annual_electricity_consumption,
-        procurement: data.procurement_date ? moment(data.procurement_date) : null,
-      });
+        procurement: data.procurement_date 
+  ? dayjs(data.procurement_date, "YYYY-MM-DD")  // Ensure it is a valid dayjs object
+  : null,
+        });
+      console.log(data);
       setSelectedIndustry(data.industry);
       setSubIndustries(industryy[data.industry] || []);
     } else {
@@ -94,6 +127,7 @@ useEffect(()=> {
       tariff_category: values.tariffCategory,
       voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
       procurement_date: values.procurement.format("YYYY-MM-DD"),
+      subIndustry: values.subIndustry,
       consumption_unit: values.consumption_unit,
       annual_electricity_consumption: values.annual_electricity_consumption,
     };
@@ -126,20 +160,16 @@ useEffect(()=> {
     }
   };
 
-  // const handleIndustryChange = (value) => {
-  //   if (value === "other") {
-  //     setIsCustomIndustry(true);
-  //   } else {
-  //     setIsCustomIndustry(false);
-  //     setCustomIndustry("");
-  //   }
-  // };
+  const handleCancel = () => {
+    form.resetFields(); 
+    onCancel(); // Close the modal
+  }
 
   return (
     <Modal
       title="Fill in the details"
       open={open}
-      onCancel={onCancel}
+      onCancel={handleCancel}
       footer={null}
       width={900}
     >
@@ -321,12 +351,19 @@ useEffect(()=> {
                 "Contracted demand / Sanctioned load as per your electricity bill"
               )}
               name="contractedDemand"
-              
-              rules={[{ required: true, message: "Please enter the contracted demand!" }]}
+              rules={[
+                { required: true, message: "Please enter the contracted demand!" },
+                {
+                  validator: (_, value) =>
+                    value > 0
+                      ? Promise.resolve()
+                      : Promise.reject(new Error("Contracted demand must be greater than 0!")),
+                },
+              ]}
             >
               <Input
                 type="number"
-                min={0}
+                min={1}
                 placeholder="Enter contracted demand in MW"
               />
             </Form.Item>
@@ -339,10 +376,19 @@ useEffect(()=> {
                 "Enter the annual electricity consumption in megawatt-hours."
               )}
               name="annual_electricity_consumption"
-              rules={[{ required: true, message: "Please enter the annual electricity consumption!" }]}
+              rules={[
+                { required: true, message: "Please enter the annual electricity consumption!" },
+                {
+                  validator: (_, value) =>
+                    value > 0
+                      ? Promise.resolve()
+                      : Promise.reject(new Error("Annual electricity consumption must be greater than 0!")),
+                },
+              ]}
             >
               <Input
                 type="number"
+                min={1}
                 placeholder="Enter annual electricity consumption in MWh"
               />
             </Form.Item>
@@ -359,7 +405,7 @@ useEffect(()=> {
             >
               <DatePicker
                 style={{ width: "100%" }}
-                // format="DD/MM/YYYY" // Set the display format to DD/MM/YYYY
+                format="DD-MM-YYYY"
                 disabledDate={(current) => {
                   // Disable today and all past dates
                   return current && current <= new Date();

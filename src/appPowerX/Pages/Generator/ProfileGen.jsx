@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -10,34 +9,32 @@ import {
   Table,
   Modal,
   Form,
-  Spin,
 } from "antd";
-import EditProfileModal from "./Modal/EditProfileModal";
+// import EditProfileModal from "./Modal/EditProfileModal";
 import dayjs from "dayjs";
-import AddUserModal from "./Modal/AddUserModal";
+// import AddUserModal from "../Consumer/Modal/AddUserModal";
 import { render } from "less";
 import { DeleteOutlined, EditOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Navigate, useNavigate } from "react-router-dom";
-import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { useDispatch } from "react-redux";
 
 const { Title, Text } = Typography;
 
-const ProfilePage = () => {
+const ProfileGen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUserModal, setIsUserModal] = useState(false);
   const [editableData, setEditaleData] = useState("");
   const [editValue, setEditValue] = useState(false);
   const [form] = Form.useForm();
-  const dispatch = useDispatch();
-  const [userDataSource, setUserDataSource] = useState([]);
-  const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
+   const [userDataSource, setUserDataSource] = useState([]);
 
+  
   // Retrieve user data safely from localStorage
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
-  const userId = initialUserData.id;
-  // console.log(userId);
+const userId = initialUserData.id;
+// console.log(userId);
 
   const navigate = useNavigate();
 
@@ -69,27 +66,26 @@ const ProfilePage = () => {
   //   { key: 4, username: "pqr", email: "pqr@gmail.com", role: "View" },
   // ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const res = await dispatch(fetchSubUserById(userId));
-        const users = res.payload; // Assuming the response is in the payload
-        const formattedUsers = users.map((user) => ({
-          key: user.id,
-          username: user.email.split("@")[0], // Assuming username is the part before the email
-          email: user.email,
-          role: user.role,
-        }));
-        setUserDataSource(formattedUsers);
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      }
-    };
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const res = await dispatch(fetchSubUserById(userId));
+//         const users = res.payload; // Assuming the response is in the payload
+//         const formattedUsers = users.map(user => ({
+//           key: user.id,
+//           username: user.email.split('@')[0], // Assuming username is the part before the email
+//           email: user.email,
+//           role: user.role,
+//         }));
+//         setUserDataSource(formattedUsers);
+//       } catch (error) {
+//         console.error("Failed to fetch user data:", error);
+//       }
+//     };
 
-    fetchData();
-  }, [dispatch]);
+//     fetchData();
+//   }, [dispatch, userId]);
+
 
   const handleEditToggle = () => setIsModalVisible(true);
   const handleCancel = () => setIsModalVisible(false);
@@ -117,7 +113,7 @@ const ProfilePage = () => {
         { ...values, key: userDataSource.length + 1 },
       ]);
     }
-  };
+  };  
   const handleEdit = (record) => {
     setEditaleData(record);
     // console.log(record);
@@ -143,31 +139,32 @@ const ProfilePage = () => {
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Role", dataIndex: "role", key: "role" },
   ];
-  // {
-  //   title: "Action",
-  //   dataIndex: "action",
-  //   key: "action",
-  //   render: (_, record) => (
-  //     <>
-  //       {/* <a
-  //         type="primary"
-  //         style={{ marginRight: 8 }}
-  //         icon={<EditOutlined />}
-  //         onClick={() => handleEdit(record)}
-  //       >
-  //         Edit
-  //       </a> */}
-  //       <a
-  //         type="danger"
-  //         style={{ color: "red" }}
-  //         icon={<DeleteOutlined />}
-  //         onClick={() => handleDelete(record.key)}
-  //       >
-  //         Delete
-  //       </a>
-  //     </>
-  //   ),
-  // },
+    // {
+    //   title: "Action",
+    //   dataIndex: "action",
+    //   key: "action",
+    //   render: (_, record) => (
+    //     <>
+    //       {/* <a
+    //         type="primary"
+    //         style={{ marginRight: 8 }}
+    //         icon={<EditOutlined />}
+    //         onClick={() => handleEdit(record)}
+    //       >
+    //         Edit
+    //       </a> */}
+    //       <a
+    //         type="danger"
+    //         style={{ color: "red" }}
+    //         icon={<DeleteOutlined />}
+    //         onClick={() => handleDelete(record.key)}
+    //       >
+    //         Delete
+    //       </a>
+    //     </>
+    //   ),
+    // },
+
 
   return (
     <Row justify="center" style={{ marginTop: "50px", width: "100%" }}>
@@ -194,7 +191,7 @@ const ProfilePage = () => {
                 <Text strong>CIN Number</Text>
               </Col>
               <Col span={12}>
-                <Text> : {userData.cin_number || "N/A"}</Text>
+                <Text> : {userData.cin_number || "-"}</Text>
               </Col>
               <Col span={12}>
                 <Text strong>Company</Text>
@@ -260,14 +257,14 @@ const ProfilePage = () => {
               {/* <Button type="primary" onClick={handleEditToggle}>
                 Edit Profile
               </Button> */}
-              <Button type="primary" icon={<LogoutOutlined  />} onClick={handleLogOut}>
+              <Button type="primary" icon={<LogoutOutlined /> } onClick={handleLogOut}>
                 Log out
               </Button>
             </Row>
           </Card>
         </Col>
 
-        {role === "Admin" ? (
+        {/* {role === "Admin" ? (
           <Col span={12} xs={24} sm={12} md={12} lg={10}>
             <Card bordered style={{ borderRadius: "8px", minHeight: "530px" }}>
               <Title
@@ -286,49 +283,36 @@ const ProfilePage = () => {
                 </Button>
               </Row>
               <br />
-              {loading ? (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "60vh", // Full height of the viewport
-                  }}
-                >
-                  <Spin />
-                </div>
-              ) : (
-                <Table
-                  columns={userColumns}
-                  dataSource={userDataSource}
-                  bordered
-                  style={{ marginTop: "10px" }}
-                  pagination={false}
-                />
-              )}
+              <Table
+                columns={userColumns}
+                dataSource={userDataSource}
+                bordered
+                style={{ marginTop: "10px" }}
+                pagination={false}
+              />
             </Card>
           </Col>
-        ) : null}
+        ) : null} */}
       </Row>
 
       {/* Edit Profile Modal */}
-      <EditProfileModal
+      {/* <EditProfileModal
         isVisible={isModalVisible}
         onCancel={handleCancel}
         onSave={handleSave}
         initialValues={userData}
-      />
+      /> */}
 
       {/* Add User Modal */}
-      <AddUserModal
+      {/* <AddUserModal
         isVisible={isUserModal}
         onCancel={handleUserCancel}
         onSave={handleSaveUser}
         editableData={editableData}
         edit={editValue}
-      />
+      /> */}
     </Row>
   );
 };
 
-export default ProfilePage;
+export default ProfileGen;

@@ -75,7 +75,7 @@ const [base64CSVFile, setBase64CSVFile] = useState(""); // State to store Base64
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user")).user;
-console.log(user);
+// console.log(user);
 const user_id=user?.id;
   const { status, projects } = useSelector((state) => state.portfolio);
 

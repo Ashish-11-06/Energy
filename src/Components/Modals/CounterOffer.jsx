@@ -30,7 +30,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransactio
   const term_sheet_id=data.id;
   const downloadable=data?.downloadable;
 
-  console.log(downloadable);
+  // console.log(downloadable);
   const [ppaTerm, setPpaTerm] = useState(data.term_of_ppa);
   const [lockInPeriod, setLockInPeriod] = useState(data.lock_in_period);
   // const [commencementOfSupply,setCommencementOfSupply ] = useState(data.commencement_of_supply);
@@ -275,7 +275,7 @@ let temp='';
             <Typography.Paragraph>
               <strong>Term of PPA (years):</strong>
               <InputNumber
-                min={1}
+                min={1} // Updated to prevent 0 or negative values
                 value={ppaTerm}
                 disabled={fromTransaction}
                 onChange={handleFieldChange(setPpaTerm)} // Use handleFieldChange
@@ -287,7 +287,7 @@ let temp='';
             <Typography.Paragraph>
               <strong>Lock-in Period (years):</strong>
               <InputNumber
-                min={1}
+                min={1} // Updated to prevent 0 or negative values
                 value={lockInPeriod}
                 disabled={fromTransaction}
                 onChange={handleFieldChange(setLockInPeriod)} // Use handleFieldChange
@@ -322,7 +322,7 @@ let temp='';
             <Typography.Paragraph>
               <strong>Annual Contracted Energy (million units):</strong>
               <InputNumber
-                min={0}
+                min={1} // Updated to prevent 0 or negative values
                 value={contractedEnergy}
                 onChange={handleFieldChange(setContractedEnergy)} // Use handleFieldChange
                 disabled={fromTransaction}
@@ -334,7 +334,7 @@ let temp='';
             <Typography.Paragraph>
               <strong>Minimum Supply Obligation (million units):</strong>
               <InputNumber
-                min={0}
+                min={1} // Updated to prevent 0 or negative values
                 value={minimumSupply}
                 onChange={handleFieldChange(setMinimumSupply)} // Use handleFieldChange
                 disabled={fromTransaction}
@@ -364,7 +364,7 @@ let temp='';
             <Typography.Paragraph>
               <strong>Payment Security Days:</strong>
               <InputNumber
-                min={1}
+                min={1} // Updated to prevent 0 or negative values
                 value={paymentSecurityDays}
                 disabled={fromTransaction}
                 onChange={handleFieldChange(setPaymentSecurityDays)} // Use handleFieldChange

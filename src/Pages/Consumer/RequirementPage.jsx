@@ -18,7 +18,7 @@ const RequirementsPage = () => {
   const [selectedRequirement, setSelectedRequirement] = useState(null); // State to hold the selected requirement
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [username, setUsername] = useState(''); // State for info modal
-  const [isEdit,setEdit] = useState(false);
+  const [isEdit, setEdit] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // Get location object
   const newUser = location.state?.new_user; // Get new_user from location state
@@ -28,27 +28,27 @@ const [editData,setEditData]=useState(selectedRequirement);
 const [loading,setLoading]= useState(false);
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
-  const userData=JSON.parse(localStorage.getItem('user')).user;
+  const userData = JSON.parse(localStorage.getItem('user')).user;
   // console.log(userData.is_new_user);
-  const is_new_user=userData.is_new_user;
-  
-  const role=userData.role;
+  const is_new_user = userData.is_new_user;
+
+  const role = userData.role;
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
     // console.log('item', item);
     return item ? JSON.parse(item) : '';
   };
 
-// useEffect(()=>{
-//   const data={
-//     user_id:userData.id,
-//     selectedRequirementId:selectedRequirement?.id
-//   }
-// const res=dispatch(lastVisitedPage(data));
-// console.log(res);
+  // useEffect(()=>{
+  //   const data={
+  //     user_id:userData.id,
+  //     selectedRequirementId:selectedRequirement?.id
+  //   }
+  // const res=dispatch(lastVisitedPage(data));
+  // console.log(res);
 
-// },[selectedRequirement])
-// console.log(selectedRequirement.id);
+  // },[selectedRequirement])
+  // console.log(selectedRequirement.id);
 
 
   // Define columns for the table (Remove selection column)
@@ -67,7 +67,7 @@ const [loading,setLoading]= useState(false);
       render: (text, record) => (
         <Radio
           checked={selectedRequirement?.id === record.id}
-          onChange={() => handleRowSelect(record)} 
+          onChange={() => handleRowSelect(record)}
         />
       ),
     },
@@ -115,23 +115,25 @@ const [loading,setLoading]= useState(false);
       dataIndex: 'procurement_date',
       key: 'procurement',
       render: (date, record) => (
-        <span key={record.id || `${record.key}-${date}`}>{date ? moment(date).format('DD-MM-YYYY') : ''}</span>
+        <span key={record.id || `${record.key}-${date}`}>
+          {console.log(date)}
+          {date ? moment(date).format('DD-MM-YYYY') : ''}</span>
       ),
     },
     {
-      title:'Edit Consumption Unit',
-      key:'edit',
-      render:(text,record)=>(
-        <Button type="primary" onClick={()=>handleEdit(record)}>Edit</Button>
+      title: 'Edit Consumption Unit',
+      key: 'edit',
+      render: (text, record) => (
+        <Button type="primary" onClick={() => handleEdit(record)}>Edit</Button>
       )
     }
-    
-   
-    ,    
+
+
+    ,
   ];
-  
-  
-  // Insert "Add Details" as the last column if subscription is active
+
+
+  // Insert "Add Details" before the "Select" column if subscription is active
   if (subscriptionPlan?.status === 'active' && role != 'view') {
     const addDetailsColumn = {
       title: "Add Consumption Details",
@@ -146,34 +148,45 @@ const [loading,setLoading]= useState(false);
     // Push the column to the end of the columns array
     columns.push(addDetailsColumn);
   }
-  
 
-  const handleEdit=(record)=>{
-    // console.log(record);
-    setEditData(record);
+  console.log(requirements);
+
+  const handleEdit = (record) => {
+    // Find the matching object in the requirements array
+    const matchingRequirement = requirements.find((item) => item.id === record.id);
+  
+    // Add the `subIndustry` field from the found object (if it exists)
+    const updatedRecord = {
+      ...record,
+      subIndustry: matchingRequirement ? matchingRequirement.sub_industry : null, 
+    };
+
+    console.log(matchingRequirement);
+  
+    setEditData(updatedRecord);
     setEdit(true);
     setIsModalVisible(true);
-  }
+  };
 
   // console.log(editData);
-  
 
-const handleAddDetails =(record) => {
-  // console.log('clicked');
-  
-// setSelectedRequirement(record);
-  // console.log(selectedRequirement);
-  localStorage.setItem('selectedRequirementId',record.id);
- navigate('/consumer/energy-consumption-table');
 
-}
+  const handleAddDetails = (record) => {
+    // console.log('clicked');
+
+    // setSelectedRequirement(record);
+    // console.log(selectedRequirement);
+    localStorage.setItem('selectedRequirementId', record.id);
+    navigate('/consumer/energy-consumption-table');
+
+  }
 
   const handleRowSelect = (record) => {
     setSelectedRowKeys([record.key]); // Only allow single selection
     setSelectedRequirement(record); // Store the selected record 
-    const data={
-      user_id:userData.id,
-      selected_requirement_id:record.id
+    const data = {
+      user_id: userData.id,
+      selected_requirement_id: record.id
     }
     message.success(`You selected record of state '${record.state}'`);
     // console.log(selectedRequirement);  
@@ -197,18 +210,18 @@ const handleAddDetails =(record) => {
     try {
       // console.log('values',values);
       // const response = await consumerrequirementA.addNewRequirement(values);
-     if(isEdit){
-      // console.log('user',id);
-      
-      
-      dispatch(updateRequirements({updatedData:values}));
-      setIsModalVisible(false);
-       message.success('Requirement updated successfully!');
-     } else {
-       dispatch(addNewRequirement(values));
-       setIsModalVisible(false);
-       message.success('Requirement added successfully!');
-     }
+      if (isEdit) {
+        // console.log('user',id);
+
+
+        dispatch(updateRequirements({ updatedData: values }));
+        setIsModalVisible(false);
+        message.success('Requirement updated successfully!');
+      } else {
+        dispatch(addNewRequirement(values));
+        setIsModalVisible(false);
+        message.success('Requirement added successfully!');
+      }
     } catch (error) {
       // console.log(error);
       message.error('Failed to add requirement');
@@ -225,7 +238,7 @@ const handleAddDetails =(record) => {
     if (selectedRequirement) {
       navigate('/consumer/matching-ipp'); // Pass the selected requirement to the next page
       // console.log(selectedRequirement);
-      localStorage.setItem('selectedRequirementId',selectedRequirement.id);
+      localStorage.setItem('selectedRequirementId', selectedRequirement.id);
 
     } else {
       message.error('Please select a single requirement before continuing.');
@@ -236,7 +249,7 @@ const handleAddDetails =(record) => {
     // Fetch username from local storage
     const user = getFromLocalStorage('user');
     // console.log(user);
-    
+
     if (user && user.user.company_representative) {
       setUsername(user.user.company_representative);
     }

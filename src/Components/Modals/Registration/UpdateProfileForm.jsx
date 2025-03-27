@@ -297,6 +297,18 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
                 required: true,
                 message: "Please input the total install capacity!",
               },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || value >= getFieldValue("available_capacity")) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(
+                      "Total Install Capacity must be greater than or equal toAvailable Capacity!"
+                    )
+                  );
+                },
+              }),
             ]}
           >
             <Input />

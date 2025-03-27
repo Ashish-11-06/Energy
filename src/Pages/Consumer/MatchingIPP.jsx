@@ -25,6 +25,8 @@ const MatchingIPP = () => {
     if (requirementId) {
       try {
         dispatch(fetchMatchingIPPById(requirementId)).then((res) => {
+          // console.log(res.payload.length);
+          
           if (res.payload && res.payload.length > 0) {
             setIsMatching(true); 
           } else {
@@ -37,7 +39,7 @@ const MatchingIPP = () => {
         console.log(error);
       }
     } else {
-      console.error("Requirement ID not found in location state.");
+      // console.error("Requirement ID not found in location state.");
     }
   }, [location, dispatch]);
 
@@ -68,7 +70,7 @@ const MatchingIPP = () => {
       message.error('Please select a single matching IPP before continuing.');
     }
   };
-console.log(isMatching);
+// console.log(isMatching);
 
   const columns = [
     {

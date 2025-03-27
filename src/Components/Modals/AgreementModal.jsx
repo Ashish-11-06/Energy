@@ -15,7 +15,7 @@ const AgreementContent = ({ dynamicData }) => (
       <p style={{ margin: '5px 0' }}>for Renewable Power Plant between</p>
       <p style={{ margin: '5px 0' }}> {dynamicData.generatorName} and {dynamicData.consumerName},</p>
       <p style={{ margin: '5px 0' }}>under Open Access Captive Mechanism</p>
-      <p style={{ margin: '5px 0' }}>in &lt;Consumer State&gt;</p>
+      <p style={{ margin: '5px 0' }}>in {dynamicData.consumer_state}</p>
       <p style={{ margin: '5px 0' }}>(the “Proposed Transaction”)</p>
 
       <hr style={{ width: '50px', margin: '10px auto', border: '1px solid black' }} />
@@ -46,12 +46,12 @@ const AgreementContent = ({ dynamicData }) => (
       Date: {new Date().toLocaleDateString()}
     </div>
 
-    <h3><strong>Indicative Heads of Terms for Open Access Captive Solar Project in {dynamicData.projectSite}</strong></h3>
+    <h3><strong>Indicative Heads of Terms for Open Access Captive Solar Project in {dynamicData.solarState}</strong></h3>
 
     <p>Dear {dynamicData.userName || 'user'} </p>
 
     <p>Please find enclosed outline terms for the open access captive renewable project <div></div>
-      ("Project") situated at [_], &lt;<b>{dynamicData.generator}</b> State&gt;, India ("Project Site").</p>
+      ("Project") situated at [_], <b>{dynamicData.consumer_state}</b> , India ("Project Site").</p>
 
     <strong><p>1. Content of these heads of terms</p></strong>
 
@@ -60,34 +60,34 @@ const AgreementContent = ({ dynamicData }) => (
       <p>a) the term sheet for the power consumption agreement is set out in Part 1 of the Annex;</p>
       <p>b) the term sheet for the equity commitment is set out in Part 2 of the Annex; and</p>
       <p>c) the shareholding arrangements are set out in Part 3 of the Annex.</p>
-      <p>The Proposed Transaction remains subject to satisfactory due diligence by &lt;<b>{dynamicData.generator}</b>&gt;, and to the agreement and signature by all relevant {dynamicData.consumerName}(s) of all legally binding agreements (the "Transaction Documents").</p>
+      <p>The Proposed Transaction remains subject to satisfactory due diligence by <b>{dynamicData.generator}</b>, and to the agreement and signature by all relevant {dynamicData.consumerName}(s) of all legally binding agreements (the "Transaction Documents").</p>
     </div>
 
     
-    <p style={{marginLeft:'25px'}}><strong>1.2.</strong> These heads of terms in the annexes ("Terms") are not exhaustive nor are they intended to be legally binding between &lt;<b>{dynamicData.generator}</b>&gt; and the {dynamicData.consumerName}(s).¹ The Transaction Documents will contain more detailed terms and conditions on the rights, obligations and responsibilities of the parties, along with customary representations and warranties and indemnities.</p>
+    <p style={{marginLeft:'25px'}}><strong>1.2.</strong> These heads of terms in the annexes ("Terms") are not exhaustive nor are they intended to be legally binding between <b>{dynamicData.generator}</b> and the {dynamicData.consumerName}(s).¹ The Transaction Documents will contain more detailed terms and conditions on the rights, obligations and responsibilities of the parties, along with customary representations and warranties and indemnities.</p>
 
     <p class="section-title"><strong>2. Exclusivity</strong></p>
     <p style={{marginLeft:'25px'}}><strong>2.1.</strong>  The definitions in this Paragraph 2.1 apply in this Paragraph 2:</p>
     <div style={{ marginLeft: '25px' }}>
     <p><b>Exclusivity Period:</b> The period commencing on the date of execution of the Terms, and ending at the earlier of: (a) the execution of the last of the Transaction Documents; or (b) on the date falling 150 days after the date of execution of the.</p>
-    <p>Terms; or (c) other such date to be agreed between &lt;<b>{dynamicData.generator}</b>&gt; and the {dynamicData.consumerName}(s) in writing:</p>
+    <p>Terms; or (c) other such date to be agreed between ;<b>{dynamicData.generator}</b> and the {dynamicData.consumerName}(s) in writing:</p>
     <p><strong>Restricted Activity:</strong> Negotiations in relation to power procurement activities through open access, captive or through power exchange. This does not include any existing transactions for which contracts have been executed prior to the execution of the Terms;</p>
-    <p><strong>Third Party:</strong> Any person other than &lt;<b>{dynamicData.generator}</b>&gt; (or any of their respective officers, employees, agents or advisers);</p>
+    <p><strong>Third Party:</strong> Any person other than <b>{dynamicData.generator}</b> (or any of their respective officers, employees, agents or advisers);</p>
     <p><strong>Third Party Negotiations:</strong> Any discussions or negotiations between a Third Party and the {dynamicData.consumerName}(s) or the {dynamicData.consumerName}'s group, or any of its respective officers, employees, agents or advisers, relating to or otherwise concerning a Restricted Activity.</p>
 
     </div>
     {/* ================================================================================================================================================ */}
 
-    <p className='page-break' style={{marginLeft:'25px'}}><strong>2.2.</strong> The {dynamicData.consumerName}(s) agrees that for the duration of the Exclusivity Period, it will discuss and negotiate the Proposed Transaction with &lt;<b>{dynamicData.generator}</b>&gt; on an exclusive basis. The {dynamicData.consumerName}(s) undertakes that for the duration of the Exclusivity Period, it will not (and will procure that no member of its group, nor any of their respective officers, employees, agents or advisers), directly or indirectly continue, enter into, re-start, solicit, initiate, respond to any inquiries, consider or participate in any Third Party Negotiations, in any manner whatsoever.</p>
+    <p className='page-break' style={{marginLeft:'25px'}}><strong>2.2.</strong> The {dynamicData.consumerName}(s) agrees that for the duration of the Exclusivity Period, it will discuss and negotiate the Proposed Transaction with <b>{dynamicData.generator}</b> on an exclusive basis. The {dynamicData.consumerName}(s) undertakes that for the duration of the Exclusivity Period, it will not (and will procure that no member of its group, nor any of their respective officers, employees, agents or advisers), directly or indirectly continue, enter into, re-start, solicit, initiate, respond to any inquiries, consider or participate in any Third Party Negotiations, in any manner whatsoever.</p>
     <p style={{marginLeft:'25px'}}><strong>2.3.</strong> On executing the Terms, the {dynamicData.consumerName}(s) will immediately terminate, or procure the termination of, any Third Party Negotiations taking place.</p>
     <p> <b>3. Undertakings</b></p>
     <div style={{marginLeft: '25px'}}>
-    <p><strong>3.1.</strong> Based on the {dynamicData.consumerName}'s exclusivity undertakings (as set out in paragraph 2 above), &lt;<b>{dynamicData.generator}</b>&gt; is committing costs and time to develop the Project at the Project Site through the feasibility stage. During the Exclusivity Period, &lt;<b>{dynamicData.generator}</b>&gt; will use its reasonable endeavours to proceed with and develop the Project at the Project Site.</p>
-    <p><strong>3.2.</strong> For the purposes of operating the Project, an application for connectivity to the grid is required to be submitted to the DISCOM (Grid Application). The Parties agree that &lt;<b>{dynamicData.generator}</b>&gt; will make such an application, and the {dynamicData.consumerName}(s) will provide necessary co-operation to <strong>&lt;<b>{dynamicData.generator}</b>&gt;</strong> in procuring and maintaining the open access approval. </p>
-    <p><strong>3.3.</strong> The {dynamicData.consumerName}(s) undertakes to execute a consent letter addressed to the DISCOM (and any other documents as &lt;<b>{dynamicData.generator}</b>&gt;may require) in the form required by &lt;<b>{dynamicData.generator}</b>&gt;  </p>
-    <p><strong>3.4.</strong> In connection with the Grid Application, &lt;<b>{dynamicData.generator}</b>&gt; shall be solely responsible for all fees and costs of such Grid Application.</p>
-    <p><strong>3.5.</strong> &lt;<b>{dynamicData.generator}</b>&gt; shall, at appropriate intervals, keep the {dynamicData.consumerName}(s) and the EXG Global reasonably informed of the status of the development of the Project, status of other {dynamicData.consumerName}(s) and any other information reasonably required for the purposes of the Project.</p>
-    <p><strong>3.6.</strong> The {dynamicData.consumerName}(s) agrees to provide &lt;<b>{dynamicData.generator}</b>&gt; such information as &lt;<b>{dynamicData.generator}</b>&gt; may request related to the Proposed Transaction, including but not limited to any information to enable &lt;Generator&gt; to carry out due diligence on the {dynamicData.consumerName}(s) and/or its group. The {dynamicData.consumerName}(s) shall respond to any request by &lt;Generator&gt; under this paragraph as soon as reasonably practicable.</p>
+    <p><strong>3.1.</strong> Based on the {dynamicData.consumerName}'s exclusivity undertakings (as set out in paragraph 2 above), <b>{dynamicData.generator}</b> is committing costs and time to develop the Project at the Project Site through the feasibility stage. During the Exclusivity Period, <b>{dynamicData.generator}</b> will use its reasonable endeavours to proceed with and develop the Project at the Project Site.</p>
+    <p><strong>3.2.</strong> For the purposes of operating the Project, an application for connectivity to the grid is required to be submitted to the DISCOM (Grid Application). The Parties agree that <b>{dynamicData.generator}</b> will make such an application, and the {dynamicData.consumerName}(s) will provide necessary co-operation to <strong><b>{dynamicData.generator}</b></strong> in procuring and maintaining the open access approval. </p>
+    <p><strong>3.3.</strong> The {dynamicData.consumerName}(s) undertakes to execute a consent letter addressed to the DISCOM (and any other documents as <b>{dynamicData.generator}</b>may require) in the form required by <b>{dynamicData.generator}</b>  </p>
+    <p><strong>3.4.</strong> In connection with the Grid Application, <b>{dynamicData.generator}</b> shall be solely responsible for all fees and costs of such Grid Application.</p>
+    <p><strong>3.5.</strong> <b>{dynamicData.generator}</b> shall, at appropriate intervals, keep the {dynamicData.consumerName}(s) and the EXG Global reasonably informed of the status of the development of the Project, status of other {dynamicData.consumerName}(s) and any other information reasonably required for the purposes of the Project.</p>
+    <p><strong>3.6.</strong> The {dynamicData.consumerName}(s) agrees to provide <b>{dynamicData.generator}</b> such information as <b>{dynamicData.generator}</b> may request related to the Proposed Transaction, including but not limited to any information to enable Generator to carry out due diligence on the {dynamicData.consumerName}(s) and/or its group. The {dynamicData.consumerName}(s) shall respond to any request by Generator under this paragraph as soon as reasonably practicable.</p>
     <p><strong>3.7.</strong> The parties undertake to use their best endeavours to negotiate the Transaction Documents in good faith based on the Terms.    </p>
     <p><strong>3.8.</strong> The parties undertake to use their best endeavours to conclude and enter into the Transaction Documents (and all ancillary documents) prior to the expiry of the Exclusivity Period.</p>
    </div>
@@ -96,23 +96,23 @@ const AgreementContent = ({ dynamicData }) => (
     <div style={{marginLeft: '25px'}}>
     <p>
       <p></p><strong>4.1. </strong>Neither party may terminate the Terms prior to the expiry of the Exclusivity
-      Period, provided however, &lt;<b>{dynamicData.generator}</b>&gt; may terminate this arrangement in
+      Period, provided however, <b>{dynamicData.generator}</b> may terminate this arrangement in
       the following circumstances, by giving a reasonable notice to the Captive
       User(s):
       <br />
-      a) where the parameters make the investment non-viable for &lt;<b>{dynamicData.generator}</b>&gt;,
-      as determined solely by &lt;<b>{dynamicData.generator}</b>&gt;;
+      a) where the parameters make the investment non-viable for <b>{dynamicData.generator}</b>,
+      as determined solely by <b>{dynamicData.generator}</b>;
       <br />
       b) where the {dynamicData.consumerName}(s) fails to comply with its obligations under the
       Terms, including, without limitation, its obligations in respect of
-      exclusivity, confidentiality, assisting &lt;<b>{dynamicData.generator}</b>&gt; with the Grid
+      exclusivity, confidentiality, assisting <b>{dynamicData.generator}</b> with the Grid
       Application, and obligation to negotiate and conclude the Transaction
       Documents in good faith; and
       <br />
-      where the {dynamicData.consumerName}(s) fails to pass &lt;<b>{dynamicData.generator}</b>&gt;’s due diligence relating to compliance and business ethics, as determined solely by &lt;<b>{dynamicData.generator}</b>&gt;.
+      where the {dynamicData.consumerName}(s) fails to pass <b>{dynamicData.generator}</b>’s due diligence relating to compliance and business ethics, as determined solely by <b>{dynamicData.generator}</b>.
     </p>
 
-    <p><strong>4.2. </strong>The termination by &lt;<b>{dynamicData.generator}</b>&gt; of the Terms, in accordance with paragraph 4.1 above, shall be without any liability for &lt;<b>{dynamicData.generator}</b>&gt; , &lt;Consumer&gt; and EXG Global. </p>
+    <p><strong>4.2. </strong>The termination by <b>{dynamicData.generator}</b> of the Terms, in accordance with paragraph 4.1 above, shall be without any liability for <b>{dynamicData.generator}</b> , Consumer and EXG Global. </p>
     </div>
     <div  className='page-break'>
     <p><strong>5. Confidentiality</strong></p>
@@ -132,16 +132,16 @@ const AgreementContent = ({ dynamicData }) => (
   
     {/* <div>
       
-      <p><strong>7.2 </strong>The {dynamicData.consumerName}(s) undertakes to execute a consent letter addressed to the DISCOM (and any other documents as &lt;Generator&gt; may require) in the form required by &lt;Generator&gt;.</p>
+      <p><strong>7.2 </strong>The {dynamicData.consumerName}(s) undertakes to execute a consent letter addressed to the DISCOM (and any other documents as Generator may require) in the form required by Generator.</p>
 
      
-      <p><strong>7.3 </strong>In connection with the Grid Application, &lt;Generator&gt; shall be solely responsible for all fees and costs of such Grid Application.</p>
+      <p><strong>7.3 </strong>In connection with the Grid Application, Generator shall be solely responsible for all fees and costs of such Grid Application.</p>
 
     
-      <p><strong>7.4 </strong>&lt;Generator&gt; shall, at appropriate intervals, keep the {dynamicData.consumerName}(s) and the EXG Global reasonably informed of the status of the development of the Project, status of other Captive User(s) and any other information reasonably required for the purposes of the Project.</p>
+      <p><strong>7.4 </strong>Generator shall, at appropriate intervals, keep the {dynamicData.consumerName}(s) and the EXG Global reasonably informed of the status of the development of the Project, status of other Captive User(s) and any other information reasonably required for the purposes of the Project.</p>
 
      
-      <p><strong>7.5 </strong>The Captive User(s) agrees to provide &lt;Generator&gt; such information as &lt;Generator&gt; may request related to the Proposed Transaction, including but not limited to any information to enable &lt;Generator&gt; to carry out due diligence on the Captive User(s) and/or its group. The Captive User(s) shall respond to any request by &lt;Generator&gt; under this paragraph as soon as reasonably practicable.</p>
+      <p><strong>7.5 </strong>The Captive User(s) agrees to provide Generator such information as Generator may request related to the Proposed Transaction, including but not limited to any information to enable Generator to carry out due diligence on the Captive User(s) and/or its group. The Captive User(s) shall respond to any request by Generator under this paragraph as soon as reasonably practicable.</p>
 
       
       <p><strong>7.6 </strong>The parties undertake to use their best endeavours to negotiate the Transaction Documents in good faith based on the Terms.</p>
@@ -152,17 +152,17 @@ const AgreementContent = ({ dynamicData }) => (
       {/* <h2>4. Termination</h2> */}
 
       {/* <h3>4.1.</h3> */}
-      {/* <p>4.1 Neither party may terminate the Terms prior to the expiry of the Exclusivity Period, provided however, &lt;Generator&gt; may terminate this arrangement in the following circumstances, by giving a reasonable notice to the Captive User(s):</p> */}
+      {/* <p>4.1 Neither party may terminate the Terms prior to the expiry of the Exclusivity Period, provided however, Generator may terminate this arrangement in the following circumstances, by giving a reasonable notice to the Captive User(s):</p> */}
 
       {/* <ol type="a">
-        <li>where the parameters make the investment non-viable for &lt;Generator&gt;, as determined solely by &lt;Generator&gt;;</li>
-        <li>where the Captive User(s) fails to comply with its obligations under the Terms, including, without limitation, its obligations in respect of exclusivity, confidentiality, assisting &lt;Generator&gt; with the Grid Application, and obligation to negotiate and conclude the Transaction Documents in good faith; and</li>
-        <li>where the Captive User(s) fails to pass &lt;Generator&gt;'s due diligence relating to compliance and business ethics, as determined solely by &lt;Generator&gt;.</li>
+        <li>where the parameters make the investment non-viable for Generator, as determined solely by Generator;</li>
+        <li>where the Captive User(s) fails to comply with its obligations under the Terms, including, without limitation, its obligations in respect of exclusivity, confidentiality, assisting Generator with the Grid Application, and obligation to negotiate and conclude the Transaction Documents in good faith; and</li>
+        <li>where the Captive User(s) fails to pass Generator's due diligence relating to compliance and business ethics, as determined solely by Generator.</li>
       </ol> */}
     </div>
 
     {/* <h3>4.2.</h3>
-    <p>The termination by &lt;Generator&gt; of the Terms, in accordance with paragraph 4.1 above, shall be without any liability for &lt;Generator&gt;, &lt;Consumer&gt; and EXG Global.</p>
+    <p>The termination by Generator of the Terms, in accordance with paragraph 4.1 above, shall be without any liability for Generator, Consumer and EXG Global.</p>
 
     <h2>5. Confidentiality</h2>
     <h3>5.1.</h3>
@@ -186,7 +186,7 @@ const AgreementContent = ({ dynamicData }) => (
 
     {/* <br><br><br> */}<div></div>
 <br/>
-    <p>For and on behalf of {dynamicData.consumerName}</p>
+    <p>For and on behalf of <b> {dynamicData.consumerName}</b></p>
     <br/>
     {/* <br><br><br> */}<div></div>
 
@@ -280,7 +280,7 @@ const AgreementContent = ({ dynamicData }) => (
             <td style={{ border: '1px solid black', padding: '8px' }}>
 
               <p>
-                Subject to the {dynamicData.consumerName} complying with their obligations under the PPAs and Equity Documents, the Generator will use its best efforts to construct the Project and commence supply of power from the Project within <strong>&lt;COD&gt;</strong> (Anticipated COD).
+                Subject to the {dynamicData.consumerName} complying with their obligations under the PPAs and Equity Documents, the Generator will use its best efforts to construct the Project and commence supply of power from the Project within <strong>COD</strong> (Anticipated COD).
               </p>
               <p>
                 Where the commencement of Power Supply is delayed for whatever reason, the Generator shall use its best endeavours to obtain an extension of the connection approval. The Anticipated COD shall be deemed extended due to delays in procuring government approvals, or any other delay which is not attributable or beyond the reasonable control of the Generator.
@@ -307,10 +307,10 @@ const AgreementContent = ({ dynamicData }) => (
                 The contract period and lock-in period should be mutually agreed and reflected in the PPA.
               </p>
               <p>
-                <strong>&lt;Term of PPA&gt;</strong> years from the date of commencement of supply of the power in case long-term open access has been procured [as set out in the Wheeling Agreement]. The minimum Lock-in period binding the Parties is <strong>&lt;{dynamicData.lock_in_period}&gt;</strong> years from the date of commencement of supply of power.
+                <strong>{dynamicData.term_of_ppa}</strong> years from the date of commencement of supply of the power in case long-term open access has been procured [as set out in the Wheeling Agreement]. The minimum Lock-in period binding the Parties is <strong>{dynamicData.lock_in_period}</strong> years from the date of commencement of supply of power.
               </p>
               <p>
-                Either Party may terminate the PPA by providing one year (12 months) notice period to the other party after completion of <strong>&lt;{dynamicData.lock_in_period}&gt; -1</strong> years from the date of commencement of supply of power such that the Lock-in period of <strong>&lt;{dynamicData.lock_in_period}&gt;</strong> years is maintained by either Party. Any such termination of PPA will also result in termination of the Equity Documents vis-à-vis such {dynamicData.consumerName}, to exit its role as a Shareholder.
+                Either Party may terminate the PPA by providing one year (12 months) notice period to the other party after completion of <strong>{dynamicData.lock_in_period} -1</strong> years from the date of commencement of supply of power such that the Lock-in period of <strong>{dynamicData.lock_in_period}</strong> years is maintained by either Party. Any such termination of PPA will also result in termination of the Equity Documents vis-à-vis such {dynamicData.consumerName}, to exit its role as a Shareholder.
               </p>
             </td>
           </tr>
@@ -402,7 +402,7 @@ const AgreementContent = ({ dynamicData }) => (
             <td style={{ border: '1px solid black', padding: '8px' }}>
               <p>
                 <p>
-                  <strong>Injection Point:</strong> The Injection Point of the power will be at the Project’s Meter on the Project Switchyard and at <strong>&lt;Generator State&gt;</strong> for Solar, <strong>&lt;Generator State&gt;</strong> for Wind, and <strong>&lt;Generator State&gt;</strong> for ESS.
+                  <strong>Injection Point:</strong> The Injection Point of the power will be at the Project’s Meter on the Project Switchyard and at <strong>Generator State</strong> for Solar, <strong>Generator State</strong> for Wind, and <strong>Generator State</strong> for ESS.
                 </p>
                 <p>
                   <strong>Withdrawal Point:</strong> The Withdrawal Point of power for {dynamicData.consumerName} shall be at their respective ABT Meter.
@@ -420,7 +420,7 @@ const AgreementContent = ({ dynamicData }) => (
             <td style={{ border: '1px solid black', padding: '8px' }}>
               <p>
                 <p>
-                  <strong>Metering:</strong> Metering will be done at the Injection Point (Project switchyard) & substation at <strong>&lt;Voltage level of Generation&gt;</strong> kV level.
+                  <strong>Metering:</strong> Metering will be done at the Injection Point (Project switchyard) & substation at <strong>{dynamicData.voltage_level_of_generation}</strong> kV level.
                 </p>
                 <p>
                   <strong>Billing:</strong> Billing will be as per Project plant switchyard ABT meter.
@@ -433,12 +433,11 @@ const AgreementContent = ({ dynamicData }) => (
            <td style={{border: '1px solid black',padding: '8px', textAlign: 'left', verticalAlign: 'top' }}>12.</td>
            <td style={{border: '1px solid black',padding: '8px', textAlign: 'left', verticalAlign: 'top' }}>
               Tariffs
-
-
             </td>
             <td style={{ border: '1px solid black', padding: '8px' }}>
               <p>
-                Bill for Monthly Contracted Electrical Output from the Project will be <strong>{dynamicData.tariff_finalized} INR /kWh</strong> till completion of the Project.
+                Bill for Monthly Contracted Electrical Output from the Project will be <strong>{parseFloat(dynamicData.tariff_finalized).toFixed(2)}
+                   {' '}INR/kWh</strong> till completion of the Project.
               </p>
             </td>
           </tr>
@@ -731,7 +730,7 @@ Arbitration. The award passed by the arbitral tribunal will be binding.
 );
 
 const AgreementModal = ({ visible, onClose,data }) => {
-  console.log(data);
+  // console.log(data);
   const consumer=data?.consumer;
  const consumer_state=data?.consumer_state;
  const generator=data?.generator;
@@ -743,24 +742,34 @@ const AgreementModal = ({ visible, onClose,data }) => {
  const term_of_ppa=data?.term_of_ppa;
  const voltage_level_of_generation=data?.voltage_level_of_generation;
   
-  const dynamicData = {
-    generatorName: generator,
-    projectSite: 'Tamil Nadu, India',
-    capacity: '100',
-    tariff: '4.5',
-    contractPeriod: '25',
-     consumerName:consumer,
-     consumer_state:consumer_state,
-     generator:generator,
-     generator_state:generator_state,
-     lockInPeriod:lock_in_period,
-     minimum_generation_obligation:minimum_generation_obligation,
-     payment_security_day:payment_security_day,
-     tariff_finalized:tariff_finalized,
-     term_of_ppa:term_of_ppa,
-     voltage_level_of_generation:voltage_level_of_generation,
-     
-  };
+
+ const generator_state_obj = JSON.parse(generator_state.replace(/'/g, '"')); // Parse the string into an object
+ const solarState = Object.entries(generator_state_obj)
+   .find(([key]) => key.toLowerCase().includes("solar"))?.[1] || " ";
+
+ const dynamicData = {
+   generatorName: generator,
+   project: generator_state,
+   solarState: solarState,
+   projectSite: generator_state,
+   capacity: '100',
+   tariff: '4.5',
+   contractPeriod: '25',
+   consumerName: consumer,
+   consumer_state: consumer_state,
+   generator: generator,
+   generator_state: generator_state,
+   lockInPeriod: lock_in_period,
+   minimum_generation_obligation: minimum_generation_obligation,
+   payment_security_day: payment_security_day,
+   tariff_finalized: tariff_finalized,
+   term_of_ppa: term_of_ppa,
+   voltage_level_of_generation: voltage_level_of_generation,
+ };
+ 
+//  console.log(dynamicData.solarState); // Output: "Gujarat"
+ 
+// console.log(dynamicData.solarState);
 
   // Generate PDF from the component
   const generatePdf = () => {

@@ -13,8 +13,7 @@ import {
 import EditProfileModal from "./Modal/EditProfileModal";
 import dayjs from "dayjs";
 import AddUserModal from "../Consumer/Modal/AddUserModal";
-import { render } from "less";
-import { DeleteOutlined, EditOutlined, LogoutOutlined } from "@ant-design/icons";
+import { LogoutOutlined } from "@ant-design/icons";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { useDispatch } from "react-redux";
@@ -34,6 +33,7 @@ const ProfilePage = () => {
   // Retrieve user data safely from localStorage
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
+  console.log(`ajdfljk ${JSON.stringify(initialUserData)}`);
 const userId = initialUserData.id;
 // console.log(userId);
 
@@ -255,9 +255,9 @@ const userId = initialUserData.id;
               justify="center"
               style={{ marginTop: "20px", justifyContent: "space-between" }}
             >
-              <Button type="primary" onClick={handleEditToggle}>
+              {/* <Button type="primary" onClick={handleEditToggle}>
                 Edit Profile
-              </Button>
+              </Button> */}
               <Button type="primary" icon={<LogoutOutlined /> } onClick={handleLogOut}>
                 Log out
               </Button>

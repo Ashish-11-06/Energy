@@ -825,13 +825,14 @@ if(dataSource?.length<=0) {
             type="generator"
           />
         )}
-      {/* <Modal 
+      <Modal 
   open={tryREreplacement}
   onOk={() => setTryREreplacement(false)}
+  onCancel={()=> setTryREreplacement(false)}
   cancelButtonProps={{ style: { display: "none" } }} // Hides cancel button
 >
   Try for lower RE Replacement
-</Modal> */}
+</Modal>
       </Row>
 
     </div>
