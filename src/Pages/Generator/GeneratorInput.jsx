@@ -67,10 +67,11 @@ const GeneratorInput = () => {
   const [activeButton, setActiveButton] = useState(null); // State to control active button
   const currentYear = new Date().getFullYear(); // Get the current year
   const lastYear = currentYear - 1; // Calculate the last year
-  const [uploadedFileName, setUploadedFileName] = useState("");
+  const [uploadedFileName, setUploadedFileName] = useState(localStorage.getItem("uploadedFileName") || ""); // Load from localStorage
   const [uploadMonthlyFile, setUploadMonthlyFile] = useState("");
   const [Structuredprojects, setStructuredProjects] = useState([]); // Local state for flattened projects
-const [checkPortfolio,setCheckPortfolio]=useState([]);
+const [checkPortfolio, setCheckPortfolio] = useState([]); // Ensure it's initialized as an array
+const [base64CSVFile, setBase64CSVFile] = useState(""); // State to store Base64 CSV file
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user")).user;
@@ -82,10 +83,15 @@ const user_id=user?.id;
     dispatch(getAllProjectsById(user.id)); // Fetch projects
   }
 
-  const handleRecordCheck =(value) => {
-    // console.log(value?.id);
-      setCheckPortfolio(value?.id);
-  }
+  const handleRecordCheck = (recordId, isChecked) => {
+    setCheckPortfolio((prev) =>
+      Array.isArray(prev) // Ensure `prev` is an array
+        ? isChecked
+          ? [...prev, recordId] // Add the ID if checked
+          : prev.filter((id) => id !== recordId) // Remove the ID if unchecked
+        : [] // Fallback to an empty array if `prev` is not an array
+    );
+  };
 
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
@@ -138,19 +144,53 @@ const user_id=user?.id;
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <Checkbox onChange={(value) => handleRecordCheck(text)}  style={{border:'green'}}/>
+        <Checkbox
+          onChange={(e) => handleRecordCheck(record.id, e.target.checked)}
+          style={{ border: "green" }}
+        />
       ),
     },
   ];
   
   // console.log(checkPortfolio);
- const handleRunOptimizer =() => {
-const modalData={
-  user_id:user_id,
-}
-  const res=dispatch(fetchCapacitySizing(modalData));
-  // navigate('/generator/combination-pattern')
- } 
+ const handleRunOptimizer = async () => {
+  if (!Array.isArray(checkPortfolio)) {
+    console.error("checkPortfolio is not an array");
+    message.error("An error occurred. Please try again.");
+    return;
+  }
+
+  const solarPortfolio = Structuredprojects.filter(
+    (p) => p.type === "Solar" && checkPortfolio.includes(p.id)
+  ).map((p) => p.id);
+  const windPortfolio = Structuredprojects.filter(
+    (p) => p.type === "Wind" && checkPortfolio.includes(p.id)
+  ).map((p) => p.id);
+  const essPortfolio = Structuredprojects.filter(
+    (p) => p.type === "ESS" && checkPortfolio.includes(p.id)
+  ).map((p) => p.id);
+
+  const modalData = {
+    user_id: user_id,
+    solar_portfolio: solarPortfolio,
+    wind_portfolio: windPortfolio,
+    ess_portfolio: essPortfolio,
+    csv_file: base64CSVFile,
+  };
+
+  try {
+    const response = await dispatch(fetchCapacitySizing(modalData)).unwrap();
+    if (response && response.combinations) {
+      console.log("Navigating to /generator/combination-pattern"); // Debugging log
+      navigate("/generator/capacity-sizing-pattern", { state: { data: response } }); // Pass response as state
+    } else {
+      message.error("No combinations found. Please check your input.");
+    }
+  } catch (error) {
+    console.error("Error running optimizer:", error);
+    message.error("An error occurred while running the optimizer. Please try again.");
+  }
+}; 
   const handleCSVUpload = async (file) => {
     try {
       // Validate the CSV file format
@@ -163,29 +203,13 @@ const modalData={
       // Display a success message for file selection
       message.success(`${file.name} uploaded successfully`);
       setUploadedFileName(file.name); // Set the latest uploaded file name
+      localStorage.setItem("uploadedFileName", file.name); // Save to localStorage
 
       // Convert file to Base64
       const reader = new FileReader();
-      reader.onloadend = async () => {
-        try {
-          const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
-
-          // Parse CSV data and update dataSource
-          const csvData = atob(base64File);
-          const parsedData = csvData.split("\n").map((row) => row.split(","));
-          // Dispatch the uploadCSV thunk and wait for the result
-          await dispatch(
-            uploadCSV({ requirement_id: requirementId, file: base64File })
-          );
-
-          // Mark action as completed only if upload succeeds
-          // setIsActionCompleted(true);
-        } catch (error) {
-          console.error("Error processing the file:", error);
-          message.error(
-            "An error occurred while processing the file. Please try again."
-          );
-        }
+      reader.onloadend = () => {
+        const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+        setBase64CSVFile(base64File); // Store Base64-encoded CSV file
       };
 
       reader.readAsDataURL(file); // Read the file as a Base64 string
@@ -199,6 +223,13 @@ const modalData={
     }
   };
 
+  useEffect(() => {
+    // Clear uploaded file name on refresh
+    return () => {
+      localStorage.removeItem("uploadedFileName");
+    };
+  }, []);
+
   const handleDownloadTemplate = () => {
     // Logic to download the CSV template
     const link = document.createElement("a");
@@ -208,6 +239,9 @@ const modalData={
     link.click();
     document.body.removeChild(link);
   };
+
+  const uploadButtonRef = React.createRef(); // Replace findDOMNode with ref
+
   return (
     <div
       style={{
@@ -241,10 +275,13 @@ const modalData={
                 }}
               ></Button>
             </Tooltip>
-            <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
+            <Upload
+              ref={uploadButtonRef} // Add ref directly to the Upload component
+              beforeUpload={handleCSVUpload}
+              showUploadList={false}
+            >
               <Tooltip title="Upload a CSV file">
                 <Button
-                  // onClick={() => handleButtonClick("csv")}
                   style={{ padding: "5px", zIndex: 100 }}
                   icon={<FileExcelOutlined style={{ marginTop: "5px" }} />}
                 >

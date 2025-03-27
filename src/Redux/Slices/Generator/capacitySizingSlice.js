@@ -6,23 +6,20 @@ export const fetchCapacitySizing = createAsyncThunk(
   'capacitySizing/fetchById',
   async (modalData, { rejectWithValue }) => {
     try {
-      // console.log('aabbcc');
-      
       const response = await capacitySizingApi.getCapacitySizing(modalData);
-      //  console.log(`klkkklklk`, response)
+      console.log("Raw API Response:", response); // Debugging log to inspect the raw API response
       if (response && response.data) {
-        if(response.data.error){
+        if (response.data.error) {
           return rejectWithValue(
             response.data.error || 'Failed to fetch combinations'
           );
         }
+        console.log("Processed API Response:", response.data); // Debugging log for processed response
         return response.data; // Successfully fetched data
       } else {
-        // If the response does not have data or is not structured correctly, reject with a message
         return rejectWithValue('Unexpected response structure');
       }
     } catch (error) {
-      // Handle errors if the request fails
       return rejectWithValue(
         error.response?.data?.message || 'Failed to fetch combinations'
       );
@@ -51,7 +48,9 @@ const capacitySizingSlice = createSlice({
       })
       .addCase(fetchCapacitySizing.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.combinations = action.payload;
+        const { combinations, monthly_consumption } = action.payload || {};
+        state.combinations = combinations || []; // Ensure combinations are extracted correctly
+        state.monthly_consumption = monthly_consumption || []; // Store monthly consumption data
       })
       .addCase(fetchCapacitySizing.rejected, (state, action) => {
         state.status = 'failed';
