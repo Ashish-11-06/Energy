@@ -26,7 +26,7 @@ import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 const { Option } = Select;
 const { Title, Text } = Typography;
 
-const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorCloseModal }) => {
+const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorCloseModal, lastUploadedFile, updateLastUploadedFile }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
   // console.log(fromPortfolio);
@@ -150,11 +150,21 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
     const reader = new FileReader();
     reader.onloadend = () => {
       setFileData(reader.result);
-      // console.log(file.name);
       setFile(file);
+
+      // Update the last uploaded file for the specific project
+      updateLastUploadedFile(project.id, file.name);
     };
     reader.readAsDataURL(file);
   };
+
+  // Retrieve the last uploaded file name for the specific project from localStorage
+  useEffect(() => {
+    // Set the last uploaded file if available
+    if (lastUploadedFile) {
+      setFile({ name: lastUploadedFile });
+    }
+  }, [lastUploadedFile]);
 
   const isUploadButtonDisabled =
     (project_type === "solar" && !solar_template_downloaded) ||
@@ -446,7 +456,11 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
             </Col>
 
             <Col span={10}>
-              {file && <Text type="secondary">Selected file: {file.name}</Text>}
+              {file && (
+                <Text type="secondary">
+                  Last uploaded file: {file.name}
+                </Text>
+              )}
             </Col>
           </Row>
 

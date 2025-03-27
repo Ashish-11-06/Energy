@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Table, Button, message, Row, Col, Modal, Tooltip,Radio, App } from 'antd';
+import { Table, Button, message, Row, Col, Modal, Tooltip,Radio, App, Spin, Skeleton } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
@@ -11,7 +11,6 @@ import { addNewRequirement } from '../../Redux/Slices/Consumer/consumerRequireme
 
 import moment from 'moment';
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
-import { lastVisitedPage } from '../../Redux/Slices/Consumer/lastVisitedPageSlice';
 
 const RequirementsPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -26,6 +25,7 @@ const RequirementsPage = () => {
   const dispatch = useDispatch();
   const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
 const [editData,setEditData]=useState(selectedRequirement);
+const [loading,setLoading]= useState(false);
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData=JSON.parse(localStorage.getItem('user')).user;
@@ -54,6 +54,14 @@ const [editData,setEditData]=useState(selectedRequirement);
   // Define columns for the table (Remove selection column)
   const columns = [
     {
+      title: 'Sr No',
+      dataIndex: 'srNo',
+      key: 'srNo',
+      render: (text, record, index) => (
+        <span key={record.id || index}>{index + 1}</span> // Wrapping in a span with key
+      ),
+    },
+    {
       title: "Select",
       key: "select",
       render: (text, record) => (
@@ -63,14 +71,7 @@ const [editData,setEditData]=useState(selectedRequirement);
         />
       ),
     },
-    {
-      title: 'Sr No',
-      dataIndex: 'srNo',
-      key: 'srNo',
-      render: (text, record, index) => (
-        <span key={record.id || index}>{index + 1}</span> // Wrapping in a span with key
-      ),
-    },
+   
     {
       title: 'State',
       dataIndex: 'state',
@@ -130,8 +131,8 @@ const [editData,setEditData]=useState(selectedRequirement);
   ];
   
   
-  // Insert "Add Details" before the "Select" column if subscription is active
-  if (subscriptionPlan?.status === 'active' && role!='view') {
+  // Insert "Add Details" as the last column if subscription is active
+  if (subscriptionPlan?.status === 'active' && role != 'view') {
     const addDetailsColumn = {
       title: "Add Consumption Details",
       key: "addDetails",
@@ -142,11 +143,8 @@ const [editData,setEditData]=useState(selectedRequirement);
       ),
     };
   
-    // Find the index of "Select" column and insert before it
-    const selectColumnIndex = columns.findIndex(col => col.key === "select");
-    if (selectColumnIndex !== -1) {
-      columns.splice(selectColumnIndex, 0, addDetailsColumn);
-    }
+    // Push the column to the end of the columns array
+    columns.push(addDetailsColumn);
   }
   
 
@@ -177,7 +175,6 @@ const handleAddDetails =(record) => {
       user_id:userData.id,
       selected_requirement_id:record.id
     }
-  const res=dispatch(lastVisitedPage(data));
     message.success(`You selected record of state '${record.state}'`);
     // console.log(selectedRequirement);  
     // localStorage.setItem('selectedRequirementId', JSON.stringify(record.id));
@@ -249,10 +246,11 @@ const handleAddDetails =(record) => {
       setIsInfoModalVisible(true);
     }
 
-    // Fetch requirements if not present in the state
+    // Show loader while fetching requirements
     if (requirements.length === 0) {
+      setLoading(true);
       const id = user.user.id;
-      dispatch(fetchRequirements(id));
+      dispatch(fetchRequirements(id)).finally(() => setLoading(false));
     }
   }, [dispatch, requirements.length, newUser]);
 
@@ -311,19 +309,32 @@ const handleAddDetails =(record) => {
           <p>Thank you!</p>
         </Modal>
 
-        <Table
-          columns={columns}
-          dataSource={requirements}
-          pagination={false}
-          bordered
-          loading={status === 'loading'}
-          // onRow={(record) => ({
-          //   onClick: () => handleRowSelect(record), // Make entire row clickable
-          // })}
-          rowClassName={(record) =>
-            selectedRequirement && record.id === selectedRequirement.id ? 'selected-row' : ''
-          }
-        />
+<div>
+  {loading ? (
+    <div style={{ position: 'relative' }}>
+      {/* <Skeleton active paragraph={{ rows: 4 }} title={false} /> */}
+      <Spin
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      />
+    </div>
+  ) : (
+    <Table
+      columns={columns}
+      dataSource={requirements}
+      pagination={false}
+      bordered
+      loading={status === 'loading'}
+      rowClassName={(record) =>
+        selectedRequirement && record.id === selectedRequirement.id ? 'selected-row' : ''
+      }
+    />
+  )}
+</div>
 
         <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
           <Col>

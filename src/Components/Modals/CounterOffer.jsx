@@ -28,8 +28,9 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId,fromTransactio
   // console.log(fromTransaction);
   // console.log(data);
   const term_sheet_id=data.id;
-  
-  // console.log(data);
+  const downloadable=data?.downloadable;
+
+  console.log(downloadable);
   const [ppaTerm, setPpaTerm] = useState(data.term_of_ppa);
   const [lockInPeriod, setLockInPeriod] = useState(data.lock_in_period);
   // const [commencementOfSupply,setCommencementOfSupply ] = useState(data.commencement_of_supply);
@@ -557,7 +558,7 @@ let temp='';
         <Button type="text" style={{marginTop:'20px'}} onClick={showModal}>
              View in Detail
             </Button>
-            <AgreementModal visible={modalVisible} onClose={handleCloseModal} />
+            <AgreementModal data={downloadable} visible={modalVisible} onClose={handleCloseModal} />
         <Modal
           title={"Negotiate Tariff"}
           open={tarrifModal}
