@@ -754,7 +754,7 @@ const CombinationPattern = () => {
             type="generator"
           />
         )}
-        <Modal open={tryLowerModal} onOk={()=> setTryLowerModal(false)} footer={null}>
+        <Modal open={tryLowerModal} onOk={()=> setTryLowerModal(false)} footer={null} onCancel={()=> setTryLowerModal(false)}>
 <p>Please try in lower RE Replacement</p>
         </Modal>
       </Row>

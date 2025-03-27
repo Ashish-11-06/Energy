@@ -33,7 +33,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const notificationCount = useSelector((state) => state.notifications.notificationCount);
 
 const isMatchingIPP = localStorage.getItem("isMatching") === "true";
-console.log(isMatchingIPP);
+// console.log(isMatchingIPP);
 
 
   useEffect(() => {

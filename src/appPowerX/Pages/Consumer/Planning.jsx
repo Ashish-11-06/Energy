@@ -17,7 +17,7 @@ import { addMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
 import { color } from 'framer-motion';
 
 dayjs.locale('en');
-
+ 
 const Planning = () => {
   const navigate = useNavigate();
   const [showTable, setShowTable] = useState(true); // Set default to true
@@ -42,7 +42,8 @@ const Planning = () => {
   const [selectedInterval, setSelectedInterval] = useState(null); // Add state for selected interval
   const [startDate, setStartDate] = useState(null); // Add state for start date
   const [endDate, setEndDate] = useState(null); // Add state for end date
-const [requirementId, setRequirementId] = useState([]);
+  const [requirementId, setRequirementId] = useState([]);
+  const [uploadedFile, setUploadedFile] = useState(null); // State to store uploaded file
   const handleDateIntervalChange = (value) => {
     setSelectedInterval(value);
     if (value === 'today') {
@@ -61,7 +62,7 @@ const [requirementId, setRequirementId] = useState([]);
       const id = user_id; // Ensure `user_id` is defined in scope
       try {
         const res = await dispatch(fetchPlanningData(id));
-        // console.log(res.payload);
+        console.log(res.payload);
         setTableDemandData(res.payload);
         setRequirementId(res.payload.map(item => item.requirement));
       } catch (error) {
@@ -238,6 +239,15 @@ const [requirementId, setRequirementId] = useState([]);
     setIsModalVisible(true); // Open modal
   };
   
+  const handleFileUpload = (file) => {
+    setUploadedFile(file.name); // Store the uploaded file name
+    return false; // Prevent default upload behavior
+  };
+
+  const handleDeleteFile = () => {
+    setUploadedFile(null); // Clear the uploaded file
+  };
+
   const columns = [
     { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 },
     { 
@@ -277,19 +287,29 @@ const [requirementId, setRequirementId] = useState([]);
         // console.log("Comparing:", record.date, currentDateStr, currentTimeStr, isBeforeDeadline);
     
         return isBeforeDeadline ? (
-          <Upload>
-          <Button type="primary" onClick={() => {
-            // console.log("Upload Data clicked for:", record);
-          }}>
-            Upload Data
-          </Button>
-          </Upload>
+          <div>
+            <Upload beforeUpload={handleFileUpload} showUploadList={false}>
+              <Button type="primary">Upload Data</Button>
+            </Upload>
+            {uploadedFile && (
+              <div style={{ marginTop: '10px' }}>
+                <span>{uploadedFile}</span>
+                <Button
+                  type="link"
+                  danger
+                  onClick={handleDeleteFile}
+                  style={{ marginLeft: '10px' }}
+                >
+                  Delete
+                </Button>
+              </div>
+            )}
+          </div>
         ) : (
           <Button disabled>Upload Data</Button>
         );
-      }
-    }
-    
+      },
+    },
   ];
   
 

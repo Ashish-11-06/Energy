@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch an
 import { fetchMatchingConsumersById } from '../../Redux/Slices/Generator/matchingConsumerSlice'; // Import the action to fetch data
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are imported
 import { Typography } from 'antd';
-import { lastVisitedPage } from '../../Redux/Slices/Consumer/lastVisitedPageSlice';
 
 
 const { Search } = Input;
@@ -57,7 +56,6 @@ const MatchingConsumerPage = () => {
           user_id:user.id,
           selected_requirement_id:key
         }
-      const res=dispatch(lastVisitedPage(data));
     setSelectedConsumer(key); // Set the selected consumer key
     // message.success(`You have selected consumer with Serial No: ${key}`);
   };

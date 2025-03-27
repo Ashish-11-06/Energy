@@ -89,7 +89,7 @@ const [freeStatus,setFreeStatus]=useState('')
         const response = await dispatch(fetchPerformaById(userId)).unwrap();
         const updatedInvoices = response.map((item) => ({
           ...item,
-          payment_status: item.subscription?.subscription_type === 'FREE' ? 'Paid' : item.payment_status,
+          payment_status: item.subscription?.subscription_type === 'FREE' ? 'Active' : item.payment_status,
         }));
         setInvoice(updatedInvoices);
         setLoading(false);

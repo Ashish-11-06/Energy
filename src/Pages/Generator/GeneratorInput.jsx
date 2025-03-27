@@ -74,7 +74,7 @@ const [checkPortfolio,setCheckPortfolio]=useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user")).user;
-console.log(user);
+// console.log(user);
 const user_id=user?.id;
   const { status, projects } = useSelector((state) => state.portfolio);
 

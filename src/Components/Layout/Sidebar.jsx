@@ -15,6 +15,7 @@ import profile from '../../assets/profile.png';
 import offerSend from '../../assets/offerSend.png';
 import notificationImg from '../../assets/notification.png';
 import portfolio from '../../assets/portfolio.png';
+import findConsumer from '../../assets/findConsumer.png';
 import track from '../../assets/track.png';
 const { Sider } = Layout;
 
@@ -103,6 +104,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Portfolio', key: '/generator/portfolio', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Find Consumer', key: '/generator/matching-consumer', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> }, 
     {label: 'Capacity Sizing', key: '/generator/GeneratorInput', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />},
     { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
@@ -148,7 +150,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     // },
     
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Track Status', key: '/generator/status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Track Status', key: '/generator/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';

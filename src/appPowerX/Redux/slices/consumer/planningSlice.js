@@ -9,13 +9,15 @@ export const fetchPlanningData = createAsyncThunk(
     try {
         // console.log("User ID:", id, typeof id);
         const response = await planningApi.getPlanningData(Number(id)); 
+// console.log(response);
 
       if (response.status === 200 && response.data) {
-        
+        // console.log(response.data);
         return response.data;
       }
       throw new Error("Invalid response from server");
     } catch (error) {
+     
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   }

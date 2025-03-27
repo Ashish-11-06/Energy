@@ -32,7 +32,7 @@ const ProformaInvoiveModal = ({
   // //  console.log(selected_plan);
   //  const invoiceDetails=selectedPlan;
 const selectedRequirementId=localStorage.getItem('selectedRequirementId');
-console.log(selectedRequirementId);
+// console.log(selectedRequirementId);
 
   const [subscriptionPlanValidity, setSubscriptionPlanValidity] = useState([]);
   const navigate = useNavigate();
