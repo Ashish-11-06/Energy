@@ -257,9 +257,9 @@ const userId = initialUserData.id;
               justify="center"
               style={{ marginTop: "20px", justifyContent: "space-between" }}
             >
-              <Button type="primary" onClick={handleEditToggle}>
+              {/* <Button type="primary" onClick={handleEditToggle}>
                 Edit Profile
-              </Button>
+              </Button> */}
               <Button type="primary" icon={<LogoutOutlined style={{color:'red',width:'20px', height:'20px'}}/>} onClick={handleLogOut}>
                 Log out
               </Button>
