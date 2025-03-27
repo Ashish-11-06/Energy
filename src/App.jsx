@@ -46,6 +46,7 @@ import EmailVerification from './Pages/EmailVerification';
 import StatusApproval from './Pages/TrackStatus';
 import Agreements from './Pages/Agreements';
 import GeneratorInput from './Pages/Generator/GeneratorInput';
+import CombinationPatternCap from './Pages/Generator/CapacitySizingPattern.jsx';
 
 
 // powerX
@@ -167,7 +168,9 @@ function App() {
             <Route path="combination" element={<OptimizeCombination />} />
             <Route path="notificationgen" element={<NotificationGenerator />} />
             <Route path="transaction-window" element={<TransactionWindowGen />}/>
-            <Route path="generatorInput" element={<GeneratorInput />} />            <Route path="status" element={<StatusApproval />} />
+            <Route path="generatorInput" element={<GeneratorInput />} />
+            <Route path="status" element={<StatusApproval />} />
+            <Route path="capacity-sizing-pattern" element={<CombinationPatternCap />} />
           </Route>
         </Route>
         </Route>
