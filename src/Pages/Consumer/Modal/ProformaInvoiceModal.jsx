@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Typography, message } from "antd";
 import { useDispatch } from "react-redux";
 import html2canvas from "html2canvas";
+import LOGO from "../../../assets/EXG_green.png";
 import jsPDF from "jspdf";
 import {
   createRazorpayOrder,
@@ -17,6 +18,75 @@ import {
   fetchSubscriptionValidity,
   subscriptionEnroll,
 } from "../../../Redux/Slices/Consumer/subscriptionEnrollSlice";
+
+// Utility function to convert numbers to words
+const numberToWords = (num) => {
+  const a = [
+    "",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+  ];
+  const b = [
+    "",
+    "",
+    "Twenty",
+    "Thirty",
+    "Forty",
+    "Fifty",
+    "Sixty",
+    "Seventy",
+    "Eighty",
+    "Ninety",
+  ];
+
+  const inWords = (n) => {
+    if (n < 20) return a[n];
+    if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+    if (n < 1000)
+      return (
+        a[Math.floor(n / 100)] +
+        " Hundred" +
+        (n % 100 ? " and " + inWords(n % 100) : "")
+      );
+    if (n < 100000)
+      return (
+        inWords(Math.floor(n / 1000)) +
+        " Thousand" +
+        (n % 1000 ? " " + inWords(n % 1000) : "")
+      );
+    if (n < 10000000)
+      return (
+        inWords(Math.floor(n / 100000)) +
+        " Lakh" +
+        (n % 100000 ? " " + inWords(n % 100000) : "")
+      );
+    return (
+      inWords(Math.floor(n / 10000000)) +
+      " Crore" +
+      (n % 10000000 ? " " + inWords(n % 10000000) : "")
+    );
+  };
+
+  return num === 0 ? "Zero" : inWords(num);
+};
+
 const ProformaInvoiveModal = ({
   open,
   onCancel,
@@ -39,7 +109,7 @@ const ProformaInvoiveModal = ({
   //   console.log(user_category)ś;
   const dispatch = useDispatch();
   const handleDownloadPDF = async () => {
-    const container = document.queryśSelector(".container"); // Select the main container
+    const container = document.querySelector(".container"); // Select the main container
     if (!container) {
       console.error("Container element not found.");
       return;
@@ -195,7 +265,6 @@ const ProformaInvoiveModal = ({
         body {
             font-family: 'Inter', Arial, sans-serif;
             background-color: #F5F6FB;
-           
         }
         .container {
             max-width: 800px;
@@ -208,12 +277,30 @@ const ProformaInvoiveModal = ({
             text-align: center;
             color: #669800;
         }
-        .header, .details, .payment-instructions, .bank-details {
+        .header {
+            display: flex;
+            justify-content: flex-end; /* Align content to the right */
+            align-items: flex-start;
             border: 1px solid #E6E8F1;
             padding: 20px;
             background-color: #f8f9fa;
         }
-        .header h3, .details h3, .payment-instructions h3, .bank-details h3 {
+        .header h3 {
+            color: #669800;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+        }
+        .header p {
+            text-align: right;
+            margin: 0;
+        }
+        .details, .payment-instructions, .bank-details {
+            border: 1px solid #E6E8F1;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .details h3, .payment-instructions h3, .bank-details h3 {
             color: #669800;
         }
         a {
@@ -236,16 +323,16 @@ const ProformaInvoiveModal = ({
 </head>
 <body>
     <div class="container">
-        <h2>${selectedPlan?.invoice_number}</h2>
-<div className="header" style={{ display: "flex", justifyContent: "flex-start", textAlign: "left" }}>
-          <div class="header" style="text-align: right;">
-            <h3>EXGGLOBAL</h3>
-            <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-direction: row;">
+            <img src="${LOGO}" alt="Logo" style="height: 50px;" />
+            <h2 style="flex-grow: 1; text-align: center;">${selectedPlan?.invoice_number}</h2>
         </div>
-</div>
-
-
-
+        <div class="header">
+            <div>
+                <h3>EXGGLOBAL</h3>
+                <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
+            </div>
+        </div>
 <p style="text-align: left;">Invoice Date: <strong>${
     selectedPlan?.issue_date ?? "NA"
   }</strong></p>
@@ -326,7 +413,9 @@ const ProformaInvoiveModal = ({
                 </tr>
                 <tr></tr>
                     <td>Total Amount Incl. GST (in words)</td>
-                    <td colspan="3">Rupees five hundred sixty only</td>
+                    <td colspan="3">₹ ${
+                      selectedPlan?.subscription?.price ?? "0"
+                    }</td>
                 </tr>
                 <tr>
                     <td>Funds Applied</td>
@@ -345,7 +434,9 @@ const ProformaInvoiveModal = ({
             </table>
         </div>
 
-        <p><strong>Total Amount (in words):</strong> Rupees five hundred sixty only</p>
+        <p><strong>Total Amount (in words):</strong>Rupees ${numberToWords(
+          selectedPlan?.subscription?.price ?? 0
+        )} only </p>
         <p style="text-align:right"><strong>Authorized Signatory</strong></p>
         <p style="font-size: 12px;">This is a computerized invoice. It does not require a signature.</p>
         
@@ -371,6 +462,7 @@ const ProformaInvoiveModal = ({
       title="Proforma Invoice"
       open={open}
       onCancel={onCancel}
+      style={{ overflowY: 'auto', maxHeight: '85vh' }} // Added maxHeight: '70vh'
       footer={[
         selectedPlan?.subscription?.subscription_type === "LITE" ||
         selectedPlan?.subscription?.subscription_type === "PRO" ? (
