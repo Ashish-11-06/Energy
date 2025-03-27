@@ -97,7 +97,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     // },
     
     { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Track Status', key: '/consumer/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // { label: 'Track Status', key: '/consumer/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 // console.log(is_new_user);
 
@@ -150,7 +150,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     // },
     
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Track Status', key: '/generator/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
+    // { label: 'Track Status', key: '/generator/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';

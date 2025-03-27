@@ -24,7 +24,7 @@ export const consumerMenuItems = [
   { key: '5', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/subscription-plan">Subscription Plan</Link> },
   { key: '6', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/invoice">Invoice</Link> },
   { key: '8', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/consumer/profile">Profile</Link> },
-  { key: '10', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/consumer/status">Track Status</Link> }
+  // { key: '10', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/consumer/status">Track Status</Link> }
 ];
 
 export const generatorMenuItems = [
@@ -41,5 +41,5 @@ export const generatorMenuItems = [
   { key: '13', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/subscription-plan">Subscription Plan</Link> },
   { key: '14', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/invoice">Invoice</Link> },
   { key: '16', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/profile">Profile</Link> },
-  { key: '17', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/status">Track Status</Link> }
+  // { key: '17', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }}/>, label: <Link to="/generator/status">Track Status</Link> }
 ];
