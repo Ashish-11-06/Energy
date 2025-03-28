@@ -54,58 +54,35 @@ const CombinationPatternCap = () => {
   const role = user.role;
   const user_id = user.id;
 
-  const formatAndSetCombinations = (combinations, reReplacementValue) => {
-    if (
-      !combinations ||
-      typeof combinations !== "object" ||
-      !Object.keys(combinations).length
-    ) {
+  const formatAndSetCombinations = (combinations) => {
+    if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
       setDataSource([]);
       return;
     }
 
-    const formattedCombinations = Object.entries(combinations).map(
-      ([key, combination], index) => {
-        const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
-        const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
-        const batteryCapacity = combination["Optimal Battery Capacity (MW)"] || 0;
-        const annualDemandMet = combination["Annual Demand Met"] || 0;
-        const annualCurtailment = combination["Annual Curtailment"] || 0;
+    const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => {
+      const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
+      const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
+      const batteryCapacity = combination["Optimal Battery Capacity (MW)"] || 0;
 
-        return {
-          key: index + 1,
-          srNo: index + 1,
-          combination: key,
-          annualDemandMet,
-          annualCurtailment,
-          technology: [
-            { name: "Solar", capacity: `${solarCapacity} MW` },
-            { name: "Wind", capacity: `${windCapacity} MW` },
-            { name: "ESS", capacity: `${batteryCapacity} MWh` },
-          ],
-          OACost:
-            combination["OA_cost"] && !isNaN(combination["OA_cost"])
-              ? combination["OA_cost"].toFixed(2)
-              : 0,
-          totalCost:
-            combination["Total Cost"] && !isNaN(combination["Total Cost"])
-              ? combination["Total Cost"].toFixed(2)
-              : 0,
-          perUnitCost:
-            combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"])
-              ? combination["Per Unit Cost"].toFixed(2)
-              : 0,
-          finalCost:
-            combination["Final Cost"] && !isNaN(combination["Final Cost"])
-              ? combination["Final Cost"].toFixed(2)
-              : 0,
-          reReplacement:
-            reReplacementValue ||
-            combination["Annual Demand Offset"]?.toFixed(2) ||
-            0,
-        };
-      }
-    );
+      return {
+        key: index + 1,
+        srNo: index + 1,
+        combination: key,
+        technology: [
+          { name: "Solar", capacity: `${solarCapacity} MW` },
+          { name: "Wind", capacity: `${windCapacity} MW` },
+          { name: "ESS", capacity: `${batteryCapacity} MWh` },
+        ],
+        annualDemandMet: combination["Annual Demand Met"] || 0,
+        annualCurtailment: combination["Annual Curtailment"] || 0,
+        perUnitCost: combination["Per Unit Cost"]?.toFixed(2) || 0,
+        oaCost: combination["OA_cost"]?.toFixed(2) || "N/A", // Add OA Cost
+        totalCost: combination["Total Cost"]?.toFixed(2) || 0,
+        cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("DD-MM-YYYY") : "N/A",
+      };
+    });
+
     setDataSource(formattedCombinations);
   };
 
@@ -149,15 +126,53 @@ const CombinationPatternCap = () => {
       const { combinations } = state.data;
       if (combinations) {
         formatAndSetCombinations(combinations, sliderValue); // Display data passed from GeneratorInput
-      console.log(combinations);
-      
       }
+      setCombinationData(state.modalData); // Store modalData for display
       setIsTableLoading(false); // Stop loader if data is already available
     } else if (state?.error) {
       message.error(state.error);
+      setCombinationData(state.modalData); // Store modalData even if there's an error
       setIsTableLoading(false); // Stop loader if there's an error
     }
   }, [state]);
+
+  useEffect(() => {
+    const fetchCombinations = async () => {
+      if (state?.modalData) {
+        try {
+          setIsTableLoading(true);
+          const response = await dispatch(fetchCapacitySizing(state.modalData)).unwrap(); // Call API with modalData
+          console.log(response);
+
+          if (response) {
+            const formattedData = Object.entries(response).map(([key, value], index) => ({
+              key: index + 1,
+              combinationId: key,
+              solarCapacity: value["Optimal Solar Capacity (MW)"] || 0,
+              windCapacity: value["Optimal Wind Capacity (MW)"] || 0,
+              batteryCapacity: value["Optimal Battery Capacity (MW)"] || 0,
+              perUnitCost: value["Per Unit Cost"]?.toFixed(2) || "N/A",
+              oaCost: value["OA_cost"]?.toFixed(2) || 0, // Add OA Cost
+              finalCost: value["Final Cost"]?.toFixed(2) || "N/A",
+            }));
+            setDataSource(formattedData); // Set the formatted data in the table
+          } else {
+            message.error("No combinations found. Please check your input.");
+          }
+        } catch (error) {
+          console.error("Error fetching combinations:", error);
+          message.error("An error occurred while fetching combinations.");
+        } finally {
+          setIsTableLoading(false);
+        }
+      } else {
+        message.error("No input data found. Please go back and try again.");
+        setIsTableLoading(false);
+      }
+    };
+
+    // fetchCombinations();
+  }, [state?.modalData]);
 
   useEffect(() => {
     if (isTableLoading) {
@@ -229,46 +244,30 @@ const CombinationPatternCap = () => {
   const columns = [
     {
       title: "Sr. No.",
-      dataIndex: "srNo",
-      key: "srNo",
-      width: 10,
+      dataIndex: "key",
+      key: "key",
+      width: 50,
     },
     {
       title: "Combination ID",
-      dataIndex: "combination",
-      key: "combination",
-      width: 120,
-      render: (text) => text, // Display the combination ID as is
-    },
-    {
-      title: "Generator's Connectivity",
-      dataIndex: "connectivity",
-      key: "connectivity",
-    },
-    {
-      title: "Technology",
-      dataIndex: "technology",
-      key: "technology",
+      dataIndex: "combinationId",
+      key: "combinationId",
       width: 150,
-      render: (technologies) => (
-        <div>
-          {technologies.map((tech, index) => (
-            <Text key={index} style={{ display: "block" }}>
-              {tech.name}: {tech.capacity}
-            </Text>
-          ))}
-        </div>
-      ),
     },
     {
-      title: "% RE Replacement",
-      dataIndex: "reReplacement",
-      key: "reReplacement",
+      title: "Optimal Solar Capacity (MW)",
+      dataIndex: "solarCapacity",
+      key: "solarCapacity",
     },
     {
-      title: "Total Capacity (MW)",
-      dataIndex: "totalCapacity",
-      key: "totalCapacity",
+      title: "Optimal Wind Capacity (MW)",
+      dataIndex: "windCapacity",
+      key: "windCapacity",
+    },
+    {
+      title: "Optimal Battery Capacity (MW)",
+      dataIndex: "batteryCapacity",
+      key: "batteryCapacity",
     },
     {
       title: "Per Unit Cost (INR/KWh)",
@@ -276,41 +275,14 @@ const CombinationPatternCap = () => {
       key: "perUnitCost",
     },
     {
-      title: "OA Cost (INR/KWh)",
-      dataIndex: "OACost",
-      key: "OACost",
+      title: "OA Cost (INR/KWh)", // New column for OA Cost
+      dataIndex: "oaCost",
+      key: "oaCost",
     },
     {
-      title: "Total Cost (INR/KWh)",
-      dataIndex: "totalCost",
-      key: "totalCost",
-    },
-    {
-      title: "COD",
-      dataIndex: "cod",
-      key: "cod",
-      width: 120,
-      render: (text) => dayjs(text).format("DD-MM-YYYY"),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (text, record) =>
-        text !== "Send Quotation" ? (
-          <Tooltip title="refer offer">
-            <Link to={`/offers`} style={{ textDecoration: "none", color: "#9A8406" }}>
-              {text}
-            </Link>
-          </Tooltip>
-        ) : (
-          <button
-            style={{ padding: "2px 2px" }} // Minimize button size
-            onClick={() => handleRowClick(record)}
-          >
-            Initiate Quotation
-          </button>
-        ),
+      title: "Final Cost (INR/KWh)",
+      dataIndex: "finalCost",
+      key: "finalCost",
     },
   ];
 
@@ -367,7 +339,8 @@ const CombinationPatternCap = () => {
                                onClick={handleOptimizeClick}
                                style={{ marginLeft: "80%", transform: "translateY(-46px)" }}
                              >
-                               Run Optimizer For {sliderValue}% RE Replacement
+                               Run Optimizer 
+                               {/* For {sliderValue}% RE Replacement */}
                              </Button>
                            </span>
                             <br />

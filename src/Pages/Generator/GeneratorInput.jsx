@@ -22,7 +22,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { getAllProjectsById } from "../../Redux/Slices/Generator/portfolioSlice";
 import moment from "moment";
-import { fetchCapacitySizing } from "../../Redux/Slices/Generator/capacitySizingSlice";
 
 const { Title } = Typography;
 
@@ -122,7 +121,7 @@ const GeneratorInput = () => {
     setIsModalVisible(true); 
   };
 
-  const handleModalOk = async () => {
+  const handleModalOk = () => {
     setIsModalVisible(false);
 
     const solarPortfolio = Structuredprojects.filter(
@@ -144,22 +143,7 @@ const GeneratorInput = () => {
       ...curtailmentInputs, // Include additional inputs
     };
 
-    navigate("/generator/capacity-sizing-pattern", { state: { isLoading: true } });
-
-    try {
-      const response = await dispatch(fetchCapacitySizing(modalData)).unwrap();
-      console.log(response);
-      
-      if (response && response.combinations) {
-        navigate("/generator/capacity-sizing-pattern", { state: { data: response } }); // Pass API response
-      } else {
-        message.error("No combinations found. Please check your input.");
-        navigate("/generator/capacity-sizing-pattern", { state: { error: "No combinations found." } });
-      }
-    } catch (error) {
-      message.error("An error occurred while running the optimizer. Please try again.");
-      navigate("/generator/capacity-sizing-pattern", { state: { error: "An error occurred." } });
-    }
+    navigate("/generator/capacity-sizing-pattern", { state: { modalData } }); // Pass modalData to the next page
   };
 
   const handleModalCancel = () => {
