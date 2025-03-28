@@ -171,7 +171,7 @@ const CombinationPatternCap = () => {
       }
     };
 
-    // fetchCombinations();
+    fetchCombinations();
   }, [state?.modalData]);
 
   useEffect(() => {
