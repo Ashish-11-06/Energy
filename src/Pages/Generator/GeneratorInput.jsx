@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,107 +7,67 @@ import {
   Button,
   Upload,
   message,
-  Space,
-  InputNumber,
   Tooltip,
-  Modal,
-  Row,
   Col,
-  Select,
   Checkbox,
+  Spin,
+  Modal,
+  InputNumber,
+  Form,
 } from "antd";
 import {
-  UploadOutlined,
-  InfoCircleOutlined,
-  DownOutlined,
   DownloadOutlined,
-  FileAddOutlined,
   FileExcelOutlined,
-  FileImageOutlined,
-  FileTextOutlined,
 } from "@ant-design/icons";
-import { data, useLocation, useNavigate } from "react-router-dom";
-import { QuestionCircleOutlined } from "@ant-design/icons";
-import axios from "axios";
-
-import {
-  addConsumption,
-  fetchMonthlyDataById,
-} from "../../Redux/Slices/Consumer/monthlyConsumptionSlice";
-import "../EnergyTable.css";
-import { consumptionBill } from "../../Redux/Slices/Consumer/monthlyConsumptionBillSlice";
-import { addScada } from "../../Redux/Slices/Consumer/uploadScadaSlice";
-import { uploadCSV } from "../../Redux/Slices/Consumer/uploadCSVFileSlice";
+import { useNavigate } from "react-router-dom";
 import { getAllProjectsById } from "../../Redux/Slices/Generator/portfolioSlice";
 import moment from "moment";
 import { fetchCapacitySizing } from "../../Redux/Slices/Generator/capacitySizingSlice";
 
 const { Title } = Typography;
 
-// Function to render a label with a tooltip
-const renderLabelWithTooltip = (label, tooltipText, onClick) => (
-  <span>
-    {label}{" "}
-    <Tooltip title={tooltipText}>
-      <InfoCircleOutlined style={{ color: "black", marginLeft: "4px" }} />
-    </Tooltip>
-    <br />
-    {onClick && (
-      <Button size="small" style={{ marginLeft: "8px" }} onClick={onClick}>
-        <DownOutlined />
-      </Button>
-    )}
-  </span>
-);
-
 const GeneratorInput = () => {
-  const location = useLocation();
-  const requirementId = localStorage.getItem("selectedRequirementId") || 26; // Destructure state to get `requirementId` and `annualSavin
-  const [activeButton, setActiveButton] = useState(null); // State to control active button
-  const currentYear = new Date().getFullYear(); // Get the current year
-  const lastYear = currentYear - 1; // Calculate the last year
-  const [uploadedFileName, setUploadedFileName] = useState(localStorage.getItem("uploadedFileName") || ""); // Load from localStorage
-  const [uploadMonthlyFile, setUploadMonthlyFile] = useState("");
-  const [Structuredprojects, setStructuredProjects] = useState([]); // Local state for flattened projects
-const [checkPortfolio, setCheckPortfolio] = useState([]); // Ensure it's initialized as an array
-const [base64CSVFile, setBase64CSVFile] = useState(""); // State to store Base64 CSV file
+  const [uploadedFileName, setUploadedFileName] = useState(""); // Remove localStorage dependency
+  const [Structuredprojects, setStructuredProjects] = useState([]);
+  const [checkPortfolio, setCheckPortfolio] = useState([]);
+  const [base64CSVFile, setBase64CSVFile] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [curtailmentInputs, setCurtailmentInputs] = useState({
+    curtailment_selling_price: 3000,
+    sell_curtailment_percentage: 0,
+    annual_curtailment_limit: 0.35,
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user")).user;
-// console.log(user);
-const user_id=user?.id;
+  const user_id = user?.id;
   const { status, projects } = useSelector((state) => state.portfolio);
 
   if (status === "idle") {
-    dispatch(getAllProjectsById(user.id)); // Fetch projects
+    dispatch(getAllProjectsById(user.id));
   }
 
   const handleRecordCheck = (recordId, isChecked) => {
     setCheckPortfolio((prev) =>
-      Array.isArray(prev) // Ensure `prev` is an array
-        ? isChecked
-          ? [...prev, recordId] // Add the ID if checked
-          : prev.filter((id) => id !== recordId) // Remove the ID if unchecked
-        : [] // Fallback to an empty array if `prev` is not an array
+      isChecked ? [...prev, recordId] : prev.filter((id) => id !== recordId)
     );
   };
 
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
       const flatProjects = [
-        ...(projects.Solar || []).map((project) => ({
-          ...project,
-          type: "Solar",
-        })),
-        ...(projects.Wind || []).map((project) => ({
-          ...project,
-          type: "Wind",
-        })),
+        ...(projects.Solar || []).map((project) => ({ ...project, type: "Solar" })),
+        ...(projects.Wind || []).map((project) => ({ ...project, type: "Wind" })),
         ...(projects.ESS || []).map((project) => ({ ...project, type: "ESS" })),
       ];
-      setStructuredProjects(flatProjects); // Update local state with flattened data
+      setStructuredProjects(flatProjects);
     }
   }, [projects.Solar, projects.Wind, projects.ESS]);
+
+  useEffect(() => {
+    setUploadedFileName(""); // Clear uploaded file name on refresh
+  }, []);
 
   const columns = [
     {
@@ -130,15 +89,13 @@ const user_id=user?.id;
       title: "Available Capacity",
       dataIndex: "available_capacity",
       key: "available_capacity",
-      render: (text) => {
-        return text === "ESS" ? `${text} MWh` : `${text} MW`;
-      },
+      render: (text) => (text === "ESS" ? `${text} MWh` : `${text} MW`),
     },
     {
       title: "COD (Commercial Operation Date)",
       dataIndex: "cod",
       key: "cod",
-      render: (text) => moment(text).format("DD-MM-YYYY"), // Format date
+      render: (text) => moment(text).format("DD-MM-YYYY"),
     },
     {
       title: "Action",
@@ -146,190 +103,197 @@ const user_id=user?.id;
       render: (text, record) => (
         <Checkbox
           onChange={(e) => handleRecordCheck(record.id, e.target.checked)}
-          style={{ border: "green" }}
         />
       ),
     },
   ];
-  
-  // console.log(checkPortfolio);
- const handleRunOptimizer = async () => {
-  if (!Array.isArray(checkPortfolio)) {
-    console.error("checkPortfolio is not an array");
-    message.error("An error occurred. Please try again.");
-    return;
-  }
 
-  const solarPortfolio = Structuredprojects.filter(
-    (p) => p.type === "Solar" && checkPortfolio.includes(p.id)
-  ).map((p) => p.id);
-  const windPortfolio = Structuredprojects.filter(
-    (p) => p.type === "Wind" && checkPortfolio.includes(p.id)
-  ).map((p) => p.id);
-  const essPortfolio = Structuredprojects.filter(
-    (p) => p.type === "ESS" && checkPortfolio.includes(p.id)
-  ).map((p) => p.id);
+  const handleRunOptimizer = async () => {
+    if (!base64CSVFile) {
+      message.error("Please upload a CSV file to run the optimizer.");
+      return;
+    }
 
-  const modalData = {
-    user_id: user_id,
-    solar_portfolio: solarPortfolio,
-    wind_portfolio: windPortfolio,
-    ess_portfolio: essPortfolio,
-    csv_file: base64CSVFile,
+    if (checkPortfolio.length === 0) {
+      message.error("Please select at least one portfolio to run the optimizer.");
+      return;
+    }
+
+    setIsModalVisible(true); 
   };
 
-  try {
-    const response = await dispatch(fetchCapacitySizing(modalData)).unwrap();
-    if (response && response.combinations) {
-      console.log("Navigating to /generator/combination-pattern"); // Debugging log
-      navigate("/generator/capacity-sizing-pattern", { state: { data: response } }); // Pass response as state
-    } else {
-      message.error("No combinations found. Please check your input.");
-    }
-  } catch (error) {
-    console.error("Error running optimizer:", error);
-    message.error("An error occurred while running the optimizer. Please try again.");
-  }
-}; 
-  const handleCSVUpload = async (file) => {
+  const handleModalOk = async () => {
+    setIsModalVisible(false);
+
+    const solarPortfolio = Structuredprojects.filter(
+      (p) => p.type === "Solar" && checkPortfolio.includes(p.id)
+    ).map((p) => p.id);
+    const windPortfolio = Structuredprojects.filter(
+      (p) => p.type === "Wind" && checkPortfolio.includes(p.id)
+    ).map((p) => p.id);
+    const essPortfolio = Structuredprojects.filter(
+      (p) => p.type === "ESS" && checkPortfolio.includes(p.id)
+    ).map((p) => p.id);
+
+    const modalData = {
+      user_id: user_id,
+      solar_portfolio: solarPortfolio,
+      wind_portfolio: windPortfolio,
+      ess_portfolio: essPortfolio,
+      csv_file: base64CSVFile,
+      ...curtailmentInputs, // Include additional inputs
+    };
+
+    navigate("/generator/capacity-sizing-pattern", { state: { isLoading: true } });
+
     try {
-      // Validate the CSV file format
-      const isValidFormat = file.name.endsWith(".csv");
-      if (!isValidFormat) {
-        message.error("Please upload a valid CSV file.");
-        return false;
+      const response = await dispatch(fetchCapacitySizing(modalData)).unwrap();
+      console.log(response);
+      
+      if (response && response.combinations) {
+        navigate("/generator/capacity-sizing-pattern", { state: { data: response } }); // Pass API response
+      } else {
+        message.error("No combinations found. Please check your input.");
+        navigate("/generator/capacity-sizing-pattern", { state: { error: "No combinations found." } });
       }
-
-      // Display a success message for file selection
-      message.success(`${file.name} uploaded successfully`);
-      setUploadedFileName(file.name); // Set the latest uploaded file name
-      localStorage.setItem("uploadedFileName", file.name); // Save to localStorage
-
-      // Convert file to Base64
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
-        setBase64CSVFile(base64File); // Store Base64-encoded CSV file
-      };
-
-      reader.readAsDataURL(file); // Read the file as a Base64 string
-      return false; // Prevent automatic upload
     } catch (error) {
-      console.error("Error uploading the file:", error);
-      message.error(
-        "An error occurred during the upload process. Please try again."
-      );
+      message.error("An error occurred while running the optimizer. Please try again.");
+      navigate("/generator/capacity-sizing-pattern", { state: { error: "An error occurred." } });
+    }
+  };
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCSVUpload = async (file) => {
+    if (!file.name.endsWith(".csv")) {
+      message.error("Please upload a valid CSV file.");
       return false;
     }
+
+    message.success(`${file.name} uploaded successfully`);
+    setUploadedFileName(file.name); // Only set in state
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64File = reader.result.split(",")[1];
+      setBase64CSVFile(base64File);
+    };
+    reader.readAsDataURL(file);
+    return false;
   };
 
-  useEffect(() => {
-    // Clear uploaded file name on refresh
-    return () => {
-      localStorage.removeItem("uploadedFileName");
-    };
-  }, []);
-
   const handleDownloadTemplate = () => {
-    // Logic to download the CSV template
+    const rows = Array.from({ length: 8760 }, (_, i) => `${i + 1},`).join("\n");
+    const csvContent = "Hour,Expected Demand\n" + rows;
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
-    link.href = "/src/assets/csvFormat.csv"; // Update with the actual path to your template
+    link.href = URL.createObjectURL(blob);
     link.download = "template.csv";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const uploadButtonRef = React.createRef(); // Replace findDOMNode with ref
-
   return (
-    <div
-      style={{
-       
-        justifyContent: "center",
-        width: "100%",
-        alignItems: "center",
-      }}
-    >
-       <Card
-        style={{
-          marginTop: "20px",
-          width: "100%",
-          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-          overflow: "hidden",
-          backgroundColor: "#fff",
-        }}
-      >
+    <div style={{ justifyContent: "center", width: "100%", alignItems: "center" }}>
+      <Card style={{ marginTop: "20px", width: "100%", boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px", backgroundColor: "#fff" }}>
         <Col span={24}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Tooltip title="Download a CSV file">
-              <Button
-                icon={<DownloadOutlined />}
-                onClick={handleDownloadTemplate}
-                style={{
-                  marginRight: "20px",
-                  zIndex: 100,
-                  height: "30px",
-                  width: 40,
-                }}
-              ></Button>
+              <Button icon={<DownloadOutlined />} onClick={handleDownloadTemplate} style={{ marginRight: "20px", height: "30px", width: 40 }} />
             </Tooltip>
-            <Upload
-              ref={uploadButtonRef} // Add ref directly to the Upload component
-              beforeUpload={handleCSVUpload}
-              showUploadList={false}
-            >
+            <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
               <Tooltip title="Upload a CSV file">
-                <Button
-                  style={{ padding: "5px", zIndex: 100 }}
-                  icon={<FileExcelOutlined style={{ marginTop: "5px" }} />}
-                >
+                <Button style={{ padding: "5px" }} icon={<FileExcelOutlined />}>
                   Upload CSV file
                 </Button>
               </Tooltip>
             </Upload>
-            <Title level={4} style={{ color: "#669800", background:'#f8f8f8', marginBottom: "10px", padding: '10px',marginLeft:'20px' }}>
-            {/* Choose the portfolios to be processed in the model execution. */}
-            Upload the consumption data
+            <Title level={4} style={{ color: "#669800", marginLeft: "20px" }}>
+              Upload the Demand data
             </Title>
           </div>
-          {activeButton === "csv" && uploadedFileName && (
-            <div style={{ marginTop: "10px" }}>
-              <span>Uploaded File: {uploadedFileName}</span>
-            </div>
-          )}
-       
+          {uploadedFileName && <div style={{ marginTop: "10px" }}>Uploaded File: {uploadedFileName}</div>}
         </Col>
       </Card>
-      <Card style={{
-          marginTop: "20px",
-          width: "100%",
-          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
-          overflow: "hidden",
-          backgroundColor: "#fff",
-        }}>
-          <span><p>Select the portfolios to be processed in the model execution and run the Optimizer Model</p>
-          {/* <h2>Available Generation Portfolio</h2> */}
-          <Button style={{ position: 'absolute', right: '0' }} onClick={handleRunOptimizer}>
-  Run Optimizer
-</Button>
-</span>
-        <Table
-          dataSource={Structuredprojects.map((project, index) => ({
-            ...project,
-            key: index,
-          }))}
-          columns={columns}
-          pagination={false}
-          bordered
-          style={{marginTop:'60px'}}
-          loading={status === "loading"}
-        />
+      <Card style={{ marginTop: "20px", width: "100%", boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px", backgroundColor: "#fff" }}>
+        <p>Select the portfolios to be processed in the model execution and run the Optimizer Model</p>
+        <div style={{ maxHeight: "400px", overflowY: "auto", marginBottom: "60px" }}>
+          <Table
+            dataSource={Structuredprojects.map((project, index) => ({ ...project, key: index }))}
+            columns={columns}
+            pagination={false}
+            bordered
+            style={{ marginTop: "20px" }}
+            loading={status === "loading"}
+          />
+        </div>
+        <Button
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            zIndex: 1000,
+          }}
+          onClick={handleRunOptimizer}
+        >
+          Run Optimizer
+        </Button>
       </Card>
-     
-     
+      <Modal
+        title="Additional Inputs"
+        visible={isModalVisible}
+        onOk={handleModalOk}
+        onCancel={handleModalCancel}
+      >
+        <Form layout="vertical">
+          <Form.Item label="Curtailment Selling Price">
+            <InputNumber
+              min={0}
+              value={curtailmentInputs.curtailment_selling_price}
+              onChange={(value) =>
+                setCurtailmentInputs((prev) => ({
+                  ...prev,
+                  curtailment_selling_price: value,
+                }))
+              }
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+          <Form.Item label="Sell Curtailment Percentage">
+            <InputNumber
+              min={0}
+              max={100}
+              value={curtailmentInputs.sell_curtailment_percentage}
+              onChange={(value) =>
+                setCurtailmentInputs((prev) => ({
+                  ...prev,
+                  sell_curtailment_percentage: value,
+                }))
+              }
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+          <Form.Item label="Annual Curtailment Limit">
+            <InputNumber
+              min={0}
+              max={1}
+              step={0.01}
+              value={curtailmentInputs.annual_curtailment_limit}
+              onChange={(value) =>
+                setCurtailmentInputs((prev) => ({
+                  ...prev,
+                  annual_curtailment_limit: value,
+                }))
+              }
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+      {isLoading && <Spin size="large" style={{ display: "block", margin: "20px auto" }} />}
     </div>
   );
 };
