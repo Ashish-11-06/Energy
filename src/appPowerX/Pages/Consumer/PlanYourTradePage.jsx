@@ -85,10 +85,20 @@ const [uploadModal,setUploadModal]=useState(false);
           return acc;
         }, {})
       };
-  
-      await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
-      message.success("Data submitted successfully");
-      navigate('/px/track-status');
+      try {
+        const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+        // console.log(res);
+
+        if (res && res.status === 201) { // Check if status is 201
+          message.success(res.data.message || "Data uploaded successfully"); // Show success message
+          navigate('/px/track-status'); // Navigate to the track status page
+        } else {
+          message.error("Failed to submit data. Please try again.");
+        }
+      } catch (error) {
+        console.log(error);
+        message.error("Failed to submit data. Please try again.");
+      }
     } catch (error) {
       message.error("Failed to submit data. Please try again.");
     }

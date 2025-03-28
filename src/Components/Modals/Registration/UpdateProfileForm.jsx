@@ -334,7 +334,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
         <Col span={12}>
           <Form.Item
             name="marginal_cost"
-            label="Marginal Cost (INR/MW)"
+            label="Marginal Cost (INR/MWh)"
             rules={[
               {
                 required: type === "ESS",

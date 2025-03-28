@@ -238,6 +238,9 @@ if(dataSource?.length<=0) {
             // If no error, process the response
             if (response?.error) {
               message.error(response.error); // Display error message
+               setTimeout(() => {
+                        message.error('Please try in lower RE Replacement'); // Display second message after 5 seconds
+                    }, 2000); 
               setIsTableLoading(false);
               setFetchingCombinations(false);
               throw new Error(response.error);
@@ -822,17 +825,18 @@ if(dataSource?.length<=0) {
             onCancel={handleQuotationModalCancel}
             data={selectedRow}
             selectedDemandId={selectedDemandId}
+            fromInitiateQuotation='true'
             type="generator"
           />
         )}
-      <Modal 
+      {/* <Modal 
   open={tryREreplacement}
   onOk={() => setTryREreplacement(false)}
   onCancel={()=> setTryREreplacement(false)}
   cancelButtonProps={{ style: { display: "none" } }} // Hides cancel button
 >
   Try for lower RE Replacement
-</Modal>
+</Modal> */}
       </Row>
 
     </div>

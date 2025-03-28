@@ -29,16 +29,6 @@ const AgreementContent = ({ dynamicData }) => (
 
     {/* ................................................ */}
 
-    {/* <h1>Term Sheet Agreement</h1>
-    <p><strong>Generator Name:</strong> {dynamicData.generatorName}</p>
-    <p><strong>Consumer Name:</strong> {dynamicData.consumerName}</p>
-    <p><strong>Project Site:</strong> {dynamicData.projectSite}</p>
-    <p><strong>Capacity:</strong> {dynamicData.capacity} MW</p>
-    <p><strong>Tariff:</strong> {dynamicData.tariff} INR/kWh</p>
-    <p><strong>Contract Period:</strong> {dynamicData.contractPeriod} years</p>
-    <p><strong>Lock-in Period:</strong> {dynamicData.lockInPeriod} years</p> */}
-
-
     <p className='page-break'>XXX,</p>
     <p>Insert details of its registered office <br /> <b>{dynamicData.consumerName}</b></p>
 
@@ -117,10 +107,6 @@ const AgreementContent = ({ dynamicData }) => (
     <div  className='page-break'>
     <p><strong>5. Confidentiality</strong></p>
     <p style={{marginLeft: '25px'}}><strong>5.1. </strong>The Terms and all negotiations and information shared between the parties with respect to the Proposed Transaction are confidential and terms of the confidentiality undertaking entered into by the Parties shall apply.</p>
-    {/* <p><strong>5</strong>Confidentiality</p>
-    <p><strong>5</strong>Confidentiality</p>
-    <p><strong>5</strong>Confidentiality</p> */}
-    {/* next page.... */}
     </div>
     <p><strong>6. Costs</strong></p>
     <div style={{marginLeft:'25px'}}>
@@ -129,70 +115,21 @@ const AgreementContent = ({ dynamicData }) => (
     <p><strong>7. Governing law</strong></p>
     <div style={{marginLeft:'25px'}}>
     <p><strong>7.1 </strong>The Terms shall be governed by and construed in accordance with the law of India. Any claims or disputes arising out of or in connection with the Terms, will be referred to and finally resolved by arbitration in accordance with the (Indian) Arbitration and Conciliation Act, 1996. Each Party will appoint an arbitrator. The two arbitrators so appointed will appoint the third arbitrator. </p>
-  
-    {/* <div>
-      
-      <p><strong>7.2 </strong>The {dynamicData.consumerName}(s) undertakes to execute a consent letter addressed to the DISCOM (and any other documents as Generator may require) in the form required by Generator.</p>
-
-     
-      <p><strong>7.3 </strong>In connection with the Grid Application, Generator shall be solely responsible for all fees and costs of such Grid Application.</p>
-
-    
-      <p><strong>7.4 </strong>Generator shall, at appropriate intervals, keep the {dynamicData.consumerName}(s) and the EXG Global reasonably informed of the status of the development of the Project, status of other Captive User(s) and any other information reasonably required for the purposes of the Project.</p>
-
-     
-      <p><strong>7.5 </strong>The Captive User(s) agrees to provide Generator such information as Generator may request related to the Proposed Transaction, including but not limited to any information to enable Generator to carry out due diligence on the Captive User(s) and/or its group. The Captive User(s) shall respond to any request by Generator under this paragraph as soon as reasonably practicable.</p>
-
-      
-      <p><strong>7.6 </strong>The parties undertake to use their best endeavours to negotiate the Transaction Documents in good faith based on the Terms.</p>
-
-     
-      <p><strong>7.7 </strong>The parties undertake to use their best endeavours to conclude and enter into the Transaction Documents (and all ancillary documents) prior to the expiry of the Exclusivity Period.</p>
-      </div> */}
-      {/* <h2>4. Termination</h2> */}
-
-      {/* <h3>4.1.</h3> */}
-      {/* <p>4.1 Neither party may terminate the Terms prior to the expiry of the Exclusivity Period, provided however, Generator may terminate this arrangement in the following circumstances, by giving a reasonable notice to the Captive User(s):</p> */}
-
-      {/* <ol type="a">
-        <li>where the parameters make the investment non-viable for Generator, as determined solely by Generator;</li>
-        <li>where the Captive User(s) fails to comply with its obligations under the Terms, including, without limitation, its obligations in respect of exclusivity, confidentiality, assisting Generator with the Grid Application, and obligation to negotiate and conclude the Transaction Documents in good faith; and</li>
-        <li>where the Captive User(s) fails to pass Generator's due diligence relating to compliance and business ethics, as determined solely by Generator.</li>
-      </ol> */}
     </div>
-
-    {/* <h3>4.2.</h3>
-    <p>The termination by Generator of the Terms, in accordance with paragraph 4.1 above, shall be without any liability for Generator, Consumer and EXG Global.</p>
-
-    <h2>5. Confidentiality</h2>
-    <h3>5.1.</h3>
-    <p>The Terms and all negotiations and information shared between the parties with respect to the Proposed Transaction are confidential and terms of the confidentiality undertaking entered into by the Parties shall apply.</p>
-
-    <h2>6. Costs</h2>
-    <h3>6.1.</h3>
-    <p>Each party shall pay its own costs incurred in connection with the Terms, the Transaction Documents and any documents contemplated by them, whether or not the Proposed Transaction proceeds.</p>
-
-    <h2>7. Governing law</h2>
-    <h3>7.1.</h3>
-    <p>The Terms shall be governed by and construed in accordance with the law of India. Any claims or disputes arising out of or in connection with the Terms, will be referred to and finally resolved by arbitration in accordance with the (Indian) Arbitration and Conciliation Act, 1996. Each Party will appoint an arbitrator. The two arbitrators so appointed will appoint the third arbitrator.</p>
-
-    <p>Please sign and return the enclosed copy of the Terms to confirm your agreement.</p> */}
 <br/>
     <p>Yours faithfully.</p>
 
-    {/* <br><br><br> */}<div></div>
+    <div></div>
 
     <p>For and on behalf of <b>{dynamicData.generator}</b></p>
 
-    {/* <br><br><br> */}<div></div>
+    <div></div>
 <br/>
     <p>For and on behalf of <b> {dynamicData.consumerName}</b></p>
     <br/>
-    {/* <br><br><br> */}<div></div>
+    <div></div>
 
     <p >For and on behalf of [EXG Global]</p>
-
-    {/* next page..... */}
 
     <div className='page-break'>
       <p style={{fontSize:'18px',fontWeight:'bold',textAlign:'center'}}>Part 1: Heads of Terms of Power Purchase Agreement (PPA)</p>
@@ -729,7 +666,7 @@ Arbitration. The award passed by the arbitral tribunal will be binding.
   </div>
 );
 
-const AgreementModal = ({ visible, onClose,data }) => {
+const AgreementModal = ({ visible, onClose, data }) => {
   // console.log(data);
   const consumer=data?.consumer;
  const consumer_state=data?.consumer_state;
@@ -743,9 +680,18 @@ const AgreementModal = ({ visible, onClose,data }) => {
  const voltage_level_of_generation=data?.voltage_level_of_generation;
   
 
- const generator_state_obj = JSON.parse(generator_state.replace(/'/g, '"')); // Parse the string into an object
+ let generator_state_obj;
+ try {
+   // Check if generator_state is valid JSON
+   generator_state_obj = JSON.parse(generator_state.replace(/'/g, '"'));
+ } catch (error) {
+   // If not JSON, treat it as a plain string
+  //  console.warn("generator_state is not valid JSON, treating it as a plain string:", generator_state);
+   generator_state_obj = { default: generator_state };
+ }
+
  const solarState = Object.entries(generator_state_obj)
-   .find(([key]) => key.toLowerCase().includes("solar"))?.[1] || " ";
+   .find(([key]) => key.toLowerCase().includes("solar"))?.[1] || generator_state;
 
  const dynamicData = {
    generatorName: generator,
@@ -767,9 +713,6 @@ const AgreementModal = ({ visible, onClose,data }) => {
    voltage_level_of_generation: voltage_level_of_generation,
  };
  
-//  console.log(dynamicData.solarState); // Output: "Gujarat"
- 
-// console.log(dynamicData.solarState);
 
   // Generate PDF from the component
   const generatePdf = () => {

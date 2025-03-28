@@ -29,6 +29,20 @@ export const verifyUser = createAsyncThunk('registerUser/verifyUser', async (dat
     }
 );
 
+export const editUser = createAsyncThunk('editUser/editUser', async (userId,userData, { rejectWithValue }) => {
+    try {
+        // Call your API for user registration
+        const response = await userApi.updateuser(userId,userData); // Replace with your actual API call
+        console.log(response);
+        
+        return response; // Return the response from the API (user data or token)
+    } catch (error) {
+        // Handle any error during the registration process
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+}
+);
+
 // Register User Slice
 const registerUserSlice = createSlice({
     name: 'registerUser',
@@ -60,6 +74,21 @@ const registerUserSlice = createSlice({
                 state.status = 'failed';
                 state.loading = false;
                 state.error = action.payload || 'Registration failed';
+            })
+            .addCase(editUser.pending, (state) => {
+                state.status = 'loading';
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(editUser.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.loading = false;
+                state.user = action.payload;
+            })
+            .addCase(editUser.rejected, (state, action) => {
+                state.status = 'failed';
+                state.loading = false;
+                state.error = action.payload || 'update failed';
             })
     
             // Handle verifyUser actions

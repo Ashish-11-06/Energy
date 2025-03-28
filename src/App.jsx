@@ -190,6 +190,7 @@ function App() {
 
       <Route path="chat-page" element={<ChatPage />} />
       <Route path="track-status" element={<TrackStatusP/>} />
+      <Route path="notifications" element={<NotificationP/>} />
 
       {/* Consumer Routes */}
       <Route path="consumer">
@@ -202,7 +203,6 @@ function App() {
         <Route path="plan-month-trade" element={<PlanMonthTrading/>} />
         <Route path="planning" element={<Planning />} />
         <Route path="trading" element={<Trading />} />
-        <Route path="notification-powerX" element={<NotificationP/>} />
         <Route path="powerx-subscription" element={<Subscription />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>

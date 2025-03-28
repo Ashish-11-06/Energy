@@ -20,6 +20,7 @@ import { DeleteOutlined, EditOutlined, LogoutOutlined } from "@ant-design/icons"
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { useDispatch } from "react-redux";
+import { editUser } from "../../Redux/Slices/userSlice";
 
 const { Title, Text } = Typography;
 
@@ -37,7 +38,7 @@ const ProfilePage = () => {
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
   const userId = initialUserData.id;
-  // console.log(userId);
+  console.log(userId);
 
   const navigate = useNavigate();
 
@@ -60,14 +61,6 @@ const ProfilePage = () => {
       ? dayjs(subscriptionPlan.end_date).format("DD/MM/YYYY")
       : "N/A"
     : "N/A";
-
-  // Initial users list
-  // const [userDataSource, setUserDataSource] = useState([
-  //   { key: 1, username: "abc", email: "abc@gmail.com", role: "Admin" },
-  //   { key: 2, username: "def", email: "def@gmail.com", role: "Management" },
-  //   { key: 3, username: "ghi", email: "ghi@gmail.com", role: "Edit" },
-  //   { key: 4, username: "pqr", email: "pqr@gmail.com", role: "View" },
-  // ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,14 +94,31 @@ const ProfilePage = () => {
   const handleAddUser = () => setIsUserModal(true);
 
   const handleSave = (values) => {
-    setUserData(values);
-    setIsModalVisible(false);
-    localStorage.setItem("user", JSON.stringify({ user: values }));
+    // Retrieve existing user data from localStorage
+    const storedUser = localStorage.getItem("user");
+    const existingUserData = storedUser ? JSON.parse(storedUser).user : {};
+
+    // Merge updated fields with existing data
+    const updatedUserData = { ...existingUserData, ...values };
+
+    // Save updated data back to localStorage
+    localStorage.setItem("user", JSON.stringify({ user: updatedUserData }));
+
+    // Dispatch the updated data to the backend
+    dispatch(editUser(userId, updatedUserData))
+      .then((res) => {
+        console.log("User updated successfully:", res);
+      })
+      .catch((error) => {
+        console.error("Failed to update user:", error);
+      });
+
+    setUserData(updatedUserData); // Update state
+    setIsModalVisible(false); // Close modal
   };
 
   const handleSaveUser = (values) => {
     setIsUserModal(false);
-    // console.log("User saved:", values);
 
     // Ensure `values` is an object before updating state
     if (values && typeof values === "object") {
@@ -120,7 +130,6 @@ const ProfilePage = () => {
   };
   const handleEdit = (record) => {
     setEditaleData(record);
-    // console.log(record);
     setIsUserModal(true);
     setEditValue(true);
     form.resetFields();
@@ -143,31 +152,6 @@ const ProfilePage = () => {
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Role", dataIndex: "role", key: "role" },
   ];
-  // {
-  //   title: "Action",
-  //   dataIndex: "action",
-  //   key: "action",
-  //   render: (_, record) => (
-  //     <>
-  //       {/* <a
-  //         type="primary"
-  //         style={{ marginRight: 8 }}
-  //         icon={<EditOutlined />}
-  //         onClick={() => handleEdit(record)}
-  //       >
-  //         Edit
-  //       </a> */}
-  //       <a
-  //         type="danger"
-  //         style={{ color: "red" }}
-  //         icon={<DeleteOutlined />}
-  //         onClick={() => handleDelete(record.key)}
-  //       >
-  //         Delete
-  //       </a>
-  //     </>
-  //   ),
-  // },
 
   return (
     <Row justify="center" style={{ marginTop: "50px", width: "100%" }}>
@@ -257,10 +241,10 @@ const ProfilePage = () => {
               justify="center"
               style={{ marginTop: "20px", justifyContent: "space-between" }}
             >
-              {/* <Button type="primary" onClick={handleEditToggle}>
+              <Button type="primary" onClick={handleEditToggle}>
                 Edit Profile
-              </Button> */}
-              <Button type="primary" icon={<LogoutOutlined  />} onClick={handleLogOut}>
+              </Button>
+              <Button type="primary" icon={<LogoutOutlined />} onClick={handleLogOut}>
                 Log out
               </Button>
             </Row>

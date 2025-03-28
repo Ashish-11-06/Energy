@@ -119,3 +119,8 @@
   border-radius: 0;
   /* transition: background 0.3s; 
 } */
+
+.ant-card-body temp-calender {
+  max-width:400px ;
+  max-height: 400px;
+}

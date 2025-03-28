@@ -22,6 +22,10 @@ const userApi = {
         return axiosInstance.post('/accounts/set-new-password', data);
     },
 
+    updateuser: (userId, userData) => {
+        return axiosInstance.put(`/accounts/update-profile/${userId}`, userData);
+    },
+
     getAllusers: () => {
         return axiosInstance.get('/users/all');
     },
@@ -37,9 +41,7 @@ const userApi = {
     
    
     
-    updateuser: (id, userData) => {
-        return axiosInstance.put(`/users/update/${id}`, userData);
-    },
+ 
 
     getuserByRole: (role) => {
         return axiosInstance.get(`/users/get/role/${role}`);

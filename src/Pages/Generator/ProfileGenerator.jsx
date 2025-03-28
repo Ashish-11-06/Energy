@@ -17,6 +17,7 @@ import { LogoutOutlined } from "@ant-design/icons";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { useDispatch } from "react-redux";
+import { editUser } from "../../Redux/Slices/userSlice";
 
 const { Title, Text } = Typography;
 
@@ -97,11 +98,29 @@ const userId = initialUserData.id;
   };
   const handleAddUser = () => setIsUserModal(true);
 
-  const handleSave = (values) => {
-    setUserData(values);
-    setIsModalVisible(false);
-    localStorage.setItem("user", JSON.stringify({ user: values }));
-  };
+   const handleSave = (values) => {
+     // Retrieve existing user data from localStorage
+     const storedUser = localStorage.getItem("user");
+     const existingUserData = storedUser ? JSON.parse(storedUser).user : {};
+ 
+     // Merge updated fields with existing data
+     const updatedUserData = { ...existingUserData, ...values };
+ 
+     // Save updated data back to localStorage
+     localStorage.setItem("user", JSON.stringify({ user: updatedUserData }));
+ 
+     // Dispatch the updated data to the backend
+     dispatch(editUser(userId, updatedUserData))
+       .then((res) => {
+         console.log("User updated successfully:", res);
+       })
+       .catch((error) => {
+         console.error("Failed to update user:", error);
+       });
+ 
+     setUserData(updatedUserData); // Update state
+     setIsModalVisible(false); // Close modal
+   };
 
   const handleSaveUser = (values) => {
     setIsUserModal(false);
@@ -255,9 +274,9 @@ const userId = initialUserData.id;
               justify="center"
               style={{ marginTop: "20px", justifyContent: "space-between" }}
             >
-              {/* <Button type="primary" onClick={handleEditToggle}>
+              <Button type="primary" onClick={handleEditToggle}>
                 Edit Profile
-              </Button> */}
+              </Button>
               <Button type="primary" icon={<LogoutOutlined /> } onClick={handleLogOut}>
                 Log out
               </Button>

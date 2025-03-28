@@ -204,7 +204,10 @@ const CombinationPattern = () => {
             // If no error, process the response
             if (response?.error) {
               message.error(response.error); // Display error message
-              setIsTableLoading(false);
+              setTimeout(() => {
+                message.error('Please try in lower RE Replacement'); // Display second message after 5 seconds
+            }, 2000); 
+                         setIsTableLoading(false);
               setFetchingCombinations(false);
               throw new Error(response.error);
             }
@@ -330,7 +333,7 @@ const CombinationPattern = () => {
       }
     } catch (error) {
       console.error("Error in handleOptimizeClick:", error);
-      setTryLowerModal(true);
+      // setTryLowerModal(true);
       message.error("Failed to fetch combinations.");
     } finally {
       setFetchingCombinations(false);
@@ -755,9 +758,9 @@ const CombinationPattern = () => {
             type="generator"
           />
         )}
-        <Modal open={tryLowerModal} onOk={()=> setTryLowerModal(false)} footer={null} onCancel={()=> setTryLowerModal(false)}>
-<p>Please try in lower RE Replacement</p>
-        </Modal>
+        {/* <Modal open={tryLowerModal} onOk={()=> setTryLowerModal(false)} footer={null} onCancel={()=> setTryLowerModal(false)}> */}
+{/* <p>Please try in lower RE Replacement</p> */}
+        {/* </Modal> */}
       </Row>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Typography, Button, Spin, List, Avatar, Badge } from "antd";
+import { Card, Row, Col, Typography, Button, Spin, List, Avatar, Badge, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchNotificationById } from "../../Redux/Slices/Consumer/notificationSlice.js";
@@ -21,6 +21,11 @@ const Notification = () => {
     dispatch(fetchNotificationById(userId))
       .then((response) => {
         setNotifications(response.payload);
+
+        if (response.payload.length < 1) {
+          message.error('No notifications available for this user');
+        }
+        
         setLoading(false);
       })
       .catch((error) => {
@@ -28,6 +33,7 @@ const Notification = () => {
         setLoading(false);
       });
   }, [dispatch, userId]);
+  
 
   return (
     <div style={{ padding: "24px", backgroundColor: "#f0f2f5", minHeight: "90vh" }}>

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Button, Tooltip } from "antd";
+import { Badge, Button, Tooltip } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -15,6 +15,7 @@ import {
 import "./HeaderComponent.css"; // Add custom styles for header component
 import chat from "../../../assets/need.png";
 import userImage from "../../../assets/profile.png";
+import NotificationIcon from "../../../assets/not.jpg";
 
 const { Header } = Layout;
 
@@ -31,6 +32,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const [matchingConsumer, setMatchingConsumer] = useState("");
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
 // const currentPath=localStorage.getItem('currentPath');
+const notificationCount=3;
+
   useEffect(() => {
     setSubscriptionRequires(subscription !== "active");
   }, [subscription]);
@@ -47,6 +50,10 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const user = getFromLocalStorage("user").user;
   // console.log(user);
   
+const handleNotificationClick =() => {
+  navigate('/px/notifications');
+}
+
   if (user && user.company_representative) {
     username = user.company_representative;
   }
@@ -334,7 +341,46 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
             onClick={handleProfileClick}
           />
           </Tooltip> */}
-
+   <Tooltip 
+          style={{
+           right: 50,
+          
+         
+           
+          }}
+          title="Notifications">
+          <Badge
+            style={{
+              position: "absolute",
+              right: 50,
+              top: 28,
+              // zIndex: 1001,
+              cursor: "pointer",
+              border: "1px solid green",
+           
+             
+            }}
+            count={notificationCount}
+          overflowCount={10}
+          >
+            <img
+              src={NotificationIcon}
+              alt="Notification"
+              style={{
+                cursor: "pointer",
+                height: "30px",
+                width: "30px",
+                margin: "0 45px 2px 0px",   
+                padding: "5px", 
+                borderRadius: "50%",
+                border: "1px solid green",
+                objectFit: "cover", // Prevents image distortion
+                backgroundColor: "white", // Ensures the image is visible
+              }}
+              onClick={handleNotificationClick}
+            />
+          </Badge>
+          </Tooltip>
           <Tooltip title="Need Assistance?">
             <img
               src={chat} // Use your imported chat image

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Typography, Row, Col, Spin, Modal, Tooltip } from 'antd';
+import { Table, Button, Typography, Row, Col, Spin, Modal, Tooltip, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { fetchTransactions } from '../../Redux/Slices/Transaction/transactionWindowSlice';
 import { useDispatch } from 'react-redux';
@@ -89,7 +89,8 @@ const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
           
           setIsRejected(true);}
       } catch (error) {
-        console.error("Error fetching transactions:", error);
+        message.error(error)
+        // console.error("Error fetching transactions:", error);
       }
       setLoading(false);
     };

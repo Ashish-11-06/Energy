@@ -68,10 +68,10 @@ let temp='';
     temp="Consumer"
   }
 
-  useEffect(() => {
-    // Update minimumSupply to 80% of contractedEnergy and keep 2 decimal places
-    setMinimumSupply(((contractedEnergy * 80) / 100).toFixed(2));
-  }, [contractedEnergy]);
+  // useEffect(() => {
+  //   // Update minimumSupply to 80% of contractedEnergy and keep 2 decimal places
+  //   setMinimumSupply(((contractedEnergy * 80) / 100).toFixed(2));
+  // }, [contractedEnergy]);
   
 
   // Initialize the commencement date using moment

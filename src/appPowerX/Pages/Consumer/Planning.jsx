@@ -62,11 +62,15 @@ const Planning = () => {
       const id = user_id; // Ensure `user_id` is defined in scope
       try {
         const res = await dispatch(fetchPlanningData(id));
+        console.log(res);        
         console.log(res.payload);
         setTableDemandData(res.payload);
         setRequirementId(res.payload.map(item => item.requirement));
       } catch (error) {
-        // console.error("Error fetching planning data:", error);
+        const errorMessage = error?.response?.data?.message || "No demand records found";
+        // console.log(error?.response?.data?.message);
+        
+        message.error(errorMessage); // Display the error message
       } finally {
         setLoading(false);
       }
@@ -386,7 +390,7 @@ const Planning = () => {
                 value={dayjs(currentMonth)}
                 onPanelChange={(date) => setCurrentMonth(date.toDate())}
                 onSelect={handleDateClick}
-                
+                className='temp-calender'
                 cellRender={(value) => tileContent(value)}
                 style={{ '--cell-size': '20px'}} // Add custom CSS variable for cell size
               />
@@ -471,7 +475,7 @@ const Planning = () => {
             </Form.Item>
           </>
         )}
-        <Form.Item label="Enter Demand (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
+        {/* <Form.Item label="Enter Demand (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
           <Input
             type="number"
             placeholder="Enter demand"
@@ -488,7 +492,7 @@ const Planning = () => {
               setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
             }}
           />
-        </Form.Item>
+        </Form.Item> */}
         <Tooltip title={!allFieldsFilled ? "All fields are required" : ""} placement="top">
           <Button onClick={handleAddData} disabled={!allFieldsFilled}>
             Add Data
@@ -500,7 +504,7 @@ const Planning = () => {
       </Modal>
       <Modal
         title="Select Technology"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleModalOk} // Call handleModalOk on OK button click
         onCancel={() => setIsModalVisible(false)}
       >

@@ -23,7 +23,6 @@ const StatisticalInformation = () => {
   const [mcvForeCastedData, setMcvForeCastedData] = useState([]);
   const [mcvPastData, setMcvPastData] = useState([]);
   const [formattedDate, setFormattedDate] = useState("");
-  // const [data,setDate]=useState([]);
   const [selectedForecast, setSelectedForecast] = useState('day'); // Default: Day Ahead
   var technology = '';
   const dummyMonthAheadData = {
@@ -31,9 +30,43 @@ const StatisticalInformation = () => {
     mcv: Array(96).fill(100), // Dummy MCV data for Month Ahead
   };
 
-  const handleForecastChange = (value) => {
+  const handleForecastChange = async (value) => {
     setSelectedForecast(value);
+    try {
+      if (value === 'currentDay') {
+        const data = await dispatch(fetchModelStatistics());
+        if (data?.payload?.date) {
+          const dateStr = data.payload.date;
+          const date = new Date(dateStr);
+          const options = { month: "long", day: "numeric" };
+          const formatted = date.toLocaleDateString("en-US", options);
+          setFormattedDate(formatted); // Example output: "January 30"
+        }
+        setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
+        setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
+        setPastData(data.payload.clean_data.map(item => item.mcp) || []);
+        setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
+        setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
+      } else if (value === 'next30Day') {
+        const data = await dispatch(fetchModelStatisticsMonth());
+        const start_date = data.payload.start_date;
+        const end_date = data.payload.end_date;
+        if (start_date && end_date) {
+          const startMonth = new Date(start_date).toLocaleString("en-US", { month: "short" });
+          const endMonth = new Date(end_date).toLocaleString("en-US", { month: "short" });
+          setFormattedDate(`${startMonth}-${endMonth}`); // Example output: "Dec-Jan"
+        }
+        setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
+        setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
+        setPastData(data.payload.clean_data.map(item => item.mcp) || []);
+        setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
+        setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
+      }
+    } catch (error) {
+      message.error(error);
+    }
   };
+
 if(selectedForecast === 'day'){
    technology = 'Day Ahead';
 } else {
@@ -76,14 +109,14 @@ const dummyAccuracyData = [
         } else if (selectedForecast === 'next30Day') {
           const data = await dispatch(fetchModelStatisticsMonth());
           // console.log(data.payload);
-          if (data?.payload?.date) {
-            const dateStr = data.payload.date;
-            const date = new Date(dateStr);
+          const start_date = data.payload.start_date;
+          const end_date = data.payload.end_date;
+          // console.log(start_date);
 
-            const options = { month: "long", day: "numeric" };
-            const formatted = date.toLocaleDateString("en-US", options);
-
-            setFormattedDate(formatted); // Example output: "January 30"
+          if (start_date && end_date) {
+            const startMonth = new Date(start_date).toLocaleString("en-US", { month: "short" });
+            const endMonth = new Date(end_date).toLocaleString("en-US", { month: "short" });
+            setFormattedDate(`${startMonth}-${endMonth}`); // Example output: "Dec-Jan"
           }
           setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
           setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);

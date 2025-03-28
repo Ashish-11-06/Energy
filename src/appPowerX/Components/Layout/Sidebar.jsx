@@ -42,7 +42,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Plan Your Trade', key: '/px/consumer/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Trade', key: '/px/consumer/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Subscription Plan', key: '/px/consumer/powerx-subscription', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Notifications', key: '/px/consumer/notification-powerX', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Track Status', key: '/px/track-status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
 
@@ -52,7 +51,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Forecast Month Ahead', key: '/px/generator/month-ahead', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Plan Your Trade', key: '/px/generator/planning', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Trade', key: '/px/generator/trading', icon: <img src={subscription} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Notifications', key: '/px/generator/notification', icon: <img src={notificationImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Track Status', key: '/px/track-status', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
 
   ];

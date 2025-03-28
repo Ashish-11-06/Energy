@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Form, Input, Button, Row } from "antd";
+// import { editUser } from "../../../Redux/Slices/userSlice";
 
 const EditProfileModal = ({ isVisible, onCancel, onSave, initialValues }) => {
   return (

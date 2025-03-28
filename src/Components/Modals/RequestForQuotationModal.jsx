@@ -28,6 +28,7 @@ const RequestForQuotationModal = ({
   data,
   fromModal,
   selectedDemandId,
+  fromInitiateQuotation
 }) => {
   const [ppaTerm, setPpaTerm] = useState(20);
   const [lockInPeriod, setLockInPeriod] = useState(10);
@@ -106,15 +107,18 @@ console.log(data);
         width={800}
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
-        <p><strong> Offer Tariff (INR/MW): </strong>
-        <InputNumber 
-        min={1}
-        value={perUnitCost}
-        onChange={
-          (value) => { setPerUnitCost(value)}
-        }
-        />
-        </p>
+       <p><strong> Offer Tariff (INR/MW): </strong>
+  {user_category === "generator" && fromInitiateQuotation ? (
+    <InputNumber 
+      min={1}
+      value={perUnitCost}
+      onChange={(value) => setPerUnitCost(value)}
+    />
+  ) : (
+    <span>{perUnitCost}</span>
+  )}
+</p>
+
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
           Standard Terms Sheet
         </Title>

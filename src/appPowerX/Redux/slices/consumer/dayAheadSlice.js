@@ -23,8 +23,10 @@ export const addDayAheadData = createAsyncThunk(
   async (dayAheadDemand, { rejectWithValue }) => { // Correctly pass rejectWithValue here
     try {
       const response = await dayAheadApi.addDayAheadData(dayAheadDemand);
-      if (response.status === 200 && response.data) {
-        return response.data; // Ensure response contains valid data
+      // console.log(response);
+      
+      if (response.status === 201 && response.data) {
+        return response; // Return the full response object
       }
       // throw new Error("Invalid response from server");
     } catch (error) {
