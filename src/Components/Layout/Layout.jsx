@@ -48,7 +48,8 @@ const LayoutComponent = () => {
   location.pathname === "/chat-page" ||
   location.pathname === "/chat-page" ||
   location.pathname === "/consumer/energy-consumption-table" ||
-  location.pathname === "/generator/energy-consumption-table";
+  location.pathname === "/generator/energy-consumption-table" ||
+  location.pathname === "/generator/GeneratorInput";
 
   // const isConsuptionPage =
   // location.pathname === "/consumer/energy-consumption-table" ||
