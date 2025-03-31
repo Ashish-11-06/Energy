@@ -377,7 +377,8 @@ if(dataSource?.length<=0) {
       }
     } catch (error) {
       console.error("Error in handleOptimizeClick:", error);
-      message.error("Failed to fetch combinations.");
+      message.error(error);
+      // message.error("Failed to fetch combinations.");
     } finally {
       setFetchingCombinations(false);
       setIsTableLoading(false);

@@ -238,8 +238,9 @@ const CombinationPattern = () => {
           behavior: "smooth",
         });
       } catch (error) {
-        // console.error("Error in loadCombinations:", error);
-        message.error("Failed to fetch combinations.");
+        console.error("Error in loadCombinations:", error);
+        message.error(error);
+        // message.error("Failed to fetch combinations.");
         setIsTableLoading(false);
         setFetchingCombinations(false);
       }
@@ -335,7 +336,8 @@ const CombinationPattern = () => {
     } catch (error) {
       console.error("Error in handleOptimizeClick:", error);
       // setTryLowerModal(true);
-      message.error("Failed to fetch combinations.");
+      message.error(error)
+      // message.error("Failed to fetch combinations.");
     } finally {
       setFetchingCombinations(false);
       setIsTableLoading(false);
