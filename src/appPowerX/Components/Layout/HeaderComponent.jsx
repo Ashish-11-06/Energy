@@ -362,6 +362,8 @@ const handleNotificationClick =() => {
             }}
             count={notificationCount}
           overflowCount={10}
+          onClick={handleNotificationClick}
+
           >
             <img
               src={NotificationIcon}

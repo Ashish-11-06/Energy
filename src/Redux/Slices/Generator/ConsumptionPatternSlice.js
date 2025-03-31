@@ -3,14 +3,13 @@ import consumptionPatternApi from '../../api/generator/consumptionPatternApi';
 
 // Async thunk to fetch matching consumers by ID
 export const fetchConsumptionPattern = createAsyncThunk(
-  'consumptionPatter/fetchById',
-  async (id, { rejectWithValue }) => {
+  'consumptionPattern/fetchById',
+  async ({ id, user_id }, { rejectWithValue }) => {
     try {
-      const response = await consumptionPatternApi.getConsumptionPattern(id);
-      // console.log(response.data);
+      const response = await consumptionPatternApi.getConsumptionPattern({ id, user_id });
+      // console.log(response.data); // Retain the console log for debugging
       return response.data; // Assuming the API returns data in `response.data`
     } catch (error) {
-      // Handle errors
       return rejectWithValue(
         error.response?.data?.message || 'Failed to fetch consumption patterns'
       );

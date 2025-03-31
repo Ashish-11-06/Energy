@@ -420,7 +420,10 @@ const Planning = () => {
         <Form.Item label="Select Consumption Unit" style={{ fontSize: '24px' }}>
           <Select
             value={selectedState || undefined}
-            onChange={handleStateChange}
+            onChange={(value) => {
+              handleStateChange(value);
+              setAllFieldsFilled(value && selectedDate); // Check if both fields are filled
+            }}
             style={{ width: "100%", borderColor: "#669800" }}
             placeholder="Select Consumption Unit"
           >
@@ -431,68 +434,17 @@ const Planning = () => {
             ))}
           </Select>
         </Form.Item>
-        {
-          !selectedInterval && (
-<Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+        <Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
           <DatePicker
             style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
             format="DD/MM/YYYY"
             disabledDate={(current) => current && current <= new Date()}
-            onChange={(date) => setSelectedDate(date)}
+            onChange={(date) => {
+              setSelectedDate(date);
+              setAllFieldsFilled(selectedState && date); // Check if both fields are filled
+            }}
           />
         </Form.Item>
-          )
-        }
-        
-        {/* <Form.Item label="Select Date Interval" style={{ fontSize: '24px' }}>
-          <Select
-            value={selectedInterval || undefined}
-            onChange={handleDateIntervalChange}
-            style={{ width: "100%", borderColor: "#669800" }}
-            placeholder="Select Date Interval"
-          >
-            <Select.Option key="next15days" value="next15days">Next 15 Days</Select.Option>
-            <Select.Option key="next30days" value="next30days">Next 30 Days</Select.Option>
-          </Select>
-        </Form.Item> */}
-        {(selectedInterval === 'next15days' || selectedInterval === 'next30days') && (
-          <>
-            <Form.Item label="Select Start Date" style={{ fontSize: '16px', fontWeight: '600' }}>
-              <DatePicker
-                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
-                format="DD/MM/YYYY"
-                disabledDate={(current) => current && current <= new Date()}
-                onChange={(date) => setStartDate(date)}
-              />
-            </Form.Item>
-            <Form.Item label="Select End Date" style={{ fontSize: '16px', fontWeight: '600' }}>
-              <DatePicker
-                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
-                format="DD/MM/YYYY"
-                disabledDate={(current) => current && current <= new Date()}
-                onChange={(date) => setEndDate(date)}
-              />
-            </Form.Item>
-          </>
-        )}
-        {/* <Form.Item label="Enter Demand (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
-          <Input
-            type="number"
-            placeholder="Enter demand"
-            min={0}
-            style={{
-              width: "100%",
-              padding: "5px",
-              fontSize: "16px",
-              borderRadius: "5px",
-              border: "1px solid #ccc"
-            }}
-            onChange={(e) => {
-              setDemand(e.target.value);
-              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
-            }}
-          />
-        </Form.Item> */}
         <Tooltip title={!allFieldsFilled ? "All fields are required" : ""} placement="top">
           <Button onClick={handleAddData} disabled={!allFieldsFilled}>
             Add Data
@@ -564,7 +516,7 @@ const Planning = () => {
             }}
             onChange={(e) => {
               setDemand(e.target.value);
-              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
+              // setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
             }}
           />
         {/* </Form.Item> */}

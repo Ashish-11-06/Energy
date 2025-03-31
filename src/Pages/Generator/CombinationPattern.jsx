@@ -40,8 +40,8 @@ const CombinationPattern = () => {
   const [fetchingCombinations, setFetchingCombinations] = useState(false);
   const [progress, setProgress] = useState(0);
   const [combinationData, setCombinationData] = useState([]);
-  const [tryREreplacement,setTryREreplacement]=useState(false);
-  const [consumerDetails,setConsumerDetails]=useState('');
+  const [tryREreplacement, setTryREreplacement] = useState(false);
+  const [consumerDetails, setConsumerDetails] = useState("");
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -54,10 +54,7 @@ const CombinationPattern = () => {
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
-  // const user_category=user.user_category;
-  // console.log(user_category);
   const role = user.role;
-  // console.log(user.id);
   const user_id = user.id;
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
@@ -66,7 +63,6 @@ const CombinationPattern = () => {
       typeof combinations !== "object" ||
       !Object.keys(combinations).length
     ) {
-      // console.log("hiiiiiiii");
       setDataSource([]);
       return;
     }
@@ -89,10 +85,7 @@ const CombinationPattern = () => {
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
         const batteryCapacity =
           combination["Optimal Battery Capacity (MW)"] || 0;
-        // console.log("format", combination);
         const annual_demand_met = combination["Annual Demand Met"] || 0;
-        // console.log(annual_demand_met);
-        // console.log("status", combination.terms_sheet_sent);
 
         return {
           key: index + 1,
@@ -137,21 +130,22 @@ const CombinationPattern = () => {
           states: combination.state,
 
           status: combination?.terms_sheet_sent
-            ? (combination?.sent_from_you === 1 ? "Already Sent" : "Already received")
+            ? combination?.sent_from_you === 1
+              ? "Already Sent"
+              : "Already received"
             : "Send Quotation",
         };
       }
     );
 
-    // console.log('tech',tech);
-    // console.log("formatting com");
     setDataSource(formattedCombinations);
   };
 useEffect(()=> {
 if(dataSource?.length<=0) {
-  setTryREreplacement(true);
-}
-},[dataSource])
+      setTryREreplacement(true);
+    }
+  }, [dataSource]);
+
   // Redux selectors
   const consumptionPatterns = useSelector(
     (state) => state.consumptionPattern?.patterns || []
@@ -166,23 +160,21 @@ if(dataSource?.length<=0) {
     (state) => state.optimizedCapacity.status
   );
 
-  // console.log('comn', combinationData);klklkl
-
   const increaseValue = () => {
-      setSliderValue((prev) => Math.min(prev + 1, 100)); // Increase by 5, max 100
-    };
-  
-    const decreaseValue = () => {
-      setSliderValue((prev) => Math.max(prev - 1, 0)); // Decrease by 5, min 0
-    };
-  
-    useEffect(() => {
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: "smooth",
-      });
-    }, [isTableLoading, setIsTableLoading]);
-  
+    setSliderValue((prev) => Math.min(prev + 1, 100)); // Increase by 5, max 100
+  };
+
+  const decreaseValue = () => {
+    setSliderValue((prev) => Math.max(prev - 1, 0)); // Decrease by 5, min 0
+  };
+
+  useEffect(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [isTableLoading, setIsTableLoading]);
+
 
   // useEffect(() => {
   //   const fetchPatterns = async () => {
@@ -200,24 +192,25 @@ if(dataSource?.length<=0) {
   //   };
   
   useEffect(() => {
-      const fetchPatterns = async () => {
-        try {
-          if (
-            (!consumptionPatterns.length &&
-              consumptionPatternStatus === "idle") ||
-            consumptionPatternStatus === "failed"
-          ) {
-            const response = await dispatch(
-              fetchConsumptionPattern(selectedDemandId)
-            );
-            console.log(response);
-            setConsumerDetails(response.payload?.consumer_details)
-            // console.log(selectedDemandId);
-          }
-        } catch (error) {
-          message.error("Failed to fetch consumption patterns.");
+    const fetchPatterns = async () => {
+      console.log('fetch pattern');
+      
+      try {
+        if (
+          (!consumptionPatterns.length &&
+            consumptionPatternStatus === "idle") ||
+          consumptionPatternStatus === "failed"
+        ) {
+          const response = await dispatch(
+            fetchConsumptionPattern({ id: selectedDemandId, user_id })
+          );
+          console.log(response);
+          setConsumerDetails(response.payload?.consumer_details);
         }
-      };
+      } catch (error) {
+        message.error("Failed to fetch consumption patterns.");
+      }
+    };
 
     const loadCombinations = async () => {
       try {
@@ -327,14 +320,11 @@ if(dataSource?.length<=0) {
   }, [isTableLoading]);
 
   const handleRowClick = (record) => {
-    setSelectedRow(record); // Record comes from the latest dataSource
-    // console.log(record);
-
+    setSelectedRow(record);
     setIsIPPModalVisible(true);
   };
 
   const re_index = combinationData.re_index || 0;
-  // console.log(re_index);
 
   const handleIPPCancel = () => {
     setIsIPPModalVisible(false);
@@ -375,9 +365,6 @@ if(dataSource?.length<=0) {
           fetchOptimizedCombinations(modalData)
         ).unwrap();
 
-        // console.log(combinations, "combinations");
-
-        // Reformat combinations based on the latest slider value
         formatAndSetCombinations(combinations, sliderValue);
         setFetchingCombinations(false);
         setIsTableLoading(false);
@@ -386,7 +373,6 @@ if(dataSource?.length<=0) {
           behavior: "smooth",
         });
       } catch (error) {
-        //console.error('Error in dispatch:', error);
         throw error;
       }
     } catch (error) {
@@ -396,13 +382,12 @@ if(dataSource?.length<=0) {
       setFetchingCombinations(false);
       setIsTableLoading(false);
 
-      // Scroll to the bottom of the page
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
   };
 
   const sliderStyle = {
-    height: "20px", // Increase the thickness of the slider
+    height: "20px",
   };
 
   const marks = {
@@ -423,34 +408,26 @@ if(dataSource?.length<=0) {
       key: "combination",
       width: 120,
       render: (text) => {
-        // Extract the parts using split()
         const parts = text.split("-");
         if (parts.length === 4) {
-          // Extract the desired parts
           const a = parts[0];
           const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
           const c = parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1);
           const d = parts[3].charAt(0) + parts[3].charAt(parts[3].length - 1);
-          // Construct the new string
           return a + b + c + d;
         }
         if (parts.length === 3) {
-          // Extract the desired parts
           const a = parts[0];
           const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
           const c = parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1);
-          // Construct the new string
           return a + b + c;
         }
         if (parts.length === 2) {
-          // Extract the desired parts
           const a = parts[0];
-          const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1); // Extract first and last characters
-          // Construct the new string
+          const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
           return a + b;
         } else {
-          // Handle cases where the combination doesn't have the expected format
-          return text; // Or return an empty string, or handle the error as needed
+          return text;
         }
       },
     },
@@ -458,7 +435,6 @@ if(dataSource?.length<=0) {
       title: "Generator's Connectivity",
       dataIndex: "connectivity",
       key: "connectivity",
-      // width: 150,
     },
     {
       title: "Technology",
@@ -479,31 +455,26 @@ if(dataSource?.length<=0) {
       title: "% RE Replacement",
       dataIndex: "reReplacement",
       key: "reReplacement",
-      // width: 100,
     },
     {
       title: "Total Capacity (MW)",
       dataIndex: "totalCapacity",
       key: "totalCapacity",
-      // width: 150,
     },
     {
       title: "Per Unit Cost (INR/KWh)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
-      // width: 150,
     },
     {
       title: "OA Cost (INR/KWh)",
       dataIndex: "OACost",
       key: "OACost",
-      // width: 150,
     },
     {
       title: "Total Cost (INR/KWh)",
       dataIndex: "totalCost",
       key: "totalCost",
-      // width: 150,
     },
 
     {
@@ -517,17 +488,19 @@ if(dataSource?.length<=0) {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      // width: 150,
       render: (text, record) =>
         text !== "Send Quotation" ? (
           <Tooltip title="refer offer">
-            <Link to={`/offers`} style={{ textDecoration: "none", color: "#9A8406" }}>
+            <Link
+              to={`/offers`}
+              style={{ textDecoration: "none", color: "#9A8406" }}
+            >
               {text}
             </Link>
           </Tooltip>
         ) : (
           <button
-            style={{ padding: "2px 2px" }} // Minimize button size
+            style={{ padding: "2px 2px" }}
             onClick={() => handleRowClick(record)}
           >
             Initiate Quotation
@@ -536,19 +509,18 @@ if(dataSource?.length<=0) {
     },
   ];
 
-  // Chart data for consumption patterns
   const chartData = {
     labels: Array.isArray(consumptionPatterns)
       ? consumptionPatterns.map((pattern) => pattern.month)
-      : [], // Safely check if it's an array
+      : [],
     datasets: [
       {
         label: "Consumption (MWh)",
         data: Array.isArray(consumptionPatterns)
           ? consumptionPatterns.map((pattern) => pattern.consumption)
-          : [], // Safely check if it's an array
+          : [],
         backgroundColor: "#4CAF50",
-        barThickness: 10, // Set bar thickness
+        barThickness: 10,
       },
     ],
   };
@@ -556,25 +528,25 @@ if(dataSource?.length<=0) {
   const lineChartData = {
     labels: Array.isArray(consumptionPatterns)
       ? consumptionPatterns.map((pattern) => pattern.month)
-      : [], // Safely check if it's an array
+      : [],
     datasets: [
       {
         type: "bar",
         label: "Consumption (MWh)",
         data: Array.isArray(consumptionPatterns)
           ? consumptionPatterns.map((pattern) => pattern.consumption)
-          : [], // Safely check if it's an array
+          : [],
         backgroundColor: "#669800",
-        barThickness: 10, // Set bar thickness
+        barThickness: 10,
       },
       {
         type: "line",
         label: "Consumption during Peak hours(MWh)",
         data: Array.isArray(consumptionPatterns)
           ? consumptionPatterns.map((pattern) => pattern.peak_consumption)
-          : [], // Safely check if it's an array
+          : [],
         borderColor: "#FF5733",
-        borderWidth: 5, // Increase line thickness
+        borderWidth: 5,
         fill: false,
       },
       {
@@ -582,9 +554,9 @@ if(dataSource?.length<=0) {
         label: "Consumption during Off-Peak hours(MWh)",
         data: Array.isArray(consumptionPatterns)
           ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption)
-          : [], // Safely check if it's an array
+          : [],
         borderColor: "#337AFF",
-        borderWidth: 5, // Increase line thickness
+        borderWidth: 5,
         fill: false,
       },
     ],
@@ -601,42 +573,36 @@ if(dataSource?.length<=0) {
     maintainAspectRatio: false,
     scales: {
       y: {
-        min: 0, // Start the scale from 15
+        min: 0,
       },
     },
     plugins: {
       legend: {
-        position: "bottom", // Move the legend to the bottom
+        position: "bottom",
       },
     },
   };
 
-  // console.log(dataSource);
-
   return (
-    <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
+    <div
+      style={{
+        padding: "20px",
+        fontFamily: "'Inter', sans-serif",
+        paddingBottom: "50px",
+      }}
+    >
       <Row
         justify="center"
         align="middle"
         gutter={[16, 8]}
         style={{ height: "100%" }}
       >
-        {/* Static Data Line Chart */}
         <Card style={{ width: "100%" }}>
           <Col span={24} style={{ textAlign: "center" }}>
             <Title level={4} style={{ color: "#001529" }}>
               Monthly Consumption Pattern
             </Title>
           </Col>
-
-          {/* <Tooltip title="Help">
-          <Button
-            shape="circle"
-            icon={<QuestionCircleOutlined />}
-            onClick={showInfoModal}
-            style={{ position: "absolute",marginLeft:'95%', right: 30 }}
-          />
-        </Tooltip> */}
 
           <Col span={24} style={{ marginBottom: "20px" }}>
             <div
@@ -652,87 +618,72 @@ if(dataSource?.length<=0) {
           </Col>
         </Card>
 
-        {/* Combination Table */}
-        <Col span={24}
-         style={{
-          border: "1px solid #669800",
-          background: '#E6E8F1',
-          padding: '10px',
-        }}
+        <Col
+          span={24}
+          style={{
+            border: "1px solid #669800",
+            background: "#E6E8F1",
+            padding: "10px",
+          }}
         >
-           <div>
-            <Title level={4} style={{ color: "#669800", background:'#f8f8f8', marginBottom: "10px", padding: '10px' }}>
-            Choose Your RE transition Goal!
+          <div>
+            <Title
+              level={4}
+              style={{
+                color: "#669800",
+                background: "#f8f8f8",
+                marginBottom: "10px",
+                padding: "10px",
+              }}
+            >
+              Choose Your RE transition Goal!
             </Title>
           </div>
           <div style={{ marginBottom: "20px" }}>
             <Card>
-              {/* <Text>RE Replacement Value: {sliderValue}%</Text> Display slider value */}
               <br />
               <p>(You can change your RE Replacement from below bar. )</p>
-             <span>
-                             <div
-                               style={{
-                                 position: "relative",
-                                 width: "80%",
-                                 marginLeft: "5%",
-                               }}
-                             >
-                               {/* Left Arrow Button (Positioned on the Slider Line) */}
-                               {/* <Button
-                                 onClick={decreaseValue}
-                                 icon={<LeftOutlined />}
-                                 style={{
-                                   position: "absolute",
-                                   left: `${(sliderValue / 100) * 84}%`, // Position based on slider value
-                                   top: "100%",
-                                   transform: "translate(-50%, -50%)",
-                                   zIndex: 10,
-                              
-                                 }}
-                               /> */}
-             
-                               <Slider
-                                 min={0}
-                                 max={100}
-                                 marks={marks} // Add marks to the slider
-                                 style={{ width: "80%", marginLeft: "5%" }}
-                                 onChange={handleSliderChange}
-                                 value={`${sliderValue}`}
-                                 tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Correct way to control tooltip visibility
-                                 trackStyle={{ height: 20 }} // Increase the thickness of the slider line
-                                 handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
-                               />
-                               {/* Right Arrow Button (Positioned on the Slider Line) */}
-                               {/* <Button
-                                 onClick={increaseValue}
-                                 icon={<RightOutlined />}
-                                 style={{
-                                   position: "absolute",
-                                   left: `${(sliderValue / 100) * 80}%`, // Position based on slider value
-                                   top: "100%",
-                                   transform: "translate(50%, -50%)",
-                                   zIndex: 10,
-                                   background: 'none !important',
-                                   marginLeft: "30px",
-                               
-                                 }}
-                               /> */}
-                             </div>
-                             <Button
-                               type="primary"
-                               onClick={handleOptimizeClick}
-                               style={{ marginLeft: "80%", transform: "translateY(-46px)" }}
-                             >
-                               Run Optimizer
-                             </Button>
-                           </span>
-                            <br />
-              {/* <p>(You can change your RE Replacement from above bar. )</p> */}
+              <span>
+                <div
+                  style={{
+                    position: "relative",
+                    width: "80%",
+                    marginLeft: "5%",
+                  }}
+                >
+                  <Slider
+                    min={0}
+                    max={100}
+                    marks={marks}
+                    style={{ width: "80%", marginLeft: "5%" }}
+                    onChange={handleSliderChange}
+                    value={`${sliderValue}`}
+                    tooltip={{
+                      open: !isIPPModalVisible && !isModalVisible,
+                    }}
+                    trackStyle={{ height: 20 }}
+                    handleStyle={{ height: 20, width: 20 }}
+                  />
+                </div>
+                <Button
+                  type="primary"
+                  onClick={handleOptimizeClick}
+                  style={{
+                    marginLeft: "80%",
+                    transform: "translateY(-46px)",
+                  }}
+                >
+                  Run Optimizer
+                </Button>
+              </span>
+              <br />
             </Card>
           </div>
           <Card>
-            <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
+            <Title
+              level={4}
+              style={{ color: "#001529", marginBottom: "10px" }}
+            >
               Optimized Combination for {value}% RE replacement
             </Title>
             {isTableLoading ? (
@@ -760,7 +711,6 @@ if(dataSource?.length<=0) {
                 >
                   Please wait while we are showing you a best matching IPP...
                 </div>
-                {/* <Progress percent={progress} /> */}
               </>
             ) : dataSource.length > 0 ? (
               <Table
@@ -768,77 +718,60 @@ if(dataSource?.length<=0) {
                 columns={columns}
                 pagination={false}
                 bordered
-                size="small" // Adjust table size
+                size="small"
                 style={{
                   backgroundColor: "#FFFFFF",
                   border: "1px solid #E6E8F1",
                   overflowX: "auto",
-                  // padding: '5px 10px'
                 }}
                 scroll={{ x: true }}
-                rowClassName={() => "custom-row"} // Add a custom row class
+                rowClassName={() => "custom-row"}
               />
             ) : (
               <>
-              <div
-                style={{
-                  padding: "20px",
-                  fontSize: "18px",
-                  fontWeight: "bold",
-                  backgroundColor: "#f8d7da",
-                  borderRadius: "8px",
-                  border: "1px solid #f5c6cb",
-                  color: "#721c24",
-                  textAlign: "center",
-                }}
-              >
-                No optimized combinations available at the moment. Please try
-                again later.
-              </div>
-              <Modal title='Please try again'>
-                
-                </Modal>
+                <div
+                  style={{
+                    padding: "20px",
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    backgroundColor: "#f8d7da",
+                    borderRadius: "8px",
+                    border: "1px solid #f5c6cb",
+                    color: "#721c24",
+                    textAlign: "center",
+                  }}
+                >
+                  No optimized combinations available at the moment. Please try
+                  again later.
+                </div>
               </>
             )}
           </Card>
         </Col>
 
-        {/* IPP Modal */}
         {isIPPModalVisible && (
           <IPPModal
             visible={isIPPModalVisible}
-            // reReplacement={sliderValue} // Pass the latest slider value
             ipp={selectedRow}
             combination={combinationData}
             consumerDetails={consumerDetails}
-            // combination={combinationData}         // Ensure selectedRow is updated
-            reIndex={re_index} // Pass re_index to the modal
+            reIndex={re_index}
             onClose={handleIPPCancel}
             onRequestForQuotation={handleRequestForQuotation}
           />
         )}
 
-        {/* Request for Quotation Modal */}
         {isModalVisible && (
           <RequestForQuotationModal
             visible={isModalVisible}
             onCancel={handleQuotationModalCancel}
             data={selectedRow}
             selectedDemandId={selectedDemandId}
-            fromInitiateQuotation='true'
+            fromInitiateQuotation="true"
             type="generator"
           />
         )}
-      {/* <Modal 
-  open={tryREreplacement}
-  onOk={() => setTryREreplacement(false)}
-  onCancel={()=> setTryREreplacement(false)}
-  cancelButtonProps={{ style: { display: "none" } }} // Hides cancel button
->
-  Try for lower RE Replacement
-</Modal> */}
       </Row>
-
     </div>
   );
 };

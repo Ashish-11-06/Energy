@@ -310,10 +310,7 @@ const isMatchingIPP = localStorage.getItem("isMatching") === "true";
 
           <Tooltip 
           style={{
-           right: 50,
-          
-         
-           
+           right: 50,      
           }}
           title="Notifications">
           <Badge
@@ -321,22 +318,20 @@ const isMatchingIPP = localStorage.getItem("isMatching") === "true";
               position: "absolute",
               right: 50,
               top: 28,
-              // zIndex: 1001,
               cursor: "pointer",
               border: "1px solid green",
-           
-             
             }}
             count={notificationCount}
           overflowCount={10}
+          onClick={handleNotificationClick}
           >
             <img
               src={NotificationIcon}
               alt="Notification"
               style={{
                 cursor: "pointer",
-                height: "35px",
-                width: "35px",
+                height: "30px",
+                width: "30px",
                 margin: "0 45px 2px 0px",   
                 padding: "5px", 
                 borderRadius: "50%",

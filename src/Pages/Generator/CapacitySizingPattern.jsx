@@ -216,9 +216,16 @@ const CombinationPatternCap = () => {
   const handleOptimizeClick = async () => {
     try {
       setIsTableLoading(true);
-      const response = await dispatch(fetchCapacitySizing({ user_id, reReplacement: sliderValue })).unwrap(); // Pass RE replacement value
+
+      // Retain the original payload and only update the RE replacement value
+      const updatedPayload = {
+        ...state.modalData, // Original payload details
+        reReplacement: sliderValue, // Update RE replacement value
+      };
+
+      const response = await dispatch(fetchCapacitySizing(updatedPayload)).unwrap(); // Pass updated payload
       console.log(response);
-      
+
       if (response?.combinations) {
         formatAndSetCombinations(response.combinations, sliderValue); // Update table with API response
       } else {

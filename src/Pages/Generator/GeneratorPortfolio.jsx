@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Typography, Modal,Form, message, Progress } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Table, Button, Typography, Modal, Form, message, Progress } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,27 +7,28 @@ import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfil
 
 import AddPortfolioModal from './Modal/AddPortfolioModal';
 import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice';
-import moment from 'moment';  // Import moment
+import moment from 'moment'; // Import moment
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
 const GenerationPortfolio = () => {
-  const user = (JSON.parse(localStorage.getItem('user'))).user;
+  const user = JSON.parse(localStorage.getItem('user')).user;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isNewUserModalVisible, setIsNewUserModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
-  const [Structuredprojects, setStructuredProjects] = useState([]);  // Local state for flattened projects
+  const [Structuredprojects, setStructuredProjects] = useState([]); // Local state for flattened projects
   const [form] = Form.useForm();
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-const [editData,setEditData]=useState(selectedRecord);
+  const [editData, setEditData] = useState(selectedRecord);
+  const editModeRef = useRef(false); // Track whether the modal is in edit mode
 
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-const subscribed=JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
-const alreadysubscribed=subscribed?.status;
+  const subscribed = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+  const alreadysubscribed = subscribed?.status;
 
   const { status, projects } = useSelector((state) => state.portfolio);
 
@@ -38,7 +39,7 @@ const alreadysubscribed=subscribed?.status;
 
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      const user = (JSON.parse(storedUser)).user;
+      const user = JSON.parse(storedUser).user;
       setUserName(user.company_representative || 'User');
     } else {
       setUserName('Guest');
@@ -55,18 +56,20 @@ const alreadysubscribed=subscribed?.status;
       setIsUpdateModalVisible(true);
     } catch (error) {
       message.error(error);
-      // console.log(error);
     }
-   
   };
 
-  const handleEdit=(record)=>{
-
-    // console.log(record);
+  const handleEdit = (record) => {
     setEditData(record);
+    editModeRef.current = true; // Set edit mode to true
     setIsModalVisible(true);
-  }
-// console.log(editData);
+  };
+
+  const handleAddNewPortfolio = () => {
+    setEditData(null); // Clear edit data
+    editModeRef.current = false; // Set edit mode to false
+    setIsModalVisible(true);
+  };
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -74,20 +77,18 @@ const alreadysubscribed=subscribed?.status;
     form.resetFields();
   };
 
-  // useEffect(() => {
-    if (status === 'idle') {
-      dispatch(getAllProjectsById(user.id));  // Fetch projects
-    }
-  // }, [status]);
+  if (status === 'idle') {
+    dispatch(getAllProjectsById(user.id)); // Fetch projects
+  }
 
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
       const flatProjects = [
-        ...(projects.Solar || []).map(project => ({ ...project, type: 'Solar' })),
-        ...(projects.Wind || []).map(project => ({ ...project, type: 'Wind' })),
-        ...(projects.ESS || []).map(project => ({ ...project, type: 'ESS' }))
+        ...(projects.Solar || []).map((project) => ({ ...project, type: 'Solar' })),
+        ...(projects.Wind || []).map((project) => ({ ...project, type: 'Wind' })),
+        ...(projects.ESS || []).map((project) => ({ ...project, type: 'ESS' })),
       ];
-      setStructuredProjects(flatProjects);  // Update local state with flattened data
+      setStructuredProjects(flatProjects); // Update local state with flattened data
     }
   }, [projects.Solar, projects.Wind, projects.ESS]);
 
@@ -112,7 +113,6 @@ const alreadysubscribed=subscribed?.status;
       dataIndex: 'available_capacity',
       key: 'available_capacity',
       render: (text) => {
-        // Check if the value is 'ESS' or not and render accordingly
         if (text === 'ESS') {
           return `${text} MWh`;
         } else {
@@ -124,15 +124,17 @@ const alreadysubscribed=subscribed?.status;
       title: 'COD (Commercial Operation Date)',
       dataIndex: 'cod',
       key: 'cod',
-      render: (text) => moment(text).format('DD-MM-YYYY'),  // Format date to DD-MM-YYYY
+      render: (text) => moment(text).format('DD-MM-YYYY'), // Format date to DD-MM-YYYY
     },
-       {
-          title:'Edit Project',
-          key:'edit',
-          render:(text,record)=>(
-            <Button type="primary" onClick={()=>handleEdit(record)}>Edit</Button>
-          )
-        }
+    {
+      title: 'Edit Project',
+      key: 'edit',
+      render: (text, record) => (
+        <Button type="primary" onClick={() => handleEdit(record)}>
+          Edit
+        </Button>
+      ),
+    },
   ];
 
   if (alreadysubscribed) {
@@ -144,15 +146,10 @@ const alreadysubscribed=subscribed?.status;
         render: (text) => (
           <div style={{ textAlign: 'center' }}>
             <Progress
-            percent={text ? 100 : 50}
-            status={text ? 'active' : 50}
-            strokeColor={text ? 'green' : 'red'}
-          />
-            {/* {text ? (
-              <CheckCircleOutlined style={{ color: 'green', fontSize: '18px' }} />
-            ) : (
-              <CloseCircleOutlined style={{ color: 'red', fontSize: '18px' }} />
-            )} */}
+              percent={text ? 100 : 50}
+              status={text ? 'active' : 50}
+              strokeColor={text ? 'green' : 'red'}
+            />
           </div>
         ),
       },
@@ -167,7 +164,6 @@ const alreadysubscribed=subscribed?.status;
               onClick={() => handleUpdate(record)}
               style={{ width: '120px' }}
             >
-
               {record.updated ? 'Edit' : 'Update'}
             </Button>
           </div>
@@ -201,9 +197,7 @@ const alreadysubscribed=subscribed?.status;
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <h2 level={2} >
-          Available Generation Portfolio
-        </h2>
+        <h2 level={2}>Available Generation Portfolio</h2>
 
         <Table
           dataSource={Structuredprojects.map((project, index) => ({ ...project, key: index }))}
@@ -213,19 +207,19 @@ const alreadysubscribed=subscribed?.status;
           loading={status === 'loading'}
         />
 
-
         <AddPortfolioModal
           visible={isModalVisible}
           onClose={() => setIsModalVisible(false)}
           onAdd={handleAddEntry}
           data={editData}
           user={user}
+          isEditMode={editModeRef.current} // Pass edit mode flag
         />
 
         <Button
           type="primary"
           style={{ marginTop: '20px' }}
-          onClick={() => setIsModalVisible(true)}
+          onClick={handleAddNewPortfolio} // Use the new handler
         >
           Add New Entry +
         </Button>
@@ -256,17 +250,17 @@ const alreadysubscribed=subscribed?.status;
           <li>Track your progress in the dashboard.</li>
         </ol>
       </Modal>
-           <Modal
-              title="Update Profile"
-              open={isUpdateModalVisible}
-              onCancel={handleCancel}
-              width={700}
-              okButtonProps={{ style: { display: 'none' } }}
-              cancelButtonProps={{ style: { display: 'none' } }}
-            >
-              <UpdateProfileForm 
+      <Modal
+        title="Update Profile"
+        open={isUpdateModalVisible}
+        onCancel={handleCancel}
+        width={700}
+        okButtonProps={{ style: { display: 'none' } }}
+        cancelButtonProps={{ style: { display: 'none' } }}
+      >
+        <UpdateProfileForm
           project={selectedRecord}
-          form={form} 
+          form={form}
           fromPortfolio={true}
           onCancel={handleCancel}
         />

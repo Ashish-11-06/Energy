@@ -9,7 +9,7 @@ import { addProject, updateProject } from '../../../Redux/Slices/Generator/portf
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { fetchState } from '../../../Redux/Slices/Consumer/stateSlice';
 
-const AddPortfolioModal = ({ visible, onClose, user, data }) => {
+const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
   const [form] = Form.useForm();
   const [unit, setUnit] = useState('MW');
   const dispatch = useDispatch();
@@ -31,10 +31,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
       values.user = user.id;
       setLoading(true);
       if (data) {
-        // console.log(values);
         const id = data?.id;
-        // console.log('id', id);
-    
         const updatedValues = { ...values, id }; // Add data.id to values
     
         dispatch(updateProject(updatedValues))
@@ -81,20 +78,23 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (data) {
-      form.setFieldsValue({
-        energy_type: data?.type,
-        state: data.state,
-        connectivity: data.connectivity,
-        total_install_capacity: data.total_install_capacity,
-        available_capacity: data.available_capacity,
-        cod: data.cod ? dayjs(data.cod) : null,
-      });
-      setUnit(data.energy_type === 'ESS' ? 'MWh' : 'MW'); // Set unit based on energy type
-    } else {
-      form.resetFields(); // Reset fields if no data is provided
+    if (visible) {
+      if (isEditMode && data) {
+        form.setFieldsValue({
+          energy_type: data?.type,
+          state: data.state,
+          connectivity: data.connectivity,
+          total_install_capacity: data.total_install_capacity,
+          available_capacity: data.available_capacity,
+          cod: data.cod ? dayjs(data.cod) : null,
+        });
+        setUnit(data.energy_type === 'ESS' ? 'MWh' : 'MW'); // Set unit based on energy type
+      } else {
+        form.resetFields(); // Reset fields for adding a new portfolio
+        setUnit('MW'); // Reset unit to default
+      }
     }
-  }, [data, form]);
+  }, [visible, isEditMode, data, form]);
 
   const disablePastDates = (current) => {
     return current && current < dayjs().endOf('day');
@@ -110,7 +110,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
 
   return (
     <Modal
-      title="Add New Project Entry"
+    title={!data ? 'Add New Project Entry' : 'Update Project Entry'}
       open={visible}
       onCancel={onClose}
       footer={null}
@@ -131,7 +131,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
               }
               name="energy_type"
               rules={[{ required: true, message: 'Please select type!' }]} >
-              <Select placeholder="Select Type" onChange={handleTechnologyChange} disabled={data?.type}>
+              <Select placeholder="Select Type" onChange={handleTechnologyChange} >
                 <Select.Option value="Solar">Solar</Select.Option>
                 <Select.Option value="Wind">Wind</Select.Option>
                 <Select.Option value="ESS">ESS (Energy Storage System)</Select.Option>
@@ -154,7 +154,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data }) => {
               // rules={[{ required: true, message: "Please select your state!" }]}
               
             >
-              <Select placeholder="Select your state" showSearch disabled={data?.state}>
+              <Select placeholder="Select your state" showSearch >
                 {isState && isState.map((state, index) => (
                   <Select.Option key={index} value={state}>
                     {state}

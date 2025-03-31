@@ -727,6 +727,8 @@ const CombinationPattern = () => {
                   textAlign: "center",
                 }}
               >
+                 No optimized combinations available at the moment. Please try
+                 again later.
                 {console.log(dataSourceError)}
               {dataSourceError}
               </div>
