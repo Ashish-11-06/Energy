@@ -176,7 +176,8 @@ const CombinationPattern = () => {
           consumptionPatternStatus === "failed"
         ) {
           const response = await dispatch(
-            fetchConsumptionPattern(selectedDemandId)
+            
+            fetchConsumptionPattern({ id: selectedDemandId, user_id })
           );
           // console.log(response);
         }
