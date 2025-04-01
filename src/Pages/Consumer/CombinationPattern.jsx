@@ -249,7 +249,7 @@ const CombinationPattern = () => {
     // console.log(combinationData);
 
     fetchPatterns();
-    loadCombinations();
+    // loadCombinations();
   }, [dispatch, selectedDemandId]);
 
   // console.log(combinationData, "combinationData");
@@ -750,6 +750,7 @@ const CombinationPattern = () => {
             ipp={selectedRow}
             combination={combinationData}
             fromGenerator={false}
+            fromConsumer={true}
             // combination={combinationData}         // Ensure selectedRow is updated
             reIndex={re_index} // Pass re_index to the modal
             onClose={handleIPPCancel}

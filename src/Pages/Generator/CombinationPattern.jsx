@@ -757,6 +757,7 @@ if(dataSource?.length<=0) {
             combination={combinationData}
             consumerDetails={consumerDetails}
             fromGenerator={true}
+            fromConsumer={false}
             reIndex={re_index}
             onClose={handleIPPCancel}
             onRequestForQuotation={handleRequestForQuotation}
