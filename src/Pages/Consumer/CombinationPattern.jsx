@@ -272,6 +272,8 @@ const CombinationPattern = () => {
     }
   }, [isTableLoading]);
 
+  console.log('consumption pattern',consumptionPatterns);
+  
   const handleRowClick = (record) => {
     setSelectedRow(record); // Record comes from the latest dataSource
     setIsIPPModalVisible(true);
@@ -741,11 +743,13 @@ const CombinationPattern = () => {
 
         {/* IPP Modal */}
         {isIPPModalVisible && (
+
           <IPPModal
             visible={isIPPModalVisible}
             // reReplacement={sliderValue} // Pass the latest slider value
             ipp={selectedRow}
             combination={combinationData}
+            fromGenerator={false}
             // combination={combinationData}         // Ensure selectedRow is updated
             reIndex={re_index} // Pass re_index to the modal
             onClose={handleIPPCancel}
