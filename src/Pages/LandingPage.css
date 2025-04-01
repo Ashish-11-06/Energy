@@ -94,8 +94,7 @@
 }
 
 .exg-logo {
-  width: 170%;
-  height: 100%;
+  width: 150%;
 }
 
 .social-media-icons {
@@ -108,6 +107,7 @@
 }
 
 .footer {
+  margin-left: -5px;
   position: absolute;
   bottom: 0;
   width: 100vw;
