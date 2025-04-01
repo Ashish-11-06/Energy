@@ -181,7 +181,7 @@ const AnnualSvg = () => {
                       </Col>
                       <Col xs={24} sm={12}>
                         <Text style={{ fontSize: '20px', color: '#9a8406', cursor: 'pointer' }} onMouseEnter={showRequirementModal}>
-                         : {annualSavingResponse ? annualSavingResponse.contracted_demand : "0"}<span style={{ fontSize: '14px' }}> (MW)</span>
+                         : {annualSavingResponse ? annualSavingResponse.contracted_demand : "0"}<span style={{ fontSize: '14px' }}> MW</span>
                         </Text>
                       </Col>
                       <Col xs={24} sm={12}>
@@ -189,8 +189,8 @@ const AnnualSvg = () => {
                       </Col>
                       <Col xs={24} sm={12}>
                         <Text style={{ fontSize: '20px' }}>
-                         : {annualSavingResponse ? annualSavingResponse.annual_savings.toLocaleString('en-IN') : "0"}
-                          <span style={{ fontSize: '14px' }}> (INR/kWh)</span>
+                         : {annualSavingResponse ? annualSavingResponse.annual_savings.toLocaleString('en-IN') : "N/A"}
+                          <span style={{ fontSize: '14px' }}> INR</span>
                         </Text>
                       </Col>
                       <Col xs={24} sm={12}>
@@ -198,7 +198,7 @@ const AnnualSvg = () => {
                       </Col>
                       <Col xs={24} sm={12}>
                         <Text style={{ fontSize: '20px' }}>
-                          : {annualSavingResponse ? annualSavingResponse.average_savings.toLocaleString('en-IN') : "0"}<span style={{ fontSize: '14px' }}> (INR/kWh)</span>
+                          : {annualSavingResponse ? annualSavingResponse.average_savings.toLocaleString('en-IN') : "0"}<span style={{ fontSize: '14px' }}> INR/kWh</span>
                         </Text>
                       </Col>
                       <Col xs={24} sm={12}>

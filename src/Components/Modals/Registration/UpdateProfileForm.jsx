@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Form,
   Input,
@@ -29,7 +29,6 @@ const { Title, Text } = Typography;
 const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorCloseModal, lastUploadedFile, updateLastUploadedFile }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
-  // console.log(fromPortfolio);
 
   const project_type = project.type;
   const solar_template_downloaded = user.solar_template_downloaded;
@@ -45,7 +44,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
   const [isState, setIsState] = useState([]);
   const [solarFile, setSolarFile] = useState("");
   const [windFile, setWindFile] = useState("");
-  // console.log(selectedProject.type);
+  const continueButtonRef = useRef(false); // Ref to track the state of the "Continue" button
 
   useEffect(() => {
     if (user.solar_template_downloaded) {
@@ -55,6 +54,17 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
       setIsTemplateDownloaded(true);
     }
   });
+
+  useEffect(() => {
+    // Update the ref value based on the project type and form state
+    if (selectedProject.type === "ESS") {
+      continueButtonRef.current = true;
+    } else if (fileData) {
+      continueButtonRef.current = true;
+    } else {
+      continueButtonRef.current = false;
+    }
+  }, [selectedProject.type, fileData]);
 
   // Function to download Excel template
   const downloadExcelTemplate = () => {
@@ -69,33 +79,15 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
 
     setIsTemplateDownloaded(true);
     message.success("Template downloaded successfully!");
-    // let user = JSON.parse(localStorage.getItem("user")).user;
 
-    // user.user = {
-    //   id: 6,
-    //   user_category: "Consumer",
-    //   email: "newemail@example.com",
-    //   mobile: "9876543210",
-    //   company: "NewCompany",
-    //   company_representative: "John Doe",
-    //   cin_number: "ABC12345",
-    //   designation: "Manager",
-    //   verified_at: "2025-02-01T10:00:00+05:30",
-    //   is_new_user: true,
-    //   solar_template_downloaded: true,
-    //   wind_template_downloaded: false
-    // };
-    // Update template download status
     const templateData = {
       user_id: user.id,
     };
 
-    // Add solar_template_downloaded only if the project_type is 'solar'
     if (project_type === "Solar") {
       templateData.solar_template_downloaded = true;
     }
 
-    // Add wind_template_downloaded only if the project_type is 'wind'
     if (project_type === "Wind") {
       templateData.wind_template_downloaded = true;
     }
@@ -103,24 +95,17 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
     dispatch(templateDownload(templateData))
       .unwrap()
       .then((response) => {
-        // console.log("Template download info:", response);
-
-        // Retrieve user data from localStorage
         let userData = JSON.parse(localStorage.getItem("user"));
 
-        // Ensure userData and userData.user exist
         if (userData && userData.user) {
-          // Check if the project_type is 'Solar' and update the solar_template_downloaded
           if (project_type === "Solar") {
             userData.user.solar_template_downloaded = true;
           }
 
-          // Check if the project_type is 'Wind' and update the wind_template_downloaded
           if (project_type === "Wind") {
             userData.user.wind_template_downloaded = true;
           }
 
-          // Save the updated user data back to localStorage
           localStorage.setItem("user", JSON.stringify(userData));
         } else {
           console.error("User data is missing or corrupted in localStorage");
@@ -135,32 +120,25 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
   useEffect(() => {
     dispatch(fetchState())
       .then((response) => {
-        // console.log(response.payload);
-
         setIsState(response.payload);
-        //console.log(isState);
       })
       .catch((error) => {
         console.error("Error fetching states:", error);
       });
   }, [dispatch]);
 
-  // Handle file upload
   const handleFileUpload = (file) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       setFileData(reader.result);
       setFile(file);
 
-      // Update the last uploaded file for the specific project
       updateLastUploadedFile(project.id, file.name);
     };
     reader.readAsDataURL(file);
   };
 
-  // Retrieve the last uploaded file name for the specific project from localStorage
   useEffect(() => {
-    // Set the last uploaded file if available
     if (lastUploadedFile) {
       setFile({ name: lastUploadedFile });
     }
@@ -169,28 +147,6 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
   const isUploadButtonDisabled =
     (project_type === "solar" && !solar_template_downloaded) ||
     (project_type === "wind" && !wind_template_downloaded);
-
-  // useEffect(() => {
-  // if (!user?.id) return;
-
-  // const downloadTemplate = async () => {
-  //   const templateData = {
-  //     user_id: user.id,
-  //    solar_template_downloaded: project_type === 'solar',
-  //     wind_template_downloaded: project_type === 'wind',
-  //   };
-
-  //   try {
-  //     const response = await dispatch(templateDownload(templateData)).unwrap();
-  //     console.log("Response:", response);
-  //     setIsTemplateDownloaded(true);
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     message.error("Failed to download the template.");
-  //   }
-  // };
-
-  // }, [dispatch, user?.id]);
 
   useEffect(() => {
     setFile(null);
@@ -209,9 +165,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
     };
 
     try {
-      console.log("Updated Values:", updatedValues);
       const response = await dispatch(updateProject(updatedValues)).unwrap();
-      console.log("Response kkkkk:", response);
       message.success("Form submitted successfully!");
       form.resetFields();
       setFileData(null);
@@ -219,13 +173,10 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
       localStorage.removeItem("matchingConsumerId");
       onCancel();
     } catch (error) {
-      console.log("Error:", error); 
       message.error(error);
-      onErrorCloseModal(); // Close modal on error
+      onErrorCloseModal();
     }
   };
-
-  
 
   return (
     <Form
@@ -251,7 +202,6 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
               onChange={(value) => {
                 setType(value);
                 form.setFieldsValue({ type: value });
-                // console.log("Selected type:", value);
               }}
             >
               <Option value="Solar">Solar</Option>
@@ -493,26 +443,16 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
       <Row gutter={24} style={{ textAlign: "right" }}>
         <Col span={24}>
           <Form.Item>
-            {!fileData && type != "ESS" ? (
+            {!continueButtonRef.current ? (
               <Tooltip title="Please fill all the details and upload the file in given format">
                 <Button type="primary" htmlType="submit" disabled>
                   Submit
                 </Button>
               </Tooltip>
             ) : (
-              // <>
-              // {!fileData && type==='ESS'? (
-              //     <Tooltip title="Please fill all the details">
-              // <Button type="primary" htmlType="submit" disabled>
-              //   Submlplplpplplit
-              // </Button>
-              // </Tooltip>
-              // ):(
               <Button type="primary" htmlType="submit">
                 Submit
               </Button>
-              // )}
-              // </>
             )}
           </Form.Item>
         </Col>
