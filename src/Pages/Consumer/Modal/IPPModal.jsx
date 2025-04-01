@@ -7,10 +7,12 @@ import moment from 'moment';
 
 const { Title, Text } = Typography;
 
-const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation,consumerDetails }) => {
+const IPPModal = ({ visible, ipp, reIndex, fromGenerator, onClose, onRequestForQuotation, consumerDetails }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
-  console.log(ipp);
+  // console.log('ippppp',ipp);
+  console.log('consumer',consumerDetails);
+  
 
   const showQuotationModal = () => {
     setIsQuotationModalVisible(true);
@@ -28,9 +30,10 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation,consum
     { key: '7', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
     { key: '8', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
     { key: '9', label: 'Total Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
-    { key: '10', label: 'Consumer Pseudo Name', value: consumerDetails?.username || "N/A" },
-    { key: '11', label: 'Consumer Credit Rating', value: consumerDetails?.credit_rating ===null? "A2" : consumerDetails?.credit_rating },
-    {}
+    ...(fromGenerator ? [
+      { key: '10', label: 'Consumer Pseudo Name', value: consumerDetails?.username || "N/A" },
+      { key: '11', label: 'Consumer Credit Rating', value: consumerDetails?.credit_rating === null ? "A2" : consumerDetails?.credit_rating },
+    ] : [])
   ];
 
   const mapToBaseType = (value) => {
@@ -79,9 +82,11 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation,consum
         onCancel={onClose}
         footer={null}
         width={700}
+        
         centered
         style={{ borderRadius: "1px", fontFamily: "'Inter', sans-serif" }}
       >
+              <div style={{ maxHeight: '70vh', overflowY: 'auto' ,padding:'10px'}}>
         <Row justify="center" align="middle" gutter={[16, 16]}>
           <Col span={24}>
             <Card
@@ -145,6 +150,7 @@ const IPPModal = ({ visible, ipp, reIndex, onClose, onRequestForQuotation,consum
             </Button>
           </Col>
         </Row>
+        </div>
       </Modal>
 
       <RequestForQuotationModal
