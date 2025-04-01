@@ -84,8 +84,8 @@ useEffect(()=> {
     if (data) {
       form.setFieldsValue({
         id:data?.id,
-        state:'Maharashtra',
-        // state: data.state,
+        // state:'Maharashtra',
+        state: data.state,
         consumption_unit: data.consumption_unit,
         industry: data.industry,
         contractedDemand: data.contracted_demand,
@@ -121,13 +121,13 @@ useEffect(()=> {
     const formattedValues = {
       id : data?.id,
       user: user.id,
-      state: values.state || 'Maharashtra',
+      state: values.state,
       industry: values.industry === "other" ? customIndustry : values.industry,
       contracted_demand: values.contractedDemand,
       tariff_category: values.tariffCategory,
       voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
       procurement_date: values.procurement.format("YYYY-MM-DD"),
-      subIndustry: values.subIndustry,
+      sub_industry: values.subIndustry,
       consumption_unit: values.consumption_unit,
       annual_electricity_consumption: values.annual_electricity_consumption,
     };

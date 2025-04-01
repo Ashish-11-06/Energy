@@ -39,19 +39,7 @@ const [loading,setLoading]= useState(false);
     return item ? JSON.parse(item) : '';
   };
 
-  // useEffect(()=>{
-  //   const data={
-  //     user_id:userData.id,
-  //     selectedRequirementId:selectedRequirement?.id
-  //   }
-  // const res=dispatch(lastVisitedPage(data));
-  // console.log(res);
-
-  // },[selectedRequirement])
-  // console.log(selectedRequirement.id);
-
-
-  // Define columns for the table (Remove selection column)
+ 
   const columns = [
     {
       title: 'Sr No',
@@ -222,6 +210,8 @@ const [loading,setLoading]= useState(false);
         setIsModalVisible(false);
         message.success('Requirement added successfully!');
       }
+
+    // form.resetFields();
     } catch (error) {
       // console.log(error);
       message.error('Failed to add requirement');
