@@ -15,6 +15,7 @@ import TermsAndConditionModal from "./Modal/TermsAndConditionModal";
 import { motion } from "framer-motion"; // Import motion here
 import EXGLogo from "../../assets/EXG.png";
 import map from "../../assets/map.png";
+// import { format } from "react-intl-number-format"; // Import for Indian number formatting
 
 const WhatWeOffer = () => {
   const navigate = useNavigate();
@@ -22,6 +23,10 @@ const WhatWeOffer = () => {
   const [data, setData] = useState(null); // State to store fetched data
   const [isModal, setIsModal] = useState(false);
   const [targetAmount, setTargetAmount] = useState(0); // Target amount for animation
+
+  const formatToIndianNumbering = (value) => {
+    return new Intl.NumberFormat("en-IN").format(value);
+  };
 
   const user = JSON.parse(localStorage.getItem("user"))?.user;
   const user_category = user?.user_category;
@@ -182,12 +187,26 @@ const WhatWeOffer = () => {
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               transition={{ duration: 1.2 }}
-              style={{ fontSize: "2.5rem", fontWeight: "bold", color: "#669800", display: "flex", justifyContent: "center", alignItems: "center" }}
+              style={{
+                fontSize: "2.5rem",
+                fontWeight: "bold",
+                color: "#669800",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              INR <span style={{ marginLeft: "5px" }}><CountUp start={0} end={targetAmount} duration={3} separator="," /></span>
+              INR <span style={{ marginLeft: "5px" }}>
+                <CountUp
+                  start={0}
+                  end={targetAmount}
+                  duration={3}
+                  separator=","
+                  formattingFn={formatToIndianNumbering} // Apply Indian formatting
+                />
+              </span>
             </motion.div>
             <p style={{ fontSize: "1.2rem", marginTop: "10px" }}>Saved annually by our consumers!</p>
-
           </div>
         )}
         <p style={{ fontSize: "1.2rem", marginTop: "20px", marginBottom: '-10px', color: "#9A8406" }}>Start Your Transition Journey...</p>

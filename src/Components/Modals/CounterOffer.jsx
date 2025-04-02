@@ -481,7 +481,27 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
                     data?.count % 2 === 1 &&
                     data?.count < 4) ? (
                   <>
-                   
+                   <Button
+                      // style={{
+                      //   color: "#ff5858",
+                      //   borderColor: "#ff5858",
+                      //   backgroundColor: "transparent",
+                      // }}
+                      className="red-btn"
+                      onClick={() => handleStatusUpdate("Rejected")}
+                      disabled={isFieldEdited}
+                    >
+                      Reject
+                    </Button>
+
+
+                    <Button
+                      style={{ marginLeft: "10px" }}
+                      onClick={handleTarrif}
+                      disabled={isFieldEdited}
+                    >
+                      Accept
+                    </Button>
                     {data?.count === 4 ? (
                       <Tooltip title="You have reached the limit for counter offers">
                         <Button style={{ marginLeft: "10px" }} disabled>
