@@ -80,6 +80,9 @@ const CombinationPatternCap = () => {
         oaCost: combination["OA_cost"]?.toFixed(2) || "N/A", // Add OA Cost
         totalCost: combination["Total Cost"]?.toFixed(2) || 0,
         cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("DD-MM-YYYY") : "N/A",
+        annualDemandOffeset:combination["Annual Demand Offset"] || 0,
+        // annualDemandMet:combination["Annual Demand Met"] || 0,
+
       };
     });
 
@@ -128,6 +131,7 @@ const CombinationPatternCap = () => {
         formatAndSetCombinations(combinations, sliderValue); // Display data passed from GeneratorInput
       }
       setCombinationData(state.modalData); // Store modalData for display
+
       setIsTableLoading(false); // Stop loader if data is already available
     } else if (state?.error) {
       message.error(state.error);
@@ -135,6 +139,7 @@ const CombinationPatternCap = () => {
       setIsTableLoading(false); // Stop loader if there's an error
     }
   }, [state]);
+console.log('combination data',combinationData);
 
   useEffect(() => {
     const fetchCombinations = async () => {
@@ -154,6 +159,9 @@ const CombinationPatternCap = () => {
               perUnitCost: value["Per Unit Cost"]?.toFixed(2) || "N/A",
               oaCost: value["OA_cost"]?.toFixed(2) || 0, // Add OA Cost
               finalCost: value["Final Cost"]?.toFixed(2) || "N/A",
+              annualCurtailment: value['Annual Curtailment'] || 0,
+              annualDemandMet:value['Annual Demand Met'] || 0,
+              annualDemandOffeset:value['Annual Demand Offset'] || 0
             }));
             setDataSource(formattedData); // Set the formatted data in the table
           } else {
@@ -171,7 +179,7 @@ const CombinationPatternCap = () => {
       }
     };
 
-    fetchCombinations();
+    // fetchCombinations();
   }, [state?.modalData]);
 
   useEffect(() => {
@@ -195,6 +203,7 @@ const CombinationPatternCap = () => {
   };
 
   const re_index = combinationData.re_index || 0;
+console.log('comb',combinationData);
 
   const handleIPPCancel = () => {
     setIsIPPModalVisible(false);
@@ -291,6 +300,22 @@ const CombinationPatternCap = () => {
       dataIndex: "finalCost",
       key: "finalCost",
     },
+    {
+      title:'Annual Demand Offset',
+      dataIndex:'annualDemandOffeset',
+      key:'annualDemandOffeset'
+    },
+    {
+      title:'Annual Demand Met',
+      dataIndex:'annualDemandMet',
+      key:'annualDemandMet'
+    },
+    {
+      title:'Annual Curtailment',
+      dataIndex:'annualCurtailment',
+      key:'annualCurtailment'
+    }
+
   ];
 
   const sliderRef = React.createRef();
