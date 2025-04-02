@@ -89,7 +89,7 @@ const companyName=userData[0]?.company;
 
   const handleSelectPlan = (id, plan) => {
     setSelectedPlan(plan);
-    // console.log(selectedPlan);
+    console.log(selectedPlan);
 
     // const currentDate = moment().format("YYYY-MM-DD");
     // setSelectedPlanId(id);
@@ -376,7 +376,7 @@ const companyName=userData[0]?.company;
                   <hr />
                 </div>
                 <Text className="price">
-                  {plan.price} <p style={{ fontSize: "18px" }}>INR</p>
+                  {Number(plan.price).toLocaleString("en-IN")} <p style={{ fontSize: "18px" }}>INR</p>
                 </Text>
                 {plan.subscription_type === "FREE" && alreadySubscribed === "FREE" ? (
                   <p style={{fontSize:'12px'}}>Time Remaining: <span style={{color:'red'}}>{time_remaining}</span> </p>
@@ -527,7 +527,7 @@ const companyName=userData[0]?.company;
                             marginRight: "4%",
                           }}
                         />{" "}
-                        Trial
+                       Add Requirement
                       </li>
                       <li
                         style={{
@@ -545,7 +545,7 @@ const companyName=userData[0]?.company;
                             marginRight: "4%",
                           }}
                         />{" "}
-                        Trial
+                      Matching IPP
                       </li>
                       <li
                         style={{
@@ -563,7 +563,7 @@ const companyName=userData[0]?.company;
                             marginRight: "4%",
                           }}
                         />{" "}
-                        Trial
+                        Model Optimization
                       </li>
                     </>
                   )}
@@ -662,7 +662,7 @@ const companyName=userData[0]?.company;
         onCancel={closeProforma}
         handleDownloadPDF={handleDownloadPDF}
         handlePayment={handlePayment}
-        plan={selectedPlan}
+        plan={performa}
         selectedPlan={performa}
         selectedPlanId={selectedPlan?.id}
         fromSubscription={true}
