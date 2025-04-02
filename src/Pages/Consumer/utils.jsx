@@ -28,11 +28,13 @@ export const createPdfContent = (annualSavingResponse) => {
 
       <div>
         <p style="color: #669800;"><strong>Background</strong></p>
-        <ul style="padding-left: 20px; font-size: 14px;">
-          <li>Consumer Company Name: ${annualSavingResponse?.consumer_company_name || 'N/A'}</li>
-          <li>Consumption Unit Name, State: ${annualSavingResponse?.consumption_unit_name || 'N/A'}</li>
-          <li>Connected Voltage (kV), Tariff Category: ${annualSavingResponse?.connected_voltage || 'N/A'} kV, ${annualSavingResponse?.tariff_category || 'N/A'}</li>
-          <li>Annual Electricity Consumption (MWh): ${annualSavingResponse?.annual_electricity_consumption || 'N/A'}</li>
+        ${annualSavingResponse?.consumer_company_name || 'N/A'}
+        <ul style="padding-left : 20px; font-size: 14px;">
+        <li> State : ${annualSavingResponse?.state || 'N/A'}</li>
+          <li>Consumption Unit Name : ${annualSavingResponse?.consumption_unit_name}</li>
+          <li>Connected Voltage (kV) :  ${annualSavingResponse?.connected_voltage}</li>
+          <li> Tariff Category: ${annualSavingResponse?.tariff_category || 'N/A'} </li>
+          <li>Annual Electricity Consumption (MWh) : ${annualSavingResponse?.annual_electricity_consumption || 'N/A'}</li>
         </ul>
       </div>
 
@@ -80,7 +82,7 @@ export const createPdfContent = (annualSavingResponse) => {
               <td style="border: 1px solid #E6E8F1; padding: 10px; text-align: left;">${annualSavingResponse?.potential_re_replacement || 'N/A'}</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #E6E8F1; padding: 10px; text-align: left;">Total Savings</td>
+            <td style="border: 1px solid #E6E8F1; padding: 10px; text-align: left;">Potential Savings</td>
               <td style="border: 1px solid #E6E8F1; padding: 10px; text-align: left;">INR crore</td>
               <td style="border: 1px solid #E6E8F1; padding: 10px; text-align: left;">${annualSavingResponse?.total_savings || 'N/A'}</td>
           </tr>
@@ -94,7 +96,13 @@ export const createPdfContent = (annualSavingResponse) => {
       </div>
 
       <p style="font-size: 14px; color: #9A8406;">This savings is based on average available industry offers on the platform. To start your energy transition and know your exact savings, subscribe to EXG Global - EXT platform.</p>
+
+      <div>
+        For more details, please contact at 
+        <a href="mailto:info@exgglobal.com" style="color: blue;">info@exgglobal.com</a>
+      </div>
     </div>
+
 
     <script>
       function adjustFontSize() {

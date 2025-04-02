@@ -65,11 +65,6 @@ const AnnualSvg = () => {
     }
   };
 
-  // const dataForBarChart = [
-  //   { name: 'Potential Savings', Savings: annualSavingResponse?.annual_savings || 0 },
-  //   { name: 'Average Savings', Savings: annualSavingResponse?.average_savings || 0 },
-  // ];
-
   const formatter = new Intl.NumberFormat('en-IN', { 
     style: 'currency', 
     currency: 'INR', 
@@ -84,7 +79,7 @@ const AnnualSvg = () => {
       formattedSavings: formatter.format(annualSavingResponse?.annual_savings || 0) 
     },
     { 
-      name: 'Average Savings', 
+      name: 'Industry Benchmark\nSavings', // Add newline for better formatting
       Savings: annualSavingResponse?.average_savings || 0, 
       formattedSavings: formatter.format(annualSavingResponse?.average_savings || 0) 
     }
@@ -96,7 +91,7 @@ const AnnualSvg = () => {
   ];
 
   const dataForSavingsBreakdown = [
-    { name: 'Per Unit Savings', Breakdown: annualSavingResponse?.per_unit_savings_potential || 0 },
+    // { name: 'Per Unit Savings', Breakdown: annualSavingResponse?.per_unit_savings_potential || 0 },
     { name: 'ISTS Charges', Breakdown: annualSavingResponse?.ISTS_charges || 0 },
     { name: 'State Charges', Breakdown: annualSavingResponse?.state_charges || 0 },
   ];
@@ -117,7 +112,6 @@ const AnnualSvg = () => {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                {/* <YAxis tick={{ fontSize: 12 }} /> */}
                 <YAxis 
                   tickFormatter={(value) => formatter.format(value)} 
                   tick={{ fontSize: 10 }} 
@@ -140,12 +134,12 @@ const AnnualSvg = () => {
                 <YAxis tick={{ fontSize: 12 }} />
                 <RechartsTooltip />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                {/* <Line type="monotone" dataKey="Tarrif" stroke="#669800" /> */}
                 <Line type="monotone" dataKey="Tarrif" stroke="#669800" strokeDasharray="5 5" />
               </LineChart>
             </Col>
             <Col xs={24} sm={12} md={12} lg={8}>
-              <Title level={5} style={{ textAlign: 'center', fontSize: '14px' }}>Savings Breakdown <span style={{ fontSize: '12px' }}> (INR/kWh)</span></Title>
+              <Title level={5} style={{ textAlign: 'center', fontSize: '14px' }}>Regulatory Charges
+              <span style={{ fontSize: '12px' }}> (INR/kWh)</span></Title>
               <BarChart
                 width={Math.min(window.innerWidth * 0.9, 400)}
                 height={180}

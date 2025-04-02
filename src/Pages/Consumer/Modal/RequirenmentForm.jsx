@@ -252,6 +252,11 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
                 <Select
                   placeholder="Select a sub-industry"
                   disabled={!subIndustries.length}
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().includes(input.toLowerCase())
+                  }
                 >
                   {subIndustries.map((sub_industry, index) => (
                     <Select.Option key={index} value={sub_industry}>
@@ -320,8 +325,8 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
                 placeholder="Select voltage level"
                 onChange={handleVoltageChange}
               >
-                <Select.Option value="33">33 kV</Select.Option>
                 <Select.Option value="11">11 kV</Select.Option>
+                <Select.Option value="33">33 kV</Select.Option>
                 <Select.Option value="66">66 kV</Select.Option>
                 <Select.Option value="110">110 kV</Select.Option>
                 <Select.Option value="other">Other</Select.Option>
