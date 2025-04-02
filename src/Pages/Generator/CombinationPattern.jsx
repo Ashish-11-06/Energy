@@ -463,17 +463,17 @@ if(dataSource?.length<=0) {
       key: "totalCapacity",
     },
     {
-      title: "Per Unit Cost (INR/KWh)",
+      title: "Per Unit Cost (INR/kWh)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
     },
     {
-      title: "OA Cost (INR/KWh)",
+      title: "OA Cost (INR/kWh)",
       dataIndex: "OACost",
       key: "OACost",
     },
     {
-      title: "Total Cost (INR/KWh)",
+      title: "Total Cost (INR/kWh)",
       dataIndex: "totalCost",
       key: "totalCost",
     },

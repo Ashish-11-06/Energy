@@ -541,7 +541,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
             style={{ width: "60%" }}
             value={offerTariff}
             onChange={handleTariffChange}
-            placeholder="Enter the tariff value in INR/KWh"
+            placeholder="Enter the tariff value in INR/kWh"
           />
           <Button onClick={handleTarrifOk} style={{ marginLeft: "5%" }}>
             Send

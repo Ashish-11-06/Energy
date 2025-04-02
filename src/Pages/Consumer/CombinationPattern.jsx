@@ -436,19 +436,19 @@ const CombinationPattern = () => {
       // width: 150,
     },
     {
-      title: "Per Unit Cost (INR/KWh)",
+      title: "Per Unit Cost (INR/kWh)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
       // width: 150,
     },
     {
-      title: "OA Cost (INR/KWh)",
+      title: "OA Cost (INR/kWh)",
       dataIndex: "OACost",
       key: "OACost",
       // width: 150,
     },
     {
-      title: "Final Cost (INR/KWh)",
+      title: "Final Cost (INR/kWh)",
       dataIndex: "totalCost",
       key: "totalCost",
       // width: 150,

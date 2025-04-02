@@ -377,7 +377,7 @@ const TransactionWindowgen = () => {
                               IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span>
                             </Text>
                             <Text style={{ margin: '150px' }} strong>
-                              Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span>
+                              Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/kWh </span>
                             </Text>
                             <Text strong>
                               Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
@@ -439,7 +439,7 @@ const TransactionWindowgen = () => {
                               IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span>
                             </Text>
                             {/* <Text style={{ margin: '150px' }} strong>
-                              Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/KWh </span>
+                              Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/kWh </span>
                             </Text> */}
 
                             <div>
@@ -478,7 +478,7 @@ const TransactionWindowgen = () => {
               color: '#9A8406',
               marginRight: '10px'
             }}>
-              tariff is in INR/KWH
+              tariff is in INR/kWh
             </div>
             <InputNumber
               style={{ backgroundColor: 'white', width: '100px' }}

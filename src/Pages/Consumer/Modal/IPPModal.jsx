@@ -24,9 +24,9 @@ const IPPModal = ({ visible, ipp, reIndex, fromGenerator, onClose, onRequestForQ
   const dataSource = [
     { key: '2', label: 'Annual Contracted Energy (million units)', value: ipp?.annual_demand_met || 0 },
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
-    { key: '4', label: 'Per Unit Cost (INR/KWh)', value: ipp?.perUnitCost || "N/A" },
-    { key: '5', label: 'OA Cost (INR/KWh)', value: ipp?.OACost || "N/A" },
-    { key: '6', label: 'Total Cost (INR/KWh)', value: ipp?.totalCost || "N/A" },
+    { key: '4', label: 'Per Unit Cost (INR/kWh)', value: ipp?.perUnitCost || "N/A" },
+    { key: '5', label: 'OA Cost (INR/kWh)', value: ipp?.OACost || "N/A" },
+    { key: '6', label: 'Total Cost (INR/kWh)', value: ipp?.totalCost || "N/A" },
     { key: '7', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
     { key: '8', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
     { key: '9', label: 'Total Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
