@@ -7,7 +7,7 @@ import moment from 'moment';
 
 const { Title, Text } = Typography;
 
-const IPPModal = ({ visible, ipp, reIndex, fromGenerator, onClose, onRequestForQuotation, consumerDetails }) => {
+const IPPModal = ({ visible, ipp, reIndex,fromConsumer, fromGenerator, onClose, onRequestForQuotation, consumerDetails }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
   // console.log('ippppp',ipp);
@@ -22,6 +22,9 @@ const IPPModal = ({ visible, ipp, reIndex, fromGenerator, onClose, onRequestForQ
 
 
   const dataSource = [
+    ...(fromConsumer ? [
+      { key: '1', label: 'RE Index', value:reIndex || 'A2'}
+    ]: []) ,
     { key: '2', label: 'Annual Contracted Energy (million units)', value: ipp?.annual_demand_met || 0 },
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
     { key: '4', label: 'Per Unit Cost (INR/kWh)', value: ipp?.perUnitCost || "N/A" },
@@ -30,6 +33,7 @@ const IPPModal = ({ visible, ipp, reIndex, fromGenerator, onClose, onRequestForQ
     { key: '7', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
     { key: '8', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
     { key: '9', label: 'Total Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
+  
     ...(fromGenerator ? [
       { key: '10', label: 'Consumer Pseudo Name', value: consumerDetails?.username || "N/A" },
       { key: '11', label: 'Consumer Credit Rating', value: consumerDetails?.credit_rating === null ? "A2" : consumerDetails?.credit_rating },
@@ -103,18 +107,29 @@ const IPPModal = ({ visible, ipp, reIndex, fromGenerator, onClose, onRequestForQ
                 IPP Project Details
               </Title>
 
-              <Row justify="center" style={{rowGap:'4px'}}>
-                {dataSource.map(item => (
-                  <React.Fragment key={item.key}>
-                    <Col span={12}>
-                      <Text strong>{item.label}</Text>
-                    </Col>
-                    <Col span={12}>
-                      <Text>: <p style={{marginLeft:'20%'}}>{item.value}</p></Text>
-                    </Col>
-                  </React.Fragment>
-                ))}
-              </Row>
+              <Row justify="center">
+  {dataSource.map(item => (
+    <Col key={item.key} span={24}>
+      <Row align="middle" justify="center">
+        {/* Common vertical alignment for labels */}
+        <Col span={12} style={{ textAlign: 'left',marginBottom:'10px' }}>
+          <Text strong>{item.label}</Text>
+        </Col>
+
+        {/* Colon centered */}
+        <Col span={2} style={{ textAlign: 'center',marginBottom:'10px' }}>
+          <Text>:</Text>
+        </Col>
+
+        {/* Values start from the same vertical position */}
+        <Col span={10} style={{ textAlign: 'left',marginBottom:'10px' }}>
+          <Text>{item.value}</Text>
+        </Col>
+      </Row>
+    </Col>
+  ))}
+</Row>
+
 
               <div style={{ borderTop: "1px solid #E6E8F1", margin: "20px 0" }} />
 

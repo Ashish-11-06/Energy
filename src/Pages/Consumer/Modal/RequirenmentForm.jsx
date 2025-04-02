@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
 import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
 
-const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
+const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
   const [form] = Form.useForm();
   const [customVoltage, setCustomVoltage] = useState("");
   const [isCustomVoltage, setIsCustomVoltage] = useState(false);
@@ -32,38 +32,31 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
   const dispatch = useDispatch();
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
-  
 
- 
-
-  console.log(data);
+  // console.log(data);
 
   useEffect(() => {
     if (data) {
       form.setFieldsValue({
-        id:data?.id,
-        state:'Maharashtra',
-        // state: data.state,
+        id: data?.id,
+        state: data.state,
         consumption_unit: data.consumption_unit,
         industry: data.industry,
         contractedDemand: data.contracted_demand,
         tariffCategory: data.tariff_category,
-
         voltageLevel: data.voltage_level,
         annual_electricity_consumption: data.annual_electricity_consumption,
         procurement: data.procurement_date
-  ? dayjs(data.procurement_date, "YYYY-MM-DD")  // Ensure it is a valid dayjs object
-  : null,
-        });
-      console.log(data);
+          ? dayjs(data.procurement_date, "YYYY-MM-DD") // Ensure it is a valid dayjs object
+          : null,
+      });
+      // console.log(data);
       setSelectedIndustry(data.industry);
       setSubIndustries(industryy[data.industry] || []);
     } else {
       form.resetFields(); // Reset fields if no data is provided
     }
   }, [data, form, industryy]);
-  
-// console.log(data);
 
   useEffect(() => {
     if (industryy.length < 1) {
@@ -74,30 +67,27 @@ const RequirementForm = ({ open, onCancel, onSubmit, data }) => {
     }
   }, [dispatch]);
 
-useEffect(()=> {
-  const res=dispatch(fetchState());
-  // console.log(res);
-  
-},[dispatch])
+  useEffect(() => {
+    const res = dispatch(fetchState());
+  }, [dispatch]);
 
   useEffect(() => {
     if (data) {
       form.setFieldsValue({
-        id:data?.id,
-        // state:'Maharashtra',
+        id: data?.id,
         state: data.state,
         consumption_unit: data.consumption_unit,
         industry: data.industry,
         contractedDemand: data.contracted_demand,
         tariffCategory: data.tariff_category,
         voltageLevel: data.voltage_level,
-        subIndustry: data.subIndustry,
+        sub_industry: data.sub_industry,
         annual_electricity_consumption: data.annual_electricity_consumption,
-        procurement: data.procurement_date 
-  ? dayjs(data.procurement_date, "YYYY-MM-DD")  // Ensure it is a valid dayjs object
-  : null,
-        });
-      console.log(data);
+        procurement: data.procurement_date
+          ? dayjs(data.procurement_date, "YYYY-MM-DD") // Ensure it is a valid dayjs object
+          : null,
+      });
+      // console.log(data);
       setSelectedIndustry(data.industry);
       setSubIndustries(industryy[data.industry] || []);
     } else {
@@ -119,21 +109,20 @@ useEffect(()=> {
   const handleSubmit = (values) => {
     const user = JSON.parse(localStorage.getItem("user")).user;
     const formattedValues = {
-      id : data?.id,
+      id: data?.id,
       user: user.id,
       state: values.state,
       industry: values.industry === "other" ? customIndustry : values.industry,
       contracted_demand: values.contractedDemand,
       tariff_category: values.tariffCategory,
-      voltage_level: values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
+      voltage_level:
+        values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
       procurement_date: values.procurement.format("YYYY-MM-DD"),
-      sub_industry: values.subIndustry,
+      sub_industry: values.sub_industry,
       consumption_unit: values.consumption_unit,
       annual_electricity_consumption: values.annual_electricity_consumption,
     };
 
-    // console.log(formattedValues);
-    
     onSubmit(formattedValues);
     form.resetFields();
     setCustomVoltage("");
@@ -161,9 +150,9 @@ useEffect(()=> {
   };
 
   const handleCancel = () => {
-    form.resetFields(); 
+    form.resetFields();
     onCancel(); // Close the modal
-  }
+  };
 
   return (
     <Modal
@@ -182,9 +171,13 @@ useEffect(()=> {
                 "State where the consumption unit is located or operates."
               )}
               name="state"
-              // rules={[{ required: true, message: "Please select your state!" }]}
+              rules={[{ required: true, message: "Please select your state!" }]}
             >
-              <Select placeholder="Select your state" showSearch disabled={data?.state}>
+              <Select
+                placeholder="Select your state"
+                showSearch
+                disabled={isEdit} // Disable only in edit mode
+              >
                 {statee?.map((state, index) => (
                   <Select.Option key={index} value={state}>
                     {state}
@@ -201,9 +194,18 @@ useEffect(()=> {
                 "Name of the consumption unit where the electricity is being consumed."
               )}
               name="consumption_unit"
-              rules={[{ required: true, message: "Please enter the consumption unit name!" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter the consumption unit name!",
+                },
+              ]}
             >
-              <Input type="text" placeholder="Enter consumption unit name" disabled={data?.consumption_unit}/>
+              <Input
+                type="text"
+                placeholder="Enter consumption unit name"
+                disabled={isEdit} // Disable only in edit mode
+              />
             </Form.Item>
           </Col>
 
@@ -225,12 +227,7 @@ useEffect(()=> {
                   option.children.toLowerCase().includes(input.toLowerCase())
                 }
               >
-                {/* {industryy.map((industry, index) => (
-                  <Select.Option key={index} value={industry}>
-                    {industry}
-                  </Select.Option>
-                ))} */}
-                 {Object.keys(industryy).map((industry, index) => (
+                {Object.keys(industryy).map((industry, index) => (
                   <Select.Option key={index} value={industry}>
                     {industry}
                   </Select.Option>
@@ -240,21 +237,25 @@ useEffect(()=> {
             </Form.Item>
           </Col>
 
-                    {/* Sub-industry selection */}
-                    {selectedIndustry && selectedIndustry !== "other" && (
+          {selectedIndustry && selectedIndustry !== "other" && (
             <Col span={12}>
               <Form.Item
-                label={renderLabelWithTooltip("Sub Industry", "Select a sub-industry from the chosen industry.")}
-                name="subIndustry"
-                rules={[{ required: true, message: "Please select your sub-industry!" }]}
+                label={renderLabelWithTooltip(
+                  "Sub Industry",
+                  "Select a sub-industry from the chosen industry."
+                )}
+                name="sub_industry"
+                rules={[
+                  { required: true, message: "Please select your sub-industry!" },
+                ]}
               >
                 <Select
                   placeholder="Select a sub-industry"
                   disabled={!subIndustries.length}
                 >
-                  {subIndustries.map((subIndustry, index) => (
-                    <Select.Option key={index} value={subIndustry}>
-                      {subIndustry}
+                  {subIndustries.map((sub_industry, index) => (
+                    <Select.Option key={index} value={sub_industry}>
+                      {sub_industry}
                     </Select.Option>
                   ))}
                 </Select>
@@ -270,7 +271,9 @@ useEffect(()=> {
                   'Enter the custom industry if "Other" was selected.'
                 )}
                 name="customIndustry"
-                rules={[{ required: true, message: "Please enter a custom industry!" }]}
+                rules={[
+                  { required: true, message: "Please enter a custom industry!" },
+                ]}
               >
                 <Input
                   type="text"
@@ -289,7 +292,9 @@ useEffect(()=> {
                 "Select the tariff category for your consumption unit (refer to your electricity bill)."
               )}
               name="tariffCategory"
-              rules={[{ required: true, message: "Please select a tariff category!" }]}
+              rules={[
+                { required: true, message: "Please select a tariff category!" },
+              ]}
             >
               <Select placeholder="Select tariff category">
                 <Select.Option value="HT Commercial">HT Commercial</Select.Option>
@@ -307,7 +312,9 @@ useEffect(()=> {
                 "Select the voltage level of the electricity being supplied to your consumption unit."
               )}
               name="voltageLevel"
-              rules={[{ required: true, message: "Please select the voltage level!" }]}
+              rules={[
+                { required: true, message: "Please select the voltage level!" },
+              ]}
             >
               <Select
                 placeholder="Select voltage level"
@@ -330,8 +337,11 @@ useEffect(()=> {
                   'Enter the custom voltage level if "Other" was selected.'
                 )}
                 name="customVoltage"
-                rules={[{ required: true, 
-                  message: "Please enter a custom voltage value!" },
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter a custom voltage value!",
+                  },
                 ]}
               >
                 <Input
@@ -357,7 +367,9 @@ useEffect(()=> {
                   validator: (_, value) =>
                     value > 0
                       ? Promise.resolve()
-                      : Promise.reject(new Error("Contracted demand must be greater than 0!")),
+                      : Promise.reject(
+                          new Error("Contracted demand must be greater than 0!")
+                        ),
                 },
               ]}
             >
@@ -377,12 +389,19 @@ useEffect(()=> {
               )}
               name="annual_electricity_consumption"
               rules={[
-                { required: true, message: "Please enter the annual electricity consumption!" },
+                {
+                  required: true,
+                  message: "Please enter the annual electricity consumption!",
+                },
                 {
                   validator: (_, value) =>
                     value > 0
                       ? Promise.resolve()
-                      : Promise.reject(new Error("Annual electricity consumption must be greater than 0!")),
+                      : Promise.reject(
+                          new Error(
+                            "Annual electricity consumption must be greater than 0!"
+                          )
+                        ),
                 },
               ]}
             >
@@ -401,7 +420,9 @@ useEffect(()=> {
                 "Select the date from which you need RE power."
               )}
               name="procurement"
-              rules={[{ required: true, message: "Please select a procurement date!" }]}
+              rules={[
+                { required: true, message: "Please select a procurement date!" },
+              ]}
             >
               <DatePicker
                 style={{ width: "100%" }}

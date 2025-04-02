@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Table, Button, message, Row, Col, Modal, Tooltip,Radio, App, Spin, Skeleton } from 'antd';
+import { Table, Button, message, Row, Col, Modal, Tooltip, Radio, App, Spin, Skeleton } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
@@ -24,29 +24,26 @@ const RequirementsPage = () => {
   const newUser = location.state?.new_user; // Get new_user from location state
   const dispatch = useDispatch();
   const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
-const [editData,setEditData]=useState(selectedRequirement);
-const [loading,setLoading]= useState(false);
+  const [editData, setEditData] = useState(selectedRequirement);
+  const [loading, setLoading] = useState(false);
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData = JSON.parse(localStorage.getItem('user')).user;
-  // console.log(userData.is_new_user);
   const is_new_user = userData.is_new_user;
 
   const role = userData.role;
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
-    // console.log('item', item);
     return item ? JSON.parse(item) : '';
   };
 
- 
   const columns = [
     {
       title: 'Sr No',
       dataIndex: 'srNo',
       key: 'srNo',
       render: (text, record, index) => (
-        <span key={record.id || index}>{index + 1}</span> // Wrapping in a span with key
+        <span key={record.id || index}>{index + 1}</span>
       ),
     },
     {
@@ -59,7 +56,6 @@ const [loading,setLoading]= useState(false);
         />
       ),
     },
-   
     {
       title: 'State',
       dataIndex: 'state',
@@ -104,7 +100,6 @@ const [loading,setLoading]= useState(false);
       key: 'procurement',
       render: (date, record) => (
         <span key={record.id || `${record.key}-${date}`}>
-          {console.log(date)}
           {date ? moment(date).format('DD-MM-YYYY') : ''}</span>
       ),
     },
@@ -114,14 +109,9 @@ const [loading,setLoading]= useState(false);
       render: (text, record) => (
         <Button type="primary" onClick={() => handleEdit(record)}>Edit</Button>
       )
-    }
-
-
-    ,
+    },
   ];
 
-
-  // Insert "Add Details" before the "Select" column if subscription is active
   if (subscriptionPlan?.status === 'active' && role != 'view') {
     const addDetailsColumn = {
       title: "Add Consumption Details",
@@ -132,57 +122,34 @@ const [loading,setLoading]= useState(false);
         </Button>
       ),
     };
-  
-    // Push the column to the end of the columns array
     columns.push(addDetailsColumn);
   }
 
-  console.log(requirements);
-
   const handleEdit = (record) => {
-    // Find the matching object in the requirements array
     const matchingRequirement = requirements.find((item) => item.id === record.id);
-  
-    // Add the `subIndustry` field from the found object (if it exists)
     const updatedRecord = {
       ...record,
-      subIndustry: matchingRequirement ? matchingRequirement.sub_industry : null, 
+      subIndustry: matchingRequirement ? matchingRequirement.sub_industry : null,
     };
-
-    console.log(matchingRequirement);
-  
     setEditData(updatedRecord);
     setEdit(true);
     setIsModalVisible(true);
   };
 
-  // console.log(editData);
-
-
   const handleAddDetails = (record) => {
-    // console.log('clicked');
-
-    // setSelectedRequirement(record);
-    // console.log(selectedRequirement);
     localStorage.setItem('selectedRequirementId', record.id);
     navigate('/consumer/energy-consumption-table');
-
-  }
+  };
 
   const handleRowSelect = (record) => {
-    setSelectedRowKeys([record.key]); // Only allow single selection
-    setSelectedRequirement(record); // Store the selected record 
+    setSelectedRowKeys([record.key]);
+    setSelectedRequirement(record);
     const data = {
       user_id: userData.id,
       selected_requirement_id: record.id
-    }
+    };
     message.success(`You selected record of state '${record.state}'`);
-    // console.log(selectedRequirement);  
-    // localStorage.setItem('selectedRequirementId', JSON.stringify(record.id));
-    // console.log('record', record);
   };
-
-
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -191,65 +158,50 @@ const [loading,setLoading]= useState(false);
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    setSelectedRequirement(null); // Reset selected requirement on cancel
+    setSelectedRequirement(null);
   };
 
   const handleSubmit = async (values) => {
     try {
-      // console.log('values',values);
-      // const response = await consumerrequirementA.addNewRequirement(values);
       if (isEdit) {
-        // console.log('user',id);
-
-
-        dispatch(updateRequirements({ updatedData: values }));
+        const res = dispatch(updateRequirements({ updatedData: values }));
         setIsModalVisible(false);
         message.success('Requirement updated successfully!');
       } else {
-        dispatch(addNewRequirement(values));
+        const res = dispatch(addNewRequirement(values));
         setIsModalVisible(false);
         message.success('Requirement added successfully!');
       }
 
     // form.resetFields();
     } catch (error) {
-      // console.log(error);
       message.error('Failed to add requirement');
       setIsInfoModalVisible(false);
     }
   };
 
   const handleClearAll = () => {
-    setSelectedRowKeys([]); // Clear the selected row when clearing all requirements
+    setSelectedRowKeys([]);
     message.success('All requirements have been cleared!');
   };
 
   const handleContinue = () => {
     if (selectedRequirement) {
-      navigate('/consumer/matching-ipp'); // Pass the selected requirement to the next page
-      // console.log(selectedRequirement);
+      navigate('/consumer/matching-ipp');
       localStorage.setItem('selectedRequirementId', selectedRequirement.id);
-
     } else {
       message.error('Please select a single requirement before continuing.');
     }
   };
 
   useEffect(() => {
-    // Fetch username from local storage
     const user = getFromLocalStorage('user');
-    // console.log(user);
-
     if (user && user.user.company_representative) {
       setUsername(user.user.company_representative);
     }
-
-    // Show info modal based on new_user value
     if (is_new_user) {
       setIsInfoModalVisible(true);
     }
-
-    // Show loader while fetching requirements
     if (requirements.length === 0) {
       setLoading(true);
       const id = user.user.id;
@@ -266,17 +218,16 @@ const [loading,setLoading]= useState(false);
   };
 
   return (
-    <App> {/* Wrap the entire component with App */}
+    <App>
       <div style={{ padding: 20 }}>
         <h2>Consumption Unit</h2>
 
         <Tooltip title="Help">
           <Button
             shape="circle"
-          
             icon={<QuestionCircleOutlined />}
             onClick={showInfoModal}
-            style={{ position: 'absolute', top: 80, right: 30,zIndex:1000 }}
+            style={{ position: 'absolute', top: 80, right: 30, zIndex: 1000 }}
           />
         </Tooltip>
 
@@ -284,7 +235,7 @@ const [loading,setLoading]= useState(false);
           title="Welcome"
           open={isInfoModalVisible}
           onOk={handleInfoModalOk}
-          onCancel={() => setIsInfoModalVisible(false)} // Add onCancel handler
+          onCancel={() => setIsInfoModalVisible(false)}
           okText="Got it"
           footer={[
             <Button key="submit" type="primary" onClick={handleInfoModalOk}>
@@ -293,59 +244,56 @@ const [loading,setLoading]= useState(false);
           ]}
         >
           <p>Hi {username},</p>
-        
           <p>Welcome to the EXT. Please follow these steps to proceed:</p>
           <ol>
             <li>Add your requirements by clicking the "Add Requirement +" button.</li>
             <li>Fill in the details shown in the form.</li>
             <li>
-    Use the tooltip [
-    <Tooltip title="More information about this field">
-      <QuestionCircleOutlined />
-    </Tooltip> 
-    ]
-    option for each field for more information.
-  </li>
+              Use the tooltip [
+              <Tooltip title="More information about this field">
+                <QuestionCircleOutlined />
+              </Tooltip>
+              ] option for each field for more information.
+            </li>
             <li>You can add multiple requirements (demands).</li>
             <li>To continue, select a requirement and click the "Continue" button.</li>
           </ol>
           <p>Thank you!</p>
         </Modal>
 
-<div>
-  {loading ? (
-    <div style={{ position: 'relative' }}>
-      {/* <Skeleton active paragraph={{ rows: 4 }} title={false} /> */}
-      <Spin
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-        }}
-      />
-    </div>
-  ) : (
-    <Table
-      columns={columns}
-      dataSource={requirements}
-      pagination={false}
-      bordered
-      loading={status === 'loading'}
-      rowClassName={(record) =>
-        selectedRequirement && record.id === selectedRequirement.id ? 'selected-row' : ''
-      }
-    />
-  )}
-</div>
+        <div>
+          {loading ? (
+            <div style={{ position: 'relative' }}>
+              <Spin
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                }}
+              />
+            </div>
+          ) : (
+            <Table
+              columns={columns}
+              dataSource={requirements}
+              pagination={false}
+              bordered
+              loading={status === 'loading'}
+              rowClassName={(record) =>
+                selectedRequirement && record.id === selectedRequirement.id ? 'selected-row' : ''
+              }
+            />
+          )}
+        </div>
 
         <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
           <Col>
-          {role!='view' ?(
-            <Button type="primary" onClick={showModal} style={{ width: 160 }}>
-              Add Requirement +
-            </Button>
-          ):null}
+            {role != 'view' ? (
+              <Button type="primary" onClick={showModal} style={{ width: 160 }}>
+                Add Requirement +
+              </Button>
+            ) : null}
           </Col>
           <Col>
             <Tooltip title={!selectedRequirement ? 'Please select a consumption unit' : ''}>
@@ -353,7 +301,7 @@ const [loading,setLoading]= useState(false);
                 type="default"
                 onClick={handleContinue}
                 style={{ width: 160 }}
-                disabled={!selectedRequirement} // Disable "Continue" if no row is selected
+                disabled={!selectedRequirement}
               >
                 Continue
               </Button>
@@ -361,14 +309,13 @@ const [loading,setLoading]= useState(false);
           </Col>
         </Row>
 
-        {/* Modal for adding new requirement */}
         <RequirementForm
           open={isModalVisible}
           onCancel={handleCancel}
           onSubmit={handleSubmit}
           data={editData}
+          isEdit={isEdit}
         />
-      
       </div>
     </App>
   );

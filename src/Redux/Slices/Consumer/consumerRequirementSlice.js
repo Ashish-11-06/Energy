@@ -30,6 +30,7 @@ export const updateRequirements = createAsyncThunk(
             // console.log(updatedData);
             
             const response = await consumerrequirementApi.updaterequirement(updatedData); // Assuming API call to fetch requirements by id
+     console.log('slice res',response);
      
             return response.data;
         } catch (error) {
@@ -48,7 +49,9 @@ export const addNewRequirement = createAsyncThunk(
         try {
             // Make API call to add a new requirement
             const response = await consumerrequirementApi.addRequirement(requirementData);
-            // console.log(response.data);
+            console.log(response.data);
+            console.log(response);
+            
             
             return response.data;
         } catch (error) {

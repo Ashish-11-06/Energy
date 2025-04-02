@@ -107,7 +107,6 @@ button:focus, .ant-btn:focus {
   
   /* Custom radio button styles */
   .ant-radio-button-wrapper {
-    border-color: #E6E8F1 !important; /* Border color for radio buttons */
     color: #7EC17A !important; /* Default color for radio buttons */
   }
   
@@ -149,9 +148,9 @@ button:focus, .ant-btn:focus {
     width: 18px;
     height: 18px;
     background-color: #f5f6fb;
-    border-color: #b0b0b0 !important;
+    border-color: rgb(0, 96, 0) !important;
     border-style: solid;
-    border-width: 1px;
+    border-width: 1.5px;
     border-radius: 50%;
     transition: all 0.2s;
   }

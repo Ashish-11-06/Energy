@@ -204,39 +204,23 @@ const response = await dispatch(fetchSubscriptionValidity(id));
     {/* <h1 style={{marginTop:'20px'}}>jnkm</h1> */}
     <div className="logo-container">
             {/* <img src={EXGLogo} alt="EXG Logo" className="exg-logo" /> */}
-            <img src={EXGLogo} alt="EXG Logo" className="exg-logo" style={{ width: '120px', height: '100px' }} />
+            <img src={EXGLogo} alt="EXG Logo" className="exg-logo"  />
           </div>
   </Row>
   <Row>
    {/* <h2 style={{justifyContent:'center'}}>Green Energy </h2> */}
-        <div className="content-container" style={{marginTop:'-10px'}}> 
-          <div className="text-content"  >
+        <div className="content-container" style={{marginTop:'-20px'}}> 
+          <div className="text-content" style={{marginTop: '-10px'}} >
             <div className='energy-title' style={{backgroundColor:'#669800',width:'160%'}}> 
             <p className='green-title' style={{marginLeft:'2%',fontWeight:'bold',marginTop:"20px"}}>Green Energy</p>
-            <p className='marketplace' style={{marginLeft:'5%',marginTop:'-30px',fontWeight:'bolder'}}>MarketPlace</p>
+            <p className='marketplace' style={{marginLeft:'2%',marginTop:'-30px',fontWeight:'bolder'}}>Marketplace</p>
             </div>
-           <p style={{fontSize:'24px',width:'130%',marginTop:'-5px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators</i></p>
+           <p style={{fontSize:'24px',width:'160%',marginTop:'-5px'}}><i>...a Comprehensive <b>energy marketplace</b> that bridges the gap between energy consumers and generators</i></p>
             {/* <h2 className="animated-text">{animatedText}</h2> */}
             <ul >
-              {/* <Row>
-                <Col span={12}> */}
-              {/* <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Comprehensive energy marketplace</li>
-              <li style={{fontSize:'20px'}} ><FaCheckCircle cssName="icon" /> Bridges the gap between energy </li>
-              <li style={{fontSize:'20px'}}> consumers and generators</li>
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Enables informed decision-making</li>
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Seamless transactions</li> */}
-              {/* </Col>
-             <Col span={12}> */}
-            
-
-              {/* <li style={{fontSize:'20px'}} ><FaCheckCircle className="icon" /> Optimizes energy usage</li>
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Forecasts trading opportunities</li>
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Streamlines billing processes</li>
-              <li style={{fontSize:'20px'}}><FaCheckCircle className="icon" /> Monitors energy generation projects</li> */}
-              {/* </Col>
-              </Row> */}
+           
             </ul>
-<p style={{color:'white',fontWeight:'bold',marginTop:'10%',marginLeft:'-10%'}}>Fast track your energy transition</p>
+            <p style={{color:'white',fontWeight:'bold',marginTop:'10%', width: '160%', fontSize: '28px'}}>Fast-track your energy transition</p>
           </div>
 
        
@@ -300,7 +284,7 @@ const response = await dispatch(fetchSubscriptionValidity(id));
                     cursor: "pointer",
                   }}
                 >
-                  Forgot Password?
+                  Forgot your password?
                 </a>
               </p>
 
@@ -314,7 +298,7 @@ const response = await dispatch(fetchSubscriptionValidity(id));
                     cursor: "pointer",
                   }}
                 >
-                  Create account
+                  Create an account
                 </a>
               </p>
             </div>

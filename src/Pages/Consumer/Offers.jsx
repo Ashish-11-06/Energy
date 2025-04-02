@@ -269,7 +269,7 @@ const Offers = () => {
       width: "15%",
       render: (_, record) => {
         if (user_category === "Consumer") {
-          return (record.consumer_status === "Offer Sent" || record.consumer_status === "Counter Offer Sent") 
+          return (record.consumer_status === "Offer Sent" || record.consumer_status === "Counter Offer Sent" ) 
             ? <>
                 {record.consumer_status} - <Tag color="blue">Generator response awaited</Tag>
               </>
@@ -288,8 +288,8 @@ const Offers = () => {
       key: "action",
       render: (_, record) => {
         const isCounterOfferSent =
-          (user_category === "Consumer" && record.consumer_status === "Counter Offer Sent") ||
-          (user_category === "Generator" && record.generator_status === "Counter Offer Sent");
+          (user_category === "Consumer" && (record.consumer_status === "Counter Offer Sent" || record.consumer_status === "Offer Sent")) ||
+          (user_category === "Generator" && (record.generator_status === "Counter Offer Sent" || record.generator_status === "Offer Sent"));
 
         const isAcceptedOrRejected =
           record.consumer_status === "Accepted" || record.consumer_status === "Rejected" ||
