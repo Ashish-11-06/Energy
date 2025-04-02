@@ -115,8 +115,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
       industry: values.industry === "other" ? customIndustry : values.industry,
       contracted_demand: values.contractedDemand,
       tariff_category: values.tariffCategory,
-      voltage_level:
-        values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
+      voltage_level:values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
       procurement_date: values.procurement.format("YYYY-MM-DD"),
       sub_industry: values.sub_industry,
       consumption_unit: values.consumption_unit,
