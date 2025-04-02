@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import html2pdf from 'html2pdf.js';
 import { Modal, Button } from 'antd';
@@ -21,9 +21,9 @@ const AgreementContent = ({ dynamicData }) => (
       <hr style={{ width: '50px', margin: '10px auto', border: '1px solid black' }} />
 
       <p style={{ margin: '10px 0' }}>
-        <span style={{ backgroundColor: 'yellow', fontWeight: 'bold' }}>XXX</span> MW Solar,
-        <span style={{ fontWeight: 'bold' }}>XXX MW Wind</span> and
-        <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>XXX MWh ESS</span> capacity
+        <span style={{ backgroundColor: 'yellow', fontWeight: 'bold' }}>{dynamicData.solar}</span> MW Solar,
+        <span style={{ fontWeight: 'bold' }}>{dynamicData.wind} MW Wind</span> and
+        <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>{dynamicData.ess} MWh ESS</span> capacity
       </p>
     </div>
 
@@ -265,7 +265,7 @@ const AgreementContent = ({ dynamicData }) => (
             </td>
             <td style={{ border: '1px solid black', padding: '8px' }}>
               <p>
-                A group captive capacity of <strong>XXX MW</strong> Solar capacity, <strong>XXX MW</strong> of Wind Capacity, and <strong>XXX MWh</strong> of ESS shall be allocated in the 
+                A group captive capacity of <strong>{dynamicData.solar} MW</strong> Solar capacity, <strong>{dynamicData.wind} MW</strong> of Wind Capacity, and <strong>{dynamicData.ess} MWh</strong> of ESS shall be allocated in the 
                 <p>Project to the {dynamicData.consumerName} (“Contracted Capacity”).</p>
               </p>
               <p>
@@ -667,10 +667,13 @@ Arbitration. The award passed by the arbitral tribunal will be binding.
 );
 
 const AgreementModal = ({ visible, onClose, data }) => {
-  // console.log(data);
+  console.log(data);
   const consumer=data?.consumer;
  const consumer_state=data?.consumer_state;
  const generator=data?.generator;
+ const ess = data?.ess ? parseFloat(data.ess).toFixed(2) : "0.00";
+ const wind=data?.wind ? parseFloat(data.wind).toFixed(2): '0.00';
+ const solar=data?.solar ? parseFloat(data.solar).toFixed(2): '0.00';
  const generator_state=data?.generator_state;
  const lock_in_period=data?.lock_in_period;
  const minimum_generation_obligation=data?.minimum_generation_obligation;
@@ -711,6 +714,9 @@ const AgreementModal = ({ visible, onClose, data }) => {
    tariff_finalized: tariff_finalized,
    term_of_ppa: term_of_ppa,
    voltage_level_of_generation: voltage_level_of_generation,
+   ess:ess,
+   wind:wind,
+   solar:solar
  };
  
 

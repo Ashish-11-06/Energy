@@ -81,25 +81,7 @@ const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
           individual users. Hyperlinking Policy External links on this portal
           are provided for user convenience. EXT Energy is not responsible for
           the content of linked websites and does not endorse any views
-          expressed on them. For further inquiries, please contact:
-          <br />
-          {/* <p style={{ fontSize: "16px" }}>
-            1 & 2 Murphy Road, Ulsoor , Bangalore 560 008 | India
-          </p> */}
-          http://www.pwc.com/in "The information transmitted, including any
-          attachments, is intended only for the person or entity to which it is
-          addressed and may contain confidential and/or privileged material. Any
-          review, retransmission, dissemination or other use of, or taking of
-          any action in reliance upon, this information by persons or entities
-          other than the intended recipient is prohibited, and all liability
-          arising therefrom is disclaimed. If you received this in error, please
-          contact the sender and delete the material from any computer. Please
-          note if the e-mail address include "TPR", the sender of this e-mail is
-          a third party resource, and not an employee, who has been specifically
-          authorized to correspond routine matters related to the project only.
-          For any clarification with regard to any non-routine or engagement
-          specific deliverables please contact the assigned project manager/
-          project partner."
+          expressed on them. 
         </p>
         <div>
          
