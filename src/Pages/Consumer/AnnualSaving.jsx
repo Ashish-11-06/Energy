@@ -74,12 +74,12 @@ const AnnualSvg = () => {
   
   const dataForBarChart = [
     { 
-      name: 'Potential Savings', 
+      name: 'Potential Saving', 
       Savings: annualSavingResponse?.annual_savings || 0, 
       formattedSavings: formatter.format(annualSavingResponse?.annual_savings || 0) 
     },
     { 
-      name: 'Industry Benchmark\nSavings', // Add newline for better formatting
+      name: `Industry Benchmark\nSaving`, // Add newline for better formatting
       Savings: annualSavingResponse?.average_savings || 0, 
       formattedSavings: formatter.format(annualSavingResponse?.average_savings || 0) 
     }
@@ -113,13 +113,17 @@ const AnnualSvg = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                 <YAxis 
-                  tickFormatter={(value) => formatter.format(value)} 
+                  tickFormatter={(value) => value / 10000000} // Convert to single values in crores
                   tick={{ fontSize: 10 }} 
                 />
                 <RechartsTooltip />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Bar dataKey="Savings" fill="#669800" />
               </BarChart>
+              {/* Add scale indicator below the chart */}
+              <div style={{ textAlign: 'right', fontSize: '12px', marginTop: '-15px', color: '#000' }}>
+                1 Unit = 1 INR Cr
+              </div>
             </Col>
             <Col xs={24} sm={12} md={12} lg={8}>
               <Title level={5} style={{ textAlign: 'center', fontSize: '14px' }}>Tariff Comparison <span style={{ fontSize: '12px' }}> (INR/kWh)</span></Title>

@@ -40,6 +40,8 @@ import transaction from "../../assets/transaction.png";
 import trial from "../../assets/trial.png";
 import powerX from "../../assets/powerX.png";
 import advice from "../../assets/advice.png";
+import consumption from "../../assets/consumption.png";
+
 
 const { Title, Text } = Typography;
 
@@ -519,7 +521,7 @@ const companyName=userData[0]?.company;
                         }}
                       >
                         <img
-                          src={trial}
+                          src={consumption}
                           alt=""
                           style={{
                             width: "20px",
@@ -536,7 +538,7 @@ const companyName=userData[0]?.company;
                           marginBottom: "10px",
                         }}
                       >
-                        <img
+                        {/* <img
                           src={trial}
                           alt=""
                           style={{
@@ -544,7 +546,12 @@ const companyName=userData[0]?.company;
                             height: "20px",
                             marginRight: "4%",
                           }}
+                            
+                        /> */}
+                        <FormOutlined
+                          style={{ marginRight: "10px", color: "#669800" }}
                         />{" "}
+                        {" "}
                       Matching IPP
                       </li>
                       <li
