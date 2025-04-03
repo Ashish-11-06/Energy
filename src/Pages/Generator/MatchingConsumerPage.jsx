@@ -27,12 +27,14 @@ const MatchingConsumerPage = () => {
   
   // Access matching consumers data and status from the Redux store
   const { Matchingconsumers, status, error } = useSelector((state) => state.matchingConsumer);
+console.log(modalConsumerDetails);
 
     const dataSource = [
-      {key:'1',label:<strong>Credit Rating</strong>, value:modalConsumerDetails?.REindex || 'A2'},
-      { key: '2', label: <strong>Consumer</strong>, value: modalConsumerDetails?.user__username},
+      {key:'1',label:<strong>Credit Rating</strong>, value:modalConsumerDetails?.REindex || 'N/A'},
+      { key: '2', label: <strong>Consumer ID</strong>, value: modalConsumerDetails?.user__username},
       { key: '3', label: <strong>State</strong>, value: modalConsumerDetails?.state },
-      { key: '4', label: <strong>Demand</strong>, value: modalConsumerDetails?.total_contracted_demand },
+      { key: '6', label: <strong>Voltage Level</strong>, value: modalConsumerDetails?.state },
+      { key: '4', label: <strong>Demand (MW)</strong>, value: modalConsumerDetails?.total_contracted_demand },
       { key: '5', label: <strong>Industry</strong>, value: modalConsumerDetails?.industry },
     
     ];
