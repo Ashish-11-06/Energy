@@ -57,6 +57,11 @@ const CombinationPattern = () => {
   const role = user.role;
   const user_id = user.id;
 
+const handleSensitivity = () => {
+  console.log('clicked');
+  
+}
+
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
     if (
       !combinations ||
@@ -477,7 +482,11 @@ if(dataSource?.length<=0) {
       dataIndex: "totalCost",
       key: "totalCost",
     },
-
+    {
+      title: "Per Unit Saving",
+      dataIndex: "totalCost",
+      key: "totalCost",
+    },
     {
       title: "COD",
       dataIndex: "cod",
@@ -507,6 +516,19 @@ if(dataSource?.length<=0) {
             Initiate Quotation
           </button>
         ),
+    },
+    {
+      title: "Sensitivity",
+      key: "sensitivity",
+      render: () => (
+        <Button
+          type="primary"
+          disabled={!combinationData}
+          onClick={handleSensitivity}
+        >
+          See Graph
+        </Button>
+      ),
     },
   ];
 
@@ -601,8 +623,13 @@ if(dataSource?.length<=0) {
         <Card style={{ width: "100%" }}>
           <Col span={24} style={{ textAlign: "center" }}>
             <Title level={4} style={{ color: "#001529" }}>
-              Monthly Consumption Pattern
+              Monthly Demand Pattern
             </Title>
+          </Col>
+          <Col span={24} style={{ textAlign: "center" }}>
+            <p  style={{ color: "#001529" }}>
+            Consumer ID: {consumerDetails?.username}
+            </p>
           </Col>
 
           <Col span={24} style={{ marginBottom: "20px" }}>
