@@ -75,8 +75,8 @@ const AnnualSvg = () => {
   const dataForBarChart = [
     { 
       name: 'Potential Saving', 
-      Savings: annualSavingResponse?.annual_savings || 0, 
-      formattedSavings: formatter.format(annualSavingResponse?.annual_savings || 0) 
+      Savings: annualSavingResponse?.annual_savings  || 0, 
+      formattedSavings: formatter.format(annualSavingResponse?.annual_savings  || 0) 
     },
     { 
       name: `Industry Benchmark\nSaving`, // Add newline for better formatting
@@ -186,10 +186,13 @@ const AnnualSvg = () => {
                         <Text strong style={{ fontSize: '16px' }}>Potential Savings</Text>
                       </Col>
                       <Col xs={24} sm={12}>
-                        <Text style={{ fontSize: '20px' }}>
-                         : {annualSavingResponse ? annualSavingResponse.annual_savings.toLocaleString('en-IN') : "N/A"}
-                          <span style={{ fontSize: '14px' }}> INR Cr</span>
-                        </Text>
+                      <Text style={{ fontSize: '20px' }}>
+  : {annualSavingResponse && annualSavingResponse.annual_savings
+      ? (annualSavingResponse.annual_savings / 10000000).toLocaleString('en-IN')
+      : "N/A"}
+  <span style={{ fontSize: '14px' }}> Cr </span>
+</Text>
+
                       </Col>
                       <Col xs={24} sm={12}>
                         <Text strong style={{ fontSize: '16px' }}>Average Savings (For your Industry Category) </Text>

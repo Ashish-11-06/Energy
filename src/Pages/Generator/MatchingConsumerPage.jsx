@@ -33,7 +33,7 @@ console.log(modalConsumerDetails);
       {key:'1',label:<strong>Credit Rating</strong>, value:modalConsumerDetails?.REindex || 'N/A'},
       { key: '2', label: <strong>Consumer ID</strong>, value: modalConsumerDetails?.user__username},
       { key: '3', label: <strong>State</strong>, value: modalConsumerDetails?.state },
-      { key: '6', label: <strong>Voltage Level</strong>, value: modalConsumerDetails?.state },
+      { key: '6', label: <strong>Voltage Level (kV)</strong>, value: modalConsumerDetails?.voltage_level },
       { key: '4', label: <strong>Demand (MW)</strong>, value: modalConsumerDetails?.total_contracted_demand },
       { key: '5', label: <strong>Industry</strong>, value: modalConsumerDetails?.industry },
     
