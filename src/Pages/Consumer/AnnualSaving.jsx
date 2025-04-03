@@ -188,16 +188,20 @@ const AnnualSvg = () => {
                       <Col xs={24} sm={12}>
                         <Text style={{ fontSize: '20px' }}>
                          : {annualSavingResponse ? annualSavingResponse.annual_savings.toLocaleString('en-IN') : "N/A"}
-                          <span style={{ fontSize: '14px' }}> INR</span>
+                          <span style={{ fontSize: '14px' }}> INR Cr</span>
                         </Text>
                       </Col>
                       <Col xs={24} sm={12}>
                         <Text strong style={{ fontSize: '16px' }}>Average Savings (For your Industry Category) </Text>
                       </Col>
                       <Col xs={24} sm={12}>
-                        <Text style={{ fontSize: '20px' }}>
-                          : {annualSavingResponse ? annualSavingResponse.average_savings.toLocaleString('en-IN') : "0"}<span style={{ fontSize: '14px' }}> INR/kWh</span>
-                        </Text>
+                      <Text style={{ fontSize: '20px' }}>
+  : {annualSavingResponse && annualSavingResponse.average_savings !== 0 
+      ? annualSavingResponse.average_savings.toLocaleString('en-IN') 
+      : "-"}
+  <span style={{ fontSize: '14px' }}> INR</span>
+</Text>
+
                       </Col>
                       <Col xs={24} sm={12}>
                         <Text strong style={{ fontSize: '16px' }}>Potential RE Replacement</Text>

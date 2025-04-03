@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, Button, Typography, Modal, Form, message, Progress } from 'antd';
+import { Table, Button, Typography, Modal, Form, message, Progress, Tooltip } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,7 +8,7 @@ import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfil
 import AddPortfolioModal from './Modal/AddPortfolioModal';
 import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice';
 import moment from 'moment'; // Import moment
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
@@ -31,9 +31,13 @@ const GenerationPortfolio = () => {
   const alreadysubscribed = subscribed?.status;
 
   const { status, projects } = useSelector((state) => state.portfolio);
+  const is_new_user=user.is_new_user;
+  console.log(is_new_user);
+
+
 
   useEffect(() => {
-    if (location.state?.isNewUser) {
+    if (is_new_user) {
       setIsNewUserModalVisible(true); // Show modal for new users
     }
 
@@ -57,6 +61,10 @@ const GenerationPortfolio = () => {
     } catch (error) {
       message.error(error);
     }
+  };
+
+  const showInfoModal = () => {
+    setIsNewUserModalVisible(true);
   };
 
   const handleEdit = (record) => {
@@ -119,6 +127,11 @@ const GenerationPortfolio = () => {
           return `${text} MW`;
         }
       },
+    },
+    {
+      title: 'Connectivity',
+      dataIndex: 'connectivity',
+      key: 'connectivity',
     },
     {
       title: 'COD (Commercial Operation Date)',
@@ -199,6 +212,14 @@ const GenerationPortfolio = () => {
       >
         <h2 level={2}>Available Generation Portfolio</h2>
 
+ <Tooltip title="Help">
+          <Button
+            shape="circle"
+            icon={<QuestionCircleOutlined />}
+            onClick={showInfoModal}
+            style={{ position: 'absolute', top: 100, right: 50, zIndex: 1000 }}
+          />
+        </Tooltip>
         <Table
           dataSource={Structuredprojects.map((project, index) => ({ ...project, key: index }))}
           columns={columns}

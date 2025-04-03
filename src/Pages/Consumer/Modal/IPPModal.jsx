@@ -22,9 +22,7 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer, fromGenerator, onClose, 
 
 
   const dataSource = [
-    ...(fromConsumer ? [
-      { key: '1', label: 'RE Index', value:reIndex || 'A2'}
-    ]: []) ,
+  
     { key: '2', label: 'Annual Contracted Energy (million units)', value: ipp?.annual_demand_met || 0 },
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
     { key: '4', label: 'Per Unit Cost (INR/kWh)', value: ipp?.perUnitCost || "N/A" },
@@ -32,8 +30,10 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer, fromGenerator, onClose, 
     { key: '6', label: 'Total Cost (INR/kWh)', value: ipp?.totalCost || "N/A" },
     { key: '7', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
     { key: '8', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
-    { key: '9', label: 'Total Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
-  
+    { key: '9', label: 'Total RE Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
+    ...(fromConsumer ? [
+      { key: '1', label: 'RE Index', value:reIndex || 'N/A'}
+    ]: []) ,
     ...(fromGenerator ? [
       { key: '10', label: 'Consumer Pseudo Name', value: consumerDetails?.username || "N/A" },
       { key: '11', label: 'Consumer Credit Rating', value: consumerDetails?.credit_rating === null ? "A2" : consumerDetails?.credit_rating },

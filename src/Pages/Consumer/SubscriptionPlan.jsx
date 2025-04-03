@@ -62,7 +62,6 @@ const SubscriptionPlans = () => {
     localStorage.getItem("subscriptionPlanValidity")
   );
   const alreadySubscribed = subscription?.subscription_type;
-
   const time_remaining = alreadySubscribed === 'FREE' ? (() => {
     const endDate = new Date(subscription?.end_date);
     const now = new Date();
@@ -80,7 +79,14 @@ const SubscriptionPlans = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userData = useState(JSON.parse(localStorage.getItem("user")).user);
-  const user_category = userData[0]?.user_category;
+  const user = JSON.parse(localStorage.getItem('user')).user;
+  const user_category=user.user_category;
+  const temp = user_category === 'Consumer' ? 'IPP' : 'Consumer';
+  const req=user_category === 'Consumer' ? 'Requirement' : 'Portfolio';
+  console.log(temp);
+  
+  
+  // const user_category = userData[0]?.user_category;
   const userId = userData[0]?.id;
   const Razorpay = useRazorpay();
   const [orderId, setOrderId] = useState(null);
@@ -408,7 +414,7 @@ const companyName=userData[0]?.company;
                         <FormOutlined
                           style={{ marginRight: "10px", color: "#669800" }}
                         />{" "}
-                        Matching IPP
+                        Matching {temp}
                         {/* {user_category=='Consumer' ?  (
                         <p>Matching IPP +</p>
                         ) : (<p>Matching Consumer</p>)
@@ -529,7 +535,7 @@ const companyName=userData[0]?.company;
                             marginRight: "4%",
                           }}
                         />{" "}
-                       Add Requirement
+                       Add {req}
                       </li>
                       <li
                         style={{
@@ -552,7 +558,7 @@ const companyName=userData[0]?.company;
                           style={{ marginRight: "10px", color: "#669800" }}
                         />{" "}
                         {" "}
-                      Matching IPP
+                      Matching {temp}
                       </li>
                       <li
                         style={{

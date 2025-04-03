@@ -54,6 +54,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
+   
     { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     {
       label: (<span>Offers</span>), 
