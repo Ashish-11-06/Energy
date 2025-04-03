@@ -46,7 +46,7 @@ const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
             other sources and to obtain appropriate professional advice before
             acting on the information provided in the Portal.
           </p>
-          <pre>Users are hereby</pre>
+          <p>Users are hereby</p>
           Users are informed not to use, display, upload, modify, publish,
           transmit, update, share, or store any information that: Belongs to
           another person. Is harmful, threatening, abusive, harassing,
