@@ -1,11 +1,30 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Col, Table, Row, Tooltip, Modal, Radio, Upload, message, Card, Select } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Col,
+  Table,
+  Row,
+  Tooltip,
+  Modal,
+  Radio,
+  Upload,
+  message,
+  Card,
+  Select,
+} from "antd";
 import { useNavigate } from "react-router-dom";
-import { UploadOutlined, DownloadOutlined, DownOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-import * as XLSX from 'xlsx';
-import { useDispatch } from 'react-redux';
+import {
+  UploadOutlined,
+  DownloadOutlined,
+  DownOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
+import * as XLSX from "xlsx";
+import { useDispatch } from "react-redux";
 import { addDayAheadData } from "../../Redux/slices/generator/dayAheadSliceG";
 import { getAllProjectsById } from "../../Redux/slices/generator/portfolioSlice";
 
@@ -13,8 +32,8 @@ const generateTimeLabels = () => {
   const times = [];
   for (let i = 0; i < 24; i++) {
     for (let j = 0; j < 60; j += 15) {
-      const hour = i.toString().padStart(2, '0');
-      const minute = j.toString().padStart(2, '0');
+      const hour = i.toString().padStart(2, "0");
+      const minute = j.toString().padStart(2, "0");
       times.push(`${hour}:${minute}`);
     }
   }
@@ -30,7 +49,7 @@ const PlanYourTradePage = () => {
   const [selectedPortfolioId, setSelectedPortfolioId] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem('user')).user;
+  const user = JSON.parse(localStorage.getItem("user")).user;
   const user_id = user.id;
   const is_new_user = user?.is_new_user;
   const username = user?.company_representative;
@@ -50,11 +69,60 @@ const PlanYourTradePage = () => {
   const [fileUploaded, setFileUploaded] = useState(false);
   const [showTable, setShowTable] = useState(false);
 
-  const handleContinue = () => {
-    if(!fileUploaded) {
-      setIsModalVisible(true);
+  const handleContinue = async () => {
+    if (!fileUploaded) {
+      // setIsModalVisible(true);
+
+      // console.log("Selected State:", selectedState);
+      // console.log("Selected Portfolio ID:", selectedPortfolioId);
+      try {
+        const dayAheadDemand = {
+          model:
+            selectedTechnology === "Solar" ? "solarportfolio" : "windportfolio",
+          object_id: selectedPortfolioId,
+          price: parseFloat(price),
+          generation_data: tableData.map((item) => {
+            let [hours, minutes] = item.time.split(":").map(Number); // Convert time to hours and minutes
+            minutes += 15; // Add 15 minutes
+
+            if (minutes >= 60) {
+              hours += 1;
+              minutes -= 60;
+            }
+
+            // Ensure hours do not exceed 23 (Reset to 00:00 if it becomes 24:00)
+            if (hours >= 24) {
+              hours = 0;
+            }
+
+            let end_time = `${String(hours).padStart(2, "0")}:${String(
+              minutes
+            ).padStart(2, "0")}`; // Format time
+
+            return {
+              start_time: item.time,
+              end_time: end_time,
+              generation: item.demand,
+            };
+          }),
+        };
+
+        // console.log(dayAheadDemand);
+        try {
+          const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+          console.log("res", res);
+          setIsModalVisible(false);
+          message.success(res.message || "Data submitted successfully!");
+          navigate("/px/generator/trading");
+        } catch (error) {
+          console.log(error);
+        }
+      } catch (error) {
+        // console.log(error);
+        message.error("Failed to submit data. Please try again.");
+      }
     } else {
-      navigate('/px/track-status');
+      navigate("/px/track-status");
     }
     // setIsModalVisible(true);
   };
@@ -96,9 +164,9 @@ const PlanYourTradePage = () => {
         const id = user_id;
         const res = await dispatch(getAllProjectsById(id)).unwrap();
         const flattenedPortfolio = [
-          ...res.Solar.map(item => ({ ...item, type: 'Solar' })),
-          ...res.Wind.map(item => ({ ...item, type: 'Wind' })),
-          ...res.ESS.map(item => ({ ...item, type: 'ESS' }))
+          ...res.Solar.map((item) => ({ ...item, type: "Solar" })),
+          ...res.Wind.map((item) => ({ ...item, type: "Wind" })),
+          ...res.ESS.map((item) => ({ ...item, type: "ESS" })),
         ];
         setGeneratorPortfolio(flattenedPortfolio);
         // console.log(flattenedPortfolio);
@@ -114,7 +182,9 @@ const PlanYourTradePage = () => {
     setSelectedState(value);
 
     // Find the portfolio ID of the selected state
-    const selectedPortfolio = generatorPortfolio.find(item => item.state === value);
+    const selectedPortfolio = generatorPortfolio.find(
+      (item) => item.state === value
+    );
     setSelectedPortfolioId(selectedPortfolio ? selectedPortfolio.id : null);
   };
 
@@ -123,53 +193,60 @@ const PlanYourTradePage = () => {
     setAllFieldsFilled(allFilled);
   }, [tableData]);
 
-  const handleModalOk = async () => {
-    // console.log("Selected State:", selectedState);
-    // console.log("Selected Portfolio ID:", selectedPortfolioId);
-    try {
-      const dayAheadDemand = {
-        model: selectedTechnology === "Solar" ? "solarportfolio" : "windportfolio",
-        object_id: selectedPortfolioId,
-        price: parseFloat(price),
-        generation_data: tableData.map(item => {
-          let [hours, minutes] = item.time.split(":").map(Number); // Convert time to hours and minutes
-          minutes += 15; // Add 15 minutes
-
-          if (minutes >= 60) {
-            hours += 1;
-            minutes -= 60;
-          }
-
-          // Ensure hours do not exceed 23 (Reset to 00:00 if it becomes 24:00)
-          if (hours >= 24) {
-            hours = 0;
-          }
-
-          let end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`; // Format time
-
-          return {
-            start_time: item.time,
-            end_time: end_time,
-            generation: item.demand
-          };
-        })
-      };
-
-      // console.log(dayAheadDemand);
-
-      const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
-      // console.log('res', res);
-      setIsModalVisible(false);
-      navigate('/px/consumer/trading');
-    } catch (error) {
-      // console.log(error);
-      message.error("Failed to submit data. Please try again.");
-    }
+  const handleModalOk = () => {
+    setShowTable(true); // Show the table after modal "Ok"
+    setIsModalVisible(false);
   };
+
+  // const handleModalOk = async () => {
+  //   // console.log("Selected State:", selectedState);
+  //   // console.log("Selected Portfolio ID:", selectedPortfolioId);
+  //   try {
+  //     const dayAheadDemand = {
+  //       model: selectedTechnology === "Solar" ? "solarportfolio" : "windportfolio",
+  //       object_id: selectedPortfolioId,
+  //       price: parseFloat(price),
+  //       generation_data: tableData.map(item => {
+  //         let [hours, minutes] = item.time.split(":").map(Number); // Convert time to hours and minutes
+  //         minutes += 15; // Add 15 minutes
+
+  //         if (minutes >= 60) {
+  //           hours += 1;
+  //           minutes -= 60;
+  //         }
+
+  //         // Ensure hours do not exceed 23 (Reset to 00:00 if it becomes 24:00)
+  //         if (hours >= 24) {
+  //           hours = 0;
+  //         }
+
+  //         let end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`; // Format time
+
+  //         return {
+  //           start_time: item.time,
+  //           end_time: end_time,
+  //           generation: item.demand
+  //         };
+  //       })
+  //     };
+
+  //     // console.log(dayAheadDemand);
+
+  //     const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+  //     // console.log('res', res);
+  //     setIsModalVisible(false);
+  //     navigate('/px/consumer/trading');
+  //   } catch (error) {
+  //     // console.log(error);
+  //     message.error("Failed to submit data. Please try again.");
+  //   }
+  // };
 
   const handleFileUpload = (file) => {
     setUploadModal(true);
-    const isExcel = file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    const isExcel =
+      file.type ===
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     if (!isExcel) {
       message.error("Please upload a valid Excel file.");
       return false;
@@ -178,7 +255,7 @@ const PlanYourTradePage = () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
+      const workbook = XLSX.read(data, { type: "array" });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
@@ -191,8 +268,10 @@ const PlanYourTradePage = () => {
       setTableData(updatedData);
       setFileUploaded(true);
       setAllFieldsFilled(true);
-       message.success(`${file.name} uploaded successfully, now you can check the status in 'Track Status' optionnnn`);
-           setUploadModal(false);
+      message.success(
+        `${file.name} uploaded successfully, now you can check the status in 'Track Status' optionnnn`
+      );
+      setUploadModal(false);
       // message.success(`${file.name} uploaded successfully`);
     };
     reader.readAsArrayBuffer(file);
@@ -201,15 +280,16 @@ const PlanYourTradePage = () => {
 
   const handleDownloadTemplate = () => {
     const formattedData = tableData.map((item, index) => ({
-      "Time Interval": index < tableData.length - 1 
-        ? `${item.time} - ${tableData[index + 1].time}`
-        : `${item.time} - 00:00`, // Last interval wraps around
-      "Generation": ''
+      "Time Interval":
+        index < tableData.length - 1
+          ? `${item.time} - ${tableData[index + 1].time}`
+          : `${item.time} - 00:00`, // Last interval wraps around
+      Generation: "",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(formattedData);
 
-    const range = XLSX.utils.decode_range(worksheet['!ref']);
+    const range = XLSX.utils.decode_range(worksheet["!ref"]);
     for (let C = range.s.c; C <= range.e.c; ++C) {
       const cell = XLSX.utils.encode_cell({ r: 0, c: C });
       if (worksheet[cell]) {
@@ -218,8 +298,8 @@ const PlanYourTradePage = () => {
     }
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
-    XLSX.writeFile(workbook, 'trade_template.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Template");
+    XLSX.writeFile(workbook, "trade_template.xlsx");
   };
 
   const handleFillBelow = (part) => {
@@ -243,9 +323,12 @@ const PlanYourTradePage = () => {
       title: (
         <div>
           Generation
-                    <Tooltip title="Fill below to apply same demand for all time intervals">
-          <Button onClick={() => handleFillBelow(part)} style={{ marginLeft: '10px', height: '10px' }} icon={<DownOutlined style={{ padding: '5px', height: '10px' }} />}>
-          </Button>
+          <Tooltip title="Fill below to apply same demand for all time intervals">
+            <Button
+              onClick={() => handleFillBelow(part)}
+              style={{ marginLeft: "10px", height: "10px" }}
+              icon={<DownOutlined style={{ padding: "5px", height: "10px" }} />}
+            ></Button>
           </Tooltip>
         </div>
       ),
@@ -284,14 +367,17 @@ const PlanYourTradePage = () => {
       data.slice(sixth * 5),
     ];
   };
-
+  const handleAddDetails = () => {
+    setIsModalVisible(true); // Show the "Select Technology" modal
+  };
   const [part1, part2, part3, part4, part5, part6] = splitData(tableData);
 
   const dummyConsumptionUnits = ["Unit 1", "Unit 2", "Unit 3"]; // Dummy data
 
-  const consumptionUnits = Array.isArray(generatorPortfolio) && generatorPortfolio.length > 0
-    ? generatorPortfolio
-    : dummyConsumptionUnits;
+  const consumptionUnits =
+    Array.isArray(generatorPortfolio) && generatorPortfolio.length > 0
+      ? generatorPortfolio
+      : dummyConsumptionUnits;
 
   return (
     <div style={{ padding: "20px" }}>
@@ -304,16 +390,26 @@ const PlanYourTradePage = () => {
             style={{ width: "70%", borderColor: "#669800" }}
             placeholder="Select Portfolio" // Placeholder text
           >
-            {Array.isArray(generatorPortfolio) && generatorPortfolio.map(item => (
-              <Select.Option key={item.id} value={item.state}>
-                {`${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
-              </Select.Option>
-            ))}
+            {Array.isArray(generatorPortfolio) &&
+              generatorPortfolio.map((item) => (
+                <Select.Option key={item.id} value={item.state}>
+                  {`${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
+                </Select.Option>
+              ))}
           </Select>
         </Form.Item>
       </Col>
-      <Row gutter={16} style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", marginLeft: "5%", marginRight: "5%" }}>
-
+      <Row
+        gutter={16}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: "20px",
+          marginLeft: "5%",
+          marginRight: "5%",
+        }}
+      >
         {/* Add Details Card */}
         <Col span={8}>
           <Card
@@ -323,21 +419,29 @@ const PlanYourTradePage = () => {
               boxShadow: "4px 4px 12px rgba(0, 0, 0, 0.2)",
               transform: "translateY(-2px)",
               transition: "all 0.3s ease-in-out",
-              textAlign: "center"
+              textAlign: "center",
             }}
           >
             <Col>
               <Tooltip title="Add details manually!" placement="bottom">
-                <Button onClick={() => setShowTable(!showTable)}>
+                {/* <Button onClick={() => setShowTable(!showTable)}>
                   {showTable ? "Add Details +" : "Add Details +"}
-                </Button>
+                </Button> */}
+                <Button onClick={handleAddDetails}>Add Details +</Button>
               </Tooltip>
             </Col>
           </Card>
         </Col>
 
         {/* OR separator */}
-        <Col span={2} style={{ textAlign: "center", fontWeight: "bold", marginRight: "10px" }}>
+        <Col
+          span={2}
+          style={{
+            textAlign: "center",
+            fontWeight: "bold",
+            marginRight: "10px",
+          }}
+        >
           <span>OR</span>
         </Col>
 
@@ -350,18 +454,23 @@ const PlanYourTradePage = () => {
               boxShadow: "4px 4px 12px rgba(0, 0, 0, 0.2)",
               transform: "translateY(-2px)",
               transition: "all 0.3s ease-in-out",
-              textAlign: "center"
+              textAlign: "center",
             }}
           >
             <Row gutter={16} align="middle" justify="center">
               <Col>
                 <Tooltip title="Download template!" placement="bottom">
-                  <Button icon={<DownloadOutlined />} onClick={handleDownloadTemplate} />
+                  <Button
+                    icon={<DownloadOutlined />}
+                    onClick={handleDownloadTemplate}
+                  />
                 </Tooltip>
               </Col>
               <Col>
                 <Tooltip title="Upload a bulk file!" placement="bottom">
-                <Button icon={<UploadOutlined />} onClick={handleFileUpload}>Upload File</Button>
+                  <Button icon={<UploadOutlined />} onClick={handleFileUpload}>
+                    Upload File
+                  </Button>
                   {/* <Upload beforeUpload={handleFileUpload} showUploadList={false}>
                     <Button icon={<UploadOutlined />}>Upload File</Button>
                   </Upload> */}
@@ -370,7 +479,6 @@ const PlanYourTradePage = () => {
             </Row>
           </Card>
         </Col>
-
       </Row>
 
       {showTable && (
@@ -387,7 +495,9 @@ const PlanYourTradePage = () => {
       )}
       <Form.Item>
         <Tooltip
-          title={!allFieldsFilled ? "Add details manually or upload the file" : ""}
+          title={
+            !allFieldsFilled ? "Add details manually or upload the file" : ""
+          }
           placement="top"
         >
           <Button
@@ -410,17 +520,19 @@ const PlanYourTradePage = () => {
         {/* Radio Group */}
         <Radio.Group onChange={handleChange} value={selectedTechnology}>
           <Radio value="Solar">Solar</Radio>
-          <Radio value="Wind">Wind</Radio>
+          <Radio value="non_solar">Non solar</Radio>
         </Radio.Group>
 
         {/* Input field for price */}
         <div style={{ marginTop: "15px" }}>
           {selectedTechnology && (
             <div>
-              <label style={{ fontWeight: "bold" }}>Enter {selectedTechnology} Price:</label>
+              <label style={{ fontWeight: "bold" }}>
+                Enter {selectedTechnology} Price (INR/MWh):
+              </label>
               <Input
                 type="number"
-                placeholder={`Enter ${selectedTechnology.toLowerCase()} price in INR`}
+                placeholder={`Enter ${selectedTechnology.toLowerCase()} price in INR/MWh`}
                 value={price}
                 min={0}
                 onChange={(e) => setPrice(e.target.value)}
@@ -447,66 +559,80 @@ const PlanYourTradePage = () => {
         <p>Welcome to the powerX. Please follow these steps to proceed:</p>
         <ol>
           <li>Select the consumption unit </li>
-          <li>Add your requirements by clicking the "Add Details +" button or Download template, fill  it and upload the document</li>
+          <li>
+            Add your requirements by clicking the "Add Details +" button or
+            Download template, fill it and upload the document
+          </li>
           <li>Click on continue button</li>
           <li>Select the technology and enter the price</li>
           <li>Click on 'Ok' to proceed</li>
         </ol>
         <p>Thank you!</p>
       </Modal>
-        <Modal title="Select Technologyyy"
-              open={uploadModal}
-             
-              onCancel={() => setUploadModal(false)} 
-          
-              footer={[
-                <>
-      
-                <Upload beforeUpload={handleFileUpload} showUploadList={false}>
-                          <Button icon={<UploadOutlined />}>Upload File</Button>
-                        </Upload>
-                        <Button onClick={() => setUploadModal(false)} style={{marginLeft:'10px'}}>Cancel</Button>
-                        </>
-              ]}
-              >
-                <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
-                <Radio value="Solar">Solar</Radio>
-                <Radio value="Non-Solar">Non-Solar</Radio>
-              </Radio.Group>
-      
-              <div style={{ marginTop: "15px" }}>
-                {selectedTechnology === "Solar" && (
-                  <div>
-                    <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
-                    <Input
-                      type="number"
-                      placeholder="Enter solar price in INR"
-                      value={price["Solar"] || ""}
-                      min={0}
-                      onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
-                      style={{ marginTop: "5px", width: "100%" }}
-                    />
-                  </div>
-                )}
-                
-                {selectedTechnology === "Non-Solar" && (
-                  <div>
-                    <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
-                    <Input
-                      type="number"
-                      placeholder="Enter non-solar price in INR"
-                      value={price["Non-Solar"] || ""}
-                      min={0}
-                      onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
-                      style={{ marginTop: "5px", width: "100%" }}
-                    />
-                  </div>
-                )}
-              </div>
-            </Modal>
+      <Modal
+        title="Select Technologyyy"
+        open={uploadModal}
+        onCancel={() => setUploadModal(false)}
+        footer={[
+          <>
+            <Upload beforeUpload={handleFileUpload} showUploadList={false}>
+              <Button icon={<UploadOutlined />}>Upload File</Button>
+            </Upload>
+            <Button
+              onClick={() => setUploadModal(false)}
+              style={{ marginLeft: "10px" }}
+            >
+              Cancel
+            </Button>
+          </>,
+        ]}
+      >
+        <Radio.Group
+          onChange={(e) => setSelectedTechnology(e.target.value)}
+          value={selectedTechnology}
+        >
+          <Radio value="Solar">Solar</Radio>
+          <Radio value="Non-Solar">Non-Solar</Radio>
+        </Radio.Group>
+
+        <div style={{ marginTop: "15px" }}>
+          {selectedTechnology === "Solar" && (
+            <div>
+              <label style={{ fontWeight: "bold" }}>
+                Enter Solar Price (INR/MWh):
+              </label>
+              <Input
+                type="number"
+                placeholder="Enter solar price in INR/MWh"
+                value={price["Solar"] || ""}
+                min={0}
+                onChange={(e) => setPrice({ ...price, Solar: e.target.value })}
+                style={{ marginTop: "5px", width: "100%" }}
+              />
+            </div>
+          )}
+
+          {selectedTechnology === "Non-Solar" && (
+            <div>
+              <label style={{ fontWeight: "bold" }}>
+                Enter Non-Solar Price (INR/MWh):
+              </label>
+              <Input
+                type="number"
+                placeholder="Enter non-solar price in INR/MWh"
+                value={price["Non-Solar"] || ""}
+                min={0}
+                onChange={(e) =>
+                  setPrice({ ...price, "Non-Solar": e.target.value })
+                }
+                style={{ marginTop: "5px", width: "100%" }}
+              />
+            </div>
+          )}
+        </div>
+      </Modal>
     </div>
   );
-
 };
 
 export default PlanYourTradePage;

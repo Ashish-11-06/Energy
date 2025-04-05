@@ -51,6 +51,7 @@ const Dashboard = () => {
   const is_due_date=user.is_due_date;
   const [showDueModal,setShowDueModal]=useState(false);
   const [nextDay, setNextDay] = useState('');
+  const [forecastDate, setForecastDate] = useState('');
     
   var formattedDate = '';
 // console.log(user_id);
@@ -66,7 +67,7 @@ const Dashboard = () => {
     fetchData();
   }, [dispatch]);
 
-  // console.log(dashboardData);
+  console.log(dashboardData);
   useEffect(() => {
     if (is_due_date) {
       setShowDueModal(true);
@@ -113,7 +114,15 @@ const Dashboard = () => {
           setLoading(true);
           const data = await dispatch(dayAheadData()).unwrap();
           // console.log(data);
-          
+          if (data?.predictions?.length > 0) {
+            const dateStr = data.predictions[0]?.date;
+            const date = new Date(dateStr);
+            
+            const options = { month: "long", day: "2-digit" };
+            const formattedDate = date.toLocaleDateString("en-US", options);
+      
+            setForecastDate(formattedDate); // Example output: "February 01"
+          }
           const mcpData = data.predictions.map(item => item.mcp_prediction);
           const mcvData = data.predictions.map(item => item.mcv_prediction);
   
@@ -193,7 +202,7 @@ const Dashboard = () => {
         },
         title: {
           display: true,
-          text: `Energy Demand (${nextDay})`, 
+          // text: `Energy Demand`, 
           font: {
             size: 18,
           },
@@ -216,7 +225,7 @@ const Dashboard = () => {
       // },
       title: {
         display: true,
-        text: `Energy Demand for ${formattedDate}`,
+        text: `Energy Demand (${formattedDate})`,
 
         font: {
           size: 18,
@@ -264,16 +273,26 @@ const stateColumn = [
     title: 'State', // Added column title
     key: 'State',
     dataIndex: 'state', // Corrected dataIndex
+    width:50,
+    fontSize: 20,
+  },
+  {
+    title: 'Technology', // New column for technology type
+    key: 'Technology',
+    dataIndex: 'technology', // Data index for technology
+    fontSize: '14px',
   },
   {
     title: 'Total Install Capacity (MW)', // Added column title
     key: 'Total Install Capacity',
     dataIndex: 'totalInstallCapacity', // Corrected dataIndex
+    fontSize: '14px',
   },
   {
     title: 'Available Capacity (MW)', // Added column title
     key: 'Available Capacity',
     dataIndex: 'availableCapacity', // Corrected dataIndex
+    fontSize: '14px',
   }
 ];
 
@@ -289,12 +308,30 @@ const cardForecastGraph = {
 };
 
   // Define stateData variable
-  const stateData = stateLabels.map((state, index) => ({
-    key: index,
-    state,
-    totalInstallCapacity: totalInstallCapacities[index],
-    availableCapacity: availableCapacities[index],
-  }));
+const stateData = [
+  ...solarData.map((data, index) => ({
+    key: `solar-${index}`,
+    state: data.state,
+    technology: 'Solar', // Set technology to Solar
+    totalInstallCapacity: data.total_install_capacity,
+    availableCapacity: data.available_capacity,
+  })),
+  ...windData.map((data, index) => ({
+    key: `wind-${index}`,
+    state: data.state,
+    technology: 'Wind', // Set technology to Wind
+    totalInstallCapacity: data.total_install_capacity,
+    availableCapacity: data.available_capacity,
+  })),
+  ...essData.map((data, index) => ({
+    key: `ess-${index}`,
+    state: data.state,
+    technology: 'ESS', // Set technology to ESS
+    totalInstallCapacity: data.total_install_capacity,
+    availableCapacity: data.available_capacity,
+  })),
+];
+  
 
   const data = {
     labels: Array.from({ length: 96 }, (_, i) => i + 1),
@@ -389,7 +426,7 @@ const cardForecastGraph = {
       },
       title: {
         display: true,
-        text: `Day Ahead Market Forecast`,
+        text: `Day Ahead Market Forecast (${forecastDate})`, // Use the nextDay variable here
         font: {
           size: 18,
         },
@@ -458,13 +495,49 @@ const cardForecastGraph = {
     navigate("/px/generator/statistical-information");
   };
 
+  const tradeSummaryColumns = [
+    {
+      title: 'Parameter',
+      dataIndex: 'parameter',
+      key: 'parameter',
+    },
+    {
+      title: 'Value',
+      dataIndex: 'value',
+      key: 'value',
+    },
+  ];
+  
+  const tradeSummaryData = [
+    {
+      key: '1',
+      parameter: 'Ask Price (INR/MWh)',
+      value: 4,
+    },
+    {
+      key: '2',
+      parameter: 'Ask Volume (MWh)',
+      value: 200,
+    },
+    {
+      key: '3',
+      parameter: 'Executed Price (INR/MWh)',
+      value: 4,
+    },
+    {
+      key: '4',
+      parameter: 'Executed Volume (MWh)',
+      value: 4,
+    },
+  ];
+
   return (
     <div style={{ padding: "3%" }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
-      Energy Demand Pattern
+      Energy Generation Pattern
       </h1>
       <Card style={{ margin: "20px" }}>
-        <Typography.Title level={3} style={{textAlign:'center'}}>State wise Requirements</Typography.Title>
+        <Typography.Title level={3} style={{textAlign:'center'}}>State wise Generation Portfolio</Typography.Title>
         {/* <Row>
           <Col span={12}>
             <div
@@ -642,21 +715,13 @@ const cardForecastGraph = {
             <Typography.Title level={4}>
               Executed Trade Summary
             </Typography.Title>
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
-              <li style={{ marginBottom: '10px' }}>
-                <strong>Ask Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
-              </li>
-              <li style={{ marginBottom: '10px' }}>
-                <strong>Ask Volume</strong> <span style={{ fontSize: '12px' }}>(kW)</span>: 200
-              </li>
-              <li style={{ marginBottom: '10px' }}>
-                <strong>Executed Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
-              </li>
-             
-              <li>
-                <strong>Executed Volume</strong> <span style={{ fontSize: '12px' }}>(kW)</span>: 4
-              </li>
-            </ul>
+            <Table
+              columns={tradeSummaryColumns}
+              dataSource={tradeSummaryData}
+              pagination={false}
+              bordered
+              style={{ marginTop: '20px' }}
+            />
           </Col>
         </Row>
       </Card>

@@ -26,6 +26,8 @@ import IPPModal from "../Consumer/Modal/IPPModal";
 import RequestForQuotationModal from "../../Components/Modals/RequestForQuotationModal";
 import { fetchOptimizedCombinationsXHR } from "../../Utils/xhrUtils";
 import "./CombinationPattern.css"; // Import the custom CSS file
+import { fetchSensitivity } from "../../Redux/Slices/Generator/sensitivitySlice";
+import { Tooltip as ChartTooltip } from "chart.js";
 
 const { Title, Text } = Typography;
 
@@ -42,6 +44,8 @@ const CombinationPattern = () => {
   const [combinationData, setCombinationData] = useState([]);
   const [tryREreplacement, setTryREreplacement] = useState(false);
   const [consumerDetails, setConsumerDetails] = useState("");
+  const [sensitivityData, setSensitivityData] = useState();
+  const [showGraph, setShowGraph] = useState(false); // State to control graph visibility
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -57,10 +61,135 @@ const CombinationPattern = () => {
   const role = user.role;
   const user_id = user.id;
 
-const handleSensitivity = () => {
-  console.log('clicked');
-  
-}
+const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State to control modal visibility
+const [isGraphLoading, setIsGraphLoading] = useState(false); // State to control loader in the button
+
+const handleSensitivity = async () => {
+  console.log("clicked");
+  setIsGraphLoading(true); // Show loader in the button
+
+  // Extract combination IDs from the table data (dataSource)
+  const combinationIds = dataSource.map((item) => item.combination);
+
+  const data = {
+    requirement_id: selectedDemandId,
+    optimize_capacity_user: user.user_category,
+    user_id: user.id,
+    combinations: combinationIds, // Send combination IDs
+  };
+
+  try {
+    const res = await dispatch(fetchSensitivity(data)).unwrap();
+    console.log("res", res);
+    setSensitivityData(res);
+    setIsGraphModalVisible(true); // Show the modal after fetching data
+  } catch (error) {
+    console.error("Error fetching sensitivity data:", error);
+    message.error("Failed to fetch sensitivity data.");
+  } finally {
+    setIsGraphLoading(false); // Hide loader in the button
+  }
+};
+
+const prepareGraphData = () => {
+  if (!sensitivityData) return null;
+
+  const labels = [];
+  const tariffData = [];
+  const finalCostData = [];
+  const technologyCapacityData = [];
+
+  Object.entries(sensitivityData).forEach(([combination, reReplacements]) => {
+    Object.entries(reReplacements).forEach(([reReplacement, data]) => {
+      if (typeof data !== "string") {
+        labels.push(reReplacement); // Add reReplacement (x-axis)
+
+        // Add y-axis values
+        tariffData.push(data["Per Unit Cost"]);
+        finalCostData.push(data["Final Cost"]);
+        technologyCapacityData.push(
+          data["Optimal Solar Capacity (MW)"] +
+          data["Optimal Wind Capacity (MW)"] +
+          data["Optimal Battery Capacity (MW)"]
+        );
+      }
+    });
+  });
+
+  return {
+    labels, // X-axis values (reReplacements)
+    datasets: [
+      {
+        label: "Tariff (INR/KWh)",
+        data: tariffData,
+        borderColor: "#FF5733",
+        backgroundColor: "rgba(255, 87, 51, 0.2)",
+        borderWidth: 2,
+        fill: true,
+      },
+      {
+        label: "Final Cost (INR)",
+        data: finalCostData,
+        borderColor: "#337AFF",
+        backgroundColor: "rgba(51, 122, 255, 0.2)",
+        borderWidth: 2,
+        fill: true,
+      },
+      {
+        label: "Technology Capacity (MW)",
+        data: technologyCapacityData,
+        borderColor: "#4CAF50",
+        backgroundColor: "rgba(76, 175, 80, 0.2)",
+        borderWidth: 2,
+        fill: true,
+      },
+    ],
+  };
+};
+
+console.log(sensitivityData, "sensitivityData");
+
+
+const graphOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: (context) => {
+          const value = context.raw;
+          const reReplacement = context.label;
+          if (value === null) {
+            return `${reReplacement}: Demand cannot be met`;
+          }
+          return `${context.dataset.label}: ${value}`;
+        },
+      },
+    },
+    legend: {
+      position: "bottom",
+    },
+  },
+  scales: {
+    x: {
+      title: {
+        display: true,
+        text: "RE Replacement (%)",
+      },
+    },
+    y: {
+      title: {
+        display: true,
+        text: "Values",
+      },
+      beginAtZero: true,
+    },
+  },
+};
+
+const handleGraphModalClose = () => {
+  setIsGraphModalVisible(false); // Close the modal
+};
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
     if (
@@ -71,6 +200,7 @@ const handleSensitivity = () => {
       setDataSource([]);
       return;
     }
+console.log('sensitivity data', sensitivityData);
 
 
     // useEffect(() => {
@@ -280,7 +410,7 @@ if(dataSource?.length<=0) {
     // console.log(combinationData);
 
     fetchPatterns();
-    loadCombinations();
+    // loadCombinations();
   }, [dispatch, selectedDemandId]);
 
   // console.log(combinationData, "combinationData");
@@ -526,7 +656,7 @@ if(dataSource?.length<=0) {
           disabled={!combinationData}
           onClick={handleSensitivity}
         >
-          See Graph
+          {isGraphLoading ? <Spin /> : "See Graph"}
         </Button>
       ),
     },
@@ -776,6 +906,42 @@ if(dataSource?.length<=0) {
             )}
           </Card>
         </Col>
+
+        <Modal
+          title="Sensitivity Analysis Graph"
+          visible={isGraphModalVisible}
+          onCancel={handleGraphModalClose}
+          footer={null}
+          width="80%"
+        >
+          {sensitivityData ? (
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "400px",
+                margin: "0 auto",
+              }}
+            >
+              <Line data={prepareGraphData()} options={graphOptions} />
+            </div>
+          ) : (
+            <div
+              style={{
+                padding: "20px",
+                fontSize: "18px",
+                fontWeight: "bold",
+                backgroundColor: "#f8d7da",
+                borderRadius: "8px",
+                border: "1px solid #f5c6cb",
+                color: "#721c24",
+                textAlign: "center",
+              }}
+            >
+              No sensitivity data available. Please fetch data to view the graph.
+            </div>
+          )}
+        </Modal>
 
         {isIPPModalVisible && (
           <IPPModal

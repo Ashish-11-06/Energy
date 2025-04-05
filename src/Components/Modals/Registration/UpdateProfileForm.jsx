@@ -13,7 +13,7 @@ import {
   message,
   Typography,
   Progress,
-  Tooltip,
+  Tooltip,                                                                                                                                               Modal,
 } from "antd";
 import * as XLSX from "xlsx";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
@@ -45,7 +45,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
   const [solarFile, setSolarFile] = useState("");
   const [windFile, setWindFile] = useState("");
   const continueButtonRef = useRef(false); // Ref to track the state of the "Continue" button
-
+const [warningModal, setWarningModal] = useState(false); // State to control the warning modal
   useEffect(() => {
     if (user.solar_template_downloaded) {
       setIsTemplateDownloaded(true);
@@ -144,6 +144,11 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
     }
   }, [lastUploadedFile]);
 
+const handleCloseWarningModal = () => {
+    setWarningModal(false);
+    oncancel();
+  };
+
   const isUploadButtonDisabled =
     (project_type === "solar" && !solar_template_downloaded) ||
     (project_type === "wind" && !wind_template_downloaded);
@@ -166,6 +171,12 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
 
     try {
       const response = await dispatch(updateProject(updatedValues)).unwrap();
+      console.log('res',response);
+      if(response.message !== null ) {
+        message.warning(response.message || "Please fill all the details and upload the file in given format");
+        setWarningModal(true);
+        return;
+      }
       message.success("Form submitted successfully!");
       form.resetFields();
       setFileData(null);
@@ -457,6 +468,19 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
           </Form.Item>
         </Col>
       </Row>
+
+      <Modal open={warningModal} onCancel={() => setWarningModal(false)} footer={null}>
+        <Title level={4}>Warning</Title>
+        <Text type="danger">
+          Please fill all the details and upload the file in the given format.
+        </Text>
+        <br />
+        <Button onClick={handleCloseWarningModal}>Proceed</Button>
+        <Button type="primary" onClick={() => setWarningModal(false)} style={{ marginTop: "16px",marginLeft: "10px" }}>
+          Resubmit
+        </Button>
+
+      </Modal>
     </Form>
   );
 };

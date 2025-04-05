@@ -82,19 +82,19 @@ const MonthAheadG = () => {
           setTableData([
             {
               key: '1',
-              status: 'Highest',
+              status: 'Highest Forecasted Value',
               mcp: responseData.overall_stats?.mcp_prediction?.highest ?? 0,
               mcv: responseData.overall_stats?.mcv_prediction?.highest ?? 0,
             },
             {
               key: '2',
-              status: 'Lowest',
+              status: 'Lowest Forecasted Value',
               mcp: responseData.overall_stats?.mcp_prediction?.lowest ?? 0,
               mcv: responseData.overall_stats?.mcv_prediction?.lowest ?? 0,
             },
             {
               key: '3',
-              status: 'Average',
+              status: 'Average Forecasted Value',
               mcp: responseData.overall_stats?.mcp_prediction?.average ?? 0,
               mcv: responseData.overall_stats?.mcv_prediction?.average ?? 0,
             },
@@ -187,6 +187,7 @@ const MonthAheadG = () => {
       title: 'Details',
       dataIndex: 'status',
       key: 'status',
+      width: 200,
     },
     {
       title: 'MCP (INR/MWh)',
@@ -201,8 +202,8 @@ const MonthAheadG = () => {
           dataIndex: 'mcpDate',
           key: 'mcpDate',
           render: (text, record) => {
-            if (record.status === 'Highest') return mcpHighestDate;
-            if (record.status === 'Lowest') return mcpLowestDate;
+            if (record.status === 'Highest Forecasted Value') return mcpHighestDate;
+            if (record.status === 'Lowest Forecasted Value') return mcpLowestDate;
             return '-';
           },
         },
@@ -221,8 +222,8 @@ const MonthAheadG = () => {
           dataIndex: 'mcvDate',
           key: 'mcvDate',
           render: (text, record) => {
-            if (record.status === 'Highest') return mcvHighestDate;
-            if (record.status === 'Lowest') return mcvLowestDate;
+            if (record.status === 'Highest Forecasted Value') return mcvHighestDate;
+            if (record.status === 'Lowest Forecasted Value') return mcvLowestDate;
             return '-';
           },
         },
@@ -245,7 +246,7 @@ const MonthAheadG = () => {
         Market Forecast - Month Ahead <span style={{fontSize:'20px'}}>({startDateString} - {endDateString})</span>
       </h1>     
       <Card style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff', width: '100%' }}> {/* Updated shadow and card background color */}
-        <Table columns={columns} dataSource={tableData} pagination={false} bordered />
+        <Table columns={columns}  dataSource={tableData} pagination={false} bordered />
       </Card>
       <div style={{ padding: '20px', width: '100%' }}>
         <Row justify="space-between">

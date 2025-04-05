@@ -79,21 +79,24 @@ const [mcvLowestDate,setMcvLowestDate]=useState('');
           setTableData([
             {
               key: '1',
-              status: 'Highest',
+              status: 'Highest Forecasted Value',
               mcp: responseData.overall_stats?.mcp_prediction?.highest ?? 0,
               mcv: responseData.overall_stats?.mcv_prediction?.highest ?? 0,
+            
             },
             {
               key: '2',
-              status: 'Lowest',
+              status: 'Lowest Forecasted Value',
               mcp: responseData.overall_stats?.mcp_prediction?.lowest ?? 0,
               mcv: responseData.overall_stats?.mcv_prediction?.lowest ?? 0,
+             
             },
             {
               key: '3',
-              status: 'Average',
+              status: 'Average Forecasted Value',
               mcp: responseData.overall_stats?.mcp_prediction?.average ?? 0,
               mcv: responseData.overall_stats?.mcv_prediction?.average ?? 0,
+             
             },
           ]);
 

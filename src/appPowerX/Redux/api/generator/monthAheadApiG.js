@@ -11,10 +11,12 @@ const monthAheadApi = {
 //     return axiosInstance.get(`/tableMonthData`); 
 //   },
   addTableMonthData: (data) => {
+    console.log("data in api", data); // Log the data being sent
+    
     return axiosInstance.post(`/month-ahead-generation`, data); 
   },
-  getUpdatedTableMonthData: () => {
-    return axiosInstance.get(`/month-ahead-generation/3`);
+  getUpdatedTableMonthData: (id) => {
+    return axiosInstance.get(`/month-ahead-generation/${id}`);
   },
 };
 
