@@ -82,7 +82,7 @@ const handleSensitivity = async () => {
     const res = await dispatch(fetchSensitivity(data)).unwrap();
     console.log("res", res);
     setSensitivityData(res);
-    setIsGraphModalVisible(true); // Show the modal after fetching data
+    // setIsGraphModalVisible(true); // Show the modal after fetching data
   } catch (error) {
     console.error("Error fetching sensitivity data:", error);
     message.error("Failed to fetch sensitivity data.");
@@ -97,20 +97,20 @@ const prepareGraphData = () => {
   const labels = [];
   const tariffData = [];
   const finalCostData = [];
-  const technologyCapacityData = [];
+  const technologyCombinationData = []; // Store for tooltips
 
   Object.entries(sensitivityData).forEach(([combination, reReplacements]) => {
     Object.entries(reReplacements).forEach(([reReplacement, data]) => {
       if (typeof data !== "string") {
-        labels.push(reReplacement); // Add reReplacement (x-axis)
+        labels.push(reReplacement); // X-axis labels
 
-        // Add y-axis values
+        // Y-axis datasets
         tariffData.push(data["Per Unit Cost"]);
         finalCostData.push(data["Final Cost"]);
-        technologyCapacityData.push(
-          data["Optimal Solar Capacity (MW)"] +
-          data["Optimal Wind Capacity (MW)"] +
-          data["Optimal Battery Capacity (MW)"]
+
+        // Store technology combination for tooltips
+        technologyCombinationData.push(
+          `Solar: ${data["Optimal Solar Capacity (MW)"]} MW, Wind: ${data["Optimal Wind Capacity (MW)"]} MW, Battery: ${data["Optimal Battery Capacity (MW)"]} MW`
         );
       }
     });
@@ -135,20 +135,12 @@ const prepareGraphData = () => {
         borderWidth: 2,
         fill: true,
       },
-      {
-        label: "Technology Capacity (MW)",
-        data: technologyCapacityData,
-        borderColor: "#4CAF50",
-        backgroundColor: "rgba(76, 175, 80, 0.2)",
-        borderWidth: 2,
-        fill: true,
-      },
     ],
+    technologyCombinationData, // Pass separately for tooltips
   };
 };
 
 console.log(sensitivityData, "sensitivityData");
-
 
 const graphOptions = {
   responsive: true,
@@ -157,12 +149,17 @@ const graphOptions = {
     tooltip: {
       callbacks: {
         label: (context) => {
-          const value = context.raw;
-          const reReplacement = context.label;
-          if (value === null) {
-            return `${reReplacement}: Demand cannot be met`;
+          const index = context.dataIndex;
+          const techData = prepareGraphData().technologyCombinationData[index];
+
+          if (context.raw === null) {
+            return `${context.label}: Demand cannot be met`;
           }
-          return `${context.dataset.label}: ${value}`;
+
+          return [
+            `${context.dataset.label}: ${context.raw}`,
+            techData, // Show technology combination in tooltip
+          ];
         },
       },
     },
@@ -379,6 +376,7 @@ if(dataSource?.length<=0) {
             formatAndSetCombinations(response);
             setIsTableLoading(false);
             setFetchingCombinations(false);
+            handleSensitivity(); // Call handleSensitivity to fetch sensitivity data
             // Scroll to the bottom of the page
             window.scrollTo({
               top: document.body.scrollHeight,
@@ -453,6 +451,10 @@ if(dataSource?.length<=0) {
       // xhr.send();
     }
   }, [isTableLoading]);
+
+const handleSensitivityClick = () => {
+  setIsGraphModalVisible(true); // Show the modal
+}
 
   const handleRowClick = (record) => {
     setSelectedRow(record);
@@ -651,13 +653,29 @@ if(dataSource?.length<=0) {
       title: "Sensitivity",
       key: "sensitivity",
       render: () => (
-        <Button
-          type="primary"
-          disabled={!combinationData}
-          onClick={handleSensitivity}
-        >
-          {isGraphLoading ? <Spin /> : "See Graph"}
-        </Button>
+        <Tooltip 
+  title="Please wait while we optimize the model for different RE replacements." 
+  disableHoverListener={!isGraphLoading && combinationData} // Disable tooltip when button is enabled
+>
+  <Button
+    type="primary"
+    disabled={!combinationData || isGraphLoading} // Button remains disabled while loading or if data is missing
+    onClick={handleSensitivityClick}
+  >
+    {isGraphLoading ? (
+      <>
+        <Spin size="small" style={{ marginRight: 8 }} />
+        Sensitivity
+      </>
+    ) : (
+      "Sensitivity"
+    )}
+  </Button>
+</Tooltip>
+
+      
+      
+      
       ),
     },
   ];
