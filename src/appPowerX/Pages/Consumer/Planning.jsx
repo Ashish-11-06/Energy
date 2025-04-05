@@ -253,7 +253,9 @@ const Planning = () => {
   };
 
   const columns = [
-    { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 },
+    { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 ,
+       render: (text) => dayjs(text).format('DD-MM-YYYY')
+    },
     { 
       title: 'Demand (MWh)', 
       dataIndex: 'demand', 
@@ -268,7 +270,32 @@ const Planning = () => {
       ),
     },
     { title: 'Technology & Price (INR/MWh)', dataIndex: 'technology', key: 'technology' },
-    { title: 'Requirement Details', dataIndex: 'requirements', key: 'requirements' },
+    // { title: 'Requirement Details', dataIndex: 'requirements', key: 'requirements' },
+    {
+      title: 'Requirement Details',
+      children: [
+        {
+          title: 'State',
+          dataIndex: 'state',
+          key: 'state',
+        },
+        {
+          title: 'Industry',
+          dataIndex: 'industry',
+          key: 'industry',
+        },
+        {
+          title: 'Contracted Demand (MWh)',
+          dataIndex: 'contracted_demand',
+          key: 'contracted_demand',
+        },
+        // {
+        //   title: 'Available Capacity (MWh)',
+        //   dataIndex: 'available_capacity',
+        //   key: 'available_capacity',
+        // },
+      ],
+    },
     {
       title: 'Action', 
       dataIndex: 'action', 
@@ -319,10 +346,17 @@ const Planning = () => {
 
   const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
     const requirementDetails = consumerRequirement.find(req => req.id === item.requirement);
+    console.log(requirementDetails);
+    console.log(item);
+    
+    
     return {
       key: item.requirement,
       date: item.date,
       demand: item.demand,
+      state: requirementDetails ? requirementDetails.state : 'N/A',
+      industry: requirementDetails ? requirementDetails.industry : 'N/A',
+      contracted_demand: requirementDetails ? `${requirementDetails.contracted_demand} ` : 'N/A',
       technology: `${item.price?.Solar ? `Solar: ${item.price.Solar}` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `Non-Solar: ${item.price["Non-Solar"]}` : ''}`,
       price: `${item.price?.Solar ? `${item.price.Solar} INR (Solar)` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `${item.price["Non-Solar"]} INR (Non-Solar)` : ''}`,
       requirements: requirementDetails ? `State: ${requirementDetails.state}, Industry: ${requirementDetails.industry}, Contracted Demand: ${requirementDetails.contracted_demand} MWh, Consumption Unit: ${requirementDetails.consumption_unit}` : 'N/A'
