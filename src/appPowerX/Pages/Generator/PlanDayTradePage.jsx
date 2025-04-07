@@ -113,7 +113,7 @@ const PlanYourTradePage = () => {
           console.log("res", res);
           setIsModalVisible(false);
           message.success(res.message || "Data submitted successfully!");
-          navigate("/px/generator/trading");
+          navigate("/px/generator/track-status");
         } catch (error) {
           console.log(error);
         }

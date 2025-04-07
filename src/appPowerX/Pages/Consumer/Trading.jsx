@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Card, Statistic, Button, Row, Col, Select } from 'antd';
+import { Card, Statistic, Button, Row, Col, Select, DatePicker } from 'antd';
 import 'antd/dist/reset.css'; // Import Ant Design styles
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
@@ -8,6 +8,8 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { fetchTradingData } from '../../Redux/slices/consumer/tradingSlice';
+import dayjs from "dayjs";
+
 // import './Trading.css';
 // Register Chart.js components and plugins
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale, zoomPlugin);
@@ -24,6 +26,10 @@ const Trading = () => {
     plan: [
       2000, 5000, 4000, 2000, 1300, 4500, 3200, 3800, 4100, 2900, 3050, 2700, 3300, 2950, 4100, 4200, 4300, 3000, 2850, 3100, 2800, 3250, 3600, 4000, 3800, 3400, 3900, 4050, 3850, 3950, 4100, 4500, 4700, 4900, 2000, 5000, 4000, 2000, 1300, 4500, 3200, 3800, 4100, 2900, 3050, 2700, 3300, 2950, 4100, 4200, 4300, 3000, 2850, 3100, 2800, 3250, 3600, 4000, 3800, 3400, 3900, 4050, 3850, 3950, 4100, 4500, 4700, 4900, 2000, 5000, 4000, 2000, 1300, 4500, 3200, 3800, 4100, 2900, 3050, 2700, 3300, 2950, 4100, 4200, 4300, 3000, 2850, 3100, 2800, 3250, 3600, 4000, 3800, 3400, 3900, 4050
     ]
+  };
+
+ const disabledDate = (current) => {
+    return current && current > dayjs().endOf("day"); // Disables tomorrow and future dates
   };
 
   useEffect(() => {
@@ -135,7 +141,13 @@ const Trading = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-       
+       <Row justify="end" align="middle" style={{ width: "95%",marginBottom:'20px' }}>
+      <Col style={{fontWeight:600}}>
+      Select Date:
+        {/* <p style={{fontWeight:600}}>Select Date:</p> */}
+        <DatePicker disabledDate={disabledDate} style={{ marginLeft: 10, zIndex: 1000 }} />
+      </Col>
+    </Row>
       <Row gutter={[16, 16]} style={{marginTop:'30px',marginBottom:'20px'}}>
         {/* Total Section */}
         <Col span={6}>
@@ -179,7 +191,7 @@ const Trading = () => {
         </Col>
       </Row>
       <Row>
-        <Col span={8}>
+        {/* <Col span={8}>
  <label htmlFor="" style={{ marginTop: "20px",marginRight:'10px' }}>Select Day</label>
       <Select
         value={day} // Controlled component
@@ -192,7 +204,7 @@ const Trading = () => {
         <Select.Option value="currentDay">Current Day</Select.Option>
         <Select.Option value="pastDay">Past Day</Select.Option>
       </Select>
-      </Col>
+      </Col> */}
       
       </Row>
       <Card style={{ marginTop: '20px',height:'400px' }}>

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Card, Statistic, Button, Row, Col } from "antd";
+import { Card, Statistic, Button, Row, Col, DatePicker } from "antd";
 import "antd/dist/reset.css"; // Import Ant Design styles
 import { Line } from "react-chartjs-2";
 import {
@@ -18,6 +18,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchTradingData } from "../../Redux/slices/consumer/tradingSlice";
 import './TradingG.css';
+import dayjs from "dayjs";
+
 // Register Chart.js components and plugins
 ChartJS.register(
   CategoryScale,
@@ -71,6 +73,10 @@ const Trading = () => {
 
     fetchData(); // Call the async function
   }, [dispatch]);
+
+  const disabledDate = (current) => {
+    return current && current > dayjs().endOf("day"); // Disables tomorrow and future dates
+  };
 
   const data = {
     labels: Array.from({ length: 96 }, (_, i) => i + 1), // Updated X-axis labels
@@ -166,8 +172,16 @@ const Trading = () => {
 
   return (
     <div style={{ padding: "20px",marginTop:'30px' }}>
+      <Row justify="end" align="middle" style={{ width: "95%",marginBottom:'20px' }}>
+      <Col style={{fontWeight:600}}>
+      Select Date:
+        {/* <p style={{fontWeight:600}}>Select Date:</p> */}
+        <DatePicker disabledDate={disabledDate} style={{ marginLeft: 10, zIndex: 1000 }} />
+      </Col>
+    </Row>
       <Row gutter={[16, 16]}>
         {/* Total Section */}
+
         <Col span={6}>
           <Card
             style={{
