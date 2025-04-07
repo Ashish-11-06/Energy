@@ -179,18 +179,9 @@ const PlanYourTradePage = () => {
   }, [user_id, dispatch]);
 
   const handleStateChange = (value) => {
-    setSelectedState(value);
-    console.log("Selected State:", value);
-    console.log("Selected Portfolio ID:", selectedPortfolioId);
-    
-
-    // Find the portfolio ID of the selected state
-    const selectedPortfolio = generatorPortfolio.find(
-      (item) => item.state === value
-    );
-    console.log("Selected Portfolio ID:", selectedPortfolio.id);
-
-    setSelectedPortfolioId(selectedPortfolio ? selectedPortfolio.id : null);
+    setSelectedPortfolioId(value); // Update selectedPortfolioId directly
+    const selectedPortfolio = generatorPortfolio.find((item) => item.id === value);
+    console.log("Selected Portfolio:", selectedPortfolio);
   };
 
   useEffect(() => {
@@ -247,8 +238,11 @@ const PlanYourTradePage = () => {
   //   }
   // };
 
+const handleFileUploadModal = () => {
+  setUploadModal(true);
+}
   const handleFileUpload = (file) => {
-    setUploadModal(true);
+    // setUploadModal(true);
     const isExcel =
       file.type ===
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -386,18 +380,20 @@ const PlanYourTradePage = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Plan Your Trade (96 time blocks)</h1>
+      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      Plan Your Trade (96 time blocks)
+      </h1>
       <Col span={24}>
         <Form.Item label="Select Portfolio">
           <Select
-            value={selectedState || undefined} // Ensures placeholder is visible when nothing is selected
+            value={selectedPortfolioId || undefined} // Ensures placeholder is visible when nothing is selected
             onChange={handleStateChange}
             style={{ width: "70%", borderColor: "#669800" }}
             placeholder="Select Portfolio" // Placeholder text
           >
             {Array.isArray(generatorPortfolio) &&
               generatorPortfolio.map((item) => (
-                <Select.Option key={item.id} value={item.state}>
+                <Select.Option key={item.id} value={item.id}>
                   {`${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
                 </Select.Option>
               ))}
@@ -473,7 +469,7 @@ const PlanYourTradePage = () => {
               </Col>
               <Col>
                 <Tooltip title="Upload a bulk file!" placement="bottom">
-                  <Button icon={<UploadOutlined />} onClick={handleFileUpload}>
+                  <Button icon={<UploadOutlined />} onClick={handleFileUploadModal}>
                     Upload File
                   </Button>
                   {/* <Upload beforeUpload={handleFileUpload} showUploadList={false}>
