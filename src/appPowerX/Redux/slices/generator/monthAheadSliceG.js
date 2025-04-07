@@ -53,15 +53,27 @@ export const addTableMonthData = createAsyncThunk(
   "monthAheadData/addTableMonthData",
   async (newData, { rejectWithValue }) => {
     try {
+      console.log("Data in slice:", newData); // Log the data being sent
+      
       const response = await monthAheadApi.addTableMonthData(newData);
-      if (response.status === 201 || response.status === 200) {
-        // Fetch the updated data
-        const updatedResponse = await monthAheadApi.getUpdatedTableMonthData();
-        if (updatedResponse.status === 200 && updatedResponse.data) {
-          return updatedResponse.data;
-        }
-        throw new Error("Failed to fetch updated data");
+      // console.log("Response:", response); // Log the response status for debugging
+      // console.log("Response from addTableMonthData:", response.data); // Log the response for debugging
+      
+      if(response.data) {
+        return response.data; // Assuming the API returns the created data
       }
+
+
+      // if (response.status === 201 || response.status === 200 || response.data) {
+      //   // Fetch the updated data
+      //   const updatedResponse = await monthAheadApi.getUpdatedTableMonthData({id:newData.id});
+      //   console.log("Updated response:", updatedResponse); // Log the updated response for debugging
+        
+      //   if (updatedResponse.status === 200 && updatedResponse.data) {
+      //     return updatedResponse.data;
+      //   }
+      //   throw new Error("Failed to fetch updated data");
+      // }
       throw new Error("Invalid response from server");
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);

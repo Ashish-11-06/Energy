@@ -41,6 +41,7 @@ import trial from "../../assets/trial.png";
 import powerX from "../../assets/powerX.png";
 import advice from "../../assets/advice.png";
 import consumption from "../../assets/consumption.png";
+import invoice from "../../assets/invoice.png";
 
 
 const { Title, Text } = Typography;
@@ -83,6 +84,7 @@ const SubscriptionPlans = () => {
   const user_category=user.user_category;
   const temp = user_category === 'Consumer' ? 'IPP' : 'Consumer';
   const req=user_category === 'Consumer' ? 'Requirement' : 'Portfolio';
+  const reque=user_category === 'Consumer' ? 'Requirement' : 'Demand';
   console.log(temp);
   
   
@@ -428,7 +430,7 @@ const companyName=userData[0]?.company;
                         }}
                       >
                         <img
-                          src={req}
+                          src={invoice}
                           alt=""
                           style={{
                             height: "15px",
@@ -436,7 +438,7 @@ const companyName=userData[0]?.company;
                             marginRight: "10px",
                           }}
                         />{" "}
-                        Requirements +
+                      {reque}
                       </li>
                       <li
                         style={{
@@ -568,7 +570,7 @@ const companyName=userData[0]?.company;
                         }}
                       >
                         <img
-                          src={trial}
+                          src={transaction}
                           alt=""
                           style={{
                             width: "20px",

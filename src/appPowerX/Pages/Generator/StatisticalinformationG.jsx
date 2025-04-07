@@ -237,7 +237,6 @@ var technology ='';
         onChange={handleForecastChange}
       >
         <Option value="currentDay">Current Day</Option>
-        <Option value="past15Days">Past 15 Days</Option>
         <Option value="past30Days">Past 30 Days</Option>
       </Select>
 

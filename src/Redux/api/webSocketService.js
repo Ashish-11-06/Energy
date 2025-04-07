@@ -1,6 +1,6 @@
 let socket = null; // Explicitly initialize socket as null
 
-const SOCKET_URL = 'ws://192.168.1.42:8000';
+const SOCKET_URL = 'ws://192.168.1.36:8000';
 const SOCKET_PATH = '/api/energy/ws/test-negotiation/';
 const FULL_URL = SOCKET_URL + SOCKET_PATH;
 

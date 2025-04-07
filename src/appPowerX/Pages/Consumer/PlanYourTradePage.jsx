@@ -446,10 +446,10 @@ const handleTableShow = () => {
         <div style={{ marginTop: "15px" }}>
           {selectedTechnology === "Solar" && (
             <div>
-              <label style={{ fontWeight: "bold" }}>Enter Solar Price (INR/kWh):</label>
+              <label style={{ fontWeight: "bold" }}>Enter Solar Price (INR/MWh):</label>
               <Input
                 type="number"
-                placeholder="Enter solar price in INR/kWh"
+                placeholder="Enter solar price in INR/MWh"
                 value={price["Solar"] || ""}
                 min={0}
                 onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
@@ -463,7 +463,7 @@ const handleTableShow = () => {
               <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price (INR/kWh):</label>
               <Input
                 type="number"
-                placeholder="Enter non-solar price in INR"
+                placeholder="Enter non-solar price in INR/MWh"
                 value={price["Non-Solar"] || ""}
                 min={0}
                 onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
@@ -497,7 +497,7 @@ const handleTableShow = () => {
         </ol>
         <p>Thank you!</p>
       </Modal>
-      <Modal title="Select Technology"
+      <Modal title="Select Technologyyyyy"
         open={uploadModal}
        
         onCancel={() => setUploadModal(false)} 

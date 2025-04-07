@@ -95,7 +95,8 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
       }
     } catch (error) {
       console.error("❌ Error:", error);
-      message.error(error.message || "Invalide CIN");
+      message.error(error.message);
+      // message.error(error.message || "Invalide CIN");
     } finally {
       setLoading(false);
     }

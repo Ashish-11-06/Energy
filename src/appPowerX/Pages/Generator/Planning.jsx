@@ -9,7 +9,9 @@ import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice
 import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
-import Calendar from 'react-calendar';
+// import Calendar from 'react-calendar';
+import { Calendar as AntdCalendar } from 'antd'; // Import Ant Design Calendar
+
 import 'react-calendar/dist/Calendar.css';
 import './Planning.css';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
@@ -43,6 +45,7 @@ const Planning = () => {
  const [selectedInterval, setSelectedInterval] = useState(null); // Add state for selected interval
  const [startDate, setStartDate] = useState(null); // Add state for start date
  const [endDate, setEndDate] = useState(null); // Add state for end date
+   const [selectedPortfolioId, setSelectedPortfolioId] = useState(null);
  
   useEffect(() => {
     const fetchData = async () => {
@@ -81,7 +84,8 @@ const Planning = () => {
 
     fetchData();
   }, [user_id, dispatch]);
-
+// console.log(tableDemandData);
+// console.log(selectedPortfolio);
   const getListData = (date) => {
     const dateStr = dayjs(date).format('YYYY-MM-DD');
     return tableDemandData.filter(item => item.date === dateStr);
@@ -145,12 +149,19 @@ const Planning = () => {
     setIsInputModalVisible(true); // Show input modal when button is clicked
   };
 
-  const handleStateChange = (value) => {
-    const selectedRequirement = generatorPortfolio.find(item => item.id === value);
-    setSelectedRequirementId(selectedRequirement ? selectedRequirement.id : null);
-    setSelectedPortfolio(selectedRequirement);
-    setSelectedState(selectedRequirement ? selectedRequirement.state : "");
-  };
+// console.log(selectedTechnology);
+
+
+const handleStateChange = (value) => {
+  setSelectedPortfolioId(value);
+  const selectedItem = generatorPortfolio.find(item => item.id === value);
+
+  if (selectedItem) {
+    setSelectedPortfolio(selectedItem); // Update state with the selected portfolio details
+    setSelectedTechnology(selectedItem.type === 'Solar' ? 'Solar' : 'non_solar'); // Set technology based on type
+  }
+};
+
 
   const handleDateIntervalChange = (value) => {
     setSelectedInterval(value);
@@ -166,42 +177,71 @@ const Planning = () => {
 
   const handleAddData = () => {
     setIsInputModalVisible(false); // Hide input modal
+    console.log(selectedPortfolio);
+    
+    if (selectedPortfolio?.type === 'Solar') {
+      setSelectedTechnology('Solar'); // Pre-select Solar if portfolio type is Solar
+    } else {
+      setSelectedTechnology('non_solar'); // Pre-select Non Solar otherwise
+    }
     setIsModalVisible(true); // Show technology modal
   };
+  // console.log("Selected Portfolio ID:", selectedPortfolioId); // Debugging log
 
   const handleModalOk = async () => {
-    // console.log('clicked')
+    // Debugging logs to check state values
+    // console.log("Selected Portfolio id:", selectedPortfolioId);
+    // console.log("Selected Date:", selectedDate);
+    // console.log("Demand:", demand);
+    // console.log("Price:", price);
+  
+    // if (!selectedPortfolio || !selectedDate || !demand || !price) {
+    //   message.error("Please fill all required fields before submitting.");
+    //   return;
+    // }
+  
     const formattedDate = selectedDate.format('YYYY-MM-DD'); // Format the date correctly
-    try {
-      // console.log(selectedRequirementId);
+    // console.log("Formatted Date:", formattedDate); // Debugging log
+    // console.log("Selected Technology:", selectedTechnology); // Debugging log
+    // console.log("Selected Portfolio:", selectedPortfolio); // Debugging log
+    // console.log("Selected Portfolio ID:", selectedPortfolioId); // Debugging log
+    
+    // try {
       const data = {
-        portfolio_id: selectedRequirementId,
-        portfolio_type: selectedPortfolio.type.toLowerCase(),
-        date: selectedDate ? selectedDate.format('YYYY-MM-DD') : '',
+        portfolio_id: selectedPortfolioId,
+        portfolio_type: selectedTechnology.toLowerCase(),
+        date: formattedDate,
         generation: parseFloat(demand),
-        price: parseFloat(price)
-      }
-      // console.log(data);
+        price: parseFloat(price),
+      };
+  
+      // console.log("Dispatching data:", data); // Debugging log
       const res = await dispatch(addTableMonthData(data)).unwrap();
       // console.log('Response from addTableMonthData:', res);
+      
       if (res) {
+        setIsModalVisible(false);
         message.success("Data added successfully");
         const id = user_id; // Ensure `user_id` is defined in scope
         try {
+          // console.log("Fetching planning data for ID:", id); // Debugging log
           const res = await dispatch(fetchPlanningDataG(id));
           // console.log(res.payload);
           setTableDemandData(Array.isArray(res.payload) ? res.payload : []);
         } catch (error) {
-          // console.error("Error fetching planning data:", error);
+          console.error("Error fetching planning data:", error);
         }
       }
-      setIsModalVisible(false);
-      navigate('/px/generator/planning');
-    } catch (error) {
-      // console.log(error);
-      message.error("Failed to submit data. Please try again.");
-    }
+
+      // navigate('/px/generator/trading');
+    // } catch (error) {
+    //   console.error("Error submitting data:", error);
+    //   message.error("Failed to submit data. Please try again.");
+    // }
   };
+  
+// console.log(selectedPortfolioId);
+
 
   const handleDemandClick = (record) => {
     const selectedRequirement = generatorPortfolio.find(item => item.state === record.state);
@@ -210,8 +250,14 @@ const Planning = () => {
   };
 
   const columns = [
-    { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 },
-    { title: 'Generation', dataIndex: 'generation', key: 'generation', rowSpan: 2, render: (text, record) => (
+    {
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+      rowSpan: 2,
+      render: (text) => dayjs(text).format('DD-MM-YYYY')
+    },
+    { title: 'Generation (MWh)', dataIndex: 'generation', key: 'generation', rowSpan: 2, render: (text, record) => (
         <Tooltip title="Click to view details">
           <span style={{ color: 'rgb(154, 132, 6)', cursor: 'pointer' }} onClick={() => handleDemandClick(record)}>
             {text}
@@ -219,8 +265,46 @@ const Planning = () => {
         </Tooltip>
       ),
     },
-    { title: 'Technology & Price (INR)', dataIndex: 'technology', key: 'technology' },
-    {title:'Portfolio',dataIndex:'portfolio',key:'portfolio'},
+    { title: 'Technology & Price (INR/MWh)', dataIndex: 'technology', key: 'technology' },
+
+    // {title:'Portfolio',dataIndex:'portfolio',key:'portfolio'},
+    {
+      title: 'Portfolio Details',
+      children: [
+        {
+          title: 'Technology',
+          dataIndex: 'techno',
+          key: 'techno',
+        },
+        {
+          title: 'State',
+          dataIndex: 'state', 
+          key: 'state',
+        },
+        {
+          title: 'Connectivity',
+          dataIndex: 'connectivity',
+          key: 'connectivity',
+        },
+        {
+          title: 'Available Capacity (MWh)',
+          dataIndex: 'available_capacity',
+          key: 'available_capacity',
+        },
+
+
+        // {
+        //   title: 'Date',
+        //   dataIndex: 'mcpDate',
+        //   key: 'mcpDate',
+        //   render: (text, record) => {
+        //     if (record.status === 'Highest Forecasted Value') return mcpHighestDate;
+        //     if (record.status === 'Lowest Forecasted Value') return mcpLowestDate;
+        //     return '-';
+        //   },
+        // },
+      ],
+    },
      {
           title: 'Action', 
           dataIndex: 'action', 
@@ -254,19 +338,39 @@ const Planning = () => {
           }
         }
   ];
+// console.log(tableDemandData);
 
-  const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => ({
+const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
+  const portfolioDetails = generatorPortfolio.find(req => req.id === item.object_id);
+  console.log(portfolioDetails);
+  console.log(item);
+  
+  return {
     key: item.object_id,
     date: item.date,
     generation: item.generation,
-    technology: `${item.content_type}: ${item.price} INR`,
+    technology: `${item.content_type.replace('portfolio', '')}: ${item.price} INR`,
     price: `${item.price} INR (${item.content_type})`,
-  })) : [];
+    // state: item.content_type.replace('portfolio', ''),
+    state: portfolioDetails?.state,
+    connectivity:`${portfolioDetails?.connectivity}`,
+    available_capacity: `${portfolioDetails?.available_capacity} `,
+    techno: portfolioDetails.type ,
+    portfolio: portfolioDetails 
+      ? `Technology: ${portfolioDetails.type}, State: ${portfolioDetails?.state}, Connectivity: ${portfolioDetails?.connectivity}, Available capacity: ${portfolioDetails?.available_capacity} MWh, Annual Generation Potential: ${portfolioDetails?.annual_generation_potential}` 
+      : 'N/A'
+  };
+}) : [];
 
   const handlePrevMonth = () => {
     setCurrentMonth(dayjs(currentMonth).subtract(1, 'month').toDate());
   };
 
+  const handleDateClick = (date) => {
+    setSelectedDate(date.format("YYYY-MM-DD")); // Store selected date
+    setIsModalVisible(true); // Open modal
+  };
+  
   const handleNextMonth = () => {
     const nextMonthLimit = dayjs().add(1, 'month');
     if (dayjs(currentMonth).isBefore(nextMonthLimit, 'month')) {
@@ -292,6 +396,21 @@ const Planning = () => {
           <Spin tip="Loading..." style={{ marginTop: '20px' }} />
         ) : !showTable ? (
           <Col span={24}>
+             <Form.Item label="Select Portfolio" style={{ fontSize: '24px' }}>
+          <Select
+                     value={selectedState || undefined} // Ensures placeholder is visible when nothing is selected
+                     onChange={handleStateChange}
+                     style={{ width: "70%", borderColor: "#669800" }}
+                     placeholder="Select Portfolio" // Placeholder text
+                   >
+                     {Array.isArray(generatorPortfolio) &&
+                       generatorPortfolio.map((item) => (
+                         <Select.Option key={item.id} value={item.state}>
+                           {`ID: ${item.id},${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
+                         </Select.Option>
+                       ))}
+                   </Select>
+        </Form.Item>
             <Card style={{ width: '90%', margin: 'auto', padding: '10px' }}>
               <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
                 <Button icon={<LeftOutlined />} onClick={handlePrevMonth} />
@@ -300,16 +419,20 @@ const Planning = () => {
                   <Button icon={<RightOutlined />} onClick={handleNextMonth} />
                 </Tooltip>
               </Row>
-              <Calendar
-                value={currentMonth}
-                onActiveStartDateChange={({ activeStartDate }) => setCurrentMonth(activeStartDate)}
-                tileContent={tileContent}
-                className="custom-calendar"
-              />
+              
+              <AntdCalendar
+                             value={dayjs(currentMonth)}
+                             onPanelChange={(date) => setCurrentMonth(date.toDate())}
+                             onSelect={handleDateClick}
+                             className='temp-calender'
+                             cellRender={(value) => tileContent(value)}
+                             style={{ '--cell-size': '20px'}} // Add custom CSS variable for cell size
+                           />
             </Card>
           </Col>
         ) : (
           <Col span={24}>
+           
             <Card style={{ width: '90%', margin: 'auto' }}>
               <Table dataSource={tableData} columns={columns} pagination={false} bordered />
             </Card>
@@ -324,25 +447,28 @@ const Planning = () => {
         </Button> */}
       </div>
       <Modal
-        title="Plan for More Days"
+        title="Plan for More Dayss"
         visible={isInputModalVisible}
         footer={null} // Remove default footer
         onCancel={() => setIsInputModalVisible(false)}
       >
-        <Form.Item label="Select Portfolio" style={{ fontSize: '24px' }}>
-          <Select
-            value={selectedPortfolio ? selectedPortfolio.id : undefined}
-            onChange={handleStateChange}
-            style={{ width: "100%", borderColor: "#669800" }}
-            placeholder="Select Portfolio"
-          >
-            {generatorPortfolio.map(item => (
-              <Select.Option key={item.id} value={item.id}>
-                {`${item.id}: ${item.type}`}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
+
+<Form.Item label="Select Portfolio" style={{ fontSize: '24px' }}>
+  <Select
+    value={selectedPortfolio ? selectedPortfolio.id : undefined}
+    onChange={handleStateChange}
+    style={{ width: "100%", borderColor: "#669800" }}
+    placeholder="Select Portfolio"
+  >
+    {Array.isArray(generatorPortfolio) &&
+      generatorPortfolio.map((item) => (
+        <Select.Option key={item.id} value={item.id}>
+          {`ID:${item.id}, ${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
+        </Select.Option>
+      ))}
+  </Select>
+</Form.Item>
+
         {
           !selectedInterval && (
             <Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
@@ -355,7 +481,7 @@ const Planning = () => {
             </Form.Item>
           )
         }
-        <Form.Item label="Select Date Interval" style={{ fontSize: '24px' }}>
+        {/* <Form.Item label="Select Date Interval" style={{ fontSize: '24px' }}>
           <Select
             value={selectedInterval || undefined}
             onChange={handleDateIntervalChange}
@@ -365,7 +491,7 @@ const Planning = () => {
             <Select.Option key="next15days" value="next15days">Next 15 Days</Select.Option>
             <Select.Option key="next30days" value="next30days">Next 30 Days</Select.Option>
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         {(selectedInterval === 'next15days' || selectedInterval === 'next30days') && (
           <>
             <Form.Item label="Select Start Date" style={{ fontSize: '16px', fontWeight: '600' }}>
@@ -422,17 +548,17 @@ const Planning = () => {
         {/* Radio Group */}
         <Radio.Group onChange={handleChange} value={selectedTechnology}>
           <Radio value="Solar">Solar</Radio>
-          <Radio value="Wind">Wind</Radio>
+          <Radio value="non_solar">Non solar</Radio>
         </Radio.Group>
 
         {/* Input field for price */}
         <div style={{ marginTop: "15px" }}>
           {selectedTechnology && (
             <div>
-              <label style={{ fontWeight: "bold" }}>Enter {selectedTechnology} Price:</label>
+              <label style={{ fontWeight: "bold" }}>Enter {selectedTechnology} Price (INR/MWh):</label>
               <Input
                 type="number"
-                placeholder={`Enter ${selectedTechnology} price in INR`}
+                placeholder={`Enter ${selectedTechnology} price in INR/MWh`}
                 value={price}
                 min={0}
                 onChange={(e) => setPrice(e.target.value)}
