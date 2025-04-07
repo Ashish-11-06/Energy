@@ -331,8 +331,8 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
         </div>
         <div class="header">
             <div>
-                <h3>EXGGLOBAL</h3>
-                <p>602, Avior, Nirmal Galaxy, Mulund (W),<br>Mumbai - 400080, Maharashtra, India.<br>Tel: +91 (22) 6142 6099<br>GSTIN: 27AAACQ4709P1ZZ</p>
+                <h3>EXG Global Private Limited</h3>
+                <p>108 HIMALAYA PALACE, </br> 65 VIJAY BLOCK LAXMI NAGAR,</br>East Delhi, India, 110092</p>
             </div>
         </div>
 <p style="text-align: left;">Invoice Date: <strong>${

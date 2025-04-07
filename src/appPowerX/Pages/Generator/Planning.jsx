@@ -266,7 +266,45 @@ const handleStateChange = (value) => {
       ),
     },
     { title: 'Technology & Price (INR/MWh)', dataIndex: 'technology', key: 'technology' },
-    {title:'Portfolio',dataIndex:'portfolio',key:'portfolio'},
+
+    // {title:'Portfolio',dataIndex:'portfolio',key:'portfolio'},
+    {
+      title: 'Portfolio Details',
+      children: [
+        {
+          title: 'Technology',
+          dataIndex: 'techno',
+          key: 'techno',
+        },
+        {
+          title: 'State',
+          dataIndex: 'state', 
+          key: 'state',
+        },
+        {
+          title: 'Connectivity',
+          dataIndex: 'connectivity',
+          key: 'connectivity',
+        },
+        {
+          title: 'Available Capacity (MWh)',
+          dataIndex: 'available_capacity',
+          key: 'available_capacity',
+        },
+
+
+        // {
+        //   title: 'Date',
+        //   dataIndex: 'mcpDate',
+        //   key: 'mcpDate',
+        //   render: (text, record) => {
+        //     if (record.status === 'Highest Forecasted Value') return mcpHighestDate;
+        //     if (record.status === 'Lowest Forecasted Value') return mcpLowestDate;
+        //     return '-';
+        //   },
+        // },
+      ],
+    },
      {
           title: 'Action', 
           dataIndex: 'action', 
@@ -304,12 +342,20 @@ const handleStateChange = (value) => {
 
 const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
   const portfolioDetails = generatorPortfolio.find(req => req.id === item.object_id);
+  console.log(portfolioDetails);
+  console.log(item);
+  
   return {
     key: item.object_id,
     date: item.date,
     generation: item.generation,
     technology: `${item.content_type.replace('portfolio', '')}: ${item.price} INR`,
     price: `${item.price} INR (${item.content_type})`,
+    // state: item.content_type.replace('portfolio', ''),
+    state: portfolioDetails?.state,
+    connectivity:`${portfolioDetails?.connectivity}`,
+    available_capacity: `${portfolioDetails?.available_capacity} `,
+    techno: portfolioDetails.type ,
     portfolio: portfolioDetails 
       ? `Technology: ${portfolioDetails.type}, State: ${portfolioDetails?.state}, Connectivity: ${portfolioDetails?.connectivity}, Available capacity: ${portfolioDetails?.available_capacity} MWh, Annual Generation Potential: ${portfolioDetails?.annual_generation_potential}` 
       : 'N/A'

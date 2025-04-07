@@ -173,6 +173,8 @@ const companyName=userData.company;
         setIsModalVisible(false);
         message.success('Requirement added successfully!');
       }
+
+    // form.resetFields();
     } catch (error) {
       message.error('Failed to add requirement');
       setIsInfoModalVisible(false);
