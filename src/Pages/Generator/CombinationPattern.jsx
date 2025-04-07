@@ -83,6 +83,11 @@ const handleSensitivity = async () => {
     console.log("res", res);
     setSensitivityData(res);
     // setIsGraphModalVisible(true); // Show the modal after fetching data
+    if(res.error) {
+      message.error(res.error); // Display error message if any
+      setIsGraphLoading(false); // Hide loader in the button
+      return;
+    }
   } catch (error) {
     console.error("Error fetching sensitivity data:", error);
     message.error("Failed to fetch sensitivity data.");
@@ -408,7 +413,7 @@ if(dataSource?.length<=0) {
     // console.log(combinationData);
 
     fetchPatterns();
-    // loadCombinations();
+    loadCombinations();
   }, [dispatch, selectedDemandId]);
 
   // console.log(combinationData, "combinationData");
