@@ -130,6 +130,8 @@ const CombinationPatternCap = () => {
       if (combinations) {
         formatAndSetCombinations(combinations, sliderValue); // Display data passed from GeneratorInput
       }
+      console.log(state.data);
+      
       setCombinationData(state.modalData); // Store modalData for display
 
       setIsTableLoading(false); // Stop loader if data is already available
@@ -179,7 +181,7 @@ console.log('combination data',combinationData);
       }
     };
 
-    // fetchCombinations();
+    fetchCombinations();
   }, [state?.modalData]);
 
   useEffect(() => {
