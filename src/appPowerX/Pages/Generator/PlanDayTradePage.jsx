@@ -180,11 +180,16 @@ const PlanYourTradePage = () => {
 
   const handleStateChange = (value) => {
     setSelectedState(value);
+    console.log("Selected State:", value);
+    console.log("Selected Portfolio ID:", selectedPortfolioId);
+    
 
     // Find the portfolio ID of the selected state
     const selectedPortfolio = generatorPortfolio.find(
       (item) => item.state === value
     );
+    console.log("Selected Portfolio ID:", selectedPortfolio.id);
+
     setSelectedPortfolioId(selectedPortfolio ? selectedPortfolio.id : null);
   };
 

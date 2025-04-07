@@ -32,7 +32,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const [matchingConsumer, setMatchingConsumer] = useState("");
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
 // const currentPath=localStorage.getItem('currentPath');
-const notificationCount=3;
+const notificationCount=0;
 
   useEffect(() => {
     setSubscriptionRequires(subscription !== "active");

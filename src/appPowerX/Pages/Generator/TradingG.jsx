@@ -17,7 +17,7 @@ import zoomPlugin from "chartjs-plugin-zoom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchTradingData } from "../../Redux/slices/consumer/tradingSlice";
-// import './Trading.css';
+import './TradingG.css';
 // Register Chart.js components and plugins
 ChartJS.register(
   CategoryScale,
@@ -181,7 +181,7 @@ const Trading = () => {
               value={493}
               suffix="+"
               style={{ color: "white", fontWeight: "bold" }}
-              valueStyle={{ color: "white" }}
+              valueStyle={{ color: "rgb(239 255 34)" }}
               formatter={(value) => (
                 <span>
                   {value} <span style={{ fontSize: "12px" }}>MW</span>

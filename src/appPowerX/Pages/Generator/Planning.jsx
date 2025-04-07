@@ -406,7 +406,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
                      {Array.isArray(generatorPortfolio) &&
                        generatorPortfolio.map((item) => (
                          <Select.Option key={item.id} value={item.state}>
-                           {`ID: ${item.id},${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
+                           {`Technology:${item.type}, State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
                          </Select.Option>
                        ))}
                    </Select>
@@ -463,7 +463,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
     {Array.isArray(generatorPortfolio) &&
       generatorPortfolio.map((item) => (
         <Select.Option key={item.id} value={item.id}>
-          {`ID:${item.id}, ${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
+          {`Technology:${item.type}, State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
         </Select.Option>
       ))}
   </Select>

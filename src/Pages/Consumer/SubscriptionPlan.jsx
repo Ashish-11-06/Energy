@@ -253,7 +253,7 @@ const companyName=userData[0]?.company;
   const handlePayment = async () => {
     try {
       log("Selected Plan ID:", selectedPlanId);
-      const amount = selectedPlanId === selectedPlanId ? 50000 : 100000; // Adjust plan amount here
+      const amount = selectedPlanId === selectedPlanId ? 500000 : 1000000; // Adjust plan amount here
       const orderResponse = await dispatch(
         createRazorpayOrder({ amount, currency: "INR" })
       ).unwrap();
