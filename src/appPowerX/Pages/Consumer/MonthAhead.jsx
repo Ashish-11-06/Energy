@@ -114,6 +114,9 @@ const [mcvLowestDate,setMcvLowestDate]=useState('');
     fetchData();
   }, [dispatch]);
 
+// console.log(mcpHighestDate);
+
+
   const options = {
     responsive: true,
     scales: {
@@ -203,8 +206,8 @@ const [mcvLowestDate,setMcvLowestDate]=useState('');
           dataIndex: 'mcpDate',
           key: 'mcpDate',
           render: (text, record) => {
-            if (record.status === 'Highest') return mcpHighestDate;
-            if (record.status === 'Lowest') return mcpLowestDate;
+            if (record.status === 'Highest Forecasted Value') return mcpHighestDate;
+            if (record.status === 'Lowest Forecasted Value') return mcpLowestDate;
             return '-';
           },
         },
@@ -223,8 +226,8 @@ const [mcvLowestDate,setMcvLowestDate]=useState('');
           dataIndex: 'mcvDate',
           key: 'mcvDate',
           render: (text, record) => {
-            if (record.status === 'Highest') return mcvHighestDate;
-            if (record.status === 'Lowest') return mcvLowestDate;
+            if (record.status === 'Highest Forecasted Value') return mcvHighestDate;
+            if (record.status === 'Lowest Forecasted Value') return mcvLowestDate;
             return '-';
           },
         },

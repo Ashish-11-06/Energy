@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox, Radio, Upload } from 'antd';
 import 'antd/dist/reset.css';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice'; // Correct import
+import { fetchTableMonthData, uploadTableMonthDataC } from '../../Redux/slices/consumer/monthAheadSlice'; // Correct import
 import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
@@ -15,6 +15,7 @@ import { fetchPlanningData } from '../../Redux/slices/consumer/planningSlice';
 import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequirementSlice";
 import { addMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
 import { color } from 'framer-motion';
+// import { uploadTableMonthData } from '../../Redux/slices/generator/monthAheadSliceG';
 
 dayjs.locale('en');
  
@@ -243,14 +244,35 @@ const Planning = () => {
     setIsModalVisible(true); // Open modal
   };
   
-  const handleFileUpload = (file) => {
-    setUploadedFile(file.name); // Store the uploaded file name
-    return false; // Prevent default upload behavior
+  const handleFileUpload = async (file, record) => {
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+  
+      const data = {
+        requirement: record.requirementId, // Use requirementId from the record
+        file: base64File, // Use Base64 encoded file
+      };
+  console.log(data);
+  
+      try {
+        const res = await dispatch(uploadTableMonthDataC(data)); // Call the API with the updated data
+        console.log('res', res);
+        
+        if (res) {
+          message.success("File uploaded successfully");
+          const updatedData = await dispatch(fetchPlanningData(user_id)); // Fetch updated data
+          setTableDemandData(Array.isArray(updatedData.payload) ? updatedData.payload : []);
+        }
+      } catch (error) {
+        message.error("Failed to upload file. Please try again.");
+      }
+    };
+  
+    reader.readAsDataURL(file); // Read the file as a Base64 string
+    return false; // Prevent automatic upload
   };
-
-  const handleDeleteFile = () => {
-    setUploadedFile(null); // Clear the uploaded file
-  };
+  
 
   const columns = [
     { title: 'Date', dataIndex: 'date', key: 'date', rowSpan: 2 ,
@@ -272,13 +294,19 @@ const Planning = () => {
     { title: 'Technology & Price (INR/MWh)', dataIndex: 'technology', key: 'technology' },
     // { title: 'Requirement Details', dataIndex: 'requirements', key: 'requirements' },
     {
-      title: 'Requirement Details',
+      title: 'Consumption Unit Details',
       children: [
         {
           title: 'State',
           dataIndex: 'state',
           key: 'state',
         },
+        {
+          title: 'Requirement ID',
+          dataIndex: 'requirementId', 
+          key: 'requirementId',
+        },
+
         {
           title: 'Industry',
           dataIndex: 'industry',
@@ -318,24 +346,15 @@ const Planning = () => {
         // console.log("Comparing:", record.date, currentDateStr, currentTimeStr, isBeforeDeadline);
     
         return isBeforeDeadline ? (
-          <div>
-            <Upload beforeUpload={handleFileUpload} showUploadList={false}>
-              <Button type="primary">Upload Data</Button>
-            </Upload>
-            {uploadedFile && (
-              <div style={{ marginTop: '10px' }}>
-                <span>{uploadedFile}</span>
-                <Button
-                  type="link"
-                  danger
-                  onClick={handleDeleteFile}
-                  style={{ marginLeft: '10px' }}
-                >
-                  Delete
-                </Button>
-              </div>
-            )}
-          </div>
+          <Upload
+            beforeUpload={(file) => {
+              handleFileUpload(file, record);
+              return false; // Prevent automatic upload
+            }}
+            showUploadList={false}
+          >
+            <Button type="primary">Upload Data</Button>
+          </Upload>
         ) : (
           <Button disabled>Upload Data</Button>
         );
@@ -347,7 +366,7 @@ const Planning = () => {
   const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
     const requirementDetails = consumerRequirement.find(req => req.id === item.requirement);
     console.log(requirementDetails);
-    console.log(item);
+    // console.log(item);
     
     
     return {
@@ -359,10 +378,12 @@ const Planning = () => {
       contracted_demand: requirementDetails ? `${requirementDetails.contracted_demand} ` : 'N/A',
       technology: `${item.price?.Solar ? `Solar: ${item.price.Solar}` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `Non-Solar: ${item.price["Non-Solar"]}` : ''}`,
       price: `${item.price?.Solar ? `${item.price.Solar} INR (Solar)` : ''}${item.price?.Solar && item.price?.["Non-Solar"] ? ', ' : ''}${item.price?.["Non-Solar"] ? `${item.price["Non-Solar"]} INR (Non-Solar)` : ''}`,
-      requirements: requirementDetails ? `State: ${requirementDetails.state}, Industry: ${requirementDetails.industry}, Contracted Demand: ${requirementDetails.contracted_demand} MWh, Consumption Unit: ${requirementDetails.consumption_unit}` : 'N/A'
+      requirements: requirementDetails ? `State: ${requirementDetails.state}, Industry: ${requirementDetails.industry}, Contracted Demand: ${requirementDetails.contracted_demand} MWh, Consumption Unit: ${requirementDetails.consumption_unit}` : 'N/A',
+      requirementId: item.requirement // Add requirement ID for file upload
     };
   }) : [];
 
+console.log(requirementId);
 
   const handlePrevMonth = () => {
     setCurrentMonth(dayjs(currentMonth).subtract(1, 'month').toDate());

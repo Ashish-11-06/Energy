@@ -225,7 +225,7 @@ const Dashboard = () => {
       // },
       title: {
         display: true,
-        text: `Energy Demand (${formattedDate})`,
+        text: ` Energy Generation Pattern (${formattedDate})`,
 
         font: {
           size: 18,
@@ -588,9 +588,9 @@ const stateData = [
 
   return (
     <div style={{ padding: "3%" }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      {/* <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
       Energy Generation Pattern
-      </h1>
+      </h1> */}
       <Card style={{ margin: "20px" }}>
         <Typography.Title level={3} style={{textAlign:'center'}}>State wise Generation Portfolio</Typography.Title>
         {/* <Row>

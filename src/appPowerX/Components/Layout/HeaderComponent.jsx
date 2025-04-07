@@ -16,6 +16,7 @@ import "./HeaderComponent.css"; // Add custom styles for header component
 import chat from "../../../assets/need.png";
 import userImage from "../../../assets/profile.png";
 import NotificationIcon from "../../../assets/not.jpg";
+import { useSelector } from "react-redux";
 
 const { Header } = Layout;
 
@@ -23,7 +24,9 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   // console.log('cc',currentPath);
-  
+  const notificationCount = useSelector((state) => state.notifications.powerxCount);
+console.log(notificationCount);
+
   const navigate = useNavigate(); // Add useNavigate hook
   let username = ""; // Use let instead of const
   const subscriptionValidity = JSON.parse(localStorage.getItem("subscriptionPlanValidity"));
@@ -32,7 +35,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const [matchingConsumer, setMatchingConsumer] = useState("");
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
 // const currentPath=localStorage.getItem('currentPath');
-const notificationCount=0;
+// const notificationCount=0;
 
   useEffect(() => {
     setSubscriptionRequires(subscription !== "active");
