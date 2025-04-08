@@ -14,6 +14,8 @@ import {
   Tooltip,
   Collapse, // Import Collapse component
 } from "antd";
+  // Handle the DatePicker change event
+import dayjs from 'dayjs';
 import React, { useState, useEffect } from "react"; // Import useState along with React
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -88,15 +90,51 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   
   const userId = user.id;
 
-  // Handle the DatePicker change event
-  const handleDateChange = (date) => {
-    if (date) {
-      setCommencementDate(moment(date).format("YYYY-MM-DD")); // Ensure correct format
-      console.log("Selected Date:", moment(date).format("YYYY-MM-DD"));
-      const formattedDate = moment(date).format("YYYY-MM-DD");
-      console.log("Formatted Date:", formattedDate); // Log the formatted date
+
+
+  const handleDateChange = async (date) => {
+    console.log("Raw date input:", date);
+    
+    try {
+      if (date) {
+        // Create a Day.js object from the date picker's value
+        const dayjsDate = dayjs.isDayjs(date) ? date : dayjs(date);
+  
+        console.log("Dayjs date object:", dayjsDate);
+        
+        // Format it to YYYY-MM-DD string
+        const formattedDate = dayjsDate.format('YYYY-MM-DD');
+        console.log("Formatted date:", formattedDate);
+        
+        // Batch state updates
+        await Promise.all([
+          new Promise(resolve => {
+            setCommencementDate(formattedDate);
+            resolve();
+          }),
+          new Promise(resolve => {
+            setIsFieldEdited(true);
+            resolve();
+          })
+        ]);
+      } else {
+        console.log("Date cleared");
+        await new Promise(resolve => {
+          setCommencementDate(null);
+          resolve();
+        });
+      }
+    } catch (error) {
+      console.error("Error handling date change:", error);
+      // Consider adding error state or user notification
     }
   };
+
+  useEffect(() => {
+    console.log("Commencement Date:", commencementDate);
+  }
+, [commencementDate]);
+
 
   const handleChatWithExpert = () => {
     navigate("/chat-page");
@@ -410,6 +448,7 @@ console.log("Final Commencement Date:", commencementDate);
                 }
                 format="DD-MM-YYYY" // Format the date
                 // value={commencementDate} // Use moment date here
+                
                 onChange={(date) => {
                   handleDateChange(date);
                   setIsFieldEdited(true); // Mark as edited
@@ -582,7 +621,7 @@ console.log("Final Commencement Date:", commencementDate);
                 ) : (
                   <p style={{ color: "#9A8406" }}>
                     {!fromTransaction ? (
-                      <p> You have sent an offer to IPP. Please wait for their decision.</p>
+                      <p>The offer has been sent to IPP. Awaiting its response.</p>
                     ) : null}
                   </p>
                 )}
@@ -659,8 +698,7 @@ console.log("Final Commencement Date:", commencementDate);
                   </>
                 ) : (
                   <p style={{ color: "#9A8406" }}>
-                    You have sent an offer to Consumer. Please wait for their
-                    decision.
+                   You have sent an offer to the consumer. Please wait for the consumer's decision.
                   </p>
                 )}
               </>
