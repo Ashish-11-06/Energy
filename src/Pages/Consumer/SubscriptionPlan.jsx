@@ -82,9 +82,9 @@ const SubscriptionPlans = () => {
   const userData = useState(JSON.parse(localStorage.getItem("user")).user);
   const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category=user.user_category;
-  const temp = user_category === 'Consumer' ? 'IPP' : 'Consumer';
+  const temp = user_category === 'Consumer' ? 'Matching IPP' : 'Find Consumer';
   const req=user_category === 'Consumer' ? 'Requirement' : 'Portfolio';
-  const reque=user_category === 'Consumer' ? 'Requirement' : 'Demand';
+  const reque=user_category === 'Consumer' ? 'Requirement' : 'Capacity Sizing';
   console.log(temp);
   
   
@@ -416,7 +416,7 @@ const companyName=userData[0]?.company;
                         <FormOutlined
                           style={{ marginRight: "10px", color: "#669800" }}
                         />{" "}
-                        Matching {temp}
+                         {temp}
                         {/* {user_category=='Consumer' ?  (
                         <p>Matching IPP +</p>
                         ) : (<p>Matching Consumer</p>)
@@ -560,7 +560,7 @@ const companyName=userData[0]?.company;
                           style={{ marginRight: "10px", color: "#669800" }}
                         />{" "}
                         {" "}
-                      Matching {temp}
+                       {temp}
                       </li>
                       <li
                         style={{

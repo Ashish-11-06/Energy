@@ -376,7 +376,7 @@ const stateData = [
         },
         title: {
           display: true,
-          text: '96 time blocks',
+          text: 'Time (15-minute intervals)',
           font: {
             weight: 'bold',
             size: 16,

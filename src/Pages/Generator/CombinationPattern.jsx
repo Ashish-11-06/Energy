@@ -78,6 +78,11 @@ const handleSensitivity = async () => {
     combinations: combinationIds, // Send combination IDs
   };
 
+  console.log("data", data);
+  
+  console.log(combinationIds);
+  
+
   try {
     const res = await dispatch(fetchSensitivity(data)).unwrap();
     console.log("res", res);
@@ -125,7 +130,7 @@ const prepareGraphData = () => {
     labels, // X-axis values (reReplacements)
     datasets: [
       {
-        label: "Tariff (INR/KWh)",
+        label: "Tariff (INR/kWh)",
         data: tariffData,
         borderColor: "#FF5733",
         backgroundColor: "rgba(255, 87, 51, 0.2)",
@@ -414,7 +419,7 @@ if(dataSource?.length<=0) {
 
     fetchPatterns();
     loadCombinations();
-  }, [dispatch, selectedDemandId]);
+  }, []);
 
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
@@ -836,7 +841,7 @@ const handleSensitivityClick = () => {
                     min={0}
                     max={100}
                     marks={marks}
-                    style={{ width: "80%", marginLeft: "5%" }}
+                    style={{ width: "80%", marginLeft: "5%", zIndex:0 }}
                     onChange={handleSliderChange}
                     value={`${sliderValue}`}
                     tooltip={{

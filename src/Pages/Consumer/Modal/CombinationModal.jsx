@@ -6,7 +6,7 @@ import { Modal, Button, Row, Col, Card, Typography } from "antd";
 const { Text } = Typography;
 
 const CombinationModal = ({ open, onCancel, combinationContent }) => {
-  // console.log(combinationContent?.state);
+  console.log(combinationContent);
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 //   console.log(user_category);

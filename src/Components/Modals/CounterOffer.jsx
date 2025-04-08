@@ -12,6 +12,7 @@ import {
   InputNumber,
   message,
   Tooltip,
+  Collapse, // Import Collapse component
 } from "antd";
 import React, { useState, useEffect } from "react"; // Import useState along with React
 import { useDispatch } from "react-redux";
@@ -23,10 +24,12 @@ import { negotiateTariff } from "../../Redux/Slices/Consumer/negotiateTariffSlic
 import AgreementModal from "./AgreementModal";
 const { Title, Text } = Typography;
 const { Option } = Select;
+const { Panel } = Collapse;
 
-const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransaction }) => {
-  // console.log(fromTransaction);
+const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransaction,requirementContent ,combinationContent}) => {
+  console.log(combinationContent);
   console.log(data);
+  console.log(combinationContent)
   const term_sheet_id = data.id;
   const downloadable = data?.downloadable;
 
@@ -36,6 +39,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   // const [commencementOfSupply,setCommencementOfSupply ] = useState(data.commencement_of_supply);
   const [modalVisible, setModalVisible] = useState(false);
   const [isFieldEdited, setIsFieldEdited] = useState(false); // Track if any field is edited
+  const [consumerDetailsVisible, setConsumerDetailsVisible] = useState(false); // State to toggle consumer details
 
   const showModal = () => {
     setModalVisible(true);
@@ -77,14 +81,21 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   // Initialize the commencement date using moment
   const [commencementDate, setCommencementDate] = useState(() => {
     const date = data.commencement_of_supply || data.cod;
-    return date ? moment(date, "YYYY-MM-DD").format("DD-MM-YYYY") : "";
+    return date ? moment(date, "DD-MM-YYYY").format("YYYY-MM-DD") : "";
   });
 
+  // console.log(commencementDate);
+  
   const userId = user.id;
 
   // Handle the DatePicker change event
   const handleDateChange = (date) => {
-    setCommencementDate(date);
+    if (date) {
+      setCommencementDate(moment(date).format("YYYY-MM-DD")); // Ensure correct format
+      console.log("Selected Date:", moment(date).format("YYYY-MM-DD"));
+      const formattedDate = moment(date).format("YYYY-MM-DD");
+      console.log("Formatted Date:", formattedDate); // Log the formatted date
+    }
   };
 
   const handleChatWithExpert = () => {
@@ -169,6 +180,8 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   // console.log(commencementDate);
   // Handle form submission
   const handleContinue = async () => {
+    console.log('clicked');
+    
     const termSheetId = data.id;
 
     const termsData = {
@@ -177,14 +190,16 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
       // combination: data.combination.combination || data.combination,
       term_of_ppa: ppaTerm,
       lock_in_period: lockInPeriod,
-      commencement_of_supply: commencementDate
-        ? moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD")
-        : null, // Format date using moment
+      commencement_of_supply: commencementDate, // Use the correctly formatted date
+      // commencement_of_supply: commencementDate && moment.isMoment(commencementDate)
+      //   ? commencementDate.format("YYYY-MM-DD")
+      //   : moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"),    
       contracted_energy: contractedEnergy,
       minimum_supply_obligation: minimumSupply,
       payment_security_type: paymentSecurityType,
       payment_security_day: paymentSecurityDays,
     };
+    console.log("Final Commencement Date:", commencementDate);
 
     try {
       console.log(
@@ -209,6 +224,13 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
     setIsFieldEdited(true); // Mark as edited when any field changes
   };
 
+  const toggleConsumerDetails = () => {
+    setConsumerDetailsVisible(!consumerDetailsVisible);
+  };
+  console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"));
+console.log(commencementDate)
+console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"))
+console.log("Final Commencement Date:", commencementDate);
   return (
     <div>
       <Modal
@@ -221,7 +243,8 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
         width={800}
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
-        <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
+      {/* <div style={{ maxHeight: '70vh', overflowY: 'auto' }}> */}
+      <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
           <p style={{ margin: 0 }}>
             Offer Tariff: <strong>{data?.offer_tariff ? data?.offer_tariff : 0}</strong> INR/kWh
           </p>
@@ -249,6 +272,105 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
           Standard Terms Sheet
         </Title>
+
+        {/* Consumer or Combination Details Section */}
+        {!fromTransaction && ( // Fix the missing closing parenthesis
+          <Collapse defaultActiveKey={["1"]} accordion>
+            <Panel
+              header={user_category === "Consumer" ? "Combination Details" : "Demand Details"}
+              key="1"
+              style={{ backgroundColor: "#f0f2f5", fontWeight: "bold" }}
+            >
+              {user_category === "Consumer" && combinationContent ? (
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Combination:</strong> {combinationContent.combination}
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Final Cost:</strong> {combinationContent.final_cost} INR
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Optimal Solar Capacity:</strong> {combinationContent.optimal_solar_capacity} MW
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Optimal Wind Capacity:</strong> {combinationContent.optimal_wind_capacity} MW
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Optimal Battery Capacity:</strong> {combinationContent.optimal_battery_capacity} MW
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Per Unit Cost:</strong> {combinationContent.per_unit_cost} INR/kWh
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>RE Replacement:</strong> {combinationContent.re_replacement}%
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>State:</strong> {combinationContent.state}
+                    </Typography.Paragraph>
+                  </Col>
+                </Row>
+              ) : user_category === "Consumer" ? (
+                <Typography.Paragraph>
+                  <strong>No combination details available.</strong>
+                </Typography.Paragraph>
+              ) : (
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Contracted Demand:</strong> {requirementContent?.rq_contracted_demand} MW
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Industry:</strong> {requirementContent?.rq_industry}
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Procurement Date:</strong> {requirementContent?.rq_procurement_date}
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Site:</strong> {requirementContent?.rq_site}
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>State:</strong> {requirementContent?.rq_state}
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Tariff Category:</strong> {requirementContent?.rq_tariff_category}
+                    </Typography.Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    <Typography.Paragraph>
+                      <strong>Voltage Level:</strong> {requirementContent?.rq_voltage_level} kV
+                    </Typography.Paragraph>
+                  </Col>
+                </Row>
+              )}
+            </Panel>
+          </Collapse>
+        )}
+
         <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
           <Col span={12}>
             <Typography.Paragraph>
@@ -476,10 +598,10 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
               <>
                 {(data?.from_whom === "Generator" &&
                   data?.count % 2 === 0 &&
-                  data?.count < 4) ||
+                  data?.count <= 4) ||
                   (data?.from_whom === "Consumer" &&
                     data?.count % 2 === 1 &&
-                    data?.count < 4) ? (
+                    data?.count <= 4) ? (
                   <>
                    <Button
                       // style={{
@@ -531,7 +653,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
                         style={{ marginLeft: "10px" }}
                         onClick={handleContinue}
                       >
-                        Counter Offer
+                        Counter Offerrrrr
                       </Button>
                     )}
                   </>
@@ -567,6 +689,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
             Send
           </Button>
         </Modal>
+        {/* </div> */}
       </Modal>
     </div>
   );
