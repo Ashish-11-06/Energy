@@ -81,14 +81,21 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   // Initialize the commencement date using moment
   const [commencementDate, setCommencementDate] = useState(() => {
     const date = data.commencement_of_supply || data.cod;
-    return date ? moment(date, "YYYY-MM-DD").format("DD-MM-YYYY") : "";
+    return date ? moment(date, "DD-MM-YYYY").format("YYYY-MM-DD") : "";
   });
 
+  // console.log(commencementDate);
+  
   const userId = user.id;
 
   // Handle the DatePicker change event
   const handleDateChange = (date) => {
-    setCommencementDate(date);
+    if (date) {
+      setCommencementDate(moment(date).format("YYYY-MM-DD")); // Ensure correct format
+      console.log("Selected Date:", moment(date).format("YYYY-MM-DD"));
+      const formattedDate = moment(date).format("YYYY-MM-DD");
+      console.log("Formatted Date:", formattedDate); // Log the formatted date
+    }
   };
 
   const handleChatWithExpert = () => {
@@ -183,15 +190,16 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
       // combination: data.combination.combination || data.combination,
       term_of_ppa: ppaTerm,
       lock_in_period: lockInPeriod,
-      commencement_of_supply: commencementDate && moment.isMoment(commencementDate)
-        ? commencementDate.format("YYYY-MM-DD")
-        : moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"),    
+      commencement_of_supply: commencementDate, // Use the correctly formatted date
+      // commencement_of_supply: commencementDate && moment.isMoment(commencementDate)
+      //   ? commencementDate.format("YYYY-MM-DD")
+      //   : moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"),    
       contracted_energy: contractedEnergy,
       minimum_supply_obligation: minimumSupply,
       payment_security_type: paymentSecurityType,
       payment_security_day: paymentSecurityDays,
     };
-    console.log(commencementDate);
+    console.log("Final Commencement Date:", commencementDate);
 
     try {
       console.log(
@@ -219,7 +227,10 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   const toggleConsumerDetails = () => {
     setConsumerDetailsVisible(!consumerDetailsVisible);
   };
-
+  console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"));
+console.log(commencementDate)
+console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"))
+console.log("Final Commencement Date:", commencementDate);
   return (
     <div>
       <Modal

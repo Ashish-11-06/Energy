@@ -303,7 +303,7 @@ console.log('comb',combinationData);
       key: "finalCost",
     },
     {
-      title:'Annual Demand Offset',
+      title:'Annual Demand Offset (%)',
       dataIndex:'annualDemandOffeset',
       key:'annualDemandOffeset'
     },
@@ -313,7 +313,7 @@ console.log('comb',combinationData);
       key:'annualDemandMet'
     },
     {
-      title:'Annual Curtailment',
+      title:'Annual Curtailment (%)',
       dataIndex:'annualCurtailment',
       key:'annualCurtailment'
     }

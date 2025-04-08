@@ -130,7 +130,7 @@ const prepareGraphData = () => {
     labels, // X-axis values (reReplacements)
     datasets: [
       {
-        label: "Tariff (INR/KWh)",
+        label: "Tariff (INR/kWh)",
         data: tariffData,
         borderColor: "#FF5733",
         backgroundColor: "rgba(255, 87, 51, 0.2)",
@@ -419,7 +419,7 @@ if(dataSource?.length<=0) {
 
     fetchPatterns();
     loadCombinations();
-  }, [dispatch, selectedDemandId]);
+  }, []);
 
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
@@ -610,17 +610,17 @@ const handleSensitivityClick = () => {
       key: "totalCapacity",
     },
     {
-      title: "Per Unit Cost (INR/KWh)",
+      title: "Per Unit Cost (INR/kWh)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
     },
     {
-      title: "OA Cost (INR/KWh)",
+      title: "OA Cost (INR/kWh)",
       dataIndex: "OACost",
       key: "OACost",
     },
     {
-      title: "Total Cost (INR/KWh)",
+      title: "Total Cost (INR/kWh)",
       dataIndex: "totalCost",
       key: "totalCost",
     },

@@ -273,7 +273,7 @@ const handleNavigateSubscription=() => {
                  
                 >
                   <Statistic
-                    title="Total Demands (MW)"
+                    title="Total Demand (MW)"
                     value={platformDetails.totalDemands}
                     prefix={
                       <img
