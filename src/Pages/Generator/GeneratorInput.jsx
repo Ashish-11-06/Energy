@@ -233,7 +233,22 @@ const GeneratorInput = () => {
         onCancel={handleModalCancel}
       >
         <Form layout="vertical">
-          <Form.Item label="Curtailment Selling Price">
+        <Form.Item label="Maximum limit for excess energy">
+            <InputNumber
+              min={0}
+              max={1}
+              step={0.01}
+              value={curtailmentInputs.annual_curtailment_limit}
+              onChange={(value) =>
+                setCurtailmentInputs((prev) => ({
+                  ...prev,
+                  annual_curtailment_limit: value,
+                }))
+              }
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+          <Form.Item label="Selling price of excess energy (INR/MWh)">
             <InputNumber
               min={0}
               value={curtailmentInputs.curtailment_selling_price}
@@ -246,7 +261,7 @@ const GeneratorInput = () => {
               style={{ width: "100%" }}
             />
           </Form.Item>
-          <Form.Item label="Sell Curtailment Percentage">
+          <Form.Item label="Percentage of excess energy sold(%)">
             <InputNumber
               min={0}
               max={100}
@@ -255,21 +270,6 @@ const GeneratorInput = () => {
                 setCurtailmentInputs((prev) => ({
                   ...prev,
                   sell_curtailment_percentage: value,
-                }))
-              }
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-          <Form.Item label="Annual Curtailment Limit">
-            <InputNumber
-              min={0}
-              max={1}
-              step={0.01}
-              value={curtailmentInputs.annual_curtailment_limit}
-              onChange={(value) =>
-                setCurtailmentInputs((prev) => ({
-                  ...prev,
-                  annual_curtailment_limit: value,
                 }))
               }
               style={{ width: "100%" }}
