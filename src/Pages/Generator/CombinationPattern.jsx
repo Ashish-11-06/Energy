@@ -68,8 +68,8 @@ const handleSensitivity = async () => {
   console.log("clicked");
   setIsGraphLoading(true); // Show loader in the button
 
-  // Extract combination IDs from the table data (dataSource)
   const combinationIds = dataSource.map((item) => item.combination);
+  console.log("Extracted combination IDs:", combinationIds); // Log to verify
 
   const data = {
     requirement_id: selectedDemandId,
@@ -78,17 +78,13 @@ const handleSensitivity = async () => {
     combinations: combinationIds, // Send combination IDs
   };
 
-  console.log("data", data);
+  console.log("Payload for sensitivity API:", data); // Log the payload
   
-  console.log(combinationIds);
-  
-
   try {
     const res = await dispatch(fetchSensitivity(data)).unwrap();
-    console.log("res", res);
+    console.log("API response:", res);
     setSensitivityData(res);
-    // setIsGraphModalVisible(true); // Show the modal after fetching data
-    if(res.error) {
+    if (res.error) {
       message.error(res.error); // Display error message if any
       setIsGraphLoading(false); // Hide loader in the button
       return;
@@ -125,7 +121,8 @@ const prepareGraphData = () => {
       }
     });
   });
-
+  const combinationIds = dataSource.map((item) => item.combination);
+  console.log(combinationIds, "combinationIds");
   return {
     labels, // X-axis values (reReplacements)
     datasets: [
@@ -386,7 +383,7 @@ if(dataSource?.length<=0) {
             formatAndSetCombinations(response);
             setIsTableLoading(false);
             setFetchingCombinations(false);
-            handleSensitivity(); // Call handleSensitivity to fetch sensitivity data
+
             // Scroll to the bottom of the page
             window.scrollTo({
               top: document.body.scrollHeight,
@@ -420,6 +417,12 @@ if(dataSource?.length<=0) {
     fetchPatterns();
     loadCombinations();
   }, []);
+
+  useEffect(() => {
+    if (dataSource.length > 0) {
+      handleSensitivity(); // Call handleSensitivity only when dataSource is populated
+    }
+  }, [dataSource]);
 
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
@@ -941,6 +944,7 @@ const handleSensitivityClick = () => {
           onCancel={handleGraphModalClose}
           footer={null}
           width="80%"
+          zIndex={5000}
         >
           {sensitivityData ? (
             <div

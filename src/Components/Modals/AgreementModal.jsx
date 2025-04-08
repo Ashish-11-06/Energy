@@ -33,7 +33,8 @@ const AgreementContent = ({ dynamicData }) => (
     <p>Insert details of its registered office <br /> <b>{dynamicData.consumerName}</b></p>
 
     <div style={{ textAlign: 'right' }}>
-      Date: {new Date().toLocaleDateString()}
+    Date: {new Date().toLocaleDateString('en-GB')}
+
     </div>
 
     <h3><strong>Indicative Heads of Terms for Open Access Captive Solar Project in {dynamicData.solarState}</strong></h3>
