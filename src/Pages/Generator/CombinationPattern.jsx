@@ -78,6 +78,11 @@ const handleSensitivity = async () => {
     combinations: combinationIds, // Send combination IDs
   };
 
+  console.log("data", data);
+  
+  console.log(combinationIds);
+  
+
   try {
     const res = await dispatch(fetchSensitivity(data)).unwrap();
     console.log("res", res);
@@ -836,7 +841,7 @@ const handleSensitivityClick = () => {
                     min={0}
                     max={100}
                     marks={marks}
-                    style={{ width: "80%", marginLeft: "5%" }}
+                    style={{ width: "80%", marginLeft: "5%", zIndex:0 }}
                     onChange={handleSliderChange}
                     value={`${sliderValue}`}
                     tooltip={{

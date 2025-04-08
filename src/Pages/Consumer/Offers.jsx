@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -38,6 +39,7 @@ const Offers = () => {
   const [error, setError] = useState(null);
   const [loading,setLoader]=useState(false);
   const [ refresh, setRefresh] = useState(false);
+  const [combData, setCombData] = useState(null);
 
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
@@ -70,11 +72,20 @@ const Offers = () => {
   }, [dispatch, user.id, refresh]);
 
 
-  // console.log(ippData);
+ 
 
   const showModal = (record) => {
-    // console.log(record);
+    console.log(record);
     setModalContent(record);
+    // Ensure combinationContent is set if not already set
+    if (!combinationContent && record.combination) {
+      setCombinationContent(record.combination);
+      setCombData(record.combination);
+    }
+    // Ensure requirementContent is set if not already set
+    if (!requirementContent && record.requirement) {
+      setRequirementContent(record.requirement);
+    }
     setIsModalVisible(true);
   };
 
@@ -82,14 +93,18 @@ const Offers = () => {
     setIsModalVisible(false);
     setModalContent(null);
     setRefresh(true);
+    // setCombData(null);
+    // setRequirementContent(null);
   };
 
   const showCombinationModal = (record) => {
+    console.log(record);
     setCombinationContent(record);
+    setCombData(record);
     setIsCombinationModalVisible(true);
   };
   const showRequirementModal = (record) => {
-    // console.log(record);
+    console.log(record);
     setRequirementContent(record);
     // console.log(requirementContent);
     setIsRequirementModalVisible(true);
@@ -98,12 +113,16 @@ const Offers = () => {
 
   const handleCloseCombinationModal = () => {
     setIsCombinationModalVisible(false);
-    setCombinationContent(null);
+    // setCombinationContent(null);
   };
   const handleRequirementModalClose = () => {
     setIsRequirementModalVisible(false);
     // setRequirementContent(null);
   };
+console.log(combData);
+console.log(combinationContent);
+
+console.log(requirementContent);
 
   const handleStatusChange = (value) => {
     setStatusFilter(value);
@@ -165,6 +184,7 @@ const Offers = () => {
       width: '12%',
       render: (text) => {
         const transformCombination = (text) => {
+          // console.log(text);      
           const parts = text.split("-");
           if (parts.length === 4) {
             return (
@@ -198,6 +218,7 @@ const Offers = () => {
 
         return (
           <Typography.Link onClick={() => showCombinationModal(text)}>
+            {console.log(transformCombination(text.combination))}
             {transformCombination(text.combination)}
           </Typography.Link>
         );
@@ -357,7 +378,7 @@ const Offers = () => {
       render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
     },
   ];
-
+  console.log(combData);
   return (
     <div style={{ padding: "20px" }}>
       <Col span={24} style={{ marginLeft: "20px" }}>
@@ -447,6 +468,8 @@ const Offers = () => {
           data={modalContent}
           onCancel={handleCloseModal}
           selectedDemandId={modalContent.requirement.rq_id}
+          requirementContent={requirementContent}
+          combinationContent={combinationContent}
         />
       )}
 

@@ -108,7 +108,7 @@ console.log(data);
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
        <p><strong> Offer Tariff (INR/MW): </strong>
-  {user_category === "generator" && fromInitiateQuotation ? (
+  {user_category === "Generator" && fromInitiateQuotation ? (
     <InputNumber 
       min={1}
       value={perUnitCost}

@@ -16,7 +16,8 @@ import "./HeaderComponent.css"; // Add custom styles for header component
 import chat from "../../../assets/need.png";
 import userImage from "../../../assets/profile.png";
 import NotificationIcon from "../../../assets/not.jpg";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { connectOfferSocket, connectPowerXWebSocket } from "../../../Redux/Slices/notificationSlice";
 
 const { Header } = Layout;
 
@@ -24,8 +25,26 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   // console.log('cc',currentPath);
+    // const notificationCount = useSelector((state) => state.notifications.notificationCount);
+  const dispatch = useDispatch();
+  const users = JSON.parse(localStorage.getItem('user')).user;
+
   const notificationCount = useSelector((state) => state.notifications.powerxCount);
-console.log(notificationCount);
+    const offerCount = useSelector((state) => state.notifications.offerCount);
+  
+// console.log(notificationCount);
+
+  useEffect(() => {
+    // Dispatch the thunk to connect to the WebSocket
+    const userId = users?.id;
+    dispatch(connectPowerXWebSocket(userId));
+    dispatch(connectOfferSocket(userId));
+
+    // Clean up on component unmount (optional)
+    return () => {
+      // You can add logic here to close the socket if needed
+    };
+  }, [dispatch, users]);
 
   const navigate = useNavigate(); // Add useNavigate hook
   let username = ""; // Use let instead of const
@@ -37,6 +56,8 @@ console.log(notificationCount);
 // const currentPath=localStorage.getItem('currentPath');
 // const notificationCount=0;
 
+// console.log(offerCount);
+// console.log(notificationCount);
   useEffect(() => {
     setSubscriptionRequires(subscription !== "active");
   }, [subscription]);

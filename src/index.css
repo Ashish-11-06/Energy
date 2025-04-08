@@ -265,3 +265,7 @@ button:focus, .ant-btn:focus {
 .red-btn:hover {
   background-color: #e34c4c !important;
 }
+
+.ant-tooltip.ant-slider-tooltip.ant-tooltip-placement-top {
+  z-index: 0 !important;
+}

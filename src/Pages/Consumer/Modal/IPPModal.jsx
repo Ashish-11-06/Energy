@@ -36,7 +36,7 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer, fromGenerator, onClose, 
     ]: []) ,
     ...(fromGenerator ? [
       { key: '10', label: 'Consumer Pseudo Name', value: consumerDetails?.username || "N/A" },
-      { key: '11', label: 'Consumer Credit Rating', value: consumerDetails?.credit_rating === null ? "A2" : consumerDetails?.credit_rating },
+      { key: '11', label: 'Consumer Credit Rating', value: consumerDetails?.credit_rating === null ? "N/A" : consumerDetails?.credit_rating },
     ] : [])
   ];
 
