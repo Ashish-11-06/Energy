@@ -337,7 +337,7 @@ const TransactionWindow = () => {
                               <Text strong>
                                 Offer Tariff:{" "}
                                 <span style={{ fontSize: "larger", color: "#9A8406" }}>
-                                  {msg.updated_tariff} INR/KWh{" "}
+                                  {msg.updated_tariff} INR/kWh{" "}
                                 </span>
                               </Text>
                               <Text type={isIncrease ? "success" : "danger"} style={{ marginLeft: "8px" }}>

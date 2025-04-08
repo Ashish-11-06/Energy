@@ -288,17 +288,17 @@ console.log('comb',combinationData);
       key: "batteryCapacity",
     },
     {
-      title: "Per Unit Cost (INR/KWh)",
+      title: "Per Unit Cost (INR/kWh)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
     },
     {
-      title: "OA Cost (INR/KWh)", // New column for OA Cost
+      title: "OA Cost (INR/kWh)", // New column for OA Cost
       dataIndex: "oaCost",
       key: "oaCost",
     },
     {
-      title: "Final Cost (INR/KWh)",
+      title: "Final Cost (INR/kWh)",
       dataIndex: "finalCost",
       key: "finalCost",
     },

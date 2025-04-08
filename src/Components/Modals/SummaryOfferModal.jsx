@@ -73,7 +73,7 @@ const SummaryOfferModal = ({ visible, onCancel, offerDetails }) => {
       <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
         <Col span={12}>
           <Paragraph>
-            <strong>Offer Tariff (INR/KWH):</strong> {offerDetails.offerTariff}
+            <strong>Offer Tariff (INR/kWh):</strong> {offerDetails.offerTariff}
           </Paragraph>
         </Col>
         <Col span={12}>

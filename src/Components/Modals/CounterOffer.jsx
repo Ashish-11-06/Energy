@@ -683,7 +683,7 @@ console.log("Final Commencement Date:", commencementDate);
             style={{ width: "60%" }}
             value={offerTariff}
             onChange={handleTariffChange}
-            placeholder="Enter the tariff value in INR/KWh"
+            placeholder="Enter the tariff value in INR/kWh"
           />
           <Button onClick={handleTarrifOk} style={{ marginLeft: "5%" }}>
             Send
