@@ -384,10 +384,6 @@ if(dataSource?.length<=0) {
             setIsTableLoading(false);
             setFetchingCombinations(false);
 
-            if (dataSource.length > 0) {
-              handleSensitivity(); // Call handleSensitivity only if dataSource has data
-            }
-           
             // Scroll to the bottom of the page
             window.scrollTo({
               top: document.body.scrollHeight,
@@ -421,6 +417,12 @@ if(dataSource?.length<=0) {
     fetchPatterns();
     loadCombinations();
   }, []);
+
+  useEffect(() => {
+    if (dataSource.length > 0) {
+      handleSensitivity(); // Call handleSensitivity only when dataSource is populated
+    }
+  }, [dataSource]);
 
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
