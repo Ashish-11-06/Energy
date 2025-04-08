@@ -325,7 +325,7 @@ console.log(requirementContent);
         } else {
           return (
             <Button type="primary" onClick={() => showModal(record)}>
-              Send Offer
+              View Details
             </Button>
           );
         }

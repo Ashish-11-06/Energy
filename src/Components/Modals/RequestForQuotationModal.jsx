@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import SummaryOfferModal from "./SummaryOfferModal";
 import { useDispatch } from "react-redux";
 import { addTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
+import AgreementModal from "./AgreementModal";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -41,6 +42,8 @@ const RequestForQuotationModal = ({
   const [windCapacity, setWindCapacity] = useState(30);
   const [essCapacity, setEssCapacity] = useState(20);
   const [perUnitCost,setPerUnitCost] =useState(data.perUnitCost);
+    const [modalVisible, setModalVisible] = useState(false);
+  
 console.log(data);
 
   const dispatch = useDispatch();
@@ -64,8 +67,18 @@ console.log(data);
     onCancel();
   };
 
+  const showModal = () => {
+    setModalVisible(true);
+  };
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+  const downloadable = data?.downloadable;
+
   const handleContinue = async () => {
     const termsData = {
+      offer_tariff: perUnitCost || 0,
       from_whom: user?.user_category || "",
       requirement_id: selectedDemandId || "",
       combination: data?.combination || "",
@@ -107,7 +120,7 @@ console.log(data);
         width={800}
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
-       <p><strong> Offer Tariff (INR/kWh): </strong>
+       <p><strong> Offer Tariff (INR/MWh): </strong>
   {user_category === "Generator" && fromInitiateQuotation ? (
     <InputNumber 
       min={1}
@@ -224,6 +237,9 @@ console.log(data);
             </Button>
           </Col> */}
         </Row>
+         <Button type="text" style={{ marginTop: '20px' }} onClick={showModal}>
+                  View in Detail
+                </Button>
         <Row justify="end" style={{ marginTop: "20px" }}>
           <Button
             type="primary"
@@ -239,6 +255,7 @@ console.log(data);
           </Button>
         </Row>
       </Modal>
+      <AgreementModal data={downloadable} visible={modalVisible} onClose={handleCloseModal} />
 
       <SummaryOfferModal
         visible={false}
