@@ -225,7 +225,7 @@ const Dashboard = () => {
       // },
       title: {
         display: true,
-        text: `Energy Demand (${formattedDate})`,
+        text: ` Energy Generation Pattern (${formattedDate})`,
 
         font: {
           size: 18,
@@ -299,14 +299,18 @@ const stateColumn = [
 const cardStyle = {
   margin: "20px",
   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-  height: "400px", // Ensure all cards are the same height
+  height: "380px", // Ensure all cards are the same height
 };
 const cardForecastGraph = {
   margin: "20px",
   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   height: "500px", // Ensure all cards are the same height
 };
-
+const cardThirdStyle = {
+  margin: "20px",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  height: "450px", // Ensure all cards are the same height
+};
   // Define stateData variable
 const stateData = [
   ...solarData.map((data, index) => ({
@@ -497,15 +501,66 @@ const stateData = [
 
   const tradeSummaryColumns = [
     {
-      title: 'Parameter',
-      dataIndex: 'parameter',
-      key: 'parameter',
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      // render: (text) => <span style={{ fontWeight: "bold" }}>{text}</span>, // Bold font for date
     },
     {
-      title: 'Value',
-      dataIndex: 'value',
-      key: 'value',
+      title: 'Portfolio Details',
+      children: [
+        {
+          title: 'Technology',
+          dataIndex: 'techno',
+          key: 'techno',
+        },
+        {
+          title: 'State',
+          dataIndex: 'state', 
+          key: 'state',
+        },
+        {
+          title: 'Connectivity',
+          dataIndex: 'connectivity',
+          key: 'connectivity',
+        },
+        {
+          title: 'Available Capacity (MWh)',
+          dataIndex: 'available_capacity',
+          key: 'available_capacity',
+        },
+      ],
     },
+    {
+      title: 'Parameter',
+      children: [
+        {
+          title: 'Ask Price (INR/MWh)',
+          dataIndex: 'ask_price',
+          key: 'ask_price',
+        },
+        {
+          title: 'Executed Price (INR/MWh)',
+          dataIndex: 'executed_price',
+          key: 'executed_price',
+        },
+        {
+          title: 'Ask Volume (MWh)',
+          dataIndex: 'ask_volume',
+          key: 'ask_volume',
+        },
+        {
+          title: 'Executed Volume (MWh)',
+          dataIndex: 'executed_volume',
+          key: 'executed_volume',
+        }, 
+      ],
+    },
+    // {
+    //   title: 'Value',
+    //   dataIndex: 'value',
+    //   key: 'value',
+    // },
   ];
   
   const tradeSummaryData = [
@@ -533,9 +588,9 @@ const stateData = [
 
   return (
     <div style={{ padding: "3%" }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      {/* <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
       Energy Generation Pattern
-      </h1>
+      </h1> */}
       <Card style={{ margin: "20px" }}>
         <Typography.Title level={3} style={{textAlign:'center'}}>State wise Generation Portfolio</Typography.Title>
         {/* <Row>
@@ -612,7 +667,7 @@ const stateData = [
               style={{
                 position: "relative",
                 width: "80%",
-                height: "300px",
+                height: "350px",
                 margin: "0 auto",
               }}
             >
@@ -676,9 +731,9 @@ const stateData = [
                    )}
                  </Card>
       
-      <Card style={{ margin: "20px" }}>
+      <Card style={cardThirdStyle}>
         <Row gutter={[16, 16]} justify="space-between">
-          <Col span={12} style={{ marginBottom: "20px", textAlign: 'center' }}>
+          {/* <Col span={12} style={{ marginBottom: "20px", textAlign: 'center' }}>
             <Typography.Title level={4}>PowerX Details</Typography.Title>
             <Col style={{ marginBottom: "20px", marginTop: '20px' }}>
               <img 
@@ -710,8 +765,26 @@ const stateData = [
                  Execute trade for next day
               </span>
             </Col>
+          </Col> */}
+          <Col span={24} style={{ textAlign: 'center' }}>
+            <Typography.Title level={4}>
+              Executed Trade Summary
+            </Typography.Title>
+            <Table
+              columns={tradeSummaryColumns}
+              dataSource={tradeSummaryData}
+              pagination={false}
+              bordered
+              // style={{ marginTop: '20px' }}
+              scroll={{ x: true, y: 300 }} // Enables horizontal and vertical scrolling
+            style={{ maxHeight: "350px", overflowY: "auto",marginTop:'20px' }} // Ensures the column does not exceed this height
+        
+            />
           </Col>
-          <Col span={12} style={{ textAlign: 'center' }}>
+        </Row>
+        {/* <Card style={cardThirdStyle}>
+        <Row gutter={[16, 16]} justify="space-between">
+        <Col span={24} style={{ textAlign: 'center' }}>
             <Typography.Title level={4}>
               Executed Trade Summary
             </Typography.Title>
@@ -723,7 +796,8 @@ const stateData = [
               style={{ marginTop: '20px' }}
             />
           </Col>
-        </Row>
+          </Row>
+          </Card> */}
       </Card>
       <Modal 
               open={showDueModal}  

@@ -54,7 +54,18 @@ const DashboardP = () => {
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
   const user=JSON.parse(localStorage.getItem('user')).user;
   const is_due_date=user.is_due_date;
+  
+  const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
 
+const option = { day: 'numeric', month: 'long' };
+const tomorrowDate = tomorrow.toLocaleDateString('en-GB', option);
+
+// console.log(formattedDate);
+
+  // const tomorrowDate = tomorrow.toISOString().split('T')[0];
+  console.log(tomorrowDate);
+  
   useEffect(() => {
     if (is_due_date) {
       setShowDueModal(true);
@@ -64,14 +75,14 @@ const DashboardP = () => {
   const cardStyle = {
     margin: "20px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    height: "400px", // Ensure all cards are the same height
+    height: "340px", // Ensure all cards are the same height
   };
   const cardThirdStyle = {
     margin: "20px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    height: "250px", // Ensure all cards are the same height
+    height: "450px", // Ensure all cards are the same height
   };
-  const cardForecastGraph ={
+  const cardForecastGraph ={ 
     margin: "20px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
     height: "500px"
@@ -107,9 +118,9 @@ setShowLineGraph(true); // Show line graph card
           const date = new Date(dateStr);
           
           const options = { month: "long", day: "2-digit" };
-          const formattedDate = date.toLocaleDateString("en-US", options);
+          const formattedDat = date.toLocaleDateString("en-US", options);
     
-          setNextDay(formattedDate); // Example output: "February 01"
+          setNextDay(formattedDat); // Example output: "February 01"
         }
         // console.log(res.payload);
         if(res.error){
@@ -128,6 +139,92 @@ setShowLineGraph(true); // Show line graph card
  
   }, [dispatch]);
 
+  const tradeSummaryColumns = [
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      // render: (text) => <span style={{ fontWeight: "bold" }}>{text}</span>, // Bold font for date
+    },
+    {
+      title: 'Requirement Details',
+      children: [
+        {
+          title: 'State',
+          dataIndex: 'state',
+          key: 'state',
+        },
+        {
+          title: 'Industry',
+          dataIndex: 'industry',
+          key: 'industry',
+        },
+        {
+          title: 'Contracted Demand (MWh)',
+          dataIndex: 'contracted_demand',
+          key: 'contracted_demand',
+        },
+        // {
+        //   title: 'Available Capacity (MWh)',
+        //   dataIndex: 'available_capacity',
+        //   key: 'available_capacity',
+        // },
+      ],
+    },
+    {
+      title: 'Parameter',
+      children: [
+        {
+          title: 'Ask Price (INR/MWh)',
+          dataIndex: 'ask_price',
+          key: 'ask_price',
+        },
+        {
+          title: 'Executed Price (INR/MWh)',
+          dataIndex: 'executed_price',
+          key: 'executed_price',
+        },
+        {
+          title: 'Ask Volume (MWh)',
+          dataIndex: 'ask_volume',
+          key: 'ask_volume',
+        },
+        {
+          title: 'Executed Volume (MWh)',
+          dataIndex: 'executed_volume',
+          key: 'executed_volume',
+        }, 
+      ],
+    },
+    // {
+    //   title: 'Value',
+    //   dataIndex: 'value',
+    //   key: 'value',
+    // },
+  ];
+  
+  // const tradeSummaryData = [
+  //   {
+  //     key: '1',
+  //     parameter: 'Ask Price (INR/MWh)',
+  //     value: 4,
+  //   },
+  //   {
+  //     key: '2',
+  //     parameter: 'Ask Volume (MWh)',
+  //     value: 200,
+  //   },
+  //   {
+  //     key: '3',
+  //     parameter: 'Executed Price (INR/MWh)',
+  //     value: 4,
+  //   },
+  //   {
+  //     key: '4',
+  //     parameter: 'Executed Volume (MWh)',
+  //     value: 4,
+  //   },
+  // ];
 
     useEffect(() => {
       const fetchData = async () => {
@@ -140,9 +237,9 @@ setShowLineGraph(true); // Show line graph card
             const date = new Date(dateStr);
             
             const options = { month: "long", day: "2-digit" };
-            const formattedDate = date.toLocaleDateString("en-US", options);
+            const formattedDat = date.toLocaleDateString("en-US", options);
       
-            setNextDay(formattedDate); // Example output: "February 01"
+            setNextDay(formattedDat); // Example output: "February 01"
           }
   
           const mcpDataOriginal = data.predictions.map(item => item.mcp_prediction);
@@ -290,7 +387,7 @@ setShowLineGraph(true); // Show line graph card
         // Removed zoom plugin configuration
         title: {
           display: true,
-          text: 'Day Ahead Market Forecast',
+          text: `Day Ahead Market Forecast (${nextDay})`,
           font: {
             size: 18,
           },
@@ -372,7 +469,7 @@ setShowLineGraph(true); // Show line graph card
       // },
       title: {
         display: true,
-        text: `Energy Demand (${nextDay})`, 
+        text: `Energy Demand Pattern (${tomorrowDate})`, 
         font: {
           size: 18,
         },
@@ -472,11 +569,33 @@ setShowLineGraph(true); // Show line graph card
     navigate("/px/consumer/statistical-information");
   };
 
+  const tradeSummaryData = [
+    {
+      key: '1',
+      parameter: 'Ask Price (INR/MWh)',
+      value: 4,
+    },
+    {
+      key: '2',
+      parameter: 'Ask Volume (MWh)',
+      value: 200,
+    },
+    {
+      key: '3',
+      parameter: 'Executed Price (INR/MWh)',
+      value: 4,
+    },
+    {
+      key: '4',
+      parameter: 'Executed Volume (MWh)',
+      value: 4,
+    },
+  ];
   return (
     <div style={{ padding: "3%" }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
+      {/* <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
       Energy Demand Pattern
-      </h1>
+      </h1> */}
       <Card style={cardStyle}>
         <Typography.Title level={3} style={{ textAlign: 'center' }}>State wise Requirements</Typography.Title>
         <Row>
@@ -556,7 +675,7 @@ setShowLineGraph(true); // Show line graph card
 
       <Card style={cardThirdStyle}>
         <Row gutter={[16, 16]} justify="space-between">
-          <Col span={12} style={{ textAlign: 'center' }}>
+          {/* <Col span={12} style={{ textAlign: 'center' }}>
             <Typography.Title level={4}>PowerX Overview</Typography.Title>
             <Col style={{ marginTop: '30px' }}>
               <img 
@@ -588,25 +707,22 @@ setShowLineGraph(true); // Show line graph card
                Execute trade for next day
               </span>
             </Col>
-          </Col>
-          <Col span={12} style={{ textAlign: 'center' }}>
-            <Typography.Title level={4}>Executed Trade Summary</Typography.Title>
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
-              <li style={{ marginBottom: '10px' }}>
-                <strong>Ask Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
-              </li>
-              <li style={{ marginBottom: '10px' }}>
-                <strong>Ask Volume</strong> <span style={{ fontSize: '12px' }}>(kW)</span>: 200
-              </li>
-              <li style={{ marginBottom: '10px' }}>
-                <strong>Executed Price</strong> <span style={{ fontSize: '12px' }}>(INR/MWh)</span>: 4
-              </li>
-             
-              <li>
-                <strong>Executed Volume</strong> <span style={{ fontSize: '12px' }}>(kW)</span>: 4
-              </li>
-            </ul>
-          </Col>
+          </Col> */}
+          <Col span={24} style={{ textAlign: 'center' }}>
+                      <Typography.Title level={4}>
+                        Executed Trade Summary
+                      </Typography.Title>
+                      <Table
+                        columns={tradeSummaryColumns}
+                        dataSource={tradeSummaryData}
+                        pagination={false}
+                        bordered
+                        scroll={{ x: true, y: 300 }} // Enables horizontal and vertical scrolling
+            style={{ maxHeight: "350px", overflowY: "auto",marginTop:'20px' }} // Ensures the column does not exceed this height
+        
+
+                      />
+                    </Col>
         </Row>
       </Card>
       <Modal 

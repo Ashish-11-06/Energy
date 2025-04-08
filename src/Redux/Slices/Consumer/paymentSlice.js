@@ -5,6 +5,8 @@ import paymentAPI from "../../api/consumer/paymentApi";
 export const createRazorpayOrder = createAsyncThunk(
   "payment/createOrder",
   async ({ amount, currency }, { rejectWithValue }) => {
+    console.log(amount, currency);
+    
     try {
       const response = await paymentAPI.payment({ amount, currency });
       return response.data;

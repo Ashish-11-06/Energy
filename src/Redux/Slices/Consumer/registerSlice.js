@@ -7,7 +7,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await registerApi.registerUser(userData);
-      // console.log('respones',response);
+      console.log('respones',response);
       
       if (response && response.data) {
         if(response.data.error){
@@ -15,6 +15,8 @@ export const registerUser = createAsyncThunk(
             response.data.error || 'Failed to register user'
           );
         }
+        console.log(response.data);
+        
         return response.data; // Successfully registered user
       } else {
         // If the response does not have data or is not structured correctly, reject with a message

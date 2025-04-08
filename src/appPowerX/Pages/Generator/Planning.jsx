@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox, Radio } from 'antd';
+import { Table, Card, Row, Col, Tooltip, Button, Spin, message, Form, Select, DatePicker, Input, Modal, Checkbox, Radio, Upload } from 'antd';
 import 'antd/dist/reset.css';
 
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
@@ -9,6 +9,7 @@ import { fetchTableMonthData } from '../../Redux/slices/consumer/monthAheadSlice
 import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
+
 // import Calendar from 'react-calendar';
 import { Calendar as AntdCalendar } from 'antd'; // Import Ant Design Calendar
 
@@ -17,7 +18,7 @@ import './Planning.css';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { getAllProjectsById } from "../../Redux/slices/generator/portfolioSlice";
 import { fetchPlanningDataG } from '../../Redux/slices/generator/planningSlice';
-import { addTableMonthData } from '../../Redux/slices/generator/monthAheadSliceG';
+import { addTableMonthData, uploadTableMonthData } from '../../Redux/slices/generator/monthAheadSliceG';
 
 dayjs.locale('en');
 
@@ -189,6 +190,17 @@ const handleStateChange = (value) => {
   // console.log("Selected Portfolio ID:", selectedPortfolioId); // Debugging log
 
   const handleModalOk = async () => {
+    console.log('clicked');
+    console.log(selectedDate);
+    
+    // if (!selectedDate || !dayjs.isDayjs(selectedDate)) {
+    //   message.error("Please select a valid date.");
+    //   return;
+    // }
+  
+    const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD'); // Ensure selectedDate is a dayjs object
+   console.log(formattedDate);
+   
     // Debugging logs to check state values
     // console.log("Selected Portfolio id:", selectedPortfolioId);
     // console.log("Selected Date:", selectedDate);
@@ -200,7 +212,6 @@ const handleStateChange = (value) => {
     //   return;
     // }
   
-    const formattedDate = selectedDate.format('YYYY-MM-DD'); // Format the date correctly
     // console.log("Formatted Date:", formattedDate); // Debugging log
     // console.log("Selected Technology:", selectedTechnology); // Debugging log
     // console.log("Selected Portfolio:", selectedPortfolio); // Debugging log
@@ -214,6 +225,9 @@ const handleStateChange = (value) => {
         generation: parseFloat(demand),
         price: parseFloat(price),
       };
+
+      console.log('data',data);
+      
   
       // console.log("Dispatching data:", data); // Debugging log
       const res = await dispatch(addTableMonthData(data)).unwrap();
@@ -249,6 +263,36 @@ const handleStateChange = (value) => {
     setIsDetailModalVisible(true);
   };
 
+  const handleFileUpload = async (file, record) => {
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+  
+      const data = {
+        id: record.portfolio_id, // Use portfolio_id instead of requirement ID
+        file: base64File, // Use Base64 encoded file
+      };
+  
+      try {
+        const res = await dispatch(uploadTableMonthData(data)); // Call the API with the updated data
+        console.log('res', res);
+        
+        if (res) {
+          // message.success("File uploaded successfullyyyyy");
+          message.success(res.payload.message);
+          const updatedData = await dispatch(fetchPlanningDataG(user_id)); // Fetch updated data
+          setTableDemandData(Array.isArray(updatedData.payload) ? updatedData.payload : []);
+        }
+      } catch (error) {
+        message.error("Failed to upload file. Please try again.");
+      }
+    };
+  
+    reader.readAsDataURL(file); // Read the file as a Base64 string
+    return false; // Prevent automatic upload
+  };
+  
+
   const columns = [
     {
       title: 'Date',
@@ -275,6 +319,11 @@ const handleStateChange = (value) => {
           title: 'Technology',
           dataIndex: 'techno',
           key: 'techno',
+        },
+        {
+          title: 'Portfolio ID',
+          dataIndex: 'portfolio_id',
+          key: 'portfolio_id',
         },
         {
           title: 'State',
@@ -327,11 +376,15 @@ const handleStateChange = (value) => {
             // console.log("Comparing:", record.date, currentDateStr, currentTimeStr, isBeforeDeadline);
         
             return isBeforeDeadline ? (
-              <Button type="primary" onClick={() => {
-                // console.log("Upload Data clicked for:", record);
-              }}>
-                Upload Data
-              </Button>
+              <Upload
+                beforeUpload={(file) => {
+                  handleFileUpload(file, record);
+                  return false; // Prevent automatic upload
+                }}
+                showUploadList={false}
+              >
+                <Button type="primary">Upload Data</Button>
+              </Upload>
             ) : (
               <Button disabled>Upload Data</Button>
             );
@@ -351,11 +404,11 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
     generation: item.generation,
     technology: `${item.content_type.replace('portfolio', '')}: ${item.price} INR`,
     price: `${item.price} INR (${item.content_type})`,
-    // state: item.content_type.replace('portfolio', ''),
-    state: portfolioDetails?.state,
-    connectivity:`${portfolioDetails?.connectivity}`,
-    available_capacity: `${portfolioDetails?.available_capacity} `,
-    techno: portfolioDetails.type ,
+    state: portfolioDetails?.state || 'N/A', // Add null check
+    portfolio_id: portfolioDetails?.id || 'N/A', // Add null check
+    connectivity: portfolioDetails?.connectivity || 'N/A', // Add null check
+    available_capacity: portfolioDetails?.available_capacity || 'N/A', // Add null check
+    techno: portfolioDetails?.type || 'N/A', // Add null check
     portfolio: portfolioDetails 
       ? `Technology: ${portfolioDetails.type}, State: ${portfolioDetails?.state}, Connectivity: ${portfolioDetails?.connectivity}, Available capacity: ${portfolioDetails?.available_capacity} MWh, Annual Generation Potential: ${portfolioDetails?.annual_generation_potential}` 
       : 'N/A'
@@ -406,7 +459,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
                      {Array.isArray(generatorPortfolio) &&
                        generatorPortfolio.map((item) => (
                          <Select.Option key={item.id} value={item.state}>
-                           {`ID: ${item.id},${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
+                           {`Technology:${item.type}, State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
                          </Select.Option>
                        ))}
                    </Select>
@@ -463,7 +516,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
     {Array.isArray(generatorPortfolio) &&
       generatorPortfolio.map((item) => (
         <Select.Option key={item.id} value={item.id}>
-          {`ID:${item.id}, ${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
+          {`Technology:${item.type}, State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
         </Select.Option>
       ))}
   </Select>
@@ -512,7 +565,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
             </Form.Item>
           </>
         )}
-        <Form.Item label="Enter Generation (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
+        {/* <Form.Item label="Enter Generation (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
           <Input
             type="number"
             placeholder="Enter generation"
@@ -529,7 +582,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
               setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
             }}
           />
-        </Form.Item>
+        </Form.Item> */}
         <Tooltip title={!allFieldsFilled ? "All fields are required" : ""} placement="top">
           <Button onClick={handleAddData} disabled={!allFieldsFilled}>
             Add Data
@@ -540,7 +593,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
         </Button>
       </Modal>
       <Modal
-        title="Select Technology"
+        title="Select Technologyyy"
         visible={isModalVisible}
         onOk={handleModalOk}
         onCancel={() => setIsModalVisible(false)}
@@ -567,6 +620,26 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
             </div>
           )}
         </div>
+        {/* <Form.Item label="Enter Generation (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}> */}
+          <p style={{ fontSize: '14px', fontWeight: '600', marginTop:'10px' }}>Enter Generation (MWh)</p>
+          {/* <br /> */}
+          <Input
+            type="number"
+            placeholder="Enter generation"
+            min={0}
+            style={{
+              width: "100%",
+              padding: "5px",
+              fontSize: "16px",
+              borderRadius: "5px",
+              border: "1px solid #ccc"
+            }}
+            onChange={(e) => {
+              setDemand(e.target.value);
+              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
+            }}
+          />
+        {/* </Form.Item> */}
       </Modal>
       <Modal
         title="Consumption Unit Details"

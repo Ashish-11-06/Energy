@@ -21,7 +21,6 @@ const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const dispatch = useDispatch();
-  const notificationCount = useSelector((state) => state.notifications.notificationCount);
   const offerCount = useSelector((state) => state.notifications.offerCount);
   // const notificationCount = 9;
   const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));

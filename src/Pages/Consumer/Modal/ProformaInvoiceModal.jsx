@@ -161,6 +161,8 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
       // console.log("selectedPlanId", selectedPlan);
 
       const amount = selectedPlan?.subscription?.price;
+      console.log("amount", amount);
+      
       const orderResponse = await dispatch(
         createRazorpayOrder({ amount, currency: "INR" })
       ).unwrap();
@@ -168,7 +170,6 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
       if (orderResponse?.data?.id) {
         const options = {
           key: "rzp_test_bVfC0PJsvP9OUR",
-
           amount: orderResponse.data.amount,
           currency: orderResponse.data.currency,
           name: "Energy Exchange",
@@ -478,24 +479,24 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
                 >
                   Download PDF
                 </Button>
-                {fromSubscription && (
+                {/* {fromSubscription && (
                   <Tooltip
                     title={
                       !selectedRequirementId
                         ? "To continue further, select a requirement first."
                         : ""
                     }
-                  >
-                    <Button
+                  > */}
+                    {/* <Button
                       key="generate"
                       type="primary"
                       onClick={handleFreeContinue}
                       disabled={!selectedRequirementId}
                     >
                       Continue
-                    </Button>
-                  </Tooltip>
-                )}
+                    </Button> */}
+                  {/* </Tooltip>
+                )} */}
               </>
             ) : (
               <>
@@ -517,24 +518,24 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
             <Button key="download" type="primary" onClick={handleDownloadPDF}>
               Download PDF
             </Button>
-            {fromSubscription && (
+            {/* {fromSubscription && (
               <Tooltip
                 title={
                   !selectedRequirementId
                     ? "To continue further, select a requirement first."
                     : ""
                 }
-              >
-                <Button
+              > */}
+                {/* <Button
                   key="generate"
                   type="primary"
                   onClick={handleFreeContinue}
                   disabled={!selectedRequirementId}
                 >
                   Continue
-                </Button>
-              </Tooltip>
-            )}
+                </Button> */}
+              {/* </Tooltip>
+            )} */}
           </>
         ),
       ]}
