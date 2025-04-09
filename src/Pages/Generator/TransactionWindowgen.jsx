@@ -11,13 +11,13 @@ import {
   message,
   InputNumber,
   Statistic,
+  Spin
 } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import ippData from "../../Data/IPPData.js";
 import {
   connectWebSocket,
   sendEvent,
-  // disconnectWebSocket,
 } from '../../Redux/api/webSocketService.js';
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
@@ -28,7 +28,6 @@ const { Title, Text } = Typography;
 const { Countdown } = Statistic;
 
 const TransactionWindowgen = () => {
-
   const { transactionId } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -37,9 +36,9 @@ const TransactionWindowgen = () => {
   const [offerValue, setOfferValue] = useState(null);
   const [sortedIppData, setSortedIppData] = useState([]);
   const contentRef = useRef();
-  const [socket, setSocket] = useState(null); // Add this line to define the socket variable
-  const [messages, setMessages] = useState([]); // Store incoming messages
-
+  const [socket, setSocket] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [tariffValue, setTariffValue] = useState(null);
 
   const handleTariffChange = (value) => {
@@ -47,147 +46,100 @@ const TransactionWindowgen = () => {
   };
 
   const location = useLocation();
-
   const navigate = useNavigate();
 
   const start_time = 10; // 10 AM
   const end_time = 11; // 11 AM
-  
-  // Get today's date
   const today = new Date();
-  
-  // Set start and end time in today's date
   const startDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), start_time, 0, 0);
   const endDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), end_time, 0, 0);
-  
-  // Set deadline for countdown (milliseconds)
   const deadline = endDateTime.getTime();
 
-
   const deadlineTime = () => {
-    const now = Date.now(); // Get current time
-    const remainingTime = deadline - now; // Calculate remaining time
-  
-    if (remainingTime <= 0 || now < startDateTime.getTime()) {
-      return 0; // Return 0 if time is up or before the start time
-    }
-  
-    // console.log(remainingTime);
-    return remainingTime; // Return remaining time in milliseconds
+    const now = Date.now();
+    const remainingTime = deadline - now;
+    return remainingTime <= 0 || now < startDateTime.getTime() ? 0 : remainingTime;
   };
-
-// console.log(deadlineTime);
-
-
-  //  const { state } = location;  // this should contain your passed record
-
-  // console.log(state);  // Check if the state is available here
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
-  // console.log(record);
-  
-
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const loggedInUserId = loggedInUser?.user?.id;
-  // console.log("user",loggedInUser)
-  // console.log("user id ",loggedInUserId)
-
-
-  // const t = 13;
 
   useEffect(() => {
-    // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
+    setIsLoading(true);
     const newSocket = connectWebSocket(user.id, record.tariff_id);
-    // console.log(newSocket);
-    
     setSocket(newSocket);
 
-    // console.log(newSocket, socket);
-
     const onMessageHandler = (event) => {
-      // console.log("📩 event jkjkjkjkjkjkjkjkjkj:", event);
       try {
-
-        const data = JSON.parse(event.data); // Parse the JSON message
-        // console.log("ll", data);
+        const data = JSON.parse(event.data);
 
         if (data.offers) {
-          // console.log("data.offers", data.offers);
-          setMessages([data.offers]); // Append new message to state
+          setMessages([data.offers]);
         } else {
-          const newOffers = data; // Assuming data is the new offers object
-          // console.log("newOffers", newOffers);
+          const newOffers = data;
           setMessages(prevMessages => {
-            const updatedMessages = [...prevMessages]; // Start with a copy of the previous messages
-
-            // Iterate over the keys in the new offers
+            const updatedMessages = [...prevMessages];
             for (const offerKey in newOffers) {
               if (newOffers.hasOwnProperty(offerKey)) {
-                // Check if the key already exists in any of the existing messages
                 const existingMessageIndex = updatedMessages.findIndex(msg => msg[offerKey]);
-
                 if (existingMessageIndex !== -1) {
-                  // Update the existing message
                   updatedMessages[existingMessageIndex][offerKey] = {
                     ...updatedMessages[existingMessageIndex][offerKey],
                     ...newOffers[offerKey],
                   };
                 } else {
-                  // If the key does not exist, you can choose to add it as a new message
                   updatedMessages.push({ [offerKey]: newOffers[offerKey] });
                 }
               }
             }
-
-            return updatedMessages; // Return the updated messages array
+            return updatedMessages;
           });
         }
+        setIsLoading(false);
       } catch (error) {
         console.error("❌ Error parsing message:", error);
+        setIsLoading(false);
       }
     };
 
     if (newSocket) {
-      // console.log("Subscribing to messages...");
       newSocket.onmessage = onMessageHandler;
+      newSocket.onopen = () => setIsLoading(false);
+      newSocket.onerror = () => setIsLoading(false);
     }
 
     return () => {
-      // disconnectWebSocket();
+      if (newSocket) {
+        newSocket.close();
+      }
     };
-  }, []);
+  }, [user.id, record.tariff_id]);
 
-  // console.log(messages);
-
-  // Handler for sending the tariff value
   const handleSendTariff = () => {
     if (tariffValue !== null) {
-      // Show confirmation modal
       Modal.confirm({
         title: "Confirm Tariff Value",
         content: `Are you sure you want to send the tariff value: ${tariffValue} INR/kWh?`,
         onOk: () => {
-          // console.log("Sending Tariff Value: ", tariffValue);
-          // Send the tariff value after confirmation
           const messageToSend = {
             updated_tariff: tariffValue,
           };
           sendEvent(messageToSend);
+          message.success("Tariff offer sent");
         },
         onCancel: () => {
-          // console.log("Tariff value sending cancelled");
+          console.log("Tariff value sending cancelled");
         },
       });
     } else {
-      console.error("Please enter a valid tariff value");
+      message.error("Please enter a valid tariff value");
     }
   };
 
-
   useEffect(() => {
-    // Sort IPP data by ascending value of tariff offer
     const sortedData = [...ippData].sort((a, b) => a.perUnitCost - b.perUnitCost);
     setSortedIppData(sortedData);
   }, []);
@@ -269,74 +221,52 @@ const TransactionWindowgen = () => {
           }}
         >
           <div ref={contentRef}>
-             <Title level={2} style={{ textAlign: "center" }}>
-                          Term Sheet Details
-                        </Title>
-                        {/* <Row gutter={[16, 16]}>
-                        <Col style={{ fontSize: 'larger',color:'#9a8406', background: 'white'}} span={8}>Open Offer Tariff Value : <strong>{record?.offer_tariff ? record.offer_tariff : 0}</strong> INR/kWh</Col>
-                       
-                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Term of PPA (years) :  {record.t_term_of_ppa}</strong> </Col>
-                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Lock-in Period (years) : {record.t_lock_in_period}</strong></Col>
-                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Commencement of Supply : {moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</strong></Col> */}
-                        {/* </Row> */}
-                        {/* <Row gutter={[16, 16]} style={{ marginTop: "16px" }}> */}
-                          {/* <Col style={{ fontSize: 'larger'}} span={8}><strong>Contracted Energy (MW) : {record.t_contracted_energy}</strong></Col>
-                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Minimum Supply Obligation (million units) : {record.t_minimum_supply_obligation}</strong></Col>
-                          <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security (days) : {record.t_payment_security_day}</strong></Col> */}
-                        {/* </Row> */}
-                        {/* <Row gutter={[16, 16]} style={{ marginTop: "16px" }}> */}
-                          {/* <Col style={{ fontSize: 'larger'}} span={8}><strong>Payment Security Type : {record.t_payment_security_type}</strong> </Col>
-                        </Row> */}
-                         <Row gutter={[16, 16]}>
-                          <Col style={{ fontSize: 'larger',color:'#9a8406', background: 'white'}} span={8}>Open Offer Tariff Value : <strong>{record?.offer_tariff ? record.offer_tariff : 0}</strong> INR/kWh</Col>
-                          <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
-                          <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
-                          {/* <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col> */}
-                        </Row>
-                        <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-                          <Col span={8}><strong>Contracted Energy (MW): </strong>{record.t_contracted_energy}</Col>
-                          <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{record.t_minimum_supply_obligation}</Col>
-                          <Col span={8}><strong>Payment Security (days):</strong>{record.t_payment_security_day}</Col>
-                        </Row>
-                        <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-                          <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
-                          <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
-                        </Row>
-                        {/* <Row > */}
-                            {/* </Row> */}
-                        {/* <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%' }}>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <img src={time} alt="" style={{ height: '30px', width: '30px', filter: 'brightness(0) saturate(100%) invert(13%) sepia(85%) saturate(7484%) hue-rotate(1deg) brightness(91%) contrast(119%)'}} />
-                            <Countdown title="Time Remaining" value={deadline} valueStyle={{ color: 'red' }}/>
-                          </span>
-                        </Row> */}
-                         <hr />
+            <Title level={2} style={{ textAlign: "center" }}>
+              Term Sheet Details
+            </Title>
+            <Row gutter={[16, 16]}>
+              <Col style={{ fontSize: 'larger', color: '#9a8406', background: 'white' }} span={8}>Open Offer Tariff Value : <strong>{record?.offer_tariff ? record.offer_tariff : 0}</strong> INR/kWh</Col>
+              <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
+              <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
+              {/* <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col> */}
+            </Row>
+            <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+              <Col span={8}><strong>Contracted Energy (MW): </strong>{record.t_contracted_energy}</Col>
+              <Col span={8}><strong>Minimum Supply Obligation (million units): </strong>{record.t_minimum_supply_obligation}</Col>
+              <Col span={8}><strong>Payment Security (days):</strong>{record.t_payment_security_day}</Col>
+            </Row>
+            <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+              <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col>
+              <Col span={8}><strong>Payment Security Type:</strong> {record.t_payment_security_type}</Col>
+            </Row>
 
-<p style={{fontWeight:'bold',fontSize:'16px'}}>Combination Details</p>
+            <hr />
 
-<Row gutter={[16, 16]}>
+            <p style={{ fontWeight: 'bold', fontSize: '16px' }}>Combination Details</p>
 
-<Col span={8}><strong>Solar Capacity (MW): </strong>{record.c_optimal_solar_capacity}</Col>
-<Col span={8}><strong>Wind Capacity: </strong>{record.c_optimal_wind_capacity}</Col>
-<Col span={8}><strong>ESS Capacity: </strong>{record.c_optimal_battery_capacity}</Col>
-</Row>
+            <Row gutter={[16, 16]}>
 
-                        <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
-                        <Col>
-                          <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div> 
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <img 
-                              src={time} 
-                              alt="" 
-                              style={{ height: '30px', width: '30px', filter: 'brightness(0) saturate(100%) invert(13%) sepia(85%) saturate(7484%) hue-rotate(1deg) brightness(91%) contrast(119%)' }} 
-                            />
- {Date.now() < startDateTime.getTime() ? (
+              <Col span={8}><strong>Solar Capacity (MW): </strong>{record.c_optimal_solar_capacity}</Col>
+              <Col span={8}><strong>Wind Capacity (MW): </strong>{record.c_optimal_wind_capacity}</Col>
+              <Col span={8}><strong>ESS Capacity (MWh): </strong>{record.c_optimal_battery_capacity}</Col>
+            </Row>
+
+            <Row justify="center" style={{ marginTop: "24px", marginLeft: '80%', textAlign: 'center' }}>
+              <Col>
+                <div style={{ color: 'black', fontWeight: 'bold' }}>Time Remaining</div>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <img
+                    src={time}
+                    alt=""
+                    style={{ height: '30px', width: '30px', filter: 'brightness(0) saturate(100%) invert(13%) sepia(85%) saturate(7484%) hue-rotate(1deg) brightness(91%) contrast(119%)' }}
+                  />
+                  {Date.now() < startDateTime.getTime() ? (
                     <Text style={{ color: 'red' }}>Countdown starts at 10:00 AM</Text>
                   ) : (
                     <Countdown value={deadline} valueStyle={{ color: 'red' }} />
                   )}                          </span>
-                        </Col>
-                      </Row>
+              </Col>
+            </Row>
 
             <div style={{
               color: '#9A8406',
@@ -345,12 +275,10 @@ const TransactionWindowgen = () => {
 
               You can submit/update tariffs within the specified time frame. After one hour, the consumer will decide which offer to select.
             </div>
-            
-          {/* <div style={{ marginTop: "24px" }}>Offers from IPPs:</div> */}
+
           </div>
-       
-          <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px"  }}>
-            <Title level={3}>Your Offers:</Title>
+          <div style={{ marginTop: "20px", padding: "10px", background: "#fff", borderRadius: "5px" }}>
+            <Title level={3}>Your Offer:</Title>
             {messages.length === 0 ? (
               <Text>No messages available.</Text>
             ) : (
@@ -359,8 +287,13 @@ const TransactionWindowgen = () => {
                 .map((messageObject, index) =>
                   Object.keys(messageObject).map((msgKey) => {
                     const msg = messageObject[msgKey];
-                    // console.log("Generator Username:", msg.generator_username);
                     if (msg && typeof msg === "object" && msg.generator_id === loggedInUserId) {
+                      // Calculate percentage change for your offer
+                      const openOfferTariff = record.offer_tariff;
+                      const tariffChange = openOfferTariff - msg.updated_tariff;
+                      const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
+                      const isIncrease = tariffChange > 0;
+
                       return (
                         <Card
                           key={msg.id || index}
@@ -369,18 +302,28 @@ const TransactionWindowgen = () => {
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "space-between",
-                            alignItems: "flex-start", // Aligns text to start
+                            alignItems: "flex-start",
                           }}
                         >
                           <div>
                             <Text strong>
-                              IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span>
+                              IPP ID: <span style={{ fontSize: 'larger' }}>{msg.generator_username}</span>
                             </Text>
-                            <Text style={{ margin: '150px' }} strong>
-                              Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/kWh </span>
-                            </Text>
+
+                            <div>
+                              <Text strong>
+                                Offer Tariff:{" "}
+                                <span style={{ fontSize: "larger", color: "#9A8406" }}>
+                                  {msg.updated_tariff} INR/kWh{" "}
+                                </span>
+                              </Text>
+                              <Text type={isIncrease ? "success" : "danger"} style={{ marginLeft: "8px" }}>
+                                {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
+                              </Text>
+                            </div>
+
                             <Text strong>
-                              Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
+                              Time: <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
                             </Text>
                           </div>
                         </Card>
@@ -420,9 +363,13 @@ const TransactionWindowgen = () => {
                   // Iterate over each key in the messageObject
                   return Object.keys(messageObject).map((msgKey) => {
                     const msg = messageObject[msgKey]; // Access the message using the key
-                
+
                     // Validate the message object
                     if (msg && typeof msg === 'object' && msg.generator_id !== loggedInUserId) {
+                      const openOfferTariff = record.offer_tariff; // Use backend-provided value
+                      const tariffChange = openOfferTariff - msg.updated_tariff;
+                      const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
+                      const isIncrease = tariffChange > 0;
                       return (
                         <Card
                           key={msg.id || index}
@@ -471,29 +418,6 @@ const TransactionWindowgen = () => {
           </div>
           <br /><br />
 
-          {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button>
-          <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button> */}
-          {/* <Row style={{ marginLeft: '60%' }}>
-            <div style={{
-              color: '#9A8406',
-              marginRight: '10px'
-            }}>
-              tariff is in INR/kWh
-            </div>
-            <InputNumber
-              style={{ backgroundColor: 'white', width: '100px' }}
-              placeholder="Enter tariff value"
-              value={tariffValue}
-              onChange={handleTariffChange}
-            />
-            <Button
-              style={{ marginLeft: '3%' }}
-              onClick={handleSendTariff}
-              disabled={tariffValue === null || tariffValue <= 0}
-            >
-              Send Tariff
-            </Button>
-          </Row> */}
         </Card>
 
       </Row>
