@@ -21,6 +21,9 @@ const Dashboard = () => {
   const [stateModal, showStateModal] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")).user;
   const [subscriptionDueModal,showSubscriptionDueModal]=useState(false);
+  const [windCapacity, setWindCapacity] = useState(0);
+  const [solarCapacity, setSolarCapacity] = useState(0);
+  const [essCapacity, setESSCapacity] = useState(0);
   const userId = user.id;
   const [states, setStates] = useState([]);
   const navigate=useNavigate();
@@ -60,7 +63,10 @@ const time_remaining = alreadySubscribed ? (() => {
       try {
         const response = await DashboardApi.getConsumerDashboardData(userId);
         const data = response.data;
-        // console.log(data);
+        console.log(data);
+        setWindCapacity(data?.wind_capacity || 0);
+        setSolarCapacity(data?.solar_capacity || 0);
+        setESSCapacity(data?.ess_capacity || 0);
         setStates(data?.states);
         setConsumerDetails({
           // energyPurchased: data.energy_purchased_from || 0,
@@ -323,6 +329,24 @@ const time_remaining = alreadySubscribed ? (() => {
                         MW
                       </span>
                     }
+                    valueRender={(value) => (
+                      <Popover
+                        content={
+                          <div style={{ padding: "10px", maxWidth: "200px" }}>
+                            <strong>Capacity Details:</strong>
+                            <ul style={{ paddingLeft: "20px", margin: "5px 0" }}>
+                              <li>Wind Capacity: {windCapacity} MW</li>
+                              <li>Solar Capacity: {solarCapacity} MW</li>
+                              <li>ESS Capacity: {essCapacity} MWh</li>
+                            </ul>
+                          </div>
+                        }
+                        trigger="hover"
+                        placement="right"
+                      >
+                        <span style={{ cursor: "pointer" }}>{value}</span>
+                      </Popover>
+                    )}
                     valueStyle={{
                       color: "#3f8600",
                       display: "flex",
