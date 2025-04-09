@@ -177,11 +177,11 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
                 showSearch
                 disabled={isEdit} // Disable only in edit mode
               >
-                {statee?.map((state, index) => (
+                {(Array.isArray(statee) ? statee : []).map((state, index) => (
                   <Select.Option key={index} value={state}>
                     {state}
                   </Select.Option>
-                ))}
+                ))} 
               </Select>
             </Form.Item>
           </Col>

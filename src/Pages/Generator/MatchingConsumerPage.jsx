@@ -1,10 +1,11 @@
+
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Table, Radio, Button, message, Input, Select, Modal,Row,Col,Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons'; // Import the Eye icon
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector hooks
-import { fetchMatchingConsumersById } from '../../Redux/Slices/Generator/matchingConsumerSlice'; // Import the action to fetch data
+import { checkStatusById, fetchMatchingConsumersById } from '../../Redux/Slices/Generator/matchingConsumerSlice'; // Import the action to fetch data
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are imported
 import { Typography } from 'antd';
 
@@ -48,6 +49,23 @@ console.log(modalConsumerDetails);
 
   useEffect(() => {
     setFilteredConsumers(Matchingconsumers); // Update filtered consumers whenever Matchingconsumers changes
+    
+    const fetchData = async () => {
+      try {
+        const response = await dispatch(checkStatusById(user.id)); // Call the action to check status
+       console.log(response);
+       
+        if (response.error) {
+          console.log('Failed to fetch status '); // Show error message if fetching fails
+        } else {
+          console.log('status')
+          // message.success('Matching consumers fetched successfully'); // Show success message
+        }
+      } catch (error) {
+        console.error(error);
+        }
+      };
+    fetchData(); // Call the fetchData function to fetch matching consumers
   }, [Matchingconsumers]);
 
   // Handle radio button change for selecting a consumer
