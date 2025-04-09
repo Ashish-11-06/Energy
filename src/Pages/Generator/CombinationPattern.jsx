@@ -356,7 +356,7 @@ if(dataSource?.length<=0) {
         setIsTableLoading(true);
         setFetchingCombinations(true);
         setProgress(0); // Reset progress when starting a new fetch
-
+        setCombinationData([]); // Reset combination data
         const modalData = {
           requirement_id: +selectedDemandId,
           optimize_capacity_user: user.user_category,
@@ -511,6 +511,7 @@ const handleSensitivityClick = () => {
           top: document.body.scrollHeight,
           behavior: "smooth",
         });
+        setDataSource([]);
         const combinations = await dispatch(
           fetchOptimizedCombinations(modalData)
         ).unwrap();
