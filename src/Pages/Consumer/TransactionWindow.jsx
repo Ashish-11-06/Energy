@@ -256,7 +256,7 @@ const TransactionWindow = () => {
 
 
   return (
-    <div style={{ padding: "30px" }}>
+    <div style={{ padding: "30px" }} ref={contentRef}>
       <Row gutter={[16, 16]} justify="center">
         <Card
           style={{
@@ -265,7 +265,7 @@ const TransactionWindow = () => {
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <div ref={contentRef}>
+          <div >
             <Title level={2} style={{ textAlign: "center" }}>
               Term Sheet Details
             </Title>
