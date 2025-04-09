@@ -31,79 +31,44 @@ const { Title, Text } = Typography;
 const { Countdown } = Statistic;
 
 const TransactionWindow = () => {
-
   const { transactionId } = useParams();
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [buttonsDisabled, setButtonsDisabled] = useState({});
   const [isNegotiateModalVisible, setIsNegotiateModalVisible] = useState(false);
   const [offerValue, setOfferValue] = useState(null);
   const [sortedIppData, setSortedIppData] = useState([]);
+  const [timeUp, setTimeUp] = useState(false);
+  const [messages, setMessages] = useState([]);
   const contentRef = useRef();
-  const [socket, setSocket] = useState(null); // Add this line to define the socket variable
-  const [messages, setMessages] = useState([]); // Store incoming messages
+  const [socket, setSocket] = useState(null);
 
   const location = useLocation();
-
   const navigate = useNavigate();
-
-  // const { state } = location;  // this should contain your passed record
-
-  // console.log(state);  // Check if the state is available here
-
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
   
   const start_time = 10; // 10 AM
-  const end_time = 11; // 11 AM
-  
-  // Get today's date
+  const end_time = 12; // 12 PM
+  const end_minutes = 54; // 30 minutes
   const today = new Date();
-  
-  // Set start and end time in today's date
   const startDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), start_time, 0, 0);
-  const endDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), end_time, 0, 0);
-  
-  // Set deadline for countdown (milliseconds)
+  const endDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), end_time, end_minutes, 0); // Set end time to 12:30 PM
   const deadline = endDateTime.getTime();
 
-
-  const deadlineTime = () => {
-    const now = Date.now(); // Get current time
-    const remainingTime = deadline - now; // Calculate remaining time
-  
-    if (remainingTime <= 0 || now < startDateTime.getTime()) {
-      return 0; // Return 0 if time is up or before the start time
-    }
-  
-    // console.log(remainingTime);
-    return remainingTime; // Return remaining time in milliseconds
-  };
-
-// console.log(deadlineTime);
-
-
   useEffect(() => {
-    // console.log("Connecting to WebSocket..." + user.id + record.tariff_id);
     const newSocket = connectWebSocket(user.id, record.tariff_id);
     setSocket(newSocket);
 
     const sendEvent = (action, data) => {
       if (newSocket && newSocket.readyState === WebSocket.OPEN) {
         newSocket.send(JSON.stringify({ action, ...data }));
-        // console.log("📤 Sent WebSocket message:", { action, ...data });
-      } else {
-        // console.error("⚠️ WebSocket is not open. Cannot send message.");
       }
     };
 
     const onMessageHandler = (event) => {
-      // console.log("📩 WebSocket event received:", event);
-
       try {
         const data = JSON.parse(event.data);
-        // console.log("Parsed Data:", data);
 
         if (data.action === "rejectTransaction") {
           setTransactions((prevTransactions) =>
@@ -114,11 +79,9 @@ const TransactionWindow = () => {
             )
           );
         } else if (data.offers) {
-          // console.log("data.offers", data.offers);
           setMessages([data.offers]);
         } else {
           const newOffers = data;
-          // console.log("newOffers", newOffers);
           setMessages(prevMessages => {
             const updatedMessages = [...prevMessages];
 
@@ -141,7 +104,7 @@ const TransactionWindow = () => {
           });
         }
       } catch (error) {
-        console.error("❌ Error parsing WebSocket message:", error);
+        console.error("Error parsing WebSocket message:", error);
       }
     };
 
@@ -154,11 +117,7 @@ const TransactionWindow = () => {
     };
   }, []);
 
-
-  // console.log(messages);
-
   useEffect(() => {
-    // Sort IPP data by ascending value of tariff offer
     const sortedData = [...ippData].sort((a, b) => a.perUnitCost - b.perUnitCost);
     setSortedIppData(sortedData);
   }, []);
@@ -171,10 +130,6 @@ const TransactionWindow = () => {
     }
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
   const handleRejectTransaction = () => {
     Modal.confirm({
       title: 'Are you sure you want to reject this transaction?',
@@ -183,7 +138,6 @@ const TransactionWindow = () => {
       cancelText: 'Cancel',
       onOk: async () => {
         try {
-          // Attempt to send the reject action through WebSocket
           await sendEvent({ action: "reject" });
           message.error('Transaction rejected');
           navigate('/transaction-page');
@@ -251,9 +205,40 @@ const TransactionWindow = () => {
     setOfferValue(value);
   };
 
-  // const deadline = Date.now() + 3600 * 1000; // 1 hour from now
-  // const deadline = Date.now() + 60 * 1000;
+  const handleAcceptBestOffer = () => {
+    if (messages.length === 0) {
+      message.warning('No offers available to accept');
+      return;
+    }
 
+    // Find the best offer (lowest tariff)
+    let bestOffer = null;
+    messages.forEach(messageObject => {
+      Object.keys(messageObject).forEach(msgKey => {
+        const msg = messageObject[msgKey];
+        if (!bestOffer || msg.updated_tariff < bestOffer.updated_tariff) {
+          bestOffer = msg;
+        }
+      });
+    });
+
+    if (bestOffer) {
+      message.success(`Accepted offer from ${bestOffer.generator_username} at ${bestOffer.updated_tariff} INR/kWh`);
+      sendEvent("acceptOffer", { offerId: bestOffer.id || bestOffer.generator_username });
+      setTimeUp(false); // Optionally hide the button after acceptance
+    }
+  };
+
+  const countdownRenderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      return <Text style={{ color: 'red' }}>Time's up!</Text>;
+    }
+    return (
+      <span style={{ color: 'red' }}>
+        {hours}:{minutes}:{seconds}
+      </span>
+    );
+  };
 
   return (
     <div style={{ padding: "30px" }} ref={contentRef}>
@@ -273,7 +258,6 @@ const TransactionWindow = () => {
               <Col style={{ fontSize: 'larger', color: '#9a8406', background: 'white' }} span={8}>Open Offer Tariff Value : <strong>{record?.offer_tariff ? record.offer_tariff : 0}</strong> INR/kWh</Col>
               <Col span={8}><strong>Term of PPA (years): </strong>{record.t_term_of_ppa}</Col>
               <Col span={8}><strong>Lock-in Period (years): </strong>{record.t_lock_in_period}</Col>
-              {/* <Col span={8}><strong>Commencement of Supply: </strong>{moment(record.t_commencement_of_supply).format('DD-MM-YYYY')}</Col> */}
             </Row>
             <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
               <Col span={8}><strong>Contracted Energy (MW): </strong>{record.t_contracted_energy}</Col>
@@ -297,11 +281,42 @@ const TransactionWindow = () => {
                   {Date.now() < startDateTime.getTime() ? (
                     <Text style={{ color: 'red' }}>Countdown starts at 10:00 AM</Text>
                   ) : (
-                    <Countdown value={deadline} valueStyle={{ color: 'red' }} />
+                    <Countdown 
+                      value={deadline} 
+                      valueStyle={{ color: 'red' }}
+                      onFinish={() => setTimeUp(true)}
+                      renderer={countdownRenderer}
+                    />
                   )}
                 </span>
               </Col>
             </Row>
+
+            {timeUp && (
+              <Card 
+                style={{ 
+                  marginTop: '20px', 
+                  backgroundColor: '#f6ffed',
+                  border: '1px solid #b7eb8f'
+                }}
+              >
+                <Row justify="space-between" align="middle">
+                  <Col>
+                    <Text strong>The bidding time has ended. You can now accept the best offer.</Text>
+                  </Col>
+                  <Col>
+                    <Button 
+                      type="primary" 
+                      onClick={handleAcceptBestOffer}
+                      style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+                    >
+                      Accept Best Offer
+                    </Button>
+                  </Col>
+                </Row>
+              </Card>
+            )}
+
             <div style={{ marginTop: "24px" }}>Offers from IPPs:</div>
           </div>
 
@@ -310,102 +325,52 @@ const TransactionWindow = () => {
             {messages.length === 0 ? (
               <Text>No messages available.</Text>
             ) : (
-              messages.length === 0 ? (
-                <Text>No messages available.</Text>
-              ) : (
-                messages.map((messageObject, index) => {
-                  // Iterate over each key in the messageObject
-                  return Object.keys(messageObject).map((msgKey) => {
-                    const msg = messageObject[msgKey]; // Access the message using the key
-
-                    // Validate the message object
-                    if (msg && typeof msg === 'object') {
-                      const openOfferTariff = record.offer_tariff; // Use backend-provided value
-                      const tariffChange = openOfferTariff - msg.updated_tariff;
-                      const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
-                      const isIncrease = tariffChange > 0;
-                      return (
-                        <Card key={msg.id || index} style={{ marginBottom: "10px", padding: "10px" }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            {/* IPP ID */}
+              messages.map((messageObject, index) => {
+                return Object.keys(messageObject).map((msgKey) => {
+                  const msg = messageObject[msgKey];
+                  if (msg && typeof msg === 'object') {
+                    const openOfferTariff = record.offer_tariff;
+                    const tariffChange = openOfferTariff - msg.updated_tariff;
+                    const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
+                    const isIncrease = tariffChange > 0;
+                    return (
+                      <Card key={msg.id || index} style={{ marginBottom: "10px", padding: "10px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <Text strong>
+                            IPP ID: <span style={{ fontSize: "larger" }}>{msg.generator_username}</span>
+                          </Text>
+                          <div>
                             <Text strong>
-                              IPP ID: <span style={{ fontSize: "larger" }}>{msg.generator_username}</span>
+                              Offer Tariff:{" "}
+                              <span style={{ fontSize: "larger", color: "#9A8406" }}>
+                                {msg.updated_tariff} INR/kWh{" "}
+                              </span>
                             </Text>
-
-                            {/* Offer Tariff with Percentage Change */}
-                            <div>
-                              <Text strong>
-                                Offer Tariff:{" "}
-                                <span style={{ fontSize: "larger", color: "#9A8406" }}>
-                                  {msg.updated_tariff} INR/kWh{" "}
-                                </span>
-                              </Text>
-                              <Text type={isIncrease ? "success" : "danger"} style={{ marginLeft: "8px" }}>
-                                {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
-                              </Text>
-                            </div>
-
-                            {/* Time */}
-                            <Text strong>
-                              Time: <span style={{ fontSize: "larger" }}>{moment(msg.timestamp).format("hh:mm A")}</span>
+                            <Text type={isIncrease ? "success" : "danger"} style={{ marginLeft: "8px" }}>
+                              {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
                             </Text>
                           </div>
-
-
-                        </Card>
-                      );
-                    } else {
-                      console.warn("Invalid message format:", messageObject);
-                      return null; // Return null if the message format is invalid
-                    }
-                  });
-                })
-              )
+                          <Text strong>
+                            Time: <span style={{ fontSize: "larger" }}>{moment(msg.timestamp).format("hh:mm A")}</span>
+                          </Text>
+                        </div>
+                      </Card>
+                    );
+                  }
+                  return null;
+                });
+              })
             )}
           </div>
           <br /><br />
 
-          {/* <Button onClick={handleRejectTransaction}>Reject Transaction</Button> */}
           <Button
-           className="red-btn"
+            className="red-btn"
             onClick={() => handleRejectTransaction(transactionId)}>Reject Transaction</Button>
           <Button style={{ marginLeft: '20px' }} onClick={handleDownloadTransaction}>Download Transaction trill</Button>
         </Card>
-
       </Row>
 
-      {/* View Modal */}
-      <Modal
-        title="Project Details"
-        open={isModalVisible}
-        onCancel={handleCancel}
-        footer={[<Button key="close" onClick={handleCancel}>Close</Button>]}>
-        {modalContent && (
-          <>
-            <Text>You have selected IPP {modalContent.key}</Text>
-            <br />
-            <Text>for offer tariff: {modalContent.perUnitCost}</Text>
-            <br /><br />
-            {userCategory === "consumer" ? (
-              <Button onClick={() => handleSendOffer(modalContent.key)} disabled={buttonsDisabled[modalContent.key]?.negotiate}>
-                Send Offer
-              </Button>
-            ) : (
-              <Button onClick={() => handleAccept(modalContent.key)} disabled={buttonsDisabled[modalContent.key]?.accept}>
-                Accept
-              </Button>
-            )}
-            <Button onClick={() => handleReject(modalContent.key)} style={{ marginLeft: "8px" }} disabled={buttonsDisabled[modalContent.key]?.reject}>
-              Reject
-            </Button>
-            <Button onClick={() => handleNegotiate(modalContent.key)} style={{ marginLeft: "8px" }} disabled={buttonsDisabled[modalContent.key]?.negotiate}>
-              Negotiate
-            </Button>
-          </>
-        )}
-      </Modal>
-
-      {/* Negotiate Modal */}
       <Modal
         title="Tariff Value"
         open={isNegotiateModalVisible}
