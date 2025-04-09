@@ -318,6 +318,7 @@ const CombinationPattern = () => {
           top: document.body.scrollHeight,
           behavior: "smooth",
         });
+        setDataSource([]);
         const combinations = await dispatch(
           fetchOptimizedCombinations(modalData)
         ).unwrap();
