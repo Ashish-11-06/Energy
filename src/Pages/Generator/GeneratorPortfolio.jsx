@@ -250,7 +250,14 @@ const GenerationPortfolio = () => {
           Add New Entry +
         </Button>
 
-        {allUpdated ? (
+        <Button
+              type="default"
+              style={{ marginTop: '20px', float: 'right' }}
+              onClick={handleFindConsumer}
+            >
+              Find Consumer
+            </Button>
+        {/* {allUpdated ? (
           <Button
             type="primary"
             style={{ marginTop: '20px', float: 'right' }}
@@ -268,7 +275,7 @@ const GenerationPortfolio = () => {
               Find Consumer
             </Button>
           )
-        )}
+        )} */}
       </div>
 
       <Modal
