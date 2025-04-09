@@ -5,6 +5,11 @@ const matchingConsumerApi = {
   getMatchingConsumersById: (id) => {
     return axiosInstance.get(`/energy/matching-consumer/${id}`);
   },
+  checkStatus: (id) => {
+    return axiosInstance.get(`/energy/portfolio_update_status/${id}`);
+  },
+
+
 
 };
 
