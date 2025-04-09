@@ -36,7 +36,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
               <Text>: {combinationContent?.combination || "NA"}</Text>
             </Col>
             <Col span={12}>
-  <Text strong>Solar Capacity (MWh)</Text>
+  <Text strong>Solar Capacity (MW)</Text>
 </Col>
 <Col span={12}>
   <Text>
@@ -50,7 +50,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
 </Col>
 
 <Col span={12}>
-  <Text strong>Wind Capacity (MWh)</Text>
+  <Text strong>Wind Capacity (MW)</Text>
 </Col>
 <Col span={12}>
   <Text>
@@ -82,7 +82,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
             {/* </>
             ) : null} */}
             <Col span={12}>
-              <Text strong>Final Cost (INR/MWh)</Text>
+              <Text strong>Final Cost (INR/kWh)</Text>
             </Col>
             <Col span={12}>
               <Text>: {combinationContent?.final_cost || "NA"}</Text>
@@ -94,13 +94,13 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
               <Text>:  {combinationContent?.rq_tariff_category || "NA"}</Text>
             </Col> */}
             <Col span={12}>
-              <Text strong>Per Unit Cost (INR/MWh)</Text>
+              <Text strong>Per Unit Cost (INR/kWh)</Text>
             </Col>
             <Col span={12}>
               <Text>: {combinationContent?.per_unit_cost || "0"}</Text>
             </Col>
             <Col span={12}>
-              <Text strong>RE Replacement</Text>
+              <Text strong>RE Replacement(%)</Text>
             </Col>
             <Col span={12}>
               <Text>: {combinationContent?.re_replacement|| "A1"}</Text>

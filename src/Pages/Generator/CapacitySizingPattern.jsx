@@ -363,6 +363,7 @@ const handleDownloadPdf = (record) => {
       ["Annual Demand Met (million units)", record.annualDemandMet || "N/A"],
       ["Annual Curtailment (%)", record.annualCurtailment || "N/A"],
     ],
+    
   });
 
   // Save the PDF
@@ -399,26 +400,47 @@ const handleDownloadPdf = (record) => {
               <br />
               <p>(You can change your RE Replacement from below bar. )</p>
              <span>
-                             <div
-                               style={{
-                                 position: "relative",
-                                 width: "80%",
-                                 marginLeft: "5%",
-                               }}
-                             >
-                               <Slider
-                                 ref={sliderRef} // Add ref directly to the Slider component
-                                 min={0}
-                                 max={100}
-                                 marks={marks} // Add marks to the slider
-                                 style={{ width: "80%", marginLeft: "5%" }}
-                                 onChange={handleSliderChange}
-                                 value={`${sliderValue}`}
-                                 tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Correct way to control tooltip visibility
-                                 trackStyle={{ height: 20 }} // Increase the thickness of the slider line
-                                 handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
-                               />
-                             </div>
+<div
+                style={{
+                  position: "relative",
+                  width: "80%",
+                  marginLeft: "5%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Slider
+                  min={0}
+                  max={100}
+                  marks={marks}
+                  style={{ width: "70%", marginRight: "10px", zIndex: 0 }}
+                  onChange={handleSliderChange}
+                  value={sliderValue}
+                  tooltip={{
+                    open: !isIPPModalVisible && !isModalVisible,
+                  }}
+                  trackStyle={{ height: 20 }}
+                  handleStyle={{ height: 20, width: 20 }}
+                />
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={sliderValue}
+                  onChange={(e) => {
+                    const value = Math.min(Math.max(Number(e.target.value), 0), 100); // Clamp value between 0 and 100
+                    setSliderValue(value);
+                  }}
+                  style={{
+                    width: "60px",
+                    height: "30px",
+                    marginLeft: "10px",
+                    textAlign: "center",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                  }}
+                />
+                </div>
                              <Button
                                type="primary"
                                onClick={handleOptimizeClick}

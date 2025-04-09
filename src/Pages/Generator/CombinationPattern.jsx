@@ -833,27 +833,47 @@ const handleSensitivityClick = () => {
               <br />
               <p>(You can change your RE Replacement from below bar. )</p>
               <span>
-                <div
-                  style={{
-                    position: "relative",
-                    width: "80%",
-                    marginLeft: "5%",
+              <div
+                style={{
+                  position: "relative",
+                  width: "80%",
+                  marginLeft: "5%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Slider
+                  min={0}
+                  max={100}
+                  marks={marks}
+                  style={{ width: "70%", marginRight: "10px", zIndex: 0 }}
+                  onChange={handleSliderChange}
+                  value={sliderValue}
+                  tooltip={{
+                    open: !isIPPModalVisible && !isModalVisible,
                   }}
-                >
-                  <Slider
-                    min={0}
-                    max={100}
-                    marks={marks}
-                    style={{ width: "80%", marginLeft: "5%", zIndex:0 }}
-                    onChange={handleSliderChange}
-                    value={`${sliderValue}`}
-                    tooltip={{
-                      open: !isIPPModalVisible && !isModalVisible,
-                    }}
-                    trackStyle={{ height: 20 }}
-                    handleStyle={{ height: 20, width: 20 }}
-                  />
-                </div>
+                  trackStyle={{ height: 20 }}
+                  handleStyle={{ height: 20, width: 20 }}
+                />
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={sliderValue}
+                  onChange={(e) => {
+                    const value = Math.min(Math.max(Number(e.target.value), 0), 100); // Clamp value between 0 and 100
+                    setSliderValue(value);
+                  }}
+                  style={{
+                    width: "60px",
+                    height: "30px",
+                    marginLeft: "10px",
+                    textAlign: "center",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                  }}
+                />
+              </div>
                 <Button
                   type="primary"
                   onClick={handleOptimizeClick}
