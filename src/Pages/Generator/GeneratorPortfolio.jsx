@@ -34,7 +34,9 @@ const GenerationPortfolio = () => {
   const is_new_user=user.is_new_user;
   console.log(is_new_user);
 
-
+  const handleOptimize = () => {
+    navigate('/generator/combination-pattern');
+  };
 
   useEffect(() => {
     if (is_new_user) {
@@ -137,21 +139,38 @@ const GenerationPortfolio = () => {
       title: 'COD (Commercial Operation Date)',
       dataIndex: 'cod',
       key: 'cod',
-      render: (text) => moment(text).format('DD-MM-YYYY'), // Format date to DD-MM-YYYY
+      render: (text) => moment(text).format('DD-MM-YYYY'),
     },
     {
-      title: 'Edit Project',
-      key: 'edit',
+      title: 'Action',
+      key: 'action',
+      width: 100,
       render: (text, record) => (
-        <Button type="primary" onClick={() => handleEdit(record)}>
-          Edit
-        </Button>
+        <div>
+          {alreadysubscribed ? (
+            <Button
+              type="primary"
+              onClick={() => handleUpdate(record)}
+              style={{ width: '120px' }}
+            >
+              {record.updated ? 'Edit' : 'Update'}
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              onClick={() => handleEdit(record)}
+              style={{ width: '120px' }}
+            >
+              Edit Details
+            </Button>
+          )}
+        </div>
       ),
     },
   ];
 
   if (alreadysubscribed) {
-    columns.push(
+    columns.splice(columns.length - 1, 0, // Insert before the last column (Action)
       {
         title: 'Portfolio Updated',
         dataIndex: 'updated',
@@ -163,22 +182,6 @@ const GenerationPortfolio = () => {
               status={text ? 'active' : 50}
               strokeColor={text ? 'green' : 'red'}
             />
-          </div>
-        ),
-      },
-      {
-        title: 'Action',
-        key: 'action',
-        width: 100,
-        render: (text, record) => (
-          <div>
-            <Button
-              type="primary"
-              onClick={() => handleUpdate(record)}
-              style={{ width: '120px' }}
-            >
-              {record.updated ? 'Edit' : 'Update'}
-            </Button>
           </div>
         ),
       }
@@ -197,6 +200,8 @@ const GenerationPortfolio = () => {
     setIsNewUserModalVisible(false);
     form.resetFields();
   };
+
+  const allUpdated = Structuredprojects.every((project) => project.updated);
 
   return (
     <div style={{ padding: '20px' }}>
@@ -245,14 +250,24 @@ const GenerationPortfolio = () => {
           Add New Entry +
         </Button>
 
-        {Structuredprojects.length > 0 && (
+        {allUpdated ? (
           <Button
-            type="default"
+            type="primary"
             style={{ marginTop: '20px', float: 'right' }}
-            onClick={handleFindConsumer}
+            onClick={handleOptimize}
           >
-            Find Consumer
+            Optimize
           </Button>
+        ) : (
+          Structuredprojects.length > 0 && (
+            <Button
+              type="default"
+              style={{ marginTop: '20px', float: 'right' }}
+              onClick={handleFindConsumer}
+            >
+              Find Consumer
+            </Button>
+          )
         )}
       </div>
 

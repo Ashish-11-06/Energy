@@ -30,7 +30,7 @@ const RequirementsPage = () => {
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData = JSON.parse(localStorage.getItem('user')).user;
   const is_new_user = userData.is_new_user;
-console.log(userData);
+// console.log(userData);
 const companyName=userData.company;
   const role = userData.role;
   const getFromLocalStorage = (key) => {
