@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Spin, Alert, Row, Button, Radio, Modal, Tooltip, message } from "antd";
+import { Table, Spin, Alert, Row, Button, Radio, Modal, Tooltip, message, Select, Typography, Col } from "antd";
 import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSlice";
 import { QuestionCircleOutlined } from '@ant-design/icons';
-
+import { fetchRequirements } from "../../Redux/Slices/Consumer/consumerRequirementSlice";
 
 const MatchingIPP = () => {
   const location = useLocation();
@@ -19,33 +19,67 @@ const MatchingIPP = () => {
   );
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [isMatching, setIsMatching] = useState(false); // Add state for isMatching
+  const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
+  const [selectedRequirement, setSelectedRequirement] = useState(null); // State for selected requirement
+  const [showIPPModal, setShowIPPModal] = useState(false); // State for showing IPP modal
+  const [solarArray, setSolarArray] = useState([]);
+  const [windArray, setWindArray] = useState([]);
+  const [essArray, setEssArray] = useState([]);
+
+  const getFromLocalStorage = (key) => {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : '';
+  };
+
+  console.log("Matching IPP data:", matchingIPP);
+
+  useEffect(() => {
+    if (requirements.length > 0) {
+      setSelectedRequirement(requirements[0]); // Select the first requirement by default
+    }
+  }, [requirements]);
 
   useEffect(() => {
     const requirementId = localStorage.getItem('selectedRequirementId');
     if (requirementId) {
       try {
         dispatch(fetchMatchingIPPById(requirementId)).then((res) => {
-          // console.log(res.payload.length);
-          
           if (res.payload && res.payload.length > 0) {
             setIsMatching(true); 
           } else {
             setIsMatching(false);
           }
           localStorage.setItem('isMatching', isMatching);
-
         });
       } catch (error) {
         console.log(error);
       }
-    } else {
-      // console.error("Requirement ID not found in location state.");
     }
   }, [location, dispatch]);
 
-  const handleRowClick = (record) => {
-    setSelectedRow(record); // Set selected row when a row is clicked
+  useEffect(() => {
+    const selectedRequirementId = selectedRequirement?.id;
+    localStorage.setItem('selectedRequirementId', selectedRequirementId);
+  }, [selectedRequirement]);
+
+  const handleRequirementChange = (value) => {
+    const selected = requirements.find((req) => req.id === value);
+    setSelectedRequirement(selected);
+    localStorage.setItem('selectedRequirementId', selected.id); // Update localStorage
+    dispatch(fetchMatchingIPPById(selected.id)); // Fetch matching IPPs for the selected requirement
   };
+
+  const handleRadioChange = (record) => {
+    setSelectedRow(record); // Set the selected record when radio button is clicked
+  };
+
+  useEffect(() => {
+    const user = getFromLocalStorage('user');
+    if (requirements.length === 0) {
+      const id = user.user.id;
+      dispatch(fetchRequirements(id));
+    }
+  }, [dispatch, requirements.length]);
 
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);
@@ -53,14 +87,6 @@ const MatchingIPP = () => {
   const showInfoModal = () => {
     setIsInfoModalVisible(true);
   };
-
-  const handleRadioChange = (id) => {
-    setSelectedRow(id); // Set the selected record, replacing previous selection
-  };
-  
-  const handleRowSelect = (record) => {
-    setSelectedRow(record); // Only allow single selection
-  }
 
   const handleContinue = () => {
     if (selectedRow) {
@@ -70,41 +96,57 @@ const MatchingIPP = () => {
       message.error('Please select a single matching IPP before continuing.');
     }
   };
-// console.log(isMatching);
+
+  const handleIPPClick = (record) => {
+    setShowIPPModal(true);
+    const { solar, wind, ess } = record;
+    setSolarArray(solar || []); // Update solarArray with the selected IPP's solar data
+    setWindArray(wind || []);  // Update windArray with the selected IPP's wind data
+    setEssArray(ess || []);    // Update essArray with the selected IPP's ESS data
+  };
 
   const columns = [
     {
       title: "Select",
       key: "select",
-      render:(text, record) => (
-      <Radio
+      render: (text, record) => (
+        <Radio
           checked={selectedRow === record}
-          onChange={() => handleRowSelect(record)} 
+          onChange={() => handleRadioChange(record)} // Use radio button click for selection
         />
       ),
-    } ,
+    },
     {
       title: 'Sr. No',
       dataIndex: 'srNo', // or any unique key you prefer for the row
       render: (text, record, index) => index + 1, // This will display the serial number
-      
-  },
+    },
     {
       title: "IPP ID",
       dataIndex: "user__username",
       key: "user__username",
+      render: (text, record) => (
+        <Typography.Link onClick={() => handleIPPClick(record)}>
+          {text}
+        </Typography.Link>
+      ),
     },
+    // {
+    //   title: "State",
+    //   dataIndex: "state",
+    //   key: "state",
+    // },
+
     {
-      title: "State",
-      dataIndex: "state",
-      key: "state",
+      title: "Total Install Capacity (MW)",
+      dataIndex: "installed_capacity",
+      key: "installed_capacity",
     },
     {
       title: "Total Available Capacity (MW)",
       dataIndex: "available_capacity",
       key: "available_capacity",
     }
-      
   ];
 
   if (status === "loading") {
@@ -146,7 +188,7 @@ const MatchingIPP = () => {
         alignItems: "center",
         padding: "20px",
       }}
-    >
+    >    
       <Row style={{ width: "100%" }}>
         <h2>Matching IPP Details</h2>
         <Tooltip title="Help">
@@ -154,29 +196,39 @@ const MatchingIPP = () => {
             shape="circle"
             icon={<QuestionCircleOutlined />}
             onClick={showInfoModal}
-            style={{ position: 'absolute', top: 120, right: 30,zIndex:1000 }}
+            style={{ position: 'absolute', top: 120, right: 30, zIndex: 1000 }}
           />
         </Tooltip>
+        <Row style={{ width: "90%", display: "flex", alignItems: "center", gap: "10px",marginTop: "20px" }}>
+          <p style={{ margin: 0, whiteSpace: "nowrap" }}>Select Requirement</p>
+          <Select
+            style={{ flex: 1 }} // Takes remaining space
+            value={selectedRequirement?.id}
+            onChange={handleRequirementChange}
+            options={requirements.map((req) => ({
+              label: `State:${req.state},Consumption unit: ${req.consumption_unit},Indusrty: ${req.industry},Contracted demand: ${req.contracted_demand} kW,Tariff Category: ${req.tariff_category},Voltage: ${req.voltage_level} kV, ${req.annual_electricity_consumption} MWh, ${req.procurement_date}`,
+              value: req.id,
+            }))}
+          />
+        </Row>
 
-        <Table
-          columns={columns}
-          dataSource={Array.isArray(matchingIPP) ? matchingIPP : []}
-          rowKey={(record) => record.user || record.id || Math.random()}
-          bordered
-          pagination={false}
-          onRow={(record) => ({
-            onClick: () => handleRowClick(record), // Handle row click to set selected row
-          })}
-          locale={{
-            emptyText: "No Matching IPPs found",
-          }}
-       
-          style={{
-            marginTop: "5%",
-            width: "60%",
-            padding: "5px 5px",
-          }}
-        />
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
+          <Table
+            columns={columns}
+            dataSource={Array.isArray(matchingIPP) ? matchingIPP : []}
+            rowKey={(record) => record.user || record.id || Math.random()}
+            bordered
+            pagination={false}
+            locale={{
+              emptyText: "No Matching IPPs found",
+            }}
+            style={{
+              marginTop: "5%",
+              width: "80%",
+              padding: "5px 5px",
+            }}
+          />
+        </div>
       </Row>
       <Row
         style={{
@@ -215,8 +267,36 @@ const MatchingIPP = () => {
         ]}
       >
         <p></p>
-
         <p>This is a general estimate of the matched IPPs. To achieve better results, please provide more details.</p>
+      </Modal>
+      <Modal
+        title="IPP Details"
+        open={showIPPModal}
+        onCancel={() => setShowIPPModal(false)}
+        footer={null}
+        width={800}
+      >
+        <Table
+          dataSource={[
+            ...solarArray.map(item => ({ ...item, technology: "Solar" })),
+            ...windArray.map(item => ({ ...item, technology: "Wind" })),
+            ...essArray.map(item => ({ ...item, technology: "ESS" })),
+          ]}
+          columns={[
+            { title: "Technology", dataIndex: "technology", key: "technology" },
+            { title: "State", dataIndex: "state", key: "state" },
+            { title: "Connectivity", dataIndex: "connectivity", key: "connectivity" },
+            { title: "Available Capacity (MW)", dataIndex: "available_capacity", key: "available_capacity" },
+            { title: "Total Installed Capacity (MW)", dataIndex: "total_install_capacity", key: "total_install_capacity" },
+          ]}
+          rowKey={(record, index) => index}
+          pagination={false}
+          locale={{ emptyText: "No Data Available" }}
+        />
+        <br />
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+    <Button onClick={() => setShowIPPModal(false)}>Close</Button>
+</div>
 
       </Modal>
     </main>
