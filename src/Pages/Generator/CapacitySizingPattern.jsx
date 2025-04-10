@@ -15,6 +15,11 @@ import {
   Tooltip,
   Modal,
 } from "antd";
+
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { DownloadOutlined } from "@ant-design/icons";
+
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -303,22 +308,69 @@ console.log('comb',combinationData);
       key: "finalCost",
     },
     {
-      title:'Annual Demand Offset (%)',
+      title:'Annual Demand Offset(%)',
       dataIndex:'annualDemandOffeset',
       key:'annualDemandOffeset'
     },
     {
-      title:'Annual Demand Met',
+      title:'Annual Demand Met (million units)',
       dataIndex:'annualDemandMet',
       key:'annualDemandMet'
     },
     {
-      title:'Annual Curtailment (%)',
+      title:'Annual Curtailment(%)',
       dataIndex:'annualCurtailment',
       key:'annualCurtailment'
-    }
+    },
+    {
+      title: "Download PDF", // New column for PDF download
+      key: "downloadPdf",
+      render: (text, record) => (
+        <Button
+          type="link"
+          icon={<DownloadOutlined style={{ color: "white" }} />} // Ant Design PDF icon
+          onClick={() => handleDownloadPdf(record)}
+        >
+          Download
+        </Button>
+      ),
+    },
 
   ];
+
+
+  // Function to handle PDF download
+const handleDownloadPdf = (record) => {
+  const doc = new jsPDF();
+
+  // Add title
+  doc.setFontSize(16);
+  doc.text("Combination Details", 10, 10);
+
+  // Add table with row details
+  doc.autoTable({
+    startY: 20,
+    head: [["Field", "Value"]],
+    body: [
+      ["Combination ID", record.combinationId || "N/A"],
+      ["Optimal Solar Capacity (MW)", record.solarCapacity || "N/A"],
+      ["Optimal Wind Capacity (MW)", record.windCapacity || "N/A"],
+      ["Optimal Battery Capacity (MW)", record.batteryCapacity || "N/A"],
+      ["Per Unit Cost (INR/kWh)", record.perUnitCost || "N/A"],
+      ["OA Cost (INR/kWh)", record.oaCost || "N/A"],
+      ["Final Cost (INR/kWh)", record.finalCost || "N/A"],
+      ["Annual Demand Offset (%)", record.annualDemandOffeset || "N/A"],
+      ["Annual Demand Met (million units)", record.annualDemandMet || "N/A"],
+      ["Annual Curtailment (%)", record.annualCurtailment || "N/A"],
+    ],
+    
+  });
+
+  // Save the PDF
+  doc.save(`Combination_${record.combinationId || "Details"}.pdf`);
+};
+
+
 
   const sliderRef = React.createRef();
 
@@ -348,26 +400,47 @@ console.log('comb',combinationData);
               <br />
               <p>(You can change your RE Replacement from below bar. )</p>
              <span>
-                             <div
-                               style={{
-                                 position: "relative",
-                                 width: "80%",
-                                 marginLeft: "5%",
-                               }}
-                             >
-                               <Slider
-                                 ref={sliderRef} // Add ref directly to the Slider component
-                                 min={0}
-                                 max={100}
-                                 marks={marks} // Add marks to the slider
-                                 style={{ width: "80%", marginLeft: "5%" }}
-                                 onChange={handleSliderChange}
-                                 value={`${sliderValue}`}
-                                 tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Correct way to control tooltip visibility
-                                 trackStyle={{ height: 20 }} // Increase the thickness of the slider line
-                                 handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
-                               />
-                             </div>
+<div
+                style={{
+                  position: "relative",
+                  width: "80%",
+                  marginLeft: "5%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Slider
+                  min={0}
+                  max={100}
+                  marks={marks}
+                  style={{ width: "70%", marginRight: "10px", zIndex: 0 }}
+                  onChange={handleSliderChange}
+                  value={sliderValue}
+                  tooltip={{
+                    open: !isIPPModalVisible && !isModalVisible,
+                  }}
+                  trackStyle={{ height: 20 }}
+                  handleStyle={{ height: 20, width: 20 }}
+                />
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={sliderValue}
+                  onChange={(e) => {
+                    const value = Math.min(Math.max(Number(e.target.value), 0), 100); // Clamp value between 0 and 100
+                    setSliderValue(value);
+                  }}
+                  style={{
+                    width: "60px",
+                    height: "30px",
+                    marginLeft: "10px",
+                    textAlign: "center",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                  }}
+                />
+                </div>
                              <Button
                                type="primary"
                                onClick={handleOptimizeClick}

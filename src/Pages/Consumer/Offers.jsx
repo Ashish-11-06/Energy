@@ -253,9 +253,17 @@ console.log(requirementContent);
       ),
     },
     {
-      title: "Lock-in Period (Months)",
-      dataIndex: "lock_in_period",
-      key: "lock_in_period",
+      title: "Total RE Offered (MW)",
+      dataIndex: "combination",
+      key: "re_capacity",
+      render: (combination) => combination?.re_capacity || "-",
+    },
+    {
+      title: "Final Cost (INR)",
+      dataIndex: "combination",
+      key: "final_cost",
+      render: (combination) => combination?.final_cost || "-",
+      
     },
     {
       title: "term_of_ppa (Years)",

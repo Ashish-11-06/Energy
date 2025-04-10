@@ -319,9 +319,15 @@ console.log("Final Commencement Date:", commencementDate);
                     </Typography.Paragraph>
                   </Col>
                   <Col span={12}>
-                    <Typography.Paragraph>
-                      <strong>State:</strong> {combinationContent.state}
-                    </Typography.Paragraph>
+                  <Typography.Paragraph>
+                    <strong>State:</strong>{" "}
+                    {combinationContent.state &&
+                      Object.entries(
+                        JSON.parse(combinationContent.state.replace(/'/g, '"')) // Replace single quotes with double quotes
+                      )
+                        .map(([key, value]) => `${key.replace('_', ' ')} - ${value}`)
+                        .join(', ')}
+                  </Typography.Paragraph>
                   </Col>
                 </Row>
               ) : user_category === "Consumer" ? (
