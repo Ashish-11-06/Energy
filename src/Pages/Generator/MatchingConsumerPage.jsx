@@ -55,6 +55,9 @@ console.log(Matchingconsumers);
 
   console.log(filteredConsumers);
   useEffect(() => {
+    const userId = user.id; // Replace with actual user ID (you can get it from localStorage or another source)
+    dispatch(fetchMatchingConsumersById(userId)); // Fetch matching consumers
+  
     setFilteredConsumers(Array.isArray(Matchingconsumers) ? Matchingconsumers : []); // Ensure it's an array
     
     const fetchData = async () => {
