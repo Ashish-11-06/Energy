@@ -1,7 +1,7 @@
 // import axios from 'axios';
 
 // const axiosInstance = axios.create({
-//     baseURL: 'http://172.31.16.56 /api/powerx', 
+//     baseURL: 'http://52.66.186.241 /api/powerx', 
 //     // baseURL: 'http://localhost:5000/',
 //     headers: {
 //         'Content-Type': 'application/json',
