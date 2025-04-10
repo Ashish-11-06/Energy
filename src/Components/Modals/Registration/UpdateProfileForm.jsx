@@ -45,7 +45,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
   const [solarFile, setSolarFile] = useState("");
   const [windFile, setWindFile] = useState("");
   const continueButtonRef = useRef(false); // Ref to track the state of the "Continue" button
-const [warningModal, setWarningModal] = useState(false); // State to control the warning modal
+const [warningModal, setWarningModal] = useState(false); // State to control tupdatehe warning modal
   useEffect(() => {
     if (user.solar_template_downloaded) {
       setIsTemplateDownloaded(true);
@@ -145,7 +145,7 @@ const [warningModal, setWarningModal] = useState(false); // State to control the
   }, [lastUploadedFile]);
 
 const handleCloseWarningModal = () => {
-    setWarningModal(false);
+  setWarningModal(false);
     oncancel();
   };
 
@@ -475,7 +475,14 @@ const handleCloseWarningModal = () => {
           Please fill all the details and upload the file in the given format.
         </Text>
         <br />
-        <Button onClick={handleCloseWarningModal}>Proceed</Button>
+        <Button
+          onClick={() => {
+            setWarningModal(false);
+            onCancel(); // Close the parent modal
+          }}
+        >
+          Proceed
+        </Button>
         <Button type="primary" onClick={() => setWarningModal(false)} style={{ marginTop: "16px",marginLeft: "10px" }}>
           Resubmit
         </Button>
