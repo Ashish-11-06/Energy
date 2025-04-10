@@ -17,9 +17,25 @@ export const fetchMatchingConsumersById = createAsyncThunk(
   }
 );
 
+export const checkStatusById = createAsyncThunk(
+  'matchingConsumer/checkStatusById',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await matchingConsumerApi.checkStatus(id);
+      return response.data; // Assuming the API returns data in `response.data`
+    } catch (error) {
+      // Handle errors
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to fetch matching consumers'
+      );
+    }
+  }
+);
+
 // Initial state
 const initialState = {
   Matchingconsumers: [], // Holds the fetched consumers
+  checkStatus: [], // Holds the status of the consumers
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null, // Error message if the API call fails
 };
@@ -40,6 +56,18 @@ const matchingConsumerSlice = createSlice({
         state.Matchingconsumers = action.payload;
       })
       .addCase(fetchMatchingConsumersById.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      .addCase(checkStatusById.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(checkStatusById.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.checkStatus = action.payload;
+      })
+      .addCase(checkStatusById.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       });

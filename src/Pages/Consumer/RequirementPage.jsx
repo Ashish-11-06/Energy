@@ -277,7 +277,7 @@ const companyName=userData.company;
           ) : (
             <Table
               columns={columns}
-              dataSource={requirements}
+              dataSource={Array.isArray(requirements) ? requirements : []} // Ensure dataSource is always an array
               pagination={false}
               bordered
               loading={status === 'loading'}

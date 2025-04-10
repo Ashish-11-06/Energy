@@ -17,7 +17,7 @@ const GenerationPortfolio = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isNewUserModalVisible, setIsNewUserModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
-  const [Structuredprojects, setStructuredProjects] = useState([]); // Local state for flattened projects
+  const [Structuredprojects, setStructuredProjects] = useState([]); // Ensure default is an empty array
   const [form] = Form.useForm();
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -98,7 +98,9 @@ const GenerationPortfolio = () => {
         ...(projects.Wind || []).map((project) => ({ ...project, type: 'Wind' })),
         ...(projects.ESS || []).map((project) => ({ ...project, type: 'ESS' })),
       ];
-      setStructuredProjects(flatProjects); // Update local state with flattened data
+      setStructuredProjects(flatProjects); // Ensure this is always an array
+    } else {
+      setStructuredProjects([]); // Fallback to an empty array if no projects exist
     }
   }, [projects.Solar, projects.Wind, projects.ESS]);
 
@@ -250,7 +252,14 @@ const GenerationPortfolio = () => {
           Add New Entry +
         </Button>
 
-        {allUpdated ? (
+        <Button
+              type="default"
+              style={{ marginTop: '20px', float: 'right' }}
+              onClick={handleFindConsumer}
+            >
+              Find Consumer
+            </Button>
+        {/* {allUpdated ? (
           <Button
             type="primary"
             style={{ marginTop: '20px', float: 'right' }}
@@ -268,7 +277,7 @@ const GenerationPortfolio = () => {
               Find Consumer
             </Button>
           )
-        )}
+        )} */}
       </div>
 
       <Modal

@@ -43,7 +43,7 @@ export const sendForgotPasswordOtp = createAsyncThunk(
 
 // Async Thunks
 export const loginUser = createAsyncThunk('users/loginUser', async (credentials, { rejectWithValue }) => {
-    // console.log('Dispatching loginUser with credentials:', credentials);
+    console.log('Dispatching loginUser with credentials:', credentials);
     try {
         localStorage.clear();
         const response = await userApi.logInUser(credentials);

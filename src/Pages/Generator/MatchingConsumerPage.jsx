@@ -4,7 +4,7 @@ import { Table, Radio, Button, message, Input, Select, Modal,Row,Col,Tooltip } f
 import { EyeOutlined } from '@ant-design/icons'; // Import the Eye icon
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch and useSelector hooks
-import { fetchMatchingConsumersById } from '../../Redux/Slices/Generator/matchingConsumerSlice'; // Import the action to fetch data
+import { checkStatusById, fetchMatchingConsumersById } from '../../Redux/Slices/Generator/matchingConsumerSlice'; // Import the action to fetch data
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are imported
 import { Typography } from 'antd';
 
@@ -24,10 +24,11 @@ const MatchingConsumerPage = () => {
   const [filterState, setFilterState] = useState(''); // For filtering by state
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
   const [modalConsumerDetails, setModalConsumerDetails] = useState(null); // Consumer details for the modal
-  
+  const [statusData, setStatusData] = useState(null); // State to hold status data
   // Access matching consumers data and status from the Redux store
   const { Matchingconsumers, status, error } = useSelector((state) => state.matchingConsumer);
 console.log(modalConsumerDetails);
+console.log(Matchingconsumers);
 
     const dataSource = [
       {key:'1',label:<strong>Credit Rating</strong>, value:modalConsumerDetails?.REindex || 'N/A'},
@@ -39,16 +40,46 @@ console.log(modalConsumerDetails);
     
     ];
   
+
+    // if(Matchingconsumers.length === 0) {
   if (status === 'idle') {
     const userId = user.id; // Replace with actual user ID (you can get it from localStorage or another source)
     dispatch(fetchMatchingConsumersById(userId)); // Fetch matching consumers
   }
+// }
+  console.log(Matchingconsumers);
+  
+  
   
   const [filteredConsumers, setFilteredConsumers] = useState(Matchingconsumers); // Set initial filtered consumers to matching consumers
 
+  console.log(filteredConsumers);
   useEffect(() => {
-    setFilteredConsumers(Matchingconsumers); // Update filtered consumers whenever Matchingconsumers changes
-  }, [Matchingconsumers]);
+    setFilteredConsumers(Array.isArray(Matchingconsumers) ? Matchingconsumers : []); // Ensure it's an array
+    
+    const fetchData = async () => {
+      try {
+        const response = await dispatch(checkStatusById(user.id)); // Call the action to check status
+      //  console.log(response);
+      //  setStatusData(response?.payload); // Set the status data in the state.p
+      //  console.log('All Updated:', response?.payload?.all_updated); // Log the all_updated field
+       setStatusData(response?.payload?.all_updated); // Set the status data in the state
+       if (response.error) {
+          console.log('Failed to fetch status '); // Show error message if fetching fails
+        } else {
+          console.log('status')
+          // message.success('Matching consumers fetched successfully'); // Show success message
+        }
+      } catch (error) {
+        console.error(error);
+        }
+      };
+    fetchData(); // Call the fetchData function to fetch matching consumers
+  }, []);
+
+  useEffect(() => {
+    setFilteredConsumers(Array.isArray(Matchingconsumers) ? Matchingconsumers : []); // Ensure it's an array
+  }, [Matchingconsumers]); // Add Matchingconsumers as a dependency
 
   // Handle radio button change for selecting a consumer
   const handleRadioChange = (e, key) => {
@@ -157,9 +188,12 @@ console.log(modalConsumerDetails);
     if (selectedConsumer) {
       // Navigate to the next page (e.g., /next-page)
       // console.log(selectedConsumer);
-      if(subscriptionPlan.status === 'active') {
+      if(subscriptionPlan.status === 'active' && statusData === true) {
+        navigate('/generator/combination-pattern'); // Pass selected consumer as state
+      } else if(subscriptionPlan.status === 'active' && statusData === false) {
         navigate('/generator/update-profile-details', { state: { selectedConsumer } }); // Pass selected consumer as state
-      } else {
+      }
+        else {
         navigate('/subscription-plan');
       }
       } else {
@@ -167,6 +201,8 @@ console.log(modalConsumerDetails);
     }
   };
 
+  console.log(statusData);
+  
   return (
     <div style={{ padding: '20px', marginTop: '50px', border: "2px" }}>
       <h2>Potential Consumer</h2>
@@ -190,7 +226,7 @@ console.log(modalConsumerDetails);
       </div>
       <Table
   columns={columns}
-  dataSource={filteredConsumers}
+  dataSource={filteredConsumers} // Ensure this is always an array
   pagination={false}
   loading={status === 'loading'}
   bordered
