@@ -15,7 +15,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
   const dispatch = useDispatch();
   const { status, error } = useSelector((state) => state.portfolio);
   const [loading, setLoading] = useState(false);
-  const [isState, setIsState] = useState([]);
+  const [isState, setIsState] = useState([]); // Ensure it's initialized as an array
 
   useEffect(() => {
     if (status === 'failed' && error) {
@@ -70,10 +70,11 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
   useEffect(() => {
     dispatch(fetchState())
       .then(response => {
-        setIsState(response.payload);
+        setIsState(Array.isArray(response.payload) ? response.payload : []); // Ensure payload is an array
       })
       .catch(error => {
         console.error("Error fetching states:", error);
+        setIsState([]); // Fallback to an empty array on error
       });
   }, [dispatch]);
 
@@ -155,7 +156,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
               
             >
               <Select placeholder="Select your state" showSearch >
-                {isState && isState.map((state, index) => (
+                {Array.isArray(isState) && isState.map((state, index) => ( // Add a check before map
                   <Select.Option key={index} value={state}>
                     {state}
                   </Select.Option>

@@ -1,7 +1,7 @@
 let socket = null;
 let reconnectAttempts = 0;
 const MAX_RECONNECT_ATTEMPTS = 5;
-const RECONNECT_INTERVAL = 3000; // 3 seconds
+const RECONNECT_INTERVAL = 10000; // 3 seconds
 
 const SOCKET_URL = 'ws://192.168.1.36:8000';
 const SOCKET_PATH = '/api/energy/ws/test-negotiation/';
@@ -18,7 +18,6 @@ const eventListeners = new Map();
  * @returns {WebSocket|null} - Returns the socket instance or null if failed
  */
 export const connectWebSocket = (user_id, tariff_id, onConnected = null) => {
-    // Clear any existing connection
     if (socket) {
         disconnectWebSocket();
     }
@@ -30,38 +29,29 @@ export const connectWebSocket = (user_id, tariff_id, onConnected = null) => {
 
         socket = new WebSocket(wsUrl.toString());
 
+        // Add a timeout mechanism
+        const connectionTimeout = setTimeout(() => {
+            if (socket.readyState === WebSocket.CONNECTING) {
+                console.error('⏳ WebSocket connection timed out');
+                socket.close();
+                attemptReconnect(user_id, tariff_id, onConnected);
+            }
+        }, 20000); // 20 seconds timeout
+
         socket.onopen = () => {
+            clearTimeout(connectionTimeout);
             console.log('✅ WebSocket connected:', wsUrl.toString());
-            reconnectAttempts = 0; // Reset reconnect counter
+            reconnectAttempts = 0;
             if (onConnected) onConnected();
         };
 
         socket.onclose = (event) => {
+            clearTimeout(connectionTimeout);
             if (event.wasClean) {
                 console.log('🟢 WebSocket closed cleanly:', event.reason);
             } else {
                 console.error('🔴 WebSocket connection lost:', event.reason);
                 attemptReconnect(user_id, tariff_id, onConnected);
-            }
-        };
-
-        socket.onerror = (error) => {
-            console.error('❌ WebSocket error:', error);
-            // Note: The browser doesn't expose detailed error info due to security
-        };
-
-        socket.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                console.debug('📩 WebSocket message:', data);
-
-                // Check if this is a registered event
-                if (data.event && eventListeners.has(data.event)) {
-                    const callbacks = eventListeners.get(data.event);
-                    callbacks.forEach(callback => callback(data.payload));
-                }
-            } catch (error) {
-                console.error('❌ Error parsing WebSocket message:', error);
             }
         };
 
@@ -71,6 +61,7 @@ export const connectWebSocket = (user_id, tariff_id, onConnected = null) => {
         return null;
     }
 };
+
 
 /**
  * Attempts to reconnect to WebSocket server

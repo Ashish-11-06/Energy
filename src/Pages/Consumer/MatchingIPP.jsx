@@ -199,17 +199,30 @@ const MatchingIPP = () => {
             style={{ position: 'absolute', top: 120, right: 30, zIndex: 1000 }}
           />
         </Tooltip>
-        <Row style={{ width: "90%", display: "flex", alignItems: "center", gap: "10px",marginTop: "20px" }}>
-          <p style={{ margin: 0, whiteSpace: "nowrap" }}>Select Requirement</p>
-          <Select
-            style={{ flex: 1 }} // Takes remaining space
-            value={selectedRequirement?.id}
-            onChange={handleRequirementChange}
-            options={requirements.map((req) => ({
-              label: `State:${req.state},Consumption unit: ${req.consumption_unit},Indusrty: ${req.industry},Contracted demand: ${req.contracted_demand} kW,Tariff Category: ${req.tariff_category},Voltage: ${req.voltage_level} kV, ${req.annual_electricity_consumption} MWh, ${req.procurement_date}`,
-              value: req.id,
-            }))}
-          />
+        <Row
+          style={{
+            width: "100%",
+            marginTop: "20px",
+            display: "flex",
+            flexWrap: "wrap", // Allow wrapping for smaller screens
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+            <p style={{ margin: 0, whiteSpace: "nowrap" }}>Select Requirement</p>
+          <Col xs={24} sm={8} md={6} lg={4} style={{ textAlign: "center" }}>
+          </Col>
+          <Col xs={24} sm={16} md={18} lg={20}>
+            <Select
+              style={{ width: "100%" }} // Full width for responsiveness
+              value={selectedRequirement?.id}
+              onChange={handleRequirementChange}
+              options={Array.isArray(requirements) ? requirements.map((req) => ({
+                label: `State:${req.state},Consumption unit: ${req.consumption_unit},Indusrty: ${req.industry},Contracted demand: ${req.contracted_demand} kW,Tariff Category: ${req.tariff_category},Voltage: ${req.voltage_level} kV, ${req.annual_electricity_consumption} MWh, ${req.procurement_date}`,
+                value: req.id,
+              })) : []} // Ensure options is an empty array if requirements is not an array
+            />
+          </Col>
         </Row>
 
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>

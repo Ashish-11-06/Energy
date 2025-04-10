@@ -35,6 +35,7 @@ export const checkStatusById = createAsyncThunk(
 // Initial state
 const initialState = {
   Matchingconsumers: [], // Holds the fetched consumers
+  checkStatus: [], // Holds the status of the consumers
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null, // Error message if the API call fails
 };
@@ -64,7 +65,7 @@ const matchingConsumerSlice = createSlice({
       })
       .addCase(checkStatusById.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.Matchingconsumers = action.payload;
+        state.checkStatus = action.payload;
       })
       .addCase(checkStatusById.rejected, (state, action) => {
         state.status = 'failed';
