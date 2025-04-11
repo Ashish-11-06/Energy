@@ -71,6 +71,7 @@ const TransactionWindow = () => {
     0
   ); // Set end time to 12:30 PM
   const deadline = endDateTime.getTime();
+console.log(deadline);
 
   useEffect(() => {
     const newSocket = connectWebSocket(user.id, record.tariff_id);
@@ -416,7 +417,7 @@ const handleAcceptOffer =() => {
                     </Text>
                   </Col>
                   <Col>
-                    {/* <Button
+                    <Button
                       type="primary"
                       onClick={handleAcceptBestOffer}
                       style={{
@@ -425,7 +426,7 @@ const handleAcceptOffer =() => {
                       }}
                     >
                       Accept Best Offer
-                    </Button> */}
+                    </Button>
                   </Col>
                 </Row>
               </Card>
@@ -500,7 +501,7 @@ const handleAcceptOffer =() => {
                             </span>
                           </Text>
 
-                          {timeUp && !offerAccepted && ( // Show "Accept" button until an offer is accepted
+                          {Date.now() >= deadline && (
                             <Button
                               type="primary"
                               onClick={() => handleAcceptOffer(msg)}
