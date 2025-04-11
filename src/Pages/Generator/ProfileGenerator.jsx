@@ -144,6 +144,7 @@ const userId = initialUserData.id;
 
   const handleLogOut = () => {
     localStorage.removeItem("user");
+    localStorage.clear();
     navigate("/");
   };
 

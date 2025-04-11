@@ -27,9 +27,9 @@ const { Option } = Select;
 const { Panel } = Collapse;
 
 const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransaction,requirementContent ,combinationContent}) => {
-  console.log(combinationContent);
-  console.log(data);
-  console.log(combinationContent)
+  // console.log(combinationContent);
+  // console.log(data);
+  // console.log(combinationContent)
   const term_sheet_id = data.id;
   const downloadable = data?.downloadable;
 
@@ -92,9 +92,9 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   const handleDateChange = (date) => {
     if (date) {
       setCommencementDate(moment(date).format("YYYY-MM-DD")); // Ensure correct format
-      console.log("Selected Date:", moment(date).format("YYYY-MM-DD"));
+      // console.log("Selected Date:", moment(date).format("YYYY-MM-DD"));
       const formattedDate = moment(date).format("YYYY-MM-DD");
-      console.log("Formatted Date:", formattedDate); // Log the formatted date
+      // console.log("Formatted Date:", formattedDate); // Log the formatted date
     }
   };
 
@@ -144,13 +144,18 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
         title: "Confirm Rejection",
         content: "Are you sure, you want to reject this request?",
         okText: "Yes, Reject",
-        cancelText: "Counter Offer",
+        cancelText: data?.count === 4 ? "Counter Offer" : "Counter Offer",
+        cancelButtonProps: { disabled: data?.count === 4 }, // Disable the button when count is 4
         onOk: async () => {
           await updateStatus(action);
         },
         onCancel: () => {
           setModalVisible(false); // Close the confirm reject modal
         },
+        onClose: () => {
+          setModalVisible(false); // Handle the cross button close
+        },
+        closable: true, // Add close button to the modal
       });
     } else {
       await updateStatus(action);
@@ -180,7 +185,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   // console.log(commencementDate);
   // Handle form submission
   const handleContinue = async () => {
-    console.log('clicked');
+    // console.log('clicked');
     
     const termSheetId = data.id;
 
@@ -199,7 +204,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
       payment_security_type: paymentSecurityType,
       payment_security_day: paymentSecurityDays,
     };
-    console.log("Final Commencement Date:", commencementDate);
+    // console.log("Final Commencement Date:", commencementDate);
 
     try {
       console.log(
@@ -227,10 +232,10 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   const toggleConsumerDetails = () => {
     setConsumerDetailsVisible(!consumerDetailsVisible);
   };
-  console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"));
-console.log(commencementDate)
-console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"))
-console.log("Final Commencement Date:", commencementDate);
+//   console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"));
+// console.log(commencementDate)
+// console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"))
+// console.log("Final Commencement Date:", commencementDate);
   return (
     <div>
       <Modal
@@ -245,7 +250,7 @@ console.log("Final Commencement Date:", commencementDate);
       >
       {/* <div style={{ maxHeight: '70vh', overflowY: 'auto' }}> */}
       <span style={{ display: "flex", alignItems: "center", width: "100%" }}>
-          <p style={{ margin: 0 }}>
+          <p style={{ margin: 0,fontSize: "16px" }}>
             Offer Tariff: <strong>{data?.offer_tariff ? data?.offer_tariff : 0}</strong> INR/kWh
           </p>
           {!fromTransaction ? (
@@ -479,6 +484,18 @@ console.log("Final Commencement Date:", commencementDate);
               />
             </Typography.Paragraph>
           </Col>
+          {/* <Button
+                      // style={{
+                      //   color: "#ff5858",
+                      //   borderColor: "#ff5858",
+                      //   backgroundColor: "transparent",
+                      // }}
+                      className="red-btn"
+                      onClick={() => handleStatusUpdate("Rejected")}
+                      // disabled={isFieldEdited}
+                    >
+                      Reject
+                    </Button> */}
           {/* <Col span={12}>
             <Button
               block
@@ -563,6 +580,7 @@ console.log("Final Commencement Date:", commencementDate);
                         <Button
                           style={{ marginLeft: "10px" }}
                           onClick={handleContinue}
+                          disabled={data?.count === 4} // Disable button when count is 4
                         >
                           Counter Offer
                         </Button>
@@ -572,6 +590,7 @@ console.log("Final Commencement Date:", commencementDate);
                         <Button
                           style={{ marginLeft: "10px" }}
                           onClick={handleContinue}
+                          disabled={data?.count === 4} // Disable button when count is 4
                         >
                           Counter Offer
                         </Button>
@@ -580,6 +599,7 @@ console.log("Final Commencement Date:", commencementDate);
                       <Button
                         style={{ marginLeft: "10px" }}
                         onClick={handleContinue}
+                        disabled={data?.count === 4} // Disable button when count is 4
                       >
                         Counter Offer
                       </Button>
@@ -641,6 +661,7 @@ console.log("Final Commencement Date:", commencementDate);
                         <Button
                           style={{ marginLeft: "10px" }}
                           onClick={handleContinue}
+                          disabled={data?.count === 4} // Disable button when count is 4
                         >
                           Counter Offer
                         </Button>
@@ -650,6 +671,7 @@ console.log("Final Commencement Date:", commencementDate);
                         <Button
                           style={{ marginLeft: "10px" }}
                           onClick={handleContinue}
+                          disabled={data?.count === 4} // Disable button when count is 4
                         >
                           Counter Offer
                         </Button>
@@ -658,8 +680,9 @@ console.log("Final Commencement Date:", commencementDate);
                       <Button
                         style={{ marginLeft: "10px" }}
                         onClick={handleContinue}
+                        disabled={data?.count === 4} // Disable button when count is 4
                       >
-                        Counter Offerrrrr
+                        Counter Offer
                       </Button>
                     )}
                   </>

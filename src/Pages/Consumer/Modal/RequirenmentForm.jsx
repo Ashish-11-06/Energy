@@ -236,7 +236,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
             </Form.Item>
           </Col>
 
-          {selectedIndustry && selectedIndustry !== "other" && (
+          {(selectedIndustry && selectedIndustry !== "other") || (isCustomIndustry)  && (
             <Col span={12}>
               <Form.Item
                 label={renderLabelWithTooltip(
@@ -250,7 +250,38 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
               >
                 <Select
                   placeholder="Select a sub-industry"
-                  disabled={!subIndustries.length}
+                  // disabled={!subIndustries.length}
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().includes(input.toLowerCase())
+                  }
+                >
+                  {subIndustries.map((sub_industry, index) => (
+                    <Select.Option key={index} value={sub_industry}>
+                      {sub_industry}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          )}
+
+{(selectedIndustry && selectedIndustry !== "other" )  && (
+            <Col span={12}>
+              <Form.Item
+                label={renderLabelWithTooltip(
+                  "Sub Industry",
+                  "Select a sub-industry from the chosen industry."
+                )}
+                name="sub_industry"
+                rules={[
+                  { required: true, message: "Please select your sub-industry!" },
+                ]}
+              >
+                <Select
+                  placeholder="Select a sub-industry"
+                  // disabled={!subIndustries.length}
                   showSearch
                   optionFilterProp="children"
                   filterOption={(input, option) =>

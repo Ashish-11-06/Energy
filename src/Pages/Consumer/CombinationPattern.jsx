@@ -341,6 +341,7 @@ const CombinationPattern = () => {
       console.error("Error in handleOptimizeClick:", error);
       // setTryLowerModal(true);
       message.error(error)
+      message.error('Try in lower RE Replacement value')
       // message.error("Failed to fetch combinations.");
     } finally {
       setFetchingCombinations(false);
@@ -359,7 +360,20 @@ const CombinationPattern = () => {
     0: "0%",
     100: "100%",
   };
-
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        min: 0, // Start the scale from 15
+      },
+    },
+    plugins: {
+      legend: {
+        position: "bottom", // Move the legend to the bottom
+      },
+    },
+  };
   const columns = [
     {
       title: "Sr. No.",
@@ -487,82 +501,107 @@ const CombinationPattern = () => {
     });
   }
 
-  // Chart data for consumption patterns
-  const chartData = {
-    labels: Array.isArray(consumptionPatterns)
-      ? consumptionPatterns.map((pattern) => pattern.month)
-      : [], // Safely check if it's an array
-    datasets: [
-      {
-        label: "Consumption (MWh)",
-        data: Array.isArray(consumptionPatterns)
-          ? consumptionPatterns.map((pattern) => pattern.consumption)
-          : [], // Safely check if it's an array
-        backgroundColor: "#4CAF50",
-        barThickness: 10, // Set bar thickness
-      },
-    ],
-  };
+  // Chart data for stacked bar chart
+// const stackedBarChartData = {
+//   labels: Array.isArray(consumptionPatterns)
+//     ? consumptionPatterns.map((pattern) => pattern.month)
+//     : [], // Safely check if it's an array
+//   datasets: [
+//     {
+//       label: "Consumption (MWh)",
+//       data: Array.isArray(consumptionPatterns)
+//         ? consumptionPatterns.map((pattern) => pattern.consumption)
+//         : [],
+//       backgroundColor: "#4CAF50",
+//     },
+//     {
+//       label: "Peak Consumption (MWh)",
+//       data: Array.isArray(consumptionPatterns)
+//         ? consumptionPatterns.map((pattern) => pattern.peak_consumption)
+//         : [],
+//       backgroundColor: "#FF5733",
+//     },
+//     {
+//       label: "Off-Peak Consumption (MWh)",
+//       data: Array.isArray(consumptionPatterns)
+//         ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption)
+//         : [],
+//       backgroundColor: "#337AFF",
+//     },
+//   ],
+// };
 
-  const lineChartData = {
-    labels: Array.isArray(consumptionPatterns)
-      ? consumptionPatterns.map((pattern) => pattern.month)
-      : [], // Safely check if it's an array
-    datasets: [
-      {
-        type: "bar",
-        label: "Consumption (MWh)",
-        data: Array.isArray(consumptionPatterns)
-          ? consumptionPatterns.map((pattern) => pattern.consumption)
-          : [], // Safely check if it's an array
-        backgroundColor: "#669800",
-        barThickness: 10, // Set bar thickness
-      },
-      {
-        type: "line",
-        label: "Consumption during Peak hours(MWh)",
-        data: Array.isArray(consumptionPatterns)
-          ? consumptionPatterns.map((pattern) => pattern.peak_consumption)
-          : [], // Safely check if it's an array
-        borderColor: "#FF5733",
-        borderWidth: 5, // Increase line thickness
-        fill: false,
-      },
-      {
-        type: "line",
-        label: "Consumption during Off-Peak hours(MWh)",
-        data: Array.isArray(consumptionPatterns)
-          ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption)
-          : [], // Safely check if it's an array
-        borderColor: "#337AFF",
-        borderWidth: 5, // Increase line thickness
-        fill: false,
-      },
-    ],
-  };
+// const stackedBarChartOptions = {
+//   responsive: true,
+//   maintainAspectRatio: false,
+//   scales: {
+//     x: {
+//       stacked: true,
+//     },
+//     y: {
+//       stacked: true,
+//       min: 0, // Start the scale from 0
+//     },
+//   },
+//   plugins: {
+//     legend: {
+//       position: "bottom", // Move the legend to the bottom
+//     },
+//   },
+// };
 
-  useEffect(() => {
-    //console.log(consumptionPatterns, "consumptionPatterns");
-  }, [consumptionPatterns]);
-
-  // console.log(consumptionPatterns);
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        min: 0, // Start the scale from 15
-      },
+const chartData = {
+  labels: Array.isArray(consumptionPatterns)
+    ? consumptionPatterns.map((pattern) => pattern.month)
+    : [], // Safely check if it's an array
+  datasets: [
+    {
+      label: "Consumption (MWh)",
+      data: Array.isArray(consumptionPatterns)
+        ? consumptionPatterns.map((pattern) => pattern.consumption)
+        : [], // Safely check if it's an array
+      backgroundColor: "#4CAF50",
+      barThickness: 10, // Set bar thickness
     },
-    plugins: {
-      legend: {
-        position: "bottom", // Move the legend to the bottom
-      },
-    },
-  };
+  ],
+};
 
-  // console.log(dataSource);
+const lineChartData = {
+  labels: Array.isArray(consumptionPatterns)
+    ? consumptionPatterns.map((pattern) => pattern.month)
+    : [], // Safely check if it's an array
+  datasets: [
+    {
+      type: "bar",
+      label: "Consumption (MWh)",
+      data: Array.isArray(consumptionPatterns)
+        ? consumptionPatterns.map((pattern) => pattern.consumption)
+        : [], // Safely check if it's an array
+      backgroundColor: "#669800",
+      barThickness: 10, // Set bar thickness
+    },
+    {
+      type: "line",
+      label: "Consumption during Peak hours(MWh)",
+      data: Array.isArray(consumptionPatterns)
+        ? consumptionPatterns.map((pattern) => pattern.peak_consumption)
+        : [], // Safely check if it's an array
+      borderColor: "#FF5733",
+      borderWidth: 5, // Increase line thickness
+      fill: false,
+    },
+    {
+      type: "line",
+      label: "Consumption during Off-Peak hours(MWh)",
+      data: Array.isArray(consumptionPatterns)
+        ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption)
+        : [], // Safely check if it's an array
+      borderColor: "#337AFF",
+      borderWidth: 5, // Increase line thickness
+      fill: false,
+    },
+  ],
+};
 
   return (
     <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif", paddingBottom:'50px'}}>
@@ -590,7 +629,8 @@ const CombinationPattern = () => {
                 margin: "0 auto",
               }}
             >
-              <Line data={lineChartData} options={chartOptions} />
+                <Line data={lineChartData} options={chartOptions} />
+              {/* <Bar data={stackedBarChartData} options={stackedBarChartOptions} /> */}
             </div>
           </Col>
         </Card>
@@ -645,6 +685,24 @@ const CombinationPattern = () => {
                     trackStyle={{ height: 20 }} // Increase the thickness of the slider line
                     handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
                   />
+                  <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={sliderValue}
+                  onChange={(e) => {
+                    const value = Math.min(Math.max(Number(e.target.value), 0), 100); // Clamp value between 0 and 100
+                    setSliderValue(value);
+                  }}
+                  style={{
+                    width: "60px",
+                    height: "30px",
+                    marginLeft: "10px",
+                    textAlign: "center",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                  }}
+                />
                   {/* Right Arrow Button (Positioned on the Slider Line) */}
                   {/* <Button
                     onClick={increaseValue}

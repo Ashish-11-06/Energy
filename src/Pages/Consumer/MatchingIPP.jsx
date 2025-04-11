@@ -25,36 +25,51 @@ const MatchingIPP = () => {
   const [solarArray, setSolarArray] = useState([]);
   const [windArray, setWindArray] = useState([]);
   const [essArray, setEssArray] = useState([]);
+const selectedRequirements = location.state?.selectedRequirements || [];
+  const selectedRequirementId = location.state?.selectedRequirement?.id || null; // Get selected requirement ID from location state
 
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
     return item ? JSON.parse(item) : '';
   };
 
-  console.log("Matching IPP data:", matchingIPP);
+  // console.log("Matching IPP data:", matchingIPP);
+  // if(matchingIPP.message) {
+  //   message.error(matchingIPP.message);
+  // }
+
 
   useEffect(() => {
-    if (requirements.length > 0) {
-      setSelectedRequirement(requirements[0]); // Select the first requirement by default
+    const storedRequirement = JSON.parse(localStorage.getItem('selectedRequirement'));
+    if (storedRequirement) {
+      setSelectedRequirement(storedRequirement); // Set the selected requirement from localStorage
+    } else if (requirements.length > 0) {
+      setSelectedRequirement(requirements[0]); // Fallback to the first requirement
     }
   }, [requirements]);
 
   useEffect(() => {
+    const fetchMatchingIpp = async () => {
     const requirementId = localStorage.getItem('selectedRequirementId');
     if (requirementId) {
       try {
-        dispatch(fetchMatchingIPPById(requirementId)).then((res) => {
+       const res=await dispatch(fetchMatchingIPPById(requirementId)).then((res) => {
+        // console.log(res);
+        
           if (res.payload && res.payload.length > 0) {
             setIsMatching(true); 
           } else {
             setIsMatching(false);
+            message.error(res.payload.message);
           }
           localStorage.setItem('isMatching', isMatching);
         });
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     }
+  }
+    fetchMatchingIpp();
   }, [location, dispatch]);
 
   useEffect(() => {
@@ -71,6 +86,7 @@ const MatchingIPP = () => {
 
   const handleRadioChange = (record) => {
     setSelectedRow(record); // Set the selected record when radio button is clicked
+    localStorage.setItem('matchingIPP', record.user__username); // Store the selected IPP ID in local storage
   };
 
   useEffect(() => {
@@ -89,7 +105,13 @@ const MatchingIPP = () => {
   };
 
   const handleContinue = () => {
-    if (selectedRow) {
+    const subscriptionPlanValidity = getFromLocalStorage('subscriptionPlanValidity');
+    const matchingIPP = localStorage.getItem('matchingIPP');
+    const selectedRequirementId = localStorage.getItem('selectedRequirementId');
+  
+    if (selectedRequirementId && matchingIPP && subscriptionPlanValidity?.status === 'active') {
+      navigate("/consumer/energy-consumption-table", { state: { requirementId: selectedRequirementId } });
+    } else if (selectedRow) {
       const requirementId = location.state?.selectedRequirement?.id;
       navigate("/consumer/annual-saving", { state: { requirementId } });
     } else {
@@ -214,7 +236,7 @@ const MatchingIPP = () => {
           </Col>
           <Col xs={24} sm={16} md={18} lg={20}>
             <Select
-              style={{ width: "100%" }} // Full width for responsiveness
+              style={{ width: "70%" }} // Full width for responsiveness
               value={selectedRequirement?.id}
               onChange={handleRequirementChange}
               options={Array.isArray(requirements) ? requirements.map((req) => ({

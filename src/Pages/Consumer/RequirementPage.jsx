@@ -29,7 +29,7 @@ const RequirementsPage = () => {
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData = JSON.parse(localStorage.getItem('user')).user;
-  const is_new_user = userData.is_new_user;
+  const is_new_user = userData?.is_new_user;
 // console.log(userData);
 const companyName=userData.company;
   const role = userData.role;
@@ -139,17 +139,19 @@ const companyName=userData.company;
 
   const handleAddDetails = (record) => {
     localStorage.setItem('selectedRequirementId', record.id);
-    navigate('/consumer/energy-consumption-table');
+    navigate('/consumer/energy-consumption-table', );
   };
 
   const handleRowSelect = (record) => {
+    // console.log('record', record);
+    
     setSelectedRowKeys([record.key]);
     setSelectedRequirement(record);
     const data = {
       user_id: userData.id,
       selected_requirement_id: record.id
     };
-    message.success(`You selected record of state '${record.state}'`);
+    message.success(`You selected record of site '${record.consumption_unit}'`);
   };
 
   const showModal = () => {
@@ -187,8 +189,11 @@ const companyName=userData.company;
   };
 
   const handleContinue = () => {
+    // console.log(selectedRequirement);
+    
     if (selectedRequirement) {
-      navigate('/consumer/matching-ipp');
+      localStorage.setItem('selectedRequirement', JSON.stringify(selectedRequirement)); // Store selected requirement in localStorage
+      navigate('/consumer/matching-ipp', { state: selectedRequirement });
       localStorage.setItem('selectedRequirementId', selectedRequirement.id);
     } else {
       message.error('Please select a single requirement before continuing.');
@@ -202,6 +207,8 @@ const companyName=userData.company;
     }
     if (is_new_user) {
       setIsInfoModalVisible(true);
+      // Update local storage when modal opens
+      localStorage.setItem('user', JSON.stringify({ ...user, user: { ...user.user, is_new_user: false } }));
     }
     if (requirements.length === 0) {
       setLoading(true);

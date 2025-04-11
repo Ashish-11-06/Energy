@@ -32,7 +32,7 @@ const GenerationPortfolio = () => {
 
   const { status, projects } = useSelector((state) => state.portfolio);
   const is_new_user=user.is_new_user;
-  console.log(is_new_user);
+  // console.log(is_new_user);
 
   const handleOptimize = () => {
     navigate('/generator/combination-pattern');
@@ -41,6 +41,8 @@ const GenerationPortfolio = () => {
   useEffect(() => {
     if (is_new_user) {
       setIsNewUserModalVisible(true); // Show modal for new users
+    localStorage.setItem('user', JSON.stringify({ ...user, user: { ...user.user, is_new_user: false } }));
+  //  console.log('res',res);
     }
 
     const storedUser = localStorage.getItem('user');

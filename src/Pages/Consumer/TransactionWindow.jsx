@@ -52,7 +52,7 @@ const TransactionWindow = () => {
 
   const start_time = 10; // 10 AM
   const end_time = 12; // 12 PM
-  const end_minutes = 38; // 30 minutes
+  const end_minutes = 5; // 30 minutes
   const today = new Date();
   const startDateTime = new Date(
     today.getFullYear(),
@@ -192,6 +192,11 @@ const handleAcceptOffer =() => {
 
   const handleDownloadTransaction = async () => {
     const input = contentRef.current;
+
+    // Temporarily hide the buttons
+    const buttons = input.querySelectorAll(".red-btn, .download-btn");
+    buttons.forEach((button) => (button.style.display = "none"));
+
     const canvas = await html2canvas(input, { scale: 2 });
     const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF("p", "mm", "a4");
@@ -199,6 +204,10 @@ const handleAcceptOffer =() => {
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+    // Restore the buttons
+    buttons.forEach((button) => (button.style.display = ""));
+
     pdf.save("transaction_details.pdf");
   };
 
@@ -528,6 +537,7 @@ const handleAcceptOffer =() => {
             Reject Transaction
           </Button>
           <Button
+            className="download-btn"
             style={{ marginLeft: "20px" }}
             onClick={handleDownloadTransaction}
           >

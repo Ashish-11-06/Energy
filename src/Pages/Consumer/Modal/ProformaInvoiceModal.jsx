@@ -98,6 +98,10 @@ const ProformaInvoiveModal = ({
   const userData = JSON.parse(localStorage.getItem("user")).user;
   const userId = userData?.id;
   const companyName=userData?.company;
+  console.log(selectedPlan);
+  
+  console.log('selected plan',selectedPlanId);
+  
   //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
   // //  console.log(selected_plan);
   //  const invoiceDetails=selectedPlan;
@@ -247,10 +251,32 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
     }
   };
 
-  const handleFreeContinue = () => {
-    userData?.user_category === "Consumer"
-      ? navigate("/consumer/energy-consumption-table")
-      : navigate("/generator/update-profile-details");
+  const handleFreeContinue = async () => {
+    const user = userId;
+    const subscription_id = selectedPlanId;
+    const subscriptionData = {
+      user,
+      subscription_id,
+    };
+
+    try {
+      const res = await dispatch(subscriptionEnroll(subscriptionData));
+      console.log(res);
+      console.log(res?.payload?.status);
+      console.log(res?.payload);
+
+      if (res?.payload?.status === "active") {
+        message.success("Subscription activated successfully.");
+        userData?.user_category === "Consumer"
+          ? navigate("/consumer/energy-consumption-table")
+          : navigate("/generator/update-profile-details");
+      } else {
+        message.error("Subscription activation failed.");
+      }
+    } catch (error) {
+      console.error("Error activating subscription:", error);
+      message.error("Subscription activation failed.");
+    }
   };
 
   const closeProforma = () => {
@@ -438,7 +464,7 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
         </div>
 
         <p><strong>Total Amount (in words):</strong>Rupees ${numberToWords(
-          selectedPlan?.subscription?.price ?? 0
+          selectedPlan?.subscription?.price || 0 // Explicitly pass 0 if price is falsy
         )} only </p>
         <p style="text-align:right"><strong>Authorized Signatory</strong></p>
         <p style="font-size: 12px;">This is a computerized invoice. It does not require a signature.</p>
@@ -479,8 +505,24 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
                 >
                   Download PDF
                 </Button>
+                <Button
+                      key="generate"
+                      type="primary"
+                      onClick={handleFreeContinue}
+                      disabled={!selectedRequirementId}
+                    >
+                      Continue
+                    </Button> 
                 {/* {fromSubscription && (
-                  <Tooltip
+                <Button
+                      key="generate"
+                      type="primary"
+                      onClick={handleFreeContinue}
+                      disabled={!selectedRequirementId}
+                    >
+                      Continue
+                    </Button> }
+                /*  <Tooltip
                     title={
                       !selectedRequirementId
                         ? "To continue further, select a requirement first."
@@ -518,6 +560,14 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
             <Button key="download" type="primary" onClick={handleDownloadPDF}>
               Download PDF
             </Button>
+            <Button
+                  key="generate"
+                  type="primary"
+                  onClick={handleFreeContinue}
+                  // disabled={!selectedRequirementId}
+                >
+                  Continue
+                </Button> 
             {/* {fromSubscription && (
               <Tooltip
                 title={
