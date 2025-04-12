@@ -1,4 +1,4 @@
-import axiosInstance from "../axiosInstance";
+import axiosInstance from "../../../Redux/axiosInstance";
 
 const userApi = {
   login: (userData) => {

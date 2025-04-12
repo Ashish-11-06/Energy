@@ -1,14 +1,14 @@
-import axiosInstance from "../../axiosInstance";
+import axiosInstance from "../../../../Redux/axiosInstance";
 
 const notificationApi = {
   getNotification: (userId) => {
     // console.log(userId);
     // console.log("User ID:", userId, typeof userId);
     const id = Number(userId); 
-    return axiosInstance.get(`/notifications/${id}`);
+    return axiosInstance.get(`/powerx/notifications/${id}`);
 },
   updateNotification: (data) => {
-    return axiosInstance.patch(`/notification`, data); // Correct the endpoint
+    return axiosInstance.patch(`/powerx/notification`, data); // Correct the endpoint
   }
 };
 

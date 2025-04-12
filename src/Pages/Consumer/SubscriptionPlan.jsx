@@ -65,9 +65,14 @@ const SubscriptionPlans = () => {
   const alreadySubscribed = subscription?.subscription_type;
   const time_remaining = alreadySubscribed === 'FREE' ? (() => {
     const endDate = new Date(subscription?.end_date);
-    const now = new Date();
   
-    const diffMs = endDate - now; // Difference in milliseconds
+    // Get current UTC time
+    const nowUTC = new Date();
+  
+    // Convert to IST by adding 5 hours and 30 minutes
+    const nowIST = new Date(nowUTC.getTime() + (5.5 * 60 * 60 * 1000));
+  
+    const diffMs = endDate - nowIST; // Difference in milliseconds
     if (diffMs <= 0) return "Expired"; // Handle expiration
   
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -75,6 +80,7 @@ const SubscriptionPlans = () => {
   
     return `${days} days, ${hours} hours`;
   })() : ' ';
+  
 
   
   const navigate = useNavigate();
@@ -98,11 +104,11 @@ const companyName=userData[0]?.company;
 
 
   const handleSelectPlan = (id, plan) => {
-    console.log("Selected Plan ID:", id);
-    console.log("Selected Plan:", plan);
+    // console.log("Selected Plan ID:", id);
+    // console.log("Selected Plan:", plan);
     
     setSelectedPlan(plan);
-    console.log('selected plan',selectedPlan);
+    // console.log('selected plan',selectedPlan);
 
     // const currentDate = moment().format("YYYY-MM-DD");
     setSelectedPlanId(id);
@@ -115,7 +121,7 @@ const companyName=userData[0]?.company;
     setIsQuotationVisible(true);
   };
 
-  console.log('id',performa);
+  // console.log('id',performa);
 
   const closeQuotation = () => {
     setIsQuotationVisible(false);
@@ -179,7 +185,7 @@ const companyName=userData[0]?.company;
       subscription: selectedPlanId, // Ensure selectedPlanId is coming from a controlled input
       // due_date: "2025-01-25",
     };
-console.log('performaData',performaData);
+// console.log('performaData',performaData);
 
     try {
       const response = await dispatch(
@@ -325,8 +331,8 @@ console.log('performaData',performaData);
   const closeProforma = () => {
     setIsProformaVisible(false);
   };
- console.log('plan',selectedPlan);
- console.log('id',selectedPlanId);
+//  console.log('plan',selectedPlan);
+//  console.log('id',selectedPlanId);
  
   return (
     <div className="subscription-plans-container">

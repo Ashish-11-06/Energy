@@ -550,6 +550,13 @@ const role=userData?.role;
                     data?.count % 2 === 1 &&
                     data?.count <= 4) ? (
                   <>
+                   <Button
+                      style={{ marginLeft: "10px" }}
+                      onClick={() => handleStatusUpdate("Withdraw")}
+                      disabled={isFieldEdited}
+                    >
+                      Withdraw
+                    </Button>
                     <Button
                       // style={{
                       //   color: "#ff5858",
@@ -632,6 +639,13 @@ const role=userData?.role;
                     data?.count % 2 === 1 &&
                     data?.count <= 4) ? (
                   <>
+                    <Button
+                      style={{ marginLeft: "10px" }}
+                      onClick={() => handleStatusUpdate("Withdraw")}
+                      disabled={isFieldEdited}
+                    >
+                      Withdraw
+                    </Button>
                    <Button
                       // style={{
                       //   color: "#ff5858",

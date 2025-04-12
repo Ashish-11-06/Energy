@@ -74,6 +74,7 @@ const LandingPage = () => {
             if (!user) {
                 throw new Error("Invalid response from server");
             }
+            await new Promise(resolve => setTimeout(resolve, 5000));
             if (user?.user_category === 'Generator') {
               navigate(
                   user?.is_new_user 

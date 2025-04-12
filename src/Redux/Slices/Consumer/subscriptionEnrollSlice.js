@@ -3,32 +3,29 @@ import subscriptionEnrollApi from '../../api/consumer/subscriptionEnrollApi';
 
 
 export const subscriptionEnroll = createAsyncThunk(
-    'subscription/subscriptionEnroll',
-    async (subscriptionData, { rejectWithValue }) => {
-      try {
-        const response = await subscriptionEnrollApi.subscriptionEnroll(subscriptionData);
-        // console.log('respones',response);
-        
-        if (response && response.data) {
-          if(response.data.error){
-            return rejectWithValue(
-              response.data.error || 'Failed to register user'
-            );
-          }
-          return response.data; // Successfully registered user
-        } else {
-          // If the response does not have data or is not structured correctly, reject with a message
-          return rejectWithValue('Unexpected response structure');
+  'subscription/subscriptionEnroll',
+  async (subscriptionData, { rejectWithValue }) => {
+    try {
+      const response = await subscriptionEnrollApi.subscriptionEnroll(subscriptionData);
+      
+      if (response && response.data) {
+        if (response.data.error) {
+          return rejectWithValue(response.data.error || 'Failed to register user');
         }
-      } catch (error) {
-        // console.log('error',error);
-        // Handle errors if the request fails
-        return rejectWithValue(
-          error.response?.data?.error || 'Failed to register user'
-        );
+        return response.data;
+      } else {
+        return rejectWithValue('Unexpected response structure');
       }
+    } catch (error) {
+      console.error('API Error:', error.response?.data); // Debug log
+      return rejectWithValue(
+        error.response?.data?.detail || error.response?.data?.error || 'Failed to register user'
+      );
     }
-  );
+  }
+);
+
+
 // Async thunk to fetch subscription validity (GET request)
 export const fetchSubscriptionValidity = createAsyncThunk(
   'subscriptionPlan/fetchSubscriptionValidity',
