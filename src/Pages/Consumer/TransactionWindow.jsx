@@ -43,7 +43,8 @@ const TransactionWindow = () => {
   const contentRef = useRef();
   const [socket, setSocket] = useState(null);
   const [offerAccepted, setOfferAccepted] = useState(false); // Track if an offer is accepted
-
+  const userData = JSON.parse(localStorage.getItem('user')).user;
+const role=userData?.role;
   const location = useLocation();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user")).user;
@@ -199,6 +200,11 @@ const handleAcceptOffer =() => {
 
   const handleDownloadTransaction = async () => {
     const input = contentRef.current;
+
+    // Temporarily hide the buttons
+    const buttons = input.querySelectorAll(".red-btn, .download-btn");
+    buttons.forEach((button) => (button.style.display = "none"));
+
     const canvas = await html2canvas(input, { scale: 2 });
     const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF("p", "mm", "a4");
@@ -206,6 +212,10 @@ const handleAcceptOffer =() => {
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+    // Restore the buttons
+    buttons.forEach((button) => (button.style.display = ""));
+
     pdf.save("transaction_details.pdf");
   };
 
@@ -508,7 +518,7 @@ const handleAcceptOffer =() => {
                             </span>
                           </Text>
 
-                          {Date.now() >= deadline && (
+                          {Date.now() >= deadline && role !== "View" && (
                             <Button
                               type="primary"
                               onClick={() => handleAcceptOffer(msg)}
@@ -535,6 +545,7 @@ const handleAcceptOffer =() => {
             Reject Transaction
           </Button>
           <Button
+            className="download-btn"
             style={{ marginLeft: "20px" }}
             onClick={handleDownloadTransaction}
           >

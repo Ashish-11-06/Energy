@@ -63,8 +63,10 @@ const CombinationPattern = () => {
 
 const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State to control modal visibility
 const [isGraphLoading, setIsGraphLoading] = useState(false); // State to control loader in the button
+const [hasRunSensitivity, setHasRunSensitivity] = useState(false); // Track sensitivity execution
 
 const handleSensitivity = async () => {
+  if (hasRunSensitivity) return; // Prevent re-execution
   console.log("clicked");
   setIsGraphLoading(true); // Show loader in the button
 
@@ -89,6 +91,7 @@ const handleSensitivity = async () => {
       setIsGraphLoading(false); // Hide loader in the button
       return;
     }
+    setHasRunSensitivity(true); // Mark sensitivity as executed
   } catch (error) {
     console.error("Error fetching sensitivity data:", error);
     message.error("Failed to fetch sensitivity data.");
@@ -419,10 +422,10 @@ if(dataSource?.length<=0) {
   }, []);
 
   useEffect(() => {
-    if (dataSource.length > 0) {
-      handleSensitivity(); // Call handleSensitivity only when dataSource is populated
+    if (dataSource.length > 0 && !hasRunSensitivity) {
+      handleSensitivity(); // Call handleSensitivity only when dataSource is populated and hasn't run
     }
-  }, [dataSource]);
+  }, [dataSource, hasRunSensitivity]);
 
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
@@ -495,6 +498,7 @@ const handleSensitivityClick = () => {
 
   const handleOptimizeClick = async () => {
     setValue(sliderValue);
+    setHasRunSensitivity(false); // Reset sensitivity execution flag
     try {
       setIsTableLoading(true);
       setFetchingCombinations(true);
@@ -529,6 +533,8 @@ const handleSensitivityClick = () => {
     } catch (error) {
       console.error("Error in handleOptimizeClick:", error);
       message.error(error);
+      message.error('Try in lower RE Replacement value')
+      
       // message.error("Failed to fetch combinations.");
     } finally {
       setFetchingCombinations(false);
@@ -747,11 +753,76 @@ const handleSensitivityClick = () => {
     ],
   };
 
-  useEffect(() => {
-    //console.log(consumptionPatterns, "consumptionPatterns");
-  }, [consumptionPatterns]);
+  const chartOptionss = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        min: 0,
+      },
+    },
+    plugins: {
+      legend: {
+        position: "bottom",
+      },
+    },
+  };
 
-  // console.log(consumptionPatterns);
+  // const stackedBarChartData = {
+  //   labels: Array.isArray(consumptionPatterns)
+  //     ? consumptionPatterns.map((pattern) => pattern.month)
+  //     : [],
+  //   datasets: [
+  //     {
+  //       label: "Consumption (MWh)",
+  //       data: Array.isArray(consumptionPatterns)
+  //         ? consumptionPatterns.map((pattern) => pattern.consumption)
+  //         : [],
+  //       backgroundColor: "#4CAF50",
+  //     },
+  //     {
+  //       label: "Consumption during Peak hours (MWh)",
+  //       data: Array.isArray(consumptionPatterns)
+  //         ? consumptionPatterns.map((pattern) => pattern.peak_consumption)
+  //         : [],
+  //       backgroundColor: "#FF5733",
+  //     },
+  //     {
+  //       label: "Consumption during Off-Peak hours (MWh)",
+  //       data: Array.isArray(consumptionPatterns)
+  //         ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption)
+  //         : [],
+  //       backgroundColor: "#337AFF",
+  //     },
+  //   ],
+  // };
+  
+  // const stackedBarChartOptions = {
+  //   responsive: true,
+  //   maintainAspectRatio: false,
+  //   plugins: {
+  //     legend: {
+  //       position: "bottom",
+  //     },
+  //   },
+  //   scales: {
+  //     x: {
+  //       stacked: true,
+  //       title: {
+  //         display: true,
+  //         text: "Months",
+  //       },
+  //     },
+  //     y: {
+  //       stacked: true,
+  //       title: {
+  //         display: true,
+  //         text: "Consumption (MWh)",
+  //       },
+  //       beginAtZero: true,
+  //     },
+  //   },
+  // };
 
   const chartOptions = {
     responsive: true,
@@ -767,6 +838,11 @@ const handleSensitivityClick = () => {
       },
     },
   };
+  useEffect(() => {
+    //console.log(consumptionPatterns, "consumptionPatterns");
+  }, [consumptionPatterns]);
+
+  // console.log(consumptionPatterns);
 
   return (
     <div
@@ -803,7 +879,8 @@ const handleSensitivityClick = () => {
                 margin: "0 auto",
               }}
             >
-              <Line data={lineChartData} options={chartOptions} />
+               <Line data={lineChartData} options={chartOptionss} />
+              {/* <Bar data={stackedBarChartData} options={stackedBarChartOptions} /> */}
             </div>
           </Col>
         </Card>
@@ -856,7 +933,7 @@ const handleSensitivityClick = () => {
                   trackStyle={{ height: 20 }}
                   handleStyle={{ height: 20, width: 20 }}
                 />
-                <input
+                {/* <input
                   type="number"
                   min={0}
                   max={100}
@@ -873,7 +950,7 @@ const handleSensitivityClick = () => {
                     border: "1px solid #ccc",
                     borderRadius: "4px",
                   }}
-                />
+                /> */}
               </div>
                 <Button
                   type="primary"

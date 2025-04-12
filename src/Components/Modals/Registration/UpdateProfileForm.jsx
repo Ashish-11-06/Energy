@@ -59,12 +59,12 @@ const [warningModal, setWarningModal] = useState(false); // State to control tup
     // Update the ref value based on the project type and form state
     if (selectedProject.type === "ESS") {
       continueButtonRef.current = true;
-    } else if (fileData) {
+    } else if (fileData || file) {
       continueButtonRef.current = true;
     } else {
       continueButtonRef.current = false;
     }
-  }, [selectedProject.type, fileData]);
+  }, [selectedProject.type, fileData, file]);
 
   // Function to download Excel template
   const downloadExcelTemplate = () => {
@@ -133,7 +133,11 @@ const [warningModal, setWarningModal] = useState(false); // State to control tup
       setFileData(reader.result);
       setFile(file);
 
-      updateLastUploadedFile(project.id, file.name);
+      // Update the continueButtonRef state after file upload
+      continueButtonRef.current = true;
+
+      // Reset the file input state
+      document.querySelector('input[type="file"]').value = null;
     };
     reader.readAsDataURL(file);
   };
@@ -157,6 +161,13 @@ const handleCloseWarningModal = () => {
     setFile(null);
     setFileData(null);
   }, []);
+
+  useEffect(() => {
+    // Reset file and fileData when the project changes
+    setFile(null);
+    setFileData(null);
+    continueButtonRef.current = selectedProject.type === "ESS"; // Reset submit button state
+  }, [project]);
 
   const onSubmit = async (values) => {
     const updatedValues = {

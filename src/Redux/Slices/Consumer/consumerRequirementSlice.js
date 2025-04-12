@@ -49,8 +49,8 @@ export const addNewRequirement = createAsyncThunk(
         try {
             // Make API call to add a new requirement
             const response = await consumerrequirementApi.addRequirement(requirementData);
-            console.log(response.data);
-            console.log(response);
+            // console.log(response.data);
+            // console.log(response);
             
             
             return response.data;

@@ -33,10 +33,13 @@ const ProfilePage = () => {
   
   // Retrieve user data safely from localStorage
   const storedUser = localStorage.getItem("user");
+  // console.log(storedUser);
+  const userDat = JSON.parse(localStorage.getItem('user')).user;
+
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
-  console.log(`ajdfljk ${JSON.stringify(initialUserData)}`);
+  // console.log(`ajdfljk ${JSON.stringify(initialUserData)}`);
 const userId = initialUserData.id;
-// console.log(userId);
+// console.log(userDat);
 
   const navigate = useNavigate();
 
@@ -144,6 +147,7 @@ const userId = initialUserData.id;
 
   const handleLogOut = () => {
     localStorage.removeItem("user");
+    localStorage.clear();
     navigate("/");
   };
 

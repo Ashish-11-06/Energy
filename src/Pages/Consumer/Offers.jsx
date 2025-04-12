@@ -75,7 +75,7 @@ const Offers = () => {
  
 
   const showModal = (record) => {
-    console.log(record);
+    // console.log(record);
     setModalContent(record);
     // Ensure combinationContent is set if not already set
     if (!combinationContent && record.combination) {
@@ -98,13 +98,13 @@ const Offers = () => {
   };
 
   const showCombinationModal = (record) => {
-    console.log(record);
+    // console.log(record);
     setCombinationContent(record);
     setCombData(record);
     setIsCombinationModalVisible(true);
   };
   const showRequirementModal = (record) => {
-    console.log(record);
+    // console.log(record);
     setRequirementContent(record);
     // console.log(requirementContent);
     setIsRequirementModalVisible(true);
@@ -119,10 +119,10 @@ const Offers = () => {
     setIsRequirementModalVisible(false);
     // setRequirementContent(null);
   };
-console.log(combData);
-console.log(combinationContent);
+// console.log(combData);
+// console.log(combinationContent);
 
-console.log(requirementContent);
+// console.log(requirementContent);
 
   const handleStatusChange = (value) => {
     setStatusFilter(value);
@@ -218,7 +218,7 @@ console.log(requirementContent);
 
         return (
           <Typography.Link onClick={() => showCombinationModal(text)}>
-            {console.log(transformCombination(text.combination))}
+            {/* {console.log(transformCombination(text.combination))} */}
             {transformCombination(text.combination)}
           </Typography.Link>
         );
@@ -386,7 +386,7 @@ console.log(requirementContent);
       render: (text) => (text ? moment(text).format("DD-MM-YYYY") : "-"),
     },
   ];
-  console.log(combData);
+  // console.log(combData);
   return (
     <div style={{ padding: "20px" }}>
       <Col span={24} style={{ marginLeft: "20px" }}>

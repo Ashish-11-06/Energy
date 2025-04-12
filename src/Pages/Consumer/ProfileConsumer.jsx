@@ -137,6 +137,7 @@ const ProfilePage = () => {
 
   const handleLogOut = () => {
     localStorage.removeItem("user");
+    localStorage.clear();
     navigate("/");
   };
 

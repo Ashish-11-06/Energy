@@ -76,6 +76,37 @@ console.log(data);
 
   const downloadable = data?.downloadable;
 
+  // const downloadableData = {
+  //   term_of_ppa:ppaTerm,
+  //   lock_in_period:lockInPeriod,
+  //   minimum_supply:minimumSupply,
+  //   contracted_energy:contractedEnergy,
+  //   payment_security_type:paymentSecurityType,
+  //   payment_security_day:paymentSecurityDays,
+  //   offer_tariff:perUnitCost,
+  //   solar_capacity:solarCapacity,
+  //   wind_capacity:windCapacity,
+  //   ess_capacity:essCapacity,
+  //   // commencement_of_supply: data?.cod ? moment(data.cod).format("YYYY-MM-DD") : null,
+  // };
+  // }
+
+  const termsData = {
+    offer_tariff: perUnitCost || 0,
+    from_whom: user?.user_category || "",
+    requirement_id: selectedDemandId || "",
+    combination: data?.combination || "",
+    term_of_ppa: ppaTerm || "",
+    lock_in_period: lockInPeriod || "",
+    commencement_of_supply: data?.cod ? moment(data.cod).format("YYYY-MM-DD") : null,
+    contracted_energy: contractedEnergy,
+    minimum_supply_obligation: minimumSupply || 0,
+    payment_security_type: paymentSecurityType || "",
+    payment_security_day: paymentSecurityDays || 0,
+  };
+
+  // console.log('termsData',termsData);
+
   const handleContinue = async () => {
     const termsData = {
       offer_tariff: perUnitCost || 0,
@@ -90,6 +121,8 @@ console.log(data);
       payment_security_type: paymentSecurityType || "",
       payment_security_day: paymentSecurityDays || 0,
     };
+console.log('termsData',termsData);
+
 
     try {
       await dispatch(addTermsAndConditions(termsData)).unwrap();
@@ -255,7 +288,7 @@ console.log(data);
           </Button>
         </Row>
       </Modal>
-      <AgreementModal data={downloadable} visible={modalVisible} onClose={handleCloseModal} />
+      <AgreementModal data={termsData} visible={modalVisible} onClose={handleCloseModal} />
 
       <SummaryOfferModal
         visible={false}

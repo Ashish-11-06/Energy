@@ -85,7 +85,7 @@ const SubscriptionPlans = () => {
   const temp = user_category === 'Consumer' ? 'Matching IPP' : 'Find Consumer';
   const req=user_category === 'Consumer' ? 'Requirement' : 'Portfolio';
   const reque=user_category === 'Consumer' ? 'Requirement' : 'Capacity Sizing';
-  console.log(temp);
+  // console.log(temp);
   
   
   // const user_category = userData[0]?.user_category;
@@ -94,15 +94,18 @@ const SubscriptionPlans = () => {
   const [orderId, setOrderId] = useState(null);
 
 const companyName=userData[0]?.company;
-// console.log(companyName);
+
 
 
   const handleSelectPlan = (id, plan) => {
+    console.log("Selected Plan ID:", id);
+    console.log("Selected Plan:", plan);
+    
     setSelectedPlan(plan);
-    console.log(selectedPlan);
+    console.log('selected plan',selectedPlan);
 
     // const currentDate = moment().format("YYYY-MM-DD");
-    // setSelectedPlanId(id);
+    setSelectedPlanId(id);
     // const subscriptionData = {
     //   user: userId,
     //   subscription: id,
@@ -111,6 +114,8 @@ const companyName=userData[0]?.company;
     // const response = dispatch(subscriptionEnroll(subscriptionData));
     setIsQuotationVisible(true);
   };
+
+  console.log('id',performa);
 
   const closeQuotation = () => {
     setIsQuotationVisible(false);
@@ -161,6 +166,9 @@ const companyName=userData[0]?.company;
         });
     }
   }, [dispatch]);
+// console.log(selectedPlan);
+// console.log(subscriptionPlan);
+
 
   const handleGenerateProforma = async (values) => {
     // console.log(values);
@@ -168,9 +176,10 @@ const companyName=userData[0]?.company;
       company_name: values.companyName,
       company_address: values.companyAddress,
       gst_number: values.gstinNumber,
-      subscription: selectedPlan?.id, // Ensure selectedPlanId is coming from a controlled input
-      due_date: "2025-01-25",
+      subscription: selectedPlanId, // Ensure selectedPlanId is coming from a controlled input
+      // due_date: "2025-01-25",
     };
+console.log('performaData',performaData);
 
     try {
       const response = await dispatch(
@@ -316,7 +325,9 @@ const companyName=userData[0]?.company;
   const closeProforma = () => {
     setIsProformaVisible(false);
   };
-
+ console.log('plan',selectedPlan);
+ console.log('id',selectedPlanId);
+ 
   return (
     <div className="subscription-plans-container">
       <Title level={2} style={{ marginTop: "5%", marginBottom: "5%" }}>

@@ -27,8 +27,8 @@ const MatchingConsumerPage = () => {
   const [statusData, setStatusData] = useState(null); // State to hold status data
   // Access matching consumers data and status from the Redux store
   const { Matchingconsumers, status, error } = useSelector((state) => state.matchingConsumer);
-console.log(modalConsumerDetails);
-console.log(Matchingconsumers);
+// console.log(modalConsumerDetails);
+// console.log(Matchingconsumers);
 
     const dataSource = [
       {key:'1',label:<strong>Credit Rating</strong>, value:modalConsumerDetails?.REindex || 'N/A'},
@@ -47,13 +47,13 @@ console.log(Matchingconsumers);
     dispatch(fetchMatchingConsumersById(userId)); // Fetch matching consumers
   }
 // }
-  console.log(Matchingconsumers);
+  // console.log(Matchingconsumers);
   
   
   
   const [filteredConsumers, setFilteredConsumers] = useState(Matchingconsumers); // Set initial filtered consumers to matching consumers
 
-  console.log(filteredConsumers);
+  // console.log(filteredConsumers);
   useEffect(() => {
     const userId = user.id; // Replace with actual user ID (you can get it from localStorage or another source)
     dispatch(fetchMatchingConsumersById(userId)); // Fetch matching consumers
@@ -70,7 +70,7 @@ console.log(Matchingconsumers);
        if (response.error) {
           console.log('Failed to fetch status '); // Show error message if fetching fails
         } else {
-          console.log('status')
+          // console.log('status')
           // message.success('Matching consumers fetched successfully'); // Show success message
         }
       } catch (error) {
@@ -204,7 +204,7 @@ console.log(Matchingconsumers);
     }
   };
 
-  console.log(statusData);
+  // console.log(statusData);
   
   return (
     <div style={{ padding: '20px', marginTop: '50px', border: "2px" }}>

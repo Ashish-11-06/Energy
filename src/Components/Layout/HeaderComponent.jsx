@@ -31,19 +31,6 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const [matchingConsumer, setMatchingConsumer] = useState("");
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
   const notificationCount = useSelector((state) => state.notifications.notificationCount);
-
-const isMatchingIPP = localStorage.getItem("isMatching") === "true";
-// console.log(isMatchingIPP);
-
-
-  useEffect(() => {
-    setSubscriptionRequires(subscription !== "active");
-  }, [subscription]);
-
-  useEffect(() => {
-    setMatchingConsumer(!matchingConsumerId);
-  }, [matchingConsumerId]);
-
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
     return item ? JSON.parse(item) : "";
@@ -56,6 +43,20 @@ const isMatchingIPP = localStorage.getItem("isMatching") === "true";
   if (user && user.company_representative) {
     username = user.company_representative;
   }
+const isMatchingIPP = localStorage.getItem("isMatching") === "true";
+// console.log(isMatchingIPP);
+
+
+  useEffect(() => {
+    setSubscriptionRequires(subscription !== "active");
+  }, [subscription]);
+
+  useEffect(() => {
+    setMatchingConsumer(!matchingConsumerId);
+  }, [matchingConsumerId]);
+
+
+
 
  
 
@@ -225,7 +226,7 @@ const isMatchingIPP = localStorage.getItem("isMatching") === "true";
                           {step.label}
                         </span>
 
-                        {isMatchingConsumerMissing || step.isDisabled ? ( // Check for isDisabled
+                        {isMatchingConsumerMissing || step.isDisabled ? (
                           <Tooltip title={step.isDisabled ? "Matching IPP required" : ""}>
                             <div
                               className="icon-circle disabled"
@@ -256,23 +257,21 @@ const isMatchingIPP = localStorage.getItem("isMatching") === "true";
                             </div>
                           </Tooltip>
                         ) : (
-                          <Link to={step.path}>
-                            <div
-                              className={`icon-circle ${index <= currentStepIndex ? "completed" : ""
-                                }`}
-                              style={{
-                                margin: "0 auto",
-                                transform:
-                                  index === steps.length - 1
-                                    ? "translateX(10px)"
-                                    : "none",
-                              }}
-                            >
-                              {React.cloneElement(step.icon, {
-                                style: { fontSize: "16px" },
-                              })}
-                            </div>
-                          </Link>
+                          <div
+                            className={`icon-circle ${index <= currentStepIndex ? "completed" : ""
+                              }`}
+                            style={{
+                              margin: "0 auto",
+                              transform:
+                                index === steps.length - 1
+                                  ? "translateX(10px)"
+                                  : "none",
+                            }}
+                          >
+                            {React.cloneElement(step.icon, {
+                              style: { fontSize: "16px" },
+                            })}
+                          </div>
                         )}
                       </div>
                     );

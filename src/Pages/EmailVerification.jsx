@@ -58,7 +58,7 @@ const EmailVerification = () => {
           initialValues={{ email: '', password: '', confirm_password: '' }}
         >
           <Form.Item
-            label="Enter your password"
+            label="Enter new password"
             name="password"
             rules={[{ required: true, message: 'Please enter your password!' }]}
           >

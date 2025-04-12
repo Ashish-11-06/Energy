@@ -191,6 +191,21 @@ const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
             >
               Open Window
             </Button>
+            {/* <Button onClick={() => {
+                // if (
+                //   record.tariff_status !== 'Active'
+                // )
+                //   return; // Prevent navigation if not active or outside time window
+                const user = JSON.parse(localStorage.getItem('user')).user;
+                const path =
+                  user.user_category === 'Generator'
+                    ? '/generator/transaction-window'
+                    : '/consumer/transaction-window';
+
+                navigate(path, { state: record });
+              }}>
+              Open window
+            </Button> */}
           </Tooltip>
           <br />
           <br />

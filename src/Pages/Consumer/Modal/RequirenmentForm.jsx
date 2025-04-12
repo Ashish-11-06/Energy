@@ -28,6 +28,8 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
   const [isCustomIndustry, setIsCustomIndustry] = useState(false);
   const [selectedIndustry, setSelectedIndustry] = useState(""); // State to track selected industry
   const [subIndustries, setSubIndustries] = useState([]);
+  const [customSubIndustry, setCustomSubIndustry] = useState("");
+  const [isCustomSubIndustry, setIsCustomSubIndustry] = useState(false);
 
   const dispatch = useDispatch();
   const industryy = useSelector((state) => state.industry.industry);
@@ -106,6 +108,15 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
     }
   };
 
+  const handleSubIndustryChange = (value) => {
+    if (value === "otherSub") {
+      setIsCustomSubIndustry(true);
+    } else {
+      setIsCustomSubIndustry(false);
+      setCustomSubIndustry("");
+    }
+  };
+
   const handleSubmit = (values) => {
     const user = JSON.parse(localStorage.getItem("user")).user;
     const formattedValues = {
@@ -117,7 +128,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
       tariff_category: values.tariffCategory,
       voltage_level:values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
       procurement_date: values.procurement.format("YYYY-MM-DD"),
-      sub_industry: values.sub_industry,
+      sub_industry: values.sub_industry === "otherSub" ? customSubIndustry : values.sub_industry,
       consumption_unit: values.consumption_unit,
       annual_electricity_consumption: values.annual_electricity_consumption,
     };
@@ -128,6 +139,8 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
     setIsCustomVoltage(false);
     setCustomIndustry("");
     setIsCustomIndustry(false);
+    setCustomSubIndustry("");
+    setIsCustomSubIndustry(false);
   };
 
   const renderLabelWithTooltip = (label, tooltip) => (
@@ -236,7 +249,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
             </Form.Item>
           </Col>
 
-          {selectedIndustry && selectedIndustry !== "other" && (
+          {(selectedIndustry && selectedIndustry !== "other") && (
             <Col span={12}>
               <Form.Item
                 label={renderLabelWithTooltip(
@@ -250,9 +263,9 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
               >
                 <Select
                   placeholder="Select a sub-industry"
-                  disabled={!subIndustries.length}
                   showSearch
                   optionFilterProp="children"
+                  onChange={handleSubIndustryChange} // Ensure this handler is used
                   filterOption={(input, option) =>
                     option.children.toLowerCase().includes(input.toLowerCase())
                   }
@@ -262,28 +275,29 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
                       {sub_industry}
                     </Select.Option>
                   ))}
+                  <Select.Option value="otherSub">Other</Select.Option> {/* Correct "Other" option */}
                 </Select>
               </Form.Item>
             </Col>
           )}
 
-          {isCustomIndustry && (
+          {isCustomSubIndustry && (
             <Col span={12}>
               <Form.Item
                 label={renderLabelWithTooltip(
-                  "Custom Industry",
-                  'Enter the custom industry if "Other" was selected.'
+                  "Custom Sub Industry",
+                  'Enter the custom sub-industry if "Other" was selected.'
                 )}
-                name="customIndustry"
+                name="customSubIndustry"
                 rules={[
-                  { required: true, message: "Please enter a custom industry!" },
+                  { required: true, message: "Please enter a custom sub-industry!" },
                 ]}
               >
                 <Input
                   type="text"
-                  placeholder="Enter custom industry"
-                  value={customIndustry}
-                  onChange={(e) => setCustomIndustry(e.target.value)}
+                  placeholder="Enter custom sub-industry"
+                  value={customSubIndustry}
+                  onChange={(e) => setCustomSubIndustry(e.target.value)}
                 />
               </Form.Item>
             </Col>
