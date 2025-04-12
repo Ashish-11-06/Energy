@@ -179,10 +179,11 @@ const CombinationPattern = () => {
             
             fetchConsumptionPattern({ id: selectedDemandId, user_id })
           );
-          // console.log(response);
+          console.log(response);
+
         }
       } catch (error) {
-        message.error("Failed to fetch consumption patterns.");
+        message.error(error.message || "Failed to fetch consumption patterns.");
       }
     };
 
@@ -478,7 +479,7 @@ const CombinationPattern = () => {
     },
   ];
 
-  if (role !== "view") {
+  if (role !== "View") {
     columns.push({
       title: "Status",
       dataIndex: "status",

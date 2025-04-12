@@ -29,6 +29,10 @@ const RequirementsPage = () => {
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData = JSON.parse(localStorage.getItem('user')).user;
+  // console.log(userData);
+  const use=localStorage.getItem('user');
+  // console.log('localStorage',use);
+  
   const is_new_user = userData?.is_new_user;
 // console.log(userData);
 const companyName=userData.company;
@@ -228,7 +232,9 @@ const companyName=userData.company;
   return (
     <App>
       <div style={{ padding: 20 }}>
-      <h2>{companyName.replace("Private Limited", "").trim()}'s Consumption Unit</h2>
+      <h2> {companyName
+    ? `${companyName.replace("Private Limited", "").trim()}'s Consumption Unit`
+    : "Consumption Unit"}</h2>
 
         <Tooltip title="Help">
           <Button
@@ -297,7 +303,7 @@ const companyName=userData.company;
 
         <Row gutter={[16, 16]} style={{ marginTop: '16px' }} justify="center">
           <Col>
-            {role != 'view' ? (
+            {role != 'View' ? (
               <Button type="primary" onClick={showModal} style={{ width: 160 }}>
                 Add Requirement +
               </Button>

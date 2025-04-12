@@ -4,16 +4,20 @@ import userApi from '../api/userApi';
 
 
 export const sendForgotPasswordOtp = createAsyncThunk(
-    "users/sendForgotPasswordOtp",
-    async (email, { rejectWithValue }) => {
-      try {
-        await userApi.sendForgotPasswordOtp(email);
-        return { email };
-      } catch (error) {
-        return rejectWithValue(error.response?.data?.message || "Failed to send OTP.");
-      }
+  "users/sendForgotPasswordOtp",
+  async (email, { rejectWithValue }) => {
+    try {
+      const res = await userApi.sendForgotPasswordOtp(email);
+      return res.data;
+    } catch (error) {
+      // console.error("Backend error response:", error.response?.data); // log full backend error
+      return rejectWithValue(
+        error.response?.data?.error || error.response?.data?.message || "Failed to send OTP."
+      );
     }
-  );
+  }
+);
+
   
   // ✅ Verify OTP
   export const verifyForgotPasswordOtp = createAsyncThunk(
@@ -43,7 +47,7 @@ export const sendForgotPasswordOtp = createAsyncThunk(
 
 // Async Thunks
 export const loginUser = createAsyncThunk('users/loginUser', async (credentials, { rejectWithValue }) => {
-    console.log('Dispatching loginUser with credentials:', credentials);
+    // console.log('Dispatching loginUser with credentials:', credentials);
     try {
         localStorage.clear();
         const response = await userApi.logInUser(credentials);

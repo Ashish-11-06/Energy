@@ -40,6 +40,9 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   const [modalVisible, setModalVisible] = useState(false);
   const [isFieldEdited, setIsFieldEdited] = useState(false); // Track if any field is edited
   const [consumerDetailsVisible, setConsumerDetailsVisible] = useState(false); // State to toggle consumer details
+  const userData = JSON.parse(localStorage.getItem('user')).user;
+// console.log(userData?.role);
+const role=userData?.role;
 
   const showModal = () => {
     setModalVisible(true);
@@ -532,7 +535,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
           Continue
         </Button> */}
 
-          {user_category === "Consumer"
+          {user_category === "Consumer" && role !== 'View'
             &&
             data?.generator_status !== "Rejected" &&
             data?.generator_status !== "Accepted"
@@ -616,7 +619,7 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
             ) : null}
 
 
-          {!fromTransaction && user_category === "Generator"
+          {!fromTransaction && user_category === "Generator" && role !== 'View'
             &&
             data?.consumer_status !== "Rejected" &&
             data?.consumer_status !== "Accepted"

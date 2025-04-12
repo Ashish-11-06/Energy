@@ -26,6 +26,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const subscription_type = subscription?.subscription_type;
   // console.log(subscription_type);
+  // console.log(subscription);
 
   // console.log(notificationCount);
 
@@ -157,12 +158,12 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
   const menuItems = menuType === 'consumer' ? consumerMenuItems : generatorMenuItems;
 
-  
-  // const lastMenuItem = { label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' };
-  const lastMenuItem = is_new_user 
-  ? { label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' }
-  : { label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' };
-
+  let lastMenuItem = { label: '', key: '/' }; // Fallback value
+  if (subscription_type === 'PRO') {
+    lastMenuItem = is_new_user 
+      ? { label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' }
+      : { label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' };
+  }
   // if (subscription_type === 'PRO') {
     // if (is_new_user == true) {
     //   menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
@@ -226,26 +227,27 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               </Menu.Item>
             ))}
           </Menu>
-          <div style={{
-    position: "absolute",
-    bottom: "20px",
-    left: "20px",
-    width: "80%",
-    backgroundColor: "rgb(102, 152, 0)",
-    borderColor: "rgb(102, 152, 0)",
-    padding: "5px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-    height: "40px",
-    borderRadius:'10px'
-}}>
-    <Button type="primary" href={lastMenuItem.key} block>
-        {lastMenuItem.label}
-    </Button>
-</div>
-
+          {subscription_type === 'PRO' && (
+            <div style={{
+              position: "absolute",
+              bottom: "20px",
+              left: "20px",
+              width: "80%",
+              backgroundColor: "rgb(102, 152, 0)",
+              borderColor: "rgb(102, 152, 0)",
+              padding: "5px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              height: "40px",
+              borderRadius: '10px'
+            }}>
+              <Button type="primary" href={lastMenuItem.key} block>
+                {lastMenuItem.label}
+              </Button>
+            </div>
+          )}
         </Sider>
       ) : (
         <>

@@ -253,11 +253,14 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
 
   const handleFreeContinue = async () => {
     const user = userId;
-    const subscription_id = selectedPlanId;
+    const subscription = selectedPlanId;
     const subscriptionData = {
       user,
-      subscription_id,
+      subscription,
+      start_date: moment().format("YYYY-MM-DD"),
     };
+    console.log(moment().format("YYYY-MM-DD"));
+    
 
     try {
       const res = await dispatch(subscriptionEnroll(subscriptionData));

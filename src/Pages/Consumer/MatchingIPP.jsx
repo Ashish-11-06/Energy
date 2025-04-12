@@ -32,6 +32,9 @@ const selectedRequirements = location.state?.selectedRequirements || [];
     const item = localStorage.getItem(key);
     return item ? JSON.parse(item) : '';
   };
+  const userData = JSON.parse(localStorage.getItem('user')).user;
+// console.log("User Data:", userData);
+const role=userData?.role;
 
   // console.log("Matching IPP data:", matchingIPP);
   // if(matchingIPP.message) {
@@ -109,12 +112,17 @@ const selectedRequirements = location.state?.selectedRequirements || [];
     const matchingIPP = localStorage.getItem('matchingIPP');
     const selectedRequirementId = localStorage.getItem('selectedRequirementId');
   
-    if (selectedRequirementId && matchingIPP && subscriptionPlanValidity?.status === 'active') {
-      navigate("/consumer/energy-consumption-table", { state: { requirementId: selectedRequirementId } });
-    } else if (selectedRow) {
-      const requirementId = location.state?.selectedRequirement?.id;
-      navigate("/consumer/annual-saving", { state: { requirementId } });
-    } else {
+    if(role !== 'View') {
+      if (selectedRequirementId && matchingIPP && subscriptionPlanValidity?.status === 'active') {
+        navigate("/consumer/energy-consumption-table", { state: { requirementId: selectedRequirementId } });
+      } else if (selectedRow) {
+        const requirementId = location.state?.selectedRequirement?.id;
+        navigate("/consumer/annual-saving", { state: { requirementId } });
+      }
+    } else if(role === 'View' && selectedRequirementId && matchingIPP && subscriptionPlanValidity?.status === 'active') {
+     navigate("/consumer/consumption-pattern", { state: { requirementId: selectedRequirementId } });
+    }
+     else {
       message.error('Please select a single matching IPP before continuing.');
     }
   };
@@ -274,7 +282,7 @@ const selectedRequirements = location.state?.selectedRequirements || [];
       >
         <Tooltip title={!selectedRow ? 'Please select a matching IPP' : ''} placement="top">
           <div>
-            <Button
+           { <Button
               type="primary"
               onClick={handleContinue}
               disabled={!selectedRow} // Disable button until a row is selected
@@ -286,6 +294,7 @@ const selectedRequirements = location.state?.selectedRequirements || [];
             >
               Continue
             </Button>
+}
           </div>
         </Tooltip>
       </Row>

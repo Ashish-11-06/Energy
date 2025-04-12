@@ -19,6 +19,13 @@ const AddUserModal = ({ isVisible, onCancel, onSave, editableData, edit }) => {
     const id = user.id;
     try {
       const res=await dispatch(addSubUser({ id, userData: data })).unwrap();
+      console.log(res);
+      if (res) {
+        message.success(res.message,8);
+      } else {
+        message.error(res.message || "Failed to add user", 5);
+      }
+      
       onSave(values);
 
       // console.log(res);

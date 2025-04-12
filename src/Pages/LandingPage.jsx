@@ -141,12 +141,16 @@ const response = await dispatch(fetchSubscriptionValidity(id));
     setLoading(true);
     try {
       const res = await dispatch(sendForgotPasswordOtp(email)).unwrap(); // Unwrap the result
+    // console.log(res?.message)
+    //   console.log(res);
       message.success(res.message || "OTP sent successfully!"); // Show success message
       // setOtpSent(true);
       setIsForgotPasswordModalVisible(false)
       setEmailForReset(email);
     } catch (error) {
-      message.error(error || "Failed to send OTP. Please try again.");
+      console.log(error);
+      message.error(error)
+      // message.error(error || "Failed to send OTP. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -326,11 +330,11 @@ const response = await dispatch(fetchSubscriptionValidity(id));
                 name="email"
                 rules={[{ required: true, message: "Please input your email!" }]}
               >
-                <Input placeholder="Enter your email to receive OTP" />
+                <Input placeholder="Enter your email to receive link" />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit" block loading={loading}>
-                  Send OTP
+                  Send Link
                 </Button>
               </Form.Item>
             </Form>

@@ -43,7 +43,8 @@ const TransactionWindow = () => {
   const contentRef = useRef();
   const [socket, setSocket] = useState(null);
   const [offerAccepted, setOfferAccepted] = useState(false); // Track if an offer is accepted
-
+  const userData = JSON.parse(localStorage.getItem('user')).user;
+const role=userData?.role;
   const location = useLocation();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user")).user;
@@ -51,8 +52,8 @@ const TransactionWindow = () => {
   const record = location.state;
 
   const start_time = 10; // 10 AM
-  const end_time = 12; // 12 PM
-  const end_minutes = 5; // 30 minutes
+  const end_time = 11; // 12 PM
+  const end_minutes = 2; // 30 minutes
   const today = new Date();
   const startDateTime = new Date(
     today.getFullYear(),
@@ -510,7 +511,7 @@ const handleAcceptOffer =() => {
                             </span>
                           </Text>
 
-                          {Date.now() >= deadline && (
+                          {Date.now() >= deadline && role !== "View" && (
                             <Button
                               type="primary"
                               onClick={() => handleAcceptOffer(msg)}
