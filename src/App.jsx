@@ -174,7 +174,7 @@ function App() {
             <Route path="status" element={<StatusApproval />} />
             <Route path="capacity-sizing-pattern" element={<CombinationPatternCap />} />
           </Route>
-        </Route>
+      
         </Route>
 
 
@@ -227,6 +227,7 @@ function App() {
 
       </Route>
 
+    </Route>
     </Route>
   </Route>
 </Routes>

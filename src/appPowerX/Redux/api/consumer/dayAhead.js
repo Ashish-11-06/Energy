@@ -1,13 +1,13 @@
-import axiosInstance from "../../axiosInstance";
+import axiosInstance from "../../../../Redux/axiosInstance";
 
 const dayAheadApi = {
   dayAheadData: async () => {
-    return axiosInstance.get('/next-day-predictions');
+    return axiosInstance.get('/powerx/next-day-predictions');
   },
   addDayAheadData: async (dayAheadDemand) => {
     // console.log(dayAheadDemand);
     
-    return axiosInstance.post('/consumer-day-ahead-demand', dayAheadDemand);
+    return axiosInstance.post('/powerx/consumer-day-ahead-demand', dayAheadDemand);
   },
   getDayAhead: () => {
     return axiosInstance.get(`/tableData`);

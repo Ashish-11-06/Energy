@@ -1,11 +1,11 @@
-import axiosInstance from "../../axiosInstance";
+import axiosInstance from "../../../../Redux/axiosInstance";
 
 const modelStatisticsApi ={
     modelStatistics: () => {
-        return axiosInstance.get('/model-statistics');
+        return axiosInstance.get('/powerx/model-statistics');
     },
     modelStatisticsMonth: () => {
-        return axiosInstance.get('/model-statistics-month');
+        return axiosInstance.get('/powerx/model-statistics-month');
     },
 
 };

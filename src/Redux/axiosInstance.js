@@ -1,30 +1,36 @@
+/* eslint-disable no-unused-vars */
 import axios from 'axios';
 
-// Get token from localStorage if available
-let token;
-try {
-  const userData = JSON.parse(localStorage.getItem('user'));
-  
-  token = userData?.token;
-    // token = `akjdlfjalkjdfljalj`; // Use access_token instead of token
-  console.log(`user token ${token}`);
-} catch (error) {
-  token = null;
-}
-
-// Create headers object conditionally
-const headers = {
-  'Content-Type': 'application/json',
-};
-
-if (token) {
-  headers['Authorization'] = `Bearer ${token}`;
-}
-
-console.log(`headers ${headers}`);
 const axiosInstance = axios.create({
   baseURL: 'http://192.168.1.36:8000/api',
-  headers,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
+
+// Add a request interceptor
+axiosInstance.interceptors.request.use(
+  (config) => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      const token = userData?.token;
+
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+        console.log(`Token added to headers: ${token}`);
+      } else {
+        console.log('No token found in localStorage');
+      }
+    } catch (error) {
+      console.error('Error getting token:', error);
+    }
+
+    return config;
+  },
+  (error) => {
+    // Handle request error
+    return Promise.reject(error);
+  }
+);
 
 export default axiosInstance;

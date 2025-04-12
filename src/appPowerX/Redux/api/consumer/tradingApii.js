@@ -1,8 +1,8 @@
-import axiosInstance from "../../axiosInstance";
+import axiosInstance from "../../../../Redux/axiosInstance";
 
 const tradingApi ={
     fetchTrading: () => {
-        return axiosInstance.get('/tradingData');
+        return axiosInstance.get('/powerx/tradingData');
     }
 };
 

@@ -1,13 +1,13 @@
-import axiosInstance from "../../axiosInstance";
+import axiosInstance from "../../../../Redux/axiosInstance";
 
 const dashboardApi ={
     fetchDashboard: (id) => {
         // console.log(id);
         
-        return axiosInstance.get(`/consumer-dashboard/${id}`);
+        return axiosInstance.get(`/powerx/consumer-dashboard/${id}`);
     },
     fetchDashboardLine: (id) => {
-        return axiosInstance.get(`/consumer-day-ahead-demand/${id}`);
+        return axiosInstance.get(`/powerx/consumer-day-ahead-demand/${id}`);
     },
 };
 
