@@ -115,8 +115,9 @@ function App() {
 
         {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
-        <Route element={< ProtectedRoute/>}>
-        <Route path="email/:token" element={<EmailVerification />} />
+        <Route path="email/:token" element={<EmailVerification />} /> {/* Moved outside ProtectedRoute */}
+        <Route element={<ProtectedRoute />}>
+
         <Route path="what-we-offer" element={<WhatWeOffer />} />
 
 

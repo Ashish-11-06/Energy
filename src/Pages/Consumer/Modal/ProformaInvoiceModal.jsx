@@ -98,9 +98,9 @@ const ProformaInvoiveModal = ({
   const userData = JSON.parse(localStorage.getItem("user")).user;
   const userId = userData?.id;
   const companyName=userData?.company;
-  console.log(selectedPlan);
+  // console.log(selectedPlan);
   
-  console.log('selected plan',selectedPlanId);
+  // console.log('selected plan',selectedPlanId);
   
   //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
   // //  console.log(selected_plan);
@@ -165,7 +165,7 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
       // console.log("selectedPlanId", selectedPlan);
 
       const amount = selectedPlan?.subscription?.price;
-      console.log("amount", amount);
+      // console.log("amount", amount);
       
       const orderResponse = await dispatch(
         createRazorpayOrder({ amount, currency: "INR" })
@@ -259,23 +259,25 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
       subscription,
       start_date: moment().format("YYYY-MM-DD"),
     };
-    console.log(moment().format("YYYY-MM-DD"));
+    // console.log(moment().format("YYYY-MM-DD"));
     
 
     try {
       const res = await dispatch(subscriptionEnroll(subscriptionData));
-      console.log(res);
-      console.log(res?.payload?.status);
-      console.log(res?.payload);
+// console.log(res);
 
-      if (res?.payload?.status === "active") {
-        message.success("Subscription activated successfully.");
-        userData?.user_category === "Consumer"
-          ? navigate("/consumer/energy-consumption-table")
-          : navigate("/generator/update-profile-details");
-      } else {
-        message.error("Subscription activation failed.");
-      }
+if (subscriptionEnroll.fulfilled.match(res)) {
+  if (res?.payload?.status === "active") {
+    message.success("Subscription activated successfully.");
+    userData?.user_category === "Consumer"
+      ? navigate("/consumer/energy-consumption-table")
+      : navigate("/generator/update-profile-details");
+  } else {
+    message.error("Subscription activation failed.");
+  }
+} else {
+  message.error(res?.payload || "Subscription activation failed.");
+}
     } catch (error) {
       console.error("Error activating subscription:", error);
       message.error("Subscription activation failed.");
