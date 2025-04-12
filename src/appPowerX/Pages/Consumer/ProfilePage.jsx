@@ -127,8 +127,9 @@ const userId = initialUserData.id;
 
   const handleLogOut = () => {
     localStorage.removeItem("user");
-    navigate("/px-login");
+    window.location.href = "/px-login"; // This reloads the page and navigates
   };
+  
 
   const handleDelete = (key) => {
     const updatedDataSource = userDataSource.filter(

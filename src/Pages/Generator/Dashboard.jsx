@@ -359,7 +359,7 @@ const handleNavigateSubscription=() => {
         </Col>
         {/* Platform Details */}
         <Col span={12}>
-          <Card
+          {/* <Card
             title="Capacity Sizing"
             bordered={false}
             style={{ backgroundColor: "white", height: "100%" }}
@@ -413,25 +413,7 @@ const handleNavigateSubscription=() => {
               <Col span={8}>
                 <Card.Grid
                   style={{ width: "100%", height: "100%", textAlign: "center" }}
-                >
-                  {/* <Statistic
-                    title="Total States"
-                    value={platformDetails.totalStates}
-                    prefix={
-                      <img
-                        src={state}
-                        alt=""
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                          marginRight: "5px",
-                        }}
-                        hoverable
-                        onMouseEnter={() => showStateModal(true)}
-                      />
-                    }
-                    valueStyle={{ color: "#3f8600" }}
-                  /> */}
+                >   
                    <Statistic
                     title="Ess Capacity"
                     value={platformDetails.totalStates}
@@ -475,7 +457,7 @@ const handleNavigateSubscription=() => {
                 </Card.Grid>
               </Col>
             </Row>
-          </Card>
+          </Card> */}
         </Col>
       </Row>
       

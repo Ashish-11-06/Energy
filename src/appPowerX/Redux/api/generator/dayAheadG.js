@@ -1,14 +1,14 @@
 import { message } from "antd";
-import axiosInstance from "../../axiosInstance";
+import axiosInstance from "../../../../Redux/axiosInstance";
 
 const dayAheadApi = {
   dayAheadData: async () => {
-    return axiosInstance.get('/next-day-predictions');
+    return axiosInstance.get('/powerx/next-day-predictions');
   },
   addDayAheadData: async (dayAheadGeneration) => {
     // console.log(dayAheadGeneration);
     
-    return axiosInstance.post('/day-ahead-generation', dayAheadGeneration);
+    return axiosInstance.post('/powerx/day-ahead-generation', dayAheadGeneration);
   },
   getDayAhead: () => {
     return axiosInstance.get(`/tableData`);

@@ -1,8 +1,8 @@
-import axiosInstance from "../../axiosInstance";
+import axiosInstance from "../../../../Redux/axiosInstance";
 
 const monthAccuracyApi ={
     fetchAccuracy: () => {
-        return axiosInstance.get('/accuracyData');
+        return axiosInstance.get('/powerx/accuracyData');
     }
 };
 

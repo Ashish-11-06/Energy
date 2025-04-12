@@ -1,8 +1,8 @@
-import axiosInstance from "../../axiosInstance";
+import axiosInstance from "../../../../Redux/axiosInstance";
 
 const planningApi ={
     getPlanningData: (id) => {
-        return axiosInstance.get(`/consumer-month-ahead-demand/${id}`);
+        return axiosInstance.get(`/powerx/consumer-month-ahead-demand/${id}`);
     }
 };
 
