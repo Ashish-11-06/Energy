@@ -23,7 +23,7 @@ if (token) {
 
 console.log(`headers ${headers}`);
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.1.36:8000/api',
+  baseURL: 'http://52.66.186.241:8000/api',
   headers,
 });
 
