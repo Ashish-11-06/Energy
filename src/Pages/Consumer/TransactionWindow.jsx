@@ -44,7 +44,7 @@ const TransactionWindow = () => {
   const [socket, setSocket] = useState(null);
   const [offerAccepted, setOfferAccepted] = useState(false); // Track if an offer is accepted
   const userData = JSON.parse(localStorage.getItem('user')).user;
-const role=userData?.role;
+  const role = userData?.role;
   const location = useLocation();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user")).user;
@@ -53,23 +53,23 @@ const role=userData?.role;
 
   console.log(record);
 
-// Assuming record.end_time is in the format "2025-04-11 18:00:00"
-const endDate = new Date(record.end_time);
+  // Assuming record.end_time is in the format "2025-04-11 18:00:00"
+  const endDate = new Date(record.end_time);
 
-const end_time = endDate.getHours();     // e.g., 18
-const end_minutes = endDate.getMinutes(); // e.g., 0
+  const end_time = endDate.getHours();     // e.g., 18
+  const end_minutes = endDate.getMinutes(); // e.g., 0
 
-// Optional: start time
-const start_time = 10; // 10 AM
-const today = new Date();
-const startDateTime = new Date(
-  today.getFullYear(),
-  today.getMonth(),
-  today.getDate(),
-  start_time,
-  0,
-  0
-);
+  // Optional: start time
+  const start_time = 10; // 10 AM
+  const today = new Date();
+  const startDateTime = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+    start_time,
+    0,
+    0
+  );
   const endDateTime = new Date(
     today.getFullYear(),
     today.getMonth(),
@@ -79,7 +79,7 @@ const startDateTime = new Date(
     0
   ); // Set end time to 12:30 PM
   const deadline = endDateTime.getTime();
-console.log(deadline);
+  console.log(deadline);
 
   useEffect(() => {
     const newSocket = connectWebSocket(user.id, record.tariff_id);
@@ -178,24 +178,24 @@ console.log(deadline);
     });
   };
 
-const handleAcceptOffer =() => {
-  Modal.confirm({ 
-    title: "Are you sure you want to accept this offer?",
-    content: "It will not be visible to you again if accepted.",
-    okText: "Yes, Accept",
-    cancelText: "Cancel",
-    onOk: async () => {
-      try {
-        await sendEvent({ action: "accept" });
-        message.success("Offer accepted successfully");
-        navigate("/transaction-page");
-      } catch (error) {
-        console.error("Error accepting offer:", error);
-        message.error("Failed to accept the offer. Please try again.");
-      }
+  const handleAcceptOffer = () => {
+    Modal.confirm({
+      title: "Are you sure you want to accept this offer?",
+      content: "It will not be visible to you again if accepted.",
+      okText: "Yes, Accept",
+      cancelText: "Cancel",
+      onOk: async () => {
+        try {
+          await sendEvent({ action: "accept" });
+          message.success("Offer accepted successfully");
+          navigate("/transaction-page");
+        } catch (error) {
+          console.error("Error accepting offer:", error);
+          message.error("Failed to accept the offer. Please try again.");
+        }
       },
     });
-    };
+  };
 
 
   const handleDownloadTransaction = async () => {
@@ -512,8 +512,14 @@ const handleAcceptOffer =() => {
                             </Text>
                           </div>
                           <Text strong>
+                            RE index:{" "}
+                            <span >
+                              {msg.generator_re_index ?? "NA"}
+                            </span>
+                          </Text>
+                          <Text strong>
                             Time:{" "}
-                            <span style={{ fontSize: "larger" }}>
+                            <span>
                               {moment(msg.timestamp).format("hh:mm A")}
                             </span>
                           </Text>
