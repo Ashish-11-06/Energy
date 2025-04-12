@@ -514,7 +514,7 @@ if (subscriptionEnroll.fulfilled.match(res)) {
                       key="generate"
                       type="primary"
                       onClick={handleFreeContinue}
-                      disabled={!selectedRequirementId}
+                      // disabled={!selectedRequirementId}
                     >
                       Continue
                     </Button> 
