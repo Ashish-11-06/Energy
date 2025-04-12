@@ -29,7 +29,8 @@ const RequirementsPage = () => {
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData = JSON.parse(localStorage.getItem('user')).user;
-  // console.log(userData);
+  // const userDataa = JSON.parse(localStorage.getItem('user'));
+  // console.log(userDataa);
   const use=localStorage.getItem('user');
   // console.log('localStorage',use);
   
@@ -241,7 +242,7 @@ const companyName=userData.company;
             shape="circle"
             icon={<QuestionCircleOutlined />}
             onClick={showInfoModal}
-            style={{ position: 'absolute', top: 80, right: 30, zIndex: 1000 }}
+            style={{ position: 'absolute', top: 80, right: 30 }}
           />
         </Tooltip>
 

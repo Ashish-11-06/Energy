@@ -13,10 +13,8 @@ import consumption from '../../assets/consumption.png';
 import invoice from '../../assets/invoice.png';
 import profile from '../../assets/profile.png';
 import offerSend from '../../assets/offerSend.png';
-import notificationImg from '../../assets/notification.png';
 import portfolio from '../../assets/portfolio.png';
 import findConsumer from '../../assets/findConsumer.png';
-import track from '../../assets/track.png';
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
@@ -45,21 +43,17 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     dispatch(connectWebSocket(userId));
     dispatch(connectOfferSocket(userId));
 
-    // Clean up on component unmount (optional)
-    return () => {
-      // You can add logic here to close the socket if needed
-    };
   }, [dispatch, user]);
 
   const consumerMenuItems = [
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
-   
+
     { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     {
-      label: (<span>Offers</span>), 
-      key: '/offers', 
+      label: (<span>Offers</span>),
+      key: '/offers',
       icon: (
         <Badge
           style={{
@@ -97,22 +91,22 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     //     </Badge>
     //   )
     // },
-    
+
     { label: 'Profile', key: '/consumer/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Track Status', key: '/consumer/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];
-// console.log(is_new_user);
+  // console.log(is_new_user);
 
   const generatorMenuItems = [
     { label: 'Dashboard', key: '/generator/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Portfolio', key: '/generator/portfolio', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Find Consumer', key: '/generator/matching-consumer', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> }, 
-    {label: 'Capacity Sizing', key: '/generator/GeneratorInput', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />},
+    { label: 'Find Consumer', key: '/generator/matching-consumer', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Capacity Sizing', key: '/generator/GeneratorInput', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
     {
-      label: (<span>Offers</span>), 
-      key: '/offers', 
+      label: (<span>Offers</span>),
+      key: '/offers',
       icon: (
         <Badge
           style={{
@@ -127,30 +121,12 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
         </Badge>
       )
     },
-     // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
+    // { label: 'Consumer Requests', key: '/generator/consumer-requests', icon: <AppstoreAddOutlined /> },
     // { label: 'Update Profile Details', key: '/generator/update-profile-details', icon: <FileTextOutlined /> },
     { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Invoice', key: '/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    // {
-    //   label: (<span>Notification</span>), key: '/consumer/notification', icon: (
-    //     <Badge
-    //       style={{
-    //         transform: 'translate(50%, -50%)',
-    //         minWidth: '15px',
-    //         height: '15px'
-    //       }}
-    //       count={notificationCount}
-    //       overflowCount={5}
-    //     >
-    //       <img
-    //         src={notificationImg}
-    //         alt="Notification"
-    //         style={{ width: '20px', height: '20px' }}
-    //       />
-    //     </Badge>
-    //   )
-    // },
-    
+
+
     { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Track Status', key: '/generator/status', icon: <img src={track} alt="" style={{ width: '20px', height: '20px' }} /> },
   ];

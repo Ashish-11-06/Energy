@@ -745,7 +745,7 @@ const EnergyConsumptionTable = () => {
           <Row style={{ marginTop: "3%" }}>
             <Col span={6}>
               <Tooltip title="Add details manually">
-                <Button onClick={handleToggleDetails} icon={<FileAddOutlined />} style={{ zIndex: 2000 }}>
+                <Button onClick={handleToggleDetails} icon={<FileAddOutlined />} >
                   {dataSource && showTable ? "Add Details " : "Add Details "}
                 </Button>
               </Tooltip>
@@ -795,7 +795,7 @@ const EnergyConsumptionTable = () => {
               <Tooltip title="Upload your monthly electricity bill">
                 <Button
                   onClick={handleToggleFileUploadTable}
-                  style={{ marginLeft: "50px", padding: "5px", zIndex: 1000 }}
+                  style={{ marginLeft: "50px", padding: "5px"}}
                   icon={<FileTextOutlined style={{ marginTop: "5px" }} />}
                 >
                   Upload Bill
@@ -818,7 +818,7 @@ const EnergyConsumptionTable = () => {
                 <Upload showUploadList={false} beforeUpload={handleScadaUpload}>
                   <Button
                     onClick={() => handleButtonClick("scada")}
-                    style={{ padding: "5px", zIndex: 1000 }}
+                    style={{ padding: "5px" }}
                     icon={<FileImageOutlined style={{ marginTop: "5px" }} />}
                   >
                     Upload SCADA file

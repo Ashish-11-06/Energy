@@ -51,18 +51,25 @@ const role=userData?.role;
   const userCategory = user?.user_category;
   const record = location.state;
 
-  const start_time = 10; // 10 AM
-  const end_time = 11; // 12 PM
-  const end_minutes = 2; // 30 minutes
-  const today = new Date();
-  const startDateTime = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-    start_time,
-    0,
-    0
-  );
+  console.log(record);
+
+// Assuming record.end_time is in the format "2025-04-11 18:00:00"
+const endDate = new Date(record.end_time);
+
+const end_time = endDate.getHours();     // e.g., 18
+const end_minutes = endDate.getMinutes(); // e.g., 0
+
+// Optional: start time
+const start_time = 10; // 10 AM
+const today = new Date();
+const startDateTime = new Date(
+  today.getFullYear(),
+  today.getMonth(),
+  today.getDate(),
+  start_time,
+  0,
+  0
+);
   const endDateTime = new Date(
     today.getFullYear(),
     today.getMonth(),
