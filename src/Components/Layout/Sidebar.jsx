@@ -22,7 +22,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const offerCount = useSelector((state) => state.notifications.offerCount);
   // const notificationCount = 9;
   const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
-  // const subscription_type = subscription?.subscription_type;
+  const subscription_type = subscription?.subscription_type;
   // console.log(subscription_type);
   // console.log(subscription);
 

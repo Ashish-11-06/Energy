@@ -29,7 +29,8 @@ const RequirementsPage = () => {
 
   const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const userData = JSON.parse(localStorage.getItem('user')).user;
-  // console.log(userData);
+  // const userDataa = JSON.parse(localStorage.getItem('user'));
+  // console.log(userDataa);
   const use=localStorage.getItem('user');
   // console.log('localStorage',use);
   
