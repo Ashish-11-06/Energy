@@ -218,7 +218,7 @@ const ProfilePage = () => {
                   {" "}
                   :
                   {subscriptionPlan?.subscription_type
-                    ? `EXT ${subscriptionPlan.subscription_type} Plan`
+                    ? ` EXT ${subscriptionPlan.subscription_type} Plan`
                     : "N/A"}
                 </Text>
               </Col>
@@ -229,7 +229,7 @@ const ProfilePage = () => {
                 <Text>
                   {start_date === "N/A" && end_date === "N/A"
                     ? "N/A"
-                    : `${start_date} `}
+                    : `: ${start_date} `}
                   {start_date !== "N/A" && end_date !== "N/A" && (
                     <span style={{ fontWeight: "bold" }}>To</span>
                   )}

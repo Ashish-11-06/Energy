@@ -228,7 +228,7 @@ const companyName=userData.company;
             shape="circle"
             icon={<QuestionCircleOutlined />}
             onClick={showInfoModal}
-            style={{ position: 'absolute', top: 80, right: 30, zIndex: 1000 }}
+            style={{ position: 'absolute', top: 80, right: 30 }}
           />
         </Tooltip>
 

@@ -11,6 +11,7 @@ import {
   message,
   InputNumber,
   Statistic,
+  Tooltip,
   Spin
 } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
@@ -48,11 +49,37 @@ const TransactionWindowgen = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const record = location.state;
+
+  console.log(record);
+
+  // Assuming record.end_time is in the format "2025-04-11 18:00:00"
+  // const endDate = new Date(record.end_time);
+  const endDate = new Date("2025-04-11 18:50:00");
+
+  const end_time = endDate.getHours();     // e.g., 18
+  const end_minutes = endDate.getMinutes(); // e.g., 0
+
+  // Optional: start time
   const start_time = 10; // 10 AM
-  const end_time = 11; // 11 AM
   const today = new Date();
-  const startDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), start_time, 0, 0);
-  const endDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), end_time, 0, 0);
+  const startDateTime = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+    start_time,
+    0,
+    0
+  );
+  const endDateTime = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+    end_time,
+    end_minutes,
+    0
+  ); // Set end time to 12:30 PM
+
   const deadline = endDateTime.getTime();
 
   const deadlineTime = () => {
@@ -63,7 +90,7 @@ const TransactionWindowgen = () => {
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
-  const record = location.state;
+
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const loggedInUserId = loggedInUser?.user?.id;
 
@@ -119,6 +146,15 @@ const TransactionWindowgen = () => {
   }, [user.id, record.tariff_id]);
 
   const handleSendTariff = () => {
+    const now = Date.now();
+    console.log("deadline", deadline);
+    console.log("Now", now);
+    // Check if current time is past the deadline or before start time
+    if (now > deadline) {
+      message.error("The offer submission period has ended.");
+      return;
+    }
+
     if (tariffValue !== null) {
       Modal.confirm({
         title: "Confirm Tariff Value",
@@ -208,6 +244,16 @@ const TransactionWindowgen = () => {
 
   // const deadline = Date.now() + 3600 * 1000; // 1 hour from now
 
+  const getTooltipMessage = () => {
+    if (Date.now() > deadline) {
+      return "The offer submission period has ended";
+    } else if (tariffValue === null) {
+      return "Please enter a tariff value";
+    } else if (tariffValue <= 0) {
+      return "Tariff value must be greater than 0";
+    }
+    return null;
+  };
 
 
   return (
@@ -289,10 +335,17 @@ const TransactionWindowgen = () => {
                     const msg = messageObject[msgKey];
                     if (msg && typeof msg === "object" && msg.generator_id === loggedInUserId) {
                       // Calculate percentage change for your offer
-                      const openOfferTariff = record.offer_tariff;
-                      const tariffChange = openOfferTariff - msg.updated_tariff;
-                      const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
-                      const isIncrease = tariffChange > 0;
+                      const openOfferTariff = record.offer_tariff; // 3.62 in your example
+                      const updatedTariff = msg.updated_tariff;    // 4 in your example
+
+                      // Calculate percentage change (new - old)/old * 100
+                      const percentageChange = ((updatedTariff - openOfferTariff) / openOfferTariff * 100).toFixed(2);
+
+                      // Determine if it's an increase or decrease
+                      const isIncrease = updatedTariff > openOfferTariff;
+
+                      // Format the percentage display
+                      const displayPercentage = isIncrease ? `+${percentageChange}%` : `${percentageChange}%`;
 
                       return (
                         <Card
@@ -318,7 +371,7 @@ const TransactionWindowgen = () => {
                                 </span>
                               </Text>
                               <Text type={isIncrease ? "success" : "danger"} style={{ marginLeft: "8px" }}>
-                                {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
+                                {displayPercentage}
                               </Text>
                             </div>
 
@@ -341,12 +394,19 @@ const TransactionWindowgen = () => {
                   value={tariffValue}
                   onChange={handleTariffChange}
                 />
-                <Button
-                  onClick={handleSendTariff}
-                  disabled={tariffValue === null || tariffValue <= 0}
-                >
-                  Send Tariff
-                </Button>
+
+                <Tooltip title={getTooltipMessage()}>
+                  <Button
+                    onClick={handleSendTariff}
+                    disabled={
+                      tariffValue === null ||
+                      tariffValue <= 0 ||
+                      Date.now() > deadline
+                    }
+                  >
+                    Send Tariff
+                  </Button>
+                </Tooltip>
               </div>
             </div>
           </div>
@@ -360,16 +420,22 @@ const TransactionWindowgen = () => {
                 <Text>No messages available.</Text>
               ) : (
                 messages.map((messageObject, index) => {
-                  // Iterate over each key in the messageObject
                   return Object.keys(messageObject).map((msgKey) => {
-                    const msg = messageObject[msgKey]; // Access the message using the key
-
-                    // Validate the message object
+                    const msg = messageObject[msgKey];
+                    
                     if (msg && typeof msg === 'object' && msg.generator_id !== loggedInUserId) {
-                      const openOfferTariff = record.offer_tariff; // Use backend-provided value
-                      const tariffChange = openOfferTariff - msg.updated_tariff;
-                      const percentageChange = ((tariffChange / openOfferTariff) * 100).toFixed(2);
-                      const isIncrease = tariffChange > 0;
+                      const openOfferTariff = record.offer_tariff;
+                      const updatedTariff = msg.updated_tariff;
+                      
+                      // Correct percentage calculation: (new - old)/old * 100
+                      const percentageChange = ((updatedTariff - openOfferTariff) / openOfferTariff * 100).toFixed(2);
+                      
+                      // Determine if it's an increase or decrease
+                      const isIncrease = updatedTariff > openOfferTariff;
+                      
+                      // Format the percentage display with proper sign
+                      const displayPercentage = isIncrease ? `+${percentageChange}%` : `${percentageChange}%`;
+              
                       return (
                         <Card
                           key={msg.id || index}
@@ -378,17 +444,14 @@ const TransactionWindowgen = () => {
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "space-between",
-                            alignItems: "flex-start", // Aligns text to start
+                            alignItems: "flex-start",
                           }}
                         >
                           <div>
                             <Text strong>
-                              IPP ID : <span style={{ fontSize: 'larger' }}> {msg.generator_username}</span>
+                              IPP ID: <span style={{ fontSize: 'larger' }}>{msg.generator_username}</span>
                             </Text>
-                            {/* <Text style={{ margin: '150px' }} strong>
-                              Offer Tariff : <span style={{ fontSize: 'larger', color: '#9A8406' }}>{msg.updated_tariff} INR/kWh </span>
-                            </Text> */}
-
+              
                             <div>
                               <Text strong>
                                 Offer Tariff:{" "}
@@ -397,20 +460,18 @@ const TransactionWindowgen = () => {
                                 </span>
                               </Text>
                               <Text type={isIncrease ? "success" : "danger"} style={{ marginLeft: "8px" }}>
-                                {isIncrease ? `+${percentageChange}%` : `${percentageChange}%`}
+                                {displayPercentage}
                               </Text>
                             </div>
-
+              
                             <Text strong>
-                              Time : <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
+                              Time: <span style={{ fontSize: 'larger' }}>{moment(msg.timestamp).format("hh:mm A")}</span>
                             </Text>
                           </div>
                         </Card>
                       );
-                    } else {
-                      // console.warn("Invalid message format:", messageObject);
-                      return null; // Return null if the message format is invalid
                     }
+                    return null;
                   });
                 })
               )
