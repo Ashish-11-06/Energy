@@ -1,8 +1,24 @@
 export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onError) => {
   try {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://192.168.1.36:8000/api/energy/optimize-capactiy", true); // Update with the actual API endpoint
+    xhr.open("POST", "http://192.168.1.36:8000/api/energy/optimize-capactiy", true);
+
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+    // Add Bearer token from localStorage
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      const token = userData?.token;
+
+      if (token) {
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+        console.log(`Token added to headers: ${token}`);
+      } else {
+        console.log("No token found in localStorage");
+      }
+    } catch (err) {
+      console.error("Error getting token from localStorage:", err);
+    }
 
     xhr.onprogress = (event) => {
       if (event.lengthComputable) {
@@ -14,10 +30,8 @@ export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onE
     xhr.onload = () => {
       if (xhr.status === 200) {
         const response = JSON.parse(xhr.responseText);
-        // Only set progress to 100% after processing the response
         onLoad(response);
-        onProgress(100); // Set progress to 100% after response is processed
-        onLoad(response);
+        onProgress(100);
       } else {
         onError("Failed to fetch combinations.");
       }
