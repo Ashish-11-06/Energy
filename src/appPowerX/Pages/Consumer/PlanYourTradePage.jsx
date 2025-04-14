@@ -174,42 +174,71 @@ const handleTableShow = () => {
   renderTable();
 }
 
-  const handleFileUpload = (file) => {
-    const isExcel = file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    if (!isExcel) {
-      message.error("Please upload a valid Excel file.");
-      return false;
+const handleFileUpload = (file) => {
+  const isExcel = file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  if (!isExcel) {
+    message.error("Please upload a valid Excel file.");
+    return false;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+    // Validate file format
+    if (!jsonData[0] || jsonData[0][0] !== "Time Interval" || jsonData[0][1] !== "Demand") {
+      message.error("Invalid file format. Please use the correct template.");
+      return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    // Convert file to base64
+    const base64Reader = new FileReader();
+    base64Reader.onload = async (event) => {
+      const base64File = event.target.result.split(",")[1]; // Extract base64 string
 
-      const updatedData = tableData.map((item, index) => ({
-        ...item,
-        demand: jsonData[index + 1] ? jsonData[index + 1][1] : null,
-      }));
+      // Prepare data for API
+      const demandData = jsonData.slice(1).map((row) => {
+        const [start, end] = row[0]?.split(" - ") || [];
+        return {
+          start_time: start,
+          end_time: end,
+          demand: row[1] || null,
+        };
+      });
 
-      setTableData(updatedData);
-      setFileUploaded(true);
-      setAllFieldsFilled(true);
-      message.success(`${file.name} uploaded successfully, now you can check the status in 'Track Status' option`);
-     setUploadModal(false);
+      const dayAheadDemand = {
+        requirement: selectedRequirementId,
+        file: base64File, // Include base64 file
+        price: (Array.isArray(selectedTechnology) ? selectedTechnology : [selectedTechnology]).reduce((acc, tech) => {
+          acc[tech] = parseFloat(price[tech]);
+          return acc;
+        }, {}),
+      };
+
+      try {
+        const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+        if (res && res.status === 201) {
+          message.success(res.data.message || "File uploaded successfully.");
+          navigate('/px/track-status');
+        } else {
+          message.error("Failed to upload file. Please try again.");
+        }
+      } catch (error) {
+        console.error(error);
+        message.error("Failed to upload file. Please try again.");
+      }
     };
-    reader.readAsArrayBuffer(file);
-    return false; // Prevent automatic upload
+
+    base64Reader.readAsDataURL(file); // Read file as base64
   };
 
-  // const handleDownloadTemplate = () => {
-  //   const worksheet = XLSX.utils.json_to_sheet(tableData.map(item => ({ Time: item.time, Demand: '' })));
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
-  //   XLSX.writeFile(workbook, 'trade_template.xlsx');
-  // };
+  reader.readAsArrayBuffer(file);
+  return false; // Prevent automatic upload
+};
 
   const handleDownloadTemplate = () => {
     // Modify time format for the template
@@ -497,7 +526,7 @@ const handleTableShow = () => {
         </ol>
         <p>Thank you!</p>
       </Modal>
-      <Modal title="Select Technologyyyyy"
+      <Modal title="Upload File"
         open={uploadModal}
        
         onCancel={() => setUploadModal(false)} 

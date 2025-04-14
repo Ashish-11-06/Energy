@@ -113,7 +113,8 @@ const PlanYourTradePage = () => {
           console.log("res", res);
           setIsModalVisible(false);
           message.success(res.message || "Data submitted successfully!");
-          navigate("/px/generator/track-status");
+
+          navigate("/px/track-status");
         } catch (error) {
           console.log(error);
         }
@@ -126,6 +127,7 @@ const PlanYourTradePage = () => {
     }
     // setIsModalVisible(true);
   };
+console.log('price', price);
 
   const onFinish = (values) => {
     // console.log("Received values of form: ", values);
@@ -181,6 +183,9 @@ const PlanYourTradePage = () => {
   const handleStateChange = (value) => {
     setSelectedPortfolioId(value); // Update selectedPortfolioId directly
     const selectedPortfolio = generatorPortfolio.find((item) => item.id === value);
+    if (selectedPortfolio) {
+      setSelectedTechnology(selectedPortfolio.type); // Automatically set technology based on portfolio type
+    }
     console.log("Selected Portfolio:", selectedPortfolio);
   };
 
@@ -242,7 +247,6 @@ const handleFileUploadModal = () => {
   setUploadModal(true);
 }
   const handleFileUpload = (file) => {
-    // setUploadModal(true);
     const isExcel =
       file.type ===
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -267,11 +271,39 @@ const handleFileUploadModal = () => {
       setTableData(updatedData);
       setFileUploaded(true);
       setAllFieldsFilled(true);
-      message.success(
-        `${file.name} uploaded successfully, now you can check the status in 'Track Status' optionnnn`
-      );
-      setUploadModal(false);
-      // message.success(`${file.name} uploaded successfully`);
+
+      // Convert file to base64
+      const base64Reader = new FileReader();
+      base64Reader.onload = async (event) => {
+        const base64File = event.target.result.split(",")[1]; // Extract base64 string
+
+        // Ensure price is not null
+        // if (!price || isNaN(parseFloat(price))) {
+        //   message.error("Please enter a valid price before uploading.");
+        //   return;
+        // }
+
+        const dayAheadDemand = {
+          model:
+            selectedTechnology === "Solar" ? "solarportfolio" : "windportfolio",
+          object_id: selectedPortfolioId,
+          price: price, // Ensure price is properly set
+          file: base64File, // Add base64 file to payload
+        };
+
+        console.log("dayAheadDemand", dayAheadDemand);
+
+        try {
+          const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+          message.success(res.message || "Data submitted successfully!");
+          setUploadModal(false);
+          navigate("/px/track-status");
+        } catch (error) {
+          console.error(error);
+          message.error("Failed to submit data. Please try again.");
+        }
+      };
+      base64Reader.readAsDataURL(file);
     };
     reader.readAsArrayBuffer(file);
     return false; // Prevent automatic upload
@@ -518,10 +550,16 @@ const handleFileUploadModal = () => {
         onOk={handleModalOk}
         onCancel={() => setIsModalVisible(false)}
       >
-        {/* Radio Group */}
-        <Radio.Group onChange={handleChange} value={selectedTechnology}>
-          <Radio value="Solar">Solar</Radio>
-          <Radio value="non_solar">Non solar</Radio>
+        <Radio.Group
+          value={selectedTechnology}
+          onChange={(e) => setSelectedTechnology(e.target.value)} // Ensure state updates on change
+        >
+          <Radio value="Solar" disabled={selectedTechnology !== "Solar"}>
+            Solar
+          </Radio>
+          <Radio value="non_solar" disabled={selectedTechnology === "Solar"}>
+            Non solar
+          </Radio>
         </Radio.Group>
 
         {/* Input field for price */}
@@ -589,11 +627,15 @@ const handleFileUploadModal = () => {
         ]}
       >
         <Radio.Group
-          onChange={(e) => setSelectedTechnology(e.target.value)}
           value={selectedTechnology}
+          onChange={(e) => setSelectedTechnology(e.target.value)} // Ensure state updates on change
         >
-          <Radio value="Solar">Solar</Radio>
-          <Radio value="Non-Solar">Non-Solar</Radio>
+          <Radio value="Solar" disabled={selectedTechnology !== "Solar"}>
+            Solar
+          </Radio>
+          <Radio value="Non-Solar" disabled={selectedTechnology === "Solar"}>
+            Non-Solar
+          </Radio>
         </Radio.Group>
 
         <div style={{ marginTop: "15px" }}>
@@ -605,15 +647,15 @@ const handleFileUploadModal = () => {
               <Input
                 type="number"
                 placeholder="Enter solar price in INR/MWh"
-                value={price["Solar"] || ""}
+                value={price || ""} // Use a single numeric value
                 min={0}
-                onChange={(e) => setPrice({ ...price, Solar: e.target.value })}
+                onChange={(e) => setPrice(e.target.value)} // Update price directly
                 style={{ marginTop: "5px", width: "100%" }}
               />
             </div>
           )}
 
-          {selectedTechnology === "Non-Solar" && (
+          {selectedTechnology !== "Solar" && (
             <div>
               <label style={{ fontWeight: "bold" }}>
                 Enter Non-Solar Price (INR/MWh):
@@ -621,11 +663,9 @@ const handleFileUploadModal = () => {
               <Input
                 type="number"
                 placeholder="Enter non-solar price in INR/MWh"
-                value={price["Non-Solar"] || ""}
+                value={price || ""} // Use a single numeric value
                 min={0}
-                onChange={(e) =>
-                  setPrice({ ...price, "Non-Solar": e.target.value })
-                }
+                onChange={(e) => setPrice(e.target.value)} // Update price directly
                 style={{ marginTop: "5px", width: "100%" }}
               />
             </div>
