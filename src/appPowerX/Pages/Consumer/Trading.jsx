@@ -152,27 +152,35 @@ const Trading = () => {
         {/* Total Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TOTAL" value={493} suffix="+" valueStyle={{color:'white'}} style={{color:'white',fontWeight:'bold'}} />
+            <Statistic title="PRICE PER UNIT" value={4}  valueStyle={{color:'white'}} style={{color:'white',fontWeight:'bold'}} 
+            formatter={(value) => (
+              <span>
+                {value} <span style={{ fontSize: '12px' }}>INR/MWh</span>
+              </span>
+            )}
+            />
+       
           </Card>
         </Col>
 
         {/* Trading Volume Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="TRADING VOLUME" value={8.324} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
+            <Statistic title="TOTAL VOLUME" value={200} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
     <span>
-      {value} <span style={{ fontSize: '12px' }}>MW</span>
+      {value} <span style={{ fontSize: '12px' }}>MWh</span>
     </span>
-  )}/>
+  )}
+  />
           </Card>
         </Col>
 
         {/* Price Per Unit Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800',textAlign:'center' }}>
-            <Statistic title="ASK PRICE" value={3.4} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
+            <Statistic title="AVERAGE DEMAND" value={3.4} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
     <span>
-      {value} <span style={{ fontSize: '12px', color:'white' }}>INR/MWh</span>
+      {value} <span style={{ fontSize: '12px', color:'white' }}>MW</span>
     </span>
   )}/> 
           </Card>
@@ -181,9 +189,9 @@ const Trading = () => {
         {/* Planning Costs Section */}
         <Col span={6}>
           <Card style={{ height: '100px', backgroundColor: '#669800' ,textAlign:'center'}}>
-            <Statistic title="EXECUTED PRICE"  value={3.6} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
+            <Statistic title="TOTAL DEMAND "  value={3.6} style={{color:'white',fontWeight:'bold'}} valueStyle={{color:'white'}} formatter={(value) => (
     <span>
-      {value} <span style={{ fontSize: '12px' }}>INR/MWh</span>
+      {value} <span style={{ fontSize: '12px' }}>MW</span>
     </span>
   )}/>
             

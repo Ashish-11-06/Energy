@@ -191,14 +191,14 @@ const Trading = () => {
             }}
           >
             <Statistic
-              title="TOTAL"
-              value={493}
-              suffix="+"
+              title="PRICE PER UNIT"
+              value={3}
+              // suffix="+"
               style={{ color: "white", fontWeight: "bold" }}
-              valueStyle={{ color: "rgb(239 255 34)" }}
+              valueStyle={{ color: "white" }}
               formatter={(value) => (
                 <span>
-                  {value} <span style={{ fontSize: "12px" }}>MW</span>
+                  {value} <span style={{ fontSize: "12px" }}>INR/MWh</span>
                 </span>
               )}
             />
@@ -215,13 +215,13 @@ const Trading = () => {
             }}
           >
             <Statistic
-              title="TRADING VOLUME"
+              title="TOTAL VOLUME"
               value={8.324}
               style={{ color: "white", fontWeight: "bold" }}
               valueStyle={{ color: "white" }}
               formatter={(value) => (
                 <span>
-                  {value} <span style={{ fontSize: "12px" }}>MW</span>
+                  {value} <span style={{ fontSize: "12px" }}>MWh</span>
                 </span>
               )}
             />
@@ -238,8 +238,8 @@ const Trading = () => {
             }}
           >
             <Statistic
-              title="PRICE PER UNIT"
-              value={6.203}
+              title="AVERAGE GENERATION"
+              value={200}
               style={{ color: "white", fontWeight: "bold" }}
               valueStyle={{ color: "white" }}
               formatter={(value) => (
@@ -261,7 +261,7 @@ const Trading = () => {
             }}
           >
             <Statistic
-              title="PLANNING COSTS"
+              title="TOTAL GENERATION"
               value={64900}
               style={{ color: "white", fontWeight: "bold" }}
               valueStyle={{ color: "white" }}
