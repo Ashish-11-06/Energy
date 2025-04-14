@@ -277,6 +277,7 @@ if (subscriptionEnroll.fulfilled.match(res)) {
   }
 } else {
   message.error(res?.payload || "Subscription activation failed.");
+  
 }
     } catch (error) {
       console.error("Error activating subscription:", error);
