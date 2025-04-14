@@ -406,10 +406,43 @@ console.log(requirementId);
         Energy Planner
       </h1>
           {/* <h1 style={{ margin: 0 }}>Energy Planner</h1> */}
-          <Button style={{ marginRight: '-50%', backgroundColor: '#669800', borderColor: '#669800',height:'40px' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
-          <Button onClick={handleAddDetailsClick} style={{color:'black',marginLeft:'10px', backgroundColor: '#ff5722',height:'40px', borderColor: '#ff5722' }}>
-          Schedule Trade
-          </Button>
+          <div style={{
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '1rem',
+  justifyContent: 'center',
+  alignItems: 'center',
+  margin: '1rem 0',
+}}>
+  <Button
+    style={{
+      backgroundColor: '#669800',
+      borderColor: '#669800',
+      height: '40px',
+      color: 'white',
+      minWidth: '140px',
+      flex: '1 1 auto',
+    }}
+    onClick={handleToggleView}
+  >
+    {showTable ? 'Show Calendar' : 'Show Table'}
+  </Button>
+
+  <Button
+    onClick={handleAddDetailsClick}
+    style={{
+      backgroundColor: '#ff5722',
+      borderColor: '#ff5722',
+      color: 'black',
+      height: '40px',
+      minWidth: '140px',
+      flex: '1 1 auto',
+    }}
+  >
+    Schedule Trade
+  </Button>
+</div>
+
         </Row>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '20px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

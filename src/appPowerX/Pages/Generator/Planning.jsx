@@ -440,10 +440,43 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
            <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
                   Energy Planner
                 </h1>
-          <Button style={{ marginRight: '-50%', backgroundColor: '#669800', borderColor: '#669800',height:'40px' }} onClick={handleToggleView}>{showTable ? 'Show Calendar' : 'Show Table'}</Button>
-          <Button onClick={handleAddDetailsClick} style={{backgroundColor: '#ff5722', borderColor: '#ff5722',height:'40px'}}>
-            Schedule Trade
-          </Button>
+                <div style={{
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '1rem',
+  justifyContent: 'center',
+  alignItems: 'center',
+  margin: '1rem 0',
+}}>
+  <Button
+    style={{
+      backgroundColor: '#669800',
+      borderColor: '#669800',
+      color: 'white',
+      height: '40px',
+      minWidth: '140px',
+      flex: '1 1 auto',
+    }}
+    onClick={handleToggleView}
+  >
+    {showTable ? 'Show Calendar' : 'Show Table'}
+  </Button>
+
+  <Button
+    onClick={handleAddDetailsClick}
+    style={{
+      backgroundColor: '#ff5722',
+      borderColor: '#ff5722',
+      color: 'white',
+      height: '40px',
+      minWidth: '140px',
+      flex: '1 1 auto',
+    }}
+  >
+    Schedule Trade
+  </Button>
+</div>
+
         </Row>
         {loading ? (
           <Spin tip="Loading..." style={{ marginTop: '20px' }} />
