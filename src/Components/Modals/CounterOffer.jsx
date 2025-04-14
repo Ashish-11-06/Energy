@@ -541,7 +541,13 @@ const role=userData?.role;
             data?.generator_status !== "Accepted"
             ? (
               <>
-              
+               <Button
+                      style={{ marginLeft: "10px",marginRight:'10px' }}
+                      onClick={() => handleStatusUpdate("Withdraw")}
+                      disabled={isFieldEdited}
+                    >
+                      Withdraw
+                    </Button>
                 {(data?.from_whom === "Consumer" &&
                   data?.count % 2 === 0 &&
                   data?.count <= 4)
@@ -550,13 +556,7 @@ const role=userData?.role;
                     data?.count % 2 === 1 &&
                     data?.count <= 4) ? (
                   <>
-                   <Button
-                      style={{ marginLeft: "10px" }}
-                      onClick={() => handleStatusUpdate("Withdraw")}
-                      disabled={isFieldEdited}
-                    >
-                      Withdraw
-                    </Button>
+                  
                     <Button
                       // style={{
                       //   color: "#ff5858",

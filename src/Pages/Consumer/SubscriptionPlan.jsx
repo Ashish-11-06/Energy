@@ -346,24 +346,24 @@ const companyName=userData[0]?.company;
           subscriptionPlan?.map((plan) => (
             <Col key={plan.id} xs={24} sm={8} md={8}>
               <Card
-                hoverable
+                hoverable={!(alreadySubscribed === "PRO" || (alreadySubscribed === "LITE" && plan.subscription_type === "FREE"))}
                 className={selectedPlanId === plan.id ? "selected-plan" : ""}
+                style={{
+                  cursor:
+                    alreadySubscribed === "PRO" || (alreadySubscribed === "LITE" && plan.subscription_type === "FREE")
+                      ? "pointer"
+                      : "default",
+                }}
                 onClick={() => {
-                  if (plan.subscription_type !== alreadySubscribed) {
+                  if (
+                    !(alreadySubscribed === "PRO" || (alreadySubscribed === "LITE" && plan.subscription_type === "FREE")) &&
+                    plan.subscription_type !== alreadySubscribed
+                  ) {
                     handleSelectPlan(plan.id, plan);
                   }
                 }}
                 actions={[
-                  plan.subscription_type !== alreadySubscribed ? (
-                    <Button
-                      type="primary"
-                      block
-                      size="small"
-                      style={{ width: "160px", fontSize: "16px" }}
-                    >
-                      Select Plan
-                    </Button>
-                  ) : (
+                  alreadySubscribed === plan.subscription_type ? (
                     <Button
                       disabled
                       style={{
@@ -372,7 +372,28 @@ const companyName=userData[0]?.company;
                         width: "160px",
                       }}
                     >
-                      Subscribed
+                      Active Subscription
+                    </Button>
+                  ) : alreadySubscribed === "PRO" || (alreadySubscribed === "LITE" && plan.subscription_type === "FREE") ? (
+                    <Button
+                      disabled
+                      style={{
+                        fontSize: "14px",
+                        height: "17px",
+                        width: "160px",
+                      }}
+                    >
+                      Closed
+                    </Button>
+                  ) : (
+                    <Button
+                      type="primary"
+                      block
+                      size="small"
+                      style={{ width: "160px", fontSize: "16px" }}
+                      onClick={() => handleSelectPlan(plan.id, plan)}
+                    >
+                      Select Plan
                     </Button>
                   ),
                 ]}
