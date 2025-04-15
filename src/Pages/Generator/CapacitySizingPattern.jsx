@@ -58,7 +58,7 @@ const CombinationPatternCap = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const role = user.role;
   const user_id = user.id;
-
+console.log('state',state)
   const formatAndSetCombinations = (combinations) => {
     if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
       setDataSource([]);

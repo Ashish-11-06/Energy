@@ -251,7 +251,7 @@ const CombinationPattern = () => {
 
     fetchPatterns();
     // 
-    loadCombinations();
+    // loadCombinations();
   }, [dispatch, selectedDemandId]);
 
   // console.log(combinationData, "combinationData");
@@ -423,7 +423,7 @@ const CombinationPattern = () => {
       title: "Generator's Connectivity",
       dataIndex: "connectivity",
       key: "connectivity",
-      // width: 150,
+       width: 120,
     },
     {
       title: "Technology",
@@ -440,35 +440,35 @@ const CombinationPattern = () => {
         </div>
       ),
     },
-    {
-      title: "% RE Replacement",
-      dataIndex: "reReplacement",
-      key: "reReplacement",
-      // width: 100,
-    },
+    // {
+    //   title: "% RE Replacement",
+    //   dataIndex: "reReplacement",
+    //   key: "reReplacement",
+    //   // width: 100,
+    // },
     {
       title: "Total Capacity (MW)",
       dataIndex: "totalCapacity",
       key: "totalCapacity",
-      // width: 150,
+       width: 120,
     },
     {
       title: "Per Unit Cost (INR/kWh)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
-      // width: 150,
+       width: 140,
     },
     {
       title: "OA Cost (INR/kWh)",
       dataIndex: "OACost",
       key: "OACost",
-      // width: 150,
+       width: 120,
     },
     {
       title: "Final Cost (INR/kWh)",
       dataIndex: "totalCost",
       key: "totalCost",
-      // width: 150,
+       width: 120,
     },
     {
       title: "COD",
@@ -484,6 +484,7 @@ const CombinationPattern = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      width: 120,
       render: (text, record) => 
         text !== "Send Quotation" ? (
           <Tooltip title="refer offer">
@@ -654,13 +655,16 @@ const lineChartData = {
               <p>(Scroll the below bar for different RE combination )</p>
               {/* <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>(Scroll the below bar for different RE combination  )</p></span> Display slider value */}
               <span>
-                <div
-                  style={{
-                    position: "relative",
-                    width: "80%",
-                    marginLeft: "5%",
-                  }}
-                >
+             
+                  <div
+                style={{
+                  position: "relative",
+                  width: "80%",
+                  marginLeft: "5%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
                   {/* Left Arrow Button (Positioned on the Slider Line) */}
                   {/* <Button
                     onClick={decreaseValue}
@@ -686,7 +690,7 @@ const lineChartData = {
                     trackStyle={{ height: 20 }} // Increase the thickness of the slider line
                     handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
                   />
-                  <input
+                   <input
                   type="number"
                   min={0}
                   max={100}
@@ -777,7 +781,7 @@ const lineChartData = {
                   overflowX: "auto",
                   // padding: '5px 10px'
                 }}
-                scroll={{ x: true }}
+                scroll={{ x: "max-content" }} // Enable horizontal scrolling
                 rowClassName={() => "custom-row"} // Add a custom row class
               />
             ) : (
