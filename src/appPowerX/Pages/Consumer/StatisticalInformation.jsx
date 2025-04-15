@@ -23,55 +23,85 @@ const StatisticalInformation = () => {
   const [mcvForeCastedData, setMcvForeCastedData] = useState([]);
   const [mcvPastData, setMcvPastData] = useState([]);
   const [formattedDate, setFormattedDate] = useState("");
-  const [selectedForecast, setSelectedForecast] = useState('day'); // Default: Day Ahead
-  var technology = '';
-  const dummyMonthAheadData = {
-    mcp: Array(96).fill(50), // Dummy MCP data for Month Ahead
-    mcv: Array(96).fill(100), // Dummy MCV data for Month Ahead
-  };
+  const [selectedForecast, setSelectedForecast] = useState('currentDay'); // Default: Current Day
+  const [statisticsData, setStatisticsData] = useState(null); // Store both API data
+  const [technology, setTechnology] = useState('Day Ahead'); // Define technology as a state variable
 
-  const handleForecastChange = async (value) => {
-    setSelectedForecast(value);
-    try {
-      if (value === 'currentDay') {
-        const data = await dispatch(fetchModelStatistics());
-        if (data?.payload?.date) {
-          const dateStr = data.payload.date;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [currentDayData, monthData] = await Promise.all([
+          dispatch(fetchModelStatistics()),
+          dispatch(fetchModelStatisticsMonth()),
+        ]);
+
+        // Process current day data
+        if (currentDayData?.payload?.date) {
+          const dateStr = currentDayData.payload.date;
           const date = new Date(dateStr);
           const options = { month: "long", day: "numeric" };
           const formatted = date.toLocaleDateString("en-US", options);
-          setFormattedDate(formatted); // Example output: "January 30"
+          setFormattedDate(formatted); // Example: "January 30"
         }
-        setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
-        setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
-        setPastData(data.payload.clean_data.map(item => item.mcp) || []);
-        setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
-        setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
-      } else if (value === 'next30Day') {
-        const data = await dispatch(fetchModelStatisticsMonth());
-        const start_date = data.payload.start_date;
-        const end_date = data.payload.end_date;
+
+        // Set default MCP data for current day
+        setTableData(Array.isArray(currentDayData.payload.clean_data) ? currentDayData.payload.clean_data : []);
+        setForeCastedData(currentDayData.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
+        setPastData(currentDayData.payload.clean_data.map(item => item.mcp) || []);
+        setMcvForeCastedData(currentDayData.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
+        setMcvPastData(currentDayData.payload.clean_data.map(item => item.mcv_total) || []);
+
+        // Process month data
+        const start_date = monthData.payload.start_date;
+        const end_date = monthData.payload.end_date;
         if (start_date && end_date) {
           const startMonth = new Date(start_date).toLocaleString("en-US", { month: "short" });
           const endMonth = new Date(end_date).toLocaleString("en-US", { month: "short" });
-          setFormattedDate(`${startMonth}-${endMonth}`); // Example output: "Dec-Jan"
+          setFormattedDate(`${startMonth}-${endMonth}`); // Example: "Dec-Jan"
         }
-        setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
-        setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
-        setPastData(data.payload.clean_data.map(item => item.mcp) || []);
-        setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
-        setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
+
+        // Store both API data for later use
+        setStatisticsData({
+          currentDay: currentDayData.payload,
+          month: monthData.payload,
+        });
+      } catch (error) {
+        message.error(error.message || "Error fetching data");
       }
-    } catch (error) {
-      message.error(error);
+    };
+
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedForecast === 'currentDay') {
+      setTechnology('Day Ahead');
+    } else {
+      setTechnology('Month Ahead');
+    }
+  }, [selectedForecast]); // Update technology whenever selectedForecast changes
+
+  const handleForecastChange = (value) => {
+    setSelectedForecast(value);
+
+    if (statisticsData) {
+      if (value === 'currentDay' && statisticsData.currentDay) {
+        const currentDay = statisticsData.currentDay;
+        setTableData(Array.isArray(currentDay.clean_data) ? currentDay.clean_data : []);
+        setForeCastedData(currentDay.next_day_predictions?.map(item => item.mcp_prediction) || []);
+        setPastData(currentDay.clean_data?.map(item => item.mcp) || []);
+        setMcvForeCastedData(currentDay.next_day_predictions?.map(item => item.mcv_prediction) || []);
+        setMcvPastData(currentDay.clean_data?.map(item => item.mcv_total) || []);
+      } else if (value === 'next30Day' && statisticsData.month) {
+        const month = statisticsData.month;
+        setTableData(Array.isArray(month.clean_data) ? month.clean_data : []);
+        setForeCastedData(month.next_day_predictions?.map(item => item.mcp_prediction) || []);
+        setPastData(month.clean_data?.map(item => item.mcp) || []);
+        setMcvForeCastedData(month.next_day_predictions?.map(item => item.mcv_prediction) || []);
+        setMcvPastData(month.clean_data?.map(item => item.mcv_total) || []);
+      }
     }
   };
-
-if(selectedForecast === 'day'){
-   technology = 'Day Ahead';
-} else {
-   technology = 'Month Ahead';
-}
 
 const dummyAccuracyData = [
   {
@@ -85,52 +115,6 @@ const dummyAccuracyData = [
     errors: "10%"
   }
 ];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (selectedForecast === 'currentDay') {
-          const data = await dispatch(fetchModelStatistics());
-          // console.log(data.payload);
-          if (data?.payload?.date) {
-            const dateStr = data.payload.date;
-            const date = new Date(dateStr);
-
-            const options = { month: "long", day: "numeric" };
-            const formatted = date.toLocaleDateString("en-US", options);
-
-            setFormattedDate(formatted); // Example output: "January 30"
-          }
-          setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
-          setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
-          setPastData(data.payload.clean_data.map(item => item.mcp) || []);
-          setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
-          setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
-        } else if (selectedForecast === 'next30Day') {
-          const data = await dispatch(fetchModelStatisticsMonth());
-          // console.log(data.payload);
-          const start_date = data.payload.start_date;
-          const end_date = data.payload.end_date;
-          // console.log(start_date);
-
-          if (start_date && end_date) {
-            const startMonth = new Date(start_date).toLocaleString("en-US", { month: "short" });
-            const endMonth = new Date(end_date).toLocaleString("en-US", { month: "short" });
-            setFormattedDate(`${startMonth}-${endMonth}`); // Example output: "Dec-Jan"
-          }
-          setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
-          setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
-          setPastData(data.payload.clean_data.map(item => item.mcp) || []);
-          setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
-          setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
-        }
-      } catch (error) {
-        message.error(error);
-        // console.log(error);
-      }
-    };
-    fetchData();
-  }, [dispatch, selectedForecast]);
 
   const handleChange = (e) => {
     const value = e.target.value;
