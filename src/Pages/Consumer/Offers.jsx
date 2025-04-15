@@ -237,7 +237,7 @@ const Offers = () => {
     //   render: (text) => text.rq_industry,
     // },
     {
-      title: "Contracted Energy (MW)",
+      title: "Contracted Energy (MWh)",
       dataIndex: "contracted_energy",
       key: "contracted_energy",
     },
@@ -259,14 +259,14 @@ const Offers = () => {
       render: (combination) => combination?.re_capacity || "-",
     },
     {
-      title: "Final Cost (INR)",
+      title: "Final Cost (INR/kWh)",
       dataIndex: "combination",
       key: "final_cost",
       render: (combination) => combination?.final_cost || "-",
       
     },
     {
-      title: "term_of_ppa (Years)",
+      title: "Term of PPA (Years)",
       dataIndex: "term_of_ppa",
       key: "term_of_ppa",
     },

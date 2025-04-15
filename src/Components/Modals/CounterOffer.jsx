@@ -243,6 +243,26 @@ const role=userData?.role;
 // console.log(commencementDate)
 // console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"))
 // console.log("Final Commencement Date:", commencementDate);
+
+const handleAccept = async () => {
+  if (user_category === "Consumer") {
+    try {
+      const data = {
+        user_id: userId,
+        terms_sheet_id: term_sheet_id,
+        offer_tariff: offerTariff,
+      };
+      await dispatch(negotiateTariff(data));
+      message.success("Offer accepted successfully.");
+      updateStatus("Accepted");
+    } catch (error) {
+      message.error("Failed to accept the offer.");
+    }
+  } else {
+    setTarrifModal(true); // Open modal for other user categories
+  }
+};
+
   return (
     <div>
       <Modal
@@ -302,7 +322,7 @@ const role=userData?.role;
                   </Col>
                   <Col span={12}>
                     <Typography.Paragraph>
-                      <strong>Final Cost:</strong> {combinationContent.final_cost} INR
+                      <strong>Final Cost:</strong> {combinationContent.final_cost} INR/kWh
                     </Typography.Paragraph>
                   </Col>
                   <Col span={12}>
@@ -317,12 +337,12 @@ const role=userData?.role;
                   </Col>
                   <Col span={12}>
                     <Typography.Paragraph>
-                      <strong>Optimal Battery Capacity:</strong> {combinationContent.optimal_battery_capacity} MW
+                      <strong>Optimal Battery Capacity:</strong> {combinationContent.optimal_battery_capacity} MWh
                     </Typography.Paragraph>
                   </Col>
                   <Col span={12}>
                     <Typography.Paragraph>
-                      <strong>Per Unit Cost:</strong> {combinationContent.per_unit_cost} INR/kWh
+                      <strong>Optimal Per Unit Cost:</strong> {combinationContent.per_unit_cost} INR/kWh
                     </Typography.Paragraph>
                   </Col>
                   <Col span={12}>
@@ -571,7 +591,7 @@ const role=userData?.role;
 
                     <Button
                       style={{ marginLeft: "10px" }}
-                      onClick={handleTarrif}
+                      onClick={handleAccept}
                       disabled={isFieldEdited}
                     >
                       Accept
@@ -665,7 +685,7 @@ const role=userData?.role;
 
                     <Button
                       style={{ marginLeft: "10px" }}
-                      onClick={handleTarrif}
+                      onClick={handleAccept}
                       disabled={isFieldEdited}
                     >
                       Accept
