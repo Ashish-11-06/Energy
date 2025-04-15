@@ -152,7 +152,7 @@ const role=userData?.role;
         onOk: async () => {
           await updateStatus(action);
         },
-        onCancel: () => {
+        onCancel: () => { 
           setModalVisible(false); // Close the confirm reject modal
         },
         onClose: () => {
@@ -162,6 +162,10 @@ const role=userData?.role;
       });
     } else {
       await updateStatus(action);
+    }
+    if (action === "Withdraw") {
+      await updateStatus(action);
+      return; // Exit early to prevent showing other buttons
     }
   };
 
@@ -538,16 +542,10 @@ const role=userData?.role;
           {user_category === "Consumer" && role !== 'View'
             &&
             data?.generator_status !== "Rejected" &&
-            data?.generator_status !== "Accepted"
-            ? (
+            data?.generator_status !== "Accepted" &&
+            data?.generator_status !== "Withdrawn" ? ( // Hide buttons if status is "Withdraw"
               <>
-               <Button
-                      style={{ marginLeft: "10px",marginRight:'10px' }}
-                      onClick={() => handleStatusUpdate("Withdraw")}
-                      disabled={isFieldEdited}
-                    >
-                      Withdraw
-                    </Button>
+              
                 {(data?.from_whom === "Consumer" &&
                   data?.count % 2 === 0 &&
                   data?.count <= 4)
@@ -618,7 +616,18 @@ const role=userData?.role;
                 ) : (
                   <p style={{ color: "#9A8406" }}>
                     {!fromTransaction ? (
+                        <div style={{ marginTop: "10px" }}>
+                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                          <Button
+                            style={{ marginBottom: "5px" }}
+                            onClick={() => handleStatusUpdate("Withdraw")}
+                            disabled={isFieldEdited}
+                          >
+                            Withdraw
+                          </Button>
+                        </div>
                       <p> You have sent an offer to IPP. Please wait for their decision.</p>
+                     </div>
                     ) : null}
                   </p>
                 )}
@@ -629,8 +638,8 @@ const role=userData?.role;
           {!fromTransaction && user_category === "Generator" && role !== 'View'
             &&
             data?.consumer_status !== "Rejected" &&
-            data?.consumer_status !== "Accepted"
-            ? (
+            data?.consumer_status !== "Accepted" &&
+            data?.consumer_status !== "Withdraw" ? ( // Hide buttons if status is "Withdraw"
               <>
                 {(data?.from_whom === "Generator" &&
                   data?.count % 2 === 0 &&
@@ -639,13 +648,7 @@ const role=userData?.role;
                     data?.count % 2 === 1 &&
                     data?.count <= 4) ? (
                   <>
-                    <Button
-                      style={{ marginLeft: "10px" }}
-                      onClick={() => handleStatusUpdate("Withdraw")}
-                      disabled={isFieldEdited}
-                    >
-                      Withdraw
-                    </Button>
+                   
                    <Button
                       // style={{
                       //   color: "#ff5858",
@@ -704,10 +707,22 @@ const role=userData?.role;
                     )}
                   </>
                 ) : (
-                  <p style={{ color: "#9A8406" }}>
-                    You have sent an offer to Consumer. Please wait for their
-                    decision.
-                  </p>
+                  <div style={{ marginTop: "10px" }}>
+  <div style={{ display: "flex", justifyContent: "flex-end" }}>
+    <Button
+      style={{ marginBottom: "5px" }}
+      onClick={() => handleStatusUpdate("Withdraw")}
+      disabled={isFieldEdited}
+    >
+      Withdraw
+    </Button>
+  </div>
+  <p style={{ color: "#9A8406", margin: 0 }}>
+    You have sent an offer to Consumer. Please wait for their decision.
+  </p>
+</div>
+
+                
                 )}
               </>
             ) : null}
