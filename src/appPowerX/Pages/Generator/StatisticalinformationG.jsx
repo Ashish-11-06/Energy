@@ -16,117 +16,79 @@ const { Option } = Select;
 
 const StatisticalInformationG = () => {
   const [tableData, setTableData] = useState([]);
-  const navigate = useNavigate(); 
   const [selectedType, setSelectedType] = useState('MCP'); // Default: MCP chart displayed
-  const dispatch = useDispatch();
+  const [forecastType, setForecastType] = useState('currentDay'); // Default: Current Day
+  const [formattedDate, setFormattedDate] = useState('');
+  const [currentDayData, setCurrentDayData] = useState(null);
+  const [past30DaysData, setPast30DaysData] = useState(null);
   const [foreCastedData, setForeCastedData] = useState([]);
   const [pastData, setPastData] = useState([]);
   const [mcvForeCastedData, setMcvForeCastedData] = useState([]);
   const [mcvPastData, setMcvPastData] = useState([]);
-  const [forecastType, setForecastType] = useState('dayAhead'); // Default: Day Ahead
-  const [date, setDate] = useState('');
-  const [formattedDate, setFormattedDate] = useState("");
-var technology ='';
-  const handleForecastChange = (value) => {
-    setForecastType(value);
-    // if (value === 'currentDay') {
-      
-    //   fetchData(); // Fetch data for Day Ahead
-    // } else {
-    //   // Set dummy data for Month Ahead
-    //   setTableData([
-    //     { metric: 'MCP', accuracy: '90%', errors: '10%' },
-    //     { metric: 'MCV', accuracy: '85%', errors: '15%' },
-    //   ]);
-    //   setForeCastedData(Array(96).fill(50)); // Dummy forecasted MCP data
-    //   setPastData(Array(96).fill(45)); // Dummy past MCP data
-    //   setMcvForeCastedData(Array(96).fill(100)); // Dummy forecasted MCV data
-    //   setMcvPastData(Array(96).fill(95)); // Dummy past MCV data
-    // }
-  };
-
-// if(forecastType === 'dayAhead'){
-//   technology = 'Day Ahead';
-// }
-// else{
-//   technology = 'Month Ahead';
-// }
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (forecastType === 'currentDay') {
-          const data = await dispatch(fetchModelStatistics());
-          // console.log(data.payload);
-          if (data?.payload?.date) {
-            const dateStr = data.payload.date;
-            const date = new Date(dateStr);
+        const [currentDayResponse, past30DaysResponse] = await Promise.all([
+          dispatch(fetchModelStatistics()),
+          dispatch(fetchModelStatisticsMonth()),
+        ]);
 
-            const options = { month: "long", day: "numeric" };
-            const formatted = date.toLocaleDateString("en-US", options);
-
-            setFormattedDate(formatted); // Example output: "January 30"
-          }
-          setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
-          setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
-          setPastData(data.payload.clean_data.map(item => item.mcp) || []);
-          setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
-          setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
-        } else if (forecastType === 'past30Days') {
-
-          const data = await dispatch(fetchModelStatisticsMonth());
-          // console.log(data.payload);
-          if (data?.payload?.date) {
-            const dateStr = data.payload.date;
-            const date = new Date(dateStr);
-
-            const options = { month: "long", day: "numeric" };
-            const formatted = date.toLocaleDateString("en-US", options);
-
-            setFormattedDate(formatted); // Example output: "January 30"
-          }
-          setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
-          setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
-          setPastData(data.payload.clean_data.map(item => item.mcp) || []);
-          setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
-          setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
+        if (currentDayResponse?.payload?.date) {
+          const dateStr = currentDayResponse.payload.date;
+          const date = new Date(dateStr);
+          const options = { month: 'long', day: 'numeric' };
+          setFormattedDate(date.toLocaleDateString('en-US', options));
         }
+
+        setCurrentDayData(currentDayResponse.payload);
+        setPast30DaysData(past30DaysResponse.payload);
+
+        // Set default data for MCP (Current Day)
+        setForeCastedData(currentDayResponse.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
+        setPastData(currentDayResponse.payload.clean_data.map(item => item.mcp) || []);
+        setMcvForeCastedData(currentDayResponse.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
+        setMcvPastData(currentDayResponse.payload.clean_data.map(item => item.mcv_total) || []);
+        setTableData(Array.isArray(currentDayResponse.payload.clean_data) ? currentDayResponse.payload.clean_data : []);
       } catch (error) {
-        // console.log(error);
+        // Handle error
       }
     };
+
     fetchData();
-  }, [dispatch, forecastType]);
+  }, [dispatch]);
 
-  // useEffect(() => {
-  //   if (forecastType === 'dayAhead') {
-  //     fetchData();
-  //   }
-  // }, [dispatch, forecastType]);
+  const handleForecastChange = (value) => {
+    setForecastType(value);
 
-  const fetchData = async () => {
-    try {
-      const data = await dispatch(fetchModelStatistics());
-      // console.log(data.payload);
-      const dates=data.payload.date;
-      if (dates) {
-        const dateObj = new Date(dates);
-      setDate(dateObj.toLocaleDateString("en-US", { month: "long", day: "numeric" }));
-        // console.log(formattedDate); // Output: March 21
-    }
-      setTableData(Array.isArray(data.payload.clean_data) ? data.payload.clean_data : []);
-      setForeCastedData(data.payload.next_day_predictions.map(item => item.mcp_prediction) || []);
-      setPastData(data.payload.clean_data.map(item => item.mcp) || []);
-      setMcvForeCastedData(data.payload.next_day_predictions.map(item => item.mcv_prediction) || []);
-      setMcvPastData(data.payload.clean_data.map(item => item.mcv_total) || []);
-    } catch (error) {
-      // console.log(error);
+    if (value === 'currentDay' && currentDayData) {
+      setForeCastedData(currentDayData.next_day_predictions.map(item => item.mcp_prediction) || []);
+      setPastData(currentDayData.clean_data.map(item => item.mcp) || []);
+      setMcvForeCastedData(currentDayData.next_day_predictions.map(item => item.mcv_prediction) || []);
+      setMcvPastData(currentDayData.clean_data.map(item => item.mcv_total) || []);
+      setTableData(Array.isArray(currentDayData.clean_data) ? currentDayData.clean_data : []);
+    } else if (value === 'past30Days' && past30DaysData) {
+      setForeCastedData(past30DaysData.next_day_predictions.map(item => item.mcp_prediction) || []);
+      setPastData(past30DaysData.clean_data.map(item => item.mcp) || []);
+      setMcvForeCastedData(past30DaysData.next_day_predictions.map(item => item.mcv_prediction) || []);
+      setMcvPastData(past30DaysData.clean_data.map(item => item.mcv_total) || []);
+      setTableData(Array.isArray(past30DaysData.clean_data) ? past30DaysData.clean_data : []);
     }
   };
 
   const handleChange = (e) => {
     const value = e.target.value;
     setSelectedType(value);
+
+    if (value === 'MCP') {
+      setForeCastedData(foreCastedData);
+      setPastData(pastData);
+    } else if (value === 'MCV') {
+      setMcvForeCastedData(mcvForeCastedData);
+      setMcvPastData(mcvPastData);
+    }
   };
 
   const MCVData = {
@@ -226,7 +188,7 @@ var technology ='';
   return (
     <div style={{ padding: '20px' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
-      Statistical Insights <span style={{fontSize:'20px'}}>({date})</span>
+      Statistical Insights <span style={{fontSize:'20px'}}>({formattedDate})</span>
       </h1>
 
       {/* Dropdown for Forecast Type Selection */}
@@ -253,7 +215,7 @@ var technology ='';
           {selectedType === 'MCP' && (
             <Col span={24} >
               <Card style={{  backgroundColor: 'white' }}>
-                <h3>{technology} MCP Data</h3>
+                <h3>{selectedType} MCP Data</h3>
                 <div>
                   <Line 
                     style={{height:'300px'}} 
@@ -294,7 +256,7 @@ var technology ='';
           {selectedType === 'MCV' && (
             <Col span={24} >
               <Card style={{  backgroundColor: 'white' }}>
-                <h3>{technology} MCV Data</h3>
+                <h3>{selectedType} MCV Data</h3>
                 <div >
                   <Line 
                     style={{height:'300px'}} 
