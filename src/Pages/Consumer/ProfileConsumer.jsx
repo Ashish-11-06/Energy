@@ -125,6 +125,11 @@ const ProfilePage = () => {
                 // Update localStorage immediately
                 localStorage.setItem("user", JSON.stringify(updatedLocalStorageData));
                 setUserData(updatedLocalStorageData.user); // Update state immediately
+
+                // Trigger custom event to notify HeaderComponent
+                const event = new Event("userDetailsUpdated");
+                window.dispatchEvent(event);
+
                 console.log("User updated successfully:", res);
             }
         })
