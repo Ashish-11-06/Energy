@@ -135,7 +135,7 @@ const handleNavigateSubscription=() => {
           "#3f8600",
           "#3f8600",
           "#3f8600",
-          "#cf1322",
+          "#1AA7EC",
           "#3f8600",
         ],
       },

@@ -445,10 +445,6 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
               <DatePicker
                 style={{ width: "100%" }}
                 format="DD-MM-YYYY"
-                disabledDate={(current) => {
-                  // Disable today and all past dates
-                  return current && current <= new Date();
-                }}
               />
             </Form.Item>
           </Col>

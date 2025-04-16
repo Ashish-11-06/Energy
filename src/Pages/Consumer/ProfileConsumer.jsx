@@ -93,19 +93,21 @@ const ProfilePage = () => {
   };
   const handleAddUser = () => setIsUserModal(true);
 
-  const handleSave = (values) => {
+  const handleSave =async (values) => {
+    console.log('pressed');
+    
     // Retrieve existing user data from localStorage
     const storedUser = localStorage.getItem("user");
     const existingUserData = storedUser ? JSON.parse(storedUser).user : {};
-
+console.log('existingUserData',existingUserData);
     // Merge updated fields with existing data
     const updatedUserData = { ...existingUserData, ...values };
-
+console.log('updatedUserData',updatedUserData);
     // Save updated data back to localStorage
     localStorage.setItem("user", JSON.stringify({ user: updatedUserData }));
 
     // Dispatch the updated data to the backend
-    dispatch(editUser(userId, updatedUserData))
+   const res=await dispatch(editUser(userId, updatedUserData))
       .then((res) => {
         console.log("User updated successfully:", res);
       })

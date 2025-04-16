@@ -424,7 +424,9 @@ const companyName=userData[0]?.company;
                   <hr />
                 </div>
                 <Text className="price">
-                  {Number(plan.price).toLocaleString("en-IN")} <p style={{ fontSize: "18px" }}>INR</p>
+                  {plan.subscription_type === "FREE" && plan.price === "0.00"
+                    ? "NULL"
+                    : `${Number(plan.price).toLocaleString("en-IN")}${plan.price !== 0 ? " INR" : ""}`}
                 </Text>
                 {plan.subscription_type === "FREE" && alreadySubscribed === "FREE" ? (
                   <p style={{fontSize:'12px'}}>Time Remaining: <span style={{color:'red'}}>{time_remaining}</span> </p>
