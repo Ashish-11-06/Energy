@@ -64,6 +64,7 @@ const CombinationPattern = () => {
 const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State to control modal visibility
 const [isGraphLoading, setIsGraphLoading] = useState(false); // State to control loader in the button
 const [hasRunSensitivity, setHasRunSensitivity] = useState(false); // Track sensitivity execution
+const [lastSensitivityRunId, setLastSensitivityRunId] = useState(null); // Track the last ID for sensitivity
 
 const handleSensitivity = async () => {
   if (hasRunSensitivity) return; // Prevent re-execution
@@ -418,14 +419,15 @@ if(dataSource?.length<=0) {
     // console.log(combinationData);
 
     fetchPatterns();
-    loadCombinations();
+    // loadCombinations();
   }, []);
 
-  useEffect(() => {
-    if (dataSource.length > 0 && !hasRunSensitivity) {
-      handleSensitivity(); // Call handleSensitivity only when dataSource is populated and hasn't run
-    }
-  }, [dataSource, hasRunSensitivity]);
+useEffect(() => {
+  if (dataSource.length > 0 && selectedDemandId !== lastSensitivityRunId) {
+    handleSensitivity(); // Call sensitivity only if it hasn't run for the current selectedDemandId
+    setLastSensitivityRunId(selectedDemandId); // Update the last ID for sensitivity
+  }
+}, [dataSource, selectedDemandId]); // Remove hasRunSensitivity dependency
 
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
@@ -496,53 +498,51 @@ const handleSensitivityClick = () => {
     setSliderValue(value);
   };
 
-  const handleOptimizeClick = async () => {
-    setValue(sliderValue);
-    setHasRunSensitivity(false); // Reset sensitivity execution flag
+const handleOptimizeClick = async () => {
+  setValue(sliderValue);
+  setLastSensitivityRunId(null); // Reset sensitivity execution flag for new data
+  try {
+    setIsTableLoading(true);
+    setFetchingCombinations(true);
+
+    const modalData = {
+      user_id: user_id,
+      requirement_id: selectedDemandId,
+      optimize_capacity_user: user.user_category,
+      re_replacement: sliderValue,
+    };
+
     try {
-      setIsTableLoading(true);
-      setFetchingCombinations(true);
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+      setDataSource([]);
+      const combinations = await dispatch(
+        fetchOptimizedCombinations(modalData)
+      ).unwrap();
 
-      const modalData = {
-        user_id: user_id,
-        requirement_id: selectedDemandId,
-        optimize_capacity_user: user.user_category,
-        re_replacement: sliderValue,
-      };
-
-      try {
-        window.scrollTo({
-          top: document.body.scrollHeight,
-          behavior: "smooth",
-        });
-        setDataSource([]);
-        const combinations = await dispatch(
-          fetchOptimizedCombinations(modalData)
-        ).unwrap();
-
-        formatAndSetCombinations(combinations, sliderValue);
-        setFetchingCombinations(false);
-        setIsTableLoading(false);
-        window.scrollTo({
-          top: document.body.scrollHeight,
-          behavior: "smooth",
-        });
-      } catch (error) {
-        throw error;
-      }
-    } catch (error) {
-      console.error("Error in handleOptimizeClick:", error);
-      message.error(error);
-      message.error('Try in lower RE Replacement value')
-      
-      // message.error("Failed to fetch combinations.");
-    } finally {
+      formatAndSetCombinations(combinations, sliderValue);
       setFetchingCombinations(false);
       setIsTableLoading(false);
-
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    } catch (error) {
+      throw error;
     }
-  };
+  } catch (error) {
+    console.error("Error in handleOptimizeClick:", error);
+    message.error(error);
+    message.error('Try in lower RE Replacement value');
+  } finally {
+    setFetchingCombinations(false);
+    setIsTableLoading(false);
+
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }
+};
 
   const sliderStyle = {
     height: "20px",
@@ -643,7 +643,7 @@ const handleSensitivityClick = () => {
       title: "COD",
       dataIndex: "cod",
       key: "cod",
-      width: 120,
+      width: 300,
       render: (text) => dayjs(text).format("DD-MM-YYYY"),
     },
     {
@@ -933,7 +933,7 @@ const handleSensitivityClick = () => {
                   trackStyle={{ height: 20 }}
                   handleStyle={{ height: 20, width: 20 }}
                 />
-                {/* <input
+                <input
                   type="number"
                   min={0}
                   max={100}
@@ -945,12 +945,12 @@ const handleSensitivityClick = () => {
                   style={{
                     width: "60px",
                     height: "30px",
-                    marginLeft: "10px",
+                    marginLeft: "30px",
                     textAlign: "center",
                     border: "1px solid #ccc",
                     borderRadius: "4px",
                   }}
-                /> */}
+                />
               </div>
                 <Button
                   type="primary"
@@ -1011,7 +1011,7 @@ const handleSensitivityClick = () => {
                   border: "1px solid #E6E8F1",
                   overflowX: "auto",
                 }}
-                scroll={{ x: true }}
+                scroll={{ x: 1200 }} // Enable horizontal scrolling with a minimum width
                 rowClassName={() => "custom-row"}
               />
             ) : (

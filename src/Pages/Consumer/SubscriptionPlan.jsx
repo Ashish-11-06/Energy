@@ -516,7 +516,7 @@ const companyName=userData[0]?.company;
                             marginRight: "4%",
                           }}
                         />{" "}
-                        Dashboard
+                        Dashboard Analytics
                       </li>
                       <li
                         style={{
