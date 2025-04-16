@@ -319,7 +319,7 @@ const handleCloseWarningModal = () => {
             rules={[
               {
                 required: type === "ESS",
-                required: true,
+                // required: true,
                 message: "Please input the marginal cost!",
               },
             ]}
