@@ -419,7 +419,7 @@ if(dataSource?.length<=0) {
     // console.log(combinationData);
 
     fetchPatterns();
-    // loadCombinations();
+     loadCombinations();
   }, []);
 
 useEffect(() => {
