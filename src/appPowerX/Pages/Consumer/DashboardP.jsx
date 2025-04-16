@@ -93,9 +93,7 @@ const tomorrowDate = tomorrow.toLocaleDateString('en-GB', option);
     const id=user_id;
     const fetchData = async () => {
       const res = await dispatch(fetchDashboardData(id));
-      // console.log(res.payload);
-      
-      setDashboardData(res.payload || []);
+      setDashboardData(Array.isArray(res.payload) ? res.payload : []); // Ensure it's an array
     };
     fetchData();
   }, [dispatch]);
@@ -478,8 +476,8 @@ setShowLineGraph(true); // Show line graph card
   };
 
   // Extract state names and their demands from dashboardData
-  const stateLabels = dashboardData?.map(data => data.state);
-  const stateDemands = dashboardData?.map(data => data.contracted_demand);
+  const stateLabels = Array.isArray(dashboardData) ? dashboardData.map(data => data.state) : [];
+  const stateDemands = Array.isArray(dashboardData) ? dashboardData.map(data => data.contracted_demand) : [];
 
   const stateColumn = [
     {
