@@ -1,6 +1,6 @@
 // src/api/websocketConf.js
 
-export const SOCKET_URL = 'https://ext.exgglobal.com/ws';
+export const SOCKET_URL = 'wss://ext.exgglobal.com/ws';
 export const SOCKET_PATH = '/api/energy/ws/test-negotiation/';
 
 // Function to get the notification WebSocket URL

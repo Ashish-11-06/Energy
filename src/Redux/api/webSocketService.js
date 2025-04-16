@@ -3,7 +3,7 @@ let reconnectAttempts = 0;
 const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECT_INTERVAL = 10000; // 3 seconds
 
-const SOCKET_URL = 'https://ext.exgglobal.com/ws';
+const SOCKET_URL = 'wss://ext.exgglobal.com/ws';
 const SOCKET_PATH = '/api/energy/ws/test-negotiation/';
 const FULL_URL = SOCKET_URL + SOCKET_PATH;
 
