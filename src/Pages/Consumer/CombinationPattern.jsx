@@ -251,7 +251,7 @@ const CombinationPattern = () => {
 
     fetchPatterns();
     // 
-    // loadCombinations();
+    loadCombinations();
   }, [dispatch, selectedDemandId]);
 
   // console.log(combinationData, "combinationData");
