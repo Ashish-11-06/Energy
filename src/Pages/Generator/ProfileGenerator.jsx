@@ -101,29 +101,48 @@ const userId = initialUserData.id;
   };
   const handleAddUser = () => setIsUserModal(true);
 
-   const handleSave = (values) => {
-     // Retrieve existing user data from localStorage
-     const storedUser = localStorage.getItem("user");
-     const existingUserData = storedUser ? JSON.parse(storedUser).user : {};
- 
-     // Merge updated fields with existing data
-     const updatedUserData = { ...existingUserData, ...values };
- 
-     // Save updated data back to localStorage
-     localStorage.setItem("user", JSON.stringify({ user: updatedUserData }));
- 
-     // Dispatch the updated data to the backend
-     dispatch(editUser(userId, updatedUserData))
-       .then((res) => {
-         console.log("User updated successfully:", res);
-       })
-       .catch((error) => {
-         console.error("Failed to update user:", error);
-       });
- 
-     setUserData(updatedUserData); // Update state
-     setIsModalVisible(false); // Close modal
-   };
+const handleSave = (values) => {
+  const storedUser = localStorage.getItem("user");
+  const existingUserData = storedUser ? JSON.parse(storedUser) : {};
+
+  // Compare and update only changed fields
+  const updatedUserData = {
+    ...existingUserData.user,
+    ...(values.company_representative !== existingUserData.user.company_representative && { company_representative: values.company_representative }),
+    ...(values.company !== existingUserData.user.company && { company: values.company }),
+    ...(values.email !== existingUserData.user.email && { email: values.email }),
+    ...(values.mobile !== existingUserData.user.mobile && { mobile: values.mobile }),
+  };
+
+  dispatch(editUser({ userId, userData: updatedUserData }))
+    .then((res) => {
+      if (res.payload && res.payload.data) {
+        // Merge API response with existing localStorage data
+        const updatedLocalStorageData = {
+          ...existingUserData,
+          user: {
+            ...existingUserData.user,
+            ...res.payload.data.data, // Use the `data` object from the API response
+          },
+        };
+        localStorage.setItem("user", JSON.stringify(updatedLocalStorageData));
+        setUserData(updatedLocalStorageData.user);
+
+        // Trigger custom event to notify HeaderComponent
+        const event = new Event("userDetailsUpdated");
+        window.dispatchEvent(event);
+
+        console.log("User updated successfully:", res);
+      } else {
+        console.error("API response is missing required data.");
+      }
+    })
+    .catch((error) => {
+      console.error("Failed to update user:", error);
+    });
+
+  setIsModalVisible(false);
+};
 
   const handleSaveUser = (values) => {
     setIsUserModal(false);

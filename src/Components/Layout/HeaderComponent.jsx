@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Badge, Button, Tooltip } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
@@ -22,7 +22,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const navigate = useNavigate(); // Add useNavigate hook
-  let username = ""; // Use let instead of const
+  const [username, setUsername] = useState("");
+  const [userCategory, setUserCategory] = useState("");
   const subscriptionValidity = JSON.parse(
     localStorage.getItem("subscriptionPlanValidity")
   );
@@ -36,16 +37,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     return item ? JSON.parse(item) : "";
   };
 
-  const user = getFromLocalStorage("user").user;
-  const user_category =
-    user?.user_category === "Consumer" ? "consumer" : "generator";
-
-  if (user && user.company_representative) {
-    username = user.company_representative;
-  }
-const isMatchingIPP = localStorage.getItem("isMatching") === "true";
-// console.log(isMatchingIPP);
-
+  const isMatchingIPP = localStorage.getItem("isMatching") === "true";
+  // console.log(isMatchingIPP);
 
   useEffect(() => {
     setSubscriptionRequires(subscription !== "active");
@@ -55,10 +48,40 @@ const isMatchingIPP = localStorage.getItem("isMatching") === "true";
     setMatchingConsumer(!matchingConsumerId);
   }, [matchingConsumerId]);
 
+  const usernameRef = useRef("");
+  const userCategoryRef = useRef("");
 
+  const updateUserDetails = () => {
+    const user = getFromLocalStorage("user").user;
+    usernameRef.current = user?.company_representative || "";
+    userCategoryRef.current = user?.user_category === "Consumer" ? "consumer" : "generator";
+    setUsername(usernameRef.current);
+    setUserCategory(userCategoryRef.current);
+  };
 
+  // Call updateUserDetails initially
+  useEffect(() => {
+    updateUserDetails();
+  }, []);
 
- 
+  // Listen for changes in localStorage and custom events
+  useEffect(() => {
+    const handleStorageChange = () => {
+      updateUserDetails();
+    };
+
+    const handleCustomUpdate = () => {
+      updateUserDetails();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("userDetailsUpdated", handleCustomUpdate);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("userDetailsUpdated", handleCustomUpdate);
+    };
+  }, []);
 
   const handleNotificationClick = () => {
     navigate('/notification');
@@ -131,7 +154,7 @@ const isMatchingIPP = localStorage.getItem("isMatching") === "true";
   ];
 
   const steps =
-    user.user_category === "Consumer" ? consumerSteps : generatorSteps;
+    userCategory === "consumer" ? consumerSteps : generatorSteps;
 
   const currentStepIndex = steps.findIndex((step) => step.path === currentPath);
   const showProgress = [
@@ -293,11 +316,11 @@ const isMatchingIPP = localStorage.getItem("isMatching") === "true";
               marginLeft: "10px", // Optional: To add some space between the text and chat icon
             }}
           >
-            {user_category && username ? (
+            {userCategory && username ? (
               // Show Tooltip with "My Profile" when there's a valid user_category and username
 
               <p>
-                Welcome,  <span onClick={() => { navigate(`/${user_category}/profile`) }} style={{ color: 'rgb(154, 132, 6)', cursor: "pointer", }}>{username}</span>
+                Welcome,  <span onClick={() => { navigate(`/${userCategoryRef.current}/profile`) }} style={{ color: 'rgb(154, 132, 6)', cursor: "pointer", }}>{usernameRef.current}</span>
               </p>
 
 
