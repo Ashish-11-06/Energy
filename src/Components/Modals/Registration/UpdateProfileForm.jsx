@@ -318,7 +318,7 @@ const handleCloseWarningModal = () => {
             label="Marginal Cost (INR/MWh)"
             rules={[
               {
-                required: type === "ESS",
+                required: type === "ESS" || true,
                 // required: true,
                 message: "Please input the marginal cost!",
               },
