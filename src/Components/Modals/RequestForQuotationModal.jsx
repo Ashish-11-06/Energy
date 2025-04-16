@@ -153,7 +153,7 @@ console.log('termsData',termsData);
         width={800}
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
-       <p><strong> Offer Tariff (INR/MWh): </strong>
+       <p><strong> Offer Tariff (INR/kWh): </strong>
   {user_category === "Generator" && fromInitiateQuotation ? (
     <InputNumber 
       min={1}
