@@ -252,11 +252,20 @@ const handleCloseWarningModal = () => {
 
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item
-            label="Available Capacity (MW)"
-            name="available_capacity"
-            rules={[{ required: true, message: "Please input the capacity!" }]}
-          >
+        <Form.Item
+          label="Available Capacity (MW)"
+          name="available_capacity"
+          rules={[
+            { required: true, message: "Please input the capacity!" },
+            {
+              validator: (_, value) =>
+                value > 1
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Capacity must be greater than 1 MW")),
+            },
+          ]}
+        >
+
             <Input />
           </Form.Item>
         </Col>
@@ -310,6 +319,7 @@ const handleCloseWarningModal = () => {
             rules={[
               {
                 required: type === "ESS",
+                required: true,
                 message: "Please input the marginal cost!",
               },
             ]}
