@@ -94,28 +94,46 @@ const ProfilePage = () => {
   const handleAddUser = () => setIsUserModal(true);
 
   const handleSave = (values) => {
-    // Retrieve existing user data from localStorage
     const storedUser = localStorage.getItem("user");
-    const existingUserData = storedUser ? JSON.parse(storedUser).user : {};
+    const existingUserData = storedUser ? JSON.parse(storedUser) : {};
 
-    // Merge updated fields with existing data
-    const updatedUserData = { ...existingUserData, ...values };
+    // Ensure updatedUserData only updates fields that are provided
+    const updatedUserData = {
+        ...existingUserData.user,
+        company_representative: values.company_representative ?? existingUserData.user.company_representative,
+        company: values.company ?? existingUserData.user.company,
+        email: values.email ?? existingUserData.user.email,
+        mobile: values.mobile ?? existingUserData.user.mobile,
+    };
 
-    // Save updated data back to localStorage
-    localStorage.setItem("user", JSON.stringify({ user: updatedUserData }));
+    dispatch(editUser({ userId, userData: updatedUserData }))
+        .then((res) => {
+            if (res.payload && res.payload.data && res.payload.data.data) {
+                const updatedLocalStorageData = {
+                    message: existingUserData.message || "Login successful",
+                    token: existingUserData.token,
+                    user: {
+                        ...existingUserData.user,
+                        ...res.payload.data.data, // Use the updated user data from the API response
+                    },
+                    subscription_type: existingUserData.subscription_type,
+                    start_date: existingUserData.start_date,
+                    end_date: existingUserData.end_date,
+                    status: existingUserData.status,
+                };
 
-    // Dispatch the updated data to the backend
-    dispatch(editUser(userId, updatedUserData))
-      .then((res) => {
-        console.log("User updated successfully:", res);
-      })
-      .catch((error) => {
-        console.error("Failed to update user:", error);
-      });
+                // Update localStorage immediately
+                localStorage.setItem("user", JSON.stringify(updatedLocalStorageData));
+                setUserData(updatedLocalStorageData.user); // Update state immediately
+                console.log("User updated successfully:", res);
+            }
+        })
+        .catch((error) => {
+            console.error("Failed to update user:", error);
+        });
 
-    setUserData(updatedUserData); // Update state
-    setIsModalVisible(false); // Close modal
-  };
+    setIsModalVisible(false);
+};
 
   const handleSaveUser = (values) => {
     setIsUserModal(false);

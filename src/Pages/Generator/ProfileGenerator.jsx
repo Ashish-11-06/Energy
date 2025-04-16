@@ -101,29 +101,48 @@ const userId = initialUserData.id;
   };
   const handleAddUser = () => setIsUserModal(true);
 
-   const handleSave = (values) => {
-     // Retrieve existing user data from localStorage
-     const storedUser = localStorage.getItem("user");
-     const existingUserData = storedUser ? JSON.parse(storedUser).user : {};
- 
-     // Merge updated fields with existing data
-     const updatedUserData = { ...existingUserData, ...values };
- 
-     // Save updated data back to localStorage
-     localStorage.setItem("user", JSON.stringify({ user: updatedUserData }));
- 
-     // Dispatch the updated data to the backend
-     dispatch(editUser(userId, updatedUserData))
-       .then((res) => {
-         console.log("User updated successfully:", res);
-       })
-       .catch((error) => {
-         console.error("Failed to update user:", error);
-       });
- 
-     setUserData(updatedUserData); // Update state
-     setIsModalVisible(false); // Close modal
-   };
+const handleSave = (values) => {
+    const storedUser = localStorage.getItem("user");
+    const existingUserData = storedUser ? JSON.parse(storedUser) : {};
+
+    // Ensure updatedUserData only updates fields that are provided
+    const updatedUserData = {
+        ...existingUserData.user,
+        company_representative: values.company_representative ?? existingUserData.user.company_representative,
+        company: values.company ?? existingUserData.user.company,
+        email: values.email ?? existingUserData.user.email,
+        mobile: values.mobile ?? existingUserData.user.mobile,
+    };
+
+    dispatch(editUser({ userId, userData: updatedUserData }))
+        .then((res) => {
+            if (res.payload && res.payload.data) {
+                const updatedLocalStorageData = {
+                    message: existingUserData.message || "Login successful",
+                    token: existingUserData.token,
+                    user: {
+                        ...existingUserData.user,
+                        company: res.payload.data.company ?? existingUserData.user.company,
+                        company_representative: res.payload.data.company_representative ?? existingUserData.user.company_representative,
+                        email: res.payload.data.email ?? existingUserData.user.email,
+                        mobile: res.payload.data.mobile ?? existingUserData.user.mobile,
+                    },
+                    subscription_type: existingUserData.subscription_type,
+                    start_date: existingUserData.start_date,
+                    end_date: existingUserData.end_date,
+                    status: existingUserData.status,
+                };
+                localStorage.setItem("user", JSON.stringify(updatedLocalStorageData));
+                setUserData(updatedLocalStorageData.user);
+                console.log("User updated successfully:", res);
+            }
+        })
+        .catch((error) => {
+            console.error("Failed to update user:", error);
+        });
+
+    setIsModalVisible(false);
+};
 
   const handleSaveUser = (values) => {
     setIsUserModal(false);

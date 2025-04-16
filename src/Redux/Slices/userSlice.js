@@ -29,19 +29,17 @@ export const verifyUser = createAsyncThunk('registerUser/verifyUser', async (dat
     }
 );
 
-export const editUser = createAsyncThunk('editUser/editUser', async (userId,userData, { rejectWithValue }) => {
+export const editUser = createAsyncThunk('editUser/editUser', async ({ userId, userData }, { rejectWithValue }) => {
     try {
-        // Call your API for user registration
-        const response = await userApi.updateuser(userId,userData); // Replace with your actual API call
+        // Call your API for user update
+        const response = await userApi.updateuser(userId, userData); // Replace with your actual API call
         console.log(response);
-        
         return response; // Return the response from the API (user data or token)
     } catch (error) {
-        // Handle any error during the registration process
+        // Handle any error during the update process
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
-}
-);
+});
 
 // Register User Slice
 const registerUserSlice = createSlice({
