@@ -471,7 +471,9 @@ if (subscriptionEnroll.fulfilled.match(res)) {
         </div>
 
         <p><strong>Total Amount (in words):</strong>Rupees ${numberToWords(
-          selectedPlan?.subscription?.price || 0 // Explicitly pass 0 if price is falsy
+          typeof selectedPlan?.subscription?.price === 'number' 
+        ? selectedPlan.subscription.price 
+        : 0 // Explicitly pass 0 if price is falsy
         )} only </p>
         <p style="text-align:right"><strong>Authorized Signatory</strong></p>
         <p style="font-size: 12px;">This is a computerized invoice. It does not require a signature.</p>
@@ -479,7 +481,7 @@ if (subscriptionEnroll.fulfilled.match(res)) {
         <div class="payment-instructions">
             <h3>Payment Instructions:</h3>
             <ol>
-                <li>Non-payment within 7 days will result in suspension of the services automatically without notice.</li>
+                <li>Non-payment within 10 days will result in suspension of the services automatically without notice.</li>
                 <li>Subject to Mumbai Jurisdiction.</li>
             </ol>
             <p>[Our services does not fall under negative list of services.]</p>

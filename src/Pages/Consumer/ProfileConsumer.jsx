@@ -245,7 +245,7 @@ console.log('updatedUserData',updatedUserData);
               style={{ marginTop: "20px", justifyContent: "space-between" }}
             >
               <Button type="primary" onClick={handleEditToggle}>
-                Edit Profile
+                Edit Profiles
               </Button>
               <Button type="primary" icon={<LogoutOutlined />} onClick={handleLogOut}>
                 Log out
