@@ -209,7 +209,8 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
 
                  const id=userId;
                 try { const response =await dispatch(fetchSubscriptionValidity(id));
-                setSubscriptionPlanValidity(response.payload);
+               
+                  log setSubscriptionPlanValidity(response.payload);
                 // console.log(response);
                 localStorage.setItem(
                   "subscriptionPlanValidity",

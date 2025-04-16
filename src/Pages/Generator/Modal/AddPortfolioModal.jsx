@@ -98,7 +98,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
   }, [visible, isEditMode, data, form]);
 
   const disablePastDates = (current) => {
-    return current && current < dayjs().endOf('day');
+    return false; // Allow all dates, including past dates
   };
 
   const handleTechnologyChange = (value) => {
