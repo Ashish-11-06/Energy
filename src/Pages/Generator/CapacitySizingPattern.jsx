@@ -236,7 +236,7 @@ console.log('comb',combinationData);
       // Retain the original payload and only update the RE replacement value
       const updatedPayload = {
         ...state.modalData, // Original payload details
-        reReplacement: sliderValue, // Update RE replacement value
+        re_replacement: sliderValue, // Update RE replacement value
       };
 
       const response = await dispatch(fetchCapacitySizing(updatedPayload)).unwrap(); // Pass updated payload
@@ -245,7 +245,7 @@ console.log('comb',combinationData);
       if (response?.combinations) {
         formatAndSetCombinations(response.combinations, sliderValue); // Update table with API response
       } else {
-        message.error("No combinations found. Please try again.");
+        // message.error("No combinations found. Please try again.");
       }
       setIsTableLoading(false); // Stop loader after processing response
     } catch (error) {
