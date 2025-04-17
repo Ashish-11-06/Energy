@@ -176,7 +176,7 @@ console.log('combination data',combinationData);
           }
         } catch (error) {
           console.error("Error fetching combinations:", error);
-          message.error("An error occurred while fetching combinations.");
+          message.error(error);
         } finally {
           setIsTableLoading(false);
         }
