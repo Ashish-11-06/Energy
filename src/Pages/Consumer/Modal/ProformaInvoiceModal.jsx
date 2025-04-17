@@ -253,39 +253,62 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
   };
 
   const handleFreeContinue = async () => {
-    const user = userId;
-    const subscription = selectedPlanId;
-    const subscriptionData = {
-      user,
-      subscription,
-      start_date: moment().format("YYYY-MM-DD"),
-    };
-    // console.log(moment().format("YYYY-MM-DD"));
-    
-
-    try {
-      const res = await dispatch(subscriptionEnroll(subscriptionData));
-// console.log(res);
-
-if (subscriptionEnroll.fulfilled.match(res)) {
-  if (res?.payload?.status === "active") {
-    message.success("Subscription activated successfully.");
-    userData?.user_category === "Consumer"
-      ? navigate("/consumer/energy-consumption-table")
-      : navigate("/generator/update-profile-details");
-  } else {
-    message.error("Subscription activation failed.");
-  }
-} else {
-  message.error(res?.payload || "Subscription activation failed.");
+    if (fromSubscription) {
+      const user = userId;
+      const subscription = selectedPlanId;
+      const subscriptionData = {
+        user,
+        subscription,
+        start_date: moment().format("YYYY-MM-DD"),
+      };
   
-}
-    } catch (error) {
-      console.error("Error activating subscription:", error);
-      message.error("Subscription activation failed.");
+      try {
+        const res = await dispatch(subscriptionEnroll(subscriptionData));
+        console.log(res);
+  
+        if (subscriptionEnroll.fulfilled.match(res)) {
+          if (res?.payload?.status === "active") {
+            message.success("Subscription activated successfully.");
+  
+            try {
+              const response = await dispatch(fetchSubscriptionValidity(userId));
+              console.log(response);
+              setSubscriptionPlanValidity(response.payload);
+              localStorage.setItem(
+                "subscriptionPlanValidity",
+                JSON.stringify(response.payload)
+              );
+            } catch (error) {
+              message.error(error.message || "Failed to fetch subscription validity.");
+            }
+  
+            // Navigate after API calls
+            if (userData?.user_category === "Consumer") {
+              navigate("/consumer/energy-consumption-table");
+            } else {
+              navigate("/generator/update-profile-details");
+            }
+          } else {
+            message.error("Subscription activation failed.");
+          }
+        } else {
+          message.error(res?.payload || "Subscription activation failed.");
+        }
+      } catch (error) {
+        console.error("Error activating subscription:", error);
+        message.error("Subscription activation failed.");
+      }
+    } else {
+      // Directly navigate if not fromSubscription
+      if (userData?.user_category === "Consumer") {
+        navigate("/consumer/energy-consumption-table");
+      } else {
+        navigate("/generator/update-profile-details");
+      }
     }
   };
-
+  
+  
   const closeProforma = () => {
     setIsProformaVisible(false);
   };
