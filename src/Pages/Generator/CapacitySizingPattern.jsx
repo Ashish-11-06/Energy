@@ -455,7 +455,7 @@ const handleDownloadPdf = (record) => {
           </div>
           <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-              Optimized Combination for {value}% RE replacement
+              Optimized Combination for {sliderValue}% RE replacement
             </Title>
             {isTableLoading ? (
               <>

@@ -425,7 +425,7 @@ const companyName=userData[0]?.company;
                 </div>
                 <Text className="price">
                   {plan.subscription_type === "FREE" && plan.price === "0.00"
-                    ? "NULL"
+                    ? "NIL"
                     : `${Number(plan.price).toLocaleString("en-IN")}${plan.price !== 0 ? " INR" : ""}`}
                 </Text>
                 {plan.subscription_type === "FREE" && alreadySubscribed === "FREE" ? (

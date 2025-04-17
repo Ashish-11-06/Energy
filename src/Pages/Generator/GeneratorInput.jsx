@@ -233,7 +233,7 @@ const GeneratorInput = () => {
         onCancel={handleModalCancel}
       >
         <Form layout="vertical">
-        <Form.Item label="Maximum limit for excess energy">
+        <Form.Item label="Maximum limit for excess energy (%)">
             <InputNumber
               min={0}
               max={1}
