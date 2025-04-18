@@ -210,7 +210,7 @@ const handleSave = (values) => {
 
 
   return (
-    <Row justify="center" style={{ marginTop: "50px", width: "100%" }}>
+    <Row justify="center" style={{ marginTop: "50px", width: "100%",  }}>
       <Row
         gutter={[16, 16]}
         justify="center"
@@ -218,7 +218,8 @@ const handleSave = (values) => {
           width: "100%",
         }}
       >
-        <Col span={12} xs={24} sm={12} md={12} lg={10}>
+        <Col span={14} xs={24} sm={20} md={20} lg={12}>
+
           <Card bordered style={{ borderRadius: "8px", minHeight: "400px" }}>
             <Row justify="center" style={{ marginBottom: "20px" }}>
               <Avatar size={70} src="/src/assets/profile1.jpeg" />
@@ -230,59 +231,62 @@ const handleSave = (values) => {
               Profile
             </Title>
             <Row gutter={[16, 16]}>
-              <Col span={12}>
+              <Col span={10}>
                 <Text strong>CIN Number</Text>
               </Col>
-              <Col span={12}>
+              <Col span={14}>
                 <Text> : {userData.cin_number || "-"}</Text>
               </Col>
-              <Col span={12}>
+              <Col span={10}>
                 <Text strong>Company</Text>
               </Col>
-              <Col span={12}>
+              <Col span={14}>
                 <Text> : {userData.company || "N/A"}</Text>
               </Col>
-              <Col span={12}>
+              <Col span={10}>
                 <Text strong>Representative</Text>
               </Col>
-              <Col span={12}>
+              <Col span={14}>
                 <Text> : {userData.company_representative || "N/A"}</Text>
               </Col>
-              <Col span={12}>
-                <Text strong>Email</Text>
-              </Col>
-              <Col span={12}>
-                <Text> : {userData.email || "N/A"}</Text>
-              </Col>
-              <Col span={12}>
+             <Col span={10}>
+  <Text strong>Email</Text>
+</Col>
+<Col span={14}>
+  {/* <Text style={{ marginLeft: "10px", display: "inline-block", width: "calc(100% - 20px)" }}> */}
+    : {userData.email || "N/A"}
+  {/* </Text> */}
+</Col>
+              <Col span={10}>
                 <Text strong>Mobile</Text>
               </Col>
-              <Col span={12}>
+              <Col span={14}>
                 <Text> : {userData.mobile || "N/A"}</Text>
               </Col>
-              <Col span={12}>
+              <Col span={10}>
                 <Text strong>User Category</Text>
               </Col>
-              <Col span={12}>
+              <Col span={14}>
                 <Text> : {userData.user_category || "N/A"}</Text>
               </Col>
-              <Col span={12}>
-                <Text strong>Subscription plan</Text>
+              <Col span={10}>
+                <Text strong>Subscription plan </Text>
               </Col>
-              <Col span={12}>
-                <Text>
+              <Col span={14}>
+                <Text> :
                   {" "}
-                  :
+                  
                   {subscriptionPlan?.subscription_type
                     ? `EXT ${subscriptionPlan.subscription_type} Plan`
                     : "N/A"}
                 </Text>
               </Col>
-              <Col span={12}>
+              <Col span={10}>
                 <Text strong>Plan validity</Text>
               </Col>
-              <Col span={12}>
-                <Text>
+              <Col span={14}>
+                <Text> :
+                  {" "}
                   {start_date === "N/A" && end_date === "N/A"
                     ? "N/A"
                     : `${start_date} `}
