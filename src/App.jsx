@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import  { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch } from "react-redux";
@@ -118,119 +118,119 @@ function App() {
         <Route path="email/:token" element={<EmailVerification />} /> {/* Moved outside ProtectedRoute */}
         <Route element={<ProtectedRoute />}>
 
-        <Route path="what-we-offer" element={<WhatWeOffer />} />
+          <Route path="what-we-offer" element={<WhatWeOffer />} />
 
 
 
-        {/* Routes with shared layout */}
-        <Route path="what-we-offer" element={<WhatWeOffer />} />
-        <Route element={<LayoutComponent />}>
-          <Route path="offers" element={<OfferRecieved />} />
-          <Route path="transaction-page" element={<TransactionMainPage />} />
-          <Route path="subscription-plan" element={<SubscriptionPlans />} />
-          <Route path="agreements" element={<Agreements />} />
-          <Route path="chat-page" element={<ChatWithExpert />} />
-          <Route path="notification" element={<Notification />} />
-          <Route path="invoice" element={<InvoicePage />} />
+          {/* Routes with shared layout */}
+          <Route path="what-we-offer" element={<WhatWeOffer />} />
+          <Route element={<LayoutComponent />}>
+            <Route path="offers" element={<OfferRecieved />} />
+            <Route path="transaction-page" element={<TransactionMainPage />} />
+            <Route path="subscription-plan" element={<SubscriptionPlans />} />
+            <Route path="agreements" element={<Agreements />} />
+            <Route path="chat-page" element={<ChatWithExpert />} />
+            <Route path="notification" element={<Notification />} />
+            <Route path="invoice" element={<InvoicePage />} />
 
 
-          {/* Consumer Routes */}
-          <Route path="/consumer/*">
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="matching-ipp" element={<MatchingIPP />} />
-            <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
-            <Route path="consumption-pattern" element={<CombinationPatternC />} />
-            <Route path="project-details" element={<IppProjectDetails />} />
-            <Route path="requirement" element={<RequirementsPage />} />
-            <Route path="annual-saving" element={<AnnualSvg />} />
-            {/* <Route path="subscription-plan" element={<SubscriptionPlans />} /> */}
-            <Route path="profile" element={<ProfileConsumer />} />
-            <Route path="requested-ipp" element={<RequestedIPP />} />
-            <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
-            <Route path="transaction-window" element={<TransactionWindow />} />
-            <Route path="status" element={<StatusApproval />} />
+            {/* Consumer Routes */}
+            <Route path="/consumer/*">
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="matching-ipp" element={<MatchingIPP />} />
+              <Route path="energy-consumption-table" element={<EnergyConsumptionTable />} />
+              <Route path="consumption-pattern" element={<CombinationPatternC />} />
+              <Route path="project-details" element={<IppProjectDetails />} />
+              <Route path="requirement" element={<RequirementsPage />} />
+              <Route path="annual-saving" element={<AnnualSvg />} />
+              {/* <Route path="subscription-plan" element={<SubscriptionPlans />} /> */}
+              <Route path="profile" element={<ProfileConsumer />} />
+              <Route path="requested-ipp" element={<RequestedIPP />} />
+              <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
+              <Route path="transaction-window" element={<TransactionWindow />} />
+              <Route path="status" element={<StatusApproval />} />
+            </Route>
+
+            {/* Generator Routes */}
+            <Route path="/generator/*">
+              <Route path="dashboard" element={<DashboardG />} />
+              <Route path="what-we-offer" element={<WhatWeOfferG />} />
+              <Route path="portfolio" element={<GenerationPortfolio />} />
+              <Route path="matching-consumer" element={<MatchingConsumerPage />} />
+              {/* <Route path="subscription-plan" element={<SubscriptionPlanG />} /> */}
+              <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
+              <Route path="update-profile-details" element={<UpdateProfileDetails />} />
+              <Route path="combination-pattern" element={<CombinationPattern />} />
+              <Route path="requested-ipp-gen" element={<RequestedIPPOfGen />} />
+              <Route path="consumer-requests" element={<OfferRecievedFromCons />} />
+              <Route path="new-page" element={<NewPage />} />
+              <Route path="profile" element={<ProfileGenerator />} />
+              <Route path="profile/user" element={<UserGen />} />
+              <Route path="profile/portfolio" element={<PortfolioGen />} />
+              <Route path="combination" element={<OptimizeCombination />} />
+              <Route path="notificationgen" element={<NotificationGenerator />} />
+              <Route path="transaction-window" element={<TransactionWindowGen />} />
+              <Route path="generatorInput" element={<GeneratorInput />} />
+              <Route path="status" element={<StatusApproval />} />
+              <Route path="capacity-sizing-pattern" element={<CombinationPatternCap />} />
+            </Route>
+
           </Route>
 
-          {/* Generator Routes */}
-          <Route path="/generator/*">
-            <Route path="dashboard" element={<DashboardG />} />
-            <Route path="what-we-offer" element={<WhatWeOfferG />} />
-            <Route path="portfolio" element={<GenerationPortfolio />} />
-            <Route path="matching-consumer" element={<MatchingConsumerPage />} />
-            {/* <Route path="subscription-plan" element={<SubscriptionPlanG />} /> */}
-            <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
-            <Route path="update-profile-details" element={<UpdateProfileDetails />} />
-            <Route path="combination-pattern" element={<CombinationPattern />} />
-            <Route path="requested-ipp-gen" element={<RequestedIPPOfGen />} />
-            <Route path="consumer-requests" element={<OfferRecievedFromCons />} />
-            <Route path="new-page" element={<NewPage />} />
-            <Route path="profile" element={<ProfileGenerator />} />
-            <Route path="profile/user" element={<UserGen />} />
-            <Route path="profile/portfolio" element={<PortfolioGen />} />
-            <Route path="combination" element={<OptimizeCombination />} />
-            <Route path="notificationgen" element={<NotificationGenerator />} />
-            <Route path="transaction-window" element={<TransactionWindowGen />}/>
-            <Route path="generatorInput" element={<GeneratorInput />} />
-            <Route path="status" element={<StatusApproval />} />
-            <Route path="capacity-sizing-pattern" element={<CombinationPatternCap />} />
+
+
+          {/* PowerX routes */}
+          <Route path="px-login" element={<LoginPage />} />
+
+          <Route path="px">
+            <Route path="what-we-offer" element={<WhatWeOfferP />} />
+
+            <Route element={<PLayoutComponent />}>
+
+              {/* Common Chat Page Route */}
+
+              <Route path="chat-page" element={<ChatPage />} />
+              <Route path="track-status" element={<TrackStatusP />} />
+              <Route path="notifications" element={<NotificationP />} />
+
+              {/* Consumer Routes */}
+              <Route path="consumer">
+                <Route path="dashboard" element={<DashboardP />} />
+                <Route path="day-ahead" element={<DayAhead />} />
+                <Route path="plan-trade-page" element={<PlanYourTradePage />} />
+                <Route path="statistical-information" element={<StatisticalInformation />} />
+                <Route path="statistical-information-month" element={<StatisticalInfoMonth />} />
+                <Route path="month-ahead" element={<MonthAhead />} />
+                <Route path="plan-month-trade" element={<PlanMonthTrading />} />
+                <Route path="planning" element={<Planning />} />
+                <Route path="trading" element={<Trading />} />
+                <Route path="powerx-subscription" element={<Subscription />} />
+                <Route path="profile" element={<ProfilePage />} />
+              </Route>
+
+              {/* Generator Routes */}
+              <Route path="generator">
+                <Route path="dashboard" element={<DashboardPG />} />
+                <Route path="day-ahead" element={<DayAheadG />} />
+                <Route path="plan-month-trade-page" element={<PlanYourMonthTradePageG />} />
+                <Route path="plan-day-trade-page" element={<PlanDayTradePage />} />
+                <Route path="statistical-information" element={<StatisticalInformationG />} />
+                {/* <Route path="statistical-day-information" element={<DayStatisticsInformation />} /> */}
+                <Route path="statistical-month-information" element={<StatisticalInfoMonth />} />
+
+                <Route path="month-ahead" element={<MonthAheadG />} />
+                <Route path="notification" element={<NotificationG />} />
+                <Route path="profile" element={<ProfileGen />} />
+
+                <Route path="planning" element={<PlanningG />} />
+                <Route path="trading" element={<TradingG />} />
+
+              </Route>
+
+            </Route>
           </Route>
-      
         </Route>
-
-
-
-       {/* PowerX routes */}
-      <Route path="px-login" element={<LoginPage/>} />
-
-    <Route path="px">
-    <Route path="what-we-offer" element={<WhatWeOfferP/>} />
-
-       <Route element={<PLayoutComponent />}>
-      
-      {/* Common Chat Page Route */}
-
-      <Route path="chat-page" element={<ChatPage />} />
-      <Route path="track-status" element={<TrackStatusP/>} />
-      <Route path="notifications" element={<NotificationP/>} />
-
-      {/* Consumer Routes */}
-      <Route path="consumer">
-        <Route path="dashboard" element={<DashboardP />} />
-        <Route path="day-ahead" element={<DayAhead />} />
-        <Route path="plan-trade-page" element={<PlanYourTradePage />} />
-        <Route path="statistical-information" element={<StatisticalInformation />} />
-        <Route path="statistical-information-month" element={<StatisticalInfoMonth />} />
-        <Route path="month-ahead" element={<MonthAhead />} />
-        <Route path="plan-month-trade" element={<PlanMonthTrading/>} />
-        <Route path="planning" element={<Planning />} />
-        <Route path="trading" element={<Trading />} />
-        <Route path="powerx-subscription" element={<Subscription />} />
-        <Route path="profile" element={<ProfilePage />} />
-      </Route>
-
-      {/* Generator Routes */}
-      <Route path="generator">
-        <Route path="dashboard" element={<DashboardPG />} />
-        <Route path="day-ahead" element={<DayAheadG />} />
-        <Route path="plan-month-trade-page" element={<PlanYourMonthTradePageG />} />
-        <Route path="plan-day-trade-page" element={<PlanDayTradePage />} />
-        <Route path="statistical-information" element={<StatisticalInformationG />} />
-        {/* <Route path="statistical-day-information" element={<DayStatisticsInformation />} /> */}
-        <Route path="statistical-month-information" element={<StatisticalInfoMonth />} />
-
-        <Route path="month-ahead" element={<MonthAheadG />} />
-        <Route path="notification" element={<NotificationG />} />
-        <Route path="profile" element={<ProfileGen />} />
-
-        <Route path="planning" element={<PlanningG />} />
-        <Route path="trading" element={<TradingG />} />
-
-      </Route>
-
-    </Route>
-    </Route>
-  </Route>
-</Routes>
+      </Routes>
     </Router>
   );
 }

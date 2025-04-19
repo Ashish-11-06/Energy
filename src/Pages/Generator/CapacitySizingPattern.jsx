@@ -8,11 +8,9 @@ import {
   Col,
   Spin,
   message,
-  Progress,
   Slider,
   Button,
   Card,
-  Tooltip,
   Modal,
 } from "antd";
 
@@ -20,7 +18,6 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { DownloadOutlined } from "@ant-design/icons";
 
-import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,27 +35,16 @@ const CombinationPatternCap = () => {
   const [isIPPModalVisible, setIsIPPModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const [value, setValue] = useState(65);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [fetchingCombinations, setFetchingCombinations] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [combinationData, setCombinationData] = useState([]);
-  const [tryREreplacement, setTryREreplacement] = useState(false);
-  const [consumerDetails, setConsumerDetails] = useState('');
   const { state } = useLocation(); // Access navigation state
-  const navigate = useNavigate();
-  const [monthlyConsumption, setMonthlyConsumption] = useState([]); // State for monthly consumption
 
-  const location = useLocation();
-  const reReplacement = state?.reReplacement;
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
-  const role = user.role;
-  const user_id = user.id;
-console.log('state',state)
+  // console.log('state', state)
   const formatAndSetCombinations = (combinations) => {
     if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
       setDataSource([]);
@@ -85,7 +71,7 @@ console.log('state',state)
         oaCost: combination["OA_cost"]?.toFixed(2) || "N/A", // Add OA Cost
         totalCost: combination["Total Cost"]?.toFixed(2) || 0,
         cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("DD-MM-YYYY") : "N/A",
-        annualDemandOffeset:combination["Annual Demand Offset"] || 0,
+        annualDemandOffeset: combination["Annual Demand Offset"] || 0,
         // annualDemandMet:combination["Annual Demand Met"] || 0,
 
       };
@@ -94,33 +80,6 @@ console.log('state',state)
     setDataSource(formattedCombinations);
   };
 
-  useEffect(() => {
-    if (dataSource?.length <= 0) {
-      setTryREreplacement(true);
-    }
-  }, [dataSource]);
-
-  // Redux selectors
-  const consumptionPatterns = useSelector(
-    (state) => state.consumptionPattern?.patterns || []
-  );
-  const consumptionPatternStatus = useSelector(
-    (state) => state.consumptionPattern.status
-  );
-  const optimizedCombinations = useSelector(
-    (state) => state.optimizedCapacity?.combinations || []
-  );
-  const optimizedCombinationsStatus = useSelector(
-    (state) => state.optimizedCapacity.status
-  );
-
-  const increaseValue = () => {
-    setSliderValue((prev) => Math.min(prev + 1, 100)); // Increase by 5, max 100
-  };
-
-  const decreaseValue = () => {
-    setSliderValue((prev) => Math.max(prev - 1, 0)); // Decrease by 5, min 0
-  };
 
   useEffect(() => {
     window.scrollTo({
@@ -136,7 +95,7 @@ console.log('state',state)
         formatAndSetCombinations(combinations, sliderValue); // Display data passed from GeneratorInput
       }
       console.log(state.data);
-      
+
       setCombinationData(state.modalData); // Store modalData for display
 
       setIsTableLoading(false); // Stop loader if data is already available
@@ -146,7 +105,7 @@ console.log('state',state)
       setIsTableLoading(false); // Stop loader if there's an error
     }
   }, [state]);
-console.log('combination data',combinationData);
+  console.log('combination data', combinationData);
 
   useEffect(() => {
     const fetchCombinations = async () => {
@@ -167,8 +126,8 @@ console.log('combination data',combinationData);
               oaCost: value["OA_cost"]?.toFixed(2) || 0, // Add OA Cost
               finalCost: value["Final Cost"]?.toFixed(2) || "N/A",
               annualCurtailment: value['Annual Curtailment'] || 0,
-              annualDemandMet:value['Annual Demand Met'] || 0,
-              annualDemandOffeset:value['Annual Demand Offset'] || 0
+              annualDemandMet: value['Annual Demand Met'] || 0,
+              annualDemandOffeset: value['Annual Demand Offset'] || 0
             }));
             setDataSource(formattedData); // Set the formatted data in the table
           } else {
@@ -189,28 +148,11 @@ console.log('combination data',combinationData);
     fetchCombinations();
   }, [state?.modalData]);
 
-  useEffect(() => {
-    if (isTableLoading) {
-      const interval = setInterval(() => {
-        setProgress((prevProgress) => {
-          if (prevProgress >= 100) {
-            clearInterval(interval);
-            return 100;
-          }
-          return prevProgress + 2;
-        });
-      }, 100);
-      return () => clearInterval(interval);
-    }
-  }, [isTableLoading]);
 
-  const handleRowClick = (record) => {
-    setSelectedRow(record); // Record comes from the latest dataSource
-    setIsIPPModalVisible(true);
-  };
+
 
   const re_index = combinationData.re_index || 0;
-console.log('comb',combinationData);
+  console.log('comb', combinationData);
 
   const handleIPPCancel = () => {
     setIsIPPModalVisible(false);
@@ -242,10 +184,23 @@ console.log('comb',combinationData);
       const response = await dispatch(fetchCapacitySizing(updatedPayload)).unwrap(); // Pass updated payload
       console.log(response);
 
-      if (response?.combinations) {
-        formatAndSetCombinations(response.combinations, sliderValue); // Update table with API response
+      if (response) {
+        const formattedData = Object.entries(response).map(([key, value], index) => ({
+          key: index + 1,
+          combinationId: key,
+          solarCapacity: value["Optimal Solar Capacity (MW)"] || 0,
+          windCapacity: value["Optimal Wind Capacity (MW)"] || 0,
+          batteryCapacity: value["Optimal Battery Capacity (MW)"] || 0,
+          perUnitCost: value["Per Unit Cost"]?.toFixed(2) || "N/A",
+          oaCost: value["OA_cost"]?.toFixed(2) || 0, // Add OA Cost
+          finalCost: value["Final Cost"]?.toFixed(2) || "N/A",
+          annualCurtailment: value['Annual Curtailment'] || 0,
+          annualDemandMet: value['Annual Demand Met'] || 0,
+          annualDemandOffeset: value['Annual Demand Offset'] || 0
+        }));
+        setDataSource(formattedData); // Set the formatted data in the table
       } else {
-        // message.error("No combinations found. Please try again.");
+        message.error("No combinations found. Please check your input.");
       }
       setIsTableLoading(false); // Stop loader after processing response
     } catch (error) {
@@ -255,9 +210,6 @@ console.log('comb',combinationData);
     }
   };
 
-  const sliderStyle = {
-    height: "20px", // Increase the thickness of the slider
-  };
 
   const marks = {
     0: "0%",
@@ -308,19 +260,19 @@ console.log('comb',combinationData);
       key: "finalCost",
     },
     {
-      title:'Annual Demand Offset(%)',
-      dataIndex:'annualDemandOffeset',
-      key:'annualDemandOffeset'
+      title: 'Annual Demand Offset(%)',
+      dataIndex: 'annualDemandOffeset',
+      key: 'annualDemandOffeset'
     },
     {
-      title:'Annual Demand Met (million units)',
-      dataIndex:'annualDemandMet',
-      key:'annualDemandMet'
+      title: 'Annual Demand Met (million units)',
+      dataIndex: 'annualDemandMet',
+      key: 'annualDemandMet'
     },
     {
-      title:'Annual Curtailment(%)',
-      dataIndex:'annualCurtailment',
-      key:'annualCurtailment'
+      title: 'Annual Curtailment(%)',
+      dataIndex: 'annualCurtailment',
+      key: 'annualCurtailment'
     },
     {
       title: "Download PDF", // New column for PDF download
@@ -340,39 +292,39 @@ console.log('comb',combinationData);
 
 
   // Function to handle PDF download
-const handleDownloadPdf = (record) => {
-  const doc = new jsPDF();
+  const handleDownloadPdf = (record) => {
+    const doc = new jsPDF();
 
-  // Add title
-  doc.setFontSize(16);
-  doc.text("Combination Details", 10, 10);
+    // Add title
+    doc.setFontSize(16);
+    doc.text("Combination Details", 10, 10);
 
-  // Add table with row details
-  doc.autoTable({
-    startY: 20,
-    head: [["Field", "Value"]],
-    body: [
-      ["Combination ID", record.combinationId || "N/A"],
-      ["Optimal Solar Capacity (MW)", record.solarCapacity || "N/A"],
-      ["Optimal Wind Capacity (MW)", record.windCapacity || "N/A"],
-      ["Optimal Battery Capacity (MW)", record.batteryCapacity || "N/A"],
-      ["Per Unit Cost (INR/kWh)", record.perUnitCost || "N/A"],
-      ["OA Cost (INR/kWh)", record.oaCost || "N/A"],
-      ["Final Cost (INR/kWh)", record.finalCost || "N/A"],
-      ["Annual Demand Offset (%)", record.annualDemandOffeset || "N/A"],
-      ["Annual Demand Met (million units)", record.annualDemandMet || "N/A"],
-      ["Annual Curtailment (%)", record.annualCurtailment || "N/A"],
-    ],
-    
-  });
+    // Add table with row details
+    doc.autoTable({
+      startY: 20,
+      head: [["Field", "Value"]],
+      body: [
+        ["Combination ID", record.combinationId || "N/A"],
+        ["Optimal Solar Capacity (MW)", record.solarCapacity || "N/A"],
+        ["Optimal Wind Capacity (MW)", record.windCapacity || "N/A"],
+        ["Optimal Battery Capacity (MW)", record.batteryCapacity || "N/A"],
+        ["Per Unit Cost (INR/kWh)", record.perUnitCost || "N/A"],
+        ["OA Cost (INR/kWh)", record.oaCost || "N/A"],
+        ["Final Cost (INR/kWh)", record.finalCost || "N/A"],
+        ["Annual Demand Offset (%)", record.annualDemandOffeset || "N/A"],
+        ["Annual Demand Met (million units)", record.annualDemandMet || "N/A"],
+        ["Annual Curtailment (%)", record.annualCurtailment || "N/A"],
+      ],
 
-  // Save the PDF
-  doc.save(`Combination_${record.combinationId || "Details"}.pdf`);
-};
+    });
 
+    // Save the PDF
+    doc.save(`Combination_${record.combinationId || "Details"}.pdf`);
+  };
 
+  // console.log(dataSource);
+  console.log(dataSource?.[0]?.annualDemandOffeset);
 
-  const sliderRef = React.createRef();
 
   return (
     <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
@@ -384,78 +336,89 @@ const handleDownloadPdf = (record) => {
       >
         {/* Combination Table */}
         <Col span={24}
-         style={{
-          border: "1px solid #669800",
-          background: '#E6E8F1',
-          padding: '10px',
-        }}
+          style={{
+            border: "1px solid #669800",
+            background: '#E6E8F1',
+            padding: '10px',
+          }}
         >
-           <div>
-            <Title level={4} style={{ color: "#669800", background:'#f8f8f8', marginBottom: "10px", padding: '10px' }}>
-            Choose Your RE transition Goal!
+          <div>
+            <Title level={4} style={{ color: "#669800", background: '#f8f8f8', marginBottom: "10px", padding: '10px' }}>
+              Choose Your RE transition Goal!
             </Title>
           </div>
           <div style={{ marginBottom: "20px" }}>
             <Card>
               <br />
               <p>(You can change your RE Replacement from below bar. )</p>
-             <span>
-<div
-                style={{
-                  position: "relative",
-                  width: "80%",
-                  marginLeft: "5%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <Slider
-                  min={0}
-                  max={100}
-                  marks={marks}
-                  style={{ width: "70%", marginRight: "10px", zIndex: 0 }}
-                  onChange={handleSliderChange}
-                  value={sliderValue}
-                  tooltip={{
-                    open: !isIPPModalVisible && !isModalVisible,
-                  }}
-                  trackStyle={{ height: 20 }}
-                  handleStyle={{ height: 20, width: 20 }}
-                />
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={sliderValue}
-                  onChange={(e) => {
-                    const value = Math.min(Math.max(Number(e.target.value), 0), 100); // Clamp value between 0 and 100
-                    setSliderValue(value);
-                  }}
+              <span>
+                <div
                   style={{
-                    width: "60px",
-                    height: "30px",
-                    marginLeft: "10px",
-                    textAlign: "center",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
+                    position: "relative",
+                    width: "80%",
+                    marginLeft: "5%",
+                    display: "flex",
+                    alignItems: "center",
                   }}
-                />
+                >
+                  <Slider
+                    min={0}
+                    max={100}
+                    marks={marks}
+                    style={{ width: "70%", marginRight: "10px", zIndex: 0 }}
+                    onChange={handleSliderChange}
+                    value={sliderValue}
+                    tooltip={{
+                      open: !isIPPModalVisible && !isModalVisible,
+                    }}
+                    trackStyle={{ height: 20 }}
+                    handleStyle={{ height: 20, width: 20 }}
+                  />
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={sliderValue}
+                    onChange={(e) => {
+                      const value = Math.min(Math.max(Number(e.target.value), 0), 100); // Clamp value between 0 and 100
+                      setSliderValue(value);
+                    }}
+                    style={{
+                      width: "60px",
+                      height: "30px",
+                      marginLeft: "10px",
+                      textAlign: "center",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                    }}
+                  />
                 </div>
-                             <Button
-                               type="primary"
-                               onClick={handleOptimizeClick}
-                               style={{ marginLeft: "80%", transform: "translateY(-46px)" }}
-                             >
-                               Run Optimizer 
-                               {/* For {sliderValue}% RE Replacement */}
-                             </Button>
-                           </span>
-                            <br />
+                <Button
+                  type="primary"
+                  onClick={handleOptimizeClick}
+                  style={{ marginLeft: "80%", transform: "translateY(-46px)" }}
+                >
+                  Run Optimizer
+                  {/* For {sliderValue}% RE Replacement */}
+                </Button>
+              </span>
+              <br />
             </Card>
           </div>
           <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
-              Optimized Combination for {sliderValue}% RE replacement
+              {isTableLoading ? (
+                <>
+                Optimized Combination for {sliderValue} % RE replacement
+                </>
+              ):(
+                <>
+                 Optimized Combination for {dataSource?.[0]?.annualDemandOffeset || sliderValue} % RE replacement
+                </>
+              )
+
+              }
+             
             </Title>
             {isTableLoading ? (
               <>
@@ -484,7 +447,7 @@ const handleDownloadPdf = (record) => {
                 </div>
               </>
             ) : dataSource.length > 0 ? (
-             <Table
+              <Table
                 dataSource={dataSource}
                 columns={columns}
                 pagination={false}
@@ -500,23 +463,23 @@ const handleDownloadPdf = (record) => {
               />
             ) : (
               <>
-              <div
-                style={{
-                  padding: "20px",
-                  fontSize: "18px",
-                  fontWeight: "bold",
-                  backgroundColor: "#f8d7da",
-                  borderRadius: "8px",
-                  border: "1px solid #f5c6cb",
-                  color: "#721c24",
-                  textAlign: "center",
-                }}
-              >
-                No optimized combinations available at the moment. Please try
-                again later.
-              </div>
-              <Modal title='Please try again'>
-                
+                <div
+                  style={{
+                    padding: "20px",
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    backgroundColor: "#f8d7da",
+                    borderRadius: "8px",
+                    border: "1px solid #f5c6cb",
+                    color: "#721c24",
+                    textAlign: "center",
+                  }}
+                >
+                  No optimized combinations available at the moment. Please try
+                  again later.
+                </div>
+                <Modal title='Please try again'>
+
                 </Modal>
               </>
             )}
