@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://ext.exgglobal.com/api/:path*"
+      "destination": "https://ext.exgglobal.com/api/api/:path*"
     }
   ]
 }

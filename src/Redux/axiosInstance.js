@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://ext.exgglobal.com/api/',
+  baseURL: 'https://ext.exgglobal.com/api/api/',
   headers: {
     'Content-Type': 'application/json',
   },
