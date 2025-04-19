@@ -80,7 +80,7 @@ console.log('track',trackDataGen);
     const conColumns = [
         {
             title: 'Demand (MW)',
-            dataIndex: 'demand',
+            dataIndex: 'average_demand',
         },
         {
             title: 'Demand Date',

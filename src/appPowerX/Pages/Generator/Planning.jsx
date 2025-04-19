@@ -542,7 +542,10 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
 <Form.Item label="Select Portfolio" style={{ fontSize: '24px' }}>
   <Select
     value={selectedPortfolio ? selectedPortfolio.id : undefined}
-    onChange={handleStateChange}
+    onChange={(value) => {
+      handleStateChange(value);
+      setAllFieldsFilled(value && selectedDate); // Update button state
+    }}
     style={{ width: "100%", borderColor: "#669800" }}
     placeholder="Select Portfolio"
   >
@@ -555,18 +558,19 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
   </Select>
 </Form.Item>
 
-        {
-          !selectedInterval && (
-            <Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
-              <DatePicker
-                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
-                format="DD/MM/YYYY"
-                disabledDate={(current) => current && current <= new Date()}
-                onChange={(date) => setSelectedDate(date)}
-              />
-            </Form.Item>
-          )
-        }
+<Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
+  <DatePicker
+    style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
+    format="DD/MM/YYYY"
+    disabledDate={(current) => current && current <= new Date()}
+    onChange={(date) => {
+      setSelectedDate(date);
+      setAllFieldsFilled(selectedPortfolio && date); // Update button state
+    }}
+  />
+</Form.Item>
+
+       
         {/* <Form.Item label="Select Date Interval" style={{ fontSize: '24px' }}>
           <Select
             value={selectedInterval || undefined}
@@ -578,26 +582,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
             <Select.Option key="next30days" value="next30days">Next 30 Days</Select.Option>
           </Select>
         </Form.Item> */}
-        {(selectedInterval === 'next15days' || selectedInterval === 'next30days') && (
-          <>
-            <Form.Item label="Select Start Date" style={{ fontSize: '16px', fontWeight: '600' }}>
-              <DatePicker
-                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
-                format="DD/MM/YYYY"
-                disabledDate={(current) => current && current <= new Date()}
-                onChange={(date) => setStartDate(date)}
-              />
-            </Form.Item>
-            <Form.Item label="Select End Date" style={{ fontSize: '16px', fontWeight: '600' }}>
-              <DatePicker
-                style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
-                format="DD/MM/YYYY"
-                disabledDate={(current) => current && current <= new Date()}
-                onChange={(date) => setEndDate(date)}
-              />
-            </Form.Item>
-          </>
-        )}
+       
         {/* <Form.Item label="Enter Generation (MWh)" style={{ fontSize: '16px', fontWeight: '600' }}>
           <Input
             type="number"
@@ -669,7 +654,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
             }}
             onChange={(e) => {
               setDemand(e.target.value);
-              setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
+              // setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
             }}
           />
         {/* </Form.Item> */}

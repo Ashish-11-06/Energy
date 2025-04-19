@@ -192,8 +192,9 @@ const Planning = () => {
       message.error("Please select a valid consumption unit.");
       return;
     }
+console.log(selectedDate);
 
-    const formattedDate = selectedDate.format('YYYY-MM-DD'); // Format the date correctly
+const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
     try {
       const newData = {
         requirement: selectedRequirementId,
