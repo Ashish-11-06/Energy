@@ -11,6 +11,8 @@ import {
   Select,
   InputNumber,
   message,
+  Card,
+  Input,
 } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -38,9 +40,9 @@ const RequestForQuotationModal = ({
   const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
   const [paymentSecurityDays, setPaymentSecurityDays] = useState(30);
   const [offerTariff, setOfferTariff] = useState(3.5);
-  const [solarCapacity, setSolarCapacity] = useState(50);
-  const [windCapacity, setWindCapacity] = useState(30);
-  const [essCapacity, setEssCapacity] = useState(20);
+  const [solar, setSolar] = useState(data?.optimal_solar_capacity || 0);
+  const [wind, setWind] = useState(data?.optimal_wind_capacity || 0);
+  const [battery, setBattery] = useState(data?.optimal_battery_capacity || 0);
   const [perUnitCost,setPerUnitCost] =useState(data.perUnitCost);
     const [modalVisible, setModalVisible] = useState(false);
   
@@ -164,6 +166,43 @@ console.log('termsData',termsData);
     <span>{perUnitCost}</span>
   )}
 </p>
+{user_category === "Generator" && fromInitiateQuotation ? (
+<Card bordered={false} style={{ marginBottom: 16 }}>
+      <Title level={5} style={{ textAlign: 'center', color: '#669800' }}>
+        Combination Details
+      </Title>
+      <Row justify="space-between">
+        <Col>
+          <Input
+            addonBefore="Solar"
+            addonAfter="MW"
+            value={solar}
+            onChange={(e) => setSolar(e.target.value)}
+            style={{ width: 180, fontSize: '16px' }}
+          />
+        </Col>
+        <Col>
+          <Input
+            addonBefore="Wind"
+            addonAfter="MW"
+            value={wind}
+            onChange={(e) => setWind(e.target.value)}
+            style={{ width: 180, fontSize: '16px' }}
+          />
+        </Col>
+        <Col>
+          <Input
+            addonBefore="Battery"
+            addonAfter="MWh"
+            value={battery}
+            onChange={(e) => setBattery(e.target.value)}
+            style={{ width: 180, fontSize: '16px' }}
+          />
+        </Col>
+      </Row>
+    </Card>
+) : (
+  null)}
 
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
           Standard Terms Sheet
