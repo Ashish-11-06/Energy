@@ -32,8 +32,10 @@ export const fetchSubscriptionValidity = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await subscriptionEnrollApi.subscriptionValidity(id); // Assuming GET request
+     console.log('slice response',response);
+     
       if (response && response.data) {
-          // console.log(response.data);
+          console.log('slice',response.data);
         return response.data; // Successfully fetched subscription validity data
         
       } else {
