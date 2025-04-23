@@ -48,7 +48,7 @@ const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
   };
 
   const handleTermSheet=(record) => {
-    // console.log(record);
+    console.log(record);
     const modalContent={
       term_of_ppa:record.t_term_of_ppa,
       lock_in_period:record.t_lock_in_period,
@@ -58,6 +58,10 @@ const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
       payment_security_type:record.t_payment_security_type,
       payment_security_day:record.t_payment_security_day,
       offer_tariff:record.offer_tariff,
+      tariff_status:record.tariff_status,
+      c_optimal_battery_capacity:record.c_optimal_battery_capacity,
+      c_optimal_solar_capacity:record.c_optimal_solar_capacity,
+      c_optimal_wind_capacity:record.c_optimal_wind_capacity,
     }
     setModalContent(modalContent);
     setIsModalVisible(true);

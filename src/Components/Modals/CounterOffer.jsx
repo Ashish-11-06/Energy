@@ -12,7 +12,8 @@ import {
   InputNumber,
   message,
   Tooltip,
-  Collapse, // Import Collapse component
+  Collapse,
+  Card, // Import Collapse component
 } from "antd";
 import React, { useState, useEffect } from "react"; // Import useState along with React
 import { useDispatch } from "react-redux";
@@ -27,8 +28,8 @@ const { Option } = Select;
 const { Panel } = Collapse;
 
 const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransaction,requirementContent ,combinationContent}) => {
-  // console.log(combinationContent);
-  // console.log(data);
+  console.log('comb',combinationContent);
+  console.log('data',data);
   // console.log(combinationContent)
   const term_sheet_id = data.id;
   const downloadable = data?.downloadable;
@@ -300,6 +301,30 @@ const handleAccept = async () => {
           ) : null}
         </span>
 
+        {data?.tariff_status === "Accepted" && (
+  <Card  bordered={false} style={{ marginBottom: 16 }}>
+    <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
+      Combinantion Details
+    </Title>
+    <Row justify="space-between">
+      <Col>
+        <p style={{ margin: 0, fontSize: "16px" }}>
+          Solar: <strong>{data?.c_optimal_solar_capacity || 0}</strong> MW
+        </p>
+      </Col>
+      <Col>
+        <p style={{ margin: 0, fontSize: "16px" }}>
+          Wind: <strong>{data?.c_optimal_wind_capacity || 0}</strong> MW
+        </p>
+      </Col>
+      <Col>
+        <p style={{ margin: 0, fontSize: "16px" }}>
+          Battery: <strong>{data?.c_optimal_battery_capacity || 0}</strong> MWh
+        </p>
+      </Col>
+    </Row>
+  </Card>
+)}
 
         <Title level={5} style={{ textAlign: "center", color: "#669800" }}>
           Standard Terms Sheet
