@@ -1,7 +1,7 @@
 
 import axios from "axios";
 const axiosInstance = axios.create({
-    baseURL: "http://52.66.186.241:8000/api/powerx", // Default Base URL
+    baseURL: "https://ext.exgglobal.com/api/api/powerx", // Default Base URL
     headers: {
         "Content-Type": "application/json",
     },
@@ -14,7 +14,7 @@ axiosInstance.interceptors.request.use((config) => {
     } else if (config.url.includes("/energy/generation-portfolio/")) {
         config.baseURL = "http://52.66.186.241:8000/api"; // Use base URL for generation portfolio
     } else {
-        config.baseURL = "http://52.66.186.241:8000/api/powerx"; // Default for other requests
+        config.baseURL = "https://ext.exgglobal.com/api/api/powerx"; // Default for other requests
     }
     return config;
 }, (error) => {
