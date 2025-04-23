@@ -301,8 +301,8 @@ const response = await dispatch(fetchSubscriptionValidity(id));
         {/* Footer */}
         <div className="footer">
        <a 
-      //  href='https://www.exgglobal.com' 
-       href='#' 
+       href='https://www.exgglobal.com' 
+      //  href='#' 
        style={{zIndex:2000}}  alt='EXG Global'>WWW.EXGGLOBAL.COM</a> 
         </div>
 
