@@ -206,26 +206,17 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
         }, {})
       };
 
-      // console.log(newData);
-
       const res = await dispatch(addMonthData(newData)).unwrap();
       if (res) {
         message.success("Data added successfully");
-        const id = user_id; // Ensure `user_id` is defined in scope
-        try {
-          const res = await dispatch(fetchTableMonthData(id));
-          // console.log(res.payload);
-          setTableDemandData(res.payload);
-        } catch (error) {
-          // console.error("Error fetching planning data:", error);
-        }
 
+        // Fetch updated planning data to show the newly added record
+        const updatedData = await dispatch(fetchPlanningData(user_id));
+        setTableDemandData(Array.isArray(updatedData.payload) ? updatedData.payload : []);
       }
-      // console.log('res', res);
       setIsModalVisible(false);
       navigate('/px/consumer/planning');
     } catch (error) {
-      // console.log(error);
       message.error("Failed to submit data. Please try again.");
     }
   };
