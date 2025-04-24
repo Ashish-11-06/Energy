@@ -12,6 +12,8 @@ import paymentReducer from './Slices/Consumer/paymentSlice'; // Import the payme
 import industry from'./Slices/Consumer/industrySlice';
 import states from './Slices/Consumer/stateSlice';
 import Notifications from './Slices/notificationSlice';
+import capacitySizingReducer from './Slices/Generator/capacitySizingSlice'; // Import the capacitySizingReducer
+
 
 export const store = configureStore({
   reducer: {
@@ -27,7 +29,8 @@ export const store = configureStore({
     payment: paymentReducer,
     industry:industry,
     states:states,
-    notifications: Notifications
+    notifications: Notifications,
+    capacitySizing: capacitySizingReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

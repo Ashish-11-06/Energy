@@ -14,6 +14,7 @@ import {
   Modal,
   InputNumber,
   Form,
+  Row,
 } from "antd";
 import {
   DownloadOutlined,
@@ -30,7 +31,6 @@ const GeneratorInput = () => {
   const [Structuredprojects, setStructuredProjects] = useState([]);
   const [checkPortfolio, setCheckPortfolio] = useState([]);
   const [base64CSVFile, setBase64CSVFile] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [curtailmentInputs, setCurtailmentInputs] = useState({
     curtailment_selling_price: 3000,
@@ -97,8 +97,8 @@ const GeneratorInput = () => {
       render: (text) => moment(text).format("DD-MM-YYYY"),
     },
     {
-      title: "Action",
-      key: "action",
+      title: "Select",
+      key: "select",
       render: (text, record) => (
         <Checkbox
           onChange={(e) => handleRecordCheck(record.id, e.target.checked)}
@@ -118,7 +118,7 @@ const GeneratorInput = () => {
       return;
     }
 
-    setIsModalVisible(true); 
+    setIsModalVisible(true);
   };
 
   const handleModalOk = () => {
@@ -181,59 +181,78 @@ const GeneratorInput = () => {
   };
 
   return (
-    <div style={{ justifyContent: "center", width: "100%", alignItems: "center" }}>
-      <Card style={{ marginTop: "20px", width: "100%", boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px", backgroundColor: "#fff" }}>
-        <Col span={24}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Tooltip title="Download a CSV file">
-              <Button icon={<DownloadOutlined />} onClick={handleDownloadTemplate} style={{ marginRight: "20px", height: "30px", width: 40 }} />
-            </Tooltip>
-            <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
-              <Tooltip title="Upload a CSV file">
-                <Button style={{ padding: "5px" }} icon={<FileExcelOutlined />}>
-                  Upload CSV file
-                </Button>
+    <div style={{ justifyContent: "center", width: "100%", alignItems: "center", padding: "20px" }}>
+     
+
+      <Card style={{ width: "100%", boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px" }}>
+      <h2 style={{  marginRight: "20px" }}>
+        Capacity Sizing
+      </h2>
+        <div style={{ color: "#669800", marginBottom: "30px" }}>
+          <Row span={24} >
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Title level={5} style={{ color: "#669800" }}>
+                Upload the Demand data
+              </Title>
+            </div>
+            {/* {uploadedFileName && <div style={{ marginTop: "10px" }}>Uploaded File: {uploadedFileName}</div>} */}
+          </Row>
+          <Row span={24}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Tooltip title="Download a CSV file">
+                <Button icon={<DownloadOutlined />} onClick={handleDownloadTemplate} style={{ marginRight: "20px", height: "30px", width: 40 }} />
               </Tooltip>
-            </Upload>
-            <Title level={4} style={{ color: "#669800", marginLeft: "20px" }}>
-              Upload the Demand data
-            </Title>
-          </div>
-          {uploadedFileName && <div style={{ marginTop: "10px" }}>Uploaded File: {uploadedFileName}</div>}
-        </Col>
-      </Card>
-      <Card style={{ marginTop: "20px", width: "100%", boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px", backgroundColor: "#fff" }}>
-        <p>Select the portfolios to be processed in the model execution and run the Optimizer Model</p>
-        <div style={{ maxHeight: "400px", overflowY: "auto", marginBottom: "60px" }}>
+              <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
+                <Tooltip title="Upload a CSV file">
+                  <Button style={{ padding: "5px" }} icon={<FileExcelOutlined />}>
+                    Upload CSV file
+                  </Button>
+                </Tooltip>
+              </Upload>
+
+            </div>
+            {uploadedFileName && <div style={{ margin: "10px", color: 'GrayText' }}>Uploaded File: {uploadedFileName}</div>}
+          </Row>
+
+
+        </div>
+        <p>Select the portfolios to be processed in the model execution and run the Optimizer Model.</p>
+        <div style={{ maxHeight: "400px", overflowY: "auto" }}>
           <Table
             dataSource={Structuredprojects.map((project, index) => ({ ...project, key: index }))}
             columns={columns}
             pagination={false}
             bordered
-            style={{ marginTop: "20px" }}
+            // style={{ marginTop: "20px" }}
             loading={status === "loading"}
           />
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
+            <Button onClick={handleRunOptimizer}>
+              Run Optimizer
+            </Button>
+          </div>
         </div>
-        <Button
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            zIndex: 1000,
-          }}
-          onClick={handleRunOptimizer}
-        >
-          Run Optimizer
-        </Button>
+
+      </Card>
+      <Card>
+        {/* <Row span={24} > */}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Title level={5} style={{ color: "#669800", marginTop: "10px" }}>
+              Saved Optimization data
+            </Title>
+
+          </div>
+
+        {/* </Row> */}
       </Card>
       <Modal
         title="Additional Inputs"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
       >
         <Form layout="vertical">
-        <Form.Item label="Maximum limit for excess energy (%)">
+          <Form.Item label="Maximum limit for excess energy (%)">
             <InputNumber
               min={0}
               max={1}
@@ -277,7 +296,7 @@ const GeneratorInput = () => {
           </Form.Item>
         </Form>
       </Modal>
-      {isLoading && <Spin size="large" style={{ display: "block", margin: "20px auto" }} />}
+      {/* {isLoading && <Spin size="large" style={{ display: "block", margin: "20px auto" }} />} */}
     </div>
   );
 };
