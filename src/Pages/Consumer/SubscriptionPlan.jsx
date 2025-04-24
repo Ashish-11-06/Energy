@@ -64,22 +64,25 @@ const SubscriptionPlans = () => {
   );
   const alreadySubscribed = subscription?.subscription_type;
   const time_remaining = alreadySubscribed === 'FREE' ? (() => {
-    const endDate = new Date(subscription?.end_date);
+    if (!subscription?.end_date) return 'Invalid Date';
   
-    // Get current UTC time
+    // Append IST midnight time
+    const endDateIST = new Date(`${subscription.end_date}T23:59:59+05:30`);
+  
     const nowUTC = new Date();
-  
-    // Convert to IST by adding 5 hours and 30 minutes
     const nowIST = new Date(nowUTC.getTime() + (5.5 * 60 * 60 * 1000));
   
-    const diffMs = endDate - nowIST; // Difference in milliseconds
-    if (diffMs <= 0) return "Expired"; // Handle expiration
+    const diffMs = endDateIST - nowIST;
+  
+    if (diffMs <= 0) return "Expired";
   
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   
     return `${days} days, ${hours} hours`;
   })() : ' ';
+  
+console.log('time_remaining',time_remaining);
   
 
   
