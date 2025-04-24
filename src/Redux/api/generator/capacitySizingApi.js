@@ -1,9 +1,15 @@
-import axiosInstance2 from "../../axiosInstance";
+import axiosInstance from "../../axiosInstance";
 
 const capacitySizingApi = {
   // Fetch all projects by ID
   getCapacitySizing: (modalData = {}) => {
-    return axiosInstance2.post(`/energy/capacity-sizing`, modalData); // Ensure modalData is passed correctly
+    return axiosInstance.post(`/energy/capacity-sizing`, modalData);
+  },
+  saveCapacitySizingData: (data) => {
+    return axiosInstance.post(`/energy/capacity-sizing-combination`, data); 
+  },
+  getCapacitySizingData: (id) => {
+    return axiosInstance.get(`/energy/capacity-sizing-combination/${id}`); 
   },
 
 };

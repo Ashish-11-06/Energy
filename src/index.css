@@ -269,3 +269,8 @@ button:focus, .ant-btn:focus {
 .ant-tooltip.ant-slider-tooltip.ant-tooltip-placement-top {
   z-index: 0 !important;
 }
+
+.ant-checkbox .ant-checkbox-inner {
+ border-color: #404b4268;
+/* background-color: #FFFFFF; */
+}
