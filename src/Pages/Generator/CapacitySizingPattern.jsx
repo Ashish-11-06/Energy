@@ -172,7 +172,7 @@ const CombinationPatternCap = () => {
       annual_demand_offset: saveRecord.annualDemandOffeset,
       annual_demand_met: saveRecord.annualDemandMet,
       annual_curtailment: saveRecord.annualCurtailment,
-
+// 
     };
   
     try {
