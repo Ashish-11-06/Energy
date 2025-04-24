@@ -43,9 +43,9 @@ export const saveCapacitySizingData = createAsyncThunk(
 
 export const getCapacitySizingData = createAsyncThunk(
   'capacitySizing/getSavedData',
-  async (_, { rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
-      const response = await capacitySizingApi.getCapacitySizingData();
+      const response = await capacitySizingApi.getCapacitySizingData(id);
       if (response && response.data) {
         if (response.data.error) {
           return rejectWithValue(response.data.error || 'Failed to fetch saved data');

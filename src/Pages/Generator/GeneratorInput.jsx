@@ -23,6 +23,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { getAllProjectsById } from "../../Redux/Slices/Generator/portfolioSlice";
 import moment from "moment";
+import { getCapacitySizingData } from "../../Redux/Slices/Generator/capacitySizingSlice";
 
 const { Title } = Typography;
 
@@ -32,6 +33,7 @@ const GeneratorInput = () => {
   const [checkPortfolio, setCheckPortfolio] = useState([]);
   const [base64CSVFile, setBase64CSVFile] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [capacitySizingData, setCapacitySizingData] = useState([]);
   const [curtailmentInputs, setCurtailmentInputs] = useState({
     curtailment_selling_price: 3000,
     sell_curtailment_percentage: 0,
@@ -52,6 +54,22 @@ const GeneratorInput = () => {
       isChecked ? [...prev, recordId] : prev.filter((id) => id !== recordId)
     );
   };
+
+useEffect(()=>{
+  const fetchData = async () => {
+    try {
+      const res=await dispatch(getCapacitySizingData(user_id));
+      console.log('capacity',res.payload);
+      setCapacitySizingData(res.payload);
+      
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  fetchData();
+},[])
+
 
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
@@ -106,6 +124,67 @@ const GeneratorInput = () => {
       ),
     },
   ];
+
+   const capacityColumns = [
+     {
+       title: "Sr. No.",
+       dataIndex: "key",
+       key: "key",
+       width: 50,
+     },
+     {
+       title: "Combination ID",
+       dataIndex: "combination",
+       key: "combination",
+       width: 150,
+     },
+     {
+       title: "Optimal Solar Capacity (MW)",
+       dataIndex: "optimal_solar_capacity",
+       key: "optimal_solar_capacity",
+     },
+     {
+       title: "Optimal Wind Capacity (MW)",
+       dataIndex: "optimal_wind_capacity",
+       key: "optimal_wind_capacity",
+     },
+     {
+       title: "Optimal Battery Capacity (MW)",
+       dataIndex: "optimal_battery_capacity",
+       key: "optimal_battery_capacity",
+     },
+     {
+       title: "Per Unit Cost (INR/kWh)",
+       dataIndex: "per_unit_cost",
+       key: "per_unit_cost",
+     },
+     {
+       title: "OA Cost (INR/kWh)", // New column for OA Cost
+       dataIndex: "oa_cost",
+       key: "oa_cost",
+     },
+     {
+       title: "Final Cost (INR/kWh)",
+       dataIndex: "final_cost",
+       key: "final_cost",
+     },
+     {
+       title: 'Annual Demand Offset(%)',
+       dataIndex: 'annual_demand_offset',
+       key: 'annual_demand_offset'
+     },
+     {
+       title: 'Annual Demand Met (million units)',
+       dataIndex: 'annual_demand_met',
+       key: 'annual_demand_met'
+     },
+     {
+       title: 'Annual Curtailment(%)',
+       dataIndex: 'annual_curtailment',
+       key: 'annual_curtailment'
+     },
+  
+   ];
 
   const handleRunOptimizer = async () => {
     if (!base64CSVFile) {
@@ -184,7 +263,7 @@ const GeneratorInput = () => {
     <div style={{ justifyContent: "center", width: "100%", alignItems: "center", padding: "20px" }}>
      
 
-      <Card style={{ width: "100%", boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px" }}>
+      <Card style={{ width: "100%", boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px",marginBottom: "20px" }}>
       <h2 style={{  marginRight: "20px" }}>
         Capacity Sizing
       </h2>
@@ -236,10 +315,24 @@ const GeneratorInput = () => {
       </Card>
       <Card>
         {/* <Row span={24} > */}
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Title level={5} style={{ color: "#669800", marginTop: "10px" }}>
+        <Title level={5} style={{ color: "#669800", marginTop: "10px" }}>
               Saved Optimization data
             </Title>
+          <div style={{ display: "flex" ,direction:'column', alignItems: "center" }}>
+            
+            <br />
+            <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+          <Table
+            dataSource={capacitySizingData.map((project, index) => ({ ...project, key: index + 1 }))}
+            columns={capacityColumns}
+            pagination={false}
+            bordered
+            size="small"
+            
+          />
+          
+        </div>
+
 
           </div>
 

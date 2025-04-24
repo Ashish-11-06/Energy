@@ -2,7 +2,7 @@
 import axios from "axios";
 const axiosInstance = axios.create({
     baseURL: "http://52.66.186.241:8000/api/powerx", // Default Base URL
-    baseURL: "http://52.66.186.241:8000/api/powerx", // Default Base URL
+    // baseURL: "http://52.66.186.241:8000/api/powerx", // Default Base URL
     headers: {
         "Content-Type": "application/json",
     },
