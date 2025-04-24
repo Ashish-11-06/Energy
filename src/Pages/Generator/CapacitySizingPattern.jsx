@@ -163,21 +163,21 @@ const CombinationPatternCap = () => {
       generator: user.id, 
       record_name: saveInput,
       combination: saveRecord.combinationId,
-      optimal_solar_capacity: 1,
-      optimal_wind_capacity: 2,
-      optimal_battery_capacity: 3,
-      per_unit_cost: 5,
-      oa_cost: 2,
-      final_cost: 3,
-      annual_demand_offset: 32,
-      annual_demand_met: 54,
-      annual_curtailment: 100
-      // ...saveRecord,
+      optimal_solar_capacity: saveRecord.solarCapacity,
+      optimal_wind_capacity: saveRecord.windCapacity,
+      optimal_battery_capacity: saveRecord.batteryCapacity,
+      per_unit_cost: saveRecord.perUnitCost,
+      oa_cost: saveRecord.oaCost,
+      final_cost: saveRecord.finalCost,
+      annual_demand_offset: saveRecord.annualDemandOffeset,
+      annual_demand_met: saveRecord.annualDemandMet,
+      annual_curtailment: saveRecord.annualCurtailment,
+
     };
   
     try {
       await dispatch(saveCapacitySizingData(data)).unwrap();
-      message.success("Record saved successfully!");
+      message.success("data saved successfully!");
       // Reset modal and states
       setIsSaveModalVisible(false);
       setSaveInput("");
