@@ -7,41 +7,80 @@ export const fetchCapacitySizing = createAsyncThunk(
   async (modalData, { rejectWithValue }) => {
     try {
       const response = await capacitySizingApi.getCapacitySizing(modalData);
-      console.log("Raw API Response:", response); // Debugging log to inspect the raw API response
       if (response && response.data) {
         if (response.data.error) {
-          return rejectWithValue(
-            response.data.error || 'Failed to fetch combinations'
-          );
+          return rejectWithValue(response.data.error || 'Failed to fetch combinations');
         }
-        console.log("Processed API Response:", response.data); // Debugging log for processed response
-        return response.data; // Successfully fetched data
+        return response.data;
       } else {
         return rejectWithValue('Unexpected response structure');
       }
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || 'Failed to fetch combinations'
-      );
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch combinations');
     }
   }
 );
 
+// Async thunk to save capacity sizing data
+export const saveCapacitySizingData = createAsyncThunk(
+  'capacitySizing/saveData',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await capacitySizingApi.saveCapacitySizingData(data);
+      if (response && response.data) {
+        if (response.data.error) {
+          return rejectWithValue(response.data.error || 'Failed to save data');
+        }
+        return response.data;
+      } else {
+        return rejectWithValue('Unexpected response structure');
+      }
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to save data');
+    }
+  }
+);
+
+export const getCapacitySizingData = createAsyncThunk(
+  'capacitySizing/getSavedData',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await capacitySizingApi.getCapacitySizingData();
+      if (response && response.data) {
+        if (response.data.error) {
+          return rejectWithValue(response.data.error || 'Failed to fetch saved data');
+        }
+        return response.data;
+      } else {
+        return rejectWithValue('Unexpected response structure');
+      }
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch saved data');
+    }
+  }
+);
 
 // Initial state
 const initialState = {
-  combinations: [], // Holds the fetched consumers
-  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-  error: null, // Error message if the API call fails
+  combinations: [],
+  monthly_consumption: [],
+  savedData: [],
+  status: 'idle',
+  fetchSavedStatus: 'idle',
+  saveStatus: 'idle', // separate save status
+  error: null,
+  saveError: null,
 };
 
-// Create the slice
+// Slice definition
 const capacitySizingSlice = createSlice({
-  name: 'optimizedCombinations',
+  name: 'capacitySizing',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+
+      // --- Fetch Combinations ---
       .addCase(fetchCapacitySizing.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -49,15 +88,43 @@ const capacitySizingSlice = createSlice({
       .addCase(fetchCapacitySizing.fulfilled, (state, action) => {
         state.status = 'succeeded';
         const { combinations, monthly_consumption } = action.payload || {};
-        state.combinations = combinations || []; // Ensure combinations are extracted correctly
-        state.monthly_consumption = monthly_consumption || []; // Store monthly consumption data
+        state.combinations = combinations || [];
+        state.monthly_consumption = monthly_consumption || [];
       })
       .addCase(fetchCapacitySizing.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
+      })
+
+      // --- Save Data ---
+      .addCase(saveCapacitySizingData.pending, (state) => {
+        state.saveStatus = 'loading';
+        state.saveError = null;
+      })
+      .addCase(saveCapacitySizingData.fulfilled, (state, action) => {
+        state.saveStatus = 'succeeded';
+        state.savedData.push(action.payload); // Add saved record to state
+      })
+      .addCase(saveCapacitySizingData.rejected, (state, action) => {
+        state.saveStatus = 'failed';
+        state.saveError = action.payload;
+      })
+
+      // --- Fetch Saved Data ---
+      .addCase(getCapacitySizingData.pending, (state) => {
+        state.fetchSavedStatus = 'loading';
+        state.fetchSavedError = null;
+      })
+      .addCase(getCapacitySizingData.fulfilled, (state, action) => {
+        state.fetchSavedStatus = 'succeeded';
+        state.savedData = action.payload || [];
+      })
+      .addCase(getCapacitySizingData.rejected, (state, action) => {
+        state.fetchSavedStatus = 'failed';
+        state.fetchSavedError = action.payload;
       });
+      
   },
 });
 
-// Export the reducer to include it in the store
 export default capacitySizingSlice.reducer;

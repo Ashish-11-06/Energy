@@ -12,11 +12,12 @@ import {
   Button,
   Card,
   Modal,
+  Input,
 } from "antd";
 
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, SaveOutlined } from "@ant-design/icons";
 
 import "chart.js/auto";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -24,7 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import IPPModal from "../Consumer/Modal/IPPModal";
 import RequestForQuotationModal from "../../Components/Modals/RequestForQuotationModal";
-import { fetchCapacitySizing } from "../../Redux/Slices/Generator/capacitySizingSlice";
+import { fetchCapacitySizing, saveCapacitySizingData } from "../../Redux/Slices/Generator/capacitySizingSlice";
 import "./CombinationPattern.css";
 
 const { Title, Text } = Typography;
@@ -37,6 +38,9 @@ const CombinationPatternCap = () => {
   const [dataSource, setDataSource] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [combinationData, setCombinationData] = useState([]);
+  const [isSaveModalVisible, setIsSaveModalVisible] = useState(false);
+  const [saveInput, setSaveInput] = useState("");
+  const [saveRecord, setSaveRecord] = useState(null);
   const { state } = useLocation(); // Access navigation state
 
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
@@ -149,7 +153,40 @@ const CombinationPatternCap = () => {
   }, [state?.modalData]);
 
 
-
+  const handleSaveConfirm = async () => {
+    if (!saveInput.trim()) {
+      message.error("Please enter a valid name.");
+      return;
+    }
+  
+    const data = {
+      generator: user.id, 
+      record_name: saveInput,
+      combination: saveRecord.combinationId,
+      optimal_solar_capacity: 1,
+      optimal_wind_capacity: 2,
+      optimal_battery_capacity: 3,
+      per_unit_cost: 5,
+      oa_cost: 2,
+      final_cost: 3,
+      annual_demand_offset: 32,
+      annual_demand_met: 54,
+      annual_curtailment: 100
+      // ...saveRecord,
+    };
+  
+    try {
+      await dispatch(saveCapacitySizingData(data)).unwrap();
+      message.success("Record saved successfully!");
+      // Reset modal and states
+      setIsSaveModalVisible(false);
+      setSaveInput("");
+      setSaveRecord(null);
+    } catch (error) {
+      console.error("Save failed:", error);
+      message.error("Failed to save record.");
+    }
+  };
 
   const re_index = combinationData.re_index || 0;
   console.log('comb', combinationData);
@@ -275,16 +312,33 @@ const CombinationPatternCap = () => {
       key: 'annualCurtailment'
     },
     {
-      title: "Download PDF", // New column for PDF download
-      key: "downloadPdf",
+      title: "Action",
+      key: "action",
       render: (text, record) => (
-        <Button
-          type="link"
-          icon={<DownloadOutlined style={{ color: "white" }} />} // Ant Design PDF icon
-          onClick={() => handleDownloadPdf(record)}
-        >
-          Download
-        </Button>
+        <div style={{ display: "flex", flexDirection: 'column', gap: "10px" }}>
+          <Button
+            type="link"
+            icon={<DownloadOutlined style={{ color: "white" }} />}
+            onClick={() => handleDownloadPdf(record)}
+          >
+            Download
+          </Button>
+          <Button
+            style={{
+              backgroundColor: "#88B048", // Green
+              color: "white",
+              border: "none",
+            }}
+            icon={<SaveOutlined style={{ color: "white" }} />}
+            onClick={() => {
+              setSaveRecord(record);
+              setIsSaveModalVisible(true);
+            }}
+          >
+            Save
+          </Button>
+
+        </div>
       ),
     },
 
@@ -409,16 +463,16 @@ const CombinationPatternCap = () => {
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
               {isTableLoading ? (
                 <>
-                Optimized Combination for {sliderValue} % RE replacement
+                  Optimized Combination for {sliderValue} % RE replacement
                 </>
-              ):(
+              ) : (
                 <>
-                 Optimized Combination for {dataSource?.[0]?.annualDemandOffeset || sliderValue} % RE replacement
+                  Optimized Combination for {dataSource?.[0]?.annualDemandOffeset || sliderValue} % RE replacement
                 </>
               )
 
               }
-             
+
             </Title>
             {isTableLoading ? (
               <>
@@ -478,9 +532,7 @@ const CombinationPatternCap = () => {
                   No optimized combinations available at the moment. Please try
                   again later.
                 </div>
-                <Modal title='Please try again'>
 
-                </Modal>
               </>
             )}
           </Card>
@@ -508,6 +560,21 @@ const CombinationPatternCap = () => {
           />
         )}
       </Row>
+
+      <Modal
+        title="Save Capacity Sizing Data"
+        open={isSaveModalVisible}
+        onOk={() => handleSaveConfirm()}
+        onCancel={() => setIsSaveModalVisible(false)}
+        okText="Save"
+      >
+        <p>Please enter a name for this data (capacity sizing):</p>
+        <Input
+          value={saveInput}
+          onChange={(e) => setSaveInput(e.target.value)}
+          placeholder="Enter name"
+        />
+      </Modal>
 
     </div>
   );
