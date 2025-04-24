@@ -348,6 +348,7 @@ const CombinationPatternCap = () => {
   // Function to handle PDF download
   const handleDownloadPdf = (record) => {
     const doc = new jsPDF();
+console.log(record);
 
     // Add title
     doc.setFontSize(16);
@@ -369,7 +370,35 @@ const CombinationPatternCap = () => {
         ["Annual Demand Met (million units)", record.annualDemandMet || "N/A"],
         ["Annual Curtailment (%)", record.annualCurtailment || "N/A"],
       ],
+      styles: { lineWidth: 0.1 }, // Add border for the table
+    });
 
+    // Add additional table for 8760 rows
+    const columnTitles = [
+      "Demand (MW)",
+      "Solar Allocation (MW)",
+      "Wind Allocation (MW)",
+      "Generation (MW)",
+      "Unmet Demand (MW)",
+      "Curtailment (MW)",
+      "Total Demand Met By Allocation (MW)",
+    ];
+
+    const dataRows = record.dataRows || []; // Assuming `record.dataRows` contains 8760 rows of data
+
+    doc.autoTable({
+      startY: doc.lastAutoTable.finalY + 10, // Start below the previous table
+      head: [columnTitles],
+      body: dataRows.map((row) => [
+        row.Demand || "N/A",
+        row.solarAllocation || "N/A",
+        row.windAllocation || "N/A",
+        row.generation || "N/A",
+        row.unmetDemand || "N/A",
+        row.curtailment || "N/A",
+        row.totalDemandMet || "N/A",
+      ]),
+      styles: { lineWidth: 0.1 }, // Add border for the table
     });
 
     // Save the PDF
