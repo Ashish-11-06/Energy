@@ -390,9 +390,9 @@ const Offers = () => {
   return (
     <div style={{ padding: "20px" }}>
       <Col span={24} style={{ marginLeft: "20px" }}>
-        <Title level={3} style={{ color: "#001529" }}>
+        <h2  style={{ color: "#001529" }}>
           Offer Transaction Window
-        </Title>
+        </h2>
         <h4>(Total offers received and sent from you.)</h4>
       </Col>
 

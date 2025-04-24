@@ -40,13 +40,20 @@ const RequestForQuotationModal = ({
   const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
   const [paymentSecurityDays, setPaymentSecurityDays] = useState(30);
   const [offerTariff, setOfferTariff] = useState(3.5);
-  const [solar, setSolar] = useState(data?.optimal_solar_capacity || 0);
-  const [wind, setWind] = useState(data?.optimal_wind_capacity || 0);
-  const [battery, setBattery] = useState(data?.optimal_battery_capacity || 0);
+  const [solar, setSolar] = useState(
+    data?.technology?.find((tech) => tech.name === "Solar")?.capacity.replace(" MW", "") || 0
+  );
+  const [wind, setWind] = useState(
+    data?.technology?.find((tech) => tech.name === "Wind")?.capacity.replace(" MW", "") || 0
+  );
+  const [battery, setBattery] = useState(
+    data?.technology?.find((tech) => tech.name === "ESS")?.capacity.replace(" MWh", "") || 0
+  );
   const [perUnitCost,setPerUnitCost] =useState(data.perUnitCost);
     const [modalVisible, setModalVisible] = useState(false);
   
-console.log(data);
+console.log('ddd',data);
+// console.log('tech data',technologyData);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -122,12 +129,16 @@ console.log(data);
       minimum_supply_obligation: minimumSupply || 0,
       payment_security_type: paymentSecurityType || "",
       payment_security_day: paymentSecurityDays || 0,
+      re_replacement: Number(data?.reReplacement) || 0,
+      solar_capacity: Number(solar) || 0,
+      wind_capacity:Number(wind)  || 0,
+      ess_capacity: Number(battery) || 0,
     };
 console.log('termsData',termsData);
 
 
     try {
-      await dispatch(addTermsAndConditions(termsData)).unwrap();
+      // await dispatch(addTermsAndConditions(termsData)).unwrap();
       message.success({
         content: "Terms and Conditions added successfully.",
         duration: 6,
@@ -171,35 +182,49 @@ console.log('termsData',termsData);
       <Title level={5} style={{ textAlign: 'center', color: '#669800' }}>
         Combination Details
       </Title>
-      <Row justify="space-between">
-        <Col>
-          <Input
-            addonBefore="Solar"
-            addonAfter="MW"
-            value={solar}
-            onChange={(e) => setSolar(e.target.value)}
-            style={{ width: 180, fontSize: '16px' }}
-          />
-        </Col>
-        <Col>
-          <Input
-            addonBefore="Wind"
-            addonAfter="MW"
-            value={wind}
-            onChange={(e) => setWind(e.target.value)}
-            style={{ width: 180, fontSize: '16px' }}
-          />
-        </Col>
-        <Col>
-          <Input
-            addonBefore="Battery"
-            addonAfter="MWh"
-            value={battery}
-            onChange={(e) => setBattery(e.target.value)}
-            style={{ width: 180, fontSize: '16px' }}
-          />
-        </Col>
-      </Row>
+      <Row justify="space-between" align="middle" gutter={16}>
+  <Col flex="1">
+    <Row align="middle">
+      <span style={{ fontWeight: 'bold', whiteSpace: 'nowrap', marginRight: 8 }}>
+        Solar  (MW):
+      </span>
+      <Input
+        value={solar}
+        onChange={(e) => setSolar(e.target.value)}
+        style={{ width: 100, fontSize: '16px' }}
+      />
+    </Row>
+  </Col>
+
+  <Col flex="1">
+    <Row align="middle">
+      <span style={{ fontWeight: 'bold', whiteSpace: 'nowrap', marginRight: 8 }}>
+        Wind  (MW):
+      </span>
+      <Input
+        value={wind}
+        onChange={(e) => setWind(e.target.value)}
+        style={{ width: 100, fontSize: '16px' }}
+      />
+    </Row>
+  </Col>
+
+  <Col flex="1">
+    <Row align="middle">
+      <span style={{ fontWeight: 'bold', whiteSpace: 'nowrap', marginRight: 8 }}>
+        Battery  (MWh):
+      </span>
+      <Input
+        value={battery}
+        onChange={(e) => setBattery(e.target.value)}
+        style={{ width: 100, fontSize: '16px' }}
+      />
+    </Row>
+  </Col>
+</Row>
+
+
+
     </Card>
 ) : (
   null)}

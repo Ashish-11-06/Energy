@@ -243,9 +243,9 @@ const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
     <div style={{ padding: '20px' }}>
       <Row justify="left" style={{ marginBottom: '20px' }}>
         <Col>
-          <Title level={3} style={{ textAlign: 'left', color: '#001529' }}>
+          <h2 style={{ textAlign: 'left', color: '#001529' }}>
             Transactions :
-          </Title>
+          </h2>
         </Col>
       </Row>
 

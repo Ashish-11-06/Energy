@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { Modal, Button } from 'antd';
 import React from 'react';
@@ -13,7 +14,10 @@ const SubscriptionDueModal = ({ open, onCancel, onConfirm, onOk, time_remaining 
       onOk={time_remaining !== 'Expiring' ? onOk : undefined} // Disable onOk when Expiring
       footer={
         time_remaining === 'Expiring' ? (
-          <Button onClick={onCancel}>Cancel</Button> // Only show Cancel button
+          <>
+          <Button onClick={onCancel}>Cancel</Button> 
+          <Button type="primary" onClick={onOk}>OK</Button> {/* Show both buttons for Expired */}
+          </>
         ) : (
           <>
             <Button onClick={onCancel}>Cancel</Button>

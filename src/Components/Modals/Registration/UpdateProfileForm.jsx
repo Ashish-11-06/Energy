@@ -471,6 +471,7 @@ const handleCloseWarningModal = () => {
           )}
         </>
       )}
+          <p style={{color:'GrayText',marginTop:'10px'}}>(Note : All * fields are mandatory)</p>
 
       <Row gutter={24} style={{ textAlign: "right" }}>
         <Col span={24}>

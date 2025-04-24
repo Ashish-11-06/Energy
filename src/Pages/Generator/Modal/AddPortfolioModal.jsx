@@ -152,7 +152,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
               }
               name="state"
               
-              // rules={[{ required: true, message: "Please select your state!" }]}
+              rules={[{ required: true, message: "Please select your state!" }]}
               
             >
               <Select placeholder="Select your state" showSearch >
@@ -260,6 +260,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
         </Row>
 
         <Form.Item>
+          <p style={{color:'GrayText'}}>(Note : All * fields are mandatory)</p>
   <Button
     type="primary"
     onClick={handleSubmit}

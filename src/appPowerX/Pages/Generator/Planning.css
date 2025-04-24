@@ -27,3 +27,29 @@
       padding: 0;
       color: green;
   }
+
+  .table.ant-picker-content {
+    /* height: 450px !important;  */
+    max-width: 500px;
+    max-height: 400px !important; 
+    overflow-y: auto; /* Enable scrolling if content exceeds 500px */
+  }
+
+  .ant-picker-cell-inner .ant-picker-calendar-date-content{
+    height: 30px !important;
+  }
+
+  .ant-row.ant-row-space-between.ant-row-middle.css-dev-only-do-not-override-oqfneu {
+    margin: 0 !important;
+  }
+
+  /* .ant-card-body {
+    max-width: 600px !important;
+  } */
+  /* .ant-card.ant-card-bordered.css-dev-only-do-not-override-oqfneu{
+    max-width: 600px !important;
+  } */
+  .mainCard {
+  max-width: 600px !important;
+  margin: 0 auto !important;
+}

@@ -124,3 +124,8 @@
   max-width:400px ;
   max-height: 400px;
 }
+
+.mainCard {
+  max-width: 600px !important;
+  margin: 0 auto !important;
+}

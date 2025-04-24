@@ -8,6 +8,7 @@ import * as XLSX from 'xlsx';
 import { useDispatch } from 'react-redux';
 import { addDayAheadData } from "../../Redux/slices/consumer/dayAheadSlice";
 import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequirementSlice";
+import { fetchHolidayList } from "../../Redux/slices/consumer/holidayListSlice";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -39,6 +40,7 @@ const PlanYourTradePage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [consumerRequirement, setConsumerRequirement] = useState([]);
   const [isTableShow,setTableShow]=useState(false);
+  const [disabledDates, setDisabledDates] = useState([]);
   const [tableData, setTableData] = useState(
     generateTimeLabels().map((time, index) => ({
       key: index,
@@ -50,7 +52,31 @@ const PlanYourTradePage = () => {
   const [fileUploaded, setFileUploaded] = useState(false);
   const [showTable, setShowTable] = useState(false);
 const [uploadModal,setUploadModal]=useState(false);
+
+useEffect(() => {
+  const fetchHolidayData = async () => {
+    try {
+      const res = await dispatch(fetchHolidayList());
+      // setDisabledDates(["2025-04-25"]);
+      setDisabledDates(res.payload);
+      console.log("Holiday List:", res);
+    } catch (error) {
+      // console.error("Error fetching holiday list:", error);
+    }
+  };
+  fetchHolidayData();
+}, [dispatch]);
+
   const handleContinue = async () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowFormatted = tomorrow.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    if (disabledDates.includes(tomorrowFormatted)) {
+      message.error("Tomorrow is a holiday. You cannot add data.");
+      return;
+    }
+
     if (!allFieldsFilled) {
       message.error("Please fill all fields or upload a file.");
       return;
@@ -104,6 +130,7 @@ const [uploadModal,setUploadModal]=useState(false);
     }
   };
   
+console.log('disabledDates',disabledDates);
 
   const onFinish = (values) => {
     // console.log("Received values of form: ", values);
@@ -319,9 +346,9 @@ const handleFileUpload = (file) => {
     </div>
   );
 
-  const handleUploadFile=()=>{
-    setUploadModal(true);
-  }
+  // const handleUploadFile=()=>{
+  //   setUploadModal(true);
+  // }
   const splitData = (data) => {
     const sixth = Math.ceil(data.length / 6);
     return [
@@ -343,7 +370,29 @@ const handleFileUpload = (file) => {
     : dummyConsumptionUnits;
 
   const handleAddDetails = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowFormatted = tomorrow.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    if (disabledDates.includes(tomorrowFormatted)) {
+      message.error("Tomorrow is a holiday. You cannot add data.");
+      return;
+    }
+
     setIsModalVisible(true); // Show the "Select Technology" modal
+  };
+
+  const handleUploadFile = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowFormatted = tomorrow.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+
+    if (disabledDates.includes(tomorrowFormatted)) {
+      message.error("Tomorrow is a holiday. You cannot add data.");
+      return;
+    }
+
+    setUploadModal(true); // Show the upload modal
   };
 
   return (

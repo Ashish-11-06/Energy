@@ -15,7 +15,7 @@ import { fetchPlanningData } from '../../Redux/slices/consumer/planningSlice';
 import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequirementSlice";
 import { addMonthData } from '../../Redux/slices/consumer/monthAheadSlice';
 import { color } from 'framer-motion';
-// import { uploadTableMonthData } from '../../Redux/slices/generator/monthAheadSliceG';
+import { fetchHolidayList } from '../../Redux/slices/consumer/holidayListSlice';
 
 dayjs.locale('en');
  
@@ -45,17 +45,8 @@ const Planning = () => {
   const [endDate, setEndDate] = useState(null); // Add state for end date
   const [requirementId, setRequirementId] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null); // State to store uploaded file
-  const handleDateIntervalChange = (value) => {
-    setSelectedInterval(value);
-    if (value === 'today') {
-      setSelectedDate(dayjs());
-    } else if (value === 'tomorrow') {
-      setSelectedDate(dayjs().add(1, 'day'));
-    } else if (value === 'next15days' || value === 'next30days') {
-      setStartDate(null); // Reset start date
-      setEndDate(null); // Reset end date
-    }
-  };
+const [disableDates, setDisableDates] = useState([]); // State to store holiday dates
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,6 +72,22 @@ const Planning = () => {
   }, [user_id, dispatch]); // Add dependencies if needed
 // console.log(requirementId);
 
+useEffect(() => {
+  const fetchHolidayData = async () => {
+    try {
+      const res = await dispatch(fetchHolidayList());
+      // setDisableDates(["2025-04-27"])
+      setDisableDates(res.payload); // Assuming res.payload contains the list of holidays
+      // console.log("Holiday List:", res);
+    } catch (error) {
+      // console.error("Error fetching holiday list:", error);
+    }
+  };
+  fetchHolidayData();
+}, [dispatch]);
+
+
+console.log('disable dates',disableDates);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -102,24 +109,27 @@ const Planning = () => {
   };
 
   const tileContent = (value) => {
-    // console.log('date clicked');
-    
+    console.log('tile');
     const date = value.toDate();
     const listData = getListData(date);
     const isToday = dayjs(date).isSame(dayjs(), 'day');
     const isPastDate = dayjs(date).isBefore(dayjs(), 'day');
-  
+    const isDisabledDate = disableDates.some(disabledDate =>
+      dayjs(disabledDate).isSame(dayjs(date), 'day')
+    );
+
     return (
       <div
         style={{
           position: 'relative',
           textAlign: 'center',
           marginTop: '15px',
-          cursor: isPastDate ? 'not-allowed' : 'pointer',
-          opacity: isPastDate ? 0.5 : 1,
+          cursor: isPastDate || isDisabledDate ? 'not-allowed' : 'pointer',
+          opacity: isPastDate || isDisabledDate ? 0.5 : 1,
+          pointerEvents: isPastDate || isDisabledDate ? 'none' : 'auto', // Prevent clicks on disabled dates
         }}
         onClick={() => {
-          if (!isPastDate) {
+          if (!isPastDate && !isDisabledDate) {
             setSelectedDate(dayjs(date)); // Set the selected date
             setIsModalVisible(true); // Open the "Select Technology" modal
           }
@@ -232,6 +242,8 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
   // console.log(selectedUnitDetails);
 
   const handleDateClick = (date) => {
+    console.log('date clicked');
+    
     setSelectedDate(date.format("YYYY-MM-DD")); // Store selected date
     setIsModalVisible(true); // Open modal
   };
@@ -357,7 +369,7 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
 
   const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
     const requirementDetails = consumerRequirement.find(req => req.id === item.requirement);
-    console.log(requirementDetails);
+    // console.log(requirementDetails);
     // console.log(item);
     
     
@@ -375,7 +387,7 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
     };
   }) : [];
 
-console.log(requirementId);
+// console.log(requirementId);
 
   const handlePrevMonth = () => {
     setCurrentMonth(dayjs(currentMonth).subtract(1, 'month').toDate());
@@ -457,7 +469,7 @@ console.log(requirementId);
             ))}
           </Select>
         </Form.Item>
-            <Card style={{ width: '90%', margin: 'auto', padding: '10px', backgroundColor: '#fff' }}> {/* Updated card background color */}
+            <Card className='mainCard' style={{ width: '90%', margin: 'auto', padding: '10px', backgroundColor: '#fff' }}> {/* Updated card background color */}
               <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
                 <Button icon={<LeftOutlined />} onClick={handlePrevMonth} />
                 <h2>{dayjs(currentMonth).format('MMMM YYYY')}</h2>
@@ -518,7 +530,13 @@ console.log(requirementId);
           <DatePicker
             style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
             format="DD/MM/YYYY"
-            disabledDate={(current) => current && current <= new Date()}
+            disabledDate={(current) => {
+              const isPastDate = current && current <= dayjs().endOf('day');
+              const isDisabledDate = disableDates.some(disabledDate =>
+                dayjs(disabledDate).isSame(current, 'day')
+              );
+              return isPastDate || isDisabledDate;
+            }}
             onChange={(date) => {
               setSelectedDate(date);
               setAllFieldsFilled(selectedState && date); // Check if both fields are filled

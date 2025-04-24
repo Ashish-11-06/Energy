@@ -449,7 +449,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
             </Form.Item>
           </Col>
         </Row>
-
+<p style={{color:'GrayText'}}>(Note: All * fields are mandatory.)</p>
         <Form.Item style={{ textAlign: "center" }}>
           <Button
             type="primary"

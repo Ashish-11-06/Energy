@@ -27,6 +27,7 @@ import * as XLSX from "xlsx";
 import { useDispatch } from "react-redux";
 import { addDayAheadData } from "../../Redux/slices/generator/dayAheadSliceG";
 import { getAllProjectsById } from "../../Redux/slices/generator/portfolioSlice";
+import { fetchHolidayList } from "../../Redux/slices/consumer/holidayListSlice";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -58,6 +59,8 @@ const PlanYourTradePage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [generatorPortfolio, setGeneratorPortfolio] = useState([]);
   const [uploadModal, setUploadModal] = useState(false);
+    const [disabledDates, setDisabledDates] = useState([]);
+  
   const [tableData, setTableData] = useState(
     generateTimeLabels().map((time, index) => ({
       key: index,
@@ -68,6 +71,20 @@ const PlanYourTradePage = () => {
   const [allFieldsFilled, setAllFieldsFilled] = useState(false);
   const [fileUploaded, setFileUploaded] = useState(false);
   const [showTable, setShowTable] = useState(false);
+
+useEffect(() => {
+  const fetchHolidayData = async () => {
+    try {
+      const res = await dispatch(fetchHolidayList());
+      // setDisabledDates(["2025-04-25"]);
+      setDisabledDates(res.payload);
+      console.log("Holiday List:", res);
+    } catch (error) {
+      // console.error("Error fetching holiday list:", error);
+    }
+  };
+  fetchHolidayData();
+}, [dispatch]);
 
   const handleContinue = async () => {
     if (!fileUploaded) {
@@ -244,6 +261,14 @@ console.log('price', price);
   // };
 
 const handleFileUploadModal = () => {
+    const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowFormatted = tomorrow.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  
+      if (disabledDates.includes(tomorrowFormatted)) {
+        message.error("Tomorrow is a holiday. You cannot add data.");
+        return;
+      }
   setUploadModal(true);
 }
   const handleFileUpload = (file) => {
@@ -399,6 +424,14 @@ const handleFileUploadModal = () => {
     ];
   };
   const handleAddDetails = () => {
+      const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowFormatted = tomorrow.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    
+        if (disabledDates.includes(tomorrowFormatted)) {
+          message.error("Tomorrow is a holiday. You cannot add data.");
+          return;
+        }
     setIsModalVisible(true); // Show the "Select Technology" modal
   };
   const [part1, part2, part3, part4, part5, part6] = splitData(tableData);

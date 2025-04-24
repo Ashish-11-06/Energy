@@ -644,7 +644,7 @@ const companyName=userData[0]?.company;
           ]}
           width={600}
         >
-          <p>(Please provide additional details)</p>
+          <p>(Please provide additional details.)</p>
 
           <Form
             form={form}
@@ -704,7 +704,7 @@ const companyName=userData[0]?.company;
                 </Form.Item>
               </Col>
             </Row>
-
+<p style={{color:'GrayText'}}>(Note : All * fields are mandatory)</p>
             {formError && (
               <Text type="danger" style={{ marginBottom: 20 }}>
                 {formError}

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import { Table, Button, Typography, Modal, Form, message, Progress, Tooltip } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -225,7 +226,7 @@ const GenerationPortfolio = () => {
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <h2 level={2}>Available Generation Portfolio</h2>
+        <h2 >Available Generation Portfolio</h2>
 
  <Tooltip title="Help">
           <Button

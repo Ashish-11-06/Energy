@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { getAllProjectsById } from "../../Redux/slices/generator/portfolioSlice";
 import { fetchPlanningDataG } from '../../Redux/slices/generator/planningSlice';
 import { addTableMonthData, uploadTableMonthData } from '../../Redux/slices/generator/monthAheadSliceG';
+import { fetchHolidayList } from '../../Redux/slices/consumer/holidayListSlice';
 
 dayjs.locale('en');
 
@@ -47,7 +48,8 @@ const Planning = () => {
  const [startDate, setStartDate] = useState(null); // Add state for start date
  const [endDate, setEndDate] = useState(null); // Add state for end date
    const [selectedPortfolioId, setSelectedPortfolioId] = useState(null);
- 
+   const [disableDates, setDisableDates] = useState([]); // State to store holiday dates
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -65,6 +67,21 @@ const Planning = () => {
 
     fetchData(); // Call the function inside useEffect
   }, [user_id, dispatch]); // Add dependencies if needed
+
+  useEffect(() => {
+    const fetchHolidayData = async () => {
+      try {
+        const res = await dispatch(fetchHolidayList());
+        // setDisableDates(["2025-04-29"]); // Assuming res.payload contains the list of holidays
+        setDisableDates(res.payload); // Assuming res.payload contains the list of holidays
+        // console.log("Holiday List:", res);
+      } catch (error) {
+        // console.error("Error fetching holiday list:", error);
+      }
+    };
+    fetchHolidayData();
+  }, [dispatch]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,12 +109,32 @@ const Planning = () => {
     return tableDemandData.filter(item => item.date === dateStr);
   };
 
-  const tileContent = ({ date }) => {
+  const tileContent = (value) => {
+    const date = value.toDate();
     const listData = getListData(date);
     const isToday = dayjs(date).isSame(dayjs(), 'day');
+    const isPastDate = dayjs(date).isBefore(dayjs(), 'day');
+    const isDisabledDate = disableDates.some(disabledDate =>
+      dayjs(disabledDate).isSame(dayjs(date), 'day')
+    );
 
     return (
-      <div style={{ position: 'relative', textAlign: 'center', marginTop: '15px' }}>
+      <div
+        style={{
+          position: 'relative',
+          textAlign: 'center',
+          marginTop: '15px',
+          cursor: isPastDate || isDisabledDate ? 'not-allowed' : 'pointer',
+          opacity: isPastDate || isDisabledDate ? 0.5 : 1,
+          pointerEvents: isPastDate || isDisabledDate ? 'none' : 'auto', // Prevent clicks on disabled dates
+        }}
+        onClick={() => {
+          if (!isPastDate && !isDisabledDate) {
+            setSelectedDate(dayjs(date)); // Set the selected date
+            setIsModalVisible(true); // Open the "Select Technology" modal
+          }
+        }}
+      >
         {isToday && (
           <div
             style={{
@@ -114,9 +151,8 @@ const Planning = () => {
           </div>
         )}
         {listData.map(item => (
-          <Tooltip 
-            style={{ marginTop: '3%' }} 
-            key={item.id} 
+          <Tooltip
+            key={item.id}
             title={`Generation: ${item.generation} MWh, ${item.content_type} Price: ${item.price} INR`}
           >
             <div
@@ -130,7 +166,7 @@ const Planning = () => {
                 bottom: '3px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                marginTop: '10px'
+                marginTop: '10px',
               }}
             />
           </Tooltip>
@@ -497,7 +533,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
                        ))}
                    </Select>
         </Form.Item>
-            <Card style={{ width: '90%', margin: 'auto', padding: '10px' }}>
+            <Card className='mainCard' style={{ width: '90%', margin: 'auto', padding: '10px' }}>
               <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
                 <Button icon={<LeftOutlined />} onClick={handlePrevMonth} />
                 <h2>{dayjs(currentMonth).format('MMMM YYYY')}</h2>
@@ -523,6 +559,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
               <Table dataSource={tableData} columns={columns} pagination={false} bordered />
             </Card>
           </Col>
+        
         )}
         {/* <Button
           type="primary"
@@ -562,7 +599,13 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
   <DatePicker
     style={{ width: "100%", fontSize: '16px', backgroundColor: 'white' }}
     format="DD/MM/YYYY"
-    disabledDate={(current) => current && current <= new Date()}
+    disabledDate={(current) => {
+      const isPastDate = current && current <= dayjs().endOf('day');
+      const isDisabledDate = disableDates.some(disabledDate =>
+        dayjs(disabledDate).isSame(current, 'day')
+      );
+      return isPastDate || isDisabledDate;
+    }}
     onChange={(date) => {
       setSelectedDate(date);
       setAllFieldsFilled(selectedPortfolio && date); // Update button state
