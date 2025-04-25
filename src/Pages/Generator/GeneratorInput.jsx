@@ -21,11 +21,11 @@ import {
   FileExcelOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { getAllProjectsById } from "../../Redux/Slices/Generator/portfolioSlice";
 import moment from "moment";
 import { getCapacitySizingData } from "../../Redux/Slices/Generator/capacitySizingSlice";
+import { handleDownloadPdf } from "./CapacitySizingDownload";
 
 const { Title } = Typography;
 
@@ -60,7 +60,7 @@ const GeneratorInput = () => {
 useEffect(()=>{
   const fetchData = async () => {
     try {
-      const res=await dispatch(getCapacitySizingData(user_id));
+      const res = await dispatch(getCapacitySizingData(user_id));
       console.log('capacity',res.payload);
       setCapacitySizingData(res.payload);
       
@@ -127,65 +127,7 @@ useEffect(()=>{
     },
   ];
 
-    const handleDownloadPdf = (record) => {
-      const doc = new jsPDF();
-  console.log(record);
   
-      // Add title
-      doc.setFontSize(16);
-      doc.text(`${record.record_name} Combination Details`, 10, 10);
-  
-      // Add table with row details
-      doc.autoTable({
-        startY: 20,
-        head: [["Field", "Value"]],
-        body: [
-          ["Combination ID", record.combination || "N/A"],
-          ["Optimal Solar Capacity (MW)", record.optimal_solar_capacity || "N/A"],
-          ["Optimal Wind Capacity (MW)", record.optimal_wind_capacity || "N/A"],
-          ["Optimal Battery Capacity (MW)", record.optimal_battery_capacity || "N/A"],
-          ["Per Unit Cost (INR/kWh)", record.per_unit_cost || "N/A"],
-          ["OA Cost (INR/kWh)", record.oa_cost || "N/A"],
-          ["Final Cost (INR/kWh)", record.final_cost || "N/A"],
-          ["Annual Demand Offset (%)", record.annual_demand_offset || "N/A"],
-          ["Annual Demand Met (million units)", record.annual_demand_met || "N/A"],
-          ["Annual Curtailment (%)", record.annual_curtailment || "N/A"],
-        ],
-        styles: { lineWidth: 0.1 }, // Add border for the table
-      });
-  
-      // Add additional table for 8760 rows
-      const columnTitles = [
-        "Demand (MW)",
-        "Solar Allocation (MW)",
-        "Wind Allocation (MW)",
-        "Generation (MW)",
-        "Unmet Demand (MW)",
-        "Curtailment (MW)",
-        "Total Demand Met By Allocation (MW)",
-      ];
-  
-      const dataRows = record.dataRows || []; // Assuming `record.dataRows` contains 8760 rows of data
-  
-      doc.autoTable({
-        startY: doc.lastAutoTable.finalY + 10, // Start below the previous table
-        head: [columnTitles],
-        body: dataRows.map((row) => [
-          row.Demand || "N/A",
-          row.solarAllocation || "N/A",
-          row.windAllocation || "N/A",
-          row.generation || "N/A",
-          row.unmetDemand || "N/A",
-          row.curtailment || "N/A",
-          row.totalDemandMet || "N/A",
-        ]),
-        styles: { lineWidth: 0.1 }, // Add border for the table
-      });
-  
-      // Save the PDF
-      doc.save(`${record.record_name}.pdf`);
-    };
-
    const capacityColumns = [
      {
        title: "Sr. No.",

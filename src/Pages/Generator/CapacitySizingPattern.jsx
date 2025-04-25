@@ -27,6 +27,7 @@ import IPPModal from "../Consumer/Modal/IPPModal";
 import RequestForQuotationModal from "../../Components/Modals/RequestForQuotationModal";
 import { fetchCapacitySizing, saveCapacitySizingData } from "../../Redux/Slices/Generator/capacitySizingSlice";
 import "./CombinationPattern.css";
+import { handleDownloadPdf } from "./CapacitySizingDownload";
 
 const { Title, Text } = Typography;
 
@@ -76,6 +77,39 @@ const CombinationPatternCap = () => {
         totalCost: combination["Total Cost"]?.toFixed(2) || 0,
         cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("DD-MM-YYYY") : "N/A",
         annualDemandOffeset: combination["Annual Demand Offset"] || 0,
+
+        curtailmentArray: Array.isArray(combination["Curtailment"])
+          ? combination["Curtailment"]
+          : [],
+
+        demandArray: Array.isArray(combination["Demand"])
+          ? combination["Demand"]
+          : [],
+
+        generationArray: Array.isArray(combination["Generation"])
+          ? combination["Generation"]
+          : [],
+
+        demandMetArray: Array.isArray(combination["Demand met"])
+          ? combination["Demand met"]
+          : [],
+
+        solarAllocationArray: Array.isArray(combination["Solar Allocation"])
+          ? combination["Solar Allocation"]
+          : [],
+
+        totalDemandMetByAllocationArray: Array.isArray(combination["Total Demand met by allocation"])
+          ? combination["Total Demand met by allocation"]
+          : [],
+
+        unmetDemandArray: Array.isArray(combination["Unmet demand"])
+          ? combination["Unmet demand"]
+          : [],
+
+        windAllocationArray: Array.isArray(combination["Wind Allocation"])
+          ? combination["Wind Allocation"]
+          : [],
+
         // annualDemandMet:combination["Annual Demand Met"] || 0,
 
       };
@@ -84,6 +118,11 @@ const CombinationPatternCap = () => {
     setDataSource(formattedCombinations);
   };
 
+  // console.log(dataSource);
+
+  useEffect(() => {
+    console.log(dataSource);
+  }, [dataSource]);
 
   useEffect(() => {
     window.scrollTo({
@@ -131,7 +170,40 @@ const CombinationPatternCap = () => {
               finalCost: value["Final Cost"]?.toFixed(2) || "N/A",
               annualCurtailment: value['Annual Curtailment'] || 0,
               annualDemandMet: value['Annual Demand Met'] || 0,
-              annualDemandOffeset: value['Annual Demand Offset'] || 0
+              annualDemandOffeset: value['Annual Demand Offset'] || 0,
+
+              curtailmentArray: Array.isArray(value["Curtailment"])
+                ? value["Curtailment"]
+                : [],
+
+              demandArray: Array.isArray(value["Demand"])
+                ? value["Demand"]
+                : [],
+
+              generationArray: Array.isArray(value["Generation"])
+                ? value["Generation"]
+                : [],
+
+              demandMetArray: Array.isArray(value["Demand met"])
+                ? value["Demand met"]
+                : [],
+
+              solarAllocationArray: Array.isArray(value["Solar Allocation"])
+                ? value["Solar Allocation"]
+                : [],
+
+              totalDemandMetByAllocationArray: Array.isArray(value["Total Demand met by allocation"])
+                ? value["Total Demand met by allocation"]
+                : [],
+
+              unmetDemandArray: Array.isArray(value["Unmet demand"])
+                ? value["Unmet demand"]
+                : [],
+
+              windAllocationArray: Array.isArray(value["Wind Allocation"])
+                ? value["Wind Allocation"]
+                : [],
+
             }));
             setDataSource(formattedData); // Set the formatted data in the table
           } else {
@@ -158,9 +230,9 @@ const CombinationPatternCap = () => {
       message.error("Please enter a valid name.");
       return;
     }
-  
+
     const data = {
-      generator: user.id, 
+      generator: user.id,
       record_name: saveInput,
       combination: saveRecord.combinationId,
       optimal_solar_capacity: saveRecord.solarCapacity,
@@ -172,9 +244,9 @@ const CombinationPatternCap = () => {
       annual_demand_offset: saveRecord.annualDemandOffeset,
       annual_demand_met: saveRecord.annualDemandMet,
       annual_curtailment: saveRecord.annualCurtailment,
-// 
+      // 
     };
-  
+
     try {
       await dispatch(saveCapacitySizingData(data)).unwrap();
       message.success("data saved successfully!");
@@ -319,7 +391,10 @@ const CombinationPatternCap = () => {
           <Button
             type="link"
             icon={<DownloadOutlined style={{ color: "white" }} />}
-            onClick={() => handleDownloadPdf(record)}
+            onClick={() => {
+              console.log("Download PDF clicked for record:", record);
+              handleDownloadPdf(record);
+            }}
           >
             Download
           </Button>
@@ -344,66 +419,6 @@ const CombinationPatternCap = () => {
 
   ];
 
-
-  // Function to handle PDF download
-  const handleDownloadPdf = (record) => {
-    const doc = new jsPDF();
-console.log(record);
-
-    // Add title
-    doc.setFontSize(16);
-    doc.text("Combination Details", 10, 10);
-
-    // Add table with row details
-    doc.autoTable({
-      startY: 20,
-      head: [["Field", "Value"]],
-      body: [
-        ["Combination ID", record.combinationId || "N/A"],
-        ["Optimal Solar Capacity (MW)", record.solarCapacity || "N/A"],
-        ["Optimal Wind Capacity (MW)", record.windCapacity || "N/A"],
-        ["Optimal Battery Capacity (MW)", record.batteryCapacity || "N/A"],
-        ["Per Unit Cost (INR/kWh)", record.perUnitCost || "N/A"],
-        ["OA Cost (INR/kWh)", record.oaCost || "N/A"],
-        ["Final Cost (INR/kWh)", record.finalCost || "N/A"],
-        ["Annual Demand Offset (%)", record.annualDemandOffeset || "N/A"],
-        ["Annual Demand Met (million units)", record.annualDemandMet || "N/A"],
-        ["Annual Curtailment (%)", record.annualCurtailment || "N/A"],
-      ],
-      styles: { lineWidth: 0.1 }, // Add border for the table
-    });
-
-    // Add additional table for 8760 rows
-    const columnTitles = [
-      "Demand (MW)",
-      "Solar Allocation (MW)",
-      "Wind Allocation (MW)",
-      "Generation (MW)",
-      "Unmet Demand (MW)",
-      "Curtailment (MW)",
-      "Total Demand Met By Allocation (MW)",
-    ];
-
-    const dataRows = record.dataRows || []; // Assuming `record.dataRows` contains 8760 rows of data
-
-    doc.autoTable({
-      startY: doc.lastAutoTable.finalY + 10, // Start below the previous table
-      head: [columnTitles],
-      body: dataRows.map((row) => [
-        row.Demand || "N/A",
-        row.solarAllocation || "N/A",
-        row.windAllocation || "N/A",
-        row.generation || "N/A",
-        row.unmetDemand || "N/A",
-        row.curtailment || "N/A",
-        row.totalDemandMet || "N/A",
-      ]),
-      styles: { lineWidth: 0.1 }, // Add border for the table
-    });
-
-    // Save the PDF
-    doc.save(`Combination_${record.combinationId || "Details"}.pdf`);
-  };
 
   // console.log(dataSource);
   console.log(dataSource?.[0]?.annualDemandOffeset);
@@ -526,7 +541,7 @@ console.log(record);
                     textAlign: "center",
                   }}
                 >
-                  Please wait while we are showing you a best matching IPP...
+                  Please wait while we are showing you a best optimized combination...
                 </div>
               </>
             ) : dataSource.length > 0 ? (
