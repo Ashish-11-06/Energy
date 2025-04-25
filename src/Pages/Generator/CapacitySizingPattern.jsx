@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Table,
   Typography,
@@ -32,6 +32,7 @@ import { handleDownloadPdf } from "./CapacitySizingDownload";
 const { Title, Text } = Typography;
 
 const CombinationPatternCap = () => {
+  const loadingRef = useRef(null); // Tracks current loading key
   //COMBINATION PATTERN SCROLLBAR
   const [isTableLoading, setIsTableLoading] = useState(true);
   const [isIPPModalVisible, setIsIPPModalVisible] = useState(false);
@@ -49,12 +50,7 @@ const CombinationPatternCap = () => {
 
   // const [loading, setLoading] = useState(false);
 
-  const onDownload = async (record) => {
-    console.log("record", record.key);
-    setLoadingId(record.key); // or use record.key if available
-    await handleDownloadPdf(record);
-    setLoadingId(null);
-  };
+
 
 
   const dispatch = useDispatch();
@@ -232,8 +228,22 @@ const CombinationPatternCap = () => {
       }
     };
 
-    fetchCombinations();
+    // fetchCombinations();
   }, [state?.modalData]);
+
+  const onDownload = async (record) => {
+ 
+      loadingRef.current = record.key; // Set current loading key (no re-render)
+
+      console.log("Download button clicked for record:", record.key);
+      console.log("record", record);
+      console.log("loadingRef", loadingRef.current);
+     
+      await handleDownloadPdf(record);
+
+      loadingRef.current = null;
+   
+  };
 
 
   const handleSaveConfirm = async () => {
@@ -402,8 +412,11 @@ const CombinationPatternCap = () => {
           <Button
             type="link"
             icon={<DownloadOutlined style={{ color: "white" }} />}
-            loading={loadingId === record.key}
-            onClick={onDownload(record)}
+            loading={loadingRef.current?.toString() === record.key?.toString()}
+            onClick={() => {
+              console.log("Button clicked, record.key:", record.key);
+              onDownload(record);
+            }}
           >
             Download
           </Button>
