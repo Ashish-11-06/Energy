@@ -43,8 +43,19 @@ const CombinationPatternCap = () => {
   const [saveInput, setSaveInput] = useState("");
   const [saveRecord, setSaveRecord] = useState(null);
   const { state } = useLocation(); // Access navigation state
+  const [loadingId, setLoadingId] = useState(null); // null means no button is loading
 
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
+
+  // const [loading, setLoading] = useState(false);
+
+  const onDownload = async (record) => {
+    console.log("record", record.key);
+    setLoadingId(record.key); // or use record.key if available
+    await handleDownloadPdf(record);
+    setLoadingId(null);
+  };
+
 
   const dispatch = useDispatch();
 
@@ -391,10 +402,8 @@ const CombinationPatternCap = () => {
           <Button
             type="link"
             icon={<DownloadOutlined style={{ color: "white" }} />}
-            onClick={() => {
-              console.log("Download PDF clicked for record:", record);
-              handleDownloadPdf(record);
-            }}
+            loading={loadingId === record.key}
+            onClick={onDownload(record)}
           >
             Download
           </Button>
