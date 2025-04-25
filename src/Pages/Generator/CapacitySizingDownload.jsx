@@ -6,55 +6,60 @@ export const handleDownloadPdf = (record) => {
 
   try {
     container.innerHTML = `
-      <div style="font-family: Arial, sans-serif; padding: 20px;">
-        <h2>Combination Details</h2>
-        <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-          <tr><th>Field</th><th>Value</th></tr>
-          <tr><td>Combination ID</td><td>${record.combinationId || "N/A"}</td></tr>
-          <tr><td>Solar Capacity (MW)</td><td>${record.solarCapacity ?? "N/A"}</td></tr>
-          <tr><td>Wind Capacity (MW)</td><td>${record.windCapacity ?? "N/A"}</td></tr>
-          <tr><td>Battery Capacity (MW)</td><td>${record.batteryCapacity ?? "N/A"}</td></tr>
-          <tr><td>Per Unit Cost (INR/kWh)</td><td>${record.perUnitCost ?? "N/A"}</td></tr>
-          <tr><td>OA Cost (INR/kWh)</td><td>${record.oaCost ?? "N/A"}</td></tr>
-          <tr><td>Final Cost (INR/kWh)</td><td>${record.finalCost ?? "N/A"}</td></tr>
-          <tr><td>Annual Demand Offset (%)</td><td>${record.annualDemandOffeset ?? "N/A"}</td></tr>
-          <tr><td>Annual Demand Met (million units)</td><td>${record.annualDemandMet ?? "N/A"}</td></tr>
-          <tr><td>Annual Curtailment (%)</td><td>${record.annualCurtailment ?? "N/A"}</td></tr>
-        </table>
+      <div style="font-family: Arial, sans-serif;">
+        <h2 style="color: #669800;">Combination Details</h2>
+       <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+        <tr style="background-color: #669800; color: white;">
+          <th>Field</th>
+          <th>Value</th>
+        </tr>
+        <tr><td>Combination ID</td><td>${record.combinationId || "N/A"}</td></tr>
+        <tr><td>Solar Capacity (MW)</td><td>${record.solarCapacity ?? "N/A"}</td></tr>
+        <tr><td>Wind Capacity (MW)</td><td>${record.windCapacity ?? "N/A"}</td></tr>
+        <tr><td>Battery Capacity (MWh)</td><td>${record.batteryCapacity ?? "N/A"}</td></tr>
+        <tr><td>Per Unit Cost (INR/kWh)</td><td>${record.perUnitCost ?? "N/A"}</td></tr>
+        <tr><td>OA Cost (INR/kWh)</td><td>${record.oaCost ?? "N/A"}</td></tr>
+        <tr><td>Final Cost (INR/kWh)</td><td>${record.finalCost ?? "N/A"}</td></tr>
+        <tr><td>Annual Demand Offset (%)</td><td>${record.annualDemandOffeset ?? "N/A"}</td></tr>
+        <tr><td>Annual Demand Met (million units)</td><td>${record.annualDemandMet ?? "N/A"}</td></tr>
+        <tr><td>Annual Curtailment (%)</td><td>${record.annualCurtailment ?? "N/A"}</td></tr>
+      </table>
+
 
         <!-- Summary Table for Array Data -->
-        <h3>Hourly Data Summary</h3>
-        <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-          <tr>
-            <th>Parameter</th>
-            <th>Min</th>
-            <th>Max</th>
-            <th>Average</th>
-            <th>Total</th>
-          </tr>
-          ${generateSummaryRow('Demand (MW)', record.demandArray)}
-          ${generateSummaryRow('Solar Allocation (MW)', record.solarAllocationArray)}
-          ${generateSummaryRow('Wind Allocation (MW)', record.windAllocationArray)}
-          ${generateSummaryRow('Generation (MW)', record.generationArray)}
-          ${generateSummaryRow('Unmet Demand (MW)', record.unmetDemandArray)}
-          ${generateSummaryRow('Curtailment (MW)', record.curtailmentArray)}
-          ${generateSummaryRow('Demand Met (MW)', record.demandMetArray)}
-          ${generateSummaryRow('Total Demand Met By Allocation (MW)', record.totalDemandMetByAllocationArray)}
-        </table>
+        <h3 style="color: #669800;">Hourly Data Summary</h3>
+      <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+      <tr style="background-color: #669800; color: white;">
+        <th>Parameter</th>
+        <th>Min</th>
+        <th>Max</th>
+        <th>Average</th>
+        <th>Total</th>
+      </tr>
+      ${generateSummaryRow('Demand (MW)', record.demandArray)}
+      ${generateSummaryRow('Solar Allocation (MW)', record.solarAllocationArray)}
+      ${generateSummaryRow('Wind Allocation (MW)', record.windAllocationArray)}
+      ${generateSummaryRow('Generation (MW)', record.generationArray)}
+      ${generateSummaryRow('Unmet Demand (MW)', record.unmetDemandArray)}
+      ${generateSummaryRow('Curtailment (MW)', record.curtailmentArray)}
+      ${generateSummaryRow('Demand Met', record.demandMetArray)}
+      ${generateSummaryRow('Total Demand Met By Allocation (MW)', record.totalDemandMetByAllocationArray)}
+    </table>
 
-        <h3>Sample Hourly Data (First 24 Hours)</h3>
-        <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-          <thead>
+       <h3 style="color: #669800;">Sample Hourly Data (First 2000 Hours)</h3>
+       <h5>Note: The data in this table is aggregated — every 2 hours of original data is combined into 1 hour. As a result, the table contains a total of 1000 rows.</h5>
+       <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+           <thead style="background-color: #669800; color: white;">
             <tr>
               <th>Hour</th>
               <th>Demand (MW)</th>
-              <th>Solar (MW)</th>
-              <th>Wind (MW)</th>
+              <th>Solar Allocation (MW)</th>
+              <th>Wind Allocation (MW)</th>
               <th>Generation (MW)</th>
-              <th>Unmet (MW)</th>
+              <th>Unmet Demand (MW)</th>
               <th>Curtailment (MW)</th>
-              <th>Demand Met (MW)</th>
-              <th>Total Met (MW)</th>
+              <th>Demand Met ?</th>
+              <th>Total Demand Met By Allocation (MW)</th>
             </tr>
           </thead>
           <tbody>
@@ -113,7 +118,7 @@ function generateSampleRows(record, count = 1000) {
         <td>${formatNumber(record.generationArray?.[index])}</td>
         <td>${formatNumber(record.unmetDemandArray?.[index])}</td>
         <td>${formatNumber(record.curtailmentArray?.[index])}</td>
-        <td>${formatNumber(record.demandMetArray?.[index])}</td>
+        <td>${record.demandMetArray?.[index]}</td>
         <td>${formatNumber(record.totalDemandMetByAllocationArray?.[index])}</td>
       </tr>
     `;
@@ -139,6 +144,20 @@ function generateSummaryRow(label, dataArray) {
   }
 
   const numericData = dataArray.filter(val => typeof val === 'number');
+  if (label.includes('Demand Met') && dataArray.some(val => val === 'Yes' || val === 'NO')) {
+    const yesCount = dataArray.filter(val => val === 'Yes').length;
+    const noCount = dataArray.filter(val => val === 'NO').length;
+    const total = dataArray.length;
+
+    return `
+      <tr>
+        <td>${label}</td>
+        <td colspan="2">YES: ${yesCount} (${((yesCount / total) * 100).toFixed(1)}%)</td>
+        <td colspan="2">NO: ${noCount} (${((noCount / total) * 100).toFixed(1)}%)</td>
+      </tr>
+    `;
+  }
+
   if (numericData.length === 0) {
     return `
       <tr>
@@ -146,6 +165,9 @@ function generateSummaryRow(label, dataArray) {
         <td colspan="4" style="text-align: center;">No numeric data</td>
       </tr>`;
   }
+
+  // Special handling for Demand Met if it contains YES/NO values
+
 
   const min = Math.min(...numericData).toFixed(2);
   const max = Math.max(...numericData).toFixed(2);
