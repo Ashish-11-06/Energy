@@ -1,4 +1,5 @@
 import html2pdf from 'html2pdf.js';
+import * as XLSX from 'xlsx';
 
 export const handleDownloadPdf = (record) => {
   const container = document.createElement("div");
@@ -182,4 +183,129 @@ function generateSummaryRow(label, dataArray) {
       <td>${avg}</td>
       <td>${sum.toFixed(2)}</td>
     </tr>`;
+}
+
+
+
+export const handleDownloadExcel = (record) => {
+  try {
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+
+    // 1. Create Combination Details sheet
+    const detailsData = [
+      ["Combination Details"],
+      ["Field", "Value"],
+      ["Combination ID", record.combinationId || "N/A"],
+      ["Solar Capacity (MW)", record.solarCapacity ?? "N/A"],
+      ["Wind Capacity (MW)", record.windCapacity ?? "N/A"],
+      ["Battery Capacity (MWh)", record.batteryCapacity ?? "N/A"],
+      ["Per Unit Cost (INR/kWh)", record.perUnitCost ?? "N/A"],
+      ["OA Cost (INR/kWh)", record.oaCost ?? "N/A"],
+      ["Final Cost (INR/kWh)", record.finalCost ?? "N/A"],
+      ["Annual Demand Offset (%)", record.annualDemandOffeset ?? "N/A"],
+      ["Annual Demand Met (million units)", record.annualDemandMet ?? "N/A"],
+      ["Annual Curtailment (%)", record.annualCurtailment ?? "N/A"]
+    ];
+
+    const detailsWS = XLSX.utils.aoa_to_sheet(detailsData);
+    XLSX.utils.book_append_sheet(wb, detailsWS, "Combination Details");
+
+    // 2. Create Hourly Data Summary sheet
+    const summaryData = [
+      ["Hourly Data Summary"],
+      ["Parameter", "Min", "Max", "Average", "Total"],
+      ...generateExcelSummaryRow('Demand (MW)', record.demandArray),
+      ...generateExcelSummaryRow('Solar Allocation (MW)', record.solarAllocationArray),
+      ...generateExcelSummaryRow('Wind Allocation (MW)', record.windAllocationArray),
+      ...generateExcelSummaryRow('Generation (MW)', record.generationArray),
+      ...generateExcelSummaryRow('Unmet Demand (MW)', record.unmetDemandArray),
+      ...generateExcelSummaryRow('Curtailment (MW)', record.curtailmentArray),
+      ...generateExcelSummaryRow('Demand Met', record.demandMetArray),
+      ...generateExcelSummaryRow('Total Demand Met By Allocation (MW)', record.totalDemandMetByAllocationArray)
+    ];
+
+    const summaryWS = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(wb, summaryWS, "Hourly Summary");
+
+    // 3. Create Sample Hourly Data sheet
+    const hourlyHeaders = [
+      "Hour",
+      "Demand (MW)",
+      "Solar Allocation (MW)",
+      "Wind Allocation (MW)",
+      "Generation (MW)",
+      "Unmet Demand (MW)",
+      "Curtailment (MW)",
+      "Demand Met ?",
+      "Total Demand Met By Allocation (MW)"
+    ];
+
+    const hourlyData = [hourlyHeaders];
+    if (record.demandArray && record.demandArray.length) {
+      const rowCount = Math.min(1000, record.demandArray.length);
+      for (let i = 0; i < rowCount; i++) {
+        hourlyData.push([
+          i + 1,
+          formatExcelNumber(record.demandArray?.[i]),
+          formatExcelNumber(record.solarAllocationArray?.[i]),
+          formatExcelNumber(record.windAllocationArray?.[i]),
+          formatExcelNumber(record.generationArray?.[i]),
+          formatExcelNumber(record.unmetDemandArray?.[i]),
+          formatExcelNumber(record.curtailmentArray?.[i]),
+          record.demandMetArray?.[i] || "N/A",
+          formatExcelNumber(record.totalDemandMetByAllocationArray?.[i])
+        ]);
+      }
+    } else {
+      hourlyData.push(["No data available"]);
+    }
+
+    const hourlyWS = XLSX.utils.aoa_to_sheet(hourlyData);
+    XLSX.utils.book_append_sheet(wb, hourlyWS, "Hourly Data");
+
+    // Generate Excel file
+    const fileName = `Combination_${record.combinationId || "Details"}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+
+  } catch (error) {
+    console.error("Error generating Excel file:", error);
+  }
+};
+
+// Helper functions
+function formatExcelNumber(value) {
+  if (value === undefined || value === null) return "N/A";
+  const num = Number(value);
+  return isNaN(num) ? "N/A" : num;
+}
+
+function generateExcelSummaryRow(label, dataArray) {
+  if (!Array.isArray(dataArray)) {
+    return [[label, "No data available", "", "", ""]];
+  }
+
+  if (label.includes('Demand Met') && dataArray.some(val => val === 'Yes' || val === 'NO')) {
+    const yesCount = dataArray.filter(val => val === 'Yes').length;
+    const noCount = dataArray.filter(val => val === 'NO').length;
+    const total = dataArray.length;
+    
+    return [
+      [label, `YES: ${yesCount} (${((yesCount / total) * 100).toFixed(1)}%)`, `NO: ${noCount} (${((noCount / total) * 100).toFixed(1)}%)`, "", ""]
+    ];
+  }
+
+  const numericData = dataArray.filter(val => typeof val === 'number');
+  if (numericData.length === 0) {
+    return [[label, "No numeric data", "", "", ""]];
+  }
+
+  const min = Math.min(...numericData);
+  const max = Math.max(...numericData);
+  const sum = numericData.reduce((a, b) => a + b, 0);
+  const avg = sum / numericData.length;
+
+  return [
+    [label, min, max, avg, sum]
+  ];
 }

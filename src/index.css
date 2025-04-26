@@ -275,3 +275,6 @@ button:focus, .ant-btn:focus {
 /* background-color: #FFFFFF; */
 }
 
+.ant-btn > span:not(:only-child) {
+  display: inline-flex;
+}
