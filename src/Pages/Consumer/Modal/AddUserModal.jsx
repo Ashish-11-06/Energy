@@ -11,31 +11,45 @@ const AddUserModal = ({ isVisible, onCancel, onSave, editableData, edit }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
+  const [loading, setLoading] = React.useState(false); // State to manage loading
 
   // console.log(user);
 
   const handleFinish = async (values) => {
     const data = values;
     const id = user.id;
+
+       // Set loading to true when the request starts
+    setLoading(true);
+
     try {
-      const res=await dispatch(addSubUser({ id, userData: data })).unwrap();
-      console.log(res);
+      // console.log("user id", id);
+      const res = await dispatch(addSubUser({ id, userData: data })).unwrap();
+      // console.log(res);
       if (res) {
-        message.success(res.message,8);
+        message.success(res.message, 8);
       } else {
+        // console.log(res);
         message.error(res.message || "Failed to add user", 5);
       }
-      
+  
       onSave(values);
-
-      // console.log(res);
-      
       form.resetFields(); // Reset the form fields after saving
     } catch (error) {
-      // console.log(error);  
-      message.error(error); // Display error message from rejectWithValue
+      // Log the full error to see its structure
+      // console.error('Full error:', error);
+  
+      // Attempt to get a message property from the error
+      const errorMessage = error?.message || error?.error || "An unknown error occurred";
+  
+      // Show the error message using Ant Design's message component
+      message.error(errorMessage, 5);
+    } finally {
+      // Set loading to false when the request finishes (either success or error)
+      setLoading(false);
     }
   };
+  
   
 
   return (
@@ -124,7 +138,7 @@ const AddUserModal = ({ isVisible, onCancel, onSave, editableData, edit }) => {
 
         {/* Submit Button */}
         <Row justify="end">
-          <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" loading={loading}>
             Save
           </Button>
         </Row>

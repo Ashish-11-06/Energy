@@ -275,3 +275,11 @@ button:focus, .ant-btn:focus {
 /* background-color: #FFFFFF; */
 }
 
+.ant-btn > span:not(:only-child) {
+  display: inline-flex;
+}
+
+:where(.css-dev-only-do-not-override-oqfneu).ant-btn >span:not(:only-child) {
+  display: inline-flex;
+  align-self: center !important;
+}

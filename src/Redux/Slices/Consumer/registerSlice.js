@@ -35,10 +35,8 @@ export const registerUser = createAsyncThunk(
 export const addSubUser = createAsyncThunk(
   'User/CreateUser',
   async ({ id, userData }, { rejectWithValue }) => {
-    // console.log('hi from add sub user');
     try {
       const response = await registerApi.addSubUser(id, userData);
-      // console.log('response', response);
       
       if (response?.data) {
         if (response.data.error) {
@@ -49,11 +47,23 @@ export const addSubUser = createAsyncThunk(
         return rejectWithValue('Unexpected response structure');
       }
     } catch (error) {
-      // console.log('error', error);
-      return rejectWithValue(error.response?.data?.error || 'Failed to add user');
+      // Check if error has a response and status code
+      if (error.response) {
+        if (error.response.status === 400) {
+          // Handle 400 Bad Request error
+          console.log('Bad Request:', error.response.data);
+          return rejectWithValue(error.response.data || 'Bad Request: Please check the input data');
+        }
+        // Handle other types of error responses
+        return rejectWithValue(error.response?.data?.error || 'Request failed');
+      } else {
+        // Handle case when error is not related to HTTP response
+        return rejectWithValue('Failed to add user: Network error or server issue');
+      }
     }
   }
 );
+
 
 // Async thunk to verify OTP
 export const verifyOtp = createAsyncThunk(

@@ -52,7 +52,7 @@ const PdfContent = () => {
               <td style={{ border: "1px solid #ccc", padding: "10px", textAlign: "left" }}></td>
             </tr>
             <tr>
-              <td style={{ border: "1px solid #ccc", padding: "10px", textAlign: "left" }}>Per unit Savings Potential (A-B-C)</td>
+              <td style={{ border: "1px solid #ccc", padding: "10px", textAlign: "left" }}>Per unit Savings Potential (A+B+C)</td>
               <td style={{ border: "1px solid #ccc", padding: "10px", textAlign: "left" }}>INR/kWh</td>
               <td style={{ border: "1px solid #ccc", padding: "10px", textAlign: "left" }}></td>
             </tr>

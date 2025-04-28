@@ -70,7 +70,7 @@ const ProfilePage = () => {
         const users = res.payload; // Assuming the response is in the payload
         const formattedUsers = users.map((user) => ({
           key: user.id,
-          username: user.email.split("@")[0], // Assuming username is the part before the email
+          // username: user.email.split("@")[0], // Assuming username is the part before the email
           email: user.email,
           role: user.role,
         }));
@@ -151,12 +151,7 @@ const ProfilePage = () => {
       ]);
     }
   };
-  const handleEdit = (record) => {
-    setEditaleData(record);
-    setIsUserModal(true);
-    setEditValue(true);
-    form.resetFields();
-  };
+ 
 
   const handleLogOut = () => {
     localStorage.removeItem("user");
@@ -164,15 +159,14 @@ const ProfilePage = () => {
     navigate("/");
   };
 
-  const handleDelete = (key) => {
-    const updatedDataSource = userDataSource.filter(
-      (record) => record.key !== key
-    );
-    setUserDataSource(updatedDataSource);
-  };
+  
 
   const userColumns = [
-    { title: "Username", dataIndex: "username", key: "username" },
+    {
+      title: "SR No.",
+      key: "srNo",
+      render: (text, record, index) => index + 1, // This will display the serial number starting from 1
+    },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Role", dataIndex: "role", key: "role" },
   ];
