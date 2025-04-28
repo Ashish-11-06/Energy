@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Table,
@@ -231,6 +231,9 @@ const EnergyConsumptionTable = () => {
     }))
   );
 
+  
+  const memoizedDataSource = useMemo(() => dataSource, [dataSource]);
+
   // console.log(dataSource);
   const monthlyData = useSelector(
     (state) => state.monthlyData?.monthlyData || []
@@ -295,17 +298,11 @@ const EnergyConsumptionTable = () => {
   }, [dataSource]);
 
   const handleInputChange = (value, key, dataIndex) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => key === item.key);
-    if (index > -1) {
-      const item = newData[index];
-      newData.splice(index, 1, {
-        ...item,
-        [dataIndex]: value,
-        fileUploaded: null,
-      });
-      setDataSource(newData);
-    }
+    setDataSource((prevDataSource) =>
+      prevDataSource.map((item) =>
+        item.key === key ? { ...item, [dataIndex]: value } : item
+      )
+    );
   };
 
   const handleToggleFileUploadTable = () => {
@@ -514,7 +511,7 @@ const EnergyConsumptionTable = () => {
     },
   ];
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: "Month",
       dataIndex: "month",
@@ -608,7 +605,7 @@ const EnergyConsumptionTable = () => {
         />
       ),
     },
-  ];
+  ], [handleInputChange]);
 
   const fileUploadColumns = [
     {
@@ -870,7 +867,8 @@ const EnergyConsumptionTable = () => {
  {showTable && (
           <>
             <Table
-              dataSource={dataSource}
+                                                rowKey="key"
+              dataSource={memoizedDataSource}
               columns={columns}
               pagination={false}
               bordered

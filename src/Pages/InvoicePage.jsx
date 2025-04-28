@@ -138,6 +138,11 @@ const [freeStatus,setFreeStatus]=useState('')
         subscripton_type={subscription_type}
         selectedPlanId={selectedPlan?.id}
         fromSubscription={false}
+        footer={[
+       
+        ]}
+        width={800}
+      style={{ border: '2px solid red'}}
       />
     </>
 

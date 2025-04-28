@@ -204,7 +204,7 @@ const ChatWithExpert = () => {
   
   
   return (
-    <Row gutter={[16, 16]}>
+    <Row gutter={[16, 16]} style={{ marginTop: "5px", marginLeft: "0px", marginRight: "0px" }}>
       <Col span={isMobile ? 24 : 16} offset={isMobile ? 0 : 4}>
         <Card
           bordered={false}

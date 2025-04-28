@@ -520,120 +520,78 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
       `;
 
   return (
-    <Modal
-      title="Proforma Invoice"
-      open={open}
-      onCancel={onCancel}
-      style={{ overflowY: 'auto', maxHeight: '85vh' }} // Added maxHeight: '70vh'
-      footer={[
-        selectedPlan?.subscription?.subscription_type === "LITE" ||
-        selectedPlan?.subscription?.subscription_type === "PRO" ? (
+<Modal
+  title="Proforma Invoice"
+  open={open}
+  onCancel={onCancel}
+  footer={[
+    selectedPlan?.subscription?.subscription_type === "LITE" ||
+    selectedPlan?.subscription?.subscription_type === "PRO" ? (
+      <>
+        {selectedPlan?.payment_status === "Paid" ? (
           <>
-            {selectedPlan?.payment_status === "Paid" ? (
-              <>
-                <Button
-                  key="download"
-                  type="primary"
-                  onClick={handleDownloadPDF}
-                >
-                  Download PDF
-                </Button>
-                <Button
-                      key="generate"
-                      type="primary"
-                      onClick={handleFreeContinue}
-                      // disabled={!selectedRequirementId}
-                    >
-                      Continue
-                    </Button> 
-                {/* {fromSubscription && (
-                <Button
-                      key="generate"
-                      type="primary"
-                      onClick={handleFreeContinue}
-                      disabled={!selectedRequirementId}
-                    >
-                      Continue
-                    </Button> }
-                /*  <Tooltip
-                    title={
-                      !selectedRequirementId
-                        ? "To continue further, select a requirement first."
-                        : ""
-                    }
-                  > */}
-                    {/* <Button
-                      key="generate"
-                      type="primary"
-                      onClick={handleFreeContinue}
-                      disabled={!selectedRequirementId}
-                    >
-                      Continue
-                    </Button> */}
-                  {/* </Tooltip>
-                )} */}
-              </>
-            ) : (
-              <>
-                <Button
-                  key="download"
-                  type="primary"
-                  onClick={handleDownloadPDF}
-                >
-                  Download PDF
-                </Button>
-                <Button key="generate" type="primary" onClick={handlePayment}>
-                  Proceed to Payment
-                </Button>
-              </>
-            )}
-          </>
-        ) : (
-          <>
-            <Button key="download" type="primary" onClick={handleDownloadPDF}>
+            <Button
+              key="download"
+              type="primary"
+              onClick={handleDownloadPDF}
+            >
               Download PDF
             </Button>
             <Button
-                  key="generate"
-                  type="primary"
-                  onClick={handleFreeContinue}
-                  // disabled={!selectedRequirementId}
-                >
-                  Continue
-                </Button> 
-            {/* {fromSubscription && (
-              <Tooltip
-                title={
-                  !selectedRequirementId
-                    ? "To continue further, select a requirement first."
-                    : ""
-                }
-              > */}
-                {/* <Button
-                  key="generate"
-                  type="primary"
-                  onClick={handleFreeContinue}
-                  disabled={!selectedRequirementId}
-                >
-                  Continue
-                </Button> */}
-              {/* </Tooltip>
-            )} */}
+              key="generate"
+              type="primary"
+              onClick={handleFreeContinue}
+            >
+              Continue
+            </Button> 
           </>
-        ),
-      ]}
-      width={900}
-      height={800}
-    >
-      {/* Replace this paragraph with the PDF content */}
-      <div>
-        {/* <h2>Proforma Invoice</h2> */}
-        <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
-        <br />
-        <br />
-        <div>Please proceed to payment to complete your subscription.</div>
-      </div>
-    </Modal>
+        ) : (
+          <>
+            <Button
+              key="download"
+              type="primary"
+              onClick={handleDownloadPDF}
+            >
+              Download PDF
+            </Button>
+            <Button key="generate" type="primary" onClick={handlePayment}>
+              Proceed to Payment
+            </Button>
+          </>
+        )}
+      </>
+    ) : (
+      <>
+        <Button key="download" type="primary" onClick={handleDownloadPDF}>
+          Download PDF
+        </Button>
+        <Button
+          key="generate"
+          type="primary"
+          onClick={handleFreeContinue}
+        >
+          Continue
+        </Button> 
+      </>
+    ),
+  ]}
+  width={900}
+  bodyStyle={{
+    height: 'calc(100vh - 200px)', // Adjust height to make modal content scrollable
+    overflowY: 'auto', // Enable vertical scrolling for the content
+    padding: '24px', // Add padding for better layout
+  }}
+  style={{
+    top: '50px', // Position the modal to keep it fixed at the top
+  }}
+>
+  <div>
+    <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+    <br />
+    <br />
+    <div>Please proceed to payment to complete your subscription.</div>
+  </div>
+</Modal>
   );
 };
 
