@@ -104,7 +104,7 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
         setOtpRequested(true);
       }
     } catch (error) {
-      console.error("❌ Error:", error);
+      console.error("Error:", error);
       message.error(error.message || error);
       // message.error(error.message || "Invalide CIN");
     } finally {
@@ -204,17 +204,21 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
         </Row>
 
         <Row gutter={16}>
-      <Col span={12}>
-        <Form.Item
-          label="CIN Number"
-          name="cin_number"
-          rules={[{ required: true, message: "Please input your CIN number!" }]}
-          validateStatus={cinValid === null ? "" : cinValid ? "success" : "error"}
-          help={cinValid === false ? "Invalid CIN format" : ""}
-        >
-          <Input placeholder="Enter your CIN number" onChange={handleCINChange} />
-        </Form.Item>
-      </Col>
+        <Col span={12}>
+  <Form.Item
+    label="CIN Number"
+    name="cin_number"
+    rules={[{ required: true, message: "Please input your CIN number!" }]}
+    validateStatus={cinValid === null ? undefined : (cinValid ? "success" : "error")}
+    help={cinValid === null ? undefined : (cinValid ? "" : "Invalid CIN format")}
+  >
+    <Input
+      placeholder="Enter your CIN number"
+      onChange={handleCINChange}
+    />
+  </Form.Item>
+</Col>
+
     </Row>
 
         <Row gutter={16}>
@@ -354,7 +358,7 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
             </Col>
           </Row>
         )}
-
+<p style={{color:'GrayText'}}>(Note : All * fields are mandatory.)</p>
         <Row gutter={16}>
           <Col span={24}>
             {!otpRequested ? (

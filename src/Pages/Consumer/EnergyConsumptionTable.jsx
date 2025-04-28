@@ -504,7 +504,7 @@ const EnergyConsumptionTable = () => {
     },
     {
       title: renderLabelWithTooltip(
-        "Monthly Bill (INR)",
+        "Monthly Bill (INR lakhs)",
         "The total cost of energy consumed during the month.",
       ),
       dataIndex: "monthlyBill",
@@ -588,7 +588,7 @@ const EnergyConsumptionTable = () => {
     },
     {
       title: renderLabelWithTooltip(
-        "Monthly Bill (INR)",
+        "Monthly Bill (INR lakhs)",
         "The total cost of energy consumed during the month.",
         () => handleFillBelow("monthlyBill")
       ),

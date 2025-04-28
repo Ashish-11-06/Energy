@@ -93,10 +93,15 @@ const role=userData?.role;
   };
 
   useEffect(() => {
-    const user = getFromLocalStorage('user');
     if (requirements.length === 0) {
-      const id = user.user.id;
-      dispatch(fetchRequirements(id));
+    const user = getFromLocalStorage('user');
+   
+      if(requirementId === null ) {
+        const id = user.user.id;
+        dispatch(fetchRequirements(id));
+      } 
+    } else {
+      message.error('Please select requirement Id first!')
     }
   }, [dispatch, requirements.length]);
 
@@ -248,7 +253,7 @@ const role=userData?.role;
               value={selectedRequirement?.id}
               onChange={handleRequirementChange}
               options={Array.isArray(requirements) ? requirements.map((req) => ({
-                label: `State:${req.state},Consumption unit: ${req.consumption_unit},Indusrty: ${req.industry},Contracted demand: ${req.contracted_demand} kW,Tariff Category: ${req.tariff_category},Voltage: ${req.voltage_level} kV, ${req.annual_electricity_consumption} MWh, ${req.procurement_date}`,
+                label: `State:${req.state},Consumption unit: ${req.consumption_unit},Industry: ${req.industry},Contracted demand: ${req.contracted_demand} kW,Tariff Category: ${req.tariff_category},Voltage: ${req.voltage_level} kV, ${req.annual_electricity_consumption} MWh, ${req.procurement_date}`,
                 value: req.id,
               })) : []} // Ensure options is an empty array if requirements is not an array
             />

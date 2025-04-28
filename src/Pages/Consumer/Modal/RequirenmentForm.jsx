@@ -222,64 +222,72 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
           </Col>
 
           <Col span={12}>
-            <Form.Item
-              label={renderLabelWithTooltip(
-                "Industry",
-                "Industry your company is involved in (e.g., IT, Manufacturing)."
-              )}
-              name="industry"
-              rules={[{ required: true, message: "Please select your industry!" }]}
-            >
-              <Select
-                placeholder="Select your industry"
-                showSearch
-                optionFilterProp="children"
-                onChange={handleIndustryChange}
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().includes(input.toLowerCase())
-                }
-              >
-                {Object.keys(industryy).map((industry, index) => (
-                  <Select.Option key={index} value={industry}>
-                    {industry}
-                  </Select.Option>
-                ))}
-                <Select.Option value="other">Other</Select.Option>
-              </Select>
-            </Form.Item>
-          </Col>
+  <Form.Item
+    label={renderLabelWithTooltip(
+      "Industry",
+      "Industry your company is involved in (e.g., IT, Manufacturing)."
+    )}
+    name="industry"
+    rules={[{ required: true, message: "Please select your industry!" }]}
+  >
+    <Select
+      placeholder="Select your industry"
+      showSearch
+      optionFilterProp="children"
+      onChange={handleIndustryChange}
+      filterOption={(input, option) =>
+        option.children.toLowerCase().includes(input.toLowerCase())
+      }
+    >
+      {/* Sorting industry keys alphabetically */}
+      {Object.keys(industryy)
+        .sort((a, b) => a.localeCompare(b)) // Sorting alphabetically
+        .map((industry, index) => (
+          <Select.Option key={index} value={industry}>
+            {industry}
+          </Select.Option>
+        ))}
+      <Select.Option value="other">Other</Select.Option>
+    </Select>
+  </Form.Item>
+</Col>
 
           {(selectedIndustry && selectedIndustry !== "other") && (
-            <Col span={12}>
-              <Form.Item
-                label={renderLabelWithTooltip(
-                  "Sub Industry",
-                  "Select a sub-industry from the chosen industry."
-                )}
-                name="sub_industry"
-                rules={[
-                  { required: true, message: "Please select your sub-industry!" },
-                ]}
-              >
-                <Select
-                  placeholder="Select a sub-industry"
-                  showSearch
-                  optionFilterProp="children"
-                  onChange={handleSubIndustryChange} // Ensure this handler is used
-                  filterOption={(input, option) =>
-                    option.children.toLowerCase().includes(input.toLowerCase())
-                  }
-                >
-                  {subIndustries.map((sub_industry, index) => (
-                    <Select.Option key={index} value={sub_industry}>
-                      {sub_industry}
-                    </Select.Option>
-                  ))}
-                  <Select.Option value="otherSub">Other</Select.Option> {/* Correct "Other" option */}
-                </Select>
-              </Form.Item>
-            </Col>
-          )}
+  <Col span={12}>
+    <Form.Item
+      label={renderLabelWithTooltip(
+        "Sub Industry",
+        "Select a sub-industry from the chosen industry."
+      )}
+      name="sub_industry"
+      rules={[
+        { required: true, message: "Please select your sub-industry!" },
+      ]}
+    >
+      <Select
+        placeholder="Select a sub-industry"
+        showSearch
+        optionFilterProp="children"
+        onChange={handleSubIndustryChange} // Ensure this handler is used
+        filterOption={(input, option) =>
+          option.children.toLowerCase().includes(input.toLowerCase())
+        }
+      >
+        {/* Sorting subIndustries array alphabetically */}
+        {[...subIndustries]
+          .sort((a, b) => a.localeCompare(b)) // Sorting alphabetically
+          .map((sub_industry, index) => (
+            <Select.Option key={index} value={sub_industry}>
+              {sub_industry}
+            </Select.Option>
+          ))}
+        
+        {/* Correct "Other" option outside the map loop */}
+        <Select.Option value="otherSub">Other</Select.Option>
+      </Select>
+    </Form.Item>
+  </Col>
+)}
 
           {isCustomSubIndustry && (
             <Col span={12}>
