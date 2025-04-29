@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use((config) => {
         config.baseURL = "http://52.66.186.241:8000/api"; // Use base URL for generation portfolio
         config.baseURL = "http://52.66.186.241:8000/api"; // Use base URL for generation portfolio
     } else {
-        config.baseURL = "http://52.66.186.241:8000/api/powerx"; // Default for other requests
+        config.baseURL = "https://ext.exgglobal.com/api/api/powerx"; // Default for other requests
     }
     return config;
 }, (error) => {

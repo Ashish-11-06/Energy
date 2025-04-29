@@ -82,6 +82,8 @@ const SubscriptionPlans = () => {
     return `${days} days, ${hours} hours`;
   })() : ' ';
   
+console.log('time_remaining',time_remaining);
+  
 
   
 
