@@ -27,7 +27,7 @@ import IPPModal from "../Consumer/Modal/IPPModal";
 import RequestForQuotationModal from "../../Components/Modals/RequestForQuotationModal";
 import { fetchCapacitySizing, saveCapacitySizingData } from "../../Redux/Slices/Generator/capacitySizingSlice";
 import "./CombinationPattern.css";
-import { handleDownloadPdf } from "./CapacitySizingDownload";
+import { handleDownloadExcel } from "./CapacitySizingDownload";
 
 const { Title, Text } = Typography;
 
@@ -228,7 +228,7 @@ const CombinationPatternCap = () => {
       }
     };
 
-    // fetchCombinations();
+    fetchCombinations();
   }, [state?.modalData]);
 
   const onDownload = async (record) => {
@@ -239,7 +239,7 @@ const CombinationPatternCap = () => {
       console.log("record", record);
       console.log("loadingRef", loadingRef.current);
      
-      await handleDownloadPdf(record);
+      await handleDownloadExcel(record);
 
       loadingRef.current = null;
    
@@ -563,7 +563,7 @@ const CombinationPatternCap = () => {
                     textAlign: "center",
                   }}
                 >
-                  Please wait while we are showing you a best optimized combination...
+                  Please wait while we are showing you a best optimized combination.
                 </div>
               </>
             ) : dataSource.length > 0 ? (

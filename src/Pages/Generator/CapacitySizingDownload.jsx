@@ -106,7 +106,7 @@ export const handleDownloadPdf = (record) => {
 };
 
 // Helper function to generate sample rows (first 24 hours)
-function generateSampleRows(record, count = 1000) {
+function generateSampleRows(record, count = 4380) {
   if (!record.demandArray || !record.demandArray.length) return null;
 
   return Array.from({ length: Math.min(count, record.demandArray.length) }, (_, index) => {
@@ -243,7 +243,7 @@ export const handleDownloadExcel = (record) => {
 
     const hourlyData = [hourlyHeaders];
     if (record.demandArray && record.demandArray.length) {
-      const rowCount = Math.min(1000, record.demandArray.length);
+      const rowCount = Math.min(4380, record.demandArray.length);
       for (let i = 0; i < rowCount; i++) {
         hourlyData.push([
           i + 1,

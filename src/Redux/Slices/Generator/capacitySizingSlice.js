@@ -9,6 +9,7 @@ export const fetchCapacitySizing = createAsyncThunk(
       const response = await capacitySizingApi.getCapacitySizing(modalData);
       if (response && response.data) {
         if (response.data.error) {
+       
           return rejectWithValue(response.data.error || 'Failed to fetch combinations');
         }
         return response.data;
@@ -16,7 +17,8 @@ export const fetchCapacitySizing = createAsyncThunk(
         return rejectWithValue('Unexpected response structure');
       }
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch combinations');
+      // console.log('Error:', error);
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch combinations');
     }
   }
 );

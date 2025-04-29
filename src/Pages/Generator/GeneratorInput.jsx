@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Table,
@@ -25,7 +25,7 @@ import "jspdf-autotable";
 import { getAllProjectsById } from "../../Redux/Slices/Generator/portfolioSlice";
 import moment from "moment";
 import { getCapacitySizingData } from "../../Redux/Slices/Generator/capacitySizingSlice";
-import { handleDownloadPdf } from "./CapacitySizingDownload";
+import { handleDownloadExcel } from "./CapacitySizingDownload";
 
 const { Title } = Typography;
 
@@ -46,6 +46,7 @@ const GeneratorInput = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_id = user?.id;
   const { status, projects } = useSelector((state) => state.portfolio);
+   const loadingRef = useRef(null); // Tracks current loading key
 
   if (status === "idle") {
     dispatch(getAllProjectsById(user.id));
@@ -88,6 +89,36 @@ const GeneratorInput = () => {
   useEffect(() => {
     setUploadedFileName(""); // Clear uploaded file name on refresh
   }, []);
+
+   const onDownload = async (record) => {
+   
+        loadingRef.current = record.key; // Set current loading key (no re-render)
+  
+        console.log("Download button clicked for record:", record.key);
+        console.log("record", record);
+        console.log("loadingRef", loadingRef.current);
+
+        const updatedRecord = {
+          combinationId: record.combination,
+          solarCapacity: record.optimal_solar_capacity,
+          windCapacity: record.optimal_wind_capacity,
+          batteryCapacity: record.optimal_battery_capacity,
+          perUnitCost: record.per_unit_cost,
+          oaCost: record.oa_cost,
+          finalCost: record.final_cost,
+          annualDemandOffeset: record.annual_demand_offset,
+          annualDemandMet: record.annual_demand_met,
+          annualCurtailment: record.annual_curtailment,
+
+
+        };
+       
+        await handleDownloadExcel(updatedRecord);
+  
+        loadingRef.current = null;
+     
+    };
+
 
   const columns = [
     {
@@ -201,7 +232,10 @@ const GeneratorInput = () => {
           <Button
             type="link"
             icon={<DownloadOutlined style={{ color: "white" }} />}
-            onClick={() => handleDownloadPdf(record)}
+            onClick={() => {
+              console.log("Button clicked, record.key:", record.key);
+              onDownload(record);
+            }}
           >
             Download
           </Button>
