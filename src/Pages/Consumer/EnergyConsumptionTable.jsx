@@ -231,7 +231,7 @@ const EnergyConsumptionTable = () => {
     }))
   );
 
-  
+
   const memoizedDataSource = useMemo(() => dataSource, [dataSource]);
 
   // console.log(dataSource);
@@ -676,315 +676,294 @@ const EnergyConsumptionTable = () => {
       <Card style={{ maxWidth: "100%", margin: "0 auto", backgroundColor: "#f0f2f5" }}>
         {/*<p>Please fill the details for making your energy transition plan.</p> */}
         <div
-        style={{
-          border: "1px solid #6698005c",
-          padding: "20px",
-          backgroundColor: "#f9f9f9",
-          borderRadius: "5px",
-        }}
+          style={{
+            border: "1px solid #6698005c",
+            padding: "20px",
+            backgroundColor: "#f9f9f9",
+            borderRadius: "5px",
+          }}
         >
-        <Tooltip title="Help">
-          <Button
-            shape="circle"
-            icon={<QuestionCircleOutlined />}
-            onClick={showInfoModal}
-            style={{ position: "absolute", marginLeft: "95%", right: 30, zIndex: 1000 }}
-          />
-        </Tooltip>
-        <span 
-        style={{  width: "100%",
-          border: "2px solidrgb(185, 63, 7)",
-         }}
-        >
-          <Row justify="center" align="middle" style={{ width: "100%" }}>
-            <Col
-              xs={24}
-              sm={12}
-              md={12}
-              style={{ display: "flex", justifyContent: "center" }}
-            >
-              <h2
-                style={{
-                  textAlign: "center",
-                  marginTop: "10px",
-                  transform: "translateX(235px)",
-                }}
-              >
-                Energy Consumption Data (12 Months) {lastYearCurrentYear}
-              </h2>
-            </Col>
-            <Col
-              xs={24}
-              sm={12}
-              md={12}
-              style={{ display: "flex", justifyContent: "center" }}
-            >
-
-            </Col>
-          </Row>
-        </span>
-
-        {(user.role !== "view") ? (<>
+          <Tooltip title="Help">
+            <Button
+              shape="circle"
+              icon={<QuestionCircleOutlined />}
+              onClick={showInfoModal}
+              style={{ position: "absolute", marginLeft: "95%", right: 30, zIndex: 1000 }}
+            />
+          </Tooltip>
           <span
             style={{
-              // display: "flex",
-              // justifyContent: "space-between",
-              // alignItems: "center",
-              // width: "100%",
-              marginLeft: "210"
+              width: "100%",
+              border: "2px solidrgb(185, 63, 7)",
             }}
           >
-            <p style={{ margin: 0 }}>
-              {`(`}Please enter/upload data📂.{`)`}
-            </p>
+            <Row justify="center" align="middle" style={{ width: "100%" }}>
+              <Col
+                xs={24}
+                sm={12}
+                md={12}
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+                <h2
+                  style={{
+                    textAlign: "center",
+                    marginTop: "10px",
+                    transform: "translateX(235px)",
+                  }}
+                >
+                  Energy Consumption Data (12 Months) {lastYearCurrentYear}
+                </h2>
+              </Col>
+              <Col
+                xs={24}
+                sm={12}
+                md={12}
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+
+              </Col>
+            </Row>
           </span>
 
-<Row style={{color:'GrayText'}}>
-  <p >(Note: Go with one of the following option to proceed
+          {(user.role !== "view") ? (<>
+            <span
+              style={{
+                // display: "flex",
+                // justifyContent: "space-between",
+                // alignItems: "center",
+                // width: "100%",
+                marginLeft: "210"
+              }}
+            >
+              <p style={{ margin: 0 }}>
+                {`(`}Please enter/upload data📂.{`)`}
+              </p>
+            </span>
 
-        <ol style={{marginTop:0}}>
-          <li>
-            {" "}
-            <strong>Add Details:</strong> Click the "Add Details" button to open
-            a table where you can enter the data manually
-          </li>
+            <Row style={{ color: 'GrayText' }}>
+              <p >(Note: Go with one of the following option to proceed
 
-          <li>
-            <strong>Upload CSV File:</strong> Download the CSV template, fill it
-            with the required information, and upload the completed file in the
-            specified format.
-          </li>
+                <ol style={{ marginTop: 0 }}>
+                  <li>
+                    {" "}
+                    <strong>Add Details:</strong> Click the "Add Details" button to open
+                    a table where you can enter the data manually
+                  </li>
 
-          <li>
-            <strong>Upload Bill:</strong> Upload monthly bills for all 12
-            months.
-          </li>
+                  <li>
+                    <strong>Upload CSV File:</strong> Download the CSV template, fill it
+                    with the required information, and upload the completed file in the
+                    specified format.
+                  </li>
 
-          <li>
-            <strong>Upload SCADA File:</strong> For more accurate data, you can
-            upload a SCADA file with 15-minute interval dumps.)
-          </li>
-        </ol></p>
-</Row>
-          <Row style={{ marginTop: "3%" }}>
-            <Col span={6}>
-              <Tooltip title="Add details manually">
-                <Button onClick={handleToggleDetails} icon={<FileAddOutlined />} >
-                  {dataSource && showTable ? "Add Details " : "Add Details "}
-                </Button>
-              </Tooltip>
+                  <li>
+                    <strong>Upload Bill:</strong> Upload monthly bills for all 12
+                    months.
+                  </li>
 
-              <span
-                style={{ fontWeight: "bold", fontSize: "16px", paddingTop: "4px", marginLeft: "20px" }}
-              >
-                OR
-              </span>
-            </Col>
+                  <li>
+                    <strong>Upload SCADA File:</strong> For more accurate data, you can
+                    upload a SCADA file with 15-minute interval dumps.)
+                  </li>
+                </ol></p>
+            </Row>
+            <Row style={{ marginTop: "3%" }}>
+              <Col span={6}>
+                <Tooltip title="Add details manually">
+                  <Button onClick={handleToggleDetails} icon={<FileAddOutlined />} >
+                    {dataSource && showTable ? "Add Details " : "Add Details "}
+                  </Button>
+                </Tooltip>
 
-            <Col span={6}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
-                  <Tooltip title="Upload a CSV file">
+                <span
+                  style={{ fontWeight: "bold", fontSize: "16px", paddingTop: "4px", marginLeft: "20px" }}
+                >
+                  OR
+                </span>
+              </Col>
+
+              <Col span={6}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Upload beforeUpload={handleCSVUpload} showUploadList={false}>
+                    <Tooltip title="Upload a CSV file">
+                      <Button
+                        onClick={() => handleButtonClick("csv")}
+                        style={{ padding: "5px", zIndex: 100 }}
+                        icon={<FileExcelOutlined style={{ marginTop: "5px" }} />}
+                      >
+                        Upload CSV file
+                      </Button>
+                    </Tooltip>
+                  </Upload>
+                  <Tooltip title="Download a CSV file">
                     <Button
-                      onClick={() => handleButtonClick("csv")}
-                      style={{ padding: "5px", zIndex: 100 }}
-                      icon={<FileExcelOutlined style={{ marginTop: "5px" }} />}
-                    >
-                      Upload CSV file
-                    </Button>
+                      icon={<DownloadOutlined />}
+                      onClick={handleDownloadTemplate}
+                      style={{ marginLeft: "10px", zIndex: 100 }}
+                    ></Button>
                   </Tooltip>
-                </Upload>
-                <Tooltip title="Download a CSV file">
+                  <span
+                    style={{ fontWeight: "bold", fontSize: "16px", paddingTop: "4px", marginLeft: "20px" }}
+                  >
+                    OR
+                  </span>
+                </div>
+                {activeButton === "csv" && uploadedFileName && (
+                  <div style={{ marginTop: "10px" }}>
+                    <span>Uploaded File: {uploadedFileName}</span>
+                  </div>
+                )}
+
+              </Col>
+
+              <Col span={6}>
+                <Tooltip title="Upload your monthly electricity bill">
                   <Button
-                    icon={<DownloadOutlined />}
-                    onClick={handleDownloadTemplate}
-                    style={{ marginLeft: "10px", zIndex: 100 }}
-                  ></Button>
+                    onClick={handleToggleFileUploadTable}
+                    style={{ marginLeft: "50px", padding: "5px" }}
+                    icon={<FileTextOutlined style={{ marginTop: "5px" }} />}
+                  >
+                    Upload Bill
+                  </Button>
                 </Tooltip>
                 <span
                   style={{ fontWeight: "bold", fontSize: "16px", paddingTop: "4px", marginLeft: "20px" }}
                 >
                   OR
                 </span>
-              </div>
-              {activeButton === "csv" && uploadedFileName && (
-                <div style={{ marginTop: "10px" }}>
-                  <span>Uploaded File: {uploadedFileName}</span>
-                </div>
-              )}
-
-            </Col>
-
-            <Col span={6}>
-              <Tooltip title="Upload your monthly electricity bill">
-                <Button
-                  onClick={handleToggleFileUploadTable}
-                  style={{ marginLeft: "50px", padding: "5px"}}
-                  icon={<FileTextOutlined style={{ marginTop: "5px" }} />}
-                >
-                  Upload Bill
-                </Button>
-              </Tooltip>
-              <span
-                style={{ fontWeight: "bold", fontSize: "16px", paddingTop: "4px", marginLeft: "20px" }}
-              >
-                OR
-              </span>
-              {activeButton === "bill" && fileUploaded && (
-                <div style={{ marginTop: "10px" }}>
-                  <span>Uploaded File: {uploadedFileName}</span>
-                </div>
-              )}
-            </Col>
-
-            <Col span={6}>
-              <Tooltip title="Upload a SCADA file">
-                <Upload showUploadList={false} beforeUpload={handleScadaUpload}>
-                  <Button
-                    onClick={() => handleButtonClick("scada")}
-                    style={{ padding: "5px" }}
-                    icon={<FileImageOutlined style={{ marginTop: "5px" }} />}
-                  >
-                    Upload SCADA file
-                  </Button>
-                </Upload>
-                {activeButton === "scada" && fileUploaded && (
+                {activeButton === "bill" && fileUploaded && (
                   <div style={{ marginTop: "10px" }}>
                     <span>Uploaded File: {uploadedFileName}</span>
                   </div>
                 )}
-              </Tooltip>
-            </Col>
-          </Row>
-        </>
-        )
-          : (
-            <>
+              </Col>
 
+              <Col span={6}>
+                <Tooltip title="Upload a SCADA file">
+                  <Upload showUploadList={false} beforeUpload={handleScadaUpload}>
+                    <Button
+                      onClick={() => handleButtonClick("scada")}
+                      style={{ padding: "5px" }}
+                      icon={<FileImageOutlined style={{ marginTop: "5px" }} />}
+                    >
+                      Upload SCADA file
+                    </Button>
+                  </Upload>
+                  {activeButton === "scada" && fileUploaded && (
+                    <div style={{ marginTop: "10px" }}>
+                      <span>Uploaded File: {uploadedFileName}</span>
+                    </div>
+                  )}
+                </Tooltip>
+              </Col>
+            </Row>
+          </>
+          )
+            : (
+              <>
+
+                <Table
+                  dataSource={dataSource}
+                  columns={vcolumns}
+                  pagination={false}
+                  bordered
+                  size="small"
+                  tableLayout="fixed"
+
+                  style={{
+                    marginTop: "20px",
+
+                  }}
+                />
+
+              </>
+            )
+          }
+        </div>
+
+        <div
+          style={{
+            border: "1px solid #6698005c",
+            padding: "20px",
+            backgroundColor: "#f9f9f9",
+            marginTop: "20px",
+            borderRadius: "5px",
+          }}
+
+        >
+          {/* </div> */}
+          {showTable && (
+            <>
               <Table
-                dataSource={dataSource}
-                columns={vcolumns}
+                rowKey="key"
+                dataSource={memoizedDataSource}
+                columns={columns}
                 pagination={false}
                 bordered
                 size="small"
                 tableLayout="fixed"
-
-                style={{
-                  marginTop: "20px",
-
+                style={{ marginTop: "20px" }}
+                components={{
+                  body: {
+                    row: ({ children, ...restProps }) => {
+                      const index = restProps["data-row-key"];
+                      return (
+                        <tr
+                          {...restProps}
+                          style={{
+                            backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#e0e0e054",
+                          }}
+                        >
+                          {children}
+                        </tr>
+                      );
+                    },
+                  },
                 }}
               />
-
-            </>
-          )
-        }
-        </div>
-        
-        <div
-        style={{
-          border: "1px solid #6698005c",
-          padding: "20px",
-          backgroundColor: "#f9f9f9",
-          marginTop: "20px",
-          borderRadius: "5px",
-        }}
-        
-        >
- {/* </div> */}
- {showTable && (
-          <>
-            <Table
-                                                rowKey="key"
-              dataSource={memoizedDataSource}
-              columns={columns}
-              pagination={false}
-              bordered
-              size="small"
-              tableLayout="fixed"
-              style={{ marginTop: "20px" }}
-              components={{
-                body: {
-                  row: ({ children, ...restProps }) => {
-                    const index = restProps["data-row-key"];
-                    return (
-                      <tr
-                        {...restProps}
-                        style={{
-                          backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#e0e0e054",
-                        }}
-                      >
-                        {children}
-                      </tr>
-                    );
-                  },
-                },
-              }}
-            />
-            <div
-              style={{
-                marginTop: "30px",
-                transform: "translateX(-108px)",
-                marginLeft: "86%",
-                marginBottom: "-40px",
-              }}
-            >
-              {saveSuccess && (
-                <span style={{ color: "green" }}>Data saved successfully!</span>
-              )}
-              {saveError && (
-                <span style={{ color: "red" }}>Failed to save data!</span>
-              )}
-              <Tooltip title="Save the entered/updated data">
-                <Button
-                  type="primary"
-                  onClick={handleSave}
-                  disabled={!allFieldsFilled}
-                  loading={loading}
-                  style={{ marginRight: "10px" }}
-                >
-                  Save
-                </Button>
-              </Tooltip>
-            </div>
-          </>
-        )}
-
-        {showFileUploadTable && renderSixMonthFileUploadTables()}
-
-        {(user.role !== "view") ? (
-
-          <>
-            <Tooltip
-              title={
-                (monthlyData.length < 1 && !scadaFileUpload)
-                  ? "Please fill the details or upload any file"
-                  : "Proceed to the next step"
-              }
-              placement="top"
-            >
-
-              <Button
-                type="primary"
-                onClick={handleContinue}
-                disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource && !allFieldsFilled} // Enable only if an action is completed
-                style={{ marginLeft: "86%", marginTop: "8px" }}
+              <div
+                style={{
+                  marginTop: "30px",
+                  transform: "translateX(-108px)",
+                  marginLeft: "86%",
+                  marginBottom: "-40px",
+                }}
               >
-                Continue {`>>`}
-              </Button>
+                {saveSuccess && (
+                  <span style={{ color: "green" }}>Data saved successfully!</span>
+                )}
+                {saveError && (
+                  <span style={{ color: "red" }}>Failed to save data!</span>
+                )}
+                <Tooltip title="Save the entered/updated data">
+                  <Button
+                    type="primary"
+                    onClick={handleSave}
+                    disabled={!allFieldsFilled}
+                    loading={loading}
+                    style={{ marginRight: "10px" }}
+                  >
+                    Save
+                  </Button>
+                </Tooltip>
+              </div>
+            </>
+          )}
 
-            </Tooltip>
-          </>
-        ) : (
-          <>
-            <Tooltip
-              title={
-                !dataSource || !scadaFileUpload
-                  ? "consumptions are not availble to proceed"
-                  : "Proceed to the next step"
-              }
-              placement="top"
-            >
-              {temp > 0 ? (
+          {showFileUploadTable && renderSixMonthFileUploadTables()}
+
+          {(user.role !== "view") ? (
+
+            <>
+              <Tooltip
+                title={
+                  (monthlyData.length < 1 && !scadaFileUpload)
+                    ? "Please fill the details or upload any file"
+                    : "Proceed to the next step"
+                }
+                placement="top"
+              >
+
                 <Button
                   type="primary"
                   onClick={handleContinue}
@@ -993,23 +972,45 @@ const EnergyConsumptionTable = () => {
                 >
                   Continue {`>>`}
                 </Button>
-              ) : (
 
-                <Button
-                  type="primary"
-                  onClick={handleContinue}
-                  style={{ marginLeft: "86%", marginTop: "8px" }}
-                  disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource && !allFieldsFilled}
-                >
-                  Continue {`>>`}
-                </Button>
-              )}
-            </Tooltip>
-          </>
-        )}
+              </Tooltip>
+            </>
+          ) : (
+            <>
+              <Tooltip
+                title={
+                  !dataSource || !scadaFileUpload
+                    ? "consumptions are not availble to proceed"
+                    : "Proceed to the next step"
+                }
+                placement="top"
+              >
+                {temp > 0 ? (
+                  <Button
+                    type="primary"
+                    onClick={handleContinue}
+                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource && !allFieldsFilled} // Enable only if an action is completed
+                    style={{ marginLeft: "86%", marginTop: "8px" }}
+                  >
+                    Continue {`>>`}
+                  </Button>
+                ) : (
+
+                  <Button
+                    type="primary"
+                    onClick={handleContinue}
+                    style={{ marginLeft: "86%", marginTop: "8px" }}
+                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource && !allFieldsFilled}
+                  >
+                    Continue {`>>`}
+                  </Button>
+                )}
+              </Tooltip>
+            </>
+          )}
         </div>
 
-       
+
 
       </Card>
 
