@@ -61,8 +61,8 @@ const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
           messages. Contains software viruses or any other computer code
           designed to disrupt or limit the functionality of any system.
           Threatens the unity, integrity, defense, security, or sovereignty of
-          any country or public order. If any user violates these terms, EXT
-          Energy reserves the right to immediately block access without notice
+          any country or public order. If any user violates these terms, EXG
+          Global reserves the right to immediately block access without notice
           upon verification of the violation. Disclaimer All efforts have been
           made to ensure the accuracy and correctness of the content on this
           portal. However, EXG Global does not guarantee the completeness or
@@ -73,8 +73,8 @@ const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
           primarily owned by EXG Global. Users may reproduce material only with
           prior permission and must acknowledge the source. However, any
           third-party content is subject to copyright, and permission must be
-          obtained from the respective copyright holders. Privacy Policy EXT
-          Energy does not collect personal information without user consent. Any
+          obtained from the respective copyright holders. Privacy Policy EXG
+          Global does not collect personal information without user consent. Any
           personal data provided will be securely stored and not shared with
           third parties. The company logs visitor data such as IP addresses,
           browser type, and visit duration but does not link this information to
