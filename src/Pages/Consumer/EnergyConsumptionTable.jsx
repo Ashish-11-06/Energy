@@ -94,15 +94,47 @@ const EnergyConsumptionTable = () => {
   const showInfoModal = () => {
     setIsInfoModalVisible(true);
   };
+  // const handleDownloadTemplate = () => {
+  //   // Logic to download the CSV template
+  //   const link = document.createElement("a");
+  //   link.href = "/assets/csvFormat.csv"; // Update with the actual path to your template
+  //   link.download = "template.csv";
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+
   const handleDownloadTemplate = () => {
-    // Logic to download the CSV template
+    // Define the headers and rows
+    const headers = [
+      "Month",
+      "Monthly Consumption",
+      "Peak Consumption (MWh)",
+      "Off Peak Consumption (MWh)",
+      "Monthly Bill Amount (INR Cr)"
+    ];
+  
+    const months = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+  
+    // Create CSV content
+    let csvContent = headers.join(",") + "\n";
+    csvContent += months.map(month => `${month},,,,`).join("\n");
+  
+    // Create a Blob and download link
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.href = "/assets/csvFormat.csv"; // Update with the actual path to your template
-    link.download = "template.csv";
+    link.href = url;
+    link.download = "12monthdatatemplate.csv";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url); // Clean up the URL object
   };
+  
 
   const handleToggleDetails = () => {
 
