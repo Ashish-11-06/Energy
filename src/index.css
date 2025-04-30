@@ -283,3 +283,8 @@ button:focus, .ant-btn:focus {
   display: inline-flex;
   align-self: center !important;
 }
+
+.ant-btn >span:not(:only-child) {
+  display: inline-flex;
+  align-self: center !important;
+}

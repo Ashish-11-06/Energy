@@ -262,7 +262,9 @@ const ProfilePage = () => {
               <Button type="primary" onClick={handleEditToggle}>
                 Edit Profiles
               </Button>
-              <Button type="primary" icon={<LogoutOutlined />} onClick={handleLogOut}>
+              <Button type="primary"
+              
+              icon={<LogoutOutlined />} onClick={handleLogOut}>
                 Log out
               </Button>
             </Row>

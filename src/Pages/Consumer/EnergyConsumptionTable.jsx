@@ -97,7 +97,7 @@ const EnergyConsumptionTable = () => {
   const handleDownloadTemplate = () => {
     // Logic to download the CSV template
     const link = document.createElement("a");
-    link.href = "/src/assets/csvFormat.csv"; // Update with the actual path to your template
+    link.href = "/assets/csvFormat.csv"; // Update with the actual path to your template
     link.download = "template.csv";
     document.body.appendChild(link);
     link.click();
@@ -298,11 +298,17 @@ const EnergyConsumptionTable = () => {
   }, [dataSource]);
 
   const handleInputChange = (value, key, dataIndex) => {
-    setDataSource((prevDataSource) =>
-      prevDataSource.map((item) =>
-        item.key === key ? { ...item, [dataIndex]: value } : item
-      )
-    );
+    setDataSource((prevDataSource) => {
+      const newDataSource = [...prevDataSource];
+      const rowIndex = newDataSource.findIndex((item) => item.key === key);
+      if (rowIndex !== -1) {
+        newDataSource[rowIndex] = {
+          ...newDataSource[rowIndex],
+          [dataIndex]: value,
+        };
+      }
+      return newDataSource;
+    });
   };
 
   const handleToggleFileUploadTable = () => {
@@ -511,6 +517,27 @@ const EnergyConsumptionTable = () => {
     },
   ];
 
+  const EditableCell = ({ value, onChange, onBlur }) => {
+    const [tempValue, setTempValue] = useState(value);
+  
+    const handleBlur = () => {
+      onChange(tempValue);
+      onBlur();
+    };
+  
+    return (
+      <InputNumber
+        value={tempValue}
+        onChange={(value) => setTempValue(value)} // Update local state
+        onFocus={(e) => e.target.select()} // Select the input value on focus
+        onBlur={handleBlur} // Update main state on blur
+        style={{ width: "100%" }}
+        min={0}
+      />
+    );
+  };
+  
+
   const columns = useMemo(() => [
     {
       title: "Month",
@@ -526,17 +553,12 @@ const EnergyConsumptionTable = () => {
       ),
       dataIndex: "monthlyConsumption",
       key: "monthlyConsumption",
-      // width: 250,
       editable: true,
       render: (_, record) => (
-        <InputNumber
+        <EditableCell
           value={record.monthlyConsumption}
-          onChange={(value) =>
-            handleInputChange(value, record.key, "monthlyConsumption")
-          }
-          style={{ width: "100%" }}
-          min={0}
-        // disabled={record.fileUploaded !== null}
+          onChange={(value) => handleInputChange(value, record.key, "monthlyConsumption")}
+          onBlur={() => {}}
         />
       ),
     },
@@ -550,14 +572,10 @@ const EnergyConsumptionTable = () => {
       key: "peakConsumption",
       editable: true,
       render: (_, record) => (
-        <InputNumber
+        <EditableCell
           value={record.peakConsumption}
-          onChange={(value) =>
-            handleInputChange(value, record.key, "peakConsumption")
-          }
-          style={{ width: "100%" }}
-          min={0}
-        // disabled={record.fileUploaded !== null}
+          onChange={(value) => handleInputChange(value, record.key, "peakConsumption")}
+          onBlur={() => {}}
         />
       ),
     },
@@ -569,17 +587,12 @@ const EnergyConsumptionTable = () => {
       ),
       dataIndex: "offPeakConsumption",
       key: "offPeakConsumption",
-      // with: 300,
       editable: true,
       render: (_, record) => (
-        <InputNumber
+        <EditableCell
           value={record.offPeakConsumption}
-          onChange={(value) =>
-            handleInputChange(value, record.key, "offPeakConsumption")
-          }
-          style={{ width: "100%" }}
-          min={0}
-        // disabled={record.fileUploaded !== null}
+          onChange={(value) => handleInputChange(value, record.key, "offPeakConsumption")}
+          onBlur={() => {}}
         />
       ),
     },
@@ -592,16 +605,11 @@ const EnergyConsumptionTable = () => {
       dataIndex: "monthlyBill",
       key: "monthlyBill",
       editable: true,
-      // width: 180,
       render: (_, record) => (
-        <InputNumber
+        <EditableCell
           value={record.monthlyBill}
-          onChange={(value) =>
-            handleInputChange(value, record.key, "monthlyBill")
-          }
-          style={{ width: "100%" }}
-          min={0}
-        // disabled={record.fileUploaded !== null}
+          onChange={(value) => handleInputChange(value, record.key, "monthlyBill")}
+          onBlur={() => {}}
         />
       ),
     },
