@@ -65,12 +65,12 @@ const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
           Energy reserves the right to immediately block access without notice
           upon verification of the violation. Disclaimer All efforts have been
           made to ensure the accuracy and correctness of the content on this
-          portal. However, EXT Energy does not guarantee the completeness or
+          portal. However, EXG Global does not guarantee the completeness or
           reliability of the information. Users should verify details with the
-          relevant authorities before acting upon them. EXT Energy is not
+          relevant authorities before acting upon them. EXG Global is not
           responsible for any loss or damage resulting from the use of this
           portal. Copyright Policy The content published on this portal is
-          primarily owned by EXT Energy. Users may reproduce material only with
+          primarily owned by EXG Global. Users may reproduce material only with
           prior permission and must acknowledge the source. However, any
           third-party content is subject to copyright, and permission must be
           obtained from the respective copyright holders. Privacy Policy EXT
@@ -79,7 +79,7 @@ const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
           third parties. The company logs visitor data such as IP addresses,
           browser type, and visit duration but does not link this information to
           individual users. Hyperlinking Policy External links on this portal
-          are provided for user convenience. EXT Energy is not responsible for
+          are provided for user convenience. EXG Global is not responsible for
           the content of linked websites and does not endorse any views
           expressed on them. 
         </p>

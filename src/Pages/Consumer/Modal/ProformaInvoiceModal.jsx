@@ -3,7 +3,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Typography, message, Tooltip } from "antd";
+import { Modal, Button, Typography, message, Tooltip, Radio, Form, Input, DatePicker } from "antd";
 import { useDispatch } from "react-redux";
 import html2canvas from "html2canvas";
 import LOGO from "../../../assets/EXG_green.png";
@@ -18,6 +18,7 @@ import {
   fetchSubscriptionValidity,
   subscriptionEnroll,
 } from "../../../Redux/Slices/Consumer/subscriptionEnrollSlice";
+import { addOfflinePayment } from "../../../Redux/Slices/Consumer/offlinePaymentSlice";
 
 // Utility function to convert numbers to words
 const numberToWords = (num) => {
@@ -98,10 +99,20 @@ const ProformaInvoiveModal = ({
   const userData = JSON.parse(localStorage.getItem("user")).user;
   const userId = userData?.id;
   const companyName=userData?.company;
+  const [paymentModeModal,setPaymentModeModal] = useState(false);
+  const [paymentMode, setPaymentMode] = useState(''); // Stores selected payment mode
+  const [offlineForm,setOfflineForm] = useState(false);
+  const [form] = Form.useForm(); // create a form instance
+  const [transactionId, setTransactionId] = useState('');
+  const [paymentDate, setPaymentDate] = useState(null);
+  const [selectedPaymentMode, setSelectedPaymentMode] = useState('');
+  const dispatch = useDispatch();
   // console.log(selectedPlan);
+  const amount=selectedPlan?.subscription?.price;
+  console.log('selected plan',amount);
   
-  // console.log('selected plan',selectedPlanId);
-  
+console.log('invoice number',selectedPlan?.invoice_number);
+
   //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
   // //  console.log(selected_plan);
   //  const invoiceDetails=selectedPlan;
@@ -113,7 +124,51 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
 
   //   const user = JSON.parse(localStorage.getItem("user")).user;
   //   console.log(user_category)ś;
-  const dispatch = useDispatch();
+  const handleRadioChange = (e) => {
+    setPaymentMode(e.target.value); // Set selected payment mode
+  };
+
+const handlePaymentMode= ()=> {
+setPaymentModeModal(true);
+// onCancel();
+}
+
+const handlePaymentModeCancel=() => {
+  setPaymentModeModal(false);
+}
+
+const handlePaymentModeOk = () => {
+  if(paymentMode === 'online') {
+    handlePayment();
+  } else {
+    setOfflineForm(true);
+    setPaymentModeModal(false);
+  }
+ 
+}
+
+const handleOfflineOk = async () => {
+  try {
+    await form.validateFields();  //  Await here
+    const data = {
+      transaction_id:transactionId,
+      // amount,
+      invoice:selectedPlan?.invoice_number,
+      payment_date: paymentDate ? paymentDate.format('DD-MM-YYYY') : null,
+      payment_mode: selectedPaymentMode,
+    };
+
+    const res = await dispatch(addOfflinePayment(data));
+    console.log('form data', data);
+    message.success('Form submitted!');
+    setPaymentModeModal(false);
+  } catch (error) {
+    message.error('Please fill in all required fields!');
+  }
+};
+
+
+
   const handleDownloadPDF = async () => {
     const container = document.querySelector(".container"); // Select the main container
     if (!container) {
@@ -222,8 +277,6 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
                   // console.log(error);
                   
                 }
-
-              
               } else {
                 message.error("Payment completion failed.");
               }
@@ -249,7 +302,7 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
       }
     } catch (error) {
       console.error("Payment Error:", error);
-      message.error("Payment initiation failed. Please try again.");
+      message.error(error);
     }
   };
 
@@ -554,7 +607,7 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
             >
               Download PDF
             </Button>
-            <Button key="generate" type="primary" onClick={handlePayment}>
+            <Button key="generate" type="primary" onClick={handlePaymentMode}>
               Proceed to Payment
             </Button>
           </>
@@ -576,7 +629,7 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
     ),
   ]}
   width={900}
-  bodyStyle={{
+  styles={{
     height: 'calc(100vh - 200px)', // Adjust height to make modal content scrollable
     overflowY: 'auto', // Enable vertical scrolling for the content
     padding: '24px', // Add padding for better layout
@@ -591,7 +644,86 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
     <br />
     <div>Please proceed to payment to complete your subscription.</div>
   </div>
+  <Modal
+        open={paymentModeModal}
+        onOk={handlePaymentModeOk}
+        onCancel={handlePaymentModeCancel}
+        title="Select Payment Mode"
+      >
+        <Radio.Group onChange={handleRadioChange} value={paymentMode}>
+          <Radio value="online">Pay Online</Radio>
+          <Radio value="offline">Pay Offline</Radio>
+        </Radio.Group>
+      </Modal>
+
+<Modal open={offlineForm} onOk={handleOfflineOk} onCancel={()=> setOfflineForm(false)}>       
+<Form
+  layout="vertical"
+  style={{ marginTop: 20 }}
+  initialValues={{ amount }}
+  form={form}
+>
+  <Form.Item
+    label="Transaction Number/Reference ID"
+    name="transactionId"
+    rules={[{ required: true, message: "Please enter the transaction number!" }]}
+  >
+    <Input 
+      placeholder="Enter transaction/reference ID" 
+      value={transactionId}
+      onChange={(e) => setTransactionId(e.target.value)}
+    />
+  </Form.Item>
+
+  <Form.Item
+    label="Amount"
+    name="amount"
+    rules={[{ required: true, message: "Please enter the amount!" }]}
+  >
+    <Input 
+      defaultValue={amount} 
+      placeholder="Enter amount" 
+      type="number" 
+      disabled 
+    />
+  </Form.Item>
+
+  <Form.Item
+    label="Date of Payment"
+    name="paymentDate"
+    rules={[{ required: true, message: "Please select the date of payment!" }]}
+  >
+    <DatePicker 
+      placeholder="Select payment date" 
+      style={{ width: '100%' }} 
+      format="DD-MM-YYYY" 
+      value={paymentDate}
+      onChange={(date) => setPaymentDate(date)}
+    />
+  </Form.Item>
+
+  <Form.Item
+    label="Payment Mode"
+    name="paymentMode"
+    rules={[{ required: true, message: "Please select the payment mode!" }]}
+  >
+    <Radio.Group
+      value={selectedPaymentMode}
+      onChange={(e) => setSelectedPaymentMode(e.target.value)}
+    >
+      <Radio value="bank">Bank</Radio>
+      <Radio value="upi">UPI</Radio>
+      <Radio value="cash">Cash</Radio>
+    </Radio.Group>
+  </Form.Item>
+</Form>
+
+        
+
 </Modal>
+</Modal>
+
+
   );
 };
 

@@ -34,7 +34,12 @@ export const createPdfContent = (annualSavingResponse) => {
           <li>Consumption Unit Name : ${annualSavingResponse?.consumption_unit_name}</li>
           <li>Connected Voltage (kV) :  ${annualSavingResponse?.connected_voltage}</li>
           <li> Tariff Category: ${annualSavingResponse?.tariff_category || 'N/A'} </li>
-          <li>Annual Electricity Consumption (MWh) : ${annualSavingResponse?.annual_electricity_consumption || 'N/A'}</li>
+<li>
+  Annual Electricity Consumption (MWh) : 
+  ${annualSavingResponse?.annual_electricity_consumption
+    ? Number(annualSavingResponse.annual_electricity_consumption).toLocaleString('en-IN')
+    : 'N/A'}
+</li>
         </ul>
       </div>
 
