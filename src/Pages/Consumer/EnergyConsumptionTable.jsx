@@ -739,6 +739,33 @@ const EnergyConsumptionTable = () => {
             </p>
           </span>
 
+<Row style={{color:'GrayText'}}>
+  <p >(Note: Go with one of the following option to proceed
+
+        <ol style={{marginTop:0}}>
+          <li>
+            {" "}
+            <strong>Add Details:</strong> Click the "Add Details" button to open
+            a table where you can enter the data manually
+          </li>
+
+          <li>
+            <strong>Upload CSV File:</strong> Download the CSV template, fill it
+            with the required information, and upload the completed file in the
+            specified format.
+          </li>
+
+          <li>
+            <strong>Upload Bill:</strong> Upload monthly bills for all 12
+            months.
+          </li>
+
+          <li>
+            <strong>Upload SCADA File:</strong> For more accurate data, you can
+            upload a SCADA file with 15-minute interval dumps.)
+          </li>
+        </ol></p>
+</Row>
           <Row style={{ marginTop: "3%" }}>
             <Col span={6}>
               <Tooltip title="Add details manually">
