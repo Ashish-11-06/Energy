@@ -27,6 +27,7 @@ const MatchingIPP = () => {
   const [essArray, setEssArray] = useState([]);
 const selectedRequirements = location.state?.selectedRequirements || [];
   const selectedRequirementId = location.state?.selectedRequirement?.id || null; // Get selected requirement ID from location state
+  const requirementId = localStorage.getItem('selectedRequirementId');
 
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
@@ -53,7 +54,6 @@ const role=userData?.role;
 
   useEffect(() => {
     const fetchMatchingIpp = async () => {
-    const requirementId = localStorage.getItem('selectedRequirementId');
     if (requirementId) {
       try {
        const res=await dispatch(fetchMatchingIPPById(requirementId)).then((res) => {
