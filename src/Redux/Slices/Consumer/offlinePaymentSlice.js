@@ -10,7 +10,7 @@ export const addOfflinePayment = createAsyncThunk(
         console.log('data',data);  
       const response = await offlinePaymentApi.addOfflinePayment(data);
       console.log('res slice',response)
-      if (response.status === 200 && response.data) {
+      if (response.status === 201 && response.data) {
         return response.data; // Ensure response contains valid data
       }
       throw new Error("Invalid response from server");
