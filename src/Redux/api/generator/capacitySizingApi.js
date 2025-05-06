@@ -6,6 +6,7 @@ const capacitySizingApi = {
     return axiosInstance.post(`/energy/capacity-sizing`, modalData);
   },
   saveCapacitySizingData: (data) => {
+    // console.log('data in api',data);
     return axiosInstance.post(`/energy/capacity-sizing-combination`, data); 
   },
   getCapacitySizingData: (id) => {

@@ -28,7 +28,12 @@ export const saveCapacitySizingData = createAsyncThunk(
   'capacitySizing/saveData',
   async (data, { rejectWithValue }) => {
     try {
+
+      // console.log('data in slice',data);
+      
       const response = await capacitySizingApi.saveCapacitySizingData(data);
+      // console.log('response in slice',response);
+      
       if (response && response.data) {
         if (response.data.error) {
           return rejectWithValue(response.data.error || 'Failed to save data');

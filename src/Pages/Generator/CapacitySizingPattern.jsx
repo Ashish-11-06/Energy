@@ -50,9 +50,6 @@ const CombinationPatternCap = () => {
 
   // const [loading, setLoading] = useState(false);
 
-
-
-
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
@@ -245,7 +242,6 @@ const CombinationPatternCap = () => {
    
   };
 
-
   const handleSaveConfirm = async () => {
     if (!saveInput.trim()) {
       message.error("Please enter a valid name.");
@@ -265,12 +261,14 @@ const CombinationPatternCap = () => {
       annual_demand_offset: saveRecord.annualDemandOffeset,
       annual_demand_met: saveRecord.annualDemandMet,
       annual_curtailment: saveRecord.annualCurtailment,
-      // 
+      demand: saveRecord.demandArray, // Include the Demand array here
     };
+
+    // console.log('data to send', data);
 
     try {
       await dispatch(saveCapacitySizingData(data)).unwrap();
-      message.success("data saved successfully!");
+      message.success("Data saved successfully!");
       // Reset modal and states
       setIsSaveModalVisible(false);
       setSaveInput("");
@@ -339,7 +337,6 @@ const CombinationPatternCap = () => {
       setIsTableLoading(false); // Stop loader on error
     }
   };
-
 
   const marks = {
     0: "0%",
@@ -441,10 +438,8 @@ const CombinationPatternCap = () => {
 
   ];
 
-
   // console.log(dataSource);
   console.log(dataSource?.[0]?.annualDemandOffeset);
-
 
   return (
     <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
