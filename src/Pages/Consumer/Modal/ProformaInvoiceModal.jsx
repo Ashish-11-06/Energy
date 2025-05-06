@@ -111,7 +111,7 @@ const ProformaInvoiveModal = ({
   const amount=selectedPlan?.subscription?.price;
   console.log('selected plan',amount);
   
-console.log('invoice number',selectedPlan?.invoice_number);
+console.log('invoice number',selectedPlan?.id);
 
   //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
   // //  console.log(selected_plan);
@@ -146,22 +146,23 @@ const handlePaymentModeOk = () => {
   }
  
 }
-
+const selectedInvoiceNumber=selectedPlan?.id;
 const handleOfflineOk = async () => {
   try {
     await form.validateFields();  //  Await here
     const data = {
-      transaction_id:transactionId,
-      // amount,
-      invoice:selectedPlan?.invoice_number,
-      payment_date: paymentDate ? paymentDate.format('DD-MM-YYYY') : null,
+      transaction_id:Number(transactionId),
+      invoice:selectedInvoiceNumber,
+      payment_date: paymentDate ? paymentDate.format('YYYY-MM-DD') : null,
       payment_mode: selectedPaymentMode,
     };
 
     const res = await dispatch(addOfflinePayment(data));
-    console.log('form data', data);
-    message.success('Form submitted!');
-    setPaymentModeModal(false);
+    console.log('form data', res);
+    if(res?.payload) {
+      setPaymentModeModal(false);
+      message.success(res?.payload.message || "Offline Payment Submitted Successfullyyy");
+    }
   } catch (error) {
     message.error('Please fill in all required fields!');
   }
