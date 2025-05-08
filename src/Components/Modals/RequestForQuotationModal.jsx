@@ -117,6 +117,8 @@ console.log('ddd',data);
   // console.log('termsData',termsData);
 
   const handleContinue = async () => {
+
+    // console.log('aarti ne click kiya');
     const termsData = {
       offer_tariff: perUnitCost || 0,
       from_whom: user?.user_category || "",
@@ -138,7 +140,7 @@ console.log('termsData',termsData);
 
 
     try {
-      // await dispatch(addTermsAndConditions(termsData)).unwrap();
+      await dispatch(addTermsAndConditions(termsData)).unwrap();
       message.success({
         content: "Terms and Conditions added successfully.",
         duration: 6,
