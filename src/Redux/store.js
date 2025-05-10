@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 import loginReducer from './Slices/loginSlice'; // Import the loginReducer
 import consumerRequirementReducer from './Slices/Consumer/consumerRequirementSlice'; // Import the consumerRequirementReducer
 import portfolioReducer from './Slices/Generator/portfolioSlice'; // Import the portfolioReducer
@@ -7,16 +7,32 @@ import optimizeCapacityReducer from './Slices/Generator/optimizeCapacitySlice'; 
 import consumptionPatternReducer from './Slices/Generator/ConsumptionPatternSlice'; // Import the consumptionPatternReducer
 import termsAndConditionsReducer from './Slices/Generator/TermsAndConditionsSlice'; // Import the termsAndConditionsReducer
 import matchingIPPSlice from './Slices/Consumer/matchingIPPSlice';
-import monthlyDataReducer from './Slices/Consumer/monthlyConsumptionSlice'
+import monthlyDataReducer from './Slices/Consumer/monthlyConsumptionSlice';
 import paymentReducer from './Slices/Consumer/paymentSlice'; // Import the paymentReducer
-import industry from'./Slices/Consumer/industrySlice';
+import industry from './Slices/Consumer/industrySlice';
 import states from './Slices/Consumer/stateSlice';
 import Notifications from './Slices/notificationSlice';
 import capacitySizingReducer from './Slices/Generator/capacitySizingSlice'; // Import the capacitySizingReducer
 
+// Define the initial state for the app
+const initialState = {};
 
+// Create a slice for resetting the state
+const appSlice = createSlice({
+  name: 'app',
+  initialState,
+  reducers: {
+    resetState: () => initialState, // Reset the state to the initial value
+  },
+});
+
+// Export the resetState action
+export const { resetState } = appSlice.actions;
+
+// Configure the store
 export const store = configureStore({
   reducer: {
+    app: appSlice.reducer, // Add appSlice to the store
     login: loginReducer, // Add loginReducer to the store
     consumerRequirement: consumerRequirementReducer, // Add consumerRequirementReducer to the store
     portfolio: portfolioReducer, // Add portfolioReducer to the store
@@ -27,10 +43,10 @@ export const store = configureStore({
     matchingIPP: matchingIPPSlice,
     monthlyData: monthlyDataReducer,
     payment: paymentReducer,
-    industry:industry,
-    states:states,
+    industry: industry,
+    states: states,
     notifications: Notifications,
-    capacitySizing: capacitySizingReducer
+    capacitySizing: capacitySizingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
