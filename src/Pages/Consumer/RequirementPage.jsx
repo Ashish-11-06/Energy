@@ -149,7 +149,8 @@ const companyName=userData.company;
 
   const handleRowSelect = (record) => {
     // console.log('record', record);
-    
+        localStorage.setItem('selectedRequirementId', record.id);
+
     setSelectedRowKeys([record.key]);
     setSelectedRequirement(record);
     const data = {

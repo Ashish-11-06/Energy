@@ -74,6 +74,7 @@ const UpdateProfileDetails = () => {
     
         return (
           <div style={{ textAlign: 'center' }}>
+        <p>Updated: {text.toString()}</p>
             <Progress
               percent={progressValue}
               status={progressValue === 100 ? 'active' : 50}

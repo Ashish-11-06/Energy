@@ -260,10 +260,9 @@ const ProfilePage = () => {
               style={{ marginTop: "20px", justifyContent: "space-between" }}
             >
               <Button type="primary" onClick={handleEditToggle}>
-                Edit Profiles
+                Edit
               </Button>
-              <Button type="primary"
-              
+              <Button type="primary"          
               icon={<LogoutOutlined />} onClick={handleLogOut}>
                 Log out
               </Button>

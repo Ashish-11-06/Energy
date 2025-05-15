@@ -95,13 +95,12 @@ const role=userData?.role;
   useEffect(() => {
     if (requirements.length === 0) {
     const user = getFromLocalStorage('user');
-   
       if(requirementId === null ) {
         const id = user.user.id;
         dispatch(fetchRequirements(id));
       } 
     } else {
-      message.error('Please select requirement Id first!')
+      // message.error('Please select requirement Id first!')
     }
   }, [dispatch, requirements.length]);
 
