@@ -37,6 +37,7 @@ const MatchingConsumerPage = () => {
       { key: '6', label: <strong>Voltage Level (kV)</strong>, value: modalConsumerDetails?.voltage_level },
       { key: '4', label: <strong>Demand (MW)</strong>, value: modalConsumerDetails?.total_contracted_demand },
       { key: '5', label: <strong>Industry</strong>, value: modalConsumerDetails?.industry },
+      { key: '6', label: <strong>Sub Industry</strong>, value: modalConsumerDetails?.sub_industry },
     
     ];
   
@@ -159,6 +160,11 @@ const MatchingConsumerPage = () => {
       title: 'Industry',
       dataIndex: 'industry',
       key: 'industry',
+    },
+    {
+      title: 'Sub-Industry',
+      dataIndex: 'sub_industry',
+      key: 'sub_industry',
     },
     {
       title: 'Actions',

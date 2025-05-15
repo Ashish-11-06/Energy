@@ -18,7 +18,9 @@ import {
 } from "antd";
 import {
   DownloadOutlined,
+  DownOutlined,
   FileExcelOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import "jspdf-autotable";
@@ -36,6 +38,8 @@ const GeneratorInput = () => {
   const [base64CSVFile, setBase64CSVFile] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [capacitySizingData, setCapacitySizingData] = useState(null);
+  const [isForm, setForm] = useState(false);
+  const [dataSource, setDataSource] = useState([])
   const [curtailmentInputs, setCurtailmentInputs] = useState({
     curtailment_selling_price: 3000,
     sell_curtailment_percentage: 0,
@@ -51,7 +55,7 @@ const GeneratorInput = () => {
   if (status === "idle") {
     dispatch(getAllProjectsById(user.id));
   }
-
+const [annual_curtailment_limits, setAnnualCurtailmentLimits] = useState(35);
   const handleRecordCheck = (recordId, isChecked) => {
     setCheckPortfolio((prev) =>
       isChecked ? [...prev, recordId] : prev.filter((id) => id !== recordId)
@@ -74,7 +78,20 @@ const GeneratorInput = () => {
     fetchData();
   }, [])
 
-
+  const renderLabelWithTooltip = (label, tooltipText, onClick) => (
+    <span>
+      {label}{" "}
+      <Tooltip title={tooltipText}>
+        <InfoCircleOutlined style={{ color: "black", marginLeft: "4px" }} />
+      </Tooltip>
+      <br />
+      {onClick && (
+        <Button size="small" style={{ marginLeft: "8px" }} onClick={onClick}>
+          <DownOutlined />
+        </Button>
+      )}
+    </span>
+  );
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
       const flatProjects = [
@@ -307,6 +324,211 @@ const GeneratorInput = () => {
     return false;
   };
 
+const handleDetails = () => {
+  // setForm(true);
+  setForm((prevShowTable) => !prevShowTable);
+
+}
+
+const EditableCell = ({ value, onChange, onBlur }) => {
+  const [tempValue, setTempValue] = useState(value);
+console.log('vale',value);
+
+
+  const handleBlur = () => {
+    onChange(tempValue);
+    onBlur();
+  };
+
+  return (
+    <InputNumber
+      value={tempValue}
+      onChange={(value) => setTempValue(value)} // Update local state
+      onFocus={(e) => e.target.select()} // Select the input value on focus
+      onBlur={handleBlur} // Update main state on blur
+      style={{ width: "100%" }}
+      min={0}
+    />
+  );
+};
+
+const handleInputChange = (value, key, dataIndex) => {
+  setDataSource((prevDataSource) => {
+    const newDataSource = [...prevDataSource];
+    const rowIndex = newDataSource.findIndex((item) => item.key === key);
+    if (rowIndex !== -1) {
+      newDataSource[rowIndex] = {
+        ...newDataSource[rowIndex],
+        [dataIndex]: value,
+      };
+    }
+    return newDataSource;
+  });
+};
+
+const handleAddRow = () => {
+  setDataSource((prevDataSource) => [
+    ...prevDataSource,
+    {
+      key: prevDataSource.length + 1,
+      annualConsumption: null,
+      contractedDemand: null,
+      morningPeakStart: null,
+      morningPeakEnd: null,
+      eveningPeakStart: null,
+      eveningPeakEnd: null,
+      annualMorningPeakConsumption: null,
+      annualEveningPeakConsumption: null,
+      peakHoursAvailability: null,
+    },
+  ]);
+};
+
+const vcolumns = [
+  {
+    title: "Annual Consumption (MWh)",
+    dataIndex: "annualConsumption",
+    key: "annualConsumption",
+    editable: true,
+    render: (_, record) => (
+      <EditableCell
+        value={record.annualConsumption}
+        onChange={(value) => handleInputChange(value, record.key, "annualConsumption")}
+        onBlur={() => {}}
+      />
+    ),
+  },
+  {
+    title: renderLabelWithTooltip(
+      "Contracted Demand (MW)",
+      "Total energy consumed during the month in megawatt-hours."
+    ),
+    dataIndex: "contractedDemand",
+    key: "contractedDemand",
+    editable: true,
+    render: (_, record) => (
+      <EditableCell
+        value={record.contractedDemand}
+        onChange={(value) => handleInputChange(value, record.key, "contractedDemand")}
+        onBlur={() => {}}
+      />
+    ),
+  },
+  {
+    title: renderLabelWithTooltip(
+      "Morning Peak hours Start",
+      "Energy consumption during peak hours in megawatt-hours."
+    ),
+    dataIndex: "morningPeakStart",
+    key: "morningPeakStart",
+    editable: true,
+    render: (_, record) => (
+      <EditableCell
+        value={record.morningPeakStart}
+        onChange={(value) => handleInputChange(value, record.key, "morningPeakStart")}
+        onBlur={() => {}}
+      />
+    ),
+  },
+  {
+    title: renderLabelWithTooltip(
+      "Morning Peak hours End",
+      "Energy consumption during off-peak hours in megawatt-hours."
+    ),
+    dataIndex: "morningPeakEnd",
+    key: "morningPeakEnd",
+    editable: true,
+    render: (_, record) => (
+      <EditableCell
+        value={record.morningPeakEnd}
+        onChange={(value) => handleInputChange(value, record.key, "morningPeakEnd")}
+        onBlur={() => {}}
+      />
+    ),
+  },
+  {
+    title: renderLabelWithTooltip(
+      "Annual Morning peak hours consumption (MWh)",
+      "Energy consumption during off-peak hours in megawatt-hours."
+    ),
+    dataIndex: "morningPeakEnd",
+    key: "morningPeakEnd",
+    editable: true,
+    render: (_, record) => (
+      <EditableCell
+        value={record.annualMorningPeakConsumption}
+        onChange={(value) => handleInputChange(value, record.key, "annualMorningPeakConsumption")}
+        onBlur={() => {}}
+      />
+    ),
+  },
+  {
+    title: renderLabelWithTooltip(
+      "Evening Peak hours Start",
+      "Energy consumption during off-peak hours in megawatt-hours."
+    ),
+    dataIndex: "eveningPeakStart",
+    key: "eveningPeakStart",
+    editable: true,
+    render: (_, record) => (
+      <EditableCell
+        value={record.eveningPeakStart}
+        onChange={(value) => handleInputChange(value, record.key, "eveningPeakStart")}
+        onBlur={() => {}}
+      />
+    ),
+  },
+  {
+    title: renderLabelWithTooltip(
+      "Evening Peak hours end ",
+      "Energy consumption during off-peak hours in megawatt-hours."
+    ),
+    dataIndex: "eveningPeakEnd",
+    key: "eveningPeakEnd",
+    editable: true,
+    render: (_, record) => (
+      <EditableCell
+        value={record.eveningPeakEnd}
+        onChange={(value) => handleInputChange(value, record.key, "eveningPeakEnd")}
+        onBlur={() => {}}
+      />
+    ),
+  },
+  {
+    title: renderLabelWithTooltip(
+      "Annual Evening peak hours consumption (MWh)",
+      "Energy consumption during off-peak hours in megawatt-hours."
+    ),
+    dataIndex: "morningPeakEnd",
+    key: "morningPeakEnd",
+    editable: true,
+    render: (_, record) => (
+      <EditableCell
+        value={record.morningPeakEnd}
+        onChange={(value) => handleInputChange(value, record.key, "morningPeakEnd")}
+        onBlur={() => {}}
+      />
+    ),
+  },
+  {
+    title: renderLabelWithTooltip(
+      "Peak hours availability requirement (%)",
+      "Energy consumption during off-peak hours in megawatt-hours."
+    ),
+    dataIndex: "peakHoursAvailability",
+    key: "peakHoursAvailability",
+    editable: true,
+    render: (_, record) => (
+      <EditableCell
+        value={record.peakHoursAvailability}
+        onChange={(value) => handleInputChange(value, record.key, "peakHoursAvailability")}
+        onBlur={() => {}}
+      />
+    ),
+  },
+  // ...other columns...
+];
+
   const handleDownloadTemplate = () => {
     const rows = Array.from({ length: 8760 }, (_, i) => `${i + 1},`).join("\n");
     const csvContent = "Hour,Expected Demand\n" + rows;
@@ -337,7 +559,8 @@ const GeneratorInput = () => {
             {/* {uploadedFileName && <div style={{ marginTop: "10px" }}>Uploaded File: {uploadedFileName}</div>} */}
           </Row>
           <Row span={24}>
-            <div style={{ display: "flex", alignItems: "center" }}>
+            {/* <div style={{ display: "flex", alignItems: "center" }}> */}
+              <Col span={12}>
               <Tooltip title="Download a CSV file">
                 <Button icon={<DownloadOutlined />} onClick={handleDownloadTemplate} style={{ marginRight: "20px", height: "30px", width: 40 }} />
               </Tooltip>
@@ -348,12 +571,41 @@ const GeneratorInput = () => {
                   </Button>
                 </Tooltip>
               </Upload>
+              </Col>
+              {/* <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
+              {"OR"}
+              </Col> */}
+              <Col span={10} style={{ display: "flex", justifyContent: "flex-start" }}>  
+              <Tooltip title="Add details manually">
+              <Button onClick={handleDetails}>Add Details</Button>
+              </Tooltip>
+              </Col>
 
-            </div>
+            {/* </div> */}
             {uploadedFileName && <div style={{ margin: "10px", color: 'GrayText' }}>Uploaded File: {uploadedFileName}</div>}
           </Row>
 
+          {isForm && ( 
+           <Row span={24} style={{ marginTop: "20px" }}>
+                <Table
+                  columns={vcolumns}
+                  dataSource={dataSource}
+                  pagination={false}
+                  bordered
+                  size="small"
+                  tableLayout="fixed"
+                />
+                <Button
+                  // type="dashed"
+                  onClick={handleAddRow}
+                  style={{ marginTop: "10px" }}
+                >
+                  Add Row
+                </Button>
+            </Row>
+            )}
 
+            
         </div>
         <p>Select the portfolios to be processed in the model execution and run the Optimizer Model.</p>
         <div style={{ maxHeight: "400px", overflowY: "auto" }}>
@@ -413,7 +665,7 @@ const GeneratorInput = () => {
         onCancel={handleModalCancel}
       >
         <Form layout="vertical">
-          <Form.Item label="Maximum limit for excess energy (%)">
+          {/* <Form.Item label="Maximum limit for excess energy (%)">
             <InputNumber
               min={0}
               max={1}
@@ -422,12 +674,34 @@ const GeneratorInput = () => {
               onChange={(value) =>
                 setCurtailmentInputs((prev) => ({
                   ...prev,
-                  annual_curtailment_limit: value,
+                  annual_curtailment_limits: value,
                 }))
               }
               style={{ width: "100%" }}
             />
-          </Form.Item>
+          </Form.Item> */}
+          <Form.Item label="Maximum limit for excess energy (%)">
+  <InputNumber
+    min={0}
+    max={100}
+    step={1}
+    value={
+      curtailmentInputs.annual_curtailment_limit != null
+        ? curtailmentInputs.annual_curtailment_limit * 100
+        : null
+    }
+    onChange={(value) =>
+      setCurtailmentInputs((prev) => ({
+        ...prev,
+        annual_curtailment_limit: value / 100,
+      }))
+    }
+    style={{ width: "100%" }}
+    formatter={(value) => `${value}`}
+    parser={(value) => value.replace('%', '')}
+  />
+</Form.Item>
+
           <Form.Item label="Selling price of excess energy (INR/MWh)">
             <InputNumber
               min={0}

@@ -100,6 +100,18 @@ const GenerationPortfolio = () => {
     dispatch(getAllProjectsById(user.id)); // Fetch projects
   }
 
+useEffect(() => {
+  const getProject = async () => {
+    try { 
+      const res = await dispatch(getAllProjectsById(user.id));
+        console.log('res', res);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  // const res = dispatch(getAllProjectsById(user.id));
+  getProject();
+}, [dispatch, user.id]);
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
       const flatProjects = [
@@ -145,6 +157,11 @@ const GenerationPortfolio = () => {
       title: 'Connectivity',
       dataIndex: 'connectivity',
       key: 'connectivity',
+    },
+    {
+      title: 'Site Name',
+      dataIndex: 'site_name',
+      key: 'site_name',
     },
     {
       title: 'COD (Commercial Operation Date)',
@@ -302,6 +319,7 @@ const GenerationPortfolio = () => {
           <li>Find matching consumers for your portfolio.</li>
           <li>Select a consumer and optimize your best combination for the selected consumer.</li>
           <li>Track your progress in the dashboard.</li>
+          <li>Structure your offerings based on demand in Capacity Sizing</li>
         </ol>
       </Modal>
       <Modal

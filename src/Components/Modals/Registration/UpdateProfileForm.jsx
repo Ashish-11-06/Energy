@@ -400,6 +400,10 @@ const handleCloseWarningModal = () => {
             <Col span={24}>
               <h3>Upload Hourly Generation Data</h3>
               <Text type="secondary" style={{ marginBottom: "40px" }}>
+              Hourly generation data to be provided for available capacity.
+              </Text>
+             <br/>
+              <Text type="secondary" style={{ marginBottom: "40px"}}>
                 Please download the template, fill it with the hourly generation
                 data, and then upload it here.
               </Text>

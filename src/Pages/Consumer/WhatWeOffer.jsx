@@ -153,7 +153,7 @@ const WhatWeOffer = () => {
                   style={{
                     background: "white",
                   }}
-                  hoverable title="Total Capacity">
+                  hoverable title="Total Demand">
                   <Statistic
                     value={data.total_contracted_demand}
                     prefix={<LineChartOutlined />}

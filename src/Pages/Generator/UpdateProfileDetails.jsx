@@ -53,6 +53,11 @@ const UpdateProfileDetails = () => {
       key: 'state',
     },
     {
+      title: 'Site Name',
+      dataIndex: 'site_name',
+      key: 'site_name',
+    },
+    {
       title: 'Available Capacity',
       dataIndex: 'available_capacity',
       key: 'capacity',
@@ -132,7 +137,7 @@ const UpdateProfileDetails = () => {
 
   return (
     <div style={{ padding: "20px", fontFamily: "Inter, sans-serif" }}>
-      <h2>Look For Additional Details</h2>
+      <h2>Provide Additional Details</h2>
       <Paragraph>
         (Please Update all profile details of your projects to optimize the capacity.)
       </Paragraph>

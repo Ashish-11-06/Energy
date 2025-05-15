@@ -95,7 +95,8 @@ console.log('time_remaining',time_remaining);
   const user_category=user.user_category;
   const temp = user_category === 'Consumer' ? 'Matching IPP' : 'Find Consumer';
   const req=user_category === 'Consumer' ? 'Requirement' : 'Portfolio';
-  const reque=user_category === 'Consumer' ? 'Requirement' : 'Capacity Sizing';
+  const reque=user_category === 'Consumer' ? 'Requirement' : 'Send offers to Consumers';
+  const capa=user_category === 'Consumer' ? 'Requirement' : 'Capacity Sizing';
   // console.log(temp);
   
   
@@ -358,6 +359,7 @@ const companyName=userData[0]?.company;
                     alreadySubscribed === "PRO" || (alreadySubscribed === "LITE" && plan.subscription_type === "FREE")
                       ? "pointer"
                       : "default",
+                      // minHeight: "400px",
                 }}
                 onClick={() => {
                   if (
@@ -429,17 +431,20 @@ const companyName=userData[0]?.company;
                   <hr />
                 </div>
                 <Text className="price">
-                  {plan.subscription_type === "FREE" && plan.price === "0.00"
-                    ? "NIL"
-                    : `${Number(plan.price).toLocaleString("en-IN")}${plan.price !== 0 ? " INR" : ""}`}
-                </Text>
+  {plan.subscription_type === "FREE" && plan.price === "0.00"
+    ? "NIL"
+    : `${(Number(plan.price) / 100000)
+        .toFixed(Number(plan.price) % 100000 === 0 ? 0 : 1)
+        .replace(/\.0$/, "")} Lakh`}
+</Text>
+
                 {plan.subscription_type === "FREE" && alreadySubscribed === "FREE" ? (
                   <p style={{fontSize:'12px'}}>Time Remaining: <span style={{color:'red'}}>{time_remaining}</span> </p>
                 ) : (
                   null
                 )}
                 <p>
-                  <strong>Duration:</strong> {plan.duration_in_days} days
+                  <strong>Validity:</strong> {plan.duration_in_days} days
                 </p>
                 <ul
                   style={{
@@ -461,7 +466,8 @@ const companyName=userData[0]?.company;
                         <FormOutlined
                           style={{ marginRight: "10px", color: "#669800" }}
                         />{" "}
-                         {temp}
+                         {/* {temp} */}
+                         FREE Plan +
                         {/* {user_category=='Consumer' ?  (
                         <p>Matching IPP +</p>
                         ) : (<p>Matching Consumer</p>)
@@ -501,7 +507,7 @@ const companyName=userData[0]?.company;
                             marginRight: "4%",
                           }}
                         />{" "}
-                        Transaction window
+                        Finalize Transaction
                       </li>
                     </>
                   )}
@@ -523,7 +529,7 @@ const companyName=userData[0]?.company;
                             marginRight: "4%",
                           }}
                         />{" "}
-                        Dashboard Analytics
+                        Lite Plan +
                       </li>
                       <li
                         style={{
@@ -541,7 +547,25 @@ const companyName=userData[0]?.company;
                             marginRight: "4%",
                           }}
                         />{" "}
-                        Advisory Support
+                        {capa}
+                      </li>
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <img
+                          src={powerX}
+                          alt=""
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            marginRight: "4%",
+                          }}
+                        />{" "}
+                        Dashboard Analytics
                       </li>
                       <li
                         style={{
@@ -623,7 +647,7 @@ const companyName=userData[0]?.company;
                             marginRight: "4%",
                           }}
                         />{" "}
-                        Model Optimization
+                       Create optimized offering
                       </li>
                     </>
                   )}

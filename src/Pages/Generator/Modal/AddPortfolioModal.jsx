@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select, message, Tooltip } from 'antd';
+import { Modal, Form, InputNumber, Button, DatePicker, Row, Col, Select, message, Tooltip, Input } from 'antd';
 import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { addProject, updateProject } from '../../../Redux/Slices/Generator/portfolioSlice';
@@ -25,6 +25,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
+      console.log('values:', values);    
       if (values.cod) {
         values.cod = dayjs(values.cod).format('YYYY-MM-DD');
       }
@@ -85,6 +86,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
           energy_type: data?.type,
           state: data.state,
           connectivity: data.connectivity,
+          site_name: data.site_name,
           total_install_capacity: data.total_install_capacity,
           available_capacity: data.available_capacity,
           cod: data.cod ? dayjs(data.cod) : null,
@@ -184,6 +186,24 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
               </Select>
             </Form.Item>
           </Col>
+          <Col span={12}>
+          <Form.Item
+              label={
+                <span>
+                  Site Name&nbsp;
+                  <Tooltip title="Name of the site  where the electricity is being generated.">
+                    <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
+                  </Tooltip>
+                </span>
+              }
+              name="site_name"
+              rules={[{ required: true, message: 'Please enter site name!' }]} >
+              <Input
+                type="text"
+                placeholder="Enter site name"
+              />
+            </Form.Item>
+          </Col>
         </Row>
 
         <Row gutter={16}>
@@ -191,8 +211,8 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
             <Form.Item
               label={
                 <span>
-                  Total Install Capacity (in {unit})&nbsp;
-                  <Tooltip title="Enter the total installed capacity of the project in megawatts.">
+                AC Install Capacity (in {unit})&nbsp;
+                  <Tooltip title="The total installed AC capacity of the project in Megawats.">
                     <InfoCircleOutlined style={{ color: "#999", marginLeft: 4 }} />
                   </Tooltip>
                 </span>

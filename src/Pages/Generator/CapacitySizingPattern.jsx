@@ -118,6 +118,7 @@ const CombinationPatternCap = () => {
 
       };
     });
+console.log('formattedCombinations', formattedCombinations);
 
     setDataSource(formattedCombinations);
   };
@@ -209,6 +210,7 @@ const CombinationPatternCap = () => {
                 : [],
 
             }));
+            console.log('formattedData', formattedData);
             setDataSource(formattedData); // Set the formatted data in the table
           } else {
             message.error("No combinations found. Please check your input.");
@@ -228,18 +230,38 @@ const CombinationPatternCap = () => {
     fetchCombinations();
   }, [state?.modalData]);
 
+console.log('data source',dataSource);
+
+
   const onDownload = async (record) => {
- 
+    try {
       loadingRef.current = record.key; // Set current loading key (no re-render)
 
       console.log("Download button clicked for record:", record.key);
       console.log("record", record);
-      console.log("loadingRef", loadingRef.current);
-     
-      await handleDownloadExcel(record);
 
+      // Ensure all required fields are present in the record
+      const enrichedRecord = {
+        ...record,
+        curtailmentArray: record.curtailmentArray || [],
+        demandArray: record.demandArray || [],
+        generationArray: record.generationArray || [],
+        demandMetArray: record.demandMetArray || [],
+        solarAllocationArray: record.solarAllocationArray || [],
+        totalDemandMetByAllocationArray: record.totalDemandMetByAllocationArray || [],
+        unmetDemandArray: record.unmetDemandArray || [],
+        windAllocationArray: record.windAllocationArray || [],
+      };
+
+      console.log("Enriched record for download:", enrichedRecord);
+
+      await handleDownloadExcel(enrichedRecord); // Pass enriched record to the download function
+    } catch (error) {
+      console.error("Error during download:", error);
+      message.error("Failed to download data.");
+    } finally {
       loadingRef.current = null;
-   
+    }
   };
 
   const handleSaveConfirm = async () => {
@@ -324,8 +346,41 @@ const CombinationPatternCap = () => {
           finalCost: value["Final Cost"]?.toFixed(2) || "N/A",
           annualCurtailment: value['Annual Curtailment'] || 0,
           annualDemandMet: value['Annual Demand Met'] || 0,
-          annualDemandOffeset: value['Annual Demand Offset'] || 0
+          annualDemandOffeset: value['Annual Demand Offset'] || 0,
+          curtailmentArray: Array.isArray(value["Curtailment"])
+          ? value["Curtailment"]
+          : [],
+
+        demandArray: Array.isArray(value["Demand"])
+          ? value["Demand"]
+          : [],
+
+        generationArray: Array.isArray(value["Generation"])
+          ? value["Generation"]
+          : [],
+
+        demandMetArray: Array.isArray(value["Demand met"])
+          ? value["Demand met"]
+          : [],
+
+        solarAllocationArray: Array.isArray(value["Solar Allocation"])
+          ? value["Solar Allocation"]
+          : [],
+
+        totalDemandMetByAllocationArray: Array.isArray(value["Total Demand met by allocation"])
+          ? value["Total Demand met by allocation"]
+          : [],
+
+        unmetDemandArray: Array.isArray(value["Unmet demand"])
+          ? value["Unmet demand"]
+          : [],
+
+        windAllocationArray: Array.isArray(value["Wind Allocation"])
+          ? value["Wind Allocation"]
+          : [],
+
         }));
+        console.log('formattedData 332', formattedData);
         setDataSource(formattedData); // Set the formatted data in the table
       } else {
         message.error("No combinations found. Please check your input.");
@@ -376,16 +431,16 @@ const CombinationPatternCap = () => {
       dataIndex: "perUnitCost",
       key: "perUnitCost",
     },
-    {
-      title: "OA Cost (INR/kWh)", // New column for OA Cost
-      dataIndex: "oaCost",
-      key: "oaCost",
-    },
-    {
-      title: "Final Cost (INR/kWh)",
-      dataIndex: "finalCost",
-      key: "finalCost",
-    },
+    // {
+    //   title: "OA Cost (INR/kWh)", // New column for OA Cost
+    //   dataIndex: "oaCost",
+    //   key: "oaCost",
+    // },
+    // {
+    //   title: "Final Cost (INR/kWh)",
+    //   dataIndex: "finalCost",
+    //   key: "finalCost",
+    // },
     {
       title: 'Annual Demand Offset(%)',
       dataIndex: 'annualDemandOffeset',
