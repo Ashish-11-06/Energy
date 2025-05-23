@@ -29,6 +29,9 @@ const { Title, Text } = Typography;
 const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorCloseModal, lastUploadedFile, updateLastUploadedFile }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
+console.log('project',project);
+// console.log('form',form);
+
 
   const project_type = project.type;
   const solar_template_downloaded = user.solar_template_downloaded;
@@ -66,6 +69,17 @@ const [warningModal, setWarningModal] = useState(false); // State to control tup
     }
   }, [selectedProject.type, fileData, file]);
 
+const handleResubmit =async () => {
+  setWarningModal(false);
+  const data={
+    energy_type: selectedProject.type,
+    updated:"False",
+    id: selectedProject.id,
+  }
+  console.log('resubmit data',data);
+  const res=await dispatch(updateProject(data)).unwrap();
+  console.log('res',res);
+}
   // Function to download Excel template
   const downloadExcelTemplate = () => {
     const wb = XLSX.utils.book_new();
@@ -129,7 +143,71 @@ const [warningModal, setWarningModal] = useState(false); // State to control tup
 
   const handleFileUpload = (file) => {
     const reader = new FileReader();
-    reader.onloadend = () => {
+      reader.onloadend = () => {
+      // Check if file is empty (base64 check)
+      const data = reader.result;
+      const base64 = data ? data.split(",")[1] : "";
+      if (!base64 || base64.length < 50) {
+        message.error("The uploaded file is empty. Please upload a valid file.");
+        setFileData(null);
+        setFile("");
+        continueButtonRef.current = false;
+        return;
+      }
+
+      // Parse Excel and validate rows/columns
+      try {
+        const workbook = XLSX.read(data, { type: "base64" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+
+        // Use defval: "" to ensure empty cells are included, and range to force full row count
+        let range = XLSX.utils.decode_range(worksheet['!ref']);
+        range.e.r = 8760; // force 8761 rows (0-based)
+        worksheet['!ref'] = XLSX.utils.encode_range(range);
+
+        let rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: "" });
+
+        // Debug: log the first few rows and the length
+        // console.log("Rows length:", rows.length, "First row:", rows[0], "Second row:", rows[1]);
+
+        //remove comment
+        // if (rows.length < 8761) {
+        //   message.error(`File must have at least 8761 rows (1 header + 8760 data rows). Found: ${rows.length}. Please check your file for missing or empty rows.`);
+        //   setFileData(null);
+        //   setFile("");
+        //   continueButtonRef.current = false;
+        //   return;
+        // }
+
+        // // Accept 0 and "" as valid, only reject if value is null or undefined
+        // for (let i = 1; i < 8761; i++) {
+        //   const row = rows[i];
+        //   if (
+        //     (!Array.isArray(row) && typeof row !== "object") ||
+        //     (Array.isArray(row) && row.length < 2) ||
+        //     (Array.isArray(row)
+        //       ? (row[0] === null || row[0] === undefined)
+        //       : (row["0"] === null || row["0"] === undefined)) ||
+        //     (Array.isArray(row)
+        //       ? (row[1] === null || row[1] === undefined)
+        //       : (row["1"] === null || row["1"] === undefined))
+        //   ) {
+        //     message.error(`Row ${i + 1} is incomplete. Please fill all values in columns A and B.`);
+        //     setFileData(null);
+        //     setFile("");
+        //     continueButtonRef.current = false;
+        //     return;
+        //   }
+        // }
+      } catch (e) {
+        message.error("Failed to read the Excel file. Please upload a valid file.");
+        setFileData(null);
+        setFile("");
+        continueButtonRef.current = false;
+        return;
+      }
+
       setFileData(reader.result);
       setFile(file);
 
@@ -509,7 +587,7 @@ const handleCloseWarningModal = () => {
         >
           Proceed
         </Button>
-        <Button type="primary" onClick={() => setWarningModal(false)} style={{ marginTop: "16px",marginLeft: "10px" }}>
+        <Button type="primary" onClick={handleResubmit} style={{ marginTop: "16px",marginLeft: "10px" }}>
           Resubmit
         </Button>
 

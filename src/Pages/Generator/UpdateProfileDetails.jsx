@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Typography, Table, Button, Modal, Form, Progress } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -53,10 +54,11 @@ const UpdateProfileDetails = () => {
       key: 'state',
     },
     {
-      title: 'Site Name',
-      dataIndex: 'site_name',
-      key: 'site_name',
-    },
+  title: 'Site Name',
+  dataIndex: 'site_name',
+  key: 'site_name',
+  render: (text) => text ? text : 'NA',
+},
     {
       title: 'Available Capacity',
       dataIndex: 'available_capacity',
@@ -74,7 +76,7 @@ const UpdateProfileDetails = () => {
     
         return (
           <div style={{ textAlign: 'center' }}>
-        <p>Updated: {text.toString()}</p>
+        {/* <p>Updated: {text.toString()}</p> */}
             <Progress
               percent={progressValue}
               status={progressValue === 100 ? 'active' : 50}
