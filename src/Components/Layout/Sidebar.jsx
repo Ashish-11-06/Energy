@@ -194,7 +194,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               height: '70px',
             }}
           >
-<p style={{ color: '#669800' }}><span style={{fontSize:'bold'}}>{company.toUpperCase()}</span></p>
+{/* <p style={{ color: '#669800' }}><span style={{fontSize:'bold'}}>{company.toUpperCase()}</span></p> */}
 {/* <p style={{marginTop:'8%', marginLeft:'-100px'}}> Menu  </p> */}
            
           </div>
