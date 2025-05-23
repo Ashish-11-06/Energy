@@ -143,7 +143,7 @@ const handleResubmit =async () => {
 
   const handleFileUpload = (file) => {
     const reader = new FileReader();
-      reader.onloadend = () => {
+    reader.onloadend = () => {
       // Check if file is empty (base64 check)
       const data = reader.result;
       const base64 = data ? data.split(",")[1] : "";
@@ -160,46 +160,33 @@ const handleResubmit =async () => {
         const workbook = XLSX.read(data, { type: "base64" });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false });
 
-        // Use defval: "" to ensure empty cells are included, and range to force full row count
-        let range = XLSX.utils.decode_range(worksheet['!ref']);
-        range.e.r = 8760; // force 8761 rows (0-based)
-        worksheet['!ref'] = XLSX.utils.encode_range(range);
+        // rows[0] is header, so data rows = rows.length - 1
+        if (rows.length !== 8761) {
+          message.error("Cannot upload an empty file. Please select a valid one.");
+          setFileData(null);
+          setFile("");
+          continueButtonRef.current = false;
+          return;
+        }
 
-        let rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: "" });
-
-        // Debug: log the first few rows and the length
-        // console.log("Rows length:", rows.length, "First row:", rows[0], "Second row:", rows[1]);
-
-        //remove comment
-        // if (rows.length < 8761) {
-        //   message.error(`File must have at least 8761 rows (1 header + 8760 data rows). Found: ${rows.length}. Please check your file for missing or empty rows.`);
-        //   setFileData(null);
-        //   setFile("");
-        //   continueButtonRef.current = false;
-        //   return;
-        // }
-
-        // // Accept 0 and "" as valid, only reject if value is null or undefined
-        // for (let i = 1; i < 8761; i++) {
-        //   const row = rows[i];
-        //   if (
-        //     (!Array.isArray(row) && typeof row !== "object") ||
-        //     (Array.isArray(row) && row.length < 2) ||
-        //     (Array.isArray(row)
-        //       ? (row[0] === null || row[0] === undefined)
-        //       : (row["0"] === null || row["0"] === undefined)) ||
-        //     (Array.isArray(row)
-        //       ? (row[1] === null || row[1] === undefined)
-        //       : (row["1"] === null || row["1"] === undefined))
-        //   ) {
-        //     message.error(`Row ${i + 1} is incomplete. Please fill all values in columns A and B.`);
-        //     setFileData(null);
-        //     setFile("");
-        //     continueButtonRef.current = false;
-        //     return;
-        //   }
-        // }
+        // Check that all rows (except header) have both columns A and B filled
+        for (let i = 1; i < rows.length; i++) {
+          const row = rows[i];
+          if (
+            row === undefined ||
+            row.length < 2 ||
+            row[0] === undefined || row[0] === "" ||
+            row[1] === undefined || row[1] === ""
+          ) {
+            message.error(`Row ${i + 1} is incomplete. Please fill all values in columns A and B.`);
+            setFileData(null);
+            setFile("");
+            continueButtonRef.current = false;
+            return;
+          }
+        }
       } catch (e) {
         message.error("Failed to read the Excel file. Please upload a valid file.");
         setFileData(null);

@@ -359,7 +359,11 @@ const companyName=userData[0]?.company;
                     alreadySubscribed === "PRO" || (alreadySubscribed === "LITE" && plan.subscription_type === "FREE")
                       ? "pointer"
                       : "default",
-                      // minHeight: "400px",
+                      minHeight: "320px", // Set a fixed minHeight for all cards
+                      height: "320px",    // Set a fixed height for all cards
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
                 }}
                 onClick={() => {
                   if (

@@ -518,13 +518,13 @@ const vcolumns = [
       "Annual Evening peak hours consumption (MWh)",
       "Energy consumption during off-peak hours in megawatt-hours."
     ),
-    dataIndex: "morningPeakEnd",
-    key: "morningPeakEnd",
+    dataIndex: "eveningPeakHourConsumption",
+    key: "eveningPeakHourConsumption",
     editable: true,
     render: (_, record) => (
       <EditableCell
-        value={record.morningPeakEnd}
-        onChange={(value) => handleInputChange(value, record.key, "morningPeakEnd")}
+        value={record.eveningPeakHourConsumption}
+        onChange={(value) => handleInputChange(value, record.key, "eveningPeakHourConsumption")}
         onBlur={() => {}}
       />
     ),
