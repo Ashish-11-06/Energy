@@ -594,11 +594,11 @@ const vcolumns = [
               {/* <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
               {"OR"}
               </Col> */}
-              <Col span={10} style={{ display: "flex", justifyContent: "flex-start" }}>  
+              {/* <Col span={10} style={{ display: "flex", justifyContent: "flex-start" }}>  
               <Tooltip title="Add details manually">
               <Button onClick={handleDetails}>Add Details</Button>
               </Tooltip>
-              </Col>
+              </Col> */}
 
             {/* </div> */}
             {uploadedFileName && <div style={{ margin: "10px", color: 'GrayText' }}>Uploaded File: {uploadedFileName}</div>}

@@ -163,30 +163,30 @@ const handleResubmit =async () => {
         const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false });
 
         // rows[0] is header, so data rows = rows.length - 1
-        if (rows.length !== 8761) {
-          message.error("Cannot upload an empty file. Please select a valid one.");
-          setFileData(null);
-          setFile("");
-          continueButtonRef.current = false;
-          return;
-        }
+        // if (rows.length !== 8761) {
+        //   message.error("Cannot upload an empty file. Please select a valid one.");
+        //   setFileData(null);
+        //   setFile("");
+        //   continueButtonRef.current = false;
+        //   return;
+        // }
 
-        // Check that all rows (except header) have both columns A and B filled
-        for (let i = 1; i < rows.length; i++) {
-          const row = rows[i];
-          if (
-            row === undefined ||
-            row.length < 2 ||
-            row[0] === undefined || row[0] === "" ||
-            row[1] === undefined || row[1] === ""
-          ) {
-            message.error(`Row ${i + 1} is incomplete. Please fill all values in columns A and B.`);
-            setFileData(null);
-            setFile("");
-            continueButtonRef.current = false;
-            return;
-          }
-        }
+        // // Check that all rows (except header) have both columns A and B filled
+        // for (let i = 1; i < rows.length; i++) {
+        //   const row = rows[i];
+        //   if (
+        //     row === undefined ||
+        //     row.length < 2 ||
+        //     row[0] === undefined || row[0] === "" ||
+        //     row[1] === undefined || row[1] === ""
+        //   ) {
+        //     message.error(`Row ${i + 1} is incomplete. Please fill all values in columns A and B.`);
+        //     setFileData(null);
+        //     setFile("");
+        //     continueButtonRef.current = false;
+        //     return;
+        //   }
+        // }
       } catch (e) {
         message.error("Failed to read the Excel file. Please upload a valid file.");
         setFileData(null);
