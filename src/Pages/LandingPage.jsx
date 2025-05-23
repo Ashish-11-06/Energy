@@ -37,8 +37,9 @@ const LandingPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log('LandingPage mounted llklk');
     dispatch(resetState());
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     const text = "Welcome to Energy Transition (EXT) Platform";

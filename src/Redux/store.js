@@ -1,56 +1,62 @@
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import loginReducer from './Slices/loginSlice'; // Import the loginReducer
-import consumerRequirementReducer from './Slices/Consumer/consumerRequirementSlice'; // Import the consumerRequirementReducer
-import portfolioReducer from './Slices/Generator/portfolioSlice'; // Import the portfolioReducer
-import matchingConsumerReducer from './Slices/Generator/matchingConsumerSlice'; // Import the matchingConsumerReducer
-import optimizeCapacityReducer from './Slices/Generator/optimizeCapacitySlice'; // Import the optimizeCapacityReducer
-import consumptionPatternReducer from './Slices/Generator/ConsumptionPatternSlice'; // Import the consumptionPatternReducer
-import termsAndConditionsReducer from './Slices/Generator/TermsAndConditionsSlice'; // Import the termsAndConditionsReducer
+import { configureStore, createSlice, combineReducers } from '@reduxjs/toolkit';
+import loginReducer from './Slices/loginSlice';
+import consumerRequirementReducer from './Slices/Consumer/consumerRequirementSlice';
+import portfolioReducer from './Slices/Generator/portfolioSlice';
+import matchingConsumerReducer from './Slices/Generator/matchingConsumerSlice';
+import optimizeCapacityReducer from './Slices/Generator/optimizeCapacitySlice';
+import consumptionPatternReducer from './Slices/Generator/ConsumptionPatternSlice';
+import termsAndConditionsReducer from './Slices/Generator/TermsAndConditionsSlice';
 import matchingIPPSlice from './Slices/Consumer/matchingIPPSlice';
 import monthlyDataReducer from './Slices/Consumer/monthlyConsumptionSlice';
-import paymentReducer from './Slices/Consumer/paymentSlice'; // Import the paymentReducer
+import paymentReducer from './Slices/Consumer/paymentSlice';
 import industry from './Slices/Consumer/industrySlice';
 import states from './Slices/Consumer/stateSlice';
 import Notifications from './Slices/notificationSlice';
-import capacitySizingReducer from './Slices/Generator/capacitySizingSlice'; // Import the capacitySizingReducer
+import capacitySizingReducer from './Slices/Generator/capacitySizingSlice';
 
-// Define the initial state for the app
-const initialState = {};
-
-// Create a slice for resetting the state
+// Create app slice for the resetState action
 const appSlice = createSlice({
   name: 'app',
-  initialState,
+  initialState: {},
   reducers: {
-    resetState: () => initialState, // Reset the state to the initial value
+    resetState: () => ({}), // just for triggering reset
   },
 });
-
-// Export the resetState action
 export const { resetState } = appSlice.actions;
 
-// Configure the store
+// Combine all reducers
+const combinedReducer = combineReducers({
+  app: appSlice.reducer,
+  login: loginReducer,
+  consumerRequirement: consumerRequirementReducer,
+  portfolio: portfolioReducer,
+  matchingConsumer: matchingConsumerReducer,
+  optimizedCapacity: optimizeCapacityReducer,
+  consumptionPattern: consumptionPatternReducer,
+  termsAndConditions: termsAndConditionsReducer,
+  matchingIPP: matchingIPPSlice,
+  monthlyData: monthlyDataReducer,
+  payment: paymentReducer,
+  industry: industry,
+  states: states,
+  notifications: Notifications,
+  capacitySizing: capacitySizingReducer,
+});
+
+// Root reducer to handle reset
+const rootReducer = (state, action) => {
+  if (action.type === resetState.type) {
+    state = undefined; // Resets entire store to initial states of each slice
+  }
+  return combinedReducer(state, action);
+};
+
+// Configure store
 export const store = configureStore({
-  reducer: {
-    app: appSlice.reducer, // Add appSlice to the store
-    login: loginReducer, // Add loginReducer to the store
-    consumerRequirement: consumerRequirementReducer, // Add consumerRequirementReducer to the store
-    portfolio: portfolioReducer, // Add portfolioReducer to the store
-    matchingConsumer: matchingConsumerReducer, // Add matchingConsumerReducer to the store
-    optimizedCapacity: optimizeCapacityReducer, // Add optimizeCapacityReducer to the store
-    consumptionPattern: consumptionPatternReducer, // Add consumptionPatternReducer to the store
-    termsAndConditions: termsAndConditionsReducer, // Add termsAndConditionsReducer to the store
-    matchingIPP: matchingIPPSlice,
-    monthlyData: monthlyDataReducer,
-    payment: paymentReducer,
-    industry: industry,
-    states: states,
-    notifications: Notifications,
-    capacitySizing: capacitySizingReducer,
-  },
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Disable serializable check for non-serializable values
+      serializableCheck: false,
     }),
 });
 
