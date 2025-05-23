@@ -29,6 +29,7 @@ import {
 } from "@ant-design/icons";
 import { data, useLocation, useNavigate } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
+const { Option } = Select;
 
 import {
   addConsumption,
@@ -299,6 +300,8 @@ const EnergyConsumptionTable = () => {
   useEffect(() => {
     //   console.log(monthlyData);
     if (monthlyData.length > 0) {
+      console.log("length of monthly data : ",monthlyData.length)
+      console.log("data source at montthly : ",dataSource)
       const updatedDataSource = dataSource.map((item) => {
         const data = monthlyData.find((data) => data.month === item.month);
         return data
@@ -311,8 +314,11 @@ const EnergyConsumptionTable = () => {
           }
           : item;
       });
+      console.log('updated',updatedDataSource);
       setDataSource(updatedDataSource);
-      // console.log(updatedDataSource);
+      if (monthlyData.length > 1) {
+        setShowTable(true);
+      }
     }
   }, [monthlyData]);
 
@@ -366,6 +372,8 @@ const EnergyConsumptionTable = () => {
         offPeakConsumption: null,
         monthlyBill: null,
       });
+      console.log('newData',newData);
+      
       setDataSource(newData);
       message.success(`${file.name} uploaded successfully`);
       setUploadMonthlyFile(file.name);
@@ -452,24 +460,6 @@ const EnergyConsumptionTable = () => {
     }
   };
 
-  useEffect(() => {
-    if (saveSuccess) {
-      const timer = setTimeout(() => {
-        setSaveSuccess(false);
-      }, 3000); // Hide success message after 5 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [saveSuccess]);
-
-  useEffect(() => {
-    if (saveError) {
-      const timer = setTimeout(() => {
-        setSaveError(false);
-      }, 3000); // Hide error message after 5 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [saveError]);
-
   const handleFillBelow = (dataIndex) => {
     const newData = [...dataSource];
     const firstValue = newData[0][dataIndex];
@@ -478,6 +468,8 @@ const EnergyConsumptionTable = () => {
         item[dataIndex] = firstValue;
       }
     });
+    console.log('fill below fun',newData);
+    
     setDataSource(newData);
   };
 
