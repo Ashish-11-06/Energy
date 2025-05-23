@@ -158,11 +158,13 @@ useEffect(() => {
       dataIndex: 'connectivity',
       key: 'connectivity',
     },
-    {
-      title: 'Site Name',
-      dataIndex: 'site_name',
-      key: 'site_name',
-    },
+  {
+  title: 'Site Name',
+  dataIndex: 'site_name',
+  key: 'site_name',
+  render: (text) => text ? text : 'NA',
+}
+,
     {
       title: 'COD (Commercial Operation Date)',
       dataIndex: 'cod',

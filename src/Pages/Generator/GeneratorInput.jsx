@@ -56,11 +56,21 @@ const GeneratorInput = () => {
     dispatch(getAllProjectsById(user.id));
   }
 const [annual_curtailment_limits, setAnnualCurtailmentLimits] = useState(35);
-  const handleRecordCheck = (recordId, isChecked) => {
-    setCheckPortfolio((prev) =>
-      isChecked ? [...prev, recordId] : prev.filter((id) => id !== recordId)
-    );
+  const handleRecordCheck = (recordId, recordType, isChecked) => {
+    setCheckPortfolio((prev) => {
+      const exists = prev.some(item => item.id === recordId && item.type === recordType);
+      if (isChecked && !exists) {
+        return [...prev, { id: recordId, type: recordType }];
+      } else if (!isChecked && exists) {
+        return prev.filter(item => !(item.id === recordId && item.type === recordType));
+      }
+      return prev;
+    });
   };
+
+  console.log("checkPortfolio", checkPortfolio);
+  console.log("structuredProjects", Structuredprojects);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -170,7 +180,8 @@ const [annual_curtailment_limits, setAnnualCurtailmentLimits] = useState(35);
       key: "select",
       render: (text, record) => (
         <Checkbox
-          onChange={(e) => handleRecordCheck(record.id, e.target.checked)}
+          onChange={(e) => handleRecordCheck(record.id, record.type, e.target.checked)}
+          checked={checkPortfolio.some(item => item.id === record.id && item.type === record.type)}
         />
       ),
     },
@@ -280,24 +291,32 @@ const [annual_curtailment_limits, setAnnualCurtailmentLimits] = useState(35);
   const handleModalOk = () => {
     setIsModalVisible(false);
 
-    const solarPortfolio = Structuredprojects.filter(
-      (p) => p.type === "Solar" && checkPortfolio.includes(p.id)
-    ).map((p) => p.id);
-    const windPortfolio = Structuredprojects.filter(
-      (p) => p.type === "Wind" && checkPortfolio.includes(p.id)
-    ).map((p) => p.id);
-    const essPortfolio = Structuredprojects.filter(
-      (p) => p.type === "ESS" && checkPortfolio.includes(p.id)
-    ).map((p) => p.id);
+    // Filter by both id and type to avoid mismatches
+    const solarPortfolio = Structuredprojects
+      .filter((p) => p.type === "Solar" && checkPortfolio.some(sel => sel.id === p.id && sel.type === "Solar"))
+      .map((p) => p.id);
+    const windPortfolio = Structuredprojects
+      .filter((p) => p.type === "Wind" && checkPortfolio.some(sel => sel.id === p.id && sel.type === "Wind"))
+      .map((p) => p.id);
+    const essPortfolio = Structuredprojects
+      .filter((p) => p.type === "ESS" && checkPortfolio.some(sel => sel.id === p.id && sel.type === "ESS"))
+      .map((p) => p.id);
 
+    console.log("solarPortfolio", solarPortfolio);
+    console.log("windPortfolio", windPortfolio);
+    console.log("essPortfolio", essPortfolio);
+
+    // Always include all portfolios, even if empty
     const modalData = {
       user_id: user_id,
       solar_portfolio: solarPortfolio,
       wind_portfolio: windPortfolio,
       ess_portfolio: essPortfolio,
       csv_file: base64CSVFile,
-      ...curtailmentInputs, // Include additional inputs
+      ...curtailmentInputs,
     };
+
+    console.log("modalData", modalData);
 
     navigate("/generator/capacity-sizing-pattern", { state: { modalData } }); // Pass modalData to the next page
   };
