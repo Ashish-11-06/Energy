@@ -359,11 +359,13 @@ const companyName=userData[0]?.company;
                     alreadySubscribed === "PRO" || (alreadySubscribed === "LITE" && plan.subscription_type === "FREE")
                       ? "pointer"
                       : "default",
-                      minHeight: "320px", // Set a fixed minHeight for all cards
-                      height: "320px",    // Set a fixed height for all cards
+                      minHeight: "370px", // Increased height for button space
+                      height: "370px",
                       display: "flex",
                       flexDirection: "column",
-                      justifyContent: "space-between",
+                      justifyContent: "flex-start",
+                      alignItems: "stretch",
+                      position: "relative",
                 }}
                 onClick={() => {
                   if (
@@ -373,41 +375,6 @@ const companyName=userData[0]?.company;
                     handleSelectPlan(plan.id, plan);
                   }
                 }}
-                actions={[
-                  alreadySubscribed === plan.subscription_type ? (
-                    <Button
-                      disabled
-                      style={{
-                        fontSize: "14px",
-                        height: "17px",
-                        width: "160px",
-                      }}
-                    >
-                      Active Subscription
-                    </Button>
-                  ) : alreadySubscribed === "PRO" || (alreadySubscribed === "LITE" && plan.subscription_type === "FREE") ? (
-                    <Button
-                      disabled
-                      style={{
-                        fontSize: "14px",
-                        height: "17px",
-                        width: "160px",
-                      }}
-                    >
-                      Closed
-                    </Button>
-                  ) : (
-                    <Button
-                      type="primary"
-                      block
-                      size="small"
-                      style={{ width: "160px", fontSize: "16px" }}
-                      onClick={() => handleSelectPlan(plan.id, plan)}
-                    >
-                      Select Plan
-                    </Button>
-                  ),
-                ]}
               >
                 <div
                   style={{
@@ -439,7 +406,7 @@ const companyName=userData[0]?.company;
     ? "NIL"
     : `${(Number(plan.price) / 100000)
         .toFixed(Number(plan.price) % 100000 === 0 ? 0 : 1)
-        .replace(/\.0$/, "")} Lakh`}
+        .replace(/\.0$/, "")} Lakh INR`}
 </Text>
 
                 {plan.subscription_type === "FREE" && alreadySubscribed === "FREE" ? (
@@ -656,6 +623,64 @@ const companyName=userData[0]?.company;
                     </>
                   )}
                 </ul>
+                {/* Remove horizontal line above the actions field */}
+                <div style={{
+                  marginTop: 0,
+                  paddingTop: 16,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "flex-end",
+                  minHeight: "40px",
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  bottom: 20,
+                }}>
+                  {alreadySubscribed === plan.subscription_type ? (
+                    <Button
+                      disabled
+                      style={{
+                        fontSize: "14px",
+                        height: "32px",
+                        width: "160px",
+                        background: "#e6f4ea",
+                        color: "#669800",
+                        border: "1px solid #b7eb8f",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Active Subscription
+                    </Button>
+                  ) : alreadySubscribed === "PRO" || (alreadySubscribed === "LITE" && plan.subscription_type === "FREE") ? (
+                    <Button
+                      disabled
+                      style={{
+                        fontSize: "14px",
+                        height: "32px",
+                        width: "160px",
+                        background: "#f5f5f5",
+                        color: "#888",
+                        border: "1px solid #d9d9d9",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Closed
+                    </Button>
+                  ) : (
+                    <Button
+                      type="primary"
+                      block
+                      size="middle"
+                      style={{ width: "160px", fontSize: "16px", fontWeight: "bold" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectPlan(plan.id, plan);
+                      }}
+                    >
+                      Select Plan
+                    </Button>
+                  )}
+                </div>
               </Card>
             </Col>
           ))

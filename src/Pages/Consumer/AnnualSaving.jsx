@@ -350,18 +350,18 @@ const AnnualSvg = () => {
                           Potential Savings
                         </Text>
                       </Col>
-                      <Col xs={24} sm={12}>
-                        <Text style={{ fontSize: "16px" }}>
-                          :{" "}
-                          {annualSavingResponse &&
-                          annualSavingResponse.annual_savings
-                            ? (
-                                annualSavingResponse.annual_savings / 10000000
-                              ).toLocaleString("en-IN")
-                            : "N/A"}
-                          <span style={{ fontSize: "12px" }}> Cr </span>
-                        </Text>
-                      </Col>
+<Col xs={24} sm={12}>
+  <Text style={{ fontSize: "16px" }}>
+    :{" "}
+    {annualSavingResponse && annualSavingResponse.annual_savings
+      ? `${(annualSavingResponse.annual_savings / 10000000).toFixed(2)}`
+      : "N/A"}
+    {annualSavingResponse && annualSavingResponse.annual_savings && (
+      <span style={{ fontSize: "12px" }}> Cr INR</span>
+    )}
+  </Text>
+</Col>
+
 
                       <Col xs={24} sm={12}>
                         <Text strong style={{ fontSize: "14px" }}>

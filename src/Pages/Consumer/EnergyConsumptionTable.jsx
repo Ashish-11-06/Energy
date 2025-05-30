@@ -112,7 +112,7 @@ const EnergyConsumptionTable = () => {
       "Monthly Consumption",
       "Peak Consumption (MWh)",
       "Off Peak Consumption (MWh)",
-      "Monthly Bill Amount (INR Cr)"
+      "Monthly Bill Amount (INR lakhs)"
     ];
   
     const months = [
@@ -773,7 +773,7 @@ const EnergyConsumptionTable = () => {
             </span>
 
             <Row style={{ color: 'GrayText' }}>
-              <p >(Note: Go with one of the following option to proceed
+              <p >Note: Go with one of the following option to proceed
 
                 <ol style={{ marginTop: 0 }}>
                   <li>
@@ -795,7 +795,7 @@ const EnergyConsumptionTable = () => {
 
                   <li>
                     <strong>Upload SCADA File:</strong> For more accurate data, you can
-                    upload a SCADA file with 15-minute interval dumps.)
+                    upload a SCADA file with 15-minute interval dumps.
                   </li>
                 </ol></p>
             </Row>

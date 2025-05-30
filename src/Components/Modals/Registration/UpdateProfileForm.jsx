@@ -364,16 +364,16 @@ const handleCloseWarningModal = () => {
 
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item
-            name="capital_cost"
-            label="Capital Cost (INR/MWh)"
-            rules={[
-              {
-                required: type === "ESS",
-                message: "Please input the capital cost!",
-              },
-            ]}
-          >
+        <Form.Item
+  name="capital_cost"
+  label="Capital Cost (INR cr/MW)"
+  rules={[
+    {
+      required: type === "ESS", // conditionally required
+      message: "Please input the capital cost!",
+    },
+  ]}
+>
             <Input />
           </Form.Item>
         </Col>

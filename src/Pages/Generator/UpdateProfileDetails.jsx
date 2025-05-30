@@ -124,7 +124,7 @@ const UpdateProfileDetails = () => {
     setIsModalVisible(false);
   };
 
-  const allUpdated = structuredProjects.every(item => item.updated);
+  const allUpdated = structuredProjects.some(item => item.updated);
 
   const handleProceed = () => {
     navigate('/generator/combination-pattern', { state: { selectedConsumer } });

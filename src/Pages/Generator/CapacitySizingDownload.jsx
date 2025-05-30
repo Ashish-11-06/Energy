@@ -1,5 +1,6 @@
 import html2pdf from 'html2pdf.js';
-import * as XLSX from 'xlsx';
+// import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 
 export const handleDownloadPdf = (record) => {
   const container = document.createElement("div");
@@ -187,12 +188,48 @@ function generateSummaryRow(label, dataArray) {
 
 
 
+
+const applyStylesToSheet = (ws) => {
+  const range = XLSX.utils.decode_range(ws['!ref']);
+
+  for (let R = range.s.r; R <= range.e.r; ++R) {
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+      const cell = ws[cellAddress];
+      if (cell) {
+        // Initialize style object if not present
+        if (!cell.s) cell.s = {};
+
+        // Apply border and alignment styles
+        cell.s.border = {
+          top: { style: "thin", color: { rgb: "000000" } },
+          bottom: { style: "thin", color: { rgb: "000000" } },
+          left: { style: "thin", color: { rgb: "000000" } },
+          right: { style: "thin", color: { rgb: "000000" } },
+        };
+        cell.s.alignment = {
+          horizontal: "center",
+          vertical: "center",
+          wrapText: true,
+        };
+
+        // Apply bold font to first two rows or first column
+        if (R === 0 || R === 1 || C === 0) {
+          cell.s.font = {
+            bold: true,
+          };
+        }
+      }
+    }
+  }
+};
+
+
 export const handleDownloadExcel = (record) => {
   try {
-    // Create a new workbook
     const wb = XLSX.utils.book_new();
 
-    // 1. Create Combination Details sheet
+    // 1. Combination Details Sheet
     const detailsData = [
       ["Combination Details"],
       ["Field", "Value"],
@@ -209,9 +246,11 @@ export const handleDownloadExcel = (record) => {
     ];
 
     const detailsWS = XLSX.utils.aoa_to_sheet(detailsData);
+    applyStylesToSheet(detailsWS);
+    detailsWS['!cols'] = Array(2).fill({ wch: 30 });
     XLSX.utils.book_append_sheet(wb, detailsWS, "Combination Details");
 
-    // 2. Create Hourly Data Summary sheet
+    // 2. Hourly Summary Sheet
     const summaryData = [
       ["Hourly Data Summary"],
       ["Parameter", "Min", "Max", "Average", "Total"],
@@ -226,45 +265,64 @@ export const handleDownloadExcel = (record) => {
     ];
 
     const summaryWS = XLSX.utils.aoa_to_sheet(summaryData);
+    applyStylesToSheet(summaryWS);
+    summaryWS['!cols'] = Array(5).fill({ wch: 25 });
     XLSX.utils.book_append_sheet(wb, summaryWS, "Hourly Summary");
 
-    // 3. Create Sample Hourly Data sheet
-    const hourlyHeaders = [
-      "Hour",
-      "Demand (MW)",
-      "Solar Allocation (MW)",
-      "Wind Allocation (MW)",
-      "Generation (MW)",
-      "Unmet Demand (MW)",
-      "Curtailment (MW)",
-      "Demand Met ?",
-      "Total Demand Met By Allocation (MW)"
-    ];
+    // 3. Hourly Data Sheet
+const hourlyHeaders = [
+  "Hour",
+  "Demand (MW)",
+  "Solar Allocation (MW)",
+  "Wind Allocation (MW)",
+  "Generation (MW)",
+  "Unmet Demand (MW)",
+  "Curtailment (MW)",
+  "Demand Met ?",
+  "Total Demand Met By Allocation (MW)"
+];
 
-    const hourlyData = [hourlyHeaders];
-    if (record.demandArray && record.demandArray.length) {
-      const rowCount = Math.min(4380, record.demandArray.length);
-      for (let i = 0; i < rowCount; i++) {
-        hourlyData.push([
-          i + 1,
-          formatExcelNumber(record.demandArray?.[i]),
-          formatExcelNumber(record.solarAllocationArray?.[i]),
-          formatExcelNumber(record.windAllocationArray?.[i]),
-          formatExcelNumber(record.generationArray?.[i]),
-          formatExcelNumber(record.unmetDemandArray?.[i]),
-          formatExcelNumber(record.curtailmentArray?.[i]),
-          record.demandMetArray?.[i] || "N/A",
-          formatExcelNumber(record.totalDemandMetByAllocationArray?.[i])
-        ]);
-      }
-    } else {
-      hourlyData.push(["No data available"]);
-    }
+// 1. Add title row
+const hourlyData = [["Hourly Data"]];  // First row (merged title)
 
-    const hourlyWS = XLSX.utils.aoa_to_sheet(hourlyData);
-    XLSX.utils.book_append_sheet(wb, hourlyWS, "Hourly Data");
+// 2. Add headers
+hourlyData.push(hourlyHeaders);        // Second row (column headers)
 
-    // Generate Excel file
+// 3. Add data rows
+if (record.demandArray && record.demandArray.length) {
+  const rowCount = Math.min(4380, record.demandArray.length);
+  for (let i = 0; i < rowCount; i++) {
+    hourlyData.push([
+      i + 1,
+      formatExcelNumber(record.demandArray?.[i]),
+      formatExcelNumber(record.solarAllocationArray?.[i]),
+      formatExcelNumber(record.windAllocationArray?.[i]),
+      formatExcelNumber(record.generationArray?.[i]),
+      formatExcelNumber(record.unmetDemandArray?.[i]),
+      formatExcelNumber(record.curtailmentArray?.[i]),
+      record.demandMetArray?.[i] || "N/A",
+      formatExcelNumber(record.totalDemandMetByAllocationArray?.[i])
+    ]);
+  }
+} else {
+  hourlyData.push(["No data available"]);
+}
+
+// 4. Create worksheet
+const hourlyWS = XLSX.utils.aoa_to_sheet(hourlyData);
+
+// 5. Merge the first row for title
+// hourlyWS['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 8 } }];  // Merge A1 to I1
+
+// 6. Optional: Set column width
+hourlyWS['!cols'] = Array(9).fill({ wch: 25 });
+
+// 7. Apply styles
+applyStylesToSheet(hourlyWS);
+
+// 8. Append sheet to workbook
+XLSX.utils.book_append_sheet(wb, hourlyWS, "Hourly Data");
+
     const fileName = `Combination_${record.combinationId || "Details"}.xlsx`;
     XLSX.writeFile(wb, fileName);
 
@@ -272,6 +330,96 @@ export const handleDownloadExcel = (record) => {
     console.error("Error generating Excel file:", error);
   }
 };
+
+
+
+
+
+// export const handleDownloadExcel = (record) => {
+//   try {
+//     // Create a new workbook
+//     const wb = XLSX.utils.book_new();
+
+//     // 1. Create Combination Details sheet
+//     const detailsData = [
+//       ["Combination Details"],
+//       ["Field", "Value"],
+//       ["Combination ID", record.combinationId || "N/A"],
+//       ["Solar Capacity (MW)", record.solarCapacity ?? "N/A"],
+//       ["Wind Capacity (MW)", record.windCapacity ?? "N/A"],
+//       ["Battery Capacity (MWh)", record.batteryCapacity ?? "N/A"],
+//       ["Per Unit Cost (INR/kWh)", record.perUnitCost ?? "N/A"],
+//       ["OA Cost (INR/kWh)", record.oaCost ?? "N/A"],
+//       ["Final Cost (INR/kWh)", record.finalCost ?? "N/A"],
+//       ["Annual Demand Offset (%)", record.annualDemandOffeset ?? "N/A"],
+//       ["Annual Demand Met (million units)", record.annualDemandMet ?? "N/A"],
+//       ["Annual Curtailment (%)", record.annualCurtailment ?? "N/A"]
+//     ];
+
+//     const detailsWS = XLSX.utils.aoa_to_sheet(detailsData);
+//     XLSX.utils.book_append_sheet(wb, detailsWS, "Combination Details");
+
+//     // 2. Create Hourly Data Summary sheet
+//     const summaryData = [
+//       ["Hourly Data Summary"],
+//       ["Parameter", "Min", "Max", "Average", "Total"],
+//       ...generateExcelSummaryRow('Demand (MW)', record.demandArray),
+//       ...generateExcelSummaryRow('Solar Allocation (MW)', record.solarAllocationArray),
+//       ...generateExcelSummaryRow('Wind Allocation (MW)', record.windAllocationArray),
+//       ...generateExcelSummaryRow('Generation (MW)', record.generationArray),
+//       ...generateExcelSummaryRow('Unmet Demand (MW)', record.unmetDemandArray),
+//       ...generateExcelSummaryRow('Curtailment (MW)', record.curtailmentArray),
+//       ...generateExcelSummaryRow('Demand Met', record.demandMetArray),
+//       ...generateExcelSummaryRow('Total Demand Met By Allocation (MW)', record.totalDemandMetByAllocationArray)
+//     ];
+
+//     const summaryWS = XLSX.utils.aoa_to_sheet(summaryData);
+//     XLSX.utils.book_append_sheet(wb, summaryWS, "Hourly Summary");
+
+//     // 3. Create Sample Hourly Data sheet
+//     const hourlyHeaders = [
+//       "Hour",
+//       "Demand (MW)",
+//       "Solar Allocation (MW)",
+//       "Wind Allocation (MW)",
+//       "Generation (MW)",
+//       "Unmet Demand (MW)",
+//       "Curtailment (MW)",
+//       "Demand Met ?",
+//       "Total Demand Met By Allocation (MW)"
+//     ];
+
+//     const hourlyData = [hourlyHeaders];
+//     if (record.demandArray && record.demandArray.length) {
+//       const rowCount = Math.min(4380, record.demandArray.length);
+//       for (let i = 0; i < rowCount; i++) {
+//         hourlyData.push([
+//           i + 1,
+//           formatExcelNumber(record.demandArray?.[i]),
+//           formatExcelNumber(record.solarAllocationArray?.[i]),
+//           formatExcelNumber(record.windAllocationArray?.[i]),
+//           formatExcelNumber(record.generationArray?.[i]),
+//           formatExcelNumber(record.unmetDemandArray?.[i]),
+//           formatExcelNumber(record.curtailmentArray?.[i]),
+//           record.demandMetArray?.[i] || "N/A",
+//           formatExcelNumber(record.totalDemandMetByAllocationArray?.[i])
+//         ]);
+//       }
+//     } else {
+//       hourlyData.push(["No data available"]);
+//     }
+
+//     const hourlyWS = XLSX.utils.aoa_to_sheet(hourlyData);
+//     XLSX.utils.book_append_sheet(wb, hourlyWS, "Hourly Data");
+
+//     // Generate Excel file
+//     const fileName = `Combination_${record.combinationId || "Details"}.xlsx`;
+//     XLSX.writeFile(wb, fileName);
+
+//   } catch (error) {
+//     console.error("Error generating Excel file:", error);
+//   }
+// };
 
 // Helper functions
 function formatExcelNumber(value) {

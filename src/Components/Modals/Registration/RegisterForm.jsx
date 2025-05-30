@@ -84,17 +84,8 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
       const values = await form.validateFields();
       const payload = { ...values, user_category: user_category };
       const response = await dispatch(registerUser(payload)).unwrap();
-      // console.log('registerresponse', response); // Log the response to check the data
-      // if (response?.error) {
-      //   message.error(response.error || 'aaa');
-      // } else if (response?.status === "error") {
-      //   message.error(response.message || 'bbb');
-      // } else if (response?.status === "failed") {
-      //   message.error("CIN already exists. Please try again.");
-      // } else if (response?.status === "invalid") {
-      //   message.error("Invalid CIN for the given company name.");
-      // } 
-      
+      console.log('registerresponse', response); // Log the response to check the data
+    
       if (response?.valid === false) {
         message.error("Invalid CIN for the given company name.");
       } else {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, Statistic, Modal } from "antd";
+import { Row, Col, Card, Statistic, Modal, Select } from "antd";
 import { Popover } from "antd";
 import { DatabaseOutlined, ProfileOutlined } from "@ant-design/icons";
 import { Bar } from "react-chartjs-2";
@@ -13,6 +13,9 @@ import demands from "../../assets/capacityAvailable.png";
 import consumption from "../../assets/consumption.png";
 import SubscriptionDueModal from "../../Components/Modals/SubscriptionDueModal";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSlice";
+import { fetchRequirements } from "../../Redux/Slices/Consumer/consumerRequirementSlice";
 
 
 const Dashboard = () => {
@@ -24,7 +27,14 @@ const Dashboard = () => {
   const [windCapacity, setWindCapacity] = useState(0);
   const [solarCapacity, setSolarCapacity] = useState(0);
   const [essCapacity, setESSCapacity] = useState(0);
+  const [annualModal, setAnnualModal] = useState(false);
+    const [selectedRequirement, setSelectedRequirement] = useState(null); // State for selected requirement
+    const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
+  const dispatch = useDispatch();
+
   const userId = user.id;
+  // console.log("userId", userId);
+  
   const [states, setStates] = useState([]);
   const navigate=useNavigate();
   const subscription = JSON.parse(
@@ -51,13 +61,43 @@ const time_remaining = alreadySubscribed ? (() => {
     return { days, hours, formatted: `${days} days, ${hours} hours` };
 })() : { days: null, hours: null, formatted: ' ' };
 
+
+
   useEffect(() => {
+     
     if (time_remaining === "Expired" || time_remaining === "Expiring") {
       showSubscriptionDueModal(true);
     }
   }, [time_remaining])
 
-  
+  const handleAnnualSavings = () => {
+    setAnnualModal(true);
+  }
+
+const handleRequirementChange = (value) => {
+  const selected = requirements.find((req) => req.id === value);
+  setSelectedRequirement(selected);
+  localStorage.setItem('selectedRequirementId', JSON.stringify(selected.id));
+  dispatch(fetchMatchingIPPById(selected.id));
+};
+
+useEffect(() => {
+  if (requirements.length === 0) {
+    dispatch(fetchRequirements(userId));
+  } else {
+    // only run restore logic once requirements are loaded
+    const storedId = JSON.parse(localStorage.getItem('selectedRequirementId'));
+    if (storedId) {
+      const found = requirements.find((r) => r.id === storedId);
+      if (found) {
+        setSelectedRequirement(found);
+        dispatch(fetchMatchingIPPById(found.id));
+      }
+    }
+    // *** no fallback to requirements[0] here ***
+  }
+}, [requirements]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -437,7 +477,140 @@ const time_remaining = alreadySubscribed ? (() => {
             </Row>
           </Card>
         </Col>
+        <Col span={12}>
+          <Card
+            title="Annual Savings Details"
+            bordered={false}
+            style={{ backgroundColor: "white", height: "100%",cursor: "pointer" }}
+            onClick={handleAnnualSavings}
+          >
+            <Row gutter={[16, 16]}>
+              <Col span={8}>
+                <Card.Grid
+                  style={{
+                    width: "100%",
+                    height: "135px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <p>Potential Savings</p>
+                  
+                  
+                  
+                </Card.Grid>
+              </Col>
+
+              <Col span={8}>
+                <Card.Grid
+                  style={{
+                    width: "100%",
+                    height: "135px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  
+                 <p>Average Savings</p>
+                </Card.Grid>
+              </Col>
+
+              <Col span={8}>
+                <Card.Grid
+                  style={{
+                    width: "100%",
+                    height: "135px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  // hoverable
+                  // onMouseEnter={() => showStateModal(true)} // Open modal when hovering
+                  // onMouseLeave={() => handleStateClose()} // Close modal when hovering out
+                >
+                  {/* <Statistic
+                    title="Number of States Covered"
+                    value={platformDetails?.statesCovered || 0} // Default to 0 if undefined
+                    prefix={
+                      <img
+                        src={state} // Ensure `state` is a valid image URL
+                        alt="State Icon"
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          marginRight: "5px",
+                        }}
+                      />
+                    }
+                    valueStyle={{
+                      color: "#3f8600",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  /> */}
+
+                 <p>Potential RE Replacement</p>
+
+                </Card.Grid>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
       </Row>
+      <Modal
+        open={annualModal}
+        title="Annual Savings Details"
+        onCancel={() => setAnnualModal(false)} // Close the modal when Cancel is clicked
+        // footer={null} // This removes the default OK/Cancel buttons
+        onOk={() => navigate('/consumer/annual-saving')} // Close the modal when OK is clicked
+        width={800} // Adjust the width as needed
+        // Adjust the top position as needed
+      >
+           <Row
+          style={{
+            width: "100%",
+            marginTop: "20px",
+            display: "flex",
+            flexWrap: "wrap", // Allow wrapping for smaller screens
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <Col span={24}>
+            <p style={{ margin: 0, whiteSpace: "nowrap" }}>Select Requirement</p>
+
+          </Col>
+          <Col span={24}>
+<Select
+  style={{ width: '100%' }}
+  value={selectedRequirement?.id}
+  onChange={handleRequirementChange}
+  placeholder="Select a requirement"
+  options={
+    Array.isArray(requirements)
+      ? requirements.map((req) => ({
+          label: (
+            <span>
+              <strong>State:</strong> {req.state},{' '}
+              <strong>Consumption unit:</strong> {req.consumption_unit},{' '}
+              <strong>Industry:</strong> {req.industry},{' '}
+              <strong>Contracted demand:</strong> {req.contracted_demand} kW,{' '}
+              <strong>Tariff Category:</strong> {req.tariff_category},{' '}
+              <strong>Voltage:</strong> {req.voltage_level} kV,{' '}
+              <strong>Annual Consumption:</strong> {req.annual_electricity_consumption} MWh,{' '}
+              <strong>Procurement Date:</strong> {req.procurement_date}
+            </span>
+          ),
+          value: req.id,
+        }))
+      : []
+  }
+/>
+          </Col>
+        </Row>
+        </Modal>
       <Modal
         open={stateModal}
         title="States Covered"
@@ -453,6 +626,7 @@ const time_remaining = alreadySubscribed ? (() => {
       <SubscriptionDueModal time_remaining={time_remaining} open={subscriptionDueModal} onCancel={() => showSubscriptionDueModal(false)} onConfirm={() => showSubscriptionDueModal(false)} onOk={handleNavigateSubscription} />
 
     </div>
+    
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import dayjs from 'dayjs';
 import {
   Table,
   Typography,
@@ -15,6 +16,8 @@ import {
   InputNumber,
   Form,
   Row,
+  Input,
+  TimePicker,
 } from "antd";
 import {
   DownloadOutlined,
@@ -39,7 +42,8 @@ const GeneratorInput = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [capacitySizingData, setCapacitySizingData] = useState(null);
   const [isForm, setForm] = useState(false);
-  const [dataSource, setDataSource] = useState([])
+  const [dataSource, setDataSource] = useState([]);
+  const [addDetailsModal, setAddDetailsModal] = useState(false);
   const [curtailmentInputs, setCurtailmentInputs] = useState({
     curtailment_selling_price: 3000,
     sell_curtailment_percentage: 0,
@@ -51,11 +55,10 @@ const GeneratorInput = () => {
   const user_id = user?.id;
   const { status, projects } = useSelector((state) => state.portfolio);
    const loadingRef = useRef(null); // Tracks current loading key
-
+const [form] = Form.useForm();
   if (status === "idle") {
     dispatch(getAllProjectsById(user.id));
   }
-const [annual_curtailment_limits, setAnnualCurtailmentLimits] = useState(35);
   const handleRecordCheck = (recordId, recordType, isChecked) => {
     setCheckPortfolio((prev) => {
       const exists = prev.some(item => item.id === recordId && item.type === recordType);
@@ -71,7 +74,19 @@ const [annual_curtailment_limits, setAnnualCurtailmentLimits] = useState(35);
   console.log("checkPortfolio", checkPortfolio);
   console.log("structuredProjects", Structuredprojects);
   
-
+const handleFormSubmit = (values) => {
+  // Save the form values to dataSource for use in modalData
+  const formattedValues = {
+    ...values,
+    morningPeakStart: values.morningPeakStart?.format("HH:mm:ss"),
+    // Do the same for all TimePickers
+    eveningPeakStart: values.eveningPeakStart?.format("HH:mm:ss"),
+    eveningPeakEnd: values.eveningPeakEnd?.format("HH:mm:ss"),
+    morningPeakEnd: values.morningPeakEnd?.format("HH:mm:ss"),
+  };
+  setDataSource([{ key: 1, ...formattedValues }]);
+    setAddDetailsModal(false);
+};
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -227,16 +242,16 @@ const [annual_curtailment_limits, setAnnualCurtailmentLimits] = useState(35);
       dataIndex: "per_unit_cost",
       key: "per_unit_cost",
     },
-    {
-      title: "OA Cost (INR/kWh)", // New column for OA Cost
-      dataIndex: "oa_cost",
-      key: "oa_cost",
-    },
-    {
-      title: "Final Cost (INR/kWh)",
-      dataIndex: "final_cost",
-      key: "final_cost",
-    },
+    // {
+    //   title: "OA Cost (INR/kWh)", // New column for OA Cost
+    //   dataIndex: "oa_cost",
+    //   key: "oa_cost",
+    // },
+    // {
+    //   title: "Final Cost (INR/kWh)",
+    //   dataIndex: "final_cost",
+    //   key: "final_cost",
+    // },
     {
       title: 'Annual Demand Offset(%)',
       dataIndex: 'annual_demand_offset',
@@ -275,8 +290,9 @@ const [annual_curtailment_limits, setAnnualCurtailmentLimits] = useState(35);
   ];
 
   const handleRunOptimizer = async () => {
-    if (!base64CSVFile) {
-      message.error("Please upload a CSV file to run the optimizer.");
+    // Check if either CSV or manual data is present
+    if (!base64CSVFile && (!dataSource || dataSource.length === 0)) {
+      message.error("Please upload a CSV file or add data manually to run the optimizer.");
       return;
     }
 
@@ -306,14 +322,33 @@ const [annual_curtailment_limits, setAnnualCurtailmentLimits] = useState(35);
     console.log("windPortfolio", windPortfolio);
     console.log("essPortfolio", essPortfolio);
 
-    // Always include all portfolios, even if empty
+    let manualData = {};
+    // Use dataSource[0] if present (from Add Details modal)
+    if (!base64CSVFile && dataSource.length > 0) {
+      const row = dataSource[0];
+      manualData = {
+        annual_consumption: Number(row.annualConsumption),
+        contracted_demand: Number(row.contractedDemand),
+        morning_peak_hours_start: row.morningPeakStart,
+        morning_peak_hours_end: row.morningPeakEnd,
+        annual_morning_peak_hours_consumption: Number(row.annualMorningPeakConsumption),
+        evening_peak_hours_start: row.eveningPeakStart,
+        evening_peak_hours_end: row.eveningPeakEnd,
+        annual_evening_peak_hours_consumption: Number(row.eveningPeakHourConsumption),
+        peak_hours_availability_requirement: Number(row.peakHoursAvailability),
+      };
+    }
+
+    // Build modalData based on input method
     const modalData = {
       user_id: user_id,
       solar_portfolio: solarPortfolio,
       wind_portfolio: windPortfolio,
       ess_portfolio: essPortfolio,
-      csv_file: base64CSVFile,
       ...curtailmentInputs,
+      ...(base64CSVFile
+        ? { csv_file: base64CSVFile }
+        : manualData),
     };
 
     console.log("modalData", modalData);
@@ -344,9 +379,29 @@ const [annual_curtailment_limits, setAnnualCurtailmentLimits] = useState(35);
   };
 
 const handleDetails = () => {
-  // setForm(true);
   setForm((prevShowTable) => !prevShowTable);
-
+  setAddDetailsModal(true);
+  // When showing the form, ensure only one row exists
+  setDataSource((prevDataSource) => {
+    if (prevDataSource.length === 0) {
+      return [{
+        key: 1,
+        annualConsumption: null,
+        contractedDemand: null,
+        morningPeakStart: null,
+        morningPeakEnd: null,
+        annualMorningPeakConsumption: null,
+        eveningPeakStart: null,
+        eveningPeakEnd: null,
+        eveningPeakHourConsumption: null,
+        peakHoursAvailability: null,
+      }];
+    } else if (prevDataSource.length > 1) {
+      // If more than one row exists, keep only the first
+      return [prevDataSource[0]];
+    }
+    return prevDataSource;
+  });
 }
 
 const EditableCell = ({ value, onChange, onBlur }) => {
@@ -371,183 +426,6 @@ console.log('vale',value);
   );
 };
 
-const handleInputChange = (value, key, dataIndex) => {
-  setDataSource((prevDataSource) => {
-    const newDataSource = [...prevDataSource];
-    const rowIndex = newDataSource.findIndex((item) => item.key === key);
-    if (rowIndex !== -1) {
-      newDataSource[rowIndex] = {
-        ...newDataSource[rowIndex],
-        [dataIndex]: value,
-      };
-    }
-    return newDataSource;
-  });
-};
-
-const handleAddRow = () => {
-  setDataSource((prevDataSource) => [
-    ...prevDataSource,
-    {
-      key: prevDataSource.length + 1,
-      annualConsumption: null,
-      contractedDemand: null,
-      morningPeakStart: null,
-      morningPeakEnd: null,
-      eveningPeakStart: null,
-      eveningPeakEnd: null,
-      annualMorningPeakConsumption: null,
-      annualEveningPeakConsumption: null,
-      peakHoursAvailability: null,
-    },
-  ]);
-};
-
-const vcolumns = [
-  {
-    title: "Annual Consumption (MWh)",
-    dataIndex: "annualConsumption",
-    key: "annualConsumption",
-    editable: true,
-    render: (_, record) => (
-      <EditableCell
-        value={record.annualConsumption}
-        onChange={(value) => handleInputChange(value, record.key, "annualConsumption")}
-        onBlur={() => {}}
-      />
-    ),
-  },
-  {
-    title: renderLabelWithTooltip(
-      "Contracted Demand (MW)",
-      "Total energy consumed during the month in megawatt-hours."
-    ),
-    dataIndex: "contractedDemand",
-    key: "contractedDemand",
-    editable: true,
-    render: (_, record) => (
-      <EditableCell
-        value={record.contractedDemand}
-        onChange={(value) => handleInputChange(value, record.key, "contractedDemand")}
-        onBlur={() => {}}
-      />
-    ),
-  },
-  {
-    title: renderLabelWithTooltip(
-      "Morning Peak hours Start",
-      "Energy consumption during peak hours in megawatt-hours."
-    ),
-    dataIndex: "morningPeakStart",
-    key: "morningPeakStart",
-    editable: true,
-    render: (_, record) => (
-      <EditableCell
-        value={record.morningPeakStart}
-        onChange={(value) => handleInputChange(value, record.key, "morningPeakStart")}
-        onBlur={() => {}}
-      />
-    ),
-  },
-  {
-    title: renderLabelWithTooltip(
-      "Morning Peak hours End",
-      "Energy consumption during off-peak hours in megawatt-hours."
-    ),
-    dataIndex: "morningPeakEnd",
-    key: "morningPeakEnd",
-    editable: true,
-    render: (_, record) => (
-      <EditableCell
-        value={record.morningPeakEnd}
-        onChange={(value) => handleInputChange(value, record.key, "morningPeakEnd")}
-        onBlur={() => {}}
-      />
-    ),
-  },
-  {
-    title: renderLabelWithTooltip(
-      "Annual Morning peak hours consumption (MWh)",
-      "Energy consumption during off-peak hours in megawatt-hours."
-    ),
-    dataIndex: "morningPeakEnd",
-    key: "morningPeakEnd",
-    editable: true,
-    render: (_, record) => (
-      <EditableCell
-        value={record.annualMorningPeakConsumption}
-        onChange={(value) => handleInputChange(value, record.key, "annualMorningPeakConsumption")}
-        onBlur={() => {}}
-      />
-    ),
-  },
-  {
-    title: renderLabelWithTooltip(
-      "Evening Peak hours Start",
-      "Energy consumption during off-peak hours in megawatt-hours."
-    ),
-    dataIndex: "eveningPeakStart",
-    key: "eveningPeakStart",
-    editable: true,
-    render: (_, record) => (
-      <EditableCell
-        value={record.eveningPeakStart}
-        onChange={(value) => handleInputChange(value, record.key, "eveningPeakStart")}
-        onBlur={() => {}}
-      />
-    ),
-  },
-  {
-    title: renderLabelWithTooltip(
-      "Evening Peak hours end ",
-      "Energy consumption during off-peak hours in megawatt-hours."
-    ),
-    dataIndex: "eveningPeakEnd",
-    key: "eveningPeakEnd",
-    editable: true,
-    render: (_, record) => (
-      <EditableCell
-        value={record.eveningPeakEnd}
-        onChange={(value) => handleInputChange(value, record.key, "eveningPeakEnd")}
-        onBlur={() => {}}
-      />
-    ),
-  },
-  {
-    title: renderLabelWithTooltip(
-      "Annual Evening peak hours consumption (MWh)",
-      "Energy consumption during off-peak hours in megawatt-hours."
-    ),
-    dataIndex: "eveningPeakHourConsumption",
-    key: "eveningPeakHourConsumption",
-    editable: true,
-    render: (_, record) => (
-      <EditableCell
-        value={record.eveningPeakHourConsumption}
-        onChange={(value) => handleInputChange(value, record.key, "eveningPeakHourConsumption")}
-        onBlur={() => {}}
-      />
-    ),
-  },
-  {
-    title: renderLabelWithTooltip(
-      "Peak hours availability requirement (%)",
-      "Energy consumption during off-peak hours in megawatt-hours."
-    ),
-    dataIndex: "peakHoursAvailability",
-    key: "peakHoursAvailability",
-    editable: true,
-    render: (_, record) => (
-      <EditableCell
-        value={record.peakHoursAvailability}
-        onChange={(value) => handleInputChange(value, record.key, "peakHoursAvailability")}
-        onBlur={() => {}}
-      />
-    ),
-  },
-  // ...other columns...
-];
-
   const handleDownloadTemplate = () => {
     const rows = Array.from({ length: 8760 }, (_, i) => `${i + 1},`).join("\n");
     const csvContent = "Hour,Expected Demand\n" + rows;
@@ -568,6 +446,22 @@ const vcolumns = [
         <h2 style={{ marginRight: "20px" }}>
           Capacity Sizing
         </h2>
+          <Row style={{ color: 'GrayText' }}>
+              <p >Note: Go with one of the following option to proceed
+
+                <ol style={{ marginTop: 0 }}>
+                    <li>
+                    <strong>Upload CSV File:</strong> Download the CSV template, fill it
+                    with the required information, and upload the completed file in the
+                    specified format.
+                  </li>
+                  <li>
+                    {" "}
+                    <strong>Add Details:</strong> Click the "Add Details" button to open
+                    a form where you can enter the data manually.
+                  </li>
+                </ol></p>
+            </Row>
         <div style={{ color: "#669800", marginBottom: "30px" }}>
           <Row span={24} >
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -579,7 +473,7 @@ const vcolumns = [
           </Row>
           <Row span={24}>
             {/* <div style={{ display: "flex", alignItems: "center" }}> */}
-              <Col span={12}>
+              <Col span={9}>
               <Tooltip title="Download a CSV file">
                 <Button icon={<DownloadOutlined />} onClick={handleDownloadTemplate} style={{ marginRight: "20px", height: "30px", width: 40 }} />
               </Tooltip>
@@ -591,38 +485,43 @@ const vcolumns = [
                 </Tooltip>
               </Upload>
               </Col>
-              {/* <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
+              <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
               {"OR"}
-              </Col> */}
-              {/* <Col span={10} style={{ display: "flex", justifyContent: "flex-start" }}>  
+              </Col>
+              <Col span={12} style={{ display: "flex", justifyContent: "flex-start" }}>  
               <Tooltip title="Add details manually">
               <Button onClick={handleDetails}>Add Details</Button>
               </Tooltip>
-              </Col> */}
+              </Col>
 
             {/* </div> */}
             {uploadedFileName && <div style={{ margin: "10px", color: 'GrayText' }}>Uploaded File: {uploadedFileName}</div>}
           </Row>
 
-          {isForm && ( 
+          {/* {isForm && ( 
            <Row span={24} style={{ marginTop: "20px" }}>
                 <Table
                   columns={vcolumns}
-                  dataSource={dataSource}
+                  dataSource={dataSource.length > 0 ? [dataSource[0]] : [{
+                    key: 1,
+                    annualConsumption: null,
+                    contractedDemand: null,
+                    morningPeakStart: null,
+                    morningPeakEnd: null,
+                    annualMorningPeakConsumption: null,
+                    eveningPeakStart: null,
+                    eveningPeakEnd: null,
+                    eveningPeakHourConsumption: null,
+                    peakHoursAvailability: null,
+                  }]}
                   pagination={false}
                   bordered
                   size="small"
                   tableLayout="fixed"
                 />
-                <Button
-                  // type="dashed"
-                  onClick={handleAddRow}
-                  style={{ marginTop: "10px" }}
-                >
-                  Add Row
-                </Button>
+               
             </Row>
-            )}
+            )} */}
 
             
         </div>
@@ -636,12 +535,12 @@ const vcolumns = [
             // style={{ marginTop: "20px" }}
             loading={status === "loading"}
           />
+        </div>
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
             <Button onClick={handleRunOptimizer}>
               Run Optimizer
             </Button>
           </div>
-        </div>
 
       </Card>
       <Card>
@@ -677,6 +576,224 @@ const vcolumns = [
 
         {/* </Row> */}
       </Card>
+     <Modal
+  // title="Add Details"
+  open={addDetailsModal}
+  onCancel={() => setAddDetailsModal(false)}
+  footer={null}
+  width={800}
+>
+  <Title level={4} style={{ textAlign: "center", color:'669800' }}>
+    Add Details
+  </Title>
+  <Form
+    form={form}
+    layout="vertical"
+    onFinish={handleFormSubmit}
+    initialValues={{}} // Optional: preset form values
+  >
+    <Row gutter={16}>
+      {/* Annual Consumption */}
+      <Col span={12}>
+        <Form.Item 
+        rules={[
+          {
+            required: true,
+            message: 'Please input the annual consumption!',
+          }
+        ]}
+        label="Annual Consumption (MWh)" name="annualConsumption">
+          <Input />
+        </Form.Item>
+      </Col>
+
+      {/* Contracted Demand */}
+      <Col span={12}>
+        <Form.Item
+         rules={[
+          {
+            required: true,
+            message: 'Please input the Contracted Demand!',
+          }
+        ]}
+          label={renderLabelWithTooltip(
+            "Contracted Demand (MW)",
+            "Total energy consumed during the month in megawatt-hours."
+          )}
+          name="contractedDemand"
+        >
+          <Input />
+        </Form.Item>
+      </Col>
+
+      {/* Morning Peak Start */}
+<Col span={12}>
+  <Form.Item
+    rules={[
+      {
+        required: true,
+        message: 'Please input the Morning Peak Start time!',
+      }
+    ]}
+    label={renderLabelWithTooltip(
+      "Morning Peak hours Start (HH:mm:ss)",
+      "Energy consumption during peak hours in megawatt-hours."
+    )}
+    name="morningPeakStart"
+  >
+    <TimePicker
+      format="HH:mm:ss"
+      placeholder="HH:mm:ss"
+      showNow={false}
+      defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}
+      style={{ width: "100%" }}
+    />
+  </Form.Item>
+</Col>
+
+      {/* Morning Peak End */}
+      <Col span={12}>
+        <Form.Item
+         rules={[
+          {
+            required: true,
+            message: 'Please input the Morning Peak End time!',
+          }
+        ]}
+          label={renderLabelWithTooltip(
+            "Morning Peak hours End (HH:mm:ss)",
+            "Energy consumption during off-peak hours in megawatt-hours."
+          )}
+          name="morningPeakEnd"
+        >
+ <TimePicker
+      format="HH:mm:ss"
+      placeholder="HH:mm:ss"
+      showNow={false}
+      defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}
+      style={{ width: "100%" }}
+    />
+        </Form.Item>
+      </Col>
+
+      {/* Annual Morning Peak Consumption */}
+     
+      <Col span={12}>
+        <Form.Item
+         rules={[
+          {
+            required: true,
+            message: 'Please input the aAnnual Morning Peak Consumption!',
+          }
+        ]}
+          label={renderLabelWithTooltip(
+            "Annual Morning peak hours consumption (MWh)",
+            "Energy consumption during off-peak hours in megawatt-hours."
+          )}
+          name="annualMorningPeakConsumption"
+        >
+          <Input />
+        </Form.Item>
+      </Col>
+   <Col span={12}>
+        <Form.Item
+        rules={[
+            {
+              required: true,
+              message: "Please input the annual evening peak hours consumption!",
+            },
+        ]}
+          label={renderLabelWithTooltip(
+            "Annual Evening peak hours consumption (MWh)",
+            "Energy consumption during off-peak hours in megawatt-hours."
+          )}
+          name="eveningPeakHourConsumption"
+        >
+          <Input />
+        </Form.Item>
+      </Col>
+      {/* Evening Peak Start */}
+      <Col span={12}>
+        <Form.Item
+         rules={[
+          {
+            required: true,
+            message: 'Please input the Evening Peak Start time!',
+          }
+        ]}
+          label={renderLabelWithTooltip(
+            "Evening Peak hours Start (HH:mm:ss)",
+            "Energy consumption during off-peak hours in megawatt-hours."
+          )}
+          name="eveningPeakStart"
+        >
+ <TimePicker
+      format="HH:mm:ss"
+      placeholder="HH:mm:ss"
+      showNow={false}
+      defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}
+      style={{ width: "100%" }}
+    />
+        </Form.Item>
+      </Col>
+   
+
+      {/* Evening Peak End */}
+      <Col span={12}>
+ <Form.Item
+  rules={[
+          {
+            required: true,
+            message: 'Please input the Evening Peak End time!',
+          }
+        ]}
+  label={renderLabelWithTooltip(
+    "Evening Peak hours end (HH:mm:ss)",
+    "Energy consumption during off-peak hours in megawatt-hours."
+  )}
+  name="eveningPeakEnd"
+>
+ <TimePicker
+      format="HH:mm:ss"
+      placeholder="HH:mm:ss"
+      showNow={false}
+      defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}
+      style={{ width: "100%" }}
+    />
+</Form.Item>
+</Col>
+
+      {/* Annual Evening Peak Consumption */}
+   
+
+      {/* Peak Hours Availability Requirement */}
+      <Col span={12}>
+        <Form.Item
+         rules={[
+          {
+            required: true,
+            message: 'Please input the Peak Hours Availability Requirement!',
+          }
+        ]}
+          label={renderLabelWithTooltip(
+            "Peak hours availability requirement (%)",
+            "Energy consumption during off-peak hours in megawatt-hours."
+          )}
+          name="peakHoursAvailability"
+        >
+          <Input />
+        </Form.Item>
+      </Col>
+    </Row>
+
+    <Form.Item>
+      <Button type="primary" htmlType="submit" style={{ float: "right" }}>
+        Submit
+      </Button>
+    </Form.Item>
+  </Form>
+</Modal>
+
       <Modal
         title="Additional Inputs"
         open={isModalVisible}

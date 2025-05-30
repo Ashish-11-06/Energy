@@ -116,7 +116,8 @@ const MatchingConsumerPage = () => {
     if (searchText) {
       filtered = filtered.filter(consumer =>
         consumer.state.toLowerCase().includes(searchText.toLowerCase()) ||
-        consumer.industry.toLowerCase().includes(searchText.toLowerCase())
+        consumer.industry.toLowerCase().includes(searchText.toLowerCase()) ||
+        consumer.sub_industry.toLowerCase().includes(searchText.toLowerCase()) 
       );
     }
 // consumer.state.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -236,7 +237,7 @@ const MatchingConsumerPage = () => {
       <Table
   columns={columns}
   dataSource={filteredConsumers} // Ensure this is always an array
-  pagination={false}
+  pagination={true}
   loading={status === 'loading'}
   bordered
   rowKey="id" // Use a unique field (e.g., consumer.id) for the row key

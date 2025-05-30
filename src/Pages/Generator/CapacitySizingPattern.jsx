@@ -25,9 +25,13 @@ import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import IPPModal from "../Consumer/Modal/IPPModal";
 import RequestForQuotationModal from "../../Components/Modals/RequestForQuotationModal";
-import { fetchCapacitySizing, saveCapacitySizingData } from "../../Redux/Slices/Generator/capacitySizingSlice";
+import {
+  fetchCapacitySizing,
+  saveCapacitySizingData,
+} from "../../Redux/Slices/Generator/capacitySizingSlice";
 import "./CombinationPattern.css";
 import { handleDownloadExcel } from "./CapacitySizingDownload";
+import { getDemandSummary } from "../../Redux/Slices/Generator/demandSummarySlice";
 
 const { Title, Text } = Typography;
 
@@ -45,7 +49,7 @@ const CombinationPatternCap = () => {
   const [saveRecord, setSaveRecord] = useState(null);
   const { state } = useLocation(); // Access navigation state
   const [loadingId, setLoadingId] = useState(null); // null means no button is loading
-
+  const [demandSummary, setDemandSummary] = useState(null);
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 
   // const [loading, setLoading] = useState(false);
@@ -53,78 +57,104 @@ const CombinationPatternCap = () => {
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
-  // console.log('state', state)
+  console.log("state", user);
+  const id = user?.id;
+  console.log("id", id);
+
   const formatAndSetCombinations = (combinations) => {
-    if (!combinations || typeof combinations !== "object" || !Object.keys(combinations).length) {
+    if (
+      !combinations ||
+      typeof combinations !== "object" ||
+      !Object.keys(combinations).length
+    ) {
       setDataSource([]);
       return;
     }
 
-    const formattedCombinations = Object.entries(combinations).map(([key, combination], index) => {
-      const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
-      const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
-      const batteryCapacity = combination["Optimal Battery Capacity (MW)"] || 0;
+    const formattedCombinations = Object.entries(combinations).map(
+      ([key, combination], index) => {
+        const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
+        const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
+        const batteryCapacity =
+          combination["Optimal Battery Capacity (MW)"] || 0;
 
-      return {
-        key: index + 1,
-        srNo: index + 1,
-        combination: key,
-        technology: [
-          { name: "Solar", capacity: `${solarCapacity} MW` },
-          { name: "Wind", capacity: `${windCapacity} MW` },
-          { name: "ESS", capacity: `${batteryCapacity} MWh` },
-        ],
-        annualDemandMet: combination["Annual Demand Met"] || 0,
-        annualCurtailment: combination["Annual Curtailment"] || 0,
-        perUnitCost: combination["Per Unit Cost"]?.toFixed(2) || 0,
-        oaCost: combination["OA_cost"]?.toFixed(2) || "N/A", // Add OA Cost
-        totalCost: combination["Total Cost"]?.toFixed(2) || 0,
-        cod: combination["greatest_cod"] ? dayjs(combination["greatest_cod"]).format("DD-MM-YYYY") : "N/A",
-        annualDemandOffeset: combination["Annual Demand Offset"] || 0,
+        return {
+          key: index + 1,
+          srNo: index + 1,
+          combination: key,
+          technology: [
+            { name: "Solar", capacity: `${solarCapacity} MW` },
+            { name: "Wind", capacity: `${windCapacity} MW` },
+            { name: "ESS", capacity: `${batteryCapacity} MWh` },
+          ],
+          annualDemandMet: combination["Annual Demand Met"] || 0,
+          annualCurtailment: combination["Annual Curtailment"] || 0,
+          perUnitCost: combination["Per Unit Cost"]?.toFixed(2) || 0,
+          oaCost: combination["OA_cost"]?.toFixed(2) || "N/A", // Add OA Cost
+          totalCost: combination["Total Cost"]?.toFixed(2) || 0,
+          cod: combination["greatest_cod"]
+            ? dayjs(combination["greatest_cod"]).format("DD-MM-YYYY")
+            : "N/A",
+          annualDemandOffeset: combination["Annual Demand Offset"] || 0,
 
-        curtailmentArray: Array.isArray(combination["Curtailment"])
-          ? combination["Curtailment"]
-          : [],
+          curtailmentArray: Array.isArray(combination["Curtailment"])
+            ? combination["Curtailment"]
+            : [],
 
-        demandArray: Array.isArray(combination["Demand"])
-          ? combination["Demand"]
-          : [],
+          demandArray: Array.isArray(combination["Demand"])
+            ? combination["Demand"]
+            : [],
 
-        generationArray: Array.isArray(combination["Generation"])
-          ? combination["Generation"]
-          : [],
+          generationArray: Array.isArray(combination["Generation"])
+            ? combination["Generation"]
+            : [],
 
-        demandMetArray: Array.isArray(combination["Demand met"])
-          ? combination["Demand met"]
-          : [],
+          demandMetArray: Array.isArray(combination["Demand met"])
+            ? combination["Demand met"]
+            : [],
 
-        solarAllocationArray: Array.isArray(combination["Solar Allocation"])
-          ? combination["Solar Allocation"]
-          : [],
+          solarAllocationArray: Array.isArray(combination["Solar Allocation"])
+            ? combination["Solar Allocation"]
+            : [],
 
-        totalDemandMetByAllocationArray: Array.isArray(combination["Total Demand met by allocation"])
-          ? combination["Total Demand met by allocation"]
-          : [],
+          totalDemandMetByAllocationArray: Array.isArray(
+            combination["Total Demand met by allocation"]
+          )
+            ? combination["Total Demand met by allocation"]
+            : [],
 
-        unmetDemandArray: Array.isArray(combination["Unmet demand"])
-          ? combination["Unmet demand"]
-          : [],
+          unmetDemandArray: Array.isArray(combination["Unmet demand"])
+            ? combination["Unmet demand"]
+            : [],
 
-        windAllocationArray: Array.isArray(combination["Wind Allocation"])
-          ? combination["Wind Allocation"]
-          : [],
+          windAllocationArray: Array.isArray(combination["Wind Allocation"])
+            ? combination["Wind Allocation"]
+            : [],
 
-        // annualDemandMet:combination["Annual Demand Met"] || 0,
-
-      };
-    });
-console.log('formattedCombinations', formattedCombinations);
+          // annualDemandMet:combination["Annual Demand Met"] || 0,
+        };
+      }
+    );
+    console.log("formattedCombinations", formattedCombinations);
 
     setDataSource(formattedCombinations);
   };
 
   // console.log(dataSource);
-
+  useEffect(() => {
+    // Get the ID from the state or set to null
+    const getDemandSummaryData = async () => {
+      try {
+        const response = await dispatch(getDemandSummary(id)).unwrap(); // Call API with ID
+        console.log("Demand Summary Response:", response);
+        setDemandSummary(response);
+      } catch (error) {
+        console.error("Error fetching Demand Summary data:", error);
+        message.error("Failed to fetch Demand Summary data.");
+      }
+    };
+    getDemandSummaryData();
+  }, [id]);
   useEffect(() => {
     console.log(dataSource);
   }, [dataSource]);
@@ -153,64 +183,69 @@ console.log('formattedCombinations', formattedCombinations);
       setIsTableLoading(false); // Stop loader if there's an error
     }
   }, [state]);
-  console.log('combination data', combinationData);
+  console.log("combination data", combinationData);
 
   useEffect(() => {
     const fetchCombinations = async () => {
       if (state?.modalData) {
         try {
           setIsTableLoading(true);
-          const response = await dispatch(fetchCapacitySizing(state.modalData)).unwrap(); // Call API with modalData
+          const response = await dispatch(
+            fetchCapacitySizing(state.modalData)
+          ).unwrap(); // Call API with modalData
           console.log(response);
 
           if (response) {
-            const formattedData = Object.entries(response).map(([key, value], index) => ({
-              key: index + 1,
-              combinationId: key,
-              solarCapacity: value["Optimal Solar Capacity (MW)"] || 0,
-              windCapacity: value["Optimal Wind Capacity (MW)"] || 0,
-              batteryCapacity: value["Optimal Battery Capacity (MW)"] || 0,
-              perUnitCost: value["Per Unit Cost"]?.toFixed(2) || "N/A",
-              oaCost: value["OA_cost"]?.toFixed(2) || 0, // Add OA Cost
-              finalCost: value["Final Cost"]?.toFixed(2) || "N/A",
-              annualCurtailment: value['Annual Curtailment'] || 0,
-              annualDemandMet: value['Annual Demand Met'] || 0,
-              annualDemandOffeset: value['Annual Demand Offset'] || 0,
+            const formattedData = Object.entries(response).map(
+              ([key, value], index) => ({
+                key: index + 1,
+                combinationId: key,
+                solarCapacity: value["Optimal Solar Capacity (MW)"] || 0,
+                windCapacity: value["Optimal Wind Capacity (MW)"] || 0,
+                batteryCapacity: value["Optimal Battery Capacity (MW)"] || 0,
+                perUnitCost: value["Per Unit Cost"]?.toFixed(2) || "N/A",
+                oaCost: value["OA_cost"]?.toFixed(2) || 0, // Add OA Cost
+                finalCost: value["Final Cost"]?.toFixed(2) || "N/A",
+                annualCurtailment: value["Annual Curtailment"] || 0,
+                annualDemandMet: value["Annual Demand Met"] || 0,
+                annualDemandOffeset: value["Annual Demand Offset"] || 0,
 
-              curtailmentArray: Array.isArray(value["Curtailment"])
-                ? value["Curtailment"]
-                : [],
+                curtailmentArray: Array.isArray(value["Curtailment"])
+                  ? value["Curtailment"]
+                  : [],
 
-              demandArray: Array.isArray(value["Demand"])
-                ? value["Demand"]
-                : [],
+                demandArray: Array.isArray(value["Demand"])
+                  ? value["Demand"]
+                  : [],
 
-              generationArray: Array.isArray(value["Generation"])
-                ? value["Generation"]
-                : [],
+                generationArray: Array.isArray(value["Generation"])
+                  ? value["Generation"]
+                  : [],
 
-              demandMetArray: Array.isArray(value["Demand met"])
-                ? value["Demand met"]
-                : [],
+                demandMetArray: Array.isArray(value["Demand met"])
+                  ? value["Demand met"]
+                  : [],
 
-              solarAllocationArray: Array.isArray(value["Solar Allocation"])
-                ? value["Solar Allocation"]
-                : [],
+                solarAllocationArray: Array.isArray(value["Solar Allocation"])
+                  ? value["Solar Allocation"]
+                  : [],
 
-              totalDemandMetByAllocationArray: Array.isArray(value["Total Demand met by allocation"])
-                ? value["Total Demand met by allocation"]
-                : [],
+                totalDemandMetByAllocationArray: Array.isArray(
+                  value["Total Demand met by allocation"]
+                )
+                  ? value["Total Demand met by allocation"]
+                  : [],
 
-              unmetDemandArray: Array.isArray(value["Unmet demand"])
-                ? value["Unmet demand"]
-                : [],
+                unmetDemandArray: Array.isArray(value["Unmet demand"])
+                  ? value["Unmet demand"]
+                  : [],
 
-              windAllocationArray: Array.isArray(value["Wind Allocation"])
-                ? value["Wind Allocation"]
-                : [],
-
-            }));
-            console.log('formattedData', formattedData);
+                windAllocationArray: Array.isArray(value["Wind Allocation"])
+                  ? value["Wind Allocation"]
+                  : [],
+              })
+            );
+            console.log("formattedData", formattedData);
             setDataSource(formattedData); // Set the formatted data in the table
           } else {
             message.error("No combinations found. Please check your input.");
@@ -230,8 +265,7 @@ console.log('formattedCombinations', formattedCombinations);
     fetchCombinations();
   }, [state?.modalData]);
 
-console.log('data source',dataSource);
-
+  console.log("data source", dataSource);
 
   const onDownload = async (record) => {
     try {
@@ -248,7 +282,8 @@ console.log('data source',dataSource);
         generationArray: record.generationArray || [],
         demandMetArray: record.demandMetArray || [],
         solarAllocationArray: record.solarAllocationArray || [],
-        totalDemandMetByAllocationArray: record.totalDemandMetByAllocationArray || [],
+        totalDemandMetByAllocationArray:
+          record.totalDemandMetByAllocationArray || [],
         unmetDemandArray: record.unmetDemandArray || [],
         windAllocationArray: record.windAllocationArray || [],
       };
@@ -302,7 +337,7 @@ console.log('data source',dataSource);
   };
 
   const re_index = combinationData.re_index || 0;
-  console.log('comb', combinationData);
+  console.log("comb", combinationData);
 
   const handleIPPCancel = () => {
     setIsIPPModalVisible(false);
@@ -331,56 +366,59 @@ console.log('data source',dataSource);
         re_replacement: sliderValue, // Update RE replacement value
       };
 
-      const response = await dispatch(fetchCapacitySizing(updatedPayload)).unwrap(); // Pass updated payload
+      const response = await dispatch(
+        fetchCapacitySizing(updatedPayload)
+      ).unwrap(); // Pass updated payload
       console.log(response);
 
       if (response) {
-        const formattedData = Object.entries(response).map(([key, value], index) => ({
-          key: index + 1,
-          combinationId: key,
-          solarCapacity: value["Optimal Solar Capacity (MW)"] || 0,
-          windCapacity: value["Optimal Wind Capacity (MW)"] || 0,
-          batteryCapacity: value["Optimal Battery Capacity (MW)"] || 0,
-          perUnitCost: value["Per Unit Cost"]?.toFixed(2) || "N/A",
-          oaCost: value["OA_cost"]?.toFixed(2) || 0, // Add OA Cost
-          finalCost: value["Final Cost"]?.toFixed(2) || "N/A",
-          annualCurtailment: value['Annual Curtailment'] || 0,
-          annualDemandMet: value['Annual Demand Met'] || 0,
-          annualDemandOffeset: value['Annual Demand Offset'] || 0,
-          curtailmentArray: Array.isArray(value["Curtailment"])
-          ? value["Curtailment"]
-          : [],
+        const formattedData = Object.entries(response).map(
+          ([key, value], index) => ({
+            key: index + 1,
+            combinationId: key,
+            solarCapacity: value["Optimal Solar Capacity (MW)"] || 0,
+            windCapacity: value["Optimal Wind Capacity (MW)"] || 0,
+            batteryCapacity: value["Optimal Battery Capacity (MW)"] || 0,
+            perUnitCost: value["Per Unit Cost"]?.toFixed(2) || "N/A",
+            oaCost: value["OA_cost"]?.toFixed(2) || 0, // Add OA Cost
+            finalCost: value["Final Cost"]?.toFixed(2) || "N/A",
+            annualCurtailment: value["Annual Curtailment"] || 0,
+            annualDemandMet: value["Annual Demand Met"] || 0,
+            annualDemandOffeset: value["Annual Demand Offset"] || 0,
+            curtailmentArray: Array.isArray(value["Curtailment"])
+              ? value["Curtailment"]
+              : [],
 
-        demandArray: Array.isArray(value["Demand"])
-          ? value["Demand"]
-          : [],
+            demandArray: Array.isArray(value["Demand"]) ? value["Demand"] : [],
 
-        generationArray: Array.isArray(value["Generation"])
-          ? value["Generation"]
-          : [],
+            generationArray: Array.isArray(value["Generation"])
+              ? value["Generation"]
+              : [],
 
-        demandMetArray: Array.isArray(value["Demand met"])
-          ? value["Demand met"]
-          : [],
+            demandMetArray: Array.isArray(value["Demand met"])
+              ? value["Demand met"]
+              : [],
 
-        solarAllocationArray: Array.isArray(value["Solar Allocation"])
-          ? value["Solar Allocation"]
-          : [],
+            solarAllocationArray: Array.isArray(value["Solar Allocation"])
+              ? value["Solar Allocation"]
+              : [],
 
-        totalDemandMetByAllocationArray: Array.isArray(value["Total Demand met by allocation"])
-          ? value["Total Demand met by allocation"]
-          : [],
+            totalDemandMetByAllocationArray: Array.isArray(
+              value["Total Demand met by allocation"]
+            )
+              ? value["Total Demand met by allocation"]
+              : [],
 
-        unmetDemandArray: Array.isArray(value["Unmet demand"])
-          ? value["Unmet demand"]
-          : [],
+            unmetDemandArray: Array.isArray(value["Unmet demand"])
+              ? value["Unmet demand"]
+              : [],
 
-        windAllocationArray: Array.isArray(value["Wind Allocation"])
-          ? value["Wind Allocation"]
-          : [],
-
-        }));
-        console.log('formattedData 332', formattedData);
+            windAllocationArray: Array.isArray(value["Wind Allocation"])
+              ? value["Wind Allocation"]
+              : [],
+          })
+        );
+        console.log("formattedData 332", formattedData);
         setDataSource(formattedData); // Set the formatted data in the table
       } else {
         message.error("No combinations found. Please check your input.");
@@ -442,25 +480,25 @@ console.log('data source',dataSource);
     //   key: "finalCost",
     // },
     {
-      title: 'Annual Demand Offset(%)',
-      dataIndex: 'annualDemandOffeset',
-      key: 'annualDemandOffeset'
+      title: "Annual Demand Offset(%)",
+      dataIndex: "annualDemandOffeset",
+      key: "annualDemandOffeset",
     },
     {
-      title: 'Annual Demand Met (million units)',
-      dataIndex: 'annualDemandMet',
-      key: 'annualDemandMet'
+      title: "Annual Demand Met (million units)",
+      dataIndex: "annualDemandMet",
+      key: "annualDemandMet",
     },
     {
-      title: 'Annual Curtailment(%)',
-      dataIndex: 'annualCurtailment',
-      key: 'annualCurtailment'
+      title: "Annual Curtailment(%)",
+      dataIndex: "annualCurtailment",
+      key: "annualCurtailment",
     },
     {
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <div style={{ display: "flex", flexDirection: 'column', gap: "10px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <Button
             type="link"
             icon={<DownloadOutlined style={{ color: "white" }} />}
@@ -486,18 +524,81 @@ console.log('data source',dataSource);
           >
             Save
           </Button>
-
         </div>
       ),
     },
-
   ];
 
   // console.log(dataSource);
   console.log(dataSource?.[0]?.annualDemandOffeset);
 
   return (
-    <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
+    <div
+      style={{
+        padding: "20px",
+        fontFamily: "'Inter', sans-serif",
+        paddingBottom: "50px",
+      }}
+    >
+      <Card style={{ marginBottom: "20px" }}>
+        <Title level={3} style={{ color: "#669800", marginBottom: "10px" }}>
+          Demand Summary
+        </Title>
+        <Row gutter={[16, 8]} justify="space-between" align="middle">
+          <Card
+            style={{
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Adds subtle shadow
+              borderRadius: "8px", // Optional: for rounded corners
+            }}
+            hoverable
+          >
+            <Text strong style={{ color: "#001529" }}>
+              Total Demand (kWh)
+            </Text>
+            <p style={{ textAlign: "center", justifyContent: "center" }}>
+              {demandSummary?.total}
+            </p>
+          </Card>
+          <Card
+            style={{
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Adds subtle shadow
+              borderRadius: "8px", // Optional: for rounded corners
+            }}
+            hoverable
+          >
+            <Text strong style={{ color: "#001529" }}>
+              Highest Demand (kWh)
+            </Text>
+            <p style={{ justifyContent: "center", textAlign: "center" }}>
+              {demandSummary?.highest}
+            </p>
+          </Card>
+          <Card
+          hoverable
+            style={{
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Adds subtle shadow
+              borderRadius: "8px", // Optional: for rounded corners
+            }}
+          >
+            <Text strong style={{ color: "#001529" }}>
+              Lowest Demand (kWh)
+            </Text>
+            <p style={{ textAlign: "center" }}>{demandSummary?.lowest}</p>
+          </Card>
+          <Card 
+          hoverable
+            style={{
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Adds subtle shadow
+              borderRadius: "8px", // Optional: for rounded corners
+            }}
+          >
+            <Text strong style={{ color: "#001529" }}>
+              Average Demand (kWh)
+            </Text>
+            <p style={{ textAlign: "center" }}>{demandSummary?.average}</p>
+          </Card>
+        </Row>
+      </Card>
       <Row
         justify="center"
         align="middle"
@@ -505,15 +606,24 @@ console.log('data source',dataSource);
         style={{ height: "100%" }}
       >
         {/* Combination Table */}
-        <Col span={24}
+        <Col
+          span={24}
           style={{
             border: "1px solid #669800",
-            background: '#E6E8F1',
-            padding: '10px',
+            background: "#E6E8F1",
+            padding: "10px",
           }}
         >
           <div>
-            <Title level={4} style={{ color: "#669800", background: '#f8f8f8', marginBottom: "10px", padding: '10px' }}>
+            <Title
+              level={4}
+              style={{
+                color: "#669800",
+                background: "#f8f8f8",
+                marginBottom: "10px",
+                padding: "10px",
+              }}
+            >
               Choose Your RE transition Goal!
             </Title>
           </div>
@@ -550,7 +660,10 @@ console.log('data source',dataSource);
                     max={100}
                     value={sliderValue}
                     onChange={(e) => {
-                      const value = Math.min(Math.max(Number(e.target.value), 0), 100); // Clamp value between 0 and 100
+                      const value = Math.min(
+                        Math.max(Number(e.target.value), 0),
+                        100
+                      ); // Clamp value between 0 and 100
                       setSliderValue(value);
                     }}
                     style={{
@@ -578,17 +691,14 @@ console.log('data source',dataSource);
           <Card>
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
               {isTableLoading ? (
-                <>
-                  Optimized Combination for {sliderValue} % RE replacement
-                </>
+                <>Optimized Combination for {sliderValue} % RE replacement</>
               ) : (
                 <>
-                  Optimized Combination for {dataSource?.[0]?.annualDemandOffeset || sliderValue} % RE replacement
+                  Optimized Combination for{" "}
+                  {dataSource?.[0]?.annualDemandOffeset || sliderValue} % RE
+                  replacement
                 </>
-              )
-
-              }
-
+              )}
             </Title>
             {isTableLoading ? (
               <>
@@ -613,7 +723,8 @@ console.log('data source',dataSource);
                     textAlign: "center",
                   }}
                 >
-                  Please wait while we are showing you a best optimized combination.
+                  Please wait while we are showing you a best optimized
+                  combination.
                 </div>
               </>
             ) : dataSource.length > 0 ? (
@@ -648,7 +759,6 @@ console.log('data source',dataSource);
                   No optimized combinations available at the moment. Please try
                   again later.
                 </div>
-
               </>
             )}
           </Card>
@@ -691,7 +801,6 @@ console.log('data source',dataSource);
           placeholder="Enter name"
         />
       </Modal>
-
     </div>
   );
 };

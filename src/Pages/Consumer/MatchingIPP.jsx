@@ -248,14 +248,29 @@ const role=userData?.role;
           </Col>
           <Col xs={24} sm={16} md={18} lg={20}>
             <Select
-              style={{ width: "70%" }} // Full width for responsiveness
-              value={selectedRequirement?.id}
-              onChange={handleRequirementChange}
-              options={Array.isArray(requirements) ? requirements.map((req) => ({
-                label: `State:${req.state},Consumption unit: ${req.consumption_unit},Industry: ${req.industry},Contracted demand: ${req.contracted_demand} kW,Tariff Category: ${req.tariff_category},Voltage: ${req.voltage_level} kV, ${req.annual_electricity_consumption} MWh, ${req.procurement_date}`,
-                value: req.id,
-              })) : []} // Ensure options is an empty array if requirements is not an array
-            />
+            style={{ width: '100%' }}
+            value={selectedRequirement?.id}
+            onChange={handleRequirementChange}
+            options={
+              Array.isArray(requirements)
+                ? requirements.map((req) => ({
+                    label: (
+                      <span>
+                        <strong>State:</strong> {req.state},{' '}
+                        <strong>Consumption unit:</strong> {req.consumption_unit},{' '}
+                        <strong>Industry:</strong> {req.industry},{' '}
+                        <strong>Contracted demand:</strong> {req.contracted_demand} kW,{` `}
+                        <strong>Tariff Category:</strong> {req.tariff_category},{' '}
+                        <strong>Voltage:</strong> {req.voltage_level} kV,{` `}
+                        <strong>Annual Consumption:</strong> {req.annual_electricity_consumption} MWh,{` `}
+                        <strong>Procurement Date:</strong> {req.procurement_date}
+                      </span>
+                    ),
+                    value: req.id,
+                  }))
+                : []
+            }
+          />
           </Col>
         </Row>
 

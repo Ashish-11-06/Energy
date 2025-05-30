@@ -31,7 +31,7 @@ const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
           <p>Terms of Use</p>
           <br />
           <p>
-            This eProcurement Portal is designed, developed, and hosted by EXT,
+            This eProcurement Portal is designed, developed, and hosted by EXG Global,
             in consultation with [Relevant Organization/Department], to ensure a
             seamless and efficient procurement process{" "}
           </p>
@@ -39,7 +39,7 @@ const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
           <p>
             Though all efforts have been made to ensure the accuracy and
             correctness of the content on this Portal, the same should not be
-            construed as a statement of law or used for any legal purposes. EXT
+            construed as a statement of law or used for any legal purposes. EXG Global
             accepts no responsibility in relation to the accuracy, completeness,
             usefulness, or otherwise of the contents. Users are advised to
             verify/check any information with the relevant authorities and/or
@@ -76,10 +76,7 @@ const TermsAndConditionModal = ({ visible, onCancel, user_category }) => {
           obtained from the respective copyright holders. Privacy Policy EXG
           Global does not collect personal information without user consent. Any
           personal data provided will be securely stored and not shared with
-          third parties. The company logs visitor data such as IP addresses,
-          browser type, and visit duration but does not link this information to
-          individual users. Hyperlinking Policy External links on this portal
-          are provided for user convenience. EXG Global is not responsible for
+          third parties.EXG Global is not responsible for
           the content of linked websites and does not endorse any views
           expressed on them. 
         </p>
