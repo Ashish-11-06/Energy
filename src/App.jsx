@@ -81,32 +81,67 @@ import TrackStatusP from './appPowerX/Pages/TrackStatus';
 import ProtectedRoute from './ProtectedRoute';
 import ProfileGen from './appPowerX/Pages/Generator/ProfileGen';
 
-// import StatisticalInfoMonthG from './appPowerX/Pages/Generator/StatisticalInfoMonthG';
+function ClearLocalStorageOnLanding() {
+  const location = useLocation();
+  useEffect(() => {
+    if (location.pathname === "/") {
+      localStorage.clear();
+    }
+  }, [location.pathname]);
+  return null;
+}
 
-// const CurrentPath = () => {
-//   const location = useLocation(); // useLocation must be inside a component
-//   const dispatch = useDispatch();
-//   const user = JSON.parse(localStorage.getItem('user'))?.user || null;
-//   //  console.log(requirementId);
-//   const userId = user?.id;
-
-
-//   useEffect(() => {
-//     const path = location.pathname;
-//     // console.log("Current Path:", location.pathname);
-//     const data = {
-//       last_visited_page: path,
-//       user_id: userId
-//     }
-//     const response = dispatch(lastVisitedPage(data));
-//     // console.log(response);
-//   }, [location]);
-//   return null; // This component does not need to render anything
-// };
 function App() {
-  return (
+  useEffect(() => {
+    // const EXPIRY_HOURS = 24;
+    // const EXPIRY_MS = EXPIRY_HOURS * 60 * 60 * 1000;
+    const EXPIRY_MS = 1 * 60 * 1000; // 1 minute in milliseconds
+    console.log("App component mounted, setting up localStorage expiry check");
+    console.log('expiry in ms:', EXPIRY_MS);
 
+    const LAST_ACTIVE_KEY = 'lastActiveTime';
+
+    const updateLastActiveTime = () => {
+      localStorage.setItem(LAST_ACTIVE_KEY, Date.now().toString());
+    };
+
+    const checkExpiry = () => {
+      const lastActive = localStorage.getItem(LAST_ACTIVE_KEY);
+      if (lastActive) {
+        const now = Date.now();
+        const diff = now - parseInt(lastActive, 10);
+        if (diff > EXPIRY_MS) {
+          localStorage.clear(); // or selectively remove items
+          console.log('localStorage cleared due to 24h inactivity');
+        }
+      }
+    };
+
+    // Set initial activity time if not present
+    if (!localStorage.getItem(LAST_ACTIVE_KEY)) {
+      updateLastActiveTime();
+    }
+
+    // Check every 1 minute
+    const intervalId = setInterval(checkExpiry, 60 * 1000);
+
+    // Listen for user activity to reset the time
+    const resetTimer = () => updateLastActiveTime();
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('click', resetTimer);
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('mousemove', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
+      window.removeEventListener('click', resetTimer);
+    };
+  }, []);
+
+  return (
     <Router>
+      <ClearLocalStorageOnLanding />
       {/* <CurrentPath /> Ensure this is rendered inside JSX */}
       <Routes>
         {/* Public routes */}
