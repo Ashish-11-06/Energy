@@ -185,6 +185,8 @@ const TermSheet = ({
                 <Option value="Bank Guarantee">Bank Guarantee</Option>
                 <Option value="Cash Deposit">Cash Deposit</Option>
                 <Option value="Letter of Credit">Letter of Credit</Option>
+                <Option value="None">None</Option>
+
               </Select>
             </Typography.Paragraph>
           </Col>

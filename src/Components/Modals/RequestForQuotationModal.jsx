@@ -306,6 +306,8 @@ console.log('termsData',termsData);
                 <Option value="Bank Guarantee">Bank Guarantee</Option>
                 <Option value="Cash Deposit">Cash Deposit</Option>
                 <Option value="Letter of Credit">Letter of Credit</Option>
+                <Option value="None">None</Option>
+
               </Select>
             </Typography.Paragraph>
           </Col>
@@ -320,6 +322,19 @@ console.log('termsData',termsData);
               />
             </Typography.Paragraph>
           </Col>
+          {user_category === "Generator" && fromInitiateQuotation ? (
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong> Equity Contribution Required from Consumer:</strong>
+              <InputNumber
+                min={1}
+                value={paymentSecurityDays}
+                onChange={(value) => setPaymentSecurityDays(value)}
+                style={{ width: "100%" }}
+              />
+            </Typography.Paragraph>
+          </Col>
+          ) : null}
           {/* <Col span={12}>
             <Button
               block

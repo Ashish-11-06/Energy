@@ -366,10 +366,11 @@ const handleCloseWarningModal = () => {
         <Col span={12}>
         <Form.Item
   name="capital_cost"
-  label="Capital Cost (INR cr/MW)"
+  label="Capital Cost (INR crore/MW)"
   rules={[
     {
-      required: type === "ESS", // conditionally required
+      required: true,
+      // required: type === "ESS", // conditionally required
       message: "Please input the capital cost!",
     },
   ]}
@@ -379,13 +380,13 @@ const handleCloseWarningModal = () => {
         </Col>
         <Col span={12}>
           <Form.Item
-            name="marginal_cost"
-            label="Marginal Cost (INR/MWh)"
+            name="expected_tariff"
+            label="Expected Tariff (INR/kWh)"
             rules={[
               {
                 // required: type === "ESS" || true,
                 required: true,
-                message: "Please input the marginal cost!",
+                message: "Please input the expected tariff!",
               },
             ]}
           >
@@ -431,7 +432,7 @@ const handleCloseWarningModal = () => {
           <Col span={12}>
             <Form.Item
               name="efficiency_of_storage"
-              label="Efficiency of Storage"
+              label="Efficiency of Storage (MWh)"
               rules={[
                 {
                   required: true,
@@ -445,7 +446,7 @@ const handleCloseWarningModal = () => {
           <Col span={12}>
             <Form.Item
               name="efficiency_of_dispatch"
-              label="Depth of Discharge"
+              label="Depth of Discharge (MWh)"
               rules={[
                 {
                   required: true,

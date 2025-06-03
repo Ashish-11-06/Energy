@@ -259,7 +259,7 @@ const role=userData?.role;
                         <strong>State:</strong> {req.state},{' '}
                         <strong>Consumption unit:</strong> {req.consumption_unit},{' '}
                         <strong>Industry:</strong> {req.industry},{' '}
-                        <strong>Contracted demand:</strong> {req.contracted_demand} kW,{` `}
+                        <strong>Contracted demand:</strong> {req.contracted_demand} MW,{` `}
                         <strong>Tariff Category:</strong> {req.tariff_category},{' '}
                         <strong>Voltage:</strong> {req.voltage_level} kV,{` `}
                         <strong>Annual Consumption:</strong> {req.annual_electricity_consumption} MWh,{` `}

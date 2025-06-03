@@ -685,7 +685,7 @@ const CombinationPattern = () => {
                     textAlign: "center",
                   }}
                 >
-                  Please wait while we are showing you a best matching IPP...
+                Please wait while we are fetching you the best matching Renewable Capacity
                 </div>
                 {/* <Progress percent={progress} /> */}
               </>

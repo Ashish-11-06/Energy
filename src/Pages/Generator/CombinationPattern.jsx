@@ -245,6 +245,14 @@ console.log('sensitivity data', sensitivityData);
             combination["OA_cost"] && !isNaN(combination["OA_cost"])
               ? combination["OA_cost"].toFixed(2)
               : 0,
+          ISTSCharges:
+            combination["ISTS_charges"] && !isNaN(combination["ISTS_charges"])
+              ? combination["ISTS_charges"].toFixed(2)
+              : 0,
+          stateCharges:
+            combination["state_charges"] && !isNaN(combination["state_charges"])
+              ? combination["state_charges"].toFixed(2)
+              : 0,
           totalCost:
             combination["Final Cost"] && !isNaN(combination["Final Cost"])
               ? combination["Final Cost"].toFixed(2)
@@ -271,6 +279,7 @@ console.log('sensitivity data', sensitivityData);
             0, // updated to handle null or undefined values
           connectivity: combination.connectivity,
           states: combination.state,
+
 
           status: combination?.terms_sheet_sent
             ? combination?.sent_from_you === 1
@@ -319,42 +328,34 @@ if(dataSource?.length<=0) {
   }, [isTableLoading, setIsTableLoading]);
 
 
-  // useEffect(() => {
-  //   const fetchPatterns = async () => {
-  //     try {
-  //       if (
-  //         (!consumptionPatterns.length &&
-  //           consumptionPatternStatus === "idle") ||
-  //         consumptionPatternStatus === "failed"
-  //       ) {
-  //         await dispatch(fetchConsumptionPattern(selectedDemandId));
-  //       }
-  //     } catch (error) {
-  //       message.error("Failed to fetch consumption patterns.");
-  //     }
-  //   };
-  
-  useEffect(() => {
-    const fetchPatterns = async () => {
-      console.log('fetch pattern');
-      
-      try {
-        if (
-          (!consumptionPatterns.length &&
-            consumptionPatternStatus === "idle") ||
-          consumptionPatternStatus === "failed"
-        ) {
-          const response = await dispatch(
-            fetchConsumptionPattern({ id: selectedDemandId, user_id })
-          );
-          console.log(response);
-          setConsumerDetails(response.payload?.consumer_details);
-        }
-      } catch (error) {
-        message.error("Failed to fetch consumption patterns.");
+  // Remove fetchPatterns from the main useEffect and move it to its own useEffect
+useEffect(() => {
+  const fetchPatterns = async () => {
+    // Don't clear previous data here, just fetch new data
+    try {
+      if (
+        (!consumptionPatterns.length &&
+          consumptionPatternStatus === "idle") ||
+        consumptionPatternStatus === "failed" ||
+        consumptionPatternStatus === "succeeded"
+      ) {
+        const response = await dispatch(
+          fetchConsumptionPattern({ id: selectedDemandId, user_id })
+        );
+        setConsumerDetails(response.payload?.consumer_details);
       }
-    };
+    } catch (error) {
+      message.error("Failed to fetch consumption patterns.");
+    }
+  };
 
+  if (selectedDemandId) {
+    fetchPatterns();
+  }
+  // eslint-disable-next-line
+}, [selectedDemandId, user_id]); // Only refetch when selectedDemandId or user_id changes
+
+useEffect(() => {
     const loadCombinations = async () => {
       try {
         setIsTableLoading(true);
@@ -384,6 +385,8 @@ if(dataSource?.length<=0) {
 
             // Success actions
             setCombinationData(response);
+            console.log('set combination 387',response);
+            
             formatAndSetCombinations(response);
             setIsTableLoading(false);
             setFetchingCombinations(false);
@@ -418,9 +421,8 @@ if(dataSource?.length<=0) {
 
     // console.log(combinationData);
 
-    fetchPatterns();
-     loadCombinations();
-  }, []);
+    loadCombinations();
+  }, []); // This effect remains as is, or you can add selectedDemandId if you want to reload combinations as well
 
 useEffect(() => {
   if (dataSource.length > 0 && selectedDemandId !== lastSensitivityRunId) {
@@ -866,7 +868,7 @@ const handleOptimizeClick = async () => {
           </Col>
           <Col span={24} style={{ textAlign: "center" }}>
             <p  style={{ color: "#001529" }}>
-            Consumer ID: {consumerDetails?.username}
+            Consumer ID: {consumerDetails?.username || "N/A"}
             </p>
           </Col>
 
@@ -996,7 +998,7 @@ const handleOptimizeClick = async () => {
                     textAlign: "center",
                   }}
                 >
-                  Please wait while we are showing you a best matching IPP...
+                Please wait while we are fetching you the best matching Renewable Capacity
                 </div>
               </>
             ) : dataSource.length > 0 ? (
@@ -1076,7 +1078,11 @@ const handleOptimizeClick = async () => {
         {isIPPModalVisible && (
           <IPPModal
             visible={isIPPModalVisible}
-            ipp={selectedRow}
+            ipp={{
+              ...selectedRow,
+              ISTSCharges: selectedRow?.ISTSCharges,
+              stateCharges: selectedRow?.stateCharges,
+            }}
             combination={combinationData}
             consumerDetails={consumerDetails}
             fromGenerator={true}
@@ -1095,6 +1101,8 @@ const handleOptimizeClick = async () => {
             selectedDemandId={selectedDemandId}
             fromInitiateQuotation="true"
             type="generator"
+            istsCharges={selectedRow?.ISTSCharges}
+            stateCharges={selectedRow?.stateCharges}
           />
         )}
       </Row>

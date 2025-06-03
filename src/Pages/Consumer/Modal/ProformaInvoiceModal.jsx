@@ -171,17 +171,20 @@ const handleOfflineOk = async () => {
 
 
   const handleDownloadPDF = async () => {
-    const container = document.querySelector(".container"); // Select the main container
+    const container = document.querySelector(".container");
     if (!container) {
       console.error("Container element not found.");
       return;
-      ś;
     }
 
     try {
+      // Ensure the full container is rendered, including the footer
       const canvas = await html2canvas(container, {
-        scale: 2, // Increase scale for better resolution (adjust as needed)
-        useCORS: true, // Important for images from different domains
+        scale: 2,
+        useCORS: true,
+        windowWidth: container.scrollWidth,
+        windowHeight: container.scrollHeight,
+        scrollY: -window.scrollY // Prevent cropping due to scroll
       });
 
       const pdf = new jsPDF("p", "mm", "a4");
@@ -191,14 +194,22 @@ const handleOfflineOk = async () => {
       const canvasWidth = canvas.width;
       const canvasHeight = canvas.height;
 
-      // Calculate scaling to fit canvas within A4
-      const scaleFactor = Math.min(width / canvasWidth, height / canvasHeight);
+      // Set your desired minimum PDF height in mm (e.g., 260 for almost full A4)
+      const minPdfHeight = 290;
 
-      const scaledWidth = canvasWidth * scaleFactor;
-      const scaledHeight = canvasHeight * scaleFactor;
+      // Calculate scaling to fit canvas within A4, but ensure min height
+      let scaleFactor = Math.min(width / canvasWidth, height / canvasHeight);
+      let scaledHeight = canvasHeight * scaleFactor;
+      let scaledWidth = canvasWidth * scaleFactor;
 
-      const xPos = (width - scaledWidth) / 2; // Center horizontally
-      const yPos = 10; // Start with some top margin
+      if (scaledHeight < minPdfHeight) {
+        scaleFactor = minPdfHeight / canvasHeight;
+        scaledHeight = minPdfHeight;
+        scaledWidth = canvasWidth * scaleFactor;
+      }
+
+      const xPos = (width - scaledWidth) / 2;
+      const yPos = 10;
 
       pdf.addImage(
         canvas.toDataURL("image/jpeg", 1.0),
@@ -207,7 +218,7 @@ const handleOfflineOk = async () => {
         yPos,
         scaledWidth,
         scaledHeight
-      ); // Use JPEG for better compression
+      );
 
       pdf.save("proforma_invoice.pdf");
     } catch (error) {
@@ -433,6 +444,36 @@ const handleOfflineOk = async () => {
             background-color: #669800;
             color: white;
         }
+        /* Letterhead footer styles */
+        .letterhead-footer {
+            margin-top: 40px;
+            padding: 16px 0 0 0;
+            border-top: 2px solid #669800;
+            color: #333;
+            font-size: 13px;
+            text-align: center;
+            background: #f8f9fa;
+            min-height: 70px; /* Ensure enough height for all lines */
+        }
+        .letterhead-footer .footer-title {
+            font-weight: bold;
+            color: #669800;
+            font-size: 15px;
+        }
+        .letterhead-footer .footer-details {
+            margin-top: 4px;
+            color: #444;
+        }
+        .letterhead-footer .footer-cin {
+            margin-top: 2px;
+            color: #666;
+            font-size: 12px;
+            white-space: pre-line; /* Allow line breaks if needed */
+            word-break: break-word;
+        }
+        .letterhead-footer .footer-bottom-space {
+            height: 8px;
+        }
     </style>
 </head>
 <body>
@@ -565,17 +606,26 @@ const handleOfflineOk = async () => {
             <p>[Our services does not fall under negative list of services.]</p>
         </div>
 
-        
+        <!-- Letterhead Footer Start -->
+        <div class="letterhead-footer">
+            <div class="footer-title">EXG Global Private Limited</div>
+            <div class="footer-details">
+                Registered Office: 108 Himalaya Palace, 65 Vijay Block, Laxmi Nagar, East Delhi, India, 110092
+            </div>
+            <div class="footer-cin">
+                CIN: U12345DL2020PTC123456 &nbsp;|&nbsp; Email: info@exgglobal.com &nbsp;|&nbsp; Phone: +91-9999999999
+            </div>
+            <div class="footer-bottom-space"></div>
+        </div>
+        <!-- Letterhead Footer End -->
     </div>
 </body>
 </html>
-
-
-      `;
+`;
 
   return (
 <Modal
-  title="Proforma Invoice"
+  title="Proforma Invoiceee"
   open={open}
   onCancel={onCancel}
   footer={[

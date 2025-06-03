@@ -428,7 +428,7 @@ console.log('vale',value);
 
   const handleDownloadTemplate = () => {
     const rows = Array.from({ length: 8760 }, (_, i) => `${i + 1},`).join("\n");
-    const csvContent = "Hour,Expected Demand\n" + rows;
+    const csvContent = "Hour,Expected Demand (MWh)\n" + rows;
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);

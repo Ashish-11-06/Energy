@@ -7,11 +7,12 @@ import moment from 'moment';
 
 const { Title, Text } = Typography;
 
-const IPPModal = ({ visible, ipp, reIndex,fromConsumer, fromGenerator, onClose, onRequestForQuotation, consumerDetails }) => {
+const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerator, onClose, onRequestForQuotation, consumerDetails }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
-  // console.log('ippppp',ipp);
-  console.log('consumer',consumerDetails);
+  console.log('ippppp',ipp);
+  console.log('consumerrrrrrr',consumerDetails);
+  console.log('combination',combination);
   
 
   const showQuotationModal = () => {
@@ -27,16 +28,25 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer, fromGenerator, onClose, 
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
     { key: '4', label: 'Per Unit Cost (INR/kWh)', value: ipp?.perUnitCost || "N/A" },
     { key: '5', label: 'OA Cost (INR/kWh)', value: ipp?.OACost || "N/A" },
-    { key: '6', label: 'Total Cost (INR/kWh)', value: ipp?.totalCost || "N/A" },
-    { key: '7', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
-    { key: '8', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
-    { key: '9', label: 'Total RE Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
+    { key: '6', label: 'ISTS Charges (INR/kWh)', value: ipp?.ISTSCharges || "N/A" },
+    { key: '7', label: 'State Charges (INR/kWh)', value: ipp?.stateCharges || "N/A" },
+    // { 
+    //   key: '5', 
+    //   label: 'OA Cost (INR/kWh)', 
+    //   value: ipp?.OACost !== undefined && ipp?.ISTSCharges !== undefined && ipp?.stateCharges !== undefined
+    //     ? `${ipp?.OACost} (${ipp?.stateCharges} [ISTS charges] + ${ipp?.ISTSCharges} [State charges])`
+    //     : "N/A"
+    // },
+    { key: '8', label: 'Total Cost (INR/kWh)', value: ipp?.totalCost || "N/A" },
+    { key: '9', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
+    { key: '10', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
+    { key: '11', label: 'Total RE Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
     ...(fromConsumer ? [
       { key: '1', label: 'RE Index', value:reIndex || 'N/A'}
     ]: []) ,
     ...(fromGenerator ? [
-      { key: '10', label: 'Consumer ID', value: consumerDetails?.username || "N/A" },
-      { key: '11', label: 'Consumer Credit Rating', value: consumerDetails?.credit_rating === null ? "N/A" : consumerDetails?.credit_rating },
+      { key: '12', label: 'Consumer ID', value: consumerDetails?.username || "N/A" },
+      { key: '13', label: 'Consumer Credit Rating', value: consumerDetails?.credit_rating === null ? "N/A" : consumerDetails?.credit_rating },
     ] : [])
   ];
 
