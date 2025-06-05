@@ -158,6 +158,27 @@ console.log('termsData',termsData);
     }
   };
 
+  // Calculate default equity contribution
+  const calculateEquityContribution = () => {
+    const solarCap = Number(solar) || 0;
+    const windCap = Number(wind) || 0;
+    const essCap = Number(battery) || 0;
+    const solarCost = Number(data?.capital_cost_solar) || 0;
+    const windCost = Number(data?.capital_cost_wind) || 0;
+    const essCost = Number(data?.capital_cost_ess) || 0;
+    const total =
+      (solarCost * solarCap + windCost * windCap + essCost * essCap) * 0.3 * 0.26;
+    return Number(total.toFixed(2));
+  };
+
+  const [equityContribution, setEquityContribution] = useState(calculateEquityContribution());
+
+  // Update equity contribution when capacities or costs change
+  useEffect(() => {
+    setEquityContribution(calculateEquityContribution());
+    // eslint-disable-next-line
+  }, [solar, wind, battery, data?.capital_cost_solar, data?.capital_cost_wind, data?.capital_cost_ess]);
+
   return (
     <>
       <Modal
@@ -327,9 +348,9 @@ console.log('termsData',termsData);
             <Typography.Paragraph>
               <strong> Equity Contribution Required from Consumer:</strong>
               <InputNumber
-                min={1}
-                value={paymentSecurityDays}
-                onChange={(value) => setPaymentSecurityDays(value)}
+                min={0}
+                value={equityContribution}
+                onChange={(value) => setEquityContribution(value)}
                 style={{ width: "100%" }}
               />
             </Typography.Paragraph>

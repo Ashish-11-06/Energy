@@ -279,8 +279,10 @@ console.log('sensitivity data', sensitivityData);
             0, // updated to handle null or undefined values
           connectivity: combination.connectivity,
           states: combination.state,
-
-
+          site_names: combination.site_names,
+          capital_cost_ess: combination.capital_cost_ess || 0,
+          capital_cost_solar: combination.capital_cost_solar || 0,
+          capital_cost_wind: combination.capital_cost_wind || 0,
           status: combination?.terms_sheet_sent
             ? combination?.sent_from_you === 1
               ? "Already Sent"
@@ -1082,6 +1084,9 @@ const handleOptimizeClick = async () => {
               ...selectedRow,
               ISTSCharges: selectedRow?.ISTSCharges,
               stateCharges: selectedRow?.stateCharges,
+              capital_cost_solar: selectedRow?.capital_cost_solar,
+              capital_cost_wind: selectedRow?.capital_cost_wind,
+              capital_cost_ess: selectedRow?.capital_cost_ess,
             }}
             combination={combinationData}
             consumerDetails={consumerDetails}

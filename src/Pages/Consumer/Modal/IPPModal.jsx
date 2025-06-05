@@ -73,12 +73,24 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
     return matchingStateKey ? ipp.states[matchingStateKey] : "N/A";
   };
   
-  const technologyData = ipp?.technology.map((tech, index) => ({
-    key: index,
-    name: tech.name,
-    capacity: tech.capacity,
-    state: getStateForTechnology(tech.name),
-  }));
+  const technologyData = ipp?.technology.map((tech, index) => {
+    // Find the state key for this technology
+    const stateKey = Object.keys(ipp?.states || {}).find((stateKey) =>
+      stateKey.startsWith(tech.name)
+    );
+    // Get the site name for this technology from ipp.site_names using the same key
+    let siteName = "N/A";
+    if (stateKey && ipp?.site_names && Object.prototype.hasOwnProperty.call(ipp.site_names, stateKey)) {
+      siteName = ipp.site_names[stateKey] ?? "N/A";
+    }
+    return {
+      key: index,
+      name: tech.name,
+      capacity: tech.capacity,
+      state: stateKey ? ipp.states[stateKey] : "N/A",
+      site_names: siteName,
+    };
+  });
   
 
   // console.log(ipp?.technology);
@@ -87,6 +99,7 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
     { title: 'Technology', dataIndex: 'name', key: 'name' },
     { title: 'Capacity', dataIndex: 'capacity', key: 'capacity' },
     { title: 'State', dataIndex: 'state', key: 'state' },
+    { title: 'Site Name', dataIndex: 'site_names', key: 'site_names',}
   ];
 
   return (

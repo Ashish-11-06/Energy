@@ -73,6 +73,8 @@ const RequestForQuotationModal = ({ visible, onCancel }) => {
               <Radio.Group>
                 <Radio value="bankGuarantee">Bank Guarantee</Radio>
                 <Radio value="letterOfCredit">Letter of Credit</Radio>
+                                <Option value="None">None</Option>
+
               </Radio.Group>
             </Form.Item>
           </Col>

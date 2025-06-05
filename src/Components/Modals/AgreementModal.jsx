@@ -64,12 +64,12 @@ const AgreementContent = ({ dynamicData }) => (
     <p>Terms; or (c) other such date to be agreed between ;<b>{dynamicData.generator}</b> and the {dynamicData.consumerName}(s) in writing:</p>
     <p><strong>Restricted Activity:</strong> Negotiations in relation to power procurement activities through open access, captive or through power exchange. This does not include any existing transactions for which contracts have been executed prior to the execution of the Terms;</p>
     <p><strong>Third Party:</strong> Any person other than <b>{dynamicData.generator}</b> (or any of their respective officers, employees, agents or advisers);</p>
-    <p><strong>Third Party Negotiations:</strong> Any discussions or negotiations between a Third Party and the {dynamicData.consumerName}(s) or the {dynamicData.consumerName}'s group, or any of its respective officers, employees, agents or advisers, relating to or otherwise concerning a Restricted Activity.</p>
+    <p className='page-break'><strong>Third Party Negotiations:</strong> Any discussions or negotiations between a Third Party and the {dynamicData.consumerName}(s) or the {dynamicData.consumerName}'s group, or any of its respective officers, employees, agents or advisers, relating to or otherwise concerning a Restricted Activity.</p>
 
     </div>
     {/* ================================================================================================================================================ */}
 
-    <p className='page-break' style={{marginLeft:'25px'}}><strong>2.2.</strong> The {dynamicData.consumerName}(s) agrees that for the duration of the Exclusivity Period, it will discuss and negotiate the Proposed Transaction with <b>{dynamicData.generator}</b> on an exclusive basis. The {dynamicData.consumerName}(s) undertakes that for the duration of the Exclusivity Period, it will not (and will procure that no member of its group, nor any of their respective officers, employees, agents or advisers), directly or indirectly continue, enter into, re-start, solicit, initiate, respond to any inquiries, consider or participate in any Third Party Negotiations, in any manner whatsoever.</p>
+    <p style={{marginLeft:'25px'}}><strong>2.2.</strong> The {dynamicData.consumerName}(s) agrees that for the duration of the Exclusivity Period, it will discuss and negotiate the Proposed Transaction with <b>{dynamicData.generator}</b> on an exclusive basis. The {dynamicData.consumerName}(s) undertakes that for the duration of the Exclusivity Period, it will not (and will procure that no member of its group, nor any of their respective officers, employees, agents or advisers), directly or indirectly continue, enter into, re-start, solicit, initiate, respond to any inquiries, consider or participate in any Third Party Negotiations, in any manner whatsoever.</p>
     <p style={{marginLeft:'25px'}}><strong>2.3.</strong> On executing the Terms, the {dynamicData.consumerName}(s) will immediately terminate, or procure the termination of, any Third Party Negotiations taking place.</p>
     <p> <b>3. Undertakings</b></p>
     <div style={{marginLeft: '25px'}}>
@@ -82,7 +82,7 @@ const AgreementContent = ({ dynamicData }) => (
     <p><strong>3.7.</strong> The parties undertake to use their best endeavours to negotiate the Transaction Documents in good faith based on the Terms.    </p>
     <p><strong>3.8.</strong> The parties undertake to use their best endeavours to conclude and enter into the Transaction Documents (and all ancillary documents) prior to the expiry of the Exclusivity Period.</p>
    </div>
-    <p><strong>4. Termination</strong></p>
+    <p className='page-break'><strong>4. Termination</strong></p>
 
     <div style={{marginLeft: '25px'}}>
     <p>
@@ -105,7 +105,7 @@ const AgreementContent = ({ dynamicData }) => (
 
     <p><strong>4.2. </strong>The termination by <b>{dynamicData.generator}</b> of the Terms, in accordance with paragraph 4.1 above, shall be without any liability for <b>{dynamicData.generator}</b> , Consumer and EXG Global. </p>
     </div>
-    <div  className='page-break'>
+    <div  >
     <p><strong>5. Confidentiality</strong></p>
     <p style={{marginLeft: '25px'}}><strong>5.1. </strong>The Terms and all negotiations and information shared between the parties with respect to the Proposed Transaction are confidential and terms of the confidentiality undertaking entered into by the Parties shall apply.</p>
     </div>
@@ -498,7 +498,7 @@ const AgreementContent = ({ dynamicData }) => (
                 <li>(b) could not have been avoided or corrected through the exercise of reasonable diligence Non-availability of open access or its requirement for consumption in electricity or a dip in demand for electricity by {dynamicData.consumerName} will not be treated as a Force Majeure Event.</li>
               </ol>
               <p>In case of Force Majeure event, the Affected Party shall notify said situation, its cause and possible duration, in writing to the other Party. The Affected Party shall continue to perform its obligations pursuant to the fullest extent possible and shall seek alternative methods of performance for compliance with its obligations. A Force Majeure event will not exempt the Parties from any payment obligations.</p>
-              <p style={{marginTop:'40px'}}>The Generator shall be entitled to relief for a Force Majeure event affecting its obligations in respect of the Project.</p>
+              <p className='page-break' style={{marginTop:'40px'}}>The Generator shall be entitled to relief for a Force Majeure event affecting its obligations in respect of the Project.</p>
               <p>Prolonged Force Majeure shall not give rise to any termination event.<sup>4</sup></p>
 
             </td>
@@ -556,7 +556,8 @@ const AgreementContent = ({ dynamicData }) => (
         </tbody>
       </table>
 
-        <p style={{fontSize:'18px',fontWeight:'bold',textAlign:'center', marginTop:'30px'}}>Part 2: Equity Investment to be done by way of Equity Subscription</p>
+<br />
+        <p  style={{fontSize:'18px',fontWeight:'bold',textAlign:'center', marginTop:'400px'}}>Part 2: Equity Investment to be done by way of Equity Subscription</p>
       <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid black' }}>
       <thead>
           <tr>
@@ -661,6 +662,7 @@ Arbitration. The award passed by the arbitral tribunal will be binding.
           
         </tbody>
       </table>
+      
       Confidential Document......................................................................................................................
     </div>
 
