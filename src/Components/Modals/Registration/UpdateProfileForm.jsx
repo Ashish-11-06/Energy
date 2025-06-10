@@ -49,6 +49,14 @@ console.log('project',project);
   const [windFile, setWindFile] = useState("");
   const continueButtonRef = useRef(false); // Ref to track the state of the "Continue" button
 const [warningModal, setWarningModal] = useState(false); // State to control tupdatehe warning modal
+console.log('selectedProject',selectedProject);
+const [lastUploadedFiles, setLastUploadedFiles] = useState({
+  hourly_data: selectedProject.hourly_data
+});
+
+const hourly_data=`http://52.66.186.241:8000${selectedProject.hourly_data}`;
+console.log('ii',lastUploadedFiles);
+
   useEffect(() => {
     if (user.solar_template_downloaded) {
       setIsTemplateDownloaded(true);
@@ -162,31 +170,6 @@ const handleResubmit =async () => {
         const worksheet = workbook.Sheets[sheetName];
         const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false });
 
-        // rows[0] is header, so data rows = rows.length - 1
-        // if (rows.length !== 8761) {
-        //   message.error("Cannot upload an empty file. Please select a valid one.");
-        //   setFileData(null);
-        //   setFile("");
-        //   continueButtonRef.current = false;
-        //   return;
-        // }
-
-        // // Check that all rows (except header) have both columns A and B filled
-        // for (let i = 1; i < rows.length; i++) {
-        //   const row = rows[i];
-        //   if (
-        //     row === undefined ||
-        //     row.length < 2 ||
-        //     row[0] === undefined || row[0] === "" ||
-        //     row[1] === undefined || row[1] === ""
-        //   ) {
-        //     message.error(`Row ${i + 1} is incomplete. Please fill all values in columns A and B.`);
-        //     setFileData(null);
-        //     setFile("");
-        //     continueButtonRef.current = false;
-        //     return;
-        //   }
-        // }
       } catch (e) {
         message.error("Failed to read the Excel file. Please upload a valid file.");
         setFileData(null);
@@ -477,13 +460,13 @@ const handleCloseWarningModal = () => {
           </Row>
 
           <Row gutter={16} align="middle">
-            <Col span={6}>
+            <Col span={8}>
               <Button
                 onClick={downloadExcelTemplate}
                 icon={<DownloadOutlined />}
                 type="primary"
                 style={{ width: "100%" }}
-              ></Button>
+              >Download Template</Button>
             </Col>
 
             <Col span={8}>
@@ -518,6 +501,23 @@ const handleCloseWarningModal = () => {
                 )}
               </Upload>
             </Col>
+         <Col span={8}>
+  {lastUploadedFiles && (
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+    <Button
+  type="link"
+  href={hourly_data}
+  target="_blank"
+  rel="noopener noreferrer"
+  download
+>
+      <DownloadOutlined />
+Last Uploaded File
+</Button>
+    </div>
+  )}
+</Col>
+
 
             <Col span={10}>
               {file && (
