@@ -50,7 +50,9 @@ const RequestForQuotationModal = ({
     data?.technology?.find((tech) => tech.name === "ESS")?.capacity.replace(" MWh", "") || 0
   );
   const [perUnitCost,setPerUnitCost] =useState(data.perUnitCost);
-    const [modalVisible, setModalVisible] = useState(false);
+  const [terminationCompensation, setTerminationCompensation] = useState(24);
+  const [latePaymentSurcharge, setLatePaymentSurcharge] = useState(1.25);
+  const [modalVisible, setModalVisible] = useState(false);
   
 console.log('ddd',data);
 // console.log('tech data',technologyData);
@@ -112,9 +114,11 @@ console.log('ddd',data);
     minimum_supply_obligation: minimumSupply || 0,
     payment_security_type: paymentSecurityType || "",
     payment_security_day: paymentSecurityDays || 0,
+    termination_compensation: terminationCompensation || 0,
+    late_payment_surcharge: latePaymentSurcharge || 0,
   };
 
-  // console.log('termsData',termsData);
+  console.log('termsData',terminationCompensation,latePaymentSurcharge);
 
   const handleContinue = async () => {
 
@@ -135,6 +139,8 @@ console.log('ddd',data);
       solar_capacity: Number(solar) || 0,
       wind_capacity:Number(wind)  || 0,
       ess_capacity: Number(battery) || 0,
+       termination_compensation: terminationCompensation || 0,
+    late_payment_surcharge: latePaymentSurcharge || 0,
     };
 console.log('termsData',termsData);
 
@@ -178,6 +184,7 @@ console.log('termsData',termsData);
     setEquityContribution(calculateEquityContribution());
     // eslint-disable-next-line
   }, [solar, wind, battery, data?.capital_cost_solar, data?.capital_cost_wind, data?.capital_cost_ess]);
+  console.log('termsData',terminationCompensation,latePaymentSurcharge);
 
   return (
     <>
@@ -356,6 +363,28 @@ console.log('termsData',termsData);
             </Typography.Paragraph>
           </Col>
           ) : null}
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong>Late Payment Surcharge (percent/month):</strong>
+              <InputNumber
+                min={0}
+                value={latePaymentSurcharge}
+                onChange={(value) => setLatePaymentSurcharge(value)}
+                style={{ width: "100%" }}
+              />
+            </Typography.Paragraph>
+          </Col>
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong>Termination Compensation</strong>
+              <InputNumber
+                min={0}
+                value={terminationCompensation}
+                onChange={(value) => setTerminationCompensation(value)}
+                style={{ width: "100%" }}
+              />
+            </Typography.Paragraph>
+          </Col>
           {/* <Col span={12}>
             <Button
               block
