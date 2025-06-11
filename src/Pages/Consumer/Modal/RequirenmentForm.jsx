@@ -380,32 +380,42 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
             </Col>
           )}
 
-          <Col span={12}>
-            <Form.Item
-              label={renderLabelWithTooltip(
-                "Contracted Demand (in MW)",
-                "Contracted demand / Sanctioned load as per your electricity bill"
-              )}
-              name="contractedDemand"
-              rules={[
-                { required: true, message: "Please enter the contracted demand!" },
-                {
-                  validator: (_, value) =>
-                    value > 0
-                      ? Promise.resolve()
-                      : Promise.reject(
-                          new Error("Contracted demand must be greater than 0!")
-                        ),
-                },
-              ]}
-            >
-              <Input
-                type="number"
-                min={1}
-                placeholder="Enter contracted demand in MW"
-              />
-            </Form.Item>
-          </Col>
+ <Col span={12}>
+  <Form.Item
+    label={renderLabelWithTooltip(
+      "Contracted Demand (in MW)",
+      "Contracted demand / Sanctioned load as per your electricity bill"
+    )}
+    name="contractedDemand"
+    rules={[
+      { required: true, message: "Please enter the contracted demand!" },
+      {
+        validator: (_, value) => {
+          if (value === undefined || value === '') {
+            return Promise.reject(new Error("Please enter the contracted demand!"));
+          }
+          if (value <= 0) {
+            return Promise.reject(new Error("Contracted demand must be greater than 0!"));
+          }
+          // Regex to check max 2 decimal places
+          if (!/^\d+(\.\d{1,2})?$/.test(value)) {
+            return Promise.reject(new Error("Contracted demand can have up to 2 decimal places!"));
+          }
+          return Promise.resolve();
+        },
+      },
+    ]}
+  >
+    <Input
+      type="number"
+      min={0.01}
+      step={0.01}
+      placeholder="Enter contracted demand in MW"
+    />
+  </Form.Item>
+</Col>
+
+
 
           <Col span={12}>
             <Form.Item
