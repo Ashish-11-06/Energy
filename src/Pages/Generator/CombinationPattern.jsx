@@ -28,6 +28,7 @@ import { fetchOptimizedCombinationsXHR } from "../../Utils/xhrUtils";
 import "./CombinationPattern.css"; // Import the custom CSS file
 import { fetchSensitivity } from "../../Redux/Slices/Generator/sensitivitySlice";
 import { Tooltip as ChartTooltip } from "chart.js";
+import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
@@ -84,6 +85,7 @@ const handleSensitivity = async () => {
   console.log("Payload for sensitivity API:", data); // Log the payload
   
   try {
+    // const res=null;
     const res = await dispatch(fetchSensitivity(data)).unwrap();
     console.log("API response:", res);
     setSensitivityData(res);
@@ -283,6 +285,7 @@ console.log('sensitivity data', sensitivityData);
           capital_cost_ess: combination.capital_cost_ess || 0,
           capital_cost_solar: combination.capital_cost_solar || 0,
           capital_cost_wind: combination.capital_cost_wind || 0,
+          banking_available: combination.banking_available || 0,
           status: combination?.terms_sheet_sent
             ? combination?.sent_from_you === 1
               ? "Already Sent"
@@ -299,6 +302,7 @@ if(dataSource?.length<=0) {
       setTryREreplacement(true);
     }
   }, [dataSource]);
+console.log('dataSource', dataSource);
 
   // Redux selectors
   const consumptionPatterns = useSelector(
@@ -650,12 +654,28 @@ const handleOptimizeClick = async () => {
       width: 300,
       render: (text) => dayjs(text).format("DD-MM-YYYY"),
     },
+ {
+  title: "Banking Available",
+  dataIndex: "banking_available",
+  key: "banking_available",
+  width: 300,
+  align: 'center',
+  render: (value) => (
+    <div style={{ textAlign: 'center' }}>
+      {value === 0 ? (
+        <CloseCircleTwoTone twoToneColor="#FF0000" />
+      ) : (
+        <CheckCircleTwoTone twoToneColor="#669800" />
+      )}
+    </div>
+  ),
+},
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       render: (text, record) =>
-        text !== "Send Quotation" ? (
+        text !== "Already Sent" ? (
           <Tooltip title="refer offer">
             <Link
               to={`/offers`}
@@ -1042,7 +1062,7 @@ const handleOptimizeClick = async () => {
 
         <Modal
           title="Sensitivity Analysis Graph"
-          visible={isGraphModalVisible}
+          open={isGraphModalVisible}
           onCancel={handleGraphModalClose}
           footer={null}
           width="80%"
@@ -1087,6 +1107,7 @@ const handleOptimizeClick = async () => {
               capital_cost_solar: selectedRow?.capital_cost_solar,
               capital_cost_wind: selectedRow?.capital_cost_wind,
               capital_cost_ess: selectedRow?.capital_cost_ess,
+              banking_available: selectedRow?.banking_available,
             }}
             combination={combinationData}
             consumerDetails={consumerDetails}

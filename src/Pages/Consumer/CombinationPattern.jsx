@@ -28,6 +28,7 @@ import IPPModal from "./Modal/IPPModal";
 import RequestForQuotationModal from "../../Components/Modals/RequestForQuotationModal";
 import { fetchOptimizedCombinationsXHR } from "../../Utils/xhrUtils";
 import "./CombinationPattern.css"; // Import the custom CSS file
+import { fetchSensitivity } from "../../Redux/Slices/Generator/sensitivitySlice";
 
 const { Title, Text } = Typography;
 
@@ -50,6 +51,11 @@ const CombinationPattern = () => {
   const selectedDemandId = localStorage.getItem("selectedRequirementId");
   const reReplacement = state?.reReplacement;
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
+const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State to control modal visibility
+const [isGraphLoading, setIsGraphLoading] = useState(false); // State to control loader in the button
+const [hasRunSensitivity, setHasRunSensitivity] = useState(false); // Track sensitivity execution
+const [lastSensitivityRunId, setLastSensitivityRunId] = useState(null); // Track the last ID for sensitivity
+  const [sensitivityData, setSensitivityData] = useState();
 
   const dispatch = useDispatch();
 
@@ -57,6 +63,133 @@ const CombinationPattern = () => {
   const role = user.role;
   // console.log(user.id);
   const user_id = user.id;
+
+const handleSensitivity = async () => {
+  if (hasRunSensitivity) return; // Prevent re-execution
+  console.log("clicked");
+  setIsGraphLoading(true); // Show loader in the button
+
+  const combinationIds = dataSource.map((item) => item.combination);
+  console.log("Extracted combination IDs:", combinationIds); // Log to verify
+
+  const data = {
+    requirement_id: selectedDemandId,
+    optimize_capacity_user: user.user_category,
+    user_id: user.id,
+    combinations: combinationIds, // Send combination IDs
+  };
+
+  console.log("Payload for sensitivity API:", data); // Log the payload
+  
+  try {
+    const res = await dispatch(fetchSensitivity(data)).unwrap();
+    console.log("API response:", res);
+    setSensitivityData(res);
+    if (res.error) {
+      message.error(res.error); // Display error message if any
+      setIsGraphLoading(false); // Hide loader in the button
+      return;
+    }
+    setHasRunSensitivity(true); // Mark sensitivity as executed
+  } catch (error) {
+    console.error("Error fetching sensitivity data:", error);
+    message.error("Failed to fetch sensitivity data.");
+  } finally {
+    setIsGraphLoading(false); // Hide loader in the button
+  }
+};
+
+const prepareGraphData = () => {
+  if (!sensitivityData) return null;
+
+  const labels = [];
+  const tariffData = [];
+  const finalCostData = [];
+  const technologyCombinationData = []; // Store for tooltips
+
+  Object.entries(sensitivityData).forEach(([combination, reReplacements]) => {
+    Object.entries(reReplacements).forEach(([reReplacement, data]) => {
+      if (typeof data !== "string") {
+        labels.push(reReplacement); // X-axis labels
+
+        // Y-axis datasets
+        tariffData.push(data["Per Unit Cost"]);
+        finalCostData.push(data["Final Cost"]);
+
+        // Store technology combination for tooltips
+        technologyCombinationData.push(
+          `Solar: ${data["Optimal Solar Capacity (MW)"]} MW, Wind: ${data["Optimal Wind Capacity (MW)"]} MW, Battery: ${data["Optimal Battery Capacity (MW)"]} MW`
+        );
+      }
+    });
+  });
+  const combinationIds = dataSource.map((item) => item.combination);
+  console.log(combinationIds, "combinationIds");
+  return {
+    labels, // X-axis values (reReplacements)
+    datasets: [
+      {
+        label: "Tariff (INR/kWh)",
+        data: tariffData,
+        borderColor: "#FF5733",
+        backgroundColor: "rgba(255, 87, 51, 0.2)",
+        borderWidth: 2,
+        fill: true,
+      },
+      {
+        label: "Final Cost (INR)",
+        data: finalCostData,
+        borderColor: "#337AFF",
+        backgroundColor: "rgba(51, 122, 255, 0.2)",
+        borderWidth: 2,
+        fill: true,
+      },
+    ],
+    technologyCombinationData, // Pass separately for tooltips
+  };
+};
+
+const graphOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: (context) => {
+          const index = context.dataIndex;
+          const techData = prepareGraphData().technologyCombinationData[index];
+
+          if (context.raw === null) {
+            return `${context.label}: Demand cannot be met`;
+          }
+
+          return [
+            `${context.dataset.label}: ${context.raw}`,
+            techData, // Show technology combination in tooltip
+          ];
+        },
+      },
+    },
+    legend: {
+      position: "bottom",
+    },
+  },
+  scales: {
+    x: {
+      title: {
+        display: true,
+        text: "RE Replacement (%)",
+      },
+    },
+    y: {
+      title: {
+        display: true,
+        text: "Values",
+      },
+      beginAtZero: true,
+    },
+  },
+};
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
     if (
@@ -77,7 +210,8 @@ const CombinationPattern = () => {
           combination["Optimal Battery Capacity (MW)"] || 0;
         // console.log("format", combination);
         const annual_demand_met = combination["Annual Demand Met"] || 0;
-        // console.log(annual_demand_met);
+        // console.log(annual_demand_m
+        // et);
         // console.log("status", combination.terms_sheet_sent);
 
         return {
@@ -103,6 +237,7 @@ const CombinationPattern = () => {
             windCapacity +
             solarCapacity 
           ).toFixed(2)}`,
+          elite_generator:combination.elite_generator,
           perUnitCost:
             combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"])
               ? combination["Per Unit Cost"].toFixed(2)
@@ -252,11 +387,20 @@ const CombinationPattern = () => {
     fetchPatterns();
     // 
     loadCombinations();
+    
   }, [dispatch, selectedDemandId]);
 
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
-
+useEffect(() => {
+  if (dataSource.length > 0 && selectedDemandId !== lastSensitivityRunId) {
+    handleSensitivity(); // Call sensitivity only if it hasn't run for the current selectedDemandId
+    setLastSensitivityRunId(selectedDemandId); // Update the last ID for sensitivity
+  }
+}, [dataSource, selectedDemandId]); // Remove hasRunSensitivity dependency
+const handleGraphModalClose = () => {
+  setIsGraphModalVisible(false); // Close the modal
+};
   useEffect(() => {
     if (isTableLoading) {
       const interval = setInterval(() => {
@@ -274,7 +418,7 @@ const CombinationPattern = () => {
     }
   }, [isTableLoading]);
 
-  console.log('consumption pattern',consumptionPatterns);
+  // console.log('consumption pattern',consumptionPatterns);
   
   const handleRowClick = (record) => {
     setSelectedRow(record); // Record comes from the latest dataSource
@@ -352,7 +496,9 @@ const CombinationPattern = () => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
   };
-
+const handleSensitivityClick = () => {
+  setIsGraphModalVisible(true); // Show the modal
+}
   const sliderStyle = {
     height: "20px", // Increase the thickness of the slider
   };
@@ -477,6 +623,7 @@ const CombinationPattern = () => {
       width: 120,
       render: (text) => dayjs(text).format("DD-MM-YYYY"),
     },
+    
   ];
 
   if (role !== "View") {
@@ -503,6 +650,34 @@ const CombinationPattern = () => {
     });
   }
 
+  if(role !== 'View') {
+    columns.push(  {
+          title: "Sensitivity",
+          key: "sensitivity",
+          render: () => (
+            <Tooltip 
+      title="Please wait while we optimize the model for different RE replacements." 
+      disableHoverListener={!isGraphLoading && combinationData} // Disable tooltip when button is enabled
+    >
+      <Button
+        type="primary"
+        disabled={!combinationData || isGraphLoading} // Button remains disabled while loading or if data is missing
+        onClick={handleSensitivityClick}
+      >
+        {isGraphLoading ? (
+          <>
+            <Spin size="small" style={{ marginRight: 8 }} />
+            Sensitivity
+          </>
+        ) : (
+          "Sensitivity"
+        )}
+      </Button>
+    </Tooltip>     
+          ),
+        },
+      )
+    }
   // Chart data for stacked bar chart
 // const stackedBarChartData = {
 //   labels: Array.isArray(consumptionPatterns)
@@ -652,7 +827,7 @@ const lineChartData = {
           </div>
           <div style={{ marginBottom: "20px" }}>
             <Card>
-              <p>(Scroll the below bar for different RE combination )</p>
+              <p>(You can change your RE Replacement from below bar.)</p>
               {/* <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>(Scroll the below bar for different RE combination  )</p></span> Display slider value */}
               <span>
              
@@ -665,20 +840,6 @@ const lineChartData = {
                   alignItems: "center",
                 }}
               >
-                  {/* Left Arrow Button (Positioned on the Slider Line) */}
-                  {/* <Button
-                    onClick={decreaseValue}
-                    icon={<LeftOutlined />}
-                    style={{
-                      position: "absolute",
-                      left: `${(sliderValue / 100) * 84}%`, // Position based on slider value
-                      top: "100%",
-                      transform: "translate(-50%, -50%)",
-                      zIndex: 10,
-                 
-                    }}
-                  /> */}
-
                   <Slider
                     min={0}
                     max={100}
@@ -700,7 +861,7 @@ const lineChartData = {
                     setSliderValue(value);
                   }}
                   style={{
-                    width: "60px",
+                    width: "50px",
                     height: "30px",
                     marginLeft: "10px",
                     textAlign: "center",
@@ -708,21 +869,6 @@ const lineChartData = {
                     borderRadius: "4px",
                   }}
                 />
-                  {/* Right Arrow Button (Positioned on the Slider Line) */}
-                  {/* <Button
-                    onClick={increaseValue}
-                    icon={<RightOutlined />}
-                    style={{
-                      position: "absolute",
-                      left: `${(sliderValue / 100) * 80}%`, // Position based on slider value
-                      top: "100%",
-                      transform: "translate(50%, -50%)",
-                      zIndex: 10,
-                      background: 'none !important',
-                      marginLeft: "30px",
-                  
-                    }}
-                  /> */}
                 </div>
                 <Button
                   type="primary"
@@ -806,6 +952,42 @@ const lineChartData = {
           </Card>
         </Col>
 
+     <Modal
+          title="Sensitivity Analysis Graph"
+          open={isGraphModalVisible}
+          onCancel={handleGraphModalClose}
+          footer={null}
+          width="80%"
+          zIndex={5000}
+        >
+          {sensitivityData ? (
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "400px",
+                margin: "0 auto",
+              }}
+            >
+              <Line data={prepareGraphData()} options={graphOptions} />
+            </div>
+          ) : (
+            <div
+              style={{
+                padding: "20px",
+                fontSize: "18px",
+                fontWeight: "bold",
+                backgroundColor: "#f8d7da",
+                borderRadius: "8px",
+                border: "1px solid #f5c6cb",
+                color: "#721c24",
+                textAlign: "center",
+              }}
+            >
+              No sensitivity data available. Please fetch data to view the graph.
+            </div>
+          )}
+        </Modal>
         {/* IPP Modal */}
         {isIPPModalVisible && (
 

@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Typography, Row, Col, Spin, Modal, Tooltip, message } from 'antd';
+import { Table, Button, Typography, Row, Col, Spin, Modal, Tooltip, message, Calendar, DatePicker } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { fetchTransactions } from '../../Redux/Slices/Transaction/transactionWindowSlice';
+import { changeWindowDate, fetchTransactions } from '../../Redux/Slices/Transaction/transactionWindowSlice';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import CounterOffer from '../../Components/Modals/CounterOffer';
@@ -19,10 +19,15 @@ const TransactionMainPage = () => {
   const [loading, setLoading] = useState(false);
   const [isRejected, setIsRejected] = useState(false);
   const [consumerDetails,setConsumerDetails]=useState([]);
+  const [changeDateRowKey, setChangeDateRowKey] = useState(null);
+  const [changeModal, setChangeModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [changeLoading, setChangeLoading] = useState(false);
+  const [changeDateWindowCreated, setChangeDateWindowCreated] = useState(null);
+  const [changeDateStartTime, setChangeDateStartTime] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-const openWindow=new Date();
+  const openWindow=new Date();
 const openWindowTime = moment(openWindow).format('HH:mm:ss');
 const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
   moment('10:00:00', 'HH:mm:ss'),
@@ -31,7 +36,52 @@ const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
   '[)'
 );
 // console.log(openWindowTime, isWithinTimeWindow);
+const handleChangeDate = (record) => {
+  // record.window_created_date and record.start_time are expected to be ISO strings
+  setChangeDateRowKey(record.key ?? record.window_id);
+  setChangeModal(true);
+  setSelectedDate(null);
+  setChangeDateWindowCreated(record.window_created_date);
+  setChangeDateStartTime(record.start_time);
+}
 
+const handleDateChange = (date) => {
+  setSelectedDate(date);
+};
+
+const handleChangeConfirm = async () => {
+  if (!selectedDate) {
+    message.warning("Please select a date.");
+    return;
+  }
+  setChangeLoading(true);
+  try {
+   const res= await dispatch(
+      changeWindowDate({
+        user_id: userId,
+        window_id: Number(changeDateRowKey),
+        date: selectedDate.format('YYYY-MM-DD'),
+      })
+    ).unwrap();
+    console.log('res', res);
+   console.log('res payload', res?.payload);
+   
+    if(res?.message) {
+      message.success(res?.message || 'Window date changed successfully');
+    }
+    
+    // message.success("Date changed successfully!");
+    setChangeModal(false);
+    setChangeDateRowKey(null);
+    setSelectedDate(null);
+    // Optionally refresh transactions
+    const response = await dispatch(fetchTransactions(userId)).unwrap();
+    setTransactions(response);
+  } catch (error) {
+    message.error("Failed to change date.");
+  }
+  setChangeLoading(false);
+};
 
   const user = JSON.parse(localStorage.getItem('user')).user;
   const userId = user.id;
@@ -71,6 +121,9 @@ const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
     setIsModalVisible(false);
     setModalContent(null);
   };
+
+console.log('set transactions', transactions);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -228,6 +281,19 @@ const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
           </Button>
           <br />
           <br />
+           <Button
+            type="primary"
+            style={{
+              backgroundColor: '#669800',
+              borderColor: '#88B04B',
+              width: '150px',
+            }}
+            onClick={() => {
+              handleChangeDate(record);
+            }}
+          >
+            Change Date
+          </Button>
         </>
       ),
     },
@@ -278,7 +344,63 @@ const isWithinTimeWindow = moment(openWindowTime, 'HH:mm:ss').isBetween(
         />
       )}
 
-<DemandModal
+      <Modal
+        title="Change Date"
+        open={changeModal}
+        onCancel={() => {
+          setChangeModal(false);
+          setChangeDateRowKey(null);
+          setSelectedDate(null);
+          setChangeDateWindowCreated(null);
+          setChangeDateStartTime(null);
+        }}
+        footer={[
+          <Button
+            key="change"
+            type="primary"
+            loading={changeLoading}
+            onClick={handleChangeConfirm}
+          >
+            Change
+          </Button>
+        ]}
+      >
+        <DatePicker
+          style={{ width: "100%" }}
+          format="DD-MM-YYYY"
+          autoFocus
+          value={selectedDate}
+          onChange={handleDateChange}
+          disabledDate={current => {
+            if (!changeDateWindowCreated || !changeDateStartTime) return true;
+            const created = moment(changeDateWindowCreated, moment.ISO_8601).startOf('day');
+            const start = moment(changeDateStartTime, moment.ISO_8601).startOf('day');
+            const min = created;
+            const max = created.clone().add(15, 'days');
+            const today = moment().startOf('day');
+            // Disable:
+            // - before window_created_date
+            // - after window_created_date + 15 days
+            // - today and before today (passed dates)
+            return (
+              current < min ||
+              current > max ||
+              current <= today
+            );
+          }}
+        />
+      </Modal>
+
+      {isRejected && (
+        <Row justify="center" style={{ marginTop: 20 }}>
+          <Col>
+            <Typography.Text type="danger">
+              Your transaction has been rejected. Please contact support for more details.
+            </Typography.Text>
+          </Col>
+        </Row>
+      )}
+      <DemandModal
         title="Demand Details"
         open={isRequirementModalVisible}
         onCancel={handleRequirementModalClose}

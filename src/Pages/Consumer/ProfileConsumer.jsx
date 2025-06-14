@@ -16,7 +16,7 @@ import EditProfileModal from "./Modal/EditProfileModal";
 import dayjs from "dayjs";
 import AddUserModal from "./Modal/AddUserModal";
 import { render } from "less";
-import { DeleteOutlined, EditOutlined, LogoutOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DownloadOutlined, EditOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { useDispatch } from "react-redux";
@@ -39,7 +39,7 @@ const ProfilePage = () => {
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
   const userId = initialUserData.id;
   console.log(userId);
-
+  const baseurl="http://192.168.1.66:8000"
   const navigate = useNavigate();
 
   const role = initialUserData.role;
@@ -96,15 +96,35 @@ const ProfilePage = () => {
   const handleSave = (values) => {
     const storedUser = localStorage.getItem("user");
     const existingUserData = storedUser ? JSON.parse(storedUser) : {};
+console.log('credit rating:', values.proof);
 
-    // Ensure updatedUserData only updates fields that are provided
+    // Debug: log the proof field structure
+    console.log('values.proof:', values.proof);
+
+    // Extract base64 from proof upload
+    let proofBase64 = undefined;
+    if (values.proof && Array.isArray(values.proof) && values.proof.length > 0) {
+      proofBase64 = values.proof[0].base64;
+    }
+    console.log('proofBase64:', proofBase64);
+
+    // Prevent submission if proofBase64 is missing
+    // if (!proofBase64) {
+    //   alert("Please wait for the file to finish uploading/converting before submitting.");
+    //   return;
+    // }
+
     const updatedUserData = {
         ...existingUserData.user,
         company_representative: values.company_representative ?? existingUserData.user.company_representative,
         company: values.company ?? existingUserData.user.company,
         email: values.email ?? existingUserData.user.email,
         mobile: values.mobile ?? existingUserData.user.mobile,
+        credit_rating: values.credit_rating ?? existingUserData.user.credit_rating,
+        credit_rating_proof: proofBase64,
     };
+
+    console.log('Payload to backend:', { userId, userData: updatedUserData });
 
     dispatch(editUser({ userId, userData: updatedUserData }))
         .then((res) => {
@@ -152,7 +172,7 @@ const ProfilePage = () => {
     }
   };
  
-
+const credit_rating_proof=`${baseurl}${userData.credit_rating_proof}`|| "N/A";
   const handleLogOut = () => {
     localStorage.removeItem("user");
     localStorage.clear();
@@ -229,6 +249,24 @@ const ProfilePage = () => {
                 <Text> : {userData.user_category || "N/A"}</Text>
               </Col>
               <Col span={12}>
+                <Text strong>Credit Rating</Text>
+              </Col>
+              <Col span={12}>
+                <Text> : {userData.credit_rating || "N/A"} {'    '}</Text> 
+  <a
+  href={credit_rating_proof}
+  target="_blank"
+  rel="noopener noreferrer"
+  download
+  style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)', textDecoration: 'underline' }}
+>
+  {/* <DownloadOutlined />  */}
+  Proof
+</a>
+
+              </Col>
+           
+              <Col span={12}>
                 <Text strong>Subscription plan</Text>
               </Col>
               <Col span={12}>
@@ -254,6 +292,7 @@ const ProfilePage = () => {
                   {end_date !== "N/A" && ` ${end_date}`}
                 </Text>
               </Col>
+
             </Row>
             <Row
               justify="center"
@@ -272,7 +311,7 @@ const ProfilePage = () => {
 
         {role === "Admin" ? (
           <Col span={12} xs={24} sm={12} md={12} lg={10}>
-            <Card bordered style={{ borderRadius: "8px", minHeight: "530px" }}>
+            <Card bordered style={{ borderRadius: "8px", minHeight: "630px" }}>
               <Title
                 level={3}
                 style={{

@@ -178,46 +178,41 @@ const handleOfflineOk = async () => {
     }
 
     try {
-      // Ensure the full container is rendered, including the footer
+      // Render the container to canvas
       const canvas = await html2canvas(container, {
         scale: 2,
         useCORS: true,
         windowWidth: container.scrollWidth,
         windowHeight: container.scrollHeight,
-        scrollY: -window.scrollY // Prevent cropping due to scroll
+        scrollY: -window.scrollY
       });
 
       const pdf = new jsPDF("p", "mm", "a4");
-      const width = pdf.internal.pageSize.getWidth();
-      const height = pdf.internal.pageSize.getHeight();
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      const canvasWidth = canvas.width;
-      const canvasHeight = canvas.height;
+      // Calculate scale to fit all content in one A4 page
+      const imgProps = {
+        width: canvas.width,
+        height: canvas.height
+      };
+      // Calculate the scale factor to fit the content within A4 size
+      const scale = Math.min(pdfWidth / imgProps.width, pdfHeight / imgProps.height);
 
-      // Set your desired minimum PDF height in mm (e.g., 260 for almost full A4)
-      const minPdfHeight = 290;
+      const imgWidth = imgProps.width * scale;
+      const imgHeight = imgProps.height * scale;
 
-      // Calculate scaling to fit canvas within A4, but ensure min height
-      let scaleFactor = Math.min(width / canvasWidth, height / canvasHeight);
-      let scaledHeight = canvasHeight * scaleFactor;
-      let scaledWidth = canvasWidth * scaleFactor;
-
-      if (scaledHeight < minPdfHeight) {
-        scaleFactor = minPdfHeight / canvasHeight;
-        scaledHeight = minPdfHeight;
-        scaledWidth = canvasWidth * scaleFactor;
-      }
-
-      const xPos = (width - scaledWidth) / 2;
-      const yPos = 10;
+      // Center the image on the page
+      const x = (pdfWidth - imgWidth) / 2;
+      const y = (pdfHeight - imgHeight) / 2;
 
       pdf.addImage(
         canvas.toDataURL("image/jpeg", 1.0),
         "JPEG",
-        xPos,
-        yPos,
-        scaledWidth,
-        scaledHeight
+        x,
+        y,
+        imgWidth,
+        imgHeight
       );
 
       pdf.save("proforma_invoice.pdf");
@@ -453,7 +448,7 @@ const handleOfflineOk = async () => {
             font-size: 13px;
             text-align: center;
             background: #f8f9fa;
-            min-height: 70px; /* Ensure enough height for all lines */
+            min-height: 20px; /* Ensure enough height for all lines */
         }
         .letterhead-footer .footer-title {
             font-weight: bold;
@@ -461,14 +456,14 @@ const handleOfflineOk = async () => {
             font-size: 15px;
         }
         .letterhead-footer .footer-details {
-            margin-top: 4px;
+            margin-top:2px;
             color: #444;
         }
         .letterhead-footer .footer-cin {
             margin-top: 2px;
             color: #666;
             font-size: 12px;
-            white-space: pre-line; /* Allow line breaks if needed */
+           
             word-break: break-word;
         }
         .letterhead-footer .footer-bottom-space {
@@ -608,7 +603,6 @@ const handleOfflineOk = async () => {
 
         <!-- Letterhead Footer Start -->
         <div class="letterhead-footer">
-            <div class="footer-title">EXG Global Private Limited</div>
             <div class="footer-details">
                 Registered Office: 108 Himalaya Palace, 65 Vijay Block, Laxmi Nagar, East Delhi, India, 110092
             </div>

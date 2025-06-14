@@ -62,6 +62,7 @@ console.log('ddd',data);
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
+console.log('user ',user);
 
   useEffect(() => {
     if (contractedEnergy) {
@@ -121,7 +122,44 @@ console.log('ddd',data);
   console.log('termsData',terminationCompensation,latePaymentSurcharge);
 
   const handleContinue = async () => {
+    console.log('user', user);
 
+    // const creditRating = user?.credit_rating;
+    // const user_category = user?.user_category;
+    // console.log('user_category:', user_category, 'creditRating:', creditRating);
+
+    // // Fix: check for null, undefined, "null", and "undefined"
+    // if (
+    //   user_category && user_category.toLowerCase() === 'consumer' &&
+    //   (
+    //     creditRating === null ||
+    //     creditRating === undefined ||
+    //     creditRating === "null" ||
+    //     creditRating === "undefined" ||
+    //     creditRating === ""
+    //   )
+    // ) {
+    //   console.log('Credit rating is null, showing modal and message');
+    //   Modal.info({
+    //     title: 'Credit Rating Required',
+    //     content: (
+    //       <div>
+    //         <p>Please update your credit rating to proceed with the quotation.</p>
+    //       </div>
+    //     ),
+    //     okText: 'OK',
+    //     onOk: () => {
+    //       navigate('/consumer/profile');
+    //     },
+    //   });
+
+    //   message.error({
+    //     content: 'Please update your credit rating before proceeding.',
+    //     duration: 6,
+    //   });
+
+    //   return;
+    // }
     // console.log('aarti ne click kiya');
     const termsData = {
       offer_tariff: perUnitCost || 0,
@@ -142,7 +180,7 @@ console.log('ddd',data);
        termination_compensation: terminationCompensation || 0,
     late_payment_surcharge: latePaymentSurcharge || 0,
     };
-console.log('termsData',termsData);
+// console.log('termsData',termsData);
 
 
     try {

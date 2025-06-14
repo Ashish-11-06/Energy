@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Modal, Typography, Row, Col, Button, Card, Table } from "antd";
 import RequestForQuotationModal from "../../../Components/Modals/RequestForQuotationModal";
 import moment from 'moment';
+import { CheckCircleFilled, CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
@@ -42,12 +43,20 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
     { key: '10', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
     { key: '11', label: 'Total RE Capacity (MW)', value: ipp?.totalCapacity || "N/A" },
     ...(fromConsumer ? [
-      { key: '1', label: 'RE Index', value:reIndex || 'N/A'}
+      { key: '1', label: 'Elite Generator', value: ipp?.elite_generator }
     ]: []) ,
     ...(fromGenerator ? [
       { key: '12', label: 'Consumer ID', value: consumerDetails?.username || "N/A" },
       { key: '13', label: 'Consumer Credit Rating', value: consumerDetails?.credit_rating === null ? "N/A" : consumerDetails?.credit_rating },
-    ] : [])
+{ 
+    key: '14', 
+    label: 'Banking Available', 
+    value: ipp?.banking_available === 1 ? (
+      <CheckCircleTwoTone twoToneColor="#669800" />
+    ) : (
+      <CloseCircleTwoTone twoToneColor="#FF0000" />
+    )
+  },    ] : [])
   ];
 
   const mapToBaseType = (value) => {
@@ -113,7 +122,7 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
         centered
         style={{ borderRadius: "1px", fontFamily: "'Inter', sans-serif" }}
       >
-              <div style={{ maxHeight: '70vh', overflowY: 'auto' ,padding:'10px'}}>
+        <div style={{ maxHeight: '70vh', overflowY: 'auto' ,padding:'10px'}}>
         <Row justify="center" align="middle" gutter={[16, 16]}>
           <Col span={24}>
             <Card
@@ -146,7 +155,16 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
 
         {/* Values start from the same vertical position */}
         <Col span={10} style={{ textAlign: 'left',marginBottom:'10px' }}>
-          <Text>{item.value}</Text>
+          {item.label === "Elite Generator" && item.value === 0 ? (
+            <>
+              <Text>Yes</Text>
+              <CheckCircleFilled style={{ color: "#1890ff", marginLeft: 8, fontSize: 18, verticalAlign: "middle" }} />
+            </>
+          ) : item.label === "Elite Generator" ? (
+            <Text>No</Text>
+          ) : (
+            <Text>{item.value}</Text>
+          )}
         </Col>
       </Row>
     </Col>

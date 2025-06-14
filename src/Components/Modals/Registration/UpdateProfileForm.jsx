@@ -14,6 +14,7 @@ import {
   Typography,
   Progress,
   Tooltip,                                                                                                                                               Modal,
+  Checkbox,
 } from "antd";
 import * as XLSX from "xlsx";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
@@ -29,9 +30,9 @@ const { Title, Text } = Typography;
 const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorCloseModal, lastUploadedFile, updateLastUploadedFile }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
-console.log('project',project);
+// console.log('project',project);
 // console.log('form',form);
-const baseURL = "http://52.66.186.241:8000";
+const baseURL = "http://192.168.1.66:8000";
 
   const project_type = project.type;
   const solar_template_downloaded = user.solar_template_downloaded;
@@ -49,13 +50,15 @@ const baseURL = "http://52.66.186.241:8000";
   const [windFile, setWindFile] = useState("");
   const continueButtonRef = useRef(false); // Ref to track the state of the "Continue" button
 const [warningModal, setWarningModal] = useState(false); // State to control tupdatehe warning modal
-console.log('selectedProject',selectedProject);
+// console.log('selectedProject',selectedProject);
 const [lastUploadedFiles, setLastUploadedFiles] = useState({
   hourly_data: selectedProject.hourly_data
 });
 
+console.log('lastUploadedFiles', lastUploadedFiles);
+
 const hourly_data=`${baseURL}${selectedProject.hourly_data}`;
-console.log('ii',lastUploadedFiles);
+// console.log('ii',lastUploadedFiles);
 
   useEffect(() => {
     if (user.solar_template_downloaded) {
@@ -218,6 +221,8 @@ const handleCloseWarningModal = () => {
   }, [project]);
 
   const onSubmit = async (values) => {
+    // console.log('submitted values',values);
+    
     const updatedValues = {
       ...values,
       id: selectedProject.id,
@@ -226,6 +231,7 @@ const handleCloseWarningModal = () => {
       cod: values.cod.format("YYYY-MM-DD"),
       hourly_data: fileData ? fileData.split(",")[1] : null,
       state: values.state,
+      banking_available: values.banking_available || false,
     };
 
     try {
@@ -248,6 +254,21 @@ const handleCloseWarningModal = () => {
     }
   };
 
+  const [isFormValid, setIsFormValid] = useState(false); // Track form validation
+
+  useEffect(() => {
+    // Check if all required fields are filled
+    const checkFormValid = async () => {
+      try {
+        await form.validateFields();
+        setIsFormValid(true);
+      } catch {
+        setIsFormValid(false);
+      }
+    };
+    checkFormValid();
+  }, [form, selectedProject, fileData, file, lastUploadedFiles]);
+
   return (
     <Form
       form={form}
@@ -257,6 +278,13 @@ const handleCloseWarningModal = () => {
         type: selectedProject.type || "Solar",
       }}
       onFinish={onSubmit}
+      onFieldsChange={() => {
+        // Re-validate form on any field change
+        form
+          .validateFields()
+          .then(() => setIsFormValid(true))
+          .catch(() => setIsFormValid(false));
+      }}
     >
       <Row gutter={16}>
         <Col span={12}>
@@ -408,6 +436,17 @@ const handleCloseWarningModal = () => {
             </Form.Item>
           </Col>
         )}
+       <Col span={12}>
+  <Form.Item
+    name="banking_available"
+
+    valuePropName="checked" 
+  >
+    <Checkbox style={{fontWeight:'bold'}}>
+      Banking Available
+    </Checkbox>
+  </Form.Item>
+</Col>
       </Row>
 
       {selectedProject.type === "ESS" && (
@@ -546,16 +585,34 @@ Last Uploaded File
       <Row gutter={24} style={{ textAlign: "right" }}>
         <Col span={24}>
           <Form.Item>
-            {!continueButtonRef.current ? (
-              <Tooltip title="Please fill all the details and upload the file in given format">
-                <Button type="primary" htmlType="submit" disabled>
+            {/* Enable Submit if: 
+                - ESS: always (handled by continueButtonRef)
+                - Non-ESS: if file uploaded OR lastUploadedFiles.hourly_data exists, and form is valid
+            */}
+            {selectedProject.type !== "ESS" ? (
+              (!fileData && !file && !lastUploadedFiles.hourly_data) || !isFormValid ? (
+                <Tooltip title="Please fill all the details and upload the file in given format">
+                  <Button type="primary" htmlType="submit" disabled>
+                    Submit
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Button type="primary" htmlType="submit">
                   Submit
                 </Button>
-              </Tooltip>
+              )
             ) : (
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
+              !isFormValid ? (
+                <Tooltip title="Please fill all the details">
+                  <Button type="primary" htmlType="submit" disabled>
+                    Submit
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              )
             )}
           </Form.Item>
         </Col>
