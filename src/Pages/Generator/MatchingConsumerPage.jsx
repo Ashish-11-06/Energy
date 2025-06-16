@@ -247,20 +247,21 @@ const MatchingConsumerPage = () => {
 
       {/* Button to show selected consumer */}
       <Tooltip title={!selectedConsumer ? 'Please select a matching consumer' : ''}>
-      <Button
-        type="primary"
-        style={{
-          marginTop: '20px',
-          backgroundColor: selectedConsumer ? '' : '#8C8C8C', // Green if selected, gray otherwise
-          borderColor: selectedConsumer ? '' : '#8C8C8C', // Match button color with background
-          color: '#fff',
-          float: 'right',
-        }}
-        onClick={handleNextClick} // Call handleNextClick on button click
-        disabled={!selectedConsumer} // Disable if no consumer is selected
-      >
-        Next
-      </Button>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+  <Button
+    type="primary"
+    style={{
+      backgroundColor: selectedConsumer ? '' : '#8C8C8C',
+      borderColor: selectedConsumer ? '' : '#8C8C8C',
+      color: '#fff',
+    }}
+    onClick={handleNextClick}
+    disabled={!selectedConsumer}
+  >
+    Next
+  </Button>
+</div>
+
       </Tooltip>
 
       {/* Modal to show consumer details */}

@@ -34,9 +34,9 @@ const UpdateProfileDetails = () => {
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
       const flatProjects = [
-        ...(projects.Solar || []).map(project => ({ ...project, type: 'Solar', key: project.id })),
-        ...(projects.Wind || []).map(project => ({ ...project, type: 'Wind', key: project.id })),
-        ...(projects.ESS || []).map(project => ({ ...project, type: 'ESS', key: project.id }))
+        ...(projects.Solar || []).map(project => ({ ...project, type: 'Solar', key: `Solar-${project.id}` })),
+        ...(projects.Wind || []).map(project => ({ ...project, type: 'Wind', key: `Wind-${project.id}` })),
+        ...(projects.ESS || []).map(project => ({ ...project, type: 'ESS', key: `ESS-${project.id}` }))
       ];
       setStructuredProjects(flatProjects);  // Update local state with flattened data
     }
@@ -95,6 +95,7 @@ const UpdateProfileDetails = () => {
         <div>
           <Button
             type="primary"
+            // onClick={() => handleEdit(record)}
             onClick={() => handleUpdate(record)}
             style={{ width: '120px' }}
           >
@@ -105,14 +106,30 @@ const UpdateProfileDetails = () => {
     }
   ];
 
-  const handleUpdate = (record) => {
-    setSelectedRecord(record);
+  const handleEdit = (record) => {
+    console.log('Edit button clicked'); // Debug log
+        console.log('Opening UpdateProfileForm modal for:', record); // Debug log
+ setSelectedRecord(record);
+    // Only set cod if it exists and is valid
     form.setFieldsValue({
       ...record,
-      cod: dayjs(record.cod), // Ensure the date is in a valid format
+      ...(record.cod && { cod: dayjs(record.cod) }),
+    });
+    console.log('modal is visible:', isModalVisible); // Debug log
+        setIsModalVisible(true);
+
+  }
+  const handleUpdate = (record) => {
+    console.log('Opening UpdateProfileForm modal for:', record); // Debug log
+    setSelectedRecord(record);
+    // Only set cod if it exists and is valid
+    form.setFieldsValue({
+      ...record,
+      ...(record.cod && { cod: dayjs(record.cod) }),
     });
     setIsModalVisible(true);
   };
+console.log('selectedRecord:', selectedRecord); // Debug log
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -169,14 +186,16 @@ const UpdateProfileDetails = () => {
         okButtonProps={{ style: { display: 'none' } }}
         cancelButtonProps={{ style: { display: 'none' } }}
       >
-        <UpdateProfileForm 
-          project={selectedRecord}
-          form={form} 
-          onCancel={handleCancel}
-          onErrorCloseModal={handleErrorCloseModal}
-          lastUploadedFile={lastUploadedFiles[selectedRecord?.id]} // Pass the last uploaded file
-          updateLastUploadedFile={updateLastUploadedFile} // Pass the update function
-        />
+    
+          <UpdateProfileForm 
+            project={selectedRecord}
+            form={form} 
+            onCancel={handleCancel}
+            onErrorCloseModal={handleErrorCloseModal}
+            lastUploadedFile={lastUploadedFiles[selectedRecord?.id]} // Pass the last uploaded file
+            updateLastUploadedFile={updateLastUploadedFile} // Pass the update function
+          />
+    
       </Modal>
     </div>
   );
