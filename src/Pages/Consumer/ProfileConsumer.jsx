@@ -39,7 +39,7 @@ const ProfilePage = () => {
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
   const userId = initialUserData.id;
   console.log(userId);
-  const baseurl="http://192.168.1.66:8000"
+  const baseurl="https://ext.exgglobal.com"
   const navigate = useNavigate();
 
   const role = initialUserData.role;
