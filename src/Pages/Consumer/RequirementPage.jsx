@@ -265,11 +265,7 @@ const companyName=userData.company;
             <li>Add your requirements by clicking the "Add Requirement +" button.</li>
             <li>Fill in the details shown in the form.</li>
             <li>
-              Use the tooltip [
-              <Tooltip title="More information about this field">
-                <QuestionCircleOutlined />
-              </Tooltip>
-              ] option for each field for more information.
+              Use the tooltip [(i)] option for each field for more information.
             </li>
             <li>You can add multiple requirements (demands).</li>
             <li>To continue, select a requirement and click the "Continue" button.</li>

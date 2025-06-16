@@ -98,7 +98,9 @@ const Dashboard = () => {
         });
         setPlatformDetails({
           totalConsumers: data.total_consumers || 0,
-          totalDemands: data.total_contracted_demand || 0,
+          totalDemands: data.total_contracted_demand
+    ? parseFloat(data.total_contracted_demand).toFixed(2)
+    : 0,
           totalStates: data.unique_state_count || 0,
         });
       } catch (error) {

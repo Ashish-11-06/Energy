@@ -100,6 +100,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
   const handleIndustryChange = (value) => {
     setSelectedIndustry(value); // Update selected industry
     setSubIndustries(industryy[value] || []); // Fetch corresponding sub-industries
+    form.setFieldsValue({ sub_industry: undefined }); // Reset sub-industry field
     if (value === "other") {
       setIsCustomIndustry(true);
     } else {

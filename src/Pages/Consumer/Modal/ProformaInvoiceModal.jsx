@@ -151,7 +151,7 @@ const handleOfflineOk = async () => {
   try {
     await form.validateFields();  //  Await here
     const data = {
-      transaction_id:Number(transactionId),
+      transaction_id:transactionId,
       invoice:selectedInvoiceNumber,
       payment_date: paymentDate ? paymentDate.format('YYYY-MM-DD') : null,
       payment_mode: selectedPaymentMode,
@@ -160,8 +160,9 @@ const handleOfflineOk = async () => {
     const res = await dispatch(addOfflinePayment(data));
     console.log('form data', res);
     if(res?.payload) {
-      setPaymentModeModal(false);
       message.success(res?.payload.message || "Offline Payment Submitted Successfullyyy");
+      setPaymentModeModal(false);
+setOfflineForm(false);
     }
   } catch (error) {
     message.error('Please fill in all required fields!');
@@ -708,17 +709,28 @@ const handleOfflineOk = async () => {
   initialValues={{ amount }}
   form={form}
 >
-  <Form.Item
-    label="Transaction Number/Reference ID"
-    name="transactionId"
-    rules={[{ required: true, message: "Please enter the transaction number!" }]}
-  >
-    <Input 
-      placeholder="Enter transaction/reference ID" 
-      value={transactionId}
-      onChange={(e) => setTransactionId(e.target.value)}
-    />
-  </Form.Item>
+<Form.Item
+  label="Transaction Number/Reference ID"
+  name="transactionId"
+  rules={[
+    { required: true, message: 'Please enter the transaction number!' },
+    {
+      pattern: /^[a-zA-Z0-9-_]{4,12}$/, // min 4, max 12 alphanumeric + - _
+      message: 'Enter a valid transaction/reference ID (4–12 characters)!',
+    },
+  ]}
+>
+  <Input
+    placeholder="Enter transaction/reference ID"
+    maxLength={12} // 🚫 Prevents typing more than 12 chars
+    value={transactionId}
+    onChange={(e) => {
+      const value = e.target.value;
+      setTransactionId(value);
+      form.setFieldsValue({ transactionId: value });
+    }}
+  />
+</Form.Item>
 
   <Form.Item
     label="Amount"
@@ -758,7 +770,6 @@ const handleOfflineOk = async () => {
     >
       <Radio value="bank">Bank</Radio>
       <Radio value="upi">UPI</Radio>
-      <Radio value="cash">Cash</Radio>
     </Radio.Group>
   </Form.Item>
 </Form>

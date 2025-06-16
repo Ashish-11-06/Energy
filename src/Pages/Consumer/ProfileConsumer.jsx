@@ -311,7 +311,7 @@ const credit_rating_proof=`${baseurl}${userData.credit_rating_proof}`|| "N/A";
 
         {role === "Admin" ? (
           <Col span={12} xs={24} sm={12} md={12} lg={10}>
-            <Card bordered style={{ borderRadius: "8px", minHeight: "630px" }}>
+            <Card bordered style={{ borderRadius: "8px", minHeight: "400px" }}>
               <Title
                 level={3}
                 style={{
@@ -340,13 +340,15 @@ const credit_rating_proof=`${baseurl}${userData.credit_rating_proof}`|| "N/A";
                   <Spin />
                 </div>
               ) : (
-                <Table
-                  columns={userColumns}
-                  dataSource={userDataSource}
-                  bordered
-                  style={{ marginTop: "10px" }}
-                  pagination={false}
-                />
+                <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                  <Table
+                    columns={userColumns}
+                    dataSource={userDataSource}
+                    bordered
+                    style={{ marginTop: "10px" }}
+                    pagination={false}
+                  />
+                </div>
               )}
             </Card>
           </Col>
