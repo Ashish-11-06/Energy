@@ -103,7 +103,7 @@ useEffect(() => {
       try {
         const response = await DashboardApi.getConsumerDashboardData(userId);
         const data = response.data;
-        console.log(data);
+        // console.log(data);
         setWindCapacity(data?.wind_capacity || 0);
         setSolarCapacity(data?.solar_capacity || 0);
         setESSCapacity(data?.ess_capacity || 0);

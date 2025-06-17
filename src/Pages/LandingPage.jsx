@@ -37,7 +37,7 @@ const LandingPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log('LandingPage mounted llklk');
+    // console.log('LandingPage mounted llklk');
     dispatch(resetState());
   }, []);
 
