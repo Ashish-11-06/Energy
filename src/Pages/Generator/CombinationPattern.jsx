@@ -675,7 +675,7 @@ const handleOptimizeClick = async () => {
       dataIndex: "status",
       key: "status",
       render: (text, record) =>
-        text !== "Already Sent" ? (
+        text !== "Send Quotation" ? (
           <Tooltip title="refer offer">
             <Link
               to={`/offers`}
