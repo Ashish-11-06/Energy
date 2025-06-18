@@ -14,6 +14,7 @@ import {
   Card,
   Tooltip,
   Modal,
+  Descriptions,
 } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
 
@@ -29,6 +30,7 @@ import RequestForQuotationModal from "../../Components/Modals/RequestForQuotatio
 import { fetchOptimizedCombinationsXHR } from "../../Utils/xhrUtils";
 import "./CombinationPattern.css"; // Import the custom CSS file
 import { fetchSensitivity } from "../../Redux/Slices/Generator/sensitivitySlice";
+import { set } from "nprogress";
 
 const { Title, Text } = Typography;
 
@@ -52,10 +54,12 @@ const CombinationPattern = () => {
   const reReplacement = state?.reReplacement;
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State to control modal visibility
-const [isGraphLoading, setIsGraphLoading] = useState(false); // State to control loader in the button
+const [isGraphLoading, setIsGraphLoading] = useState(true); // State to control loader in the button
 const [hasRunSensitivity, setHasRunSensitivity] = useState(false); // Track sensitivity execution
 const [lastSensitivityRunId, setLastSensitivityRunId] = useState(null); // Track the last ID for sensitivity
   const [sensitivityData, setSensitivityData] = useState();
+  const [consumptionPatterns, setConsumptionPatterns] = useState([]);
+  const [consumerDetails, setConsumerDetails] = useState({});
 
   const dispatch = useDispatch();
 
@@ -270,19 +274,11 @@ const graphOptions = {
     setDataSource(formattedCombinations);
   };
 
-  // Redux selectors
-  const consumptionPatterns = useSelector(
-    (state) => state.consumptionPattern?.patterns || []
-  );
+
   const consumptionPatternStatus = useSelector(
     (state) => state.consumptionPattern.status
   );
-  const optimizedCombinations = useSelector(
-    (state) => state.optimizedCapacity?.combinations || []
-  );
-  const optimizedCombinationsStatus = useSelector(
-    (state) => state.optimizedCapacity.status
-  );
+
 
   // console.log('comn', combinationData);
 
@@ -305,18 +301,12 @@ const graphOptions = {
   useEffect(() => {
     const fetchPatterns = async () => {
       try {
-        if (
-          (!consumptionPatterns.length &&
-            consumptionPatternStatus === "idle") ||
-          consumptionPatternStatus === "failed"
-        ) {
           const response = await dispatch(
-            
             fetchConsumptionPattern({ id: selectedDemandId, user_id })
-          );
-          console.log(response);
-
-        }
+          ).unwrap();
+          // console.log(response);
+          setConsumptionPatterns(response.monthly_consumption);
+          setConsumerDetails(response.consumer_details);
       } catch (error) {
         message.error(error.message || "Failed to fetch consumption patterns.");
       }
@@ -499,9 +489,6 @@ const handleGraphModalClose = () => {
 const handleSensitivityClick = () => {
   setIsGraphModalVisible(true); // Show the modal
 }
-  const sliderStyle = {
-    height: "20px", // Increase the thickness of the slider
-  };
 
   const marks = {
     0: "0%",
@@ -651,97 +638,46 @@ const handleSensitivityClick = () => {
   }
 
   if(role !== 'View') {
+    const isDisabled = !combinationData || isGraphLoading;
     columns.push(  {
           title: "Sensitivity",
           key: "sensitivity",
           render: () => (
-            <Tooltip 
-      title="Please wait while we optimize the model for different RE replacements." 
-      disableHoverListener={!isGraphLoading && combinationData} // Disable tooltip when button is enabled
-    >
+            <>
+    {isDisabled ? (
+      <Tooltip title="Please wait while we optimize the model for different RE replacements.">
+        <span>
+          <Button
+            type="primary"
+            disabled={isDisabled}
+            onClick={handleSensitivityClick}
+          >
+            {isGraphLoading ? (
+              <>
+                <Spin size="small" style={{ marginRight: 8 }} />
+                Sensitivity
+              </>
+            ) : (
+              "Sensitivity"
+            )}
+          </Button>
+        </span>
+      </Tooltip>
+    ) : (
       <Button
         type="primary"
-        disabled={!combinationData || isGraphLoading} // Button remains disabled while loading or if data is missing
+        disabled={isDisabled}
         onClick={handleSensitivityClick}
       >
-        {isGraphLoading ? (
-          <>
-            <Spin size="small" style={{ marginRight: 8 }} />
-            Sensitivity
-          </>
-        ) : (
-          "Sensitivity"
-        )}
+        Sensitivity
       </Button>
-    </Tooltip>     
+    )}
+  </> 
           ),
         },
       )
     }
-  // Chart data for stacked bar chart
-// const stackedBarChartData = {
-//   labels: Array.isArray(consumptionPatterns)
-//     ? consumptionPatterns.map((pattern) => pattern.month)
-//     : [], // Safely check if it's an array
-//   datasets: [
-//     {
-//       label: "Consumption (MWh)",
-//       data: Array.isArray(consumptionPatterns)
-//         ? consumptionPatterns.map((pattern) => pattern.consumption)
-//         : [],
-//       backgroundColor: "#4CAF50",
-//     },
-//     {
-//       label: "Peak Consumption (MWh)",
-//       data: Array.isArray(consumptionPatterns)
-//         ? consumptionPatterns.map((pattern) => pattern.peak_consumption)
-//         : [],
-//       backgroundColor: "#FF5733",
-//     },
-//     {
-//       label: "Off-Peak Consumption (MWh)",
-//       data: Array.isArray(consumptionPatterns)
-//         ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption)
-//         : [],
-//       backgroundColor: "#337AFF",
-//     },
-//   ],
-// };
 
-// const stackedBarChartOptions = {
-//   responsive: true,
-//   maintainAspectRatio: false,
-//   scales: {
-//     x: {
-//       stacked: true,
-//     },
-//     y: {
-//       stacked: true,
-//       min: 0, // Start the scale from 0
-//     },
-//   },
-//   plugins: {
-//     legend: {
-//       position: "bottom", // Move the legend to the bottom
-//     },
-//   },
-// };
-
-const chartData = {
-  labels: Array.isArray(consumptionPatterns)
-    ? consumptionPatterns.map((pattern) => pattern.month)
-    : [], // Safely check if it's an array
-  datasets: [
-    {
-      label: "Consumption (MWh)",
-      data: Array.isArray(consumptionPatterns)
-        ? consumptionPatterns.map((pattern) => pattern.consumption)
-        : [], // Safely check if it's an array
-      backgroundColor: "#4CAF50",
-      barThickness: 10, // Set bar thickness
-    },
-  ],
-};
 
 const lineChartData = {
   labels: Array.isArray(consumptionPatterns)
@@ -811,6 +747,18 @@ const lineChartData = {
             </div>
           </Col>
         </Card>
+
+      <Card title="Demand's Details" bordered={true} >
+      <Descriptions column={3} size="small">
+        <Descriptions.Item label="Username">{consumerDetails.username}</Descriptions.Item>
+        <Descriptions.Item label="Credit Rating"> {consumerDetails.credit_rating || "N/A"}</Descriptions.Item>
+        <Descriptions.Item label="State">{consumerDetails.state}</Descriptions.Item>
+        <Descriptions.Item label="Tariff Category">{consumerDetails.tariff_category}</Descriptions.Item>
+        <Descriptions.Item label="Voltage Level">{consumerDetails.voltage_level} kV</Descriptions.Item>
+        <Descriptions.Item label="Contracted Demand">{consumerDetails.contracted_demand} MW</Descriptions.Item>
+        <Descriptions.Item label="Industry">{consumerDetails.industry}</Descriptions.Item>
+      </Descriptions>
+    </Card>
 
         {/* Combination Table */}
         <Col span={24}
@@ -945,7 +893,7 @@ const lineChartData = {
               >
                  No optimized combinations available at the moment. Please try
                  again later.
-                {console.log(dataSourceError)}
+                {/* {console.log(dataSourceError)} */}
               {dataSourceError}
               </div>
             )}
