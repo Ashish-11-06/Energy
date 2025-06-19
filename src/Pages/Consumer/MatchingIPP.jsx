@@ -63,7 +63,7 @@ const role=userData?.role;
             setIsMatching(true); 
           } else {
             setIsMatching(false);
-            message.error(res.payload.message);
+            message.warning(res.payload.message, 10);
           }
           localStorage.setItem('isMatching', isMatching);
         });

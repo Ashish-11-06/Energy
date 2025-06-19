@@ -261,50 +261,7 @@ const TransactionWindow = () => {
     setOfferValue(value);
   };
 
-  const handleAcceptBestOffer = async () => {
-    if (messages.length === 0) {
-      message.warning("No offers available to accept");
-      return;
-    }
 
-    // Find the best offer (lowest tariff)
-    let bestOffer = null;
-    messages.forEach((messageObject) => {
-      Object.keys(messageObject).forEach((msgKey) => {
-        const msg = messageObject[msgKey];
-        if (!bestOffer || msg.updated_tariff < bestOffer.updated_tariff) {
-          bestOffer = msg;
-        }
-      });
-    });
-
-    if (bestOffer) {
-      try {
-        const response = await fetch("/api/acceptBestOffer", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ offerId: bestOffer.id || bestOffer.generator_username }),
-        });
-
-        if (response.ok) {
-          message.success(
-            `Accepted offer from ${bestOffer.generator_username} at ${bestOffer.updated_tariff} INR/kWh`
-          );
-          sendEvent("acceptOffer", {
-            offerId: bestOffer.id || bestOffer.generator_username,
-          });
-          setTimeUp(false); // Optionally hide the button after acceptance
-        } else {
-          message.error("Failed to accept the best offer. Please try again.");
-        }
-      } catch (error) {
-        console.error("Error accepting the best offer:", error);
-        message.error("An error occurred while accepting the best offer.");
-      }
-    }
-  };
 
   const countdownRenderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -437,18 +394,7 @@ const TransactionWindow = () => {
                       offer.
                     </Text>
                   </Col>
-                  <Col>
-                    <Button
-                      type="primary"
-                      onClick={handleAcceptBestOffer}
-                      style={{
-                        backgroundColor: "#52c41a",
-                        borderColor: "#52c41a",
-                      }}
-                    >
-                      Accept Best Offer
-                    </Button>
-                  </Col>
+                 
                 </Row>
               </Card>
             )}

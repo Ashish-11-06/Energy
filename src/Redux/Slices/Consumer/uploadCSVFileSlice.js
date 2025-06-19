@@ -13,6 +13,7 @@ export const uploadCSV = createAsyncThunk(
       const response = await uploadCSVFileApi.addCSV(formData);
       return response.data;
     } catch (error) {
+      // console.error('Error uploading CSV file:', error);
       // Handle errors
       return rejectWithValue(error.response?.data?.error || 'Failed to add csv file');
     }

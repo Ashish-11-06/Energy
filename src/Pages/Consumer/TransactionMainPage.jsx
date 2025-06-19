@@ -283,6 +283,7 @@ console.log('set transactions', transactions);
           <br />
            <Button
             type="primary"
+            disabled={record.tariff_status !== 'Upcoming'}
             style={{
               backgroundColor: '#669800',
               borderColor: '#88B04B',

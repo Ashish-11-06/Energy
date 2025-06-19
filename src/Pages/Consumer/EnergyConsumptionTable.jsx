@@ -29,7 +29,7 @@ import {
 } from "@ant-design/icons";
 import { data, useLocation, useNavigate } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-const { Option } = Select;
+
 
 import {
   addConsumption,
@@ -40,7 +40,7 @@ import { consumptionBill } from "../../Redux/Slices/Consumer/monthlyConsumptionB
 import { addScada } from "../../Redux/Slices/Consumer/uploadScadaSlice";
 import { uploadCSV } from "../../Redux/Slices/Consumer/uploadCSVFileSlice";
 
-const { Title } = Typography;
+
 
 // Function to render a label with a tooltip
 const renderLabelWithTooltip = (label, tooltipText, onClick) => (
@@ -75,7 +75,6 @@ const EnergyConsumptionTable = () => {
   const currentYear = new Date().getFullYear(); // Get the current year
   const lastYear = currentYear - 1; // Calculate the last year
   const lastYearCurrentYear = `${lastYear}-${currentYear.toString().slice(-2)}`
-  const [allFieldsFilled, setAllFieldsFilled] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fileUploaded, setFileUploaded] = useState(false);
@@ -84,6 +83,7 @@ const EnergyConsumptionTable = () => {
   const [scadaFileUpload, setScadaFileUpload] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [fieldsupdated, setFieldsUpdated] = useState(false); // State to track if fields are updated
 
   // console.log(isActionCompleted);
 
@@ -109,10 +109,10 @@ const EnergyConsumptionTable = () => {
     // Define the headers and rows
     const headers = [
       "Month",
-      "Monthly Consumption",
+      "Monthly Consumption (MWh)",
       "Peak Consumption (MWh)",
       "Off Peak Consumption (MWh)",
-      "Monthly Bill Amount (INR lakhs)"
+      "Monthly Bill Amount (INR cr)"
     ];
   
     const months = [
@@ -142,7 +142,6 @@ const EnergyConsumptionTable = () => {
     setShowTable((prevShowTable) => !prevShowTable);
     setShowFileUploadTable(false); // Close file upload table
     setActiveButton("details");
-    // setIsActionCompleted(true); // Mark action as completed/
   };
 
   const handleScadaUpload = async (file) => {
@@ -191,34 +190,36 @@ const EnergyConsumptionTable = () => {
           const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
 
           // Parse CSV data and update dataSource
-          const csvData = atob(base64File);
-          const parsedData = csvData.split("\n").map((row) => row.split(","));
-          const updatedDataSource = dataSource.map((item, index) => {
-            const row = parsedData[index + 1]; // Skip header row
-            return row
-              ? {
-                ...item,
-                monthlyConsumption: parseFloat(row[1]),
-                peakConsumption: parseFloat(row[2]),
-                offPeakConsumption: parseFloat(row[3]),
-                monthlyBill: parseFloat(row[4]),
-              }
-              : item;
-          });
+          // const csvData = atob(base64File);
+          // const parsedData = csvData.split("\n").map((row) => row.split(","));
+          // const updatedDataSource = dataSource.map((item, index) => {
+          //   const row = parsedData[index + 1]; // Skip header row
+          //   return row
+          //     ? {
+          //       ...item,
+          //       monthlyConsumption: parseFloat(row[1]),
+          //       peakConsumption: parseFloat(row[2]),
+          //       offPeakConsumption: parseFloat(row[3]),
+          //       monthlyBill: parseFloat(row[4]),
+          //     }
+          //     : item;
+          // });
 
-          setDataSource(updatedDataSource);
+          // setDataSource(updatedDataSource);
 
           // Dispatch the uploadCSV thunk and wait for the result
-          await dispatch(
+         const response = await dispatch(
             uploadCSV({ requirement_id: requirementId, file: base64File })
-          );
+          ).unwrap();
+          // console.log("CSV upload response:", response);
 
           // Mark action as completed only if upload succeeds
           setIsActionCompleted(true);
           handleToggleDetails();
         } catch (error) {
-          console.error("Error processing the file:", error);
+          // console.error("Error processing the file:", error);
           message.error(
+            error.message || error ||
             "An error occurred while processing the file. Please try again."
           );
         }
@@ -227,7 +228,7 @@ const EnergyConsumptionTable = () => {
       reader.readAsDataURL(file); // Read the file as a Base64 string
       return false; // Prevent automatic upload
     } catch (error) {
-      console.error("Error uploading the file:", error);
+      // console.error("Error uploading the file:", error);
       message.error(
         "An error occurred during the upload process. Please try again."
       );
@@ -281,11 +282,29 @@ const EnergyConsumptionTable = () => {
         try {
           const response = await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
           const temp = response.length;
-          setTemp(response.length)
-          // console.log(temp);
-          if (temp > 0) {
-            // console.log('helli');
+          
 
+        let allFieldsValid = true;
+
+        for (let item of response) {
+          // Check each key except 'monthlyBill'
+          const { monthly_consumption, peak_consumption, off_peak_consumption } = item;
+          if (
+            monthly_consumption === null ||
+            peak_consumption === null ||
+            off_peak_consumption === null
+          ) {
+            // console.log("Invalid data found:", item);
+            allFieldsValid = false;
+            break;
+          }
+        }
+        
+
+        setFieldsUpdated(allFieldsValid);  
+
+          setTemp(response.length)
+          if (temp > 0) {
             setShowTable(true);
           }
         } catch (error) {
@@ -295,13 +314,12 @@ const EnergyConsumptionTable = () => {
     };
 
     fetchData();
-  }, [requirementId, dispatch]);
+  }, [requirementId, dispatch, isActionCompleted]);
+
   // Update dataSource when monthlyData is fetched
   useEffect(() => {
     //   console.log(monthlyData);
     if (monthlyData.length > 0) {
-      console.log("length of monthly data : ",monthlyData.length)
-      console.log("data source at montthly : ",dataSource)
       const updatedDataSource = dataSource.map((item) => {
         const data = monthlyData.find((data) => data.month === item.month);
         return data
@@ -314,7 +332,6 @@ const EnergyConsumptionTable = () => {
           }
           : item;
       });
-      console.log('updated',updatedDataSource);
       setDataSource(updatedDataSource);
       if (monthlyData.length > 1) {
         setShowTable(true);
@@ -322,18 +339,7 @@ const EnergyConsumptionTable = () => {
     }
   }, [monthlyData]);
 
-  // Check if all fields are filled
-  useEffect(() => {
-    const allFilled = dataSource.every(
-      (item) =>
-        (item.monthlyConsumption !== null &&
-          item.peakConsumption !== null &&
-          item.offPeakConsumption !== null &&
-          item.monthlyBill !== null) ||
-        item.fileUploaded !== null
-    );
-    setAllFieldsFilled(allFilled);
-  }, [dataSource]);
+
 
   const handleInputChange = (value, key, dataIndex) => {
     setDataSource((prevDataSource) => {
@@ -356,7 +362,6 @@ const EnergyConsumptionTable = () => {
     );
     setShowTable(false); // Close details table
     // setActiveButton("bill");
-    // setIsActionCompleted(true); // Mark action as completed
   };
 
   const handleFileUpload = async (file, key) => {
@@ -412,11 +417,6 @@ const EnergyConsumptionTable = () => {
   };
 
   const handleSave = async () => {
-    if (!allFieldsFilled) {
-      message.error("All fields are required");
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -433,14 +433,15 @@ const EnergyConsumptionTable = () => {
 
       const response = await dispatch(addConsumption(values)).unwrap();
 
-      // console.log("resssss", response);
+      console.log("resssss", response);
+      setFieldsUpdated(response.fields_updated); 
 
       message.success({
-        content: "Monthly data added successfully!",
+        content: response.message || "Monthly data added successfully!",
         style: {
           position: "absolute",
-          bottom: "0px",
-          marginTop: "90%",
+          bottom: "-40px",
+          // marginTop: "90%",
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 9999,
@@ -449,11 +450,14 @@ const EnergyConsumptionTable = () => {
 
       // Show the modal after saving data
       setSaveSuccess(true); // Set save success to true
+      setTimeout(() => setSaveSuccess(false), 3000);
       setSaveError(false); // Reset save error
+      
     } catch (error) {
       // ...existing code...
       message.error("Failed to add monthly data");
       setSaveError(true); // Set save error to true
+      setTimeout(() => setSaveError(false), 3000);
     } finally {
       setLoading(false);
       // message.success("Monthly data added successfully!");
@@ -720,7 +724,7 @@ const EnergyConsumptionTable = () => {
               shape="circle"
               icon={<QuestionCircleOutlined />}
               onClick={showInfoModal}
-              style={{ position: "absolute", marginLeft: "95%", right: 30, zIndex: 1000 }}
+              style={{ position: "absolute", marginLeft: "95%", right: 30 }}
             />
           </Tooltip>
           <span
@@ -971,7 +975,6 @@ const EnergyConsumptionTable = () => {
                   <Button
                     type="primary"
                     onClick={handleSave}
-                    disabled={!allFieldsFilled}
                     loading={loading}
                     style={{ marginRight: "10px" }}
                   >
@@ -999,7 +1002,7 @@ const EnergyConsumptionTable = () => {
                 <Button
                   type="primary"
                   onClick={handleContinue}
-                  disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource && !allFieldsFilled} // Enable only if an action is completed
+                  disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource || !fieldsupdated } // Enable only if an action is completed
                   style={{ marginLeft: "86%", marginTop: "8px" }}
                 >
                   Continue {`>>`}
@@ -1021,7 +1024,7 @@ const EnergyConsumptionTable = () => {
                   <Button
                     type="primary"
                     onClick={handleContinue}
-                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource && !allFieldsFilled} // Enable only if an action is completed
+                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource } // Enable only if an action is completed
                     style={{ marginLeft: "86%", marginTop: "8px" }}
                   >
                     Continue {`>>`}
@@ -1032,7 +1035,7 @@ const EnergyConsumptionTable = () => {
                     type="primary"
                     onClick={handleContinue}
                     style={{ marginLeft: "86%", marginTop: "8px" }}
-                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource && !allFieldsFilled}
+                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource }
                   >
                     Continue {`>>`}
                   </Button>
