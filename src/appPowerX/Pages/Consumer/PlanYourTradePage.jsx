@@ -57,8 +57,8 @@ useEffect(() => {
   const fetchHolidayData = async () => {
     try {
       const res = await dispatch(fetchHolidayList());
-      // setDisabledDates(["2025-04-25"]);
-      setDisabledDates(res.payload);
+      setDisabledDates(["2025-06-20"]);
+      // setDisabledDates(res.payload);
       console.log("Holiday List:", res);
     } catch (error) {
       // console.error("Error fetching holiday list:", error);
@@ -77,7 +77,11 @@ useEffect(() => {
       return;
     }
 
-    if (!allFieldsFilled) {
+    if (!selectedRequirementId) {
+      message.error("Please select a consumption unit.");
+      return;
+    }
+    if (!allFieldsFilled ) {
       message.error("Please fill all fields or upload a file.");
       return;
     }
@@ -188,10 +192,15 @@ console.log('disabledDates',disabledDates);
 
   useEffect(() => {
     const allFilled = tableData.every((item) => item.demand !== null);
+    console.log('all fields filled', allFilled);
+    
     setAllFieldsFilled(allFilled);
   }, [tableData]);
 
   const handleModalOk = () => {
+    console.log('all fields filled', allFieldsFilled);
+    console.log('sss');
+    
     setShowTable(true); // Show the table after modal "Ok"
     setIsModalVisible(false);
   };
@@ -208,6 +217,8 @@ const handleFileUpload = (file) => {
     return false;
   }
 
+  console.log('all fields filled', allFieldsFilled);
+  
   const reader = new FileReader();
   reader.onload = async (e) => {
     const data = new Uint8Array(e.target.result);
@@ -266,6 +277,8 @@ const handleFileUpload = (file) => {
   reader.readAsArrayBuffer(file);
   return false; // Prevent automatic upload
 };
+
+console.log('all fields filled', allFieldsFilled);
 
   const handleDownloadTemplate = () => {
     // Modify time format for the template
@@ -510,7 +523,7 @@ const handleFileUpload = (file) => {
       </Form.Item>
       <Modal
         title="Select Technology"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleModalOk}
         onCancel={() => setIsModalVisible(false)}
       >

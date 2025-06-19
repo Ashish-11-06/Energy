@@ -75,7 +75,7 @@ const tomorrowDate = tomorrow.toLocaleDateString('en-GB', option);
   const cardStyle = {
     margin: "20px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    height: "340px", // Ensure all cards are the same height
+    height: "400px", // Ensure all cards are the same height
   };
   const cardThirdStyle = {
     margin: "20px",
@@ -631,7 +631,7 @@ setShowLineGraph(true); // Show line graph card
     bordered
 
     scroll={{ x: true, y: 300 }} // Enables horizontal and vertical scrolling
-    style={{ maxHeight: "300px", overflowY: "auto",textAlign:'center',justifyContent:'center',alignContent:'center' }} // Ensures the column does not exceed this height
+    style={{ maxHeight: "400px", overflowY: "auto",textAlign:'center',justifyContent:'center',alignContent:'center' }} // Ensures the column does not exceed this height
   />
 </Col>
 

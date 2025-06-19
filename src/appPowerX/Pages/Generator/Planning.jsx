@@ -242,11 +242,15 @@ const handleStateChange = (value) => {
     // console.log("Selected Date:", selectedDate);
     // console.log("Demand:", demand);
     // console.log("Price:", price);
+  if(!selectedPortfolioId) {
+      message.error("Please select a portfolio from 'Select Portfolio' before submitting.");
+      return;
+    }
   
-    // if (!selectedPortfolio || !selectedDate || !demand || !price) {
-    //   message.error("Please fill all required fields before submitting.");
-    //   return;
-    // }
+    if ( !selectedDate || !demand || !price) {
+      message.error("Please fill all required fields before submitting.");
+      return;
+    }
   
     // console.log("Formatted Date:", formattedDate); // Debugging log
     // console.log("Selected Technology:", selectedTechnology); // Debugging log
@@ -655,7 +659,7 @@ const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
       </Modal>
       <Modal
         title="Select Technologyyy"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleModalOk}
         onCancel={() => setIsModalVisible(false)}
       >

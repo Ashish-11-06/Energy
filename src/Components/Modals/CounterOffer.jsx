@@ -44,7 +44,11 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   const userData = JSON.parse(localStorage.getItem('user')).user;
 // console.log(userData?.role);
 const role=userData?.role;
+  const subscription = JSON.parse(
+    localStorage.getItem("subscriptionPlanValidity")
+  );
 
+  const activeSubscription = subscription?.status === "active";
   const showModal = () => {
     setModalVisible(true);
   };
@@ -585,7 +589,7 @@ const handleAccept = async () => {
           Continue
         </Button> */}
 
-          {user_category === "Consumer" && role !== 'View'
+          {user_category === "Consumer" && role !== 'View' && activeSubscription
             &&
             data?.generator_status !== "Rejected" &&
             data?.generator_status !== "Accepted" &&
@@ -681,7 +685,7 @@ const handleAccept = async () => {
             ) : null}
 
 
-          {!fromTransaction && user_category === "Generator" && role !== 'View'
+          {!fromTransaction && user_category === "Generator" && role !== 'View' && activeSubscription
             &&
             data?.consumer_status !== "Rejected" &&
             data?.consumer_status !== "Accepted" &&

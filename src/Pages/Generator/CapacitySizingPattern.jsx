@@ -190,9 +190,10 @@ const CombinationPatternCap = () => {
       if (state?.modalData) {
         try {
           setIsTableLoading(true);
-          const response = await dispatch(
-            fetchCapacitySizing(state.modalData)
-          ).unwrap(); // Call API with modalData
+          const response = null;
+          // const response = await dispatch(
+          //   fetchCapacitySizing(state.modalData)
+          // ).unwrap(); // Call API with modalData
           console.log(response);
 
           if (response) {
@@ -288,7 +289,7 @@ const CombinationPatternCap = () => {
         windAllocationArray: record.windAllocationArray || [],
       };
 
-      console.log("Enriched record for download:", enrichedRecord);
+      console.log("Enriched record for download on capacity sizing pattern:", enrichedRecord);
 
       await handleDownloadExcel(enrichedRecord); // Pass enriched record to the download function
     } catch (error) {
@@ -298,12 +299,14 @@ const CombinationPatternCap = () => {
       loadingRef.current = null;
     }
   };
+console.log('saveRecord', saveRecord);
 
   const handleSaveConfirm = async () => {
     if (!saveInput.trim()) {
       message.error("Please enter a valid name.");
       return;
     }
+console.log('saveRecord', saveRecord);
 
     const data = {
       generator: user.id,
@@ -319,9 +322,19 @@ const CombinationPatternCap = () => {
       annual_demand_met: saveRecord.annualDemandMet,
       annual_curtailment: saveRecord.annualCurtailment,
       demand: saveRecord.demandArray, // Include the Demand array here
+      curtailment: saveRecord.curtailmentArray, // Include the Curtailment array here
+      demand_met: saveRecord.demandMetArray,
+      generation: saveRecord.generationArray,
+      solar_allocation: saveRecord.solarAllocationArray,
+      total_demand_met_by_allocation: saveRecord.totalDemandMetByAllocationArray,
+      unmet_demand: saveRecord.unmetDemandArray,
+      wind_allocation: saveRecord.windAllocationArray,
+      soc:saveRecord.soc || 0, // Include SOC if available
+      ess_charge: saveRecord.essDischarge || 0, // Include ESS Discharge if available
+      ess_discharge: saveRecord.essCharge || 0, // Include ESS Charge if
     };
 
-    // console.log('data to send', data);
+    console.log('data to send', data);
 
     try {
       await dispatch(saveCapacitySizingData(data)).unwrap();

@@ -123,7 +123,10 @@ const Dashboard = () => {
       
             setForecastDate(formattedDate); // Example output: "February 01"
           }
-          const mcpData = data.predictions.map(item => item.mcp_prediction);
+          // const mcpData = data.predictions.map(item => item.mcp_prediction);
+          const mcpData = data.predictions.map(item =>
+  item.mcp_prediction === 0 ? null : Number(item.mcp_prediction)
+);
           const mcvData = data.predictions.map(item => item.mcv_prediction);
   
           setTableData([{ MCP: mcpData, MCV: mcvData }]);
@@ -302,7 +305,7 @@ const cardStyle = {
   height: "380px", // Ensure all cards are the same height
 };
 const cardForecastGraph = {
-  margin: "20px",
+  margin: "10px",
   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   height: "500px", // Ensure all cards are the same height
 };
@@ -726,7 +729,7 @@ const stateData = [
                        </div>
                    ) : (
                      <div style={{ height: '500px', width: '100%' }}>
-                       <Line data={data} options={options} style={{height: '300px', width: 'full', padding: '25px', marginLeft: '100px'}}/>
+                       <Line data={data} options={options} style={{height: '300px', width: 'full', padding: '25px', marginLeft: '50px'}}/>
                      </div>
                    )}
                  </Card>

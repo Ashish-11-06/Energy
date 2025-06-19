@@ -66,8 +66,10 @@ const DayAheadG = () => {
           setNextDay(formattedDate); // Example output: "February 01"
         }
 
-        const mcpData = data.predictions.map(item => item.mcp_prediction);
-        const mcvData = data.predictions.map(item => item.mcv_prediction);
+const mcpData = data.predictions.map(item =>
+  item.mcp_prediction === 0 ? null : Number(item.mcp_prediction)
+);
+        const mcvData = data.predictions.map(item => Number(item.mcv_prediction)); // Ensure numbers
 
         setTableData([{ MCP: mcpData, MCV: mcvData }]);
         setStatisticsData(data.statistics);
@@ -79,6 +81,7 @@ const DayAheadG = () => {
     };
     fetchData();
   }, [dispatch]);
+console.log('mcpData', tableData);
 
   useEffect(() => {
     if (statistiicsData.mcp && statistiicsData.mcv) {
@@ -108,25 +111,27 @@ const DayAheadG = () => {
   const data = {
     labels: Array.from({ length: 96 }, (_, i) => i + 1),
     datasets: [
-      {
-        label: 'MCP (INR/MWh)',
-        data: tableData[0]?.MCP || [],
-        borderColor: 'blue',
-        fill: false,
-        font: {
-          weight: 'bold',
-        },
-        yAxisID: 'y-axis-mcp',
-      },
+     {
+  label: 'MCP (INR/MWh)',
+  data: (tableData[0]?.MCP && Array.isArray(tableData[0].MCP)) ? tableData[0].MCP : [],
+  borderColor: 'blue',
+  backgroundColor: 'rgba(0, 0, 255, 0.1)', // optional: fill under line
+  fill: false, // Set true if you want area fill like area chart
+  yAxisID: 'mcp',
+  pointRadius: 2,
+  tension: 0.3, // Smooths the curve (set same as MCV)
+  borderWidth: 2,
+}
+,
       {
         label: 'MCV (MWh)',
-        data: tableData[0]?.MCV || [],
+        data: (tableData[0]?.MCV && Array.isArray(tableData[0].MCV)) ? tableData[0].MCV : [],
         borderColor: 'green',
         fill: false,
-        font: {
-          weight: 'bold',
-        },
-        yAxisID: 'y-axis-mcv',
+        yAxisID: 'mcv',
+        pointRadius: 2,
+        tension: 0.3,
+        borderWidth: 2,
       },
     ],
   };
@@ -150,10 +155,10 @@ const DayAheadG = () => {
           },
         },
       },
-      'y-axis-mcv': {
+      mcv: {
         type: 'linear',
         position: 'left',
-        beginAtZero: true,
+        // beginAtZero: true,
         color: 'green',
         title: {
           display: true,
@@ -166,7 +171,7 @@ const DayAheadG = () => {
           color: 'green',
         },
       },
-      'y-axis-mcp': {
+      mcp: {
         type: 'linear',
         position: 'right',
         beginAtZero: true,
@@ -233,7 +238,12 @@ const DayAheadG = () => {
                </div>
              ) : (
                <div style={{ height: '500px', width: '100%' }}>
-                 <Line data={data} options={options} style={{height: '300px', width: 'full', padding: '25px', marginLeft: '100px'}}/>
+                 <Line
+                   data={data}
+                   options={options}
+                   key={JSON.stringify(data)} // Force re-render on data change
+                   style={{height: '300px', width: 'full', padding: '25px', marginLeft: '100px'}}
+                 />
                </div>
              )}
            </Card>

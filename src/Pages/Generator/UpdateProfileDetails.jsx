@@ -141,7 +141,9 @@ console.log('selectedRecord:', selectedRecord); // Debug log
     setIsModalVisible(false);
   };
 
-  const allUpdated = structuredProjects.some(item => item.updated);
+  console.log('structuredProjects:', structuredProjects); // Debug log
+  
+  const allUpdated = structuredProjects.some(item => item.updated === true);
 
   const handleProceed = () => {
     navigate('/generator/combination-pattern', { state: { selectedConsumer } });

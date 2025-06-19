@@ -379,7 +379,7 @@ const handleFileUploadModal = () => {
       title: (
         <div>
           Generation
-          <Tooltip title="Fill below to apply same demand for all time intervals">
+          <Tooltip title="Fill below to apply same generation for all time intervals">
             <Button
               onClick={() => handleFillBelow(part)}
               style={{ marginLeft: "10px", height: "10px" }}

@@ -183,16 +183,14 @@ const companyName=userData[0]?.company;
 
 
   const handleGenerateProforma = async (values) => {
-    // console.log(values);
+    setLoading(true); // Start loader
     const performaData = {
       company_name: values.companyName,
       company_address: values.companyAddress,
       gst_number: values.gstinNumber,
-      subscription: selectedPlanId, // Ensure selectedPlanId is coming from a controlled input
+      subscription: selectedPlanId,
       // due_date: "2025-01-25",
     };
-// console.log('performaData',performaData);
-
     try {
       const response = await dispatch(
         createPerformaById({ id: userId, performaData })
@@ -204,6 +202,8 @@ const companyName=userData[0]?.company;
     } catch (error) {
       console.error("Failed to create performa:", error);
       message.error("Failed to generate Performa invoice. Please try again.");
+    } finally {
+      setLoading(false); // Stop loader
     }
   };
 
@@ -273,7 +273,7 @@ const companyName=userData[0]?.company;
 
   const handlePayment = async () => {
     try {
-      log("Selected Plan ID:", selectedPlanId);
+      // log("Selected Plan ID:", selectedPlanId);
       const amount = selectedPlanId === selectedPlanId ? 500000 : 1000000; // Adjust plan amount here
       const orderResponse = await dispatch(
         createRazorpayOrder({ amount, currency: "INR" })
@@ -693,7 +693,12 @@ const companyName=userData[0]?.company;
           open={isQuotationVisible}
           onCancel={closeQuotation}
           footer={[
-            <Button key="generate" type="primary" onClick={() => form.submit()}>
+            <Button
+              key="generate"
+              type="primary"
+              onClick={() => form.submit()}
+              loading={loading} // Add loader here
+            >
               Generate Proforma Invoice
             </Button>,
           ]}

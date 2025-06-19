@@ -102,6 +102,7 @@ const ProformaInvoiveModal = ({
   const [paymentModeModal,setPaymentModeModal] = useState(false);
   const [paymentMode, setPaymentMode] = useState(''); // Stores selected payment mode
   const [offlineForm,setOfflineForm] = useState(false);
+  const [offlineLoading, setOfflineLoading] = useState(false); // <-- Add loading state
   const [form] = Form.useForm(); // create a form instance
   const [transactionId, setTransactionId] = useState('');
   const [paymentDate, setPaymentDate] = useState(null);
@@ -149,6 +150,7 @@ const handlePaymentModeOk = () => {
 const selectedInvoiceNumber=selectedPlan?.id;
 const handleOfflineOk = async () => {
   try {
+    setOfflineLoading(true); // Start loader
     await form.validateFields();  //  Await here
     const data = {
       transaction_id:transactionId,
@@ -162,9 +164,18 @@ const handleOfflineOk = async () => {
     if(res?.payload) {
       message.success(res?.payload.message || "Offline Payment Submitted Successfullyyy");
       setPaymentModeModal(false);
-setOfflineForm(false);
+      setOfflineForm(false);
+      setOfflineLoading(false); // Stop loader
+      if (userData?.user_category === "Consumer") {
+        navigate('/consumer/energy-consumption-table');
+      } else {
+        navigate('/generator/update-profile-details');
+      }
+    } else {
+      setOfflineLoading(false); // Stop loader if no payload
     }
   } catch (error) {
+    setOfflineLoading(false); // Stop loader on error
     message.error('Please fill in all required fields!');
   }
 };
@@ -702,7 +713,7 @@ setOfflineForm(false);
         </Radio.Group>
       </Modal>
 
-<Modal open={offlineForm} onOk={handleOfflineOk} onCancel={()=> setOfflineForm(false)}>       
+<Modal open={offlineForm} onOk={handleOfflineOk} onCancel={()=> setOfflineForm(false)} confirmLoading={offlineLoading}>       
 <Form
   layout="vertical"
   style={{ marginTop: 20 }}

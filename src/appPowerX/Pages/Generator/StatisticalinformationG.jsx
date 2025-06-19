@@ -215,7 +215,7 @@ const StatisticalInformationG = () => {
           {selectedType === 'MCP' && (
             <Col span={24} >
               <Card style={{  backgroundColor: 'white' }}>
-                <h3>{selectedType} MCP Data</h3>
+                <h3>{selectedType} Data</h3>
                 <div>
                   <Line 
                     style={{height:'300px'}} 
@@ -256,7 +256,7 @@ const StatisticalInformationG = () => {
           {selectedType === 'MCV' && (
             <Col span={24} >
               <Card style={{  backgroundColor: 'white' }}>
-                <h3>{selectedType} MCV Data</h3>
+                <h3>{selectedType} Data</h3>
                 <div >
                   <Line 
                     style={{height:'300px'}} 

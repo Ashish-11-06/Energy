@@ -198,8 +198,18 @@ console.log('disable dates',disableDates);
   };
 
   const handleModalOk = async () => {
+    console.log('all fields filled:', allFieldsFilled);
+    
     if (!selectedRequirementId) {
       message.error("Please select a valid consumption unit.");
+      return;
+    }
+    if(!demand) {
+      message.error("Please enter a demand value.");
+      return;
+    }
+    if (!selectedTechnology) {
+      message.error("Please select a technology.");
       return;
     }
 console.log(selectedDate);

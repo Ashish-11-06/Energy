@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import dayjs from 'dayjs';
+import moment from "moment";
 import {
   Table,
   Typography,
@@ -28,7 +28,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import "jspdf-autotable";
 import { getAllProjectsById } from "../../Redux/Slices/Generator/portfolioSlice";
-import moment from "moment";
 import { getCapacitySizingData } from "../../Redux/Slices/Generator/capacitySizingSlice";
 import { handleDownloadExcel } from "./CapacitySizingDownload";
 
@@ -73,7 +72,10 @@ const [form] = Form.useForm();
 
   console.log("checkPortfolio", checkPortfolio);
   console.log("structuredProjects", Structuredprojects);
-  
+   const subscription = JSON.parse(
+    localStorage.getItem("subscriptionPlanValidity")
+  );
+  const activeSubscription = subscription?.status === "active";
 const handleFormSubmit = (values) => {
   // Save the form values to dataSource for use in modalData
   const formattedValues = {
@@ -151,11 +153,21 @@ const handleFormSubmit = (values) => {
           annualDemandOffeset: record.annual_demand_offset,
           annualDemandMet: record.annual_demand_met,
           annualCurtailment: record.annual_curtailment,
-
-
+          //  demandArray: record.demand, // Include the Demand array here
+     curtailmentArray: record.curtailment || [],
+        demandArray: record.demand || [],
+        generationArray: record.generation || [],
+        demandMetArray: record.demand_met || [],
+        solarAllocationArray: record.solar_allocation || [],
+        totalDemandMetByAllocationArray:
+          record.total_demand_met_by_allocation || [],
+        unmetDemandArray: record.unmet_demand || [],
+        windAllocationArray: record.wind_allocation || [],
         };
        
-        await handleDownloadExcel(updatedRecord);
+        console.log("Updated Record for Download on generator input :", updatedRecord);
+        
+        await handleDownloadExcel(updatedRecord, record.key);
   
         loadingRef.current = null;
      
@@ -339,7 +351,7 @@ const handleFormSubmit = (values) => {
       };
     }
 
-    // Build modalData based on input method
+    // Build modalData based on method
     const modalData = {
       user_id: user_id,
       solar_portfolio: solarPortfolio,
@@ -425,7 +437,6 @@ console.log('vale',value);
     />
   );
 };
-
   const handleDownloadTemplate = () => {
     const rows = Array.from({ length: 8760 }, (_, i) => `${i + 1},`).join("\n");
     const csvContent = "Hour,Expected Demand (MWh)\n" + rows;
@@ -440,8 +451,20 @@ console.log('vale',value);
 
   return (
     <div style={{ justifyContent: "center", width: "100%", alignItems: "center", padding: "20px" }}>
-
-
+      <Modal
+        title="Subscription Required to access this feature"
+        open={!activeSubscription}
+        onCancel={() => navigate("/subscription-plan")}
+        onOk={() => navigate("/subscription-plan")}
+        footer={[
+          <Button key="cancel" onClick={() => navigate("/subscription-plan")}>
+            Cancel
+          </Button>,
+          <Button key="confirm" type="primary" onClick={() => navigate("/subscription-plan")}>
+            Subscribe Now
+          </Button>,
+        ]}
+      />
       <Card style={{ width: "100%", boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px", marginBottom: "20px" }}>
         <h2 style={{ marginRight: "20px" }}>
           Capacity Sizing
@@ -577,56 +600,56 @@ console.log('vale',value);
         {/* </Row> */}
       </Card>
      <Modal
-  // title="Add Details"
-  open={addDetailsModal}
-  onCancel={() => setAddDetailsModal(false)}
-  footer={null}
-  width={800}
->
-  <Title level={4} style={{ textAlign: "center", color:'669800' }}>
-    Add Details
-  </Title>
-  <Form
-    form={form}
-    layout="vertical"
-    onFinish={handleFormSubmit}
-    initialValues={{}} // Optional: preset form values
-  >
-    <Row gutter={16}>
-      {/* Annual Consumption */}
-      <Col span={12}>
-        <Form.Item 
-        rules={[
-          {
-            required: true,
-            message: 'Please input the annual consumption!',
-          }
-        ]}
-        label="Annual Consumption (MWh)" name="annualConsumption">
-          <Input />
-        </Form.Item>
-      </Col>
-
-      {/* Contracted Demand */}
-      <Col span={12}>
-        <Form.Item
-         rules={[
-          {
-            required: true,
-            message: 'Please input the Contracted Demand!',
-          }
-        ]}
-          label={renderLabelWithTooltip(
-            "Contracted Demand (MW)",
-            "Total energy consumed during the month in megawatt-hours."
-          )}
-          name="contractedDemand"
+        // title="Add Details"
+        open={addDetailsModal}
+        onCancel={() => setAddDetailsModal(false)}
+        footer={null}
+        width={800}
+      >
+        <Title level={4} style={{ textAlign: "center", color:'#669800' }}>
+          Add Details
+        </Title>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleFormSubmit}
+          initialValues={{}} // Optional: preset form values
         >
-          <Input />
-        </Form.Item>
-      </Col>
+          <Row gutter={16}>
+            {/* Annual Consumption */}
+            <Col span={12}>
+              <Form.Item 
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input the annual consumption!',
+                }
+              ]}
+              label="Annual Consumption (MWh)" name="annualConsumption">
+                <Input />
+              </Form.Item>
+            </Col>
 
-      {/* Morning Peak Start */}
+            {/* Contracted Demand */}
+            <Col span={12}>
+              <Form.Item
+               rules={[
+                {
+                  required: true,
+                  message: 'Please input the Contracted Demand!',
+                }
+              ]}
+                label={renderLabelWithTooltip(
+                  "Contracted Demand (MW)",
+                  "Total energy consumed during the month in megawatt-hours."
+                )}
+                name="contractedDemand"
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            {/* Morning Peak Start */}
 <Col span={12}>
   <Form.Item
     rules={[
@@ -645,7 +668,7 @@ console.log('vale',value);
       format="HH:mm:ss"
       placeholder="HH:mm:ss"
       showNow={false}
-      defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}
+      defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
       style={{ width: "100%" }}
     />
   </Form.Item>
@@ -670,7 +693,7 @@ console.log('vale',value);
       format="HH:mm:ss"
       placeholder="HH:mm:ss"
       showNow={false}
-      defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}
+      defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
       style={{ width: "100%" }}
     />
         </Form.Item>
@@ -731,7 +754,7 @@ console.log('vale',value);
       format="HH:mm:ss"
       placeholder="HH:mm:ss"
       showNow={false}
-      defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}
+      defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
       style={{ width: "100%" }}
     />
         </Form.Item>
@@ -757,7 +780,7 @@ console.log('vale',value);
       format="HH:mm:ss"
       placeholder="HH:mm:ss"
       showNow={false}
-      defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}
+      defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
       style={{ width: "100%" }}
     />
 </Form.Item>
