@@ -30,6 +30,7 @@ import "jspdf-autotable";
 import { getAllProjectsById } from "../../Redux/Slices/Generator/portfolioSlice";
 import { getCapacitySizingData } from "../../Redux/Slices/Generator/capacitySizingSlice";
 import { handleDownloadExcel } from "./CapacitySizingDownload";
+import { Text } from "recharts";
 
 const { Title } = Typography;
 
@@ -43,6 +44,8 @@ const GeneratorInput = () => {
   const [isForm, setForm] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [addDetailsModal, setAddDetailsModal] = useState(false);
+  const [nameClickModal, setNameClickModal] = useState(false);
+  const [selectedNameRecord, setSelectedNameRecord] = useState(null); // NEW: store clicked record
   const [curtailmentInputs, setCurtailmentInputs] = useState({
     curtailment_selling_price: 3000,
     sell_curtailment_percentage: 0,
@@ -163,6 +166,8 @@ const handleFormSubmit = (values) => {
           record.total_demand_met_by_allocation || [],
         unmetDemandArray: record.unmet_demand || [],
         windAllocationArray: record.wind_allocation || [],
+        site_name: record.site_name || " ",
+        state: record.state || " ",
         };
        
         console.log("Updated Record for Download on generator input :", updatedRecord);
@@ -173,6 +178,10 @@ const handleFormSubmit = (values) => {
      
     };
 
+    const handleName = (record) => {
+      setSelectedNameRecord(record); // Save the clicked record
+    setNameClickModal(true);
+    }
 
   const columns = [
     {
@@ -222,12 +231,21 @@ const handleFormSubmit = (values) => {
       key: "key",
       width: 50,
     },
-    {
-      title: "Name",
-      dataIndex: "record_name",
-      key: "record_name",
-      width: 50,
-    },
+   {
+  title: "Name",
+  dataIndex: "record_name",
+  key: "record_name",
+  width: 50,
+  render: (text, record) => (
+    <p
+      style={{ color: "#669800", fontWeight: "bold", cursor: "pointer" }}
+      onClick={() => handleName(record)} 
+    >
+      {record.record_name}
+    </p>
+  )
+}
+,
     {
       title: "Combination ID",
       dataIndex: "combination",
@@ -815,6 +833,54 @@ console.log('vale',value);
       </Button>
     </Form.Item>
   </Form>
+</Modal>
+
+<Modal  
+open={nameClickModal}
+onCancel={() => setNameClickModal(false)}
+footer={null}
+>
+  <Title level={5}>Site Details</Title>
+  {selectedNameRecord && selectedNameRecord.state && selectedNameRecord.site_name ? (
+    <Table
+      dataSource={Object.keys(selectedNameRecord.state)
+        .filter((key) => {
+          // Only show keys that start with 'Wind', 'Solar', or 'ESS'
+          return (
+            key.startsWith("Wind") ||
+            key.startsWith("Solar") ||
+            key.startsWith("ESS")
+          );
+        })
+        .map((key, idx) => ({
+          key: idx,
+          technology:
+            key.startsWith("Wind")
+              ? "Wind"
+              : key.startsWith("Solar")
+              ? "Solar"
+              : key.startsWith("ESS")
+              ? "ESS"
+              : key,
+          state: selectedNameRecord.state[key],
+          site_name:
+            selectedNameRecord.site_name[key] == null ||
+            selectedNameRecord.site_name[key] === ""
+              ? "N/A"
+              : selectedNameRecord.site_name[key],
+        }))}
+      columns={[
+        { title: "Technology", dataIndex: "technology", key: "technology" },
+        { title: "State", dataIndex: "state", key: "state" },
+        { title: "Site Name", dataIndex: "site_name", key: "site_name" },
+      ]}
+      pagination={false}
+      bordered
+      size="small"
+    />
+  ) : (
+    <div>No data available</div>
+  )}
 </Modal>
 
       <Modal
