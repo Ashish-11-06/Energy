@@ -61,139 +61,58 @@ const [lastSensitivityRunId, setLastSensitivityRunId] = useState(null); // Track
   const [consumptionPatterns, setConsumptionPatterns] = useState([]);
   const [consumerDetails, setConsumerDetails] = useState({});
 
+  const [rowSensitivityLoading, setRowSensitivityLoading] = useState({}); // {combinationId: boolean}
+  const [rowSensitivityData, setRowSensitivityData] = useState({}); // {combinationId: data}
+  const [activeGraphCombination, setActiveGraphCombination] = useState(null); // combinationId for modal
+
+  // Sequentially fetch sensitivity for each combinationId, one at a time, only if not already fetched/loading
+const fetchNextSensitivity = async (combinationIds) => {
+  if (!combinationIds || combinationIds.length === 0) return;
+  const combinationId = combinationIds[0];
+  if (rowSensitivityData[combinationId] || rowSensitivityLoading[combinationId]) {
+    // Already fetched or loading, skip to next
+    if (combinationIds.length > 1) {
+      fetchNextSensitivity(combinationIds.slice(1));
+    }
+    return;
+  }
+  setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: true }));
+  try {
+    const data = {
+      requirement_id: selectedDemandId,
+      optimize_capacity_user: user.user_category,
+      user_id: user.id,
+      combinations: [combinationId],
+    };
+    const res = await dispatch(fetchSensitivity(data)).unwrap();
+    if (res.error) {
+      message.error(res.error);
+      setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+    } else {
+      setRowSensitivityData((prev) => ({
+        ...prev,
+        [combinationId]: res[combinationId]
+      }));
+      setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+    }
+    if (combinationIds.length > 1) {
+      fetchNextSensitivity(combinationIds.slice(1));
+    }
+  } catch (error) {
+    setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+    message.error("Failed to fetch sensitivity data.");
+    if (combinationIds.length > 1) {
+      fetchNextSensitivity(combinationIds.slice(1));
+    }
+  }
+};
+
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
   const role = user.role;
   // console.log(user.id);
   const user_id = user.id;
-
-const handleSensitivity = async () => {
-  if (hasRunSensitivity) return; // Prevent re-execution
-  console.log("clicked");
-  setIsGraphLoading(true); // Show loader in the button
-
-  const combinationIds = dataSource.map((item) => item.combination);
-  console.log("Extracted combination IDs:", combinationIds); // Log to verify
-
-  const data = {
-    requirement_id: selectedDemandId,
-    optimize_capacity_user: user.user_category,
-    user_id: user.id,
-    combinations: combinationIds, // Send combination IDs
-  };
-
-  console.log("Payload for sensitivity API:", data); // Log the payload
-  
-  try {
-    const res = await dispatch(fetchSensitivity(data)).unwrap();
-    console.log("API response:", res);
-    setSensitivityData(res);
-    if (res.error) {
-      message.error(res.error); // Display error message if any
-      setIsGraphLoading(false); // Hide loader in the button
-      return;
-    }
-    setHasRunSensitivity(true); // Mark sensitivity as executed
-  } catch (error) {
-    console.error("Error fetching sensitivity data:", error);
-    message.error("Failed to fetch sensitivity data.");
-  } finally {
-    setIsGraphLoading(false); // Hide loader in the button
-  }
-};
-
-const prepareGraphData = () => {
-  if (!sensitivityData) return null;
-
-  const labels = [];
-  const tariffData = [];
-  const finalCostData = [];
-  const technologyCombinationData = []; // Store for tooltips
-
-  Object.entries(sensitivityData).forEach(([combination, reReplacements]) => {
-    Object.entries(reReplacements).forEach(([reReplacement, data]) => {
-      if (typeof data !== "string") {
-        labels.push(reReplacement); // X-axis labels
-
-        // Y-axis datasets
-        tariffData.push(data["Per Unit Cost"]);
-        finalCostData.push(data["Final Cost"]);
-
-        // Store technology combination for tooltips
-        technologyCombinationData.push(
-          `Solar: ${data["Optimal Solar Capacity (MW)"]} MW, Wind: ${data["Optimal Wind Capacity (MW)"]} MW, Battery: ${data["Optimal Battery Capacity (MW)"]} MW`
-        );
-      }
-    });
-  });
-  const combinationIds = dataSource.map((item) => item.combination);
-  console.log(combinationIds, "combinationIds");
-  return {
-    labels, // X-axis values (reReplacements)
-    datasets: [
-      {
-        label: "Tariff (INR/kWh)",
-        data: tariffData,
-        borderColor: "#FF5733",
-        backgroundColor: "rgba(255, 87, 51, 0.2)",
-        borderWidth: 2,
-        fill: true,
-      },
-      {
-        label: "Final Cost (INR)",
-        data: finalCostData,
-        borderColor: "#337AFF",
-        backgroundColor: "rgba(51, 122, 255, 0.2)",
-        borderWidth: 2,
-        fill: true,
-      },
-    ],
-    technologyCombinationData, // Pass separately for tooltips
-  };
-};
-
-const graphOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    tooltip: {
-      callbacks: {
-        label: (context) => {
-          const index = context.dataIndex;
-          const techData = prepareGraphData().technologyCombinationData[index];
-
-          if (context.raw === null) {
-            return `${context.label}: Demand cannot be met`;
-          }
-
-          return [
-            `${context.dataset.label}: ${context.raw}`,
-            techData, // Show technology combination in tooltip
-          ];
-        },
-      },
-    },
-    legend: {
-      position: "bottom",
-    },
-  },
-  scales: {
-    x: {
-      title: {
-        display: true,
-        text: "RE Replacement (%)",
-      },
-    },
-    y: {
-      title: {
-        display: true,
-        text: "Values",
-      },
-      beginAtZero: true,
-    },
-  },
-};
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
     if (
@@ -272,6 +191,12 @@ const graphOptions = {
     // console.log('tech',tech);
     // console.log("formatting com");
     setDataSource(formattedCombinations);
+
+    // After setting dataSource, start sensitivity fetch for all combinations (only if not already fetched)
+    const ids = formattedCombinations.map((item) => item.combination);
+    if (ids.length > 0) {
+      fetchNextSensitivity(ids);
+    }
   };
 
 
@@ -380,14 +305,103 @@ const graphOptions = {
     
   }, [dispatch, selectedDemandId]);
 
+
+  const prepareGraphDataForCombination = (combinationId) => {
+  const dataObj = rowSensitivityData[combinationId];
+  if (!dataObj) return null;
+
+  const labels = [];
+  const tariffData = [];
+  const finalCostData = [];
+  const technologyCombinationData = [];
+
+  Object.entries(dataObj).forEach(([reReplacement, data]) => {
+    if (typeof data !== "string") {
+      labels.push(reReplacement);
+      tariffData.push(data["Per Unit Cost"]);
+      finalCostData.push(data["Final Cost"]);
+      technologyCombinationData.push(
+        `Solar: ${data["Optimal Solar Capacity (MW)"]} MW, Wind: ${data["Optimal Wind Capacity (MW)"]} MW, Battery: ${data["Optimal Battery Capacity (MW)"]} MW`
+      );
+    }
+  });
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: "Tariff (INR/kWh)",
+        data: tariffData,
+        borderColor: "#FF5733",
+        backgroundColor: "rgba(255, 87, 51, 0.2)",
+        borderWidth: 2,
+        fill: true,
+      },
+      {
+        label: "Final Cost (INR)",
+        data: finalCostData,
+        borderColor: "#337AFF",
+        backgroundColor: "rgba(51, 122, 255, 0.2)",
+        borderWidth: 2,
+        fill: true,
+      },
+    ],
+    technologyCombinationData,
+  };
+};
+
+
+const graphOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: (context) => {
+          // Use activeGraphCombination for correct tooltip data
+          const index = context.dataIndex;
+          const graphData = prepareGraphDataForCombination(activeGraphCombination);
+          const techData = graphData?.technologyCombinationData[index];
+
+          if (context.raw === null) {
+            return `${context.label}: Demand cannot be met`;
+          }
+
+          return [
+            `${context.dataset.label}: ${context.raw}`,
+            techData,
+          ];
+        },
+      },
+    },
+    legend: {
+      position: "bottom",
+    },
+  },
+  scales: {
+    x: {
+      title: {
+        display: true,
+        text: "RE Replacement (%)",
+      },
+    },
+    y: {
+      title: {
+        display: true,
+        text: "Values",
+      },
+      beginAtZero: true,
+    },
+  },
+};
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
-useEffect(() => {
-  if (dataSource.length > 0 && selectedDemandId !== lastSensitivityRunId) {
-    handleSensitivity(); // Call sensitivity only if it hasn't run for the current selectedDemandId
-    setLastSensitivityRunId(selectedDemandId); // Update the last ID for sensitivity
-  }
-}, [dataSource, selectedDemandId]); // Remove hasRunSensitivity dependency
+// useEffect(() => {
+//   if (dataSource.length > 0 && selectedDemandId !== lastSensitivityRunId) {
+//     handleSensitivity(); // Call sensitivity only if it hasn't run for the current selectedDemandId
+//     setLastSensitivityRunId(selectedDemandId); // Update the last ID for sensitivity
+//   }
+// }, [dataSource, selectedDemandId]); // Remove hasRunSensitivity dependency
 const handleGraphModalClose = () => {
   setIsGraphModalVisible(false); // Close the modal
 };
@@ -642,37 +656,29 @@ const handleSensitivityClick = () => {
     columns.push(  {
           title: "Sensitivity",
           key: "sensitivity",
-          render: () => (
-            <>
-    {isDisabled ? (
-      <Tooltip title="Please wait while we optimize the model for different RE replacements.">
-        <span>
-          <Button
-            type="primary"
-            disabled={isDisabled}
-            onClick={handleSensitivityClick}
-          >
-            {isGraphLoading ? (
-              <>
-                <Spin size="small" style={{ marginRight: 8 }} />
+          render: (_, record) => (
+            <Tooltip
+              title={
+                rowSensitivityLoading[record.combination]
+                  ? "Please wait while we optimize the model for different RE replacements."
+                  : rowSensitivityData[record.combination]
+                  ? "View Sensitivity Graph"
+                  : "Sensitivity data is loading..."
+              }
+            >
+              <Button
+                type="primary"
+                disabled={!!rowSensitivityLoading[record.combination] || !rowSensitivityData[record.combination]}
+                loading={!!rowSensitivityLoading[record.combination]}
+                onClick={() => {
+                  if (rowSensitivityData[record.combination]) {
+                    setActiveGraphCombination(record.combination);
+                  }
+                }}
+              >
                 Sensitivity
-              </>
-            ) : (
-              "Sensitivity"
-            )}
-          </Button>
-        </span>
-      </Tooltip>
-    ) : (
-      <Button
-        type="primary"
-        disabled={isDisabled}
-        onClick={handleSensitivityClick}
-      >
-        Sensitivity
-      </Button>
-    )}
-  </> 
+              </Button>
+            </Tooltip>
           ),
         },
       )
@@ -776,47 +782,45 @@ const lineChartData = {
           <div style={{ marginBottom: "20px" }}>
             <Card>
               <p>(You can change your RE Replacement from below bar.)</p>
-              {/* <span> <Text>RE Replacement Value: {sliderValue}%</Text><p>(Scroll the below bar for different RE combination  )</p></span> Display slider value */}
               <span>
-             
-                  <div
-                style={{
-                  position: "relative",
-                  width: "80%",
-                  marginLeft: "5%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
+                <div
+                  style={{
+                    position: "relative",
+                    width: "80%",
+                    marginLeft: "5%",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <Slider
                     min={0}
                     max={100}
-                    marks={marks} // Add marks to the slider
+                    marks={marks}
                     style={{ width: "80%", marginLeft: "5%" }}
                     onChange={handleSliderChange}
-                    value={`${sliderValue}`}
-                    tooltip={{ open: !isIPPModalVisible && !isModalVisible }} // Correct way to control tooltip visibility
-                    trackStyle={{ height: 20 }} // Increase the thickness of the slider line
-                    handleStyle={{ height: 20, width: 20 }} // Optionally, increase the size of the handle
+                    value={sliderValue}
+                    tooltip={{ open: !isIPPModalVisible && !isModalVisible }}
+                    trackStyle={{ height: 20 }}
+                    handleStyle={{ height: 20, width: 20 }}
                   />
-                   <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={sliderValue}
-                  onChange={(e) => {
-                    const value = Math.min(Math.max(Number(e.target.value), 0), 100); // Clamp value between 0 and 100
-                    setSliderValue(value);
-                  }}
-                  style={{
-                    width: "50px",
-                    height: "30px",
-                    marginLeft: "10px",
-                    textAlign: "center",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                  }}
-                />
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={sliderValue}
+                    onChange={(e) => {
+                      const value = Math.min(Math.max(Number(e.target.value), 0), 100);
+                      setSliderValue(value);
+                    }}
+                    style={{
+                      width: "50px",
+                      height: "30px",
+                      marginLeft: "10px",
+                      textAlign: "center",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                    }}
+                  />
                 </div>
                 <Button
                   type="primary"
@@ -902,13 +906,13 @@ const lineChartData = {
 
      <Modal
           title="Sensitivity Analysis Graph"
-          open={isGraphModalVisible}
-          onCancel={handleGraphModalClose}
+          open={!!activeGraphCombination}
+          onCancel={() => setActiveGraphCombination(null)}
           footer={null}
           width="80%"
           zIndex={5000}
         >
-          {sensitivityData ? (
+          {activeGraphCombination && rowSensitivityData[activeGraphCombination] ? (
             <div
               style={{
                 position: "relative",
@@ -917,7 +921,7 @@ const lineChartData = {
                 margin: "0 auto",
               }}
             >
-              <Line data={prepareGraphData()} options={graphOptions} />
+              <Line data={prepareGraphDataForCombination(activeGraphCombination)} options={graphOptions} />
             </div>
           ) : (
             <div
@@ -963,7 +967,7 @@ const lineChartData = {
             type="generator"
           />
         )}
-        {/* <Modal open={tryLowerModal} onOk={()=> setTryLowerModal(false)} footer={null} onCancel={()=> setTryLowerModal(false)}> */}
+        {/* <Modal open={tryLowerModal} onOk={()=> setTryLowerModal(false)} footer={null} onCancel={()=> setTryLowerModal(false)> */}
 {/* <p>Please try in lower RE Replacement</p> */}
         {/* </Modal> */}
       </Row>
@@ -972,3 +976,4 @@ const lineChartData = {
 };
 
 export default CombinationPattern;
+                 

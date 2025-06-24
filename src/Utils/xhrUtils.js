@@ -1,7 +1,7 @@
 export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onError) => {
   try {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://ext.exgglobal.com/api/api/energy/optimize-capactiy", true);
+    xhr.open("POST", "http://192.168.1.66:8000/api/energy/optimize-capactiy", true);
 
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
