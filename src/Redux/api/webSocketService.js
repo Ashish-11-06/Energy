@@ -40,7 +40,7 @@ export const connectWebSocket = (user_id, tariff_id, onConnected = null) => {
 
         socket.onopen = () => {
             clearTimeout(connectionTimeout);
-            console.log('✅ WebSocket connected:', wsUrl.toString());
+         // console.log('✅ WebSocket connected:', wsUrl.toString());
             reconnectAttempts = 0;
             if (onConnected) onConnected();
         };
@@ -48,7 +48,7 @@ export const connectWebSocket = (user_id, tariff_id, onConnected = null) => {
         socket.onclose = (event) => {
             clearTimeout(connectionTimeout);
             if (event.wasClean) {
-                console.log('🟢 WebSocket closed cleanly:', event.reason);
+             // console.log('🟢 WebSocket closed cleanly:', event.reason);
             } else {
                 console.error('🔴 WebSocket connection lost:', event.reason);
                 attemptReconnect(user_id, tariff_id, onConnected);
@@ -69,7 +69,7 @@ export const connectWebSocket = (user_id, tariff_id, onConnected = null) => {
 const attemptReconnect = (user_id, tariff_id, onConnected) => {
     if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
         reconnectAttempts++;
-        console.log(`♻️ Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
+     // console.log(`♻️ Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
 
         setTimeout(() => {
             connectWebSocket(user_id, tariff_id, onConnected);
@@ -95,7 +95,7 @@ export const subscribeToEvent = (eventName, callback) => {
     }
 
     eventListeners.get(eventName).push(callback);
-    console.log(`🔔 Subscribed to event: ${eventName}`);
+ // console.log(`🔔 Subscribed to event: ${eventName}`);
 };
 
 /**
@@ -110,7 +110,7 @@ export const unsubscribeFromEvent = (eventName, callback) => {
         
         if (index !== -1) {
             callbacks.splice(index, 1);
-            console.log(`🔕 Unsubscribed from event: ${eventName}`);
+         // console.log(`🔕 Unsubscribed from event: ${eventName}`);
         }
     }
 };
@@ -155,7 +155,7 @@ export const disconnectWebSocket = (reason = 'Client initiated disconnect') => {
             socket.close(1000, reason);
         }
         socket = null;
-        console.log('🔌 WebSocket disconnected:', reason);
+     // console.log('🔌 WebSocket disconnected:', reason);
     }
 };
 

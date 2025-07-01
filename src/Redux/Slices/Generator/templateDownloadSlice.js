@@ -19,7 +19,7 @@ export const templateDownload = createAsyncThunk(
       }
 
     } catch (error) {
-      console.log("Error:", error);
+   // console.log("Error:", error);
       return rejectWithValue(error.response?.data?.message || "Failed to fetch template");
     }
   }

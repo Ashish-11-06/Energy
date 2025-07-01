@@ -67,7 +67,7 @@ const Dashboard = () => {
     fetchData();
   }, [dispatch]);
 
-  console.log(dashboardData);
+  // console.log(dashboardData);
   useEffect(() => {
     if (is_due_date) {
       setShowDueModal(true);
@@ -79,7 +79,7 @@ const Dashboard = () => {
       setLoading(true);
       const res = await dispatch(fetchDashboardLineG(id)); 
       if(res.payload === 'No demand data available for the next day') {
-        console.log('no data');
+     // console.log('no data');
         setShowLineGraph(false); // Hide line graph card
                 } else {
         setShowLineGraph(true); // Show line graph card

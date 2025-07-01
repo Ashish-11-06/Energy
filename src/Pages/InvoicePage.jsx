@@ -25,7 +25,7 @@ const [freeStatus,setFreeStatus]=useState('')
     setSubscriptionType(record.subscription.subscripton_type)
 // console.log('hhh');
 
-    console.log(invoice);
+ // console.log(invoice);
     
   };
   const closeProforma = () => {

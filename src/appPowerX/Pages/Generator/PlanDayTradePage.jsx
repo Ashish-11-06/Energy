@@ -78,7 +78,7 @@ useEffect(() => {
       const res = await dispatch(fetchHolidayList());
       // setDisabledDates(["2025-04-25"]);
       setDisabledDates(res.payload);
-      console.log("Holiday List:", res);
+   // console.log("Holiday List:", res);
     } catch (error) {
       // console.error("Error fetching holiday list:", error);
     }
@@ -127,13 +127,13 @@ useEffect(() => {
         // console.log(dayAheadDemand);
         try {
           const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
-          console.log("res", res);
+       // console.log("res", res);
           setIsModalVisible(false);
           message.success(res.message || "Data submitted successfully!");
 
           navigate("/px/track-status");
         } catch (error) {
-          console.log(error);
+       // console.log(error);
         }
       } catch (error) {
         // console.log(error);
@@ -144,7 +144,7 @@ useEffect(() => {
     }
     // setIsModalVisible(true);
   };
-console.log('price', price);
+// console.log('price', price);
 
   const onFinish = (values) => {
     // console.log("Received values of form: ", values);
@@ -203,7 +203,7 @@ console.log('price', price);
     if (selectedPortfolio) {
       setSelectedTechnology(selectedPortfolio.type); // Automatically set technology based on portfolio type
     }
-    console.log("Selected Portfolio:", selectedPortfolio);
+ // console.log("Selected Portfolio:", selectedPortfolio);
   };
 
   useEffect(() => {
@@ -316,7 +316,7 @@ const handleFileUploadModal = () => {
           file: base64File, // Add base64 file to payload
         };
 
-        console.log("dayAheadDemand", dayAheadDemand);
+     // console.log("dayAheadDemand", dayAheadDemand);
 
         try {
           const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();

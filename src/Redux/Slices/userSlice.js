@@ -33,7 +33,7 @@ export const editUser = createAsyncThunk('editUser/editUser', async ({ userId, u
     try {
         // Call your API for user update
         const response = await userApi.updateuser(userId, userData); // Replace with your actual API call
-        console.log(response);
+     // console.log(response);
         return response; // Return the response from the API (user data or token)
     } catch (error) {
         // Handle any error during the update process

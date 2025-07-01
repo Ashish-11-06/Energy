@@ -12,9 +12,9 @@ export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onE
 
       if (token) {
         xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-        console.log(`Token added to headers: ${token}`);
+     // console.log(`Token added to headers: ${token}`);
       } else {
-        console.log("No token found in localStorage");
+     // console.log("No token found in localStorage");
       }
     } catch (err) {
       console.error("Error getting token from localStorage:", err);

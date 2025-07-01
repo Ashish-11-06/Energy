@@ -135,7 +135,7 @@ const CombinationPatternCap = () => {
         };
       }
     );
-    console.log("formattedCombinations", formattedCombinations);
+ // console.log("formattedCombinations", formattedCombinations);
 
     setDataSource(formattedCombinations);
   };
@@ -146,7 +146,7 @@ const CombinationPatternCap = () => {
     const getDemandSummaryData = async () => {
       try {
         const response = await dispatch(getDemandSummary(id)).unwrap(); // Call API with ID
-        console.log("Demand Summary Response:", response);
+     // console.log("Demand Summary Response:", response);
         setDemandSummary(response);
       } catch (error) {
         console.error("Error fetching Demand Summary data:", error);
@@ -156,7 +156,7 @@ const CombinationPatternCap = () => {
     getDemandSummaryData();
   }, [id]);
   useEffect(() => {
-    console.log(dataSource);
+ // console.log(dataSource);
   }, [dataSource]);
 
   useEffect(() => {
@@ -172,7 +172,7 @@ const CombinationPatternCap = () => {
       if (combinations) {
         formatAndSetCombinations(combinations, sliderValue); // Display data passed from GeneratorInput
       }
-      console.log(state.data);
+   // console.log(state.data);
 
       setCombinationData(state.modalData); // Store modalData for display
 
@@ -194,7 +194,7 @@ const CombinationPatternCap = () => {
           const response = await dispatch(
             fetchCapacitySizing(state.modalData)
           ).unwrap(); // Call API with modalData
-          console.log(response);
+       // console.log(response);
 
           if (response) {
             const formattedData = Object.entries(response).map(
@@ -249,7 +249,7 @@ const CombinationPatternCap = () => {
                   state: value["state"] || null, // Include state if available
               })
             );
-            console.log("formattedData", formattedData);
+         // console.log("formattedData", formattedData);
             setDataSource(formattedData); // Set the formatted data in the table
           } else {
             message.error("No combinations found. Please check your input.");
@@ -275,8 +275,8 @@ const CombinationPatternCap = () => {
     try {
       loadingRef.current = record.key; // Set current loading key (no re-render)
 
-      console.log("Download button clicked for record:", record.key);
-      console.log("record", record);
+   // console.log("Download button clicked for record:", record.key);
+   // console.log("record", record);
 
       // Ensure all required fields are present in the record
       const enrichedRecord = {
@@ -292,7 +292,7 @@ const CombinationPatternCap = () => {
         windAllocationArray: record.windAllocationArray || [],
       };
 
-      console.log("Enriched record for download on capacity sizing pattern:", enrichedRecord);
+   // console.log("Enriched record for download on capacity sizing pattern:", enrichedRecord);
 
       await handleDownloadExcel(enrichedRecord); // Pass enriched record to the download function
     } catch (error) {
@@ -338,7 +338,7 @@ console.log('saveRecord', saveRecord);
       state: saveRecord.state ?? null, // Send as object or null
     };
 
-    console.log('data to send', data);
+ // console.log('data to send', data);
 
     try {
       await dispatch(saveCapacitySizingData(data)).unwrap();
@@ -386,7 +386,7 @@ console.log('saveRecord', saveRecord);
       const response = await dispatch(
         fetchCapacitySizing(updatedPayload)
       ).unwrap(); // Pass updated payload
-      console.log(response);
+   // console.log(response);
 
       if (response) {
         const formattedData = Object.entries(response).map(
@@ -435,7 +435,7 @@ console.log('saveRecord', saveRecord);
               : [],
           })
         );
-        console.log("formattedData 332", formattedData);
+     // console.log("formattedData 332", formattedData);
         setDataSource(formattedData); // Set the formatted data in the table
       } else {
         message.error("No combinations found. Please check your input.");
@@ -521,7 +521,7 @@ console.log('saveRecord', saveRecord);
             icon={<DownloadOutlined style={{ color: "white" }} />}
             loading={loadingRef.current?.toString() === record.key?.toString()}
             onClick={() => {
-              console.log("Button clicked, record.key:", record.key);
+           // console.log("Button clicked, record.key:", record.key);
               onDownload(record);
             }}
           >

@@ -96,7 +96,7 @@ const handleFormSubmit = (values) => {
     const fetchData = async () => {
       try {
         const res = await dispatch(getCapacitySizingData(user_id));
-        console.log('capacity', res.payload);
+     // console.log('capacity', res.payload);
         setCapacitySizingData(res.payload);
 
       } catch (error) {
@@ -141,9 +141,9 @@ const handleFormSubmit = (values) => {
    
         loadingRef.current = record.key; // Set current loading key (no re-render)
   
-        console.log("Download button clicked for record:", record.key);
-        console.log("record", record);
-        console.log("loadingRef", loadingRef.current);
+     // console.log("Download button clicked for record:", record.key);
+     // console.log("record", record);
+     // console.log("loadingRef", loadingRef.current);
 
         const updatedRecord = {
           combinationId: record.combination,
@@ -170,7 +170,7 @@ const handleFormSubmit = (values) => {
         state: record.state || " ",
         };
        
-        console.log("Updated Record for Download on generator input :", updatedRecord);
+     // console.log("Updated Record for Download on generator input :", updatedRecord);
         
         await handleDownloadExcel(updatedRecord, record.key);
   
@@ -306,7 +306,7 @@ const handleFormSubmit = (values) => {
             type="link"
             icon={<DownloadOutlined style={{ color: "white" }} />}
             onClick={() => {
-              console.log("Button clicked, record.key:", record.key);
+           // console.log("Button clicked, record.key:", record.key);
               onDownload(record);
             }}
           >
@@ -348,9 +348,9 @@ const handleFormSubmit = (values) => {
       .filter((p) => p.type === "ESS" && checkPortfolio.some(sel => sel.id === p.id && sel.type === "ESS"))
       .map((p) => p.id);
 
-    console.log("solarPortfolio", solarPortfolio);
-    console.log("windPortfolio", windPortfolio);
-    console.log("essPortfolio", essPortfolio);
+ // console.log("solarPortfolio", solarPortfolio);
+ // console.log("windPortfolio", windPortfolio);
+ // console.log("essPortfolio", essPortfolio);
 
     let manualData = {};
     // Use dataSource[0] if present (from Add Details modal)
@@ -381,7 +381,7 @@ const handleFormSubmit = (values) => {
         : manualData),
     };
 
-    console.log("modalData", modalData);
+ // console.log("modalData", modalData);
 
     navigate("/generator/capacity-sizing-pattern", { state: { modalData } }); // Pass modalData to the next page
   };

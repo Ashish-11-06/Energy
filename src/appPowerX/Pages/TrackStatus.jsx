@@ -38,7 +38,7 @@ const [trackDataGen, setTrackDataGen] = useState([]); // State to hold fetched d
         fetchData(); // Call the async function
     }, [dispatch, user?.id, user_category]);
 
-console.log('track',trackDataGen);
+// console.log('track',trackDataGen);
 
 
     const genColumns = [

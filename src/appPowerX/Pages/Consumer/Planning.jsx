@@ -54,8 +54,8 @@ const [disableDates, setDisableDates] = useState([]); // State to store holiday 
       const id = user_id; // Ensure `user_id` is defined in scope
       try {
         const res = await dispatch(fetchPlanningData(id));
-        console.log(res);        
-        console.log(res.payload);
+     // console.log(res);        
+     // console.log(res.payload);
         setTableDemandData(res.payload);
         setRequirementId(res.payload.map(item => item.requirement));
       } catch (error) {
@@ -87,7 +87,7 @@ useEffect(() => {
 }, [dispatch]);
 
 
-console.log('disable dates',disableDates);
+// console.log('disable dates',disableDates);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -109,7 +109,7 @@ console.log('disable dates',disableDates);
   };
 
   const tileContent = (value) => {
-    console.log('tile');
+ // console.log('tile');
     const date = value.toDate();
     const listData = getListData(date);
     const isToday = dayjs(date).isSame(dayjs(), 'day');
@@ -198,7 +198,7 @@ console.log('disable dates',disableDates);
   };
 
   const handleModalOk = async () => {
-    console.log('all fields filled:', allFieldsFilled);
+ // console.log('all fields filled:', allFieldsFilled);
     
     if (!selectedRequirementId) {
       message.error("Please select a valid consumption unit.");
@@ -212,7 +212,7 @@ console.log('disable dates',disableDates);
       message.error("Please select a technology.");
       return;
     }
-console.log(selectedDate);
+// console.log(selectedDate);
 
 const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
     try {
@@ -252,7 +252,7 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
   // console.log(selectedUnitDetails);
 
   const handleDateClick = (date) => {
-    console.log('date clicked');
+ // console.log('date clicked');
     
     setSelectedDate(date.format("YYYY-MM-DD")); // Store selected date
     setIsModalVisible(true); // Open modal
@@ -267,11 +267,11 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
         requirement: record.requirementId, // Use requirementId from the record
         file: base64File, // Use Base64 encoded file
       };
-  console.log(data);
+  // console.log(data);
   
       try {
         const res = await dispatch(uploadTableMonthDataC(data)); // Call the API with the updated data
-        console.log('res', res);
+     // console.log('res', res);
         
         if (res) {
           message.success("File uploaded successfully");

@@ -107,20 +107,20 @@ const UpdateProfileDetails = () => {
   ];
 
   const handleEdit = (record) => {
-    console.log('Edit button clicked'); // Debug log
-        console.log('Opening UpdateProfileForm modal for:', record); // Debug log
+ // console.log('Edit button clicked'); // Debug log
+     // console.log('Opening UpdateProfileForm modal for:', record); // Debug log
  setSelectedRecord(record);
     // Only set cod if it exists and is valid
     form.setFieldsValue({
       ...record,
       ...(record.cod && { cod: dayjs(record.cod) }),
     });
-    console.log('modal is visible:', isModalVisible); // Debug log
+ // console.log('modal is visible:', isModalVisible); // Debug log
         setIsModalVisible(true);
 
   }
   const handleUpdate = (record) => {
-    console.log('Opening UpdateProfileForm modal for:', record); // Debug log
+ // console.log('Opening UpdateProfileForm modal for:', record); // Debug log
     setSelectedRecord(record);
     // Only set cod if it exists and is valid
     form.setFieldsValue({

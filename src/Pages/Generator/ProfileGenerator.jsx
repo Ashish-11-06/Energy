@@ -132,7 +132,7 @@ const handleSave = (values) => {
         const event = new Event("userDetailsUpdated");
         window.dispatchEvent(event);
 
-        console.log("User updated successfully:", res);
+     // console.log("User updated successfully:", res);
       } else {
         console.error("API response is missing required data.");
       }

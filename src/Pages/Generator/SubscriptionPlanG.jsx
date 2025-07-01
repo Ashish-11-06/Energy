@@ -108,7 +108,7 @@ const response=dispatch(subscriptionEnroll(subscriptionData));
   //   dispatch(fetchSubscriptionValidity(id))
   //   .then(response => {    
   //     setSubscriptionPlanValidity(response.payload);
-  //      console.log(response.payload);
+  //   // console.log(response.payload);
 
   //      localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
   //   })

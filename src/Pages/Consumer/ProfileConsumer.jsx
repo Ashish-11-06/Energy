@@ -99,14 +99,14 @@ const ProfilePage = () => {
 console.log('credit rating:', values.proof);
 
     // Debug: log the proof field structure
-    console.log('values.proof:', values.proof);
+ // console.log('values.proof:', values.proof);
 
     // Extract base64 from proof upload
     let proofBase64 = undefined;
     if (values.proof && Array.isArray(values.proof) && values.proof.length > 0) {
       proofBase64 = values.proof[0].base64;
     }
-    console.log('proofBase64:', proofBase64);
+ // console.log('proofBase64:', proofBase64);
 
     // Prevent submission if proofBase64 is missing
     // if (!proofBase64) {
@@ -124,7 +124,7 @@ console.log('credit rating:', values.proof);
         credit_rating_proof: proofBase64,
     };
 
-    console.log('Payload to backend:', { userId, userData: updatedUserData });
+ // console.log('Payload to backend:', { userId, userData: updatedUserData });
 
     dispatch(editUser({ userId, userData: updatedUserData }))
         .then((res) => {
@@ -150,7 +150,7 @@ console.log('credit rating:', values.proof);
                 const event = new Event("userDetailsUpdated");
                 window.dispatchEvent(event);
 
-                console.log("User updated successfully:", res);
+             // console.log("User updated successfully:", res);
             }
         })
         .catch((error) => {

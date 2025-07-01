@@ -63,8 +63,8 @@ const handleChangeConfirm = async () => {
         date: selectedDate.format('YYYY-MM-DD'),
       })
     ).unwrap();
-    console.log('res', res);
-   console.log('res payload', res?.payload);
+ // console.log('res', res);
+// console.log('res payload', res?.payload);
    
     if(res?.message) {
       message.success(res?.message || 'Window date changed successfully');
@@ -98,7 +98,7 @@ const handleChangeConfirm = async () => {
   };
 
   const handleTermSheet=(record) => {
-    console.log(record);
+ // console.log(record);
     const modalContent={
       term_of_ppa:record.t_term_of_ppa,
       lock_in_period:record.t_lock_in_period,
@@ -122,7 +122,7 @@ const handleChangeConfirm = async () => {
     setModalContent(null);
   };
 
-console.log('set transactions', transactions);
+// console.log('set transactions', transactions);
 
 
   useEffect(() => {

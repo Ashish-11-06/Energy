@@ -10,7 +10,7 @@ export const fetchIndustry = createAsyncThunk(
     // console.log('Fetching industry...');
     try {
       const response = await industryApi.industry();
-    //   console.log(response.data);
+    //// console.log(response.data);
       return response.data;
       
     } catch (error) {

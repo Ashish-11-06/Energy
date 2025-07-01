@@ -122,7 +122,7 @@ console.log('user ',user);
   console.log('termsData',terminationCompensation,latePaymentSurcharge);
 
   const handleContinue = async () => {
-    console.log('user', user);
+ // console.log('user', user);
 
     // const creditRating = user?.credit_rating;
     // const user_category = user?.user_category;
@@ -139,7 +139,7 @@ console.log('user ',user);
     //     creditRating === ""
     //   )
     // ) {
-    //   console.log('Credit rating is null, showing modal and message');
+    //// console.log('Credit rating is null, showing modal and message');
     //   Modal.info({
     //     title: 'Credit Rating Required',
     //     content: (

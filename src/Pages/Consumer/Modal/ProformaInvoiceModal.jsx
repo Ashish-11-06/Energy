@@ -124,7 +124,7 @@ const selectedRequirementId=localStorage.getItem('selectedRequirementId');
   const navigate = useNavigate();
 
   //   const user = JSON.parse(localStorage.getItem("user")).user;
-  //   console.log(user_category)ś;
+  //// console.log(user_category)ś;
   const handleRadioChange = (e) => {
     setPaymentMode(e.target.value); // Set selected payment mode
   };
@@ -160,7 +160,7 @@ const handleOfflineOk = async () => {
     };
 
     const res = await dispatch(addOfflinePayment(data));
-    console.log('form data', res);
+ // console.log('form data', res);
     if(res?.payload) {
       message.success(res?.payload.message || "Offline Payment Submitted Successfullyyy");
       setPaymentModeModal(false);
@@ -283,7 +283,7 @@ const handleOfflineOk = async () => {
 
                  const id=userId;
                 try { const response =await dispatch(fetchSubscriptionValidity(id));
-               console.log('subscription after payment',response);
+            // console.log('subscription after payment',response);
                
                    setSubscriptionPlanValidity(response.payload);
                 // console.log(response);
@@ -337,7 +337,7 @@ const handleOfflineOk = async () => {
   
       try {
         const res = await dispatch(subscriptionEnroll(subscriptionData));
-        console.log(res);
+     // console.log(res);
   
         if (subscriptionEnroll.fulfilled.match(res)) {
           if (res?.payload?.status === "active") {
@@ -345,7 +345,7 @@ const handleOfflineOk = async () => {
   
             try {
               const response = await dispatch(fetchSubscriptionValidity(userId));
-              console.log(response);
+           // console.log(response);
               setSubscriptionPlanValidity(response.payload);
               localStorage.setItem(
                 "subscriptionPlanValidity",

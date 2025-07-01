@@ -11,11 +11,11 @@ const monthAheadApi = {
 //     return axiosInstance.get(`/tableMonthData`); 
 //   },
   addTableMonthData: (data) => {
-    console.log("data in api", data); // Log the data being sent
+ // console.log("data in api", data); // Log the data being sent
     return axiosInstance.post(`/powerx/month-ahead-generation`, data); 
   },
   uploadTableMonthData: (data) => {
-    console.log("data in api", data); // Log the data being sent
+ // console.log("data in api", data); // Log the data being sent
     return axiosInstance.put(`/powerx/month-ahead-generation`, data); 
   },
 

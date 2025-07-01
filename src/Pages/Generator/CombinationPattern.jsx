@@ -490,7 +490,7 @@ useEffect(() => {
 
             // Success actions
             setCombinationData(response);
-            console.log('set combination 387',response);
+         // console.log('set combination 387',response);
             
             formatAndSetCombinations(response);
             setIsTableLoading(false);

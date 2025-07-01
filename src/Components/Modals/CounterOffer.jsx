@@ -28,8 +28,8 @@ const { Option } = Select;
 const { Panel } = Collapse;
 
 const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransaction,requirementContent ,combinationContent}) => {
-  console.log('comb',combinationContent);
-  console.log('data',data);
+  // console.log('comb',combinationContent);
+  // console.log('data',data);
   // console.log(combinationContent)
   const term_sheet_id = data.id;
   const downloadable = data?.downloadable;
@@ -185,7 +185,7 @@ const role=userData?.role;
       message.success(`Status updated to ${action}`);
       onCancel();
     } catch (error) {
-      console.log(error);
+   // console.log(error);
       message.error("Failed to update status");
     }
   };
@@ -219,12 +219,12 @@ const role=userData?.role;
     // console.log("Final Commencement Date:", commencementDate);
 
     try {
-      console.log(
-        "Updating terms and conditions:",
-        termsData,
-        userId,
-        termSheetId
-      );
+   // console.log(
+      //   "Updating terms and conditions:",
+      //   termsData,
+      //   userId,
+      //   termSheetId
+      // );
       // Dispatching the action to add Terms and Conditions
       await dispatch(
         updateTermsAndConditions({ userId, termSheetId, termsData })
@@ -244,7 +244,7 @@ const role=userData?.role;
   const toggleConsumerDetails = () => {
     setConsumerDetailsVisible(!consumerDetailsVisible);
   };
-//   console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"));
+//// console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"));
 // console.log(commencementDate)
 // console.log(moment(commencementDate, "DD-MM-YYYY").format("YYYY-MM-DD"))
 // console.log("Final Commencement Date:", commencementDate);

@@ -25,7 +25,7 @@ const AddPortfolioModal = ({ visible, onClose, user, data, isEditMode }) => {
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
-      console.log('values:', values);    
+   // console.log('values:', values);    
       if (values.cod) {
         values.cod = dayjs(values.cod).format('YYYY-MM-DD');
       }

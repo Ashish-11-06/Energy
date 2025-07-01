@@ -64,7 +64,7 @@ const tomorrowDate = tomorrow.toLocaleDateString('en-GB', option);
 // console.log(formattedDate);
 
   // const tomorrowDate = tomorrow.toISOString().split('T')[0];
-  console.log(tomorrowDate);
+  // console.log(tomorrowDate);
   
   useEffect(() => {
     if (is_due_date) {
@@ -108,7 +108,7 @@ const tomorrowDate = tomorrow.toLocaleDateString('en-GB', option);
         setLoading(true);
         const res = await dispatch(fetchDashboardLine(id)); 
         if(res.payload === 'No demand data available for the next day') {
-console.log('no data');
+// console.log('no data');
 setShowLineGraph(false); // Hide line graph card
         } else {
 setShowLineGraph(true); // Show line graph card

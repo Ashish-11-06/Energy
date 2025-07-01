@@ -96,7 +96,7 @@ export const handleDownloadPdf = (record) => {
       .from(container)
       .save()
       .then(() => {
-        console.log("PDF downloaded successfully");
+     // console.log("PDF downloaded successfully");
       })
       .catch((error) => {
         console.error("Error downloading PDF:", error);

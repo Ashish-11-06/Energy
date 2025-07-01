@@ -17,8 +17,8 @@ export const addProject = createAsyncThunk('portfolio/addProject', async (newPro
 export const updateProject = createAsyncThunk('portfolio/updateProject', async (updatedProject,  { rejectWithValue }) => {
   try {
     const response = await generatorPortfolioApi.updateProject(updatedProject); // Use API method
-    console.log("Updated project response:", response.data); // Log the response for debugging
-    console.log("Updated project:", response); // Log the response for debugging 
+ // console.log("Updated project response:", response.data); // Log the response for debugging
+ // console.log("Updated project:", response); // Log the response for debugging 
     return response.data;  // Assuming API returns the updated project
   } catch (error) {
     return rejectWithValue(

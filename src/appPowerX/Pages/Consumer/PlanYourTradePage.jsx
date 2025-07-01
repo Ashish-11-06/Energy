@@ -59,7 +59,7 @@ useEffect(() => {
       const res = await dispatch(fetchHolidayList());
       setDisabledDates(["2025-06-20"]);
       // setDisabledDates(res.payload);
-      console.log("Holiday List:", res);
+   // console.log("Holiday List:", res);
     } catch (error) {
       // console.error("Error fetching holiday list:", error);
     }
@@ -126,7 +126,7 @@ useEffect(() => {
           message.error("Failed to submit data. Please try again.");
         }
       } catch (error) {
-        console.log(error);
+     // console.log(error);
         message.error("Failed to submit data. Please try again.");
       }
     } catch (error) {
@@ -134,7 +134,7 @@ useEffect(() => {
     }
   };
   
-console.log('disabledDates',disabledDates);
+// console.log('disabledDates',disabledDates);
 
   const onFinish = (values) => {
     // console.log("Received values of form: ", values);
@@ -192,14 +192,14 @@ console.log('disabledDates',disabledDates);
 
   useEffect(() => {
     const allFilled = tableData.every((item) => item.demand !== null);
-    console.log('all fields filled', allFilled);
+ // console.log('all fields filled', allFilled);
     
     setAllFieldsFilled(allFilled);
   }, [tableData]);
 
   const handleModalOk = () => {
-    console.log('all fields filled', allFieldsFilled);
-    console.log('sss');
+ // console.log('all fields filled', allFieldsFilled);
+ // console.log('sss');
     
     setShowTable(true); // Show the table after modal "Ok"
     setIsModalVisible(false);
@@ -217,7 +217,7 @@ const handleFileUpload = (file) => {
     return false;
   }
 
-  console.log('all fields filled', allFieldsFilled);
+  // console.log('all fields filled', allFieldsFilled);
   
   const reader = new FileReader();
   reader.onload = async (e) => {
@@ -278,7 +278,7 @@ const handleFileUpload = (file) => {
   return false; // Prevent automatic upload
 };
 
-console.log('all fields filled', allFieldsFilled);
+// console.log('all fields filled', allFieldsFilled);
 
   const handleDownloadTemplate = () => {
     // Modify time format for the template

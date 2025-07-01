@@ -81,7 +81,7 @@ const mcpData = data.predictions.map(item =>
     };
     fetchData();
   }, [dispatch]);
-console.log('mcpData', tableData);
+// console.log('mcpData', tableData);
 
   useEffect(() => {
     if (statistiicsData.mcp && statistiicsData.mcv) {

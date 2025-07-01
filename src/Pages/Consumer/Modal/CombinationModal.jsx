@@ -9,7 +9,7 @@ const CombinationModal = ({ open, onCancel, combinationContent }) => {
   // console.log(combinationContent);
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
-//   console.log(user_category);
+//// console.log(user_category);
 
   return (
     <Modal

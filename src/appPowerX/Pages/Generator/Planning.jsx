@@ -214,7 +214,7 @@ const handleStateChange = (value) => {
 
   const handleAddData = () => {
     setIsInputModalVisible(false); // Hide input modal
-    console.log(selectedPortfolio);
+ // console.log(selectedPortfolio);
     
     if (selectedPortfolio?.type === 'Solar') {
       setSelectedTechnology('Solar'); // Pre-select Solar if portfolio type is Solar
@@ -226,8 +226,8 @@ const handleStateChange = (value) => {
   // console.log("Selected Portfolio ID:", selectedPortfolioId); // Debugging log
 
   const handleModalOk = async () => {
-    console.log('clicked');
-    console.log(selectedDate);
+ // console.log('clicked');
+ // console.log(selectedDate);
     
     // if (!selectedDate || !dayjs.isDayjs(selectedDate)) {
     //   message.error("Please select a valid date.");
@@ -235,7 +235,7 @@ const handleStateChange = (value) => {
     // }
   
     const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD'); // Ensure selectedDate is a dayjs object
-   console.log(formattedDate);
+// console.log(formattedDate);
    
     // Debugging logs to check state values
     // console.log("Selected Portfolio id:", selectedPortfolioId);
@@ -266,7 +266,7 @@ const handleStateChange = (value) => {
         price: parseFloat(price),
       };
 
-      console.log('data',data);
+   // console.log('data',data);
       
   
       // console.log("Dispatching data:", data); // Debugging log
@@ -315,7 +315,7 @@ const handleStateChange = (value) => {
   
       try {
         const res = await dispatch(uploadTableMonthData(data)); // Call the API with the updated data
-        console.log('res', res);
+     // console.log('res', res);
         
         if (res) {
           // message.success("File uploaded successfullyyyyy");
@@ -435,8 +435,8 @@ const handleStateChange = (value) => {
 
 const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
   const portfolioDetails = generatorPortfolio.find(req => req.id === item.object_id);
-  console.log(portfolioDetails);
-  console.log(item);
+  // console.log(portfolioDetails);
+  // console.log(item);
   
   return {
     key: item.object_id,

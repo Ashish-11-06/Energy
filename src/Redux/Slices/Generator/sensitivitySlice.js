@@ -8,7 +8,7 @@ export const fetchSensitivity = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await sensitivityAPI.getsensitivity(data);
-      console.log(response);
+   // console.log(response);
       
       if (response.data) {
         return response.data; // Ensure response contains valid data

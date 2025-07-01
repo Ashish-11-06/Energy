@@ -106,7 +106,7 @@ const MonthAheadG = () => {
           setLineData({ labels: [], datasets: [] });
         }
       } catch (error) {
-        console.log("Error fetching data:", error);
+     // console.log("Error fetching data:", error);
       }
     };
 
@@ -126,9 +126,9 @@ const MonthAheadG = () => {
   //         const mcpData = mcpDataOriginal.reverse();
   //         const labels = Array.from({ length: 31 }, (_, i) => i + 1); // Creates an array [1, 2, ..., 31]
 
-  //         console.log("MCV Data:", mcvData);
-  //         console.log("MCP Data:", mcpData);
-  //         console.log("Labels:", labels);
+  //      // console.log("MCV Data:", mcvData);
+  //      // console.log("MCP Data:", mcpData);
+  //      // console.log("Labels:", labels);
 
   //         setLineData({
   //           labels,
@@ -175,7 +175,7 @@ const MonthAheadG = () => {
   //         setLineData({ labels: [], datasets: [] });
   //       }
   //     } catch (error) {
-  //       console.log("Error fetching data:", error);
+  //    // console.log("Error fetching data:", error);
   //     }
   //   };
 

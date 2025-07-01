@@ -69,7 +69,7 @@ const MatchingConsumerPage = () => {
       //  console.log('All Updated:', response?.payload?.all_updated); // Log the all_updated field
        setStatusData(response?.payload?.all_updated); // Set the status data in the state
        if (response.error) {
-          console.log('Failed to fetch status '); // Show error message if fetching fails
+       // console.log('Failed to fetch status '); // Show error message if fetching fails
         } else {
           // console.log('status')
           // message.success('Matching consumers fetched successfully'); // Show success message

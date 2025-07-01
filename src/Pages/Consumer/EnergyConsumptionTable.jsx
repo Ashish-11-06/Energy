@@ -318,7 +318,7 @@ const EnergyConsumptionTable = () => {
 
   // Update dataSource when monthlyData is fetched
   useEffect(() => {
-    //   console.log(monthlyData);
+    //// console.log(monthlyData);
     if (monthlyData.length > 0) {
       const updatedDataSource = dataSource.map((item) => {
         const data = monthlyData.find((data) => data.month === item.month);
@@ -377,7 +377,7 @@ const EnergyConsumptionTable = () => {
         offPeakConsumption: null,
         monthlyBill: null,
       });
-      console.log('newData',newData);
+   // console.log('newData',newData);
       
       setDataSource(newData);
       message.success(`${file.name} uploaded successfully`);
@@ -433,7 +433,7 @@ const EnergyConsumptionTable = () => {
 
       const response = await dispatch(addConsumption(values)).unwrap();
 
-      console.log("resssss", response);
+   // console.log("resssss", response);
       setFieldsUpdated(response.fields_updated); 
 
       message.success({
@@ -472,7 +472,7 @@ const EnergyConsumptionTable = () => {
         item[dataIndex] = firstValue;
       }
     });
-    console.log('fill below fun',newData);
+ // console.log('fill below fun',newData);
     
     setDataSource(newData);
   };

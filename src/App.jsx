@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
-import { useLocation } from "react-router-dom";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useLocation, BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
+
 import LandingPage from './Pages/LandingPage';
 import LayoutComponent from './Components/Layout/Layout';
 import WhatWeOffer from './Pages/Consumer/WhatWeOffer';
@@ -15,7 +15,6 @@ import SubscriptionPlans from './Pages/Consumer/SubscriptionPlan';
 import WhatWeOfferG from './Pages/Generator/WhatWeOfferG';
 import GenerationPortfolio from './Pages/Generator/GeneratorPortfolio';
 import MatchingConsumerPage from './Pages/Generator/MatchingConsumerPage';
-// import SubscriptionPlanG from './Pages/Generator/SubscriptionPlanG';
 import DashboardG from './Pages/Generator/Dashboard';
 import EnergyOptimizationPage from './Pages/Generator/EnergyOptimization';
 import LoginC from './Pages/Consumer/LoginC';
@@ -38,7 +37,6 @@ import NotificationGenerator from './Pages/Generator/NotificationGenerator';
 import CombinationPattern from './Pages/Generator/CombinationPattern';
 import TransactionWindow from './Pages/Consumer/TransactionWindow';
 import TransactionMainPage from './Pages/Consumer/TransactionMainPage';
-// import TransactionMainPageGen from './Pages/Generator/TransactionMainPageGen';
 import TransactionWindowGen from './Pages/Generator/TransactionWindowgen';
 import RequirementsPage from './Pages/Consumer/RequirementPage';
 import InvoicePage from './Pages/InvoicePage';
@@ -47,7 +45,6 @@ import StatusApproval from './Pages/TrackStatus';
 import Agreements from './Pages/Agreements';
 import GeneratorInput from './Pages/Generator/GeneratorInput';
 import CombinationPatternCap from './Pages/Generator/CapacitySizingPattern.jsx';
-
 
 // powerX
 import PLayoutComponent from './appPowerX/Components/Layout/LayoutComponent';
@@ -61,7 +58,6 @@ import Trading from './appPowerX/Pages/Consumer/Trading';
 import DashboardPG from './appPowerX/Pages/Generator/Dashboard';
 import DayAheadG from './appPowerX/Pages/Generator/DayAheadG';
 import MonthAheadG from './appPowerX/Pages/Generator/MonthAheadG';
-// import PlanYourTradePageG from './appPowerX/Pages/Generator/PlanYourMonthTradePageG';
 import StatisticalInformationG from './appPowerX/Pages/Generator/StatisticalinformationG';
 import PlanningG from './appPowerX/Pages/Generator/Planning';
 import TradingG from './appPowerX/Pages/Generator/TradingG';
@@ -72,7 +68,6 @@ import PlanMonthTrading from './appPowerX/Pages/Consumer/PlanMonthTrading';
 import NotificationP from './appPowerX/Pages/Consumer/Notification';
 import Subscription from './appPowerX/Pages/Consumer/Subscription';
 import LoginPage from './appPowerX/Pages/LoginPage';
-// import ProfileP from './appPowerX/Pages/Consumer/Profile';
 import ProfilePage from './appPowerX/Pages/Consumer/ProfilePage';
 import NotificationG from './appPowerX/Pages/Generator/NotificationG';
 import StatisticalInfoMonth from './appPowerX/Pages/Consumer/StatisticalInfoMonth';
@@ -81,6 +76,28 @@ import TrackStatusP from './appPowerX/Pages/TrackStatus';
 import ProtectedRoute from './ProtectedRoute';
 import ProfileGen from './appPowerX/Pages/Generator/ProfileGen';
 
+// 🔒 Global Auth Guard
+function AuthGuard() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const publicRoutes = ['/', '/px-login'];
+    const emailRoute = location.pathname.startsWith('/email');
+
+    const isPublic = publicRoutes.includes(location.pathname) || emailRoute;
+
+    const user = localStorage.getItem('user');
+    
+    if (!user && !isPublic) {
+      navigate('/', { replace: true });
+    }
+  }, [location]);
+
+  return null;
+}
+
+// Clear storage if landing page is visited
 function ClearLocalStorageOnLanding() {
   const location = useLocation();
   useEffect(() => {
@@ -95,10 +112,6 @@ function App() {
   useEffect(() => {
     const EXPIRY_HOURS = 24;
     const EXPIRY_MS = EXPIRY_HOURS * 60 * 60 * 1000;
-    // const EXPIRY_MS = 1 * 60 * 1000; // 1 minute in milliseconds
-    // console.log("App component mounted, setting up localStorage expiry check");
-    // console.log('expiry in ms:', EXPIRY_MS);
-
     const LAST_ACTIVE_KEY = 'lastActiveTime';
 
     const updateLastActiveTime = () => {
@@ -111,21 +124,18 @@ function App() {
         const now = Date.now();
         const diff = now - parseInt(lastActive, 10);
         if (diff > EXPIRY_MS) {
-          localStorage.clear(); // or selectively remove items
-          console.log('localStorage cleared due to 24h inactivity');
+          localStorage.clear();
+       // console.log('localStorage cleared due to 24h inactivity');
         }
       }
     };
 
-    // Set initial activity time if not present
     if (!localStorage.getItem(LAST_ACTIVE_KEY)) {
       updateLastActiveTime();
     }
 
-    // Check every 1 minute
     const intervalId = setInterval(checkExpiry, 60 * 1000);
 
-    // Listen for user activity to reset the time
     const resetTimer = () => updateLastActiveTime();
     window.addEventListener('mousemove', resetTimer);
     window.addEventListener('keydown', resetTimer);
@@ -142,22 +152,11 @@ function App() {
   return (
     <Router>
       <ClearLocalStorageOnLanding />
-      {/* <CurrentPath /> Ensure this is rendered inside JSX */}
+      <AuthGuard /> {/* 🔒 Global auth check */}
       <Routes>
-        {/* Public routes */}
-        {/* <Route path="/consumer/login" element={<LoginC />} />
-        <Route path="/generator/login" element={<LoginG />} /> */}
-
-        {/* Default Landing Page */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="email/:token" element={<EmailVerification />} /> {/* Moved outside ProtectedRoute */}
+        <Route path="email/:token" element={<EmailVerification />} />
         <Route element={<ProtectedRoute />}>
-
-          <Route path="what-we-offer" element={<WhatWeOffer />} />
-
-
-
-          {/* Routes with shared layout */}
           <Route path="what-we-offer" element={<WhatWeOffer />} />
           <Route element={<LayoutComponent />}>
             <Route path="offers" element={<OfferRecieved />} />
@@ -167,8 +166,6 @@ function App() {
             <Route path="chat-page" element={<ChatWithExpert />} />
             <Route path="notification" element={<Notification />} />
             <Route path="invoice" element={<InvoicePage />} />
-
-
             {/* Consumer Routes */}
             <Route path="/consumer/*">
               <Route path="dashboard" element={<Dashboard />} />
@@ -178,21 +175,18 @@ function App() {
               <Route path="project-details" element={<IppProjectDetails />} />
               <Route path="requirement" element={<RequirementsPage />} />
               <Route path="annual-saving" element={<AnnualSvg />} />
-              {/* <Route path="subscription-plan" element={<SubscriptionPlans />} /> */}
               <Route path="profile" element={<ProfileConsumer />} />
               <Route path="requested-ipp" element={<RequestedIPP />} />
               <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
               <Route path="transaction-window" element={<TransactionWindow />} />
               <Route path="status" element={<StatusApproval />} />
             </Route>
-
             {/* Generator Routes */}
             <Route path="/generator/*">
               <Route path="dashboard" element={<DashboardG />} />
               <Route path="what-we-offer" element={<WhatWeOfferG />} />
               <Route path="portfolio" element={<GenerationPortfolio />} />
               <Route path="matching-consumer" element={<MatchingConsumerPage />} />
-              {/* <Route path="subscription-plan" element={<SubscriptionPlanG />} /> */}
               <Route path="energy-optimization" element={<EnergyOptimizationPage />} />
               <Route path="update-profile-details" element={<UpdateProfileDetails />} />
               <Route path="combination-pattern" element={<CombinationPattern />} />
@@ -209,26 +203,16 @@ function App() {
               <Route path="status" element={<StatusApproval />} />
               <Route path="capacity-sizing-pattern" element={<CombinationPatternCap />} />
             </Route>
-
           </Route>
 
-
-
-          {/* PowerX routes */}
+          {/* PowerX Routes */}
           <Route path="px-login" element={<LoginPage />} />
-
           <Route path="px">
             <Route path="what-we-offer" element={<WhatWeOfferP />} />
-
             <Route element={<PLayoutComponent />}>
-
-              {/* Common Chat Page Route */}
-
               <Route path="chat-page" element={<ChatPage />} />
               <Route path="track-status" element={<TrackStatusP />} />
               <Route path="notifications" element={<NotificationP />} />
-
-              {/* Consumer Routes */}
               <Route path="consumer">
                 <Route path="dashboard" element={<DashboardP />} />
                 <Route path="day-ahead" element={<DayAhead />} />
@@ -242,26 +226,19 @@ function App() {
                 <Route path="powerx-subscription" element={<Subscription />} />
                 <Route path="profile" element={<ProfilePage />} />
               </Route>
-
-              {/* Generator Routes */}
               <Route path="generator">
                 <Route path="dashboard" element={<DashboardPG />} />
                 <Route path="day-ahead" element={<DayAheadG />} />
                 <Route path="plan-month-trade-page" element={<PlanYourMonthTradePageG />} />
                 <Route path="plan-day-trade-page" element={<PlanDayTradePage />} />
                 <Route path="statistical-information" element={<StatisticalInformationG />} />
-                {/* <Route path="statistical-day-information" element={<DayStatisticsInformation />} /> */}
                 <Route path="statistical-month-information" element={<StatisticalInfoMonth />} />
-
                 <Route path="month-ahead" element={<MonthAheadG />} />
                 <Route path="notification" element={<NotificationG />} />
                 <Route path="profile" element={<ProfileGen />} />
-
                 <Route path="planning" element={<PlanningG />} />
                 <Route path="trading" element={<TradingG />} />
-
               </Route>
-
             </Route>
           </Route>
         </Route>
