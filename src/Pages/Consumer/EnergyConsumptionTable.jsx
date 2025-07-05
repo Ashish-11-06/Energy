@@ -84,6 +84,7 @@ const EnergyConsumptionTable = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [fieldsupdated, setFieldsUpdated] = useState(false); // State to track if fields are updated
+  const [enterDataUploadFailed, setEnterDataUploadFailed] = useState(false); // State to track CSV upload failure
 
   // console.log(isActionCompleted);
 
@@ -180,7 +181,7 @@ const EnergyConsumptionTable = () => {
       }
 
       // Display a success message for file selection
-      message.success(`${file.name} uploaded successfully`);
+      // message.success(`${file.name} uploaded successfully`);
       setUploadedFileName(file.name); // Set the latest uploaded file name
 
       // Convert file to Base64
@@ -188,6 +189,25 @@ const EnergyConsumptionTable = () => {
       reader.onloadend = async () => {
         try {
           const base64File = reader.result.split(",")[1]; // Get Base64 string without prefix
+
+          // Parse CSV data and update dataSource
+          // const csvData = atob(base64File);
+          // const parsedData = csvData.split("\n").map((row) => row.split(","));
+          // const updatedDataSource = dataSource.map((item, index) => {
+          //   const row = parsedData[index + 1]; // Skip header row
+          //   return row
+          //     ? {
+          //       ...item,
+          //       monthlyConsumption: parseFloat(row[1]),
+          //       peakConsumption: parseFloat(row[2]), 
+          //       offPeakConsumption: parseFloat(row[3]),
+          //       monthlyBill: parseFloat(row[4]),
+          //     }
+          //     : item;
+          // });
+
+          // setDataSource(updatedDataSource);
+
           // Dispatch the uploadCSV thunk and wait for the result
           const response = await dispatch(
             uploadCSV({ requirement_id: requirementId, file: base64File })
@@ -306,7 +326,7 @@ const EnergyConsumptionTable = () => {
     };
 
     fetchData();
-  }, [requirementId, dispatch, isActionCompleted, setIsActionCompleted]);
+  }, [requirementId, dispatch, isActionCompleted, enterDataUploadFailed]);
 
   // Update dataSource when monthlyData is fetched
   useEffect(() => {
@@ -450,6 +470,7 @@ const EnergyConsumptionTable = () => {
       message.error("Failed to add monthly data");
       setSaveError(true); // Set save error to true
       setTimeout(() => setSaveError(false), 3000);
+      setEnterDataUploadFailed(true); // Set data upload failure state
     } finally {
       setLoading(false);
       // message.success("Monthly data added successfully!");
@@ -984,8 +1005,8 @@ const EnergyConsumptionTable = () => {
             <>
               <Tooltip
                 title={
-                  (monthlyData.length < 1 && !scadaFileUpload)
-                    ? "Please fill the details or upload any file"
+                  (monthlyData.length < 1 && !scadaFileUpload && !dataSource || !fieldsupdated )
+                    ? "Please fill the complete details or upload a file"
                     : "Proceed to the next step"
                 }
                 placement="top"
@@ -1006,7 +1027,7 @@ const EnergyConsumptionTable = () => {
             <>
               <Tooltip
                 title={
-                  !dataSource || !scadaFileUpload
+                  monthlyData.length < 1 && !scadaFileUpload && !dataSource
                     ? "consumptions are not availble to proceed"
                     : "Proceed to the next step"
                 }

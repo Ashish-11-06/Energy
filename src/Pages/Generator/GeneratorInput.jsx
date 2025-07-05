@@ -56,8 +56,8 @@ const GeneratorInput = () => {
   const user = JSON.parse(localStorage.getItem("user")).user;
   const user_id = user?.id;
   const { status, projects } = useSelector((state) => state.portfolio);
-   const loadingRef = useRef(null); // Tracks current loading key
-const [form] = Form.useForm();
+  const loadingRef = useRef(null); // Tracks current loading key
+  const [form] = Form.useForm();
   if (status === "idle") {
     dispatch(getAllProjectsById(user.id));
   }
@@ -73,30 +73,31 @@ const [form] = Form.useForm();
     });
   };
 
-  console.log("checkPortfolio", checkPortfolio);
-  console.log("structuredProjects", Structuredprojects);
-   const subscription = JSON.parse(
+  // console.log("checkPortfolio", checkPortfolio);
+  // console.log("structuredProjects", Structuredprojects);
+
+  const subscription = JSON.parse(
     localStorage.getItem("subscriptionPlanValidity")
   );
   const activeSubscription = subscription?.status === "active";
-const handleFormSubmit = (values) => {
-  // Save the form values to dataSource for use in modalData
-  const formattedValues = {
-    ...values,
-    morningPeakStart: values.morningPeakStart?.format("HH:mm:ss"),
-    // Do the same for all TimePickers
-    eveningPeakStart: values.eveningPeakStart?.format("HH:mm:ss"),
-    eveningPeakEnd: values.eveningPeakEnd?.format("HH:mm:ss"),
-    morningPeakEnd: values.morningPeakEnd?.format("HH:mm:ss"),
-  };
-  setDataSource([{ key: 1, ...formattedValues }]);
+  const handleFormSubmit = (values) => {
+    // Save the form values to dataSource for use in modalData
+    const formattedValues = {
+      ...values,
+      morningPeakStart: values.morningPeakStart?.format("HH:mm:ss"),
+      // Do the same for all TimePickers
+      eveningPeakStart: values.eveningPeakStart?.format("HH:mm:ss"),
+      eveningPeakEnd: values.eveningPeakEnd?.format("HH:mm:ss"),
+      morningPeakEnd: values.morningPeakEnd?.format("HH:mm:ss"),
+    };
+    setDataSource([{ key: 1, ...formattedValues }]);
     setAddDetailsModal(false);
-};
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await dispatch(getCapacitySizingData(user_id));
-     // console.log('capacity', res.payload);
+        // console.log('capacity', res.payload);
         setCapacitySizingData(res.payload);
 
       } catch (error) {
@@ -122,66 +123,76 @@ const handleFormSubmit = (values) => {
       )}
     </span>
   );
+
   useEffect(() => {
     if (projects.Solar || projects.Wind || projects.ESS) {
       const flatProjects = [
-        ...(projects.Solar || []).map((project) => ({ ...project, type: "Solar" })),
-        ...(projects.Wind || []).map((project) => ({ ...project, type: "Wind" })),
-        ...(projects.ESS || []).map((project) => ({ ...project, type: "ESS" })),
+        ...(projects.Solar || [])
+          .filter(project => project.updated)
+          .map(project => ({ ...project, type: "Solar" })),
+        ...(projects.Wind || [])
+          .filter(project => project.updated)
+          .map(project => ({ ...project, type: "Wind" })),
+        ...(projects.ESS || [])
+          .filter(project => project.updated)
+          .map(project => ({ ...project, type: "ESS" })),
       ];
+
+      // console.log(flatProjects);
       setStructuredProjects(flatProjects);
     }
   }, [projects.Solar, projects.Wind, projects.ESS]);
+
 
   useEffect(() => {
     setUploadedFileName(""); // Clear uploaded file name on refresh
   }, []);
 
-   const onDownload = async (record) => {
-   
-        loadingRef.current = record.key; // Set current loading key (no re-render)
-  
-     // console.log("Download button clicked for record:", record.key);
-     // console.log("record", record);
-     // console.log("loadingRef", loadingRef.current);
+  const onDownload = async (record) => {
 
-        const updatedRecord = {
-          combinationId: record.combination,
-          solarCapacity: record.optimal_solar_capacity,
-          windCapacity: record.optimal_wind_capacity,
-          batteryCapacity: record.optimal_battery_capacity,
-          perUnitCost: record.per_unit_cost,
-          oaCost: record.oa_cost,
-          finalCost: record.final_cost,
-          annualDemandOffeset: record.annual_demand_offset,
-          annualDemandMet: record.annual_demand_met,
-          annualCurtailment: record.annual_curtailment,
-          //  demandArray: record.demand, // Include the Demand array here
-     curtailmentArray: record.curtailment || [],
-        demandArray: record.demand || [],
-        generationArray: record.generation || [],
-        demandMetArray: record.demand_met || [],
-        solarAllocationArray: record.solar_allocation || [],
-        totalDemandMetByAllocationArray:
-          record.total_demand_met_by_allocation || [],
-        unmetDemandArray: record.unmet_demand || [],
-        windAllocationArray: record.wind_allocation || [],
-        site_name: record.site_name || " ",
-        state: record.state || " ",
-        };
-       
-     // console.log("Updated Record for Download on generator input :", updatedRecord);
-        
-        await handleDownloadExcel(updatedRecord, record.key);
-  
-        loadingRef.current = null;
-     
+    loadingRef.current = record.key; // Set current loading key (no re-render)
+
+    // console.log("Download button clicked for record:", record.key);
+    // console.log("record", record);
+    // console.log("loadingRef", loadingRef.current);
+
+    const updatedRecord = {
+      combinationId: record.combination,
+      solarCapacity: record.optimal_solar_capacity,
+      windCapacity: record.optimal_wind_capacity,
+      batteryCapacity: record.optimal_battery_capacity,
+      perUnitCost: record.per_unit_cost,
+      oaCost: record.oa_cost,
+      finalCost: record.final_cost,
+      annualDemandOffeset: record.annual_demand_offset,
+      annualDemandMet: record.annual_demand_met,
+      annualCurtailment: record.annual_curtailment,
+      //  demandArray: record.demand, // Include the Demand array here
+      curtailmentArray: record.curtailment || [],
+      demandArray: record.demand || [],
+      generationArray: record.generation || [],
+      demandMetArray: record.demand_met || [],
+      solarAllocationArray: record.solar_allocation || [],
+      totalDemandMetByAllocationArray:
+        record.total_demand_met_by_allocation || [],
+      unmetDemandArray: record.unmet_demand || [],
+      windAllocationArray: record.wind_allocation || [],
+      site_name: record.site_name || " ",
+      state: record.state || " ",
     };
 
-    const handleName = (record) => {
-      setSelectedNameRecord(record); // Save the clicked record
+    // console.log("Updated Record for Download on generator input :", updatedRecord);
+
+    await handleDownloadExcel(updatedRecord, record.key);
+
+    loadingRef.current = null;
+
+  };
+
+  const handleName = (record) => {
+    setSelectedNameRecord(record); // Save the clicked record
     setNameClickModal(true);
-    }
+  }
 
   const columns = [
     {
@@ -231,21 +242,21 @@ const handleFormSubmit = (values) => {
       key: "key",
       width: 50,
     },
-   {
-  title: "Name",
-  dataIndex: "record_name",
-  key: "record_name",
-  width: 50,
-  render: (text, record) => (
-    <p
-      style={{ color: "#669800", fontWeight: "bold", cursor: "pointer" }}
-      onClick={() => handleName(record)} 
-    >
-      {record.record_name}
-    </p>
-  )
-}
-,
+    {
+      title: "Name",
+      dataIndex: "record_name",
+      key: "record_name",
+      width: 50,
+      render: (text, record) => (
+        <p
+          style={{ color: "#9A8406", cursor: "pointer" }}
+          onClick={() => handleName(record)}
+        >
+          {record.record_name}
+        </p>
+      )
+    }
+    ,
     {
       title: "Combination ID",
       dataIndex: "combination",
@@ -303,10 +314,10 @@ const handleFormSubmit = (values) => {
       render: (text, record) => (
         <div style={{ display: "flex", flexDirection: 'column', gap: "10px" }}>
           <Button
-            type="link"
+            // type="link"
             icon={<DownloadOutlined style={{ color: "white" }} />}
             onClick={() => {
-           // console.log("Button clicked, record.key:", record.key);
+              // console.log("Button clicked, record.key:", record.key);
               onDownload(record);
             }}
           >
@@ -348,9 +359,9 @@ const handleFormSubmit = (values) => {
       .filter((p) => p.type === "ESS" && checkPortfolio.some(sel => sel.id === p.id && sel.type === "ESS"))
       .map((p) => p.id);
 
- // console.log("solarPortfolio", solarPortfolio);
- // console.log("windPortfolio", windPortfolio);
- // console.log("essPortfolio", essPortfolio);
+    // console.log("solarPortfolio", solarPortfolio);
+    // console.log("windPortfolio", windPortfolio);
+    // console.log("essPortfolio", essPortfolio);
 
     let manualData = {};
     // Use dataSource[0] if present (from Add Details modal)
@@ -381,7 +392,7 @@ const handleFormSubmit = (values) => {
         : manualData),
     };
 
- // console.log("modalData", modalData);
+    // console.log("modalData", modalData);
 
     navigate("/generator/capacity-sizing-pattern", { state: { modalData } }); // Pass modalData to the next page
   };
@@ -408,53 +419,53 @@ const handleFormSubmit = (values) => {
     return false;
   };
 
-const handleDetails = () => {
-  setForm((prevShowTable) => !prevShowTable);
-  setAddDetailsModal(true);
-  // When showing the form, ensure only one row exists
-  setDataSource((prevDataSource) => {
-    if (prevDataSource.length === 0) {
-      return [{
-        key: 1,
-        annualConsumption: null,
-        contractedDemand: null,
-        morningPeakStart: null,
-        morningPeakEnd: null,
-        annualMorningPeakConsumption: null,
-        eveningPeakStart: null,
-        eveningPeakEnd: null,
-        eveningPeakHourConsumption: null,
-        peakHoursAvailability: null,
-      }];
-    } else if (prevDataSource.length > 1) {
-      // If more than one row exists, keep only the first
-      return [prevDataSource[0]];
-    }
-    return prevDataSource;
-  });
-}
+  const handleDetails = () => {
+    setForm((prevShowTable) => !prevShowTable);
+    setAddDetailsModal(true);
+    // When showing the form, ensure only one row exists
+    setDataSource((prevDataSource) => {
+      if (prevDataSource.length === 0) {
+        return [{
+          key: 1,
+          annualConsumption: null,
+          contractedDemand: null,
+          morningPeakStart: null,
+          morningPeakEnd: null,
+          annualMorningPeakConsumption: null,
+          eveningPeakStart: null,
+          eveningPeakEnd: null,
+          eveningPeakHourConsumption: null,
+          peakHoursAvailability: null,
+        }];
+      } else if (prevDataSource.length > 1) {
+        // If more than one row exists, keep only the first
+        return [prevDataSource[0]];
+      }
+      return prevDataSource;
+    });
+  }
 
-const EditableCell = ({ value, onChange, onBlur }) => {
-  const [tempValue, setTempValue] = useState(value);
-console.log('vale',value);
+  const EditableCell = ({ value, onChange, onBlur }) => {
+    const [tempValue, setTempValue] = useState(value);
+    console.log('vale', value);
 
 
-  const handleBlur = () => {
-    onChange(tempValue);
-    onBlur();
+    const handleBlur = () => {
+      onChange(tempValue);
+      onBlur();
+    };
+
+    return (
+      <InputNumber
+        value={tempValue}
+        onChange={(value) => setTempValue(value)} // Update local state
+        onFocus={(e) => e.target.select()} // Select the input value on focus
+        onBlur={handleBlur} // Update main state on blur
+        style={{ width: "100%" }}
+        min={0}
+      />
+    );
   };
-
-  return (
-    <InputNumber
-      value={tempValue}
-      onChange={(value) => setTempValue(value)} // Update local state
-      onFocus={(e) => e.target.select()} // Select the input value on focus
-      onBlur={handleBlur} // Update main state on blur
-      style={{ width: "100%" }}
-      min={0}
-    />
-  );
-};
   const handleDownloadTemplate = () => {
     const rows = Array.from({ length: 8760 }, (_, i) => `${i + 1},`).join("\n");
     const csvContent = "Hour,Expected Demand (MWh)\n" + rows;
@@ -487,22 +498,22 @@ console.log('vale',value);
         <h2 style={{ marginRight: "20px" }}>
           Capacity Sizing
         </h2>
-          <Row style={{ color: 'GrayText' }}>
-              <p >Note: Go with one of the following option to proceed
+        <Row style={{ color: 'GrayText' }}>
+          <p >Note: Go with one of the following option to proceed
 
-                <ol style={{ marginTop: 0 }}>
-                    <li>
-                    <strong>Upload CSV File:</strong> Download the CSV template, fill it
-                    with the required information, and upload the completed file in the
-                    specified format.
-                  </li>
-                  <li>
-                    {" "}
-                    <strong>Add Details:</strong> Click the "Add Details" button to open
-                    a form where you can enter the data manually.
-                  </li>
-                </ol></p>
-            </Row>
+            <ol style={{ marginTop: 0 }}>
+              <li>
+                <strong>Upload CSV File:</strong> Download the CSV template, fill it
+                with the required information, and upload the completed file in the
+                specified format.
+              </li>
+              <li>
+                {" "}
+                <strong>Add Details:</strong> Click the "Add Details" button to open
+                a form where you can enter the data manually.
+              </li>
+            </ol></p>
+        </Row>
         <div style={{ color: "#669800", marginBottom: "30px" }}>
           <Row span={24} >
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -514,7 +525,7 @@ console.log('vale',value);
           </Row>
           <Row span={24}>
             {/* <div style={{ display: "flex", alignItems: "center" }}> */}
-              <Col span={9}>
+            <Col span={9}>
               <Tooltip title="Download a CSV file">
                 <Button icon={<DownloadOutlined />} onClick={handleDownloadTemplate} style={{ marginRight: "20px", height: "30px", width: 40 }} />
               </Tooltip>
@@ -525,15 +536,15 @@ console.log('vale',value);
                   </Button>
                 </Tooltip>
               </Upload>
-              </Col>
-              <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
+            </Col>
+            <Col span={2} style={{ display: "flex", justifyContent: "center" }}>
               {"OR"}
-              </Col>
-              <Col span={12} style={{ display: "flex", justifyContent: "flex-start" }}>  
+            </Col>
+            <Col span={12} style={{ display: "flex", justifyContent: "flex-start" }}>
               <Tooltip title="Add details manually">
-              <Button onClick={handleDetails}>Add Details</Button>
+                <Button onClick={handleDetails}>Add Details</Button>
               </Tooltip>
-              </Col>
+            </Col>
 
             {/* </div> */}
             {uploadedFileName && <div style={{ margin: "10px", color: 'GrayText' }}>Uploaded File: {uploadedFileName}</div>}
@@ -564,7 +575,7 @@ console.log('vale',value);
             </Row>
             )} */}
 
-            
+
         </div>
         <p>Select the portfolios to be processed in the model execution and run the Optimizer Model.</p>
         <div style={{ maxHeight: "400px", overflowY: "auto" }}>
@@ -577,11 +588,11 @@ console.log('vale',value);
             loading={status === "loading"}
           />
         </div>
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
-            <Button onClick={handleRunOptimizer}>
-              Run Optimizer
-            </Button>
-          </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
+          <Button onClick={handleRunOptimizer}>
+            Run Optimizer
+          </Button>
+        </div>
 
       </Card>
       <Card>
@@ -604,9 +615,9 @@ console.log('vale',value);
                 pagination={false}
                 bordered
                 size="small"
-                // locale={{
-                //   emptyText: "No data available"
-                // }}
+              // locale={{
+              //   emptyText: "No data available"
+              // }}
               />
             </Spin>
 
@@ -617,14 +628,14 @@ console.log('vale',value);
 
         {/* </Row> */}
       </Card>
-     <Modal
+      <Modal
         // title="Add Details"
         open={addDetailsModal}
         onCancel={() => setAddDetailsModal(false)}
         footer={null}
         width={800}
       >
-        <Title level={4} style={{ textAlign: "center", color:'#669800' }}>
+        <Title level={4} style={{ textAlign: "center", color: '#669800' }}>
           Add Details
         </Title>
         <Form
@@ -636,14 +647,14 @@ console.log('vale',value);
           <Row gutter={16}>
             {/* Annual Consumption */}
             <Col span={12}>
-              <Form.Item 
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input the annual consumption!',
-                }
-              ]}
-              label="Annual Consumption (MWh)" name="annualConsumption">
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input the annual consumption!',
+                  }
+                ]}
+                label="Annual Consumption (MWh)" name="annualConsumption">
                 <Input />
               </Form.Item>
             </Col>
@@ -651,12 +662,12 @@ console.log('vale',value);
             {/* Contracted Demand */}
             <Col span={12}>
               <Form.Item
-               rules={[
-                {
-                  required: true,
-                  message: 'Please input the Contracted Demand!',
-                }
-              ]}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input the Contracted Demand!',
+                  }
+                ]}
                 label={renderLabelWithTooltip(
                   "Contracted Demand (MW)",
                   "Total energy consumed during the month in megawatt-hours."
@@ -668,220 +679,220 @@ console.log('vale',value);
             </Col>
 
             {/* Morning Peak Start */}
-<Col span={12}>
-  <Form.Item
-    rules={[
-      {
-        required: true,
-        message: 'Please input the Morning Peak Start time!',
-      }
-    ]}
-    label={renderLabelWithTooltip(
-      "Morning Peak hours Start (HH:mm:ss)",
-      "Energy consumption during peak hours in megawatt-hours."
-    )}
-    name="morningPeakStart"
-  >
-    <TimePicker
-      format="HH:mm:ss"
-      placeholder="HH:mm:ss"
-      showNow={false}
-      defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
-      style={{ width: "100%" }}
-    />
-  </Form.Item>
-</Col>
+            <Col span={12}>
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input the Morning Peak Start time!',
+                  }
+                ]}
+                label={renderLabelWithTooltip(
+                  "Morning Peak hours Start (HH:mm:ss)",
+                  "Energy consumption during peak hours in megawatt-hours."
+                )}
+                name="morningPeakStart"
+              >
+                <TimePicker
+                  format="HH:mm:ss"
+                  placeholder="HH:mm:ss"
+                  showNow={false}
+                  defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
 
-      {/* Morning Peak End */}
-      <Col span={12}>
-        <Form.Item
-         rules={[
-          {
-            required: true,
-            message: 'Please input the Morning Peak End time!',
-          }
-        ]}
-          label={renderLabelWithTooltip(
-            "Morning Peak hours End (HH:mm:ss)",
-            "Energy consumption during off-peak hours in megawatt-hours."
-          )}
-          name="morningPeakEnd"
-        >
- <TimePicker
-      format="HH:mm:ss"
-      placeholder="HH:mm:ss"
-      showNow={false}
-      defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
-      style={{ width: "100%" }}
-    />
-        </Form.Item>
-      </Col>
+            {/* Morning Peak End */}
+            <Col span={12}>
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input the Morning Peak End time!',
+                  }
+                ]}
+                label={renderLabelWithTooltip(
+                  "Morning Peak hours End (HH:mm:ss)",
+                  "Energy consumption during off-peak hours in megawatt-hours."
+                )}
+                name="morningPeakEnd"
+              >
+                <TimePicker
+                  format="HH:mm:ss"
+                  placeholder="HH:mm:ss"
+                  showNow={false}
+                  defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
 
-      {/* Annual Morning Peak Consumption */}
-     
-      <Col span={12}>
-        <Form.Item
-         rules={[
-          {
-            required: true,
-            message: 'Please input the aAnnual Morning Peak Consumption!',
-          }
-        ]}
-          label={renderLabelWithTooltip(
-            "Annual Morning peak hours consumption (MWh)",
-            "Energy consumption during off-peak hours in megawatt-hours."
-          )}
-          name="annualMorningPeakConsumption"
-        >
-          <Input />
-        </Form.Item>
-      </Col>
-   <Col span={12}>
-        <Form.Item
-        rules={[
-            {
-              required: true,
-              message: "Please input the annual evening peak hours consumption!",
-            },
-        ]}
-          label={renderLabelWithTooltip(
-            "Annual Evening peak hours consumption (MWh)",
-            "Energy consumption during off-peak hours in megawatt-hours."
-          )}
-          name="eveningPeakHourConsumption"
-        >
-          <Input />
-        </Form.Item>
-      </Col>
-      {/* Evening Peak Start */}
-      <Col span={12}>
-        <Form.Item
-         rules={[
-          {
-            required: true,
-            message: 'Please input the Evening Peak Start time!',
-          }
-        ]}
-          label={renderLabelWithTooltip(
-            "Evening Peak hours Start (HH:mm:ss)",
-            "Energy consumption during off-peak hours in megawatt-hours."
-          )}
-          name="eveningPeakStart"
-        >
- <TimePicker
-      format="HH:mm:ss"
-      placeholder="HH:mm:ss"
-      showNow={false}
-      defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
-      style={{ width: "100%" }}
-    />
-        </Form.Item>
-      </Col>
-   
+            {/* Annual Morning Peak Consumption */}
 
-      {/* Evening Peak End */}
-      <Col span={12}>
- <Form.Item
-  rules={[
-          {
-            required: true,
-            message: 'Please input the Evening Peak End time!',
-          }
-        ]}
-  label={renderLabelWithTooltip(
-    "Evening Peak hours end (HH:mm:ss)",
-    "Energy consumption during off-peak hours in megawatt-hours."
-  )}
-  name="eveningPeakEnd"
->
- <TimePicker
-      format="HH:mm:ss"
-      placeholder="HH:mm:ss"
-      showNow={false}
-      defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
-      style={{ width: "100%" }}
-    />
-</Form.Item>
-</Col>
+            <Col span={12}>
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input the aAnnual Morning Peak Consumption!',
+                  }
+                ]}
+                label={renderLabelWithTooltip(
+                  "Annual Morning peak hours consumption (MWh)",
+                  "Energy consumption during off-peak hours in megawatt-hours."
+                )}
+                name="annualMorningPeakConsumption"
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the annual evening peak hours consumption!",
+                  },
+                ]}
+                label={renderLabelWithTooltip(
+                  "Annual Evening peak hours consumption (MWh)",
+                  "Energy consumption during off-peak hours in megawatt-hours."
+                )}
+                name="eveningPeakHourConsumption"
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            {/* Evening Peak Start */}
+            <Col span={12}>
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input the Evening Peak Start time!',
+                  }
+                ]}
+                label={renderLabelWithTooltip(
+                  "Evening Peak hours Start (HH:mm:ss)",
+                  "Energy consumption during off-peak hours in megawatt-hours."
+                )}
+                name="eveningPeakStart"
+              >
+                <TimePicker
+                  format="HH:mm:ss"
+                  placeholder="HH:mm:ss"
+                  showNow={false}
+                  defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
 
-      {/* Annual Evening Peak Consumption */}
-   
 
-      {/* Peak Hours Availability Requirement */}
-      <Col span={12}>
-        <Form.Item
-         rules={[
-          {
-            required: true,
-            message: 'Please input the Peak Hours Availability Requirement!',
-          }
-        ]}
-          label={renderLabelWithTooltip(
-            "Peak hours availability requirement (%)",
-            "Energy consumption during off-peak hours in megawatt-hours."
-          )}
-          name="peakHoursAvailability"
-        >
-          <Input />
-        </Form.Item>
-      </Col>
-    </Row>
+            {/* Evening Peak End */}
+            <Col span={12}>
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input the Evening Peak End time!',
+                  }
+                ]}
+                label={renderLabelWithTooltip(
+                  "Evening Peak hours end (HH:mm:ss)",
+                  "Energy consumption during off-peak hours in megawatt-hours."
+                )}
+                name="eveningPeakEnd"
+              >
+                <TimePicker
+                  format="HH:mm:ss"
+                  placeholder="HH:mm:ss"
+                  showNow={false}
+                  defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
 
-    <Form.Item>
-      <Button type="primary" htmlType="submit" style={{ float: "right" }}>
-        Submit
-      </Button>
-    </Form.Item>
-  </Form>
-</Modal>
+            {/* Annual Evening Peak Consumption */}
 
-<Modal  
-open={nameClickModal}
-onCancel={() => setNameClickModal(false)}
-footer={null}
->
-  <Title level={5}>Site Details</Title>
-  {selectedNameRecord && selectedNameRecord.state && selectedNameRecord.site_name ? (
-    <Table
-      dataSource={Object.keys(selectedNameRecord.state)
-        .filter((key) => {
-          // Only show keys that start with 'Wind', 'Solar', or 'ESS'
-          return (
-            key.startsWith("Wind") ||
-            key.startsWith("Solar") ||
-            key.startsWith("ESS")
-          );
-        })
-        .map((key, idx) => ({
-          key: idx,
-          technology:
-            key.startsWith("Wind")
-              ? "Wind"
-              : key.startsWith("Solar")
-              ? "Solar"
-              : key.startsWith("ESS")
-              ? "ESS"
-              : key,
-          state: selectedNameRecord.state[key],
-          site_name:
-            selectedNameRecord.site_name[key] == null ||
-            selectedNameRecord.site_name[key] === ""
-              ? "N/A"
-              : selectedNameRecord.site_name[key],
-        }))}
-      columns={[
-        { title: "Technology", dataIndex: "technology", key: "technology" },
-        { title: "State", dataIndex: "state", key: "state" },
-        { title: "Site Name", dataIndex: "site_name", key: "site_name" },
-      ]}
-      pagination={false}
-      bordered
-      size="small"
-    />
-  ) : (
-    <div>No data available</div>
-  )}
-</Modal>
+
+            {/* Peak Hours Availability Requirement */}
+            <Col span={12}>
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input the Peak Hours Availability Requirement!',
+                  }
+                ]}
+                label={renderLabelWithTooltip(
+                  "Peak hours availability requirement (%)",
+                  "Energy consumption during off-peak hours in megawatt-hours."
+                )}
+                name="peakHoursAvailability"
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" style={{ float: "right" }}>
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={nameClickModal}
+        onCancel={() => setNameClickModal(false)}
+        footer={null}
+      >
+        <Title level={5}>Site Details</Title>
+        {selectedNameRecord && selectedNameRecord.state && selectedNameRecord.site_name ? (
+          <Table
+            dataSource={Object.keys(selectedNameRecord.state)
+              .filter((key) => {
+                // Only show keys that start with 'Wind', 'Solar', or 'ESS'
+                return (
+                  key.startsWith("Wind") ||
+                  key.startsWith("Solar") ||
+                  key.startsWith("ESS")
+                );
+              })
+              .map((key, idx) => ({
+                key: idx,
+                technology:
+                  key.startsWith("Wind")
+                    ? "Wind"
+                    : key.startsWith("Solar")
+                      ? "Solar"
+                      : key.startsWith("ESS")
+                        ? "ESS"
+                        : key,
+                state: selectedNameRecord.state[key],
+                site_name:
+                  selectedNameRecord.site_name[key] == null ||
+                    selectedNameRecord.site_name[key] === ""
+                    ? "N/A"
+                    : selectedNameRecord.site_name[key],
+              }))}
+            columns={[
+              { title: "Technology", dataIndex: "technology", key: "technology" },
+              { title: "State", dataIndex: "state", key: "state" },
+              { title: "Site Name", dataIndex: "site_name", key: "site_name" },
+            ]}
+            pagination={false}
+            bordered
+            size="small"
+          />
+        ) : (
+          <div>No data available</div>
+        )}
+      </Modal>
 
       <Modal
         title="Additional Inputs"
@@ -906,26 +917,26 @@ footer={null}
             />
           </Form.Item> */}
           <Form.Item label="Maximum limit for excess energy (%)">
-  <InputNumber
-    min={0}
-    max={100}
-    step={1}
-    value={
-      curtailmentInputs.annual_curtailment_limit != null
-        ? curtailmentInputs.annual_curtailment_limit * 100
-        : null
-    }
-    onChange={(value) =>
-      setCurtailmentInputs((prev) => ({
-        ...prev,
-        annual_curtailment_limit: value / 100,
-      }))
-    }
-    style={{ width: "100%" }}
-    formatter={(value) => `${value}`}
-    parser={(value) => value.replace('%', '')}
-  />
-</Form.Item>
+            <InputNumber
+              min={0}
+              max={100}
+              step={1}
+              value={
+                curtailmentInputs.annual_curtailment_limit != null
+                  ? curtailmentInputs.annual_curtailment_limit * 100
+                  : null
+              }
+              onChange={(value) =>
+                setCurtailmentInputs((prev) => ({
+                  ...prev,
+                  annual_curtailment_limit: value / 100,
+                }))
+              }
+              style={{ width: "100%" }}
+              formatter={(value) => `${value}`}
+              parser={(value) => value.replace('%', '')}
+            />
+          </Form.Item>
 
           <Form.Item label="Selling price of excess energy (INR/MWh)">
             <InputNumber
