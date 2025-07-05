@@ -28,6 +28,8 @@ import { useDispatch } from "react-redux";
 import { addDayAheadData } from "../../Redux/slices/generator/dayAheadSliceG";
 import { getAllProjectsById } from "../../Redux/slices/generator/portfolioSlice";
 import { fetchHolidayList } from "../../Redux/slices/consumer/holidayListSlice";
+import ReactDOM from 'react-dom/client';
+import { Line } from "react-chartjs-2";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -60,7 +62,7 @@ const PlanYourTradePage = () => {
   const [generatorPortfolio, setGeneratorPortfolio] = useState([]);
   const [uploadModal, setUploadModal] = useState(false);
     const [disabledDates, setDisabledDates] = useState([]);
-  
+  const [selectedPortfolio,setSelectedPortfolio] = useState(null);
   const [tableData, setTableData] = useState(
     generateTimeLabels().map((time, index) => ({
       key: index,
@@ -78,7 +80,7 @@ useEffect(() => {
       const res = await dispatch(fetchHolidayList());
       // setDisabledDates(["2025-04-25"]);
       setDisabledDates(res.payload);
-      console.log("Holiday List:", res);
+   // console.log("Holiday List:", res);
     } catch (error) {
       // console.error("Error fetching holiday list:", error);
     }
@@ -86,65 +88,105 @@ useEffect(() => {
   fetchHolidayData();
 }, [dispatch]);
 
-  const handleContinue = async () => {
-    if (!fileUploaded) {
-      // setIsModalVisible(true);
 
-      // console.log("Selected State:", selectedState);
-      // console.log("Selected Portfolio ID:", selectedPortfolioId);
-      try {
-        const dayAheadDemand = {
-          model:
-            selectedTechnology === "Solar" ? "solarportfolio" : "windportfolio",
-          object_id: selectedPortfolioId,
-          price: parseFloat(price),
-          generation_data: tableData.map((item) => {
-            let [hours, minutes] = item.time.split(":").map(Number); // Convert time to hours and minutes
-            minutes += 15; // Add 15 minutes
-
-            if (minutes >= 60) {
-              hours += 1;
-              minutes -= 60;
-            }
-
-            // Ensure hours do not exceed 23 (Reset to 00:00 if it becomes 24:00)
-            if (hours >= 24) {
-              hours = 0;
-            }
-
-            let end_time = `${String(hours).padStart(2, "0")}:${String(
-              minutes
-            ).padStart(2, "0")}`; // Format time
-
-            return {
-              start_time: item.time,
-              end_time: end_time,
-              generation: item.demand,
-            };
-          }),
-        };
-
-        // console.log(dayAheadDemand);
-        try {
-          const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
-          console.log("res", res);
-          setIsModalVisible(false);
-          message.success(res.message || "Data submitted successfully!");
-
-          navigate("/px/track-status");
-        } catch (error) {
-          console.log(error);
-        }
-      } catch (error) {
-        // console.log(error);
-        message.error("Failed to submit data. Please try again.");
-      }
-    } else {
-      navigate("/px/track-status");
-    }
-    // setIsModalVisible(true);
+const GenerationLineChart = ({ data }) => {
+  const chartData = {
+    labels: data.map((item) => item.start_time),
+    datasets: [
+      {
+        label: 'Generation (MW)',
+        data: data.map((item) => Number(item.generation)),
+        borderColor: '#1890ff',
+        backgroundColor: 'rgba(24, 144, 255, 0.2)',
+        tension: 0.4,
+        fill: true,
+        pointRadius: 0,
+      },
+    ],
   };
-console.log('price', price);
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true },
+      tooltip: { mode: 'index', intersect: false },
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Start Time' },
+        ticks: { maxTicksLimit: 12 },
+      },
+      y: {
+        title: { display: true, text: 'Generation (MW)' },
+        beginAtZero: true,
+      },
+    },
+  };
+
+  return <div style={{ height: 300 }}><Line data={chartData} options={options} /></div>;
+};
+
+
+const handleContinue = async () => {
+  if (!fileUploaded) {
+    // Prepare generation data from tableData
+    const generationData = tableData.map((item) => {
+      let [hours, minutes] = item.time.split(":").map(Number);
+      minutes += 15;
+
+      if (minutes >= 60) {
+        hours += 1;
+        minutes -= 60;
+      }
+      if (hours >= 24) hours = 0;
+
+      let end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+
+      return {
+        start_time: item.time,
+        end_time,
+        generation: item.demand,
+      };
+    });
+
+
+    // Show confirm modal with chart
+  Modal.confirm({
+  title: "Are you sure you want to submit the data?",
+  content: <GenerationLineChart data={generationData} />,
+  width: 850,
+  okText: "Yes",
+  cancelText: "No",
+  centered: true,
+  onOk: async () => {
+    try {
+      const dayAheadDemand = {
+        model: selectedTechnology === "Solar" ? "solarportfolio" : "windportfolio",
+        object_id: selectedPortfolioId,
+        price: parseFloat(price),
+        generation_data: generationData,
+      };
+
+      console.log('day ahead demand', dayAheadDemand.generation_data);
+
+      const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+      // const res = null;
+      setIsModalVisible(false);
+      message.success(res?.message || "Data submitted successfully!");
+      navigate("/px/track-status");
+    } catch (error) {
+      message.error("Failed to submit data. Please try again.");
+    }
+  },
+});
+
+  } else {
+    navigate("/px/track-status");
+  }
+};
+
+// console.log('price', price);
 
   const onFinish = (values) => {
     // console.log("Received values of form: ", values);
@@ -168,14 +210,40 @@ console.log('price', price);
     setIsInfoModalVisible(true);
   };
 
-  const handleInputChange = (value, key) => {
-    const newData = [...tableData];
-    const index = newData.findIndex((item) => key === item.key);
-    if (index > -1) {
-      newData[index].demand = value;
-      setTableData(newData);
-    }
-  };
+
+const handleInputChange = (value, key) => {
+  console.log('value', value);
+
+  const newData = [...tableData];
+  const index = newData.findIndex((item) => key === item.key);
+
+  if (index > -1) {
+    newData[index].demand = value;
+    setTableData(newData);
+  }
+
+  const selectedPortfolio = generatorPortfolio.find(
+    (item) => item.id === selectedPortfolioId && item.type === selectedTechnology
+  );
+
+  const numericValue = Number(value);
+  const generationPotential = selectedPortfolio?.available_capacity;
+
+  if (generationPotential && numericValue > generationPotential) {
+    const modal = Modal.warning({
+      title: 'Warning',
+      content: `Entered demand (${numericValue}) exceeds annual generation potential (${generationPotential}).`,
+      okButtonProps: { style: { display: 'none' } },
+    });
+
+    setTimeout(() => {
+      modal.destroy();
+    }, 3000); // Auto close after 3 seconds
+  }
+
+  console.log('selected portfolio 178', generationPotential);
+};
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -187,7 +255,9 @@ console.log('price', price);
           ...res.Wind.map((item) => ({ ...item, type: "Wind" })),
           ...res.ESS.map((item) => ({ ...item, type: "ESS" })),
         ];
-        setGeneratorPortfolio(flattenedPortfolio);
+        const filteredPortfolio = flattenedPortfolio.filter(item => item.type !== 'ESS');
+
+        setGeneratorPortfolio(filteredPortfolio);
         // console.log(flattenedPortfolio);
       } catch (error) {
         // console.log("Error fetching portfolio:", error);
@@ -197,14 +267,21 @@ console.log('price', price);
     fetchData();
   }, [user_id, dispatch]);
 
-  const handleStateChange = (value) => {
-    setSelectedPortfolioId(value); // Update selectedPortfolioId directly
-    const selectedPortfolio = generatorPortfolio.find((item) => item.id === value);
-    if (selectedPortfolio) {
-      setSelectedTechnology(selectedPortfolio.type); // Automatically set technology based on portfolio type
-    }
-    console.log("Selected Portfolio:", selectedPortfolio);
-  };
+const handleStateChange = (option) => {
+  const compositeValue = option.value; // e.g., "Solar-19"
+  const [type, idStr] = compositeValue.split("-");
+  const id = parseInt(idStr, 10);
+
+  setSelectedPortfolioId(id);
+  setSelectedTechnology(type);
+
+  const selected = generatorPortfolio.find(
+    (item) => item.id === id && item.type === type
+  );
+  setSelectedPortfolio(selected); // Optional if you're storing the full object
+};
+
+
 
   useEffect(() => {
     const allFilled = tableData.every((item) => item.demand !== null);
@@ -216,49 +293,6 @@ console.log('price', price);
     setIsModalVisible(false);
   };
 
-  // const handleModalOk = async () => {
-  //   // console.log("Selected State:", selectedState);
-  //   // console.log("Selected Portfolio ID:", selectedPortfolioId);
-  //   try {
-  //     const dayAheadDemand = {
-  //       model: selectedTechnology === "Solar" ? "solarportfolio" : "windportfolio",
-  //       object_id: selectedPortfolioId,
-  //       price: parseFloat(price),
-  //       generation_data: tableData.map(item => {
-  //         let [hours, minutes] = item.time.split(":").map(Number); // Convert time to hours and minutes
-  //         minutes += 15; // Add 15 minutes
-
-  //         if (minutes >= 60) {
-  //           hours += 1;
-  //           minutes -= 60;
-  //         }
-
-  //         // Ensure hours do not exceed 23 (Reset to 00:00 if it becomes 24:00)
-  //         if (hours >= 24) {
-  //           hours = 0;
-  //         }
-
-  //         let end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`; // Format time
-
-  //         return {
-  //           start_time: item.time,
-  //           end_time: end_time,
-  //           generation: item.demand
-  //         };
-  //       })
-  //     };
-
-  //     // console.log(dayAheadDemand);
-
-  //     const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
-  //     // console.log('res', res);
-  //     setIsModalVisible(false);
-  //     navigate('/px/consumer/trading');
-  //   } catch (error) {
-  //     // console.log(error);
-  //     message.error("Failed to submit data. Please try again.");
-  //   }
-  // };
 
 const handleFileUploadModal = () => {
     const tomorrow = new Date();
@@ -316,7 +350,7 @@ const handleFileUploadModal = () => {
           file: base64File, // Add base64 file to payload
         };
 
-        console.log("dayAheadDemand", dayAheadDemand);
+     // console.log("dayAheadDemand", dayAheadDemand);
 
         try {
           const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
@@ -443,6 +477,9 @@ const handleFileUploadModal = () => {
       ? generatorPortfolio
       : dummyConsumptionUnits;
 
+console.log('generator portfolio',generatorPortfolio);
+
+
   return (
     <div style={{ padding: "20px" }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
@@ -450,19 +487,33 @@ const handleFileUploadModal = () => {
       </h1>
       <Col span={24}>
         <Form.Item label="Select Portfolio">
-          <Select
-            value={selectedPortfolioId || undefined} // Ensures placeholder is visible when nothing is selected
-            onChange={handleStateChange}
-            style={{ width: "70%", borderColor: "#669800" }}
-            placeholder="Select Portfolio" // Placeholder text
-          >
-            {Array.isArray(generatorPortfolio) &&
-              generatorPortfolio.map((item) => (
-                <Select.Option key={item.id} value={item.id}>
-                  {`${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`}
-                </Select.Option>
-              ))}
-          </Select>
+<Select
+  labelInValue
+  value={
+    selectedPortfolioId && selectedTechnology
+      ? {
+          value: `${selectedTechnology}-${selectedPortfolioId}`,
+          label: `${selectedPortfolio?.type}: State: ${selectedPortfolio?.state}, Connectivity: ${selectedPortfolio?.connectivity}, Available Capacity: ${selectedPortfolio?.available_capacity} MWh, Annual Generation Potential: ${selectedPortfolio?.annual_generation_potential}`
+        }
+      : undefined
+  }
+  onChange={handleStateChange}
+  style={{ width: "70%", borderColor: "#669800" }}
+  placeholder="Select Portfolio"
+>
+  {Array.isArray(generatorPortfolio) &&
+    generatorPortfolio.map((item) => {
+      const compositeId = `${item.type}-${item.id}`;
+      const label = `${item.type}: State: ${item.state}, Connectivity: ${item.connectivity}, Available Capacity: ${item.available_capacity} MWh, Annual Generation Potential: ${item.annual_generation_potential}`;
+      return (
+        <Select.Option key={compositeId} value={compositeId}>
+          {label}
+        </Select.Option>
+      );
+    })}
+</Select>
+
+
         </Form.Item>
       </Col>
       <Row
@@ -579,7 +630,7 @@ const handleFileUploadModal = () => {
       </Form.Item>
       <Modal
         title="Select Technology"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleModalOk}
         onCancel={() => setIsModalVisible(false)}
       >
@@ -590,7 +641,7 @@ const handleFileUploadModal = () => {
           <Radio value="Solar" disabled={selectedTechnology !== "Solar"}>
             Solar
           </Radio>
-          <Radio value="non_solar" disabled={selectedTechnology === "Solar"}>
+          <Radio value="non_solar" disabled={selectedTechnology === "non_solar"}>
             Non solar
           </Radio>
         </Radio.Group>
@@ -599,9 +650,10 @@ const handleFileUploadModal = () => {
         <div style={{ marginTop: "15px" }}>
           {selectedTechnology && (
             <div>
-              <label style={{ fontWeight: "bold" }}>
-                Enter {selectedTechnology} Price (INR/MWh):
-              </label>
+             <label style={{ fontWeight: "bold" }}>
+  Enter {selectedTechnology === "non_solar" ? "Non Solar" : selectedTechnology} Price (INR/MWh):
+</label>
+
               <Input
                 type="number"
                 placeholder={`Enter ${selectedTechnology.toLowerCase()} price in INR/MWh`}

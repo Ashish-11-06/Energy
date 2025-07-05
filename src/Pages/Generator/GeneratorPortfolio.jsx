@@ -63,13 +63,13 @@ const GenerationPortfolio = () => {
 
   const handleUpdate = (record) => {
     try {
-      console.log('clicked on the edit button...', record);
+   // console.log('clicked on the edit button...', record);
       setSelectedRecord(record);
       form.setFieldsValue({
         ...record,
         cod: dayjs(record.cod), // Ensure the date is in a valid format
       });
-      console.log('modal is opening with record:', record);
+   // console.log('modal is opening with record:', record);
       setIsUpdateModalVisible(true);
     } catch (error) {
       message.error(error);
@@ -106,7 +106,7 @@ useEffect(() => {
   const getProject = async () => {
     try { 
       const res = await dispatch(getAllProjectsById(user.id));
-        console.log('res', res);
+     // console.log('res', res);
     } catch (error) {
       console.error(error);
     }

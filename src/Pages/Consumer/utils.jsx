@@ -137,7 +137,7 @@ export const createPdfContent = (annualSavingResponse) => {
 
 // export const generatePDF = (pdfElement, requirementId, reportResponse) => {
 
-//   console.log(reportResponse);
+//// console.log(reportResponse);
 //   const options = {
 //     margin: [0.5, 0.5],
 //     filename: `Annual_Savings_Report_${requirementId || 'default'}.pdf`,
@@ -150,7 +150,7 @@ export const createPdfContent = (annualSavingResponse) => {
 // };
 
 // export const createPdfContent = (annualSavingResponse) => {
-//   console.log(annualSavingResponse);
+//// console.log(annualSavingResponse);
 
 //   return `
 //      <body>

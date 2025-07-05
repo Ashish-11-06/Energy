@@ -46,16 +46,16 @@ const Planning = () => {
   const [requirementId, setRequirementId] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null); // State to store uploaded file
 const [disableDates, setDisableDates] = useState([]); // State to store holiday dates
-
-
+  const [addLoading,setAddLoading]= useState(false);
+  const [allFilled,setAllFilled] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       const id = user_id; // Ensure `user_id` is defined in scope
       try {
         const res = await dispatch(fetchPlanningData(id));
-        console.log(res);        
-        console.log(res.payload);
+     console.log(res);        
+     // console.log(res.payload);
         setTableDemandData(res.payload);
         setRequirementId(res.payload.map(item => item.requirement));
       } catch (error) {
@@ -87,14 +87,16 @@ useEffect(() => {
 }, [dispatch]);
 
 
-console.log('disable dates',disableDates);
+// console.log('disable dates',disableDates);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const id = user_id;
         const res = await dispatch(fetchRequirements(id)); // Wait for API response
         setConsumerRequirement(res.payload);
-        // console.log(res.payload);  
+        console.log('consumer requirement res',res);
+        
+        console.log(res.payload);  
       } catch (error) {
         // console.log("Error fetching consumer requirements:", error);
       }
@@ -109,7 +111,7 @@ console.log('disable dates',disableDates);
   };
 
   const tileContent = (value) => {
-    console.log('tile');
+ // console.log('tile');
     const date = value.toDate();
     const listData = getListData(date);
     const isToday = dayjs(date).isSame(dayjs(), 'day');
@@ -150,27 +152,30 @@ console.log('disable dates',disableDates);
             ●
           </div>
         )}
-        {listData.map(item => (
-          <Tooltip
-            key={item.id}
-            title={`Demand: ${item.demand} MWh, Solar Price: ${item.price.Solar} INR/MWh, Non-Solar Price: ${item.price["Non-Solar"]} INR/MWh`}
-          >
-            <div
-              style={{
-                backgroundColor: '#669800',
-                borderRadius: '50%',
-                width: '10px',
-                height: '10px',
-                display: 'inline-block',
-                position: 'absolute',
-                bottom: '3px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                marginTop: '10px',
-              }}
-            />
-          </Tooltip>
-        ))}
+      {listData.map(item =>
+  item.requirement === selectedRequirementId ? (
+    <Tooltip
+      key={item.id}
+      title={`Demand: ${item.demand} MWh, Solar Price: ${item.price.Solar} INR/MWh, Non-Solar Price: ${item.price["Non-Solar"]} INR/MWh`}
+    >
+      <div
+        style={{
+          backgroundColor: '#669800',
+          borderRadius: '50%',
+          width: '10px',
+          height: '10px',
+          display: 'inline-block',
+          position: 'absolute',
+          bottom: '3px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          marginTop: '10px',
+        }}
+      />
+    </Tooltip>
+  ) : null
+)}
+
       </div>
     );
   };
@@ -197,10 +202,14 @@ console.log('disable dates',disableDates);
     setIsModalVisible(true); // Show technology modal
   };
 
+console.log('selected requirement',selectedRequirementId);
+
+
   const handleModalOk = async () => {
-    console.log('all fields filled:', allFieldsFilled);
-    
+ // console.log('all fields filled:', allFieldsFilled);
+    setAddLoading(true);
     if (!selectedRequirementId) {
+      setAddLoading(false);
       message.error("Please select a valid consumption unit.");
       return;
     }
@@ -212,7 +221,7 @@ console.log('disable dates',disableDates);
       message.error("Please select a technology.");
       return;
     }
-console.log(selectedDate);
+// console.log(selectedDate);
 
 const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
     try {
@@ -227,11 +236,15 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
       };
 
       const res = await dispatch(addMonthData(newData)).unwrap();
+      console.log('res add month data',res);
+      
       if (res) {
         message.success("Data added successfully");
 
         // Fetch updated planning data to show the newly added record
         const updatedData = await dispatch(fetchPlanningData(user_id));
+        console.log('updated data res',updatedData);
+        
         setTableDemandData(Array.isArray(updatedData.payload) ? updatedData.payload : []);
       }
       setIsModalVisible(false);
@@ -239,6 +252,7 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
     } catch (error) {
       message.error("Failed to submit data. Please try again.");
     }
+    setAddLoading(false);
   };
 
   const handleDemandClick = (record) => {
@@ -252,7 +266,7 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
   // console.log(selectedUnitDetails);
 
   const handleDateClick = (date) => {
-    console.log('date clicked');
+ // console.log('date clicked');
     
     setSelectedDate(date.format("YYYY-MM-DD")); // Store selected date
     setIsModalVisible(true); // Open modal
@@ -267,11 +281,11 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
         requirement: record.requirementId, // Use requirementId from the record
         file: base64File, // Use Base64 encoded file
       };
-  console.log(data);
+  // console.log(data);
   
       try {
         const res = await dispatch(uploadTableMonthDataC(data)); // Call the API with the updated data
-        console.log('res', res);
+     // console.log('res', res);
         
         if (res) {
           message.success("File uploaded successfully");
@@ -376,6 +390,13 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
     },
   ];
   
+const checkAllFieldsFilled = (tech, priceObj, demandVal) => {
+  const hasTechnology = tech !== "";
+  const hasPrice = priceObj[tech] && priceObj[tech] !== "";
+  const hasDemand = demandVal !== "";
+
+  setAllFilled(hasTechnology && hasPrice && hasDemand);
+};
 
   const tableData = Array.isArray(tableDemandData) ? tableDemandData.map(item => {
     const requirementDetails = consumerRequirement.find(req => req.id === item.requirement);
@@ -465,6 +486,14 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
         ) : !showTable ? (
           
           <Col span={24}>
+             <p style={{ color: 'GrayText' }}>
+              (Note:
+              <ol >
+                <li>Select consumption unit from the drop down.</li>
+                <li>Select the date for which you want to schedule the trade.</li>
+                <li>Enter the Price and Demand)</li>
+              </ol>
+            </p>
              <Form.Item label="Select Consumption Unit" style={{ fontSize: '24px' }}>
           <Select
             value={selectedState || undefined}
@@ -472,11 +501,13 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
             style={{ width: "80%", borderColor: "#669800" }}
             placeholder="Select Consumption Unit"
           >
-            {consumerRequirement.map(item => (
-              <Select.Option key={item.id} value={item.state}>
-                {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
-              </Select.Option>
-            ))}
+          {Array.isArray(consumerRequirement) &&
+  consumerRequirement.map(item => (
+    <Select.Option key={item.id} value={item.state}>
+      {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
+    </Select.Option>
+))}
+
           </Select>
         </Form.Item>
             <Card className='mainCard' style={{ width: '90%', margin: 'auto', padding: '10px', backgroundColor: '#fff' }}> {/* Updated card background color */}
@@ -529,11 +560,13 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
             style={{ width: "100%", borderColor: "#669800" }}
             placeholder="Select Consumption Unit"
           >
-            {consumerRequirement.map(item => (
-              <Select.Option key={item.id} value={item.state}>
-                {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
-              </Select.Option>
-            ))}
+           {Array.isArray(consumerRequirement) &&
+  consumerRequirement.map(item => (
+    <Select.Option key={item.id} value={item.state}>
+      {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
+    </Select.Option>
+))}
+
           </Select>
         </Form.Item>
         <Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
@@ -567,50 +600,75 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
         open={isModalVisible}
         onOk={handleModalOk} // Call handleModalOk on OK button click
         onCancel={() => setIsModalVisible(false)}
+          confirmLoading={addLoading} 
+            okButtonProps={{ disabled: !allFilled }} // 👈 disables OK when allFilled is false
+
       >
-        {/* Checkbox Group */}
-        {/* <Checkbox.Group onChange={(checkedValues) => setSelectedTechnology(checkedValues)} value={selectedTechnology}>
-          <Checkbox value="Solar">"Solar"</Checkbox>
-          <Checkbox value="Non-Solar">"Non-Solar"</Checkbox>
-        </Checkbox.Group> */}
-        <Radio.Group onChange={(e) => setSelectedTechnology(e.target.value)} value={selectedTechnology}>
+       
+        <Radio.Group 
+ onChange={(e) => {
+  const value = e.target.value;
+  setSelectedTechnology(value);
+  checkAllFieldsFilled(value, price, demand);
+}}
+
+         value={selectedTechnology}>
           <Radio value="Solar">Solar</Radio>
           <Radio value="Non-Solar">Non-Solar</Radio>
         </Radio.Group>
 
         {/* Input fields for price */}
-        <div style={{ marginTop: "15px" }}>
-                 {selectedTechnology === "Solar" && (
-                   <div>
-                     <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
-                     <Input
-                       type="number"
-                       placeholder="Enter solar price in INR/MWh"
-                       value={price["Solar"] || ""}
-                       min={0}
-                       onChange={(e) => setPrice({ ...price, "Solar": e.target.value })}
-                       style={{ marginTop: "5px", width: "100%",marginBottom:'20px' }}
-                     />
-                   </div>
-                 )}
-                 
-                 {selectedTechnology === "Non-Solar" && (
-                   <div>
-                     <label style={{ fontWeight: "bold" }}>Enter Non-Solar Price:</label>
-                     <Input
-                       type="number"
-                       placeholder="Enter non-solar price in INR/MWh"
-                       value={price["Non-Solar"] || ""}
-                       min={0}
-                       onChange={(e) => setPrice({ ...price, "Non-Solar": e.target.value })}
-                       style={{ marginTop: "5px", width: "100%",marginBottom:'20px' }}
-                     />
-                   </div>
-                 )}
-               </div>
+      <div style={{ marginTop: "15px" }}>
+  {/* Solar Price Input */}
+  {selectedTechnology === "Solar" && (
+    <div>
+      <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
+      <Input
+        type="number"
+        placeholder="Enter solar price in INR/MWh"
+        value={price["Solar"] || ""}
+        min={0}
+        onChange={(e) => {
+          const updatedPrice = { ...price, "Solar": e.target.value };
+          setPrice(updatedPrice);
+          checkAllFieldsFilled(selectedTechnology, updatedPrice, demand);
+        }}
+        style={{
+          marginTop: "5px",
+          width: "100%",
+          marginBottom: "20px"
+        }}
+      />
+    </div>
+  )}
+
+  {/* Non-Solar Price Input */}
+  {selectedTechnology === "Non-Solar" && (
+    <div>
+      <label style={{ fontWeight: "bold" }}>Enter Non Solar Price:</label>
+      <Input
+        type="number"
+        placeholder="Enter non-solar price in INR/MWh"
+        value={price["Non-Solar"] || ""}
+        min={0}
+        onChange={(e) => {
+          const updatedPrice = { ...price, "Non-Solar": e.target.value };
+          setPrice(updatedPrice);
+          checkAllFieldsFilled(selectedTechnology, updatedPrice, demand);
+        }}
+        style={{
+          marginTop: "5px",
+          width: "100%",
+          marginBottom: "20px"
+        }}
+      />
+    </div>
+  )}
+</div>
+
                {/* <Form.Item label="Enter Demand (MWh)" style={{ fontSize: '16px', fontWeight: '600',marginTop:'10px' }}>
                 <br /> */}
-                <label style={{ fontSize: '14px', fontWeight: '700',marginTop:'3s0px' }}>Enter Demand (MWh):</label>
+                <label style={{ fontSize: '14px', fontWeight: '700',marginTop:'3s0px' }}>Enter Demanddddd (MWh):</label>
           <Input
             type="number"
             placeholder="Enter demand"
@@ -622,10 +680,12 @@ const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
               borderRadius: "5px",
               border: "1px solid #ccc"
             }}
-            onChange={(e) => {
-              setDemand(e.target.value);
-              // setAllFieldsFilled(e.target.value !== '' && selectedDate !== null);
-            }}
+           onChange={(e) => {
+  const value = e.target.value;
+  setDemand(value);
+  checkAllFieldsFilled(selectedTechnology, price, value);
+}}
+
           />
         {/* </Form.Item> */}
       </Modal>

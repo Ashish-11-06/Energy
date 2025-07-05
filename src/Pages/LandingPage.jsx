@@ -146,13 +146,13 @@ const LandingPage = () => {
     try {
       const res = await dispatch(sendForgotPasswordOtp(email)).unwrap(); // Unwrap the result
       // console.log(res?.message)
-      //   console.log(res);
+      //// console.log(res);
       message.success(res.message || "OTP sent successfully!"); // Show success message
       // setOtpSent(true);
       setIsForgotPasswordModalVisible(false)
       setEmailForReset(email);
     } catch (error) {
-      console.log(error);
+   // console.log(error);
       message.error(error)
       // message.error(error || "Failed to send OTP. Please try again.");
     } finally {

@@ -14,6 +14,7 @@ import {
   Card,
   Tooltip,
   Modal,
+  Descriptions,
 } from "antd";
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
@@ -66,40 +67,86 @@ const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State 
 const [isGraphLoading, setIsGraphLoading] = useState(false); // State to control loader in the button
 const [hasRunSensitivity, setHasRunSensitivity] = useState(false); // Track sensitivity execution
 const [lastSensitivityRunId, setLastSensitivityRunId] = useState(null); // Track the last ID for sensitivity
+const [rowSensitivityLoading, setRowSensitivityLoading] = useState({}); // {combinationId: boolean}
+const [rowSensitivityData, setRowSensitivityData] = useState({}); // {combinationId: data}
+const [activeGraphCombination, setActiveGraphCombination] = useState(null); // combinationId for modal
+
+// Sequentially fetch sensitivity for each combinationId, one at a time
+const fetchNextSensitivity = async (combinationIds) => {
+  if (!combinationIds || combinationIds.length === 0) return;
+  const combinationId = combinationIds[0];
+  // Prevent duplicate API call for same combinationId
+  if (rowSensitivityData[combinationId] || rowSensitivityLoading[combinationId]) {
+    // Already fetched or loading, skip to next
+    if (combinationIds.length > 1) {
+      fetchNextSensitivity(combinationIds.slice(1));
+    }
+    return;
+  }
+  setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: true }));
+  try {
+    const data = {
+      requirement_id: selectedDemandId,
+      optimize_capacity_user: user.user_category,
+      user_id: user.id,
+      combinations: [combinationId],
+    };
+    const res = await dispatch(fetchSensitivity(data)).unwrap();
+    if (res.error) {
+      message.error(res.error);
+      setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+    } else {
+      setRowSensitivityData((prev) => ({
+        ...prev,
+        [combinationId]: res[combinationId]
+      }));
+      setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+    }
+    if (combinationIds.length > 1) {
+      fetchNextSensitivity(combinationIds.slice(1));
+    }
+  } catch (error) {
+    setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+    message.error("Failed to fetch sensitivity data.");
+    if (combinationIds.length > 1) {
+      fetchNextSensitivity(combinationIds.slice(1));
+    }
+  }
+};
 
 const handleSensitivity = async () => {
   if (hasRunSensitivity) return; // Prevent re-execution
-  console.log("clicked");
   setIsGraphLoading(true); // Show loader in the button
 
   const combinationIds = dataSource.map((item) => item.combination);
-  console.log("Extracted combination IDs:", combinationIds); // Log to verify
 
-  const data = {
-    requirement_id: selectedDemandId,
-    optimize_capacity_user: user.user_category,
-    user_id: user.id,
-    combinations: combinationIds, // Send combination IDs
-  };
-
-  console.log("Payload for sensitivity API:", data); // Log the payload
-  
+  // Sequentially fetch sensitivity for each combinationId, one at a time
+  let mergedResult = {};
   try {
-    // const res=null;
-    const res = await dispatch(fetchSensitivity(data)).unwrap();
-    console.log("API response:", res);
-    setSensitivityData(res);
-    if (res.error) {
-      message.error(res.error); // Display error message if any
-      setIsGraphLoading(false); // Hide loader in the button
-      return;
+    for (let i = 0; i < combinationIds.length; i++) {
+      const data = {
+        requirement_id: selectedDemandId,
+        optimize_capacity_user: user.user_category,
+        user_id: user.id,
+        combinations: [combinationIds[i]], // always array, one at a time
+      };
+      const res = await dispatch(fetchSensitivity(data)).unwrap();
+      if (res.error) {
+        message.error(res.error);
+        setIsGraphLoading(false);
+        return;
+      }
+      // Merge response into mergedResult
+      mergedResult = { ...mergedResult, ...res };
     }
-    setHasRunSensitivity(true); // Mark sensitivity as executed
+    setSensitivityData(mergedResult);
+    setHasRunSensitivity(true);
+    setIsGraphModalVisible(true); // Show the modal after all data is ready
   } catch (error) {
     console.error("Error fetching sensitivity data:", error);
     message.error("Failed to fetch sensitivity data.");
   } finally {
-    setIsGraphLoading(false); // Hide loader in the button
+    setIsGraphLoading(false);
   }
 };
 
@@ -149,7 +196,7 @@ const prepareGraphData = () => {
         fill: true,
       },
     ],
-    technologyCombinationData, // Pass separately for tooltips
+    technologyCombinationData: technologyCombinationData, // Pass separately for tooltips
   };
 };
 
@@ -162,8 +209,10 @@ const graphOptions = {
     tooltip: {
       callbacks: {
         label: (context) => {
+          // Use activeGraphCombination for correct tooltip data
           const index = context.dataIndex;
-          const techData = prepareGraphData().technologyCombinationData[index];
+          const graphData = prepareGraphDataForCombination(activeGraphCombination);
+          const techData = graphData?.technologyCombinationData[index];
 
           if (context.raw === null) {
             return `${context.label}: Demand cannot be met`;
@@ -171,7 +220,7 @@ const graphOptions = {
 
           return [
             `${context.dataset.label}: ${context.raw}`,
-            techData, // Show technology combination in tooltip
+            techData,
           ];
         },
       },
@@ -198,7 +247,51 @@ const graphOptions = {
 };
 
 const handleGraphModalClose = () => {
-  setIsGraphModalVisible(false); // Close the modal
+  setActiveGraphCombination(null);
+};
+
+const prepareGraphDataForCombination = (combinationId) => {
+  const dataObj = rowSensitivityData[combinationId];
+  if (!dataObj) return null;
+
+  const labels = [];
+  const tariffData = [];
+  const finalCostData = [];
+  const technologyCombinationData = [];
+
+  Object.entries(dataObj).forEach(([reReplacement, data]) => {
+    if (typeof data !== "string") {
+      labels.push(reReplacement);
+      tariffData.push(data["Per Unit Cost"]);
+      finalCostData.push(data["Final Cost"]);
+      technologyCombinationData.push(
+        `Solar: ${data["Optimal Solar Capacity (MW)"]} MW, Wind: ${data["Optimal Wind Capacity (MW)"]} MW, Battery: ${data["Optimal Battery Capacity (MW)"]} MW`
+      );
+    }
+  });
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: "Tariff (INR/kWh)",
+        data: tariffData,
+        borderColor: "#FF5733",
+        backgroundColor: "rgba(255, 87, 51, 0.2)",
+        borderWidth: 2,
+        fill: true,
+      },
+      {
+        label: "Final Cost (INR)",
+        data: finalCostData,
+        borderColor: "#337AFF",
+        backgroundColor: "rgba(51, 122, 255, 0.2)",
+        borderWidth: 2,
+        fill: true,
+      },
+    ],
+    technologyCombinationData,
+  };
 };
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
@@ -296,6 +389,12 @@ console.log('sensitivity data', sensitivityData);
     );
 
     setDataSource(formattedCombinations);
+
+    // Only trigger fetchNextSensitivity here, not in any useEffect or handleSensitivity
+    const ids = formattedCombinations.map((item) => item.combination);
+    if (ids.length > 0) {
+      fetchNextSensitivity(ids);
+    }
   };
 useEffect(()=> {
 if(dataSource?.length<=0) {
@@ -391,7 +490,7 @@ useEffect(() => {
 
             // Success actions
             setCombinationData(response);
-            console.log('set combination 387',response);
+         // console.log('set combination 387',response);
             
             formatAndSetCombinations(response);
             setIsTableLoading(false);
@@ -429,13 +528,6 @@ useEffect(() => {
 
     loadCombinations();
   }, []); // This effect remains as is, or you can add selectedDemandId if you want to reload combinations as well
-
-useEffect(() => {
-  if (dataSource.length > 0 && selectedDemandId !== lastSensitivityRunId) {
-    handleSensitivity(); // Call sensitivity only if it hasn't run for the current selectedDemandId
-    setLastSensitivityRunId(selectedDemandId); // Update the last ID for sensitivity
-  }
-}, [dataSource, selectedDemandId]); // Remove hasRunSensitivity dependency
 
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
@@ -481,6 +573,30 @@ useEffect(() => {
 const handleSensitivityClick = () => {
   setIsGraphModalVisible(true); // Show the modal
 }
+
+const handleRowSensitivity = async (combinationId) => {
+  setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: true }));
+  try {
+    const data = {
+      requirement_id: selectedDemandId,
+      optimize_capacity_user: user.user_category,
+      user_id: user.id,
+      combinations: [combinationId],
+    };
+    const res = await dispatch(fetchSensitivity(data)).unwrap();
+    if (res.error) {
+      message.error(res.error);
+      setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+      return;
+    }
+    setRowSensitivityData((prev) => ({ ...prev, ...res }));
+    setActiveGraphCombination(combinationId); // Show modal for this row
+  } catch (error) {
+    message.error("Failed to fetch sensitivity data.");
+  } finally {
+    setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+  }
+};
 
   const handleRowClick = (record) => {
     setSelectedRow(record);
@@ -696,30 +812,29 @@ const handleOptimizeClick = async () => {
     {
       title: "Sensitivity",
       key: "sensitivity",
-      render: () => (
-        <Tooltip 
-  title="Please wait while we optimize the model for different RE replacements." 
-  disableHoverListener={!isGraphLoading && combinationData} // Disable tooltip when button is enabled
->
-  <Button
-    type="primary"
-    disabled={!combinationData || isGraphLoading} // Button remains disabled while loading or if data is missing
-    onClick={handleSensitivityClick}
-  >
-    {isGraphLoading ? (
-      <>
-        <Spin size="small" style={{ marginRight: 8 }} />
-        Sensitivity
-      </>
-    ) : (
-      "Sensitivity"
-    )}
-  </Button>
-</Tooltip>
-
-      
-      
-      
+      render: (_, record) => (
+        <Tooltip
+          title={
+            rowSensitivityLoading[record.combination]
+              ? "Please wait while we optimize the model for different RE replacements."
+              : rowSensitivityData[record.combination]
+              ? "View Sensitivity Graph"
+              : "Sensitivity data is loading..."
+          }
+        >
+          <Button
+            type="primary"
+            disabled={!!rowSensitivityLoading[record.combination] || !rowSensitivityData[record.combination]}
+            loading={!!rowSensitivityLoading[record.combination]}
+            onClick={() => {
+              if (rowSensitivityData[record.combination]) {
+                setActiveGraphCombination(record.combination);
+              }
+            }}
+          >
+            Sensitivity
+          </Button>
+        </Tooltip>
       ),
     },
   ];
@@ -888,11 +1003,11 @@ const handleOptimizeClick = async () => {
               Monthly Demand Pattern
             </Title>
           </Col>
-          <Col span={24} style={{ textAlign: "center" }}>
+          {/* <Col span={24} style={{ textAlign: "center" }}>
             <p  style={{ color: "#001529" }}>
             Consumer ID: {consumerDetails?.username || "N/A"}
             </p>
-          </Col>
+          </Col> */}
 
           <Col span={24} style={{ marginBottom: "20px" }}>
             <div
@@ -908,7 +1023,17 @@ const handleOptimizeClick = async () => {
             </div>
           </Col>
         </Card>
-
+   <Card title="Demand's Details" variant={true} >
+      <Descriptions column={3} size="small">
+        <Descriptions.Item label="Username">{consumerDetails.username}</Descriptions.Item>
+        <Descriptions.Item label="Credit Rating"> {consumerDetails.credit_rating || "N/A"}</Descriptions.Item>
+        <Descriptions.Item label="State">{consumerDetails.state}</Descriptions.Item>
+        <Descriptions.Item label="Tariff Category">{consumerDetails.tariff_category}</Descriptions.Item>
+        <Descriptions.Item label="Voltage Level">{consumerDetails.voltage_level} kV</Descriptions.Item>
+        <Descriptions.Item label="Contracted Demand">{consumerDetails.contracted_demand} MW</Descriptions.Item>
+        <Descriptions.Item label="Industry">{consumerDetails.industry}</Descriptions.Item>
+      </Descriptions>
+    </Card>
         <Col
           span={24}
           style={{
@@ -1062,13 +1187,13 @@ const handleOptimizeClick = async () => {
 
         <Modal
           title="Sensitivity Analysis Graph"
-          open={isGraphModalVisible}
+          open={!!activeGraphCombination}
           onCancel={handleGraphModalClose}
           footer={null}
           width="80%"
           zIndex={5000}
         >
-          {sensitivityData ? (
+          {activeGraphCombination && rowSensitivityData[activeGraphCombination] ? (
             <div
               style={{
                 position: "relative",
@@ -1077,7 +1202,7 @@ const handleOptimizeClick = async () => {
                 margin: "0 auto",
               }}
             >
-              <Line data={prepareGraphData()} options={graphOptions} />
+              <Line data={prepareGraphDataForCombination(activeGraphCombination)} options={graphOptions} />
             </div>
           ) : (
             <div

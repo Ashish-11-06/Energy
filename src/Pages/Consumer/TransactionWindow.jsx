@@ -186,7 +186,7 @@ const TransactionWindow = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          console.log("Accepting offer with ID:", record.generator_id);
+       // console.log("Accepting offer with ID:", record.generator_id);
           await sendEvent({
             action: "select_generator",
             selected_generator_id:record.generator_id,

@@ -60,7 +60,7 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
   //       dispatch(registerUser(payload))
   //         .unwrap()
   //         .then((response) => {
-  //           console.log(response); // Log the response to check the data
+  //        // console.log(response); // Log the response to check the data
   //           setUserId(response.user_id); // Assuming the response contains a `user_id` field
   //           message.success("OTP has been sent to your email and mobile!");
   //           setOtpRequested(true);
@@ -72,7 +72,7 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
   //         });
   //     })
   //     .catch((info) => {
-  //       console.log("Validate Failed:", info);
+  //    // console.log("Validate Failed:", info);
   //       setLoading(false); // Set loading to false when validation fails
   //     });
 
@@ -84,7 +84,7 @@ const CIN_REGEX = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/; // Standard 
       const values = await form.validateFields();
       const payload = { ...values, user_category: user_category };
       const response = await dispatch(registerUser(payload)).unwrap();
-      console.log('registerresponse', response); // Log the response to check the data
+   // console.log('registerresponse', response); // Log the response to check the data
     
       if (response?.valid === false) {
         message.error("Invalid CIN for the given company name.");

@@ -147,8 +147,8 @@ const TransactionWindowgen = () => {
 
   const handleSendTariff = () => {
     const now = Date.now();
-    console.log("deadline", deadline);
-    console.log("Now", now);
+ // console.log("deadline", deadline);
+ // console.log("Now", now);
     // Check if current time is past the deadline or before start time
     if (now > deadline) {
       message.error("The offer submission period has ended.");
@@ -167,7 +167,7 @@ const TransactionWindowgen = () => {
           message.success("Tariff offer sent");
         },
         onCancel: () => {
-          console.log("Tariff value sending cancelled");
+       // console.log("Tariff value sending cancelled");
         },
       });
     } else {

@@ -56,7 +56,7 @@ const monthlyConsumptionSlice = createSlice({
       .addCase(addConsumption.fulfilled, (state, action) => {
         state.loading = false;  // Set loading to false after adding successfully
         state.monthlyData = action.payload; // Add new data to
-        console.log(action.payload);
+     // console.log(action.payload);
       })
       .addCase(addConsumption.rejected, (state, action) => {
         state.loading = false;  // Set loading to false after failed add

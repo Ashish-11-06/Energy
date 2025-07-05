@@ -670,7 +670,7 @@ Arbitration. The award passed by the arbitral tribunal will be binding.
 );
 
 const AgreementModal = ({ visible, onClose, data }) => {
-  console.log(data);
+  // console.log(data);
   const consumer=data?.consumer;
  const consumer_state=data?.consumer_state;
  const generator=data?.generator;

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import {
   Modal,
@@ -17,8 +17,9 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import moment from "moment"; // Ensure moment is imported
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
+import { fetchState,fetchDistricts } from "../../../Redux/Slices/Consumer/stateSlice";
 import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
+const { Option } = Select;
 
 const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
   const [form] = Form.useForm();
@@ -30,11 +31,12 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
   const [subIndustries, setSubIndustries] = useState([]);
   const [customSubIndustry, setCustomSubIndustry] = useState("");
   const [isCustomSubIndustry, setIsCustomSubIndustry] = useState(false);
-
+  const [districts,setDistricts]=useState([]);
+  const [locations,setLocation] =useState('');
   const dispatch = useDispatch();
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
-
+const isFetching = useRef(false);
   // console.log(data);
 
   useEffect(() => {
@@ -51,6 +53,9 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
         procurement: data.procurement_date
           ? dayjs(data.procurement_date, "YYYY-MM-DD") // Ensure it is a valid dayjs object
           : null,
+           roof_area:data.roof_area,
+        solar_rooftop_capacity:data.solar_rooftop_capacity,
+        location:data.location
       });
       // console.log(data);
       setSelectedIndustry(data.industry);
@@ -69,9 +74,40 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
     }
   }, [dispatch]);
 
+  const validateLocation = () => {
+    const district = form.getFieldValue("location");
+    const lat = form.getFieldValue("latitude");
+    const long = form.getFieldValue("longitude");
+
+    if (district || (lat && long)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(
+      new Error("Please select either a district or both latitude and longitude.")
+    );
+  };
+
   useEffect(() => {
     const res = dispatch(fetchState());
   }, [dispatch]);
+
+const fetchDistrict = async (stateName) => {
+  if (isFetching.current) return;
+  isFetching.current = true;
+
+  try {
+    const response = await dispatch(fetchDistricts(stateName));
+    console.log('response',response);
+    
+    setDistricts(response?.payload);
+  } catch (error) {
+    console.error("Failed to fetch districts", error);
+  } finally {
+    isFetching.current = false;
+  }
+};
+
+console.log('districts',districts);
 
   useEffect(() => {
     if (data) {
@@ -88,6 +124,9 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
         procurement: data.procurement_date
           ? dayjs(data.procurement_date, "YYYY-MM-DD") // Ensure it is a valid dayjs object
           : null,
+        roof_area:data.roof_area,
+        solar_rooftop_capacity:data.solar_rooftop_capacity,
+        location:data.location
       });
       // console.log(data);
       setSelectedIndustry(data.industry);
@@ -119,6 +158,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
   };
 
   const handleSubmit = (values) => {
+    console.log('values',values);
     const user = JSON.parse(localStorage.getItem("user")).user;
     const formattedValues = {
       id: data?.id,
@@ -127,11 +167,18 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
       industry: values.industry === "other" ? customIndustry : values.industry,
       contracted_demand: values.contractedDemand,
       tariff_category: values.tariffCategory,
-      voltage_level:values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
+      voltage_level:
+        values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
       procurement_date: values.procurement.format("YYYY-MM-DD"),
-      sub_industry: values.sub_industry === "otherSub" ? customSubIndustry : values.sub_industry,
+      sub_industry:
+        values.sub_industry === "otherSub"
+          ? customSubIndustry
+          : values.sub_industry,
       consumption_unit: values.consumption_unit,
       annual_electricity_consumption: values.annual_electricity_consumption,
+      roof_area:values.roof_area,
+      solar_rooftop_capacity:values.solar_rooftop_capacity,
+      location:values.location
     };
 
     onSubmit(formattedValues);
@@ -142,6 +189,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
     setIsCustomIndustry(false);
     setCustomSubIndustry("");
     setIsCustomSubIndustry(false);
+    setLocation('');
   };
 
   const renderLabelWithTooltip = (label, tooltip) => (
@@ -190,12 +238,17 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
                 placeholder="Select your state"
                 showSearch
                 disabled={isEdit} // Disable only in edit mode
+                onChange={(value) => {
+  // handleStateChange(value);  // if needed
+  fetchDistrict(value);      // fetch districts when state changes
+}}
+
               >
                 {(Array.isArray(statee) ? statee : []).map((state, index) => (
                   <Select.Option key={index} value={state}>
                     {state}
                   </Select.Option>
-                ))} 
+                ))}
               </Select>
             </Form.Item>
           </Col>
@@ -223,72 +276,77 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
           </Col>
 
           <Col span={12}>
-  <Form.Item
-    label={renderLabelWithTooltip(
-      "Industry",
-      "Industry your company is involved in (e.g., IT, Manufacturing)."
-    )}
-    name="industry"
-    rules={[{ required: true, message: "Please select your industry!" }]}
-  >
-    <Select
-      placeholder="Select your industry"
-      showSearch
-      optionFilterProp="children"
-      onChange={handleIndustryChange}
-      filterOption={(input, option) =>
-        option.children.toLowerCase().includes(input.toLowerCase())
-      }
-    >
-      {/* Sorting industry keys alphabetically */}
-      {Object.keys(industryy)
-        .sort((a, b) => a.localeCompare(b)) // Sorting alphabetically
-        .map((industry, index) => (
-          <Select.Option key={index} value={industry}>
-            {industry}
-          </Select.Option>
-        ))}
-      <Select.Option value="other">Other</Select.Option>
-    </Select>
-  </Form.Item>
-</Col>
+            <Form.Item
+              label={renderLabelWithTooltip(
+                "Industry",
+                "Industry your company is involved in (e.g., IT, Manufacturing)."
+              )}
+              name="industry"
+              rules={[
+                { required: true, message: "Please select your industry!" },
+              ]}
+            >
+              <Select
+                placeholder="Select your industry"
+                showSearch
+                optionFilterProp="children"
+                onChange={handleIndustryChange}
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().includes(input.toLowerCase())
+                }
+              >
+                {/* Sorting industry keys alphabetically */}
+                {Object.keys(industryy)
+                  .sort((a, b) => a.localeCompare(b)) // Sorting alphabetically
+                  .map((industry, index) => (
+                    <Select.Option key={index} value={industry}>
+                      {industry}
+                    </Select.Option>
+                  ))}
+                <Select.Option value="other">Other</Select.Option>
+              </Select>
+            </Form.Item>
+          </Col>
 
-          {(selectedIndustry && selectedIndustry !== "other") && (
-  <Col span={12}>
-    <Form.Item
-      label={renderLabelWithTooltip(
-        "Sub Industry",
-        "Select a sub-industry from the chosen industry."
-      )}
-      name="sub_industry"
-      rules={[
-        { required: true, message: "Please select your sub-industry!" },
-      ]}
-    >
-      <Select
-        placeholder="Select a sub-industry"
-        showSearch
-        optionFilterProp="children"
-        onChange={handleSubIndustryChange} // Ensure this handler is used
-        filterOption={(input, option) =>
-          option.children.toLowerCase().includes(input.toLowerCase())
-        }
-      >
-        {/* Sorting subIndustries array alphabetically */}
-        {[...subIndustries]
-          .sort((a, b) => a.localeCompare(b)) // Sorting alphabetically
-          .map((sub_industry, index) => (
-            <Select.Option key={index} value={sub_industry}>
-              {sub_industry}
-            </Select.Option>
-          ))}
-        
-        {/* Correct "Other" option outside the map loop */}
-        <Select.Option value="otherSub">Other</Select.Option>
-      </Select>
-    </Form.Item>
-  </Col>
-)}
+          {selectedIndustry && selectedIndustry !== "other" && (
+            <Col span={12}>
+              <Form.Item
+                label={renderLabelWithTooltip(
+                  "Sub Industry",
+                  "Select a sub-industry from the chosen industry."
+                )}
+                name="sub_industry"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select your sub-industry!",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select a sub-industry"
+                  showSearch
+                  optionFilterProp="children"
+                  onChange={handleSubIndustryChange} // Ensure this handler is used
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().includes(input.toLowerCase())
+                  }
+                >
+                  {/* Sorting subIndustries array alphabetically */}
+                  {[...subIndustries]
+                    .sort((a, b) => a.localeCompare(b)) // Sorting alphabetically
+                    .map((sub_industry, index) => (
+                      <Select.Option key={index} value={sub_industry}>
+                        {sub_industry}
+                      </Select.Option>
+                    ))}
+
+                  {/* Correct "Other" option outside the map loop */}
+                  <Select.Option value="otherSub">Other</Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          )}
 
           {isCustomSubIndustry && (
             <Col span={12}>
@@ -299,7 +357,10 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
                 )}
                 name="customSubIndustry"
                 rules={[
-                  { required: true, message: "Please enter a custom sub-industry!" },
+                  {
+                    required: true,
+                    message: "Please enter a custom sub-industry!",
+                  },
                 ]}
               >
                 <Input
@@ -324,10 +385,18 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
               ]}
             >
               <Select placeholder="Select tariff category">
-                <Select.Option value="HT Commercial">HT Commercial</Select.Option>
-                <Select.Option value="HT Industrial">HT Industrial</Select.Option>
-                <Select.Option value="LT Commercial">LT Commercial</Select.Option>
-                <Select.Option value="LT Industrial">LT Industrial</Select.Option>
+                <Select.Option value="HT Commercial">
+                  HT Commercial
+                </Select.Option>
+                <Select.Option value="HT Industrial">
+                  HT Industrial
+                </Select.Option>
+                <Select.Option value="LT Commercial">
+                  LT Commercial
+                </Select.Option>
+                <Select.Option value="LT Industrial">
+                  LT Industrial
+                </Select.Option>
               </Select>
             </Form.Item>
           </Col>
@@ -381,42 +450,51 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
             </Col>
           )}
 
- <Col span={12}>
-  <Form.Item
-    label={renderLabelWithTooltip(
-      "Contracted Demand (in MW)",
-      "Contracted demand / Sanctioned load as per your electricity bill"
-    )}
-    name="contractedDemand"
-    rules={[
-      { required: true, message: "Please enter the contracted demand!" },
-      {
-        validator: (_, value) => {
-          if (value === undefined || value === '') {
-            return Promise.reject(new Error("Please enter the contracted demand!"));
-          }
-          if (value <= 0) {
-            return Promise.reject(new Error("Contracted demand must be greater than 0!"));
-          }
-          // Regex to check max 2 decimal places
-          if (!/^\d+(\.\d{1,2})?$/.test(value)) {
-            return Promise.reject(new Error("Contracted demand can have up to 2 decimal places!"));
-          }
-          return Promise.resolve();
-        },
-      },
-    ]}
-  >
-    <Input
-      type="number"
-      min={0.01}
-      step={0.01}
-      placeholder="Enter contracted demand in MW"
-    />
-  </Form.Item>
-</Col>
-
-
+          <Col span={12}>
+            <Form.Item
+              label={renderLabelWithTooltip(
+                "Contracted Demand (in MW)",
+                "Contracted demand / Sanctioned load as per your electricity bill"
+              )}
+              name="contractedDemand"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter the contracted demand!",
+                },
+                {
+                  validator: (_, value) => {
+                    if (value === undefined || value === "") {
+                      return Promise.reject(
+                        new Error("Please enter the contracted demand!")
+                      );
+                    }
+                    if (value <= 0) {
+                      return Promise.reject(
+                        new Error("Contracted demand must be greater than 0!")
+                      );
+                    }
+                    // Regex to check max 2 decimal places
+                    if (!/^\d+(\.\d{1,2})?$/.test(value)) {
+                      return Promise.reject(
+                        new Error(
+                          "Contracted demand can have up to 2 decimal places!"
+                        )
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <Input
+                type="number"
+                min={0.01}
+                step={0.01}
+                placeholder="Enter contracted demand in MW"
+              />
+            </Form.Item>
+          </Col>
 
           <Col span={12}>
             <Form.Item
@@ -458,17 +536,120 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
               )}
               name="procurement"
               rules={[
-                { required: true, message: "Please select a procurement date!" },
+                {
+                  required: true,
+                  message: "Please select a procurement date!",
+                },
               ]}
             >
-              <DatePicker
-                style={{ width: "100%" }}
-                format="DD-MM-YYYY"
+              <DatePicker style={{ width: "100%" }} format="DD-MM-YYYY" />
+            </Form.Item>
+          </Col>
+         <Col span={12}>
+            <Form.Item
+              label={renderLabelWithTooltip(
+                "Roof Area(sq m)",
+                "Enter the roof area in square meter."
+              )}
+              name="roof_area"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter the roof area in square meter!",
+                },
+              ]}
+            >
+              <Input
+                type="number"
+                min={1}
+                placeholder="Enter the roof area in square meter."
               />
             </Form.Item>
           </Col>
+           <Col span={12}>
+            <Form.Item
+              label={renderLabelWithTooltip(
+                "Existing Solar Rooftop Capacity (kWp)",
+                "Enter the existing solar rooftop capacity."
+              )}
+              name="solar_rooftop_capacity"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter the existing solar rooftop capacity!",
+                },
+                {
+                  validator: (_, value) =>
+                    value > 0
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          new Error(
+                            "Annual electricity consumption must be greater than 0!"
+                          )
+                        ),
+                },
+              ]}
+            >
+              <Input
+                type="number"
+                min={1}
+                placeholder="Enter the existing solar rooftop capacity"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+          <Form.Item
+            label="District"
+            name="location"
+            rules={[{ validator: validateLocation }]}
+          >
+            <Select placeholder="Select District" allowClear
+             onChange={(e) => setLocation(e.target.value)}
+            >
+               {(Array.isArray(districts) ? districts : []).map((district, index) => (
+                  <Select.Option key={index} value={district}>
+                    {district}
+                  </Select.Option>
+                ))}
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+  <Form.Item
+    label="Coordinates (Latitude & Longitude)"
+    required
+    style={{ marginBottom: 0 }}
+  >
+    <div style={{ display: "flex", gap: "10px" }}>
+      <Form.Item
+        name="latitude"
+        rules={[{ validator: validateLocation }]}
+        style={{ flex: 1, marginBottom: 0 }}
+      >
+        <Input
+          type="number"
+          placeholder="Enter Latitude"
+          step="any"
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="longitude"
+        rules={[{ validator: validateLocation }]}
+        style={{ flex: 1, marginBottom: 0 }}
+      >
+        <Input
+          type="number"
+          placeholder="Enter Longitude"
+          step="any"
+        />
+      </Form.Item>
+    </div>
+  </Form.Item>
+</Col>
+
         </Row>
-<p style={{color:'GrayText'}}>(Note: All * fields are mandatory.)</p>
+        <p style={{ color: "GrayText" }}>(Note: All * fields are mandatory.)</p>
         <Form.Item style={{ textAlign: "center" }}>
           <Button
             type="primary"

@@ -171,16 +171,22 @@ const companyName=userData.company;
   };
 
   const handleSubmit = async (values) => {
+    console.log('values',values);
+    
     try {
       if (isEdit) {
         const res = dispatch(updateRequirements({ updatedData: values }));
         setIsModalVisible(false);
-        message.success('Requirement updated successfully!');
+        if(res) {
+          message.success('Requirement updated successfully!');
+        }
       } else {
         const res = dispatch(addNewRequirement(values));
         setIsModalVisible(false);
-        message.success('Requirement added successfully!');
-      }
+      if(res) {
+          message.success('Requirement updated successfully!');
+        }    
+       }
 
     // form.resetFields();
     } catch (error) {

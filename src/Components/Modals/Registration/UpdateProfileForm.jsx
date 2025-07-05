@@ -30,7 +30,7 @@ const { Title, Text } = Typography;
 const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorCloseModal, lastUploadedFile, updateLastUploadedFile }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user")).user;
-console.log('project',project);
+// console.log('project',project);
 // console.log('form',form);
 const baseURL = "https://ext.exgglobal.com/api";
 
@@ -233,7 +233,7 @@ const handleCloseWarningModal = () => {
 
     try {
       const response = await dispatch(updateProject(updatedValues)).unwrap();
-      console.log('res',response);
+   // console.log('res',response);
       if(response.message !== null ) {
         message.warning(response.message || "Please fill all the details and upload the file in given format");
         setWarningModal(true);

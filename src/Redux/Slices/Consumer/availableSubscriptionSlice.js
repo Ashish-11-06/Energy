@@ -11,7 +11,7 @@ export const fetchSubscriptionPlan = createAsyncThunk(
     // console.log('Fetching subscriptionPlan...');
     try {
       const response = await availableSubscriptionApi.availableSubscription();
-    //   console.log(response.data);
+    //// console.log(response.data);
       return response.data;
       
     } catch (error) {
