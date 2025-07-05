@@ -54,7 +54,7 @@ const DashboardP = () => {
   const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
   const user=JSON.parse(localStorage.getItem('user')).user;
   const is_due_date=user.is_due_date;
-  
+  const [tableLoading,setTableLoading] = useState(false);
   const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -92,8 +92,10 @@ const tomorrowDate = tomorrow.toLocaleDateString('en-GB', option);
   useEffect(() => {
     const id=user_id;
     const fetchData = async () => {
+      setTableLoading(true);
       const res = await dispatch(fetchDashboardData(id));
       setDashboardData(Array.isArray(res.payload) ? res.payload : []); // Ensure it's an array
+      setTableLoading(false);
     };
     fetchData();
   }, [dispatch]);
@@ -173,12 +175,12 @@ setShowLineGraph(true); // Show line graph card
       title: 'Parameter',
       children: [
         {
-          title: 'Ask Price (INR/MWh)',
+          title: 'Ask Price (INR / MWh)',
           dataIndex: 'ask_price',
           key: 'ask_price',
         },
         {
-          title: 'Executed Price (INR/MWh)',
+          title: 'Executed Price (INR / MWh)',
           dataIndex: 'executed_price',
           key: 'executed_price',
         },
@@ -229,7 +231,9 @@ setShowLineGraph(true); // Show line graph card
         try {
           setLoading(true);
           const data = await dispatch(dayAheadData()).unwrap();
-          // console.log('data', data.predictions.map(item=>item.date));
+          // console.log('data response',data);
+          
+          console.log('data', data.predictions.map(item=>item.date));
           if (data?.predictions?.length > 0) {
             const dateStr = data.predictions[0]?.date;
             const date = new Date(dateStr);
@@ -283,11 +287,19 @@ setShowLineGraph(true); // Show line graph card
         }
       }, [statistiicsData]);
 
+      const timeLabels = Array.from({ length: 96 }, (_, i) => {
+  const minutes = i * 15;
+  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
+  const mins = String(minutes % 60).padStart(2, '0');
+  return `${hours}:${mins}`;
+});
+      console.log('time labes',timeLabels);
+      
         const data = {
-          labels: Array.from({ length: 96 }, (_, i) => i + 1), // Ensure X-axis shows values from 1 to 96
+           labels: timeLabels,
           datasets: [
             {
-              label: 'MCP (INR/MWh)', // Label for MCP dataset
+              label: 'MCP (INR / MWh)', // Label for MCP dataset
               data: tableData[0]?.MCP || [], // Updated data for MCP
               borderColor: 'blue',
               fill: false,
@@ -314,93 +326,68 @@ setShowLineGraph(true); // Show line graph card
   // Extract demand values from dashboardLine
   const demandValues = dashboardLine.map(item => item.demand);
 
-   const options = {
-      responsive: true,
-      scales: {
-        x: {
-          type: 'linear',
-          position: 'bottom',
-          min: 1, // Set minimum value for x-axis
-          max: 96, // Set maximum value for x-axis
-          ticks: {
-            callback: function(value) {
-              return value; // Show all values from 1 to 96
-            },
-            autoSkip: false, // Ensure all ticks are shown
-            maxTicksLimit: 96, // Ensure at least 96 ticks are shown
-          },
-          title: {
-            display: true,
-            text: 'Time (15-minute intervals)',
-            font: {
-              weight: 'bold',
-              size: 16,
-            }
-          },
+const options = {
+  responsive: true,
+  scales: {
+    x: {
+      type: 'category',
+      title: {
+        display: true,
+        text: 'Timeee',
+      },
+      ticks: {
+        maxRotation: 90,
+        minRotation: 45,
+        autoSkip: false,
+        font: {
+          size: 10,
         },
-        'y-axis-mcv': {
-          type: 'linear',
-          position: 'left',
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'MCV (MWh)',
-            font: {
-              weight: 'bold', 
-            }
-          },
-          ticks: {
-            color: 'green', // Set scale number color for MCV
-          },
-        },
-        'y-axis-mcp': {
-          type: 'linear',
-          position: 'right',
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'MCP (INR/MWh)',
-            font :{
-              weight: 'bold',
-            }
-          },
-          grid: {
-            drawOnChartArea: false, // Only draw grid lines for one Y-axis
-          },
-          ticks: {
-            color: 'blue', // Set scale number color for MCP
-          },
+        callback: function (val, index) {
+          const label = this.getLabelForValue(val); // Get actual time string
+          const [hour, minute] = label.split(':').map(Number);
+          return minute === 0 && hour % 2 === 0 ? label : ''; // Show every 2 hours
         },
       },
-      plugins: {
-        legend: {
-          display: true,
-          position: 'bottom', // Position legends at the bottom
-          align: 'end', // Align legends to the right
-          labels: {
-            // usePointStyle: true, // Use point style for legend items
-            padding: 20, // Add padding around legend items
-          },
-        },
-        // Removed zoom plugin configuration
-        title: {
-          display: true,
-          text: `Day Ahead Market Forecast (${nextDay})`,
-          font: {
-            size: 18,
-          },
-        },
+    },
+    'y-axis-mcp': {
+      position: 'right',
+      title: {
+        display: true,
+        text: 'MCP (INR / MWh)',
       },
-    };
+    },
+    'y-axis-mcv': {
+      position: 'left',
+      title: {
+        display: true,
+        text: 'MCV (MWh)',
+      },
+    },
+  },
+  plugins: {
+    title: {
+      display: true,
+      text: 'Day Ahead Market Forecast',
+      font: {
+        size: 18,
+        weight: 'bold',
+      },
+      padding: {
+        top: 10,
+        bottom: 30,
+      },
+    },
+  },
+};
+
+
   const handleModalOk =()=> {
       navigate('/px/consumer/planning')
   }
 
   // Line Chart Data
   const lineData = {
-    labels: demandValues.length
-      ? Array.from({ length: demandValues.length }, (_, i) => i + 1)
-      : [],
+     labels: timeLabels,
     datasets: [
       {
         label: "Energy (MWh)",
@@ -413,71 +400,73 @@ setShowLineGraph(true); // Show line graph card
     ],
   };
 
-  const lineOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Energy (MWh)",
-          font: {
-            weight: "bold",
-          },
-        },
-      },
-      x: {
-        type: 'linear',
-        position: 'bottom',
-        min: 0,
-        max: 100,
-        title: {
-          display: true,
-          text: 'Time (15-minute intervals)',
-          font: {
-            weight: 'bold',
-          }
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom', // Position legends at the bottom
-        align: 'end', // Align legends to the right
-        labels: {
-          padding: 20, // Add padding around legend items
-        },
-      },
-      // zoom: {
-      //   pan: {
-      //     enabled: true,
-      //     mode: 'x',
-      //   },
-      //   zoom: {
-      //     wheel: {
-      //       enabled: true,
-      //     },
-      //     pinch: {
-      //       enabled: true,
-      //     },
-      //     mode: 'x',
-      //   },
-      // },
+const lineOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    y: {
+      beginAtZero: true,
       title: {
         display: true,
-        text: `Energy Demand Pattern (${tomorrowDate})`, 
+        text: "Energy (MWh)",
         font: {
-          size: 18,
+          weight: "bold",
         },
       },
     },
-  };
+    x: {
+      type: 'category', // Change from 'linear' to 'category'
+      title: {
+        display: true,
+        text: 'Time (15-minute intervals)',
+        font: {
+          weight: 'bold',
+        }
+      },
+      ticks: {
+        maxRotation: 90,
+        minRotation: 45,
+        autoSkip: false,
+        font: {
+          size: 10,
+        },
+        callback: function (val, index) {
+          const label = this.getLabelForValue(val);
+          const [hour, minute] = label.split(':').map(Number);
+          return minute === 0 && hour % 2 === 0 ? label : '';
+        },
+      },
+    },
+    
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: 'bottom',
+      align: 'end',  
+      labels: {
+        padding: 20,
+      },
+    },
+    title: {
+      display: true,
+      text: `Energy Demand pattern (${tomorrowDate})`,
+      font: {
+        size: 18,
+      },
+    },
+  },
+};
+
 
   // Extract state names and their demands from dashboardData
   const stateLabels = Array.isArray(dashboardData) ? dashboardData.map(data => data.state) : [];
   const stateDemands = Array.isArray(dashboardData) ? dashboardData.map(data => data.contracted_demand) : [];
+
+  console.log('state label',stateLabels);
+  console.log('state demand',stateDemands);
+  
+  
 
   const stateColumn = [
     {
@@ -498,6 +487,9 @@ setShowLineGraph(true); // Show line graph card
       state,
       contracted_demand: stateDemands[index], // Corrected property name
     }));
+
+console.log('state data',stateData);
+
 
   const doughnutData = {
     labels: stateLabels,
@@ -541,6 +533,13 @@ setShowLineGraph(true); // Show line graph card
           },
         },
       },
+        title: {
+        display: true,
+        text: `Day Ahead Market Forecast `, // Use the nextDay variable here
+        font: {
+          size: 18,
+        },
+      },
       // zoom: {
       //   pan: {
       //     enabled: true,
@@ -570,7 +569,7 @@ setShowLineGraph(true); // Show line graph card
   const tradeSummaryData = [
     {
       key: '1',
-      parameter: 'Ask Price (INR/MWh)',
+      parameter: 'Ask Price (INR / MWh)',
       value: 4,
     },
     {
@@ -580,7 +579,7 @@ setShowLineGraph(true); // Show line graph card
     },
     {
       key: '3',
-      parameter: 'Executed Price (INR/MWh)',
+      parameter: 'Executed Price (INR / MWh)',
       value: 4,
     },
     {
@@ -624,15 +623,18 @@ setShowLineGraph(true); // Show line graph card
             </Col>
           </Col>
           <Col span={12}>
+          <Spin spinning={tableLoading} tip="Loading...">
   <Table
     columns={stateColumn}
     dataSource={stateData}
     pagination={false} // Disable pagination
     bordered
 
+
     scroll={{ x: true, y: 300 }} // Enables horizontal and vertical scrolling
     style={{ maxHeight: "400px", overflowY: "auto",textAlign:'center',justifyContent:'center',alignContent:'center' }} // Ensures the column does not exceed this height
   />
+  </Spin>
 </Col>
 
         </Row>

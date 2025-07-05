@@ -302,7 +302,7 @@ const dummyAccuracyData = [
         style={{ width: 200, marginBottom: '20px', marginRight: '20px' }}
         onChange={handleForecastChange}
       >
-        <Option value="currentDay">Current day</Option>
+        <Option value="currentDay">Previous day</Option>
         <Option value="next30Day">Last 30 days</Option>
       </Select>
       {/* <h1>Model Statistical Information</h1> */}

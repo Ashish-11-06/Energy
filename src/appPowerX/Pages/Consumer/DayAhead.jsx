@@ -113,26 +113,46 @@ const DayAhead = () => {
 // console.log('table data',detailDataSource);
 
 
-  const detailColumns = [
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-    },
-    {
-      title: 'Market Clearing Price (INR/MWh)',
-      dataIndex: 'mcp',
-      key: 'mcp',
-    },
-    {
-      title: 'Market Clearing Volume (MWh)',
-      dataIndex: 'mcv',
-      key: 'mcv',
-    },
-  ];
+const detailColumns = [
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+    align: 'center',
+  },
+  {
+    title: 'Market Clearing Price (INR/MWh)',
+    dataIndex: 'mcp',
+    key: 'mcp',
+    align: 'center',
+    render: (value) =>
+      Number(value).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+  },
+  {
+    title: 'Market Clearing Volume (MWh)',
+    dataIndex: 'mcv',
+    key: 'mcv',
+    align: 'center',
+    render: (value) =>
+      Number(value).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+  },
+];
+
+ const timeLabels = Array.from({ length: 96 }, (_, i) => {
+  const minutes = i * 15;
+  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
+  const mins = String(minutes % 60).padStart(2, '0');
+  return `${hours}:${mins}`;
+});
 
   const data = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1), // Ensure X-axis shows values from 1 to 96
+    labels: timeLabels, // Ensure X-axis shows values from 1 to 96
     datasets: [
       {
         label: 'MCP (INR/MWh)', // Label for MCP dataset
@@ -159,84 +179,90 @@ const DayAhead = () => {
     ],
   };
 
-  const options = {
-    responsive: true,
-    scales: {
-      x: {
-        type: 'linear',
-        position: 'bottom',
-        min: 1, // Set minimum value for x-axis
-        max: 96, // Set maximum value for x-axis
-        ticks: {
-          callback: function(value) {
-            return value; // Show all values from 1 to 96
-          },
-          autoSkip: false, // Ensure all ticks are shown
-          maxTicksLimit: 96, // Ensure at least 96 ticks are shown
-        },
-        title: {
-          display: true,
-          text: 'Time (15-minute intervals)',
-          font: {
-            weight: 'bold',
-            size: 16,
+const options = {
+  responsive: true,
+  scales: {
+    x: {
+      type: 'linear',
+      position: 'bottom',
+      min: 1,
+      max: 96,
+      ticks: {
+        callback: function (value) {
+          // Show label only every 8th interval (every 2 hours)
+          if ((value - 1) % 3 === 0) {
+            const totalMinutes = (value - 1) * 15;
+            const hours = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
+            const minutes = String(totalMinutes % 60).padStart(2, '0');
+            return `${hours}:${minutes}`;
           }
+          return '';
         },
+        autoSkip: false,
+        maxTicksLimit: 96,
       },
-      'y-axis-mcv': {
-        type: 'linear',
-        position: 'left',
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'MCV (MWh)',
-          font: {
-            weight: 'bold', 
-          }
-        },
-        ticks: {
-          color: 'green', // Set scale number color for MCV
-        },
-      },
-      'y-axis-mcp': {
-        type: 'linear',
-        position: 'right',
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'MCP (INR/MWh)',
-          font :{
-            weight: 'bold',
-          }
-        },
-        grid: {
-          drawOnChartArea: false, // Only draw grid lines for one Y-axis
-        },
-        ticks: {
-          color: 'blue', // Set scale number color for MCP
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom', // Position legends at the bottom
-        align: 'end', // Align legends to the right
-        labels: {
-          // usePointStyle: true, // Use point style for legend items
-          padding: 20, // Add padding around legend items
-        },
-      },
-      // Removed zoom plugin configuration
       title: {
         display: true,
-        text: 'Day Ahead Market Forecast',
+        text: 'Time (15-minute intervals)',
         font: {
-          size: 18,
+          weight: 'bold',
+          size: 16,
         },
       },
     },
-  };
+    'y-axis-mcv': {
+      type: 'linear',
+      position: 'left',
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'MCV (MWh)',
+        font: {
+          weight: 'bold',
+        },
+      },
+      ticks: {
+        color: 'green',
+      },
+    },
+    'y-axis-mcp': {
+      type: 'linear',
+      position: 'right',
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'MCP (INR/MWh)',
+        font: {
+          weight: 'bold',
+        },
+      },
+      grid: {
+        drawOnChartArea: false,
+      },
+      ticks: {
+        color: 'blue',
+      },
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: 'bottom',
+      align: 'end',
+      labels: {
+        padding: 20,
+      },
+    },
+    title: {
+      display: true,
+      text: 'Day Ahead Market Forecast',
+      font: {
+        size: 18,
+      },
+    },
+  },
+};
+
 
   const columns = [
     {
