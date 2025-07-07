@@ -361,6 +361,10 @@ console.log('sensitivity data', sensitivityData);
             combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"])
               ? combination["Per Unit Cost"].toFixed(2)
               : 0,
+          per_unit_savings:
+            combination["per_unit_savings"] && !isNaN(combination["per_unit_savings"])
+              ? combination["per_unit_savings"].toFixed(2)
+              : 0,
           finalCost:
             combination["FinalCost"] && !isNaN(combination["Final Cost"])
               ? combination["Final Cost"].toFixed(2)
@@ -760,8 +764,8 @@ const handleOptimizeClick = async () => {
     },
     {
       title: "Per Unit Saving",
-      dataIndex: "totalCost",
-      key: "totalCost",
+      dataIndex: "per_unit_savings",
+      key: "per_unit_savings",
     },
     {
       title: "COD",
