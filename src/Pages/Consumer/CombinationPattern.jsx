@@ -16,7 +16,7 @@ import {
   Modal,
   Descriptions,
 } from "antd";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
+import { CheckCircleTwoTone, CloseCircleTwoTone, LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
 
 import { Bar, Line, Pie, Bubble, Scatter } from "react-chartjs-2";
 import "chart.js/auto";
@@ -178,7 +178,7 @@ const fetchNextSensitivity = async (combinationIds) => {
             "NA", // updated to handle null or undefined values
           connectivity: combination.connectivity,
           states: combination.state,
-
+          banking_available: combination.banking_available || 0,
           status: combination?.terms_sheet_sent
             ? combination?.sent_from_you === 1
               ? "Already Sent"
@@ -623,6 +623,21 @@ const handleSensitivityClick = () => {
       key: "cod",
       width: 120,
       render: (text) => dayjs(text).format("DD-MM-YYYY"),
+    }, {
+      title: "Banking Available",
+      dataIndex: "banking_available",
+      key: "banking_available",
+      width: 300,
+      align: 'center',
+      render: (value) => (
+        <div style={{ textAlign: 'center' }}>
+          {value === 0 ? (
+            <CloseCircleTwoTone twoToneColor="#FF0000" />
+          ) : (
+            <CheckCircleTwoTone twoToneColor="#669800" />
+          )}
+        </div>
+      ),
     },
     
   ];
@@ -946,7 +961,9 @@ const lineChartData = {
           <IPPModal
             visible={isIPPModalVisible}
             // reReplacement={sliderValue} // Pass the latest slider value
-            ipp={selectedRow}
+            ipp={selectedRow
+
+            }
             combination={combinationData}
             fromGenerator={false}
             fromConsumer={true}
