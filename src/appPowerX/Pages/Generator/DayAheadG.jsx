@@ -151,20 +151,26 @@ const options = {
       type: 'category',
       title: {
         display: true,
-        text: 'Time (2-hour interval)',
+        text: 'Time (15-min interval)',
         font: {
           weight: 'bold',
           size: 16,
         },
       },
       ticks: {
-        callback: function (val, index) {
-          // Show label every 8th index → 15 * 8 = 120 minutes = 2 hours
-          return index % 8 === 0 ? this.getLabelForValue(val) : '';
-        },
-        maxRotation: 0,
-        autoSkip: false,  // Important to allow full control
-      },
+  callback: function (val, index, values) {
+    // Show every 2 hours AND the last label (index 95 = "23:45")
+    if (index % 8 === 0 || index === values.length - 1) {
+      return this.getLabelForValue(val);
+    }
+    return '';
+  },
+  autoSkip: false,
+  font: {
+    size: 12,
+  },
+  color: '#333',
+},
     },
     mcv: {
       type: 'linear',

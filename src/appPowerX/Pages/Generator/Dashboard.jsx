@@ -108,7 +108,12 @@ const Dashboard = () => {
     fetchLineData();
   }, [dispatch]);
 
-
+const timeLabels = Array.from({ length: 96 }, (_, i) => {
+  const minutes = i * 15;
+  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
+  const mins = String(minutes % 60).padStart(2, '0');
+  return `${hours}:${mins}`;
+});
   
     useEffect(() => {
       const fetchData = async () => {
@@ -155,9 +160,7 @@ const Dashboard = () => {
   
   // Line Chart Data
   const lineData = {
-    labels: generationValues.length
-      ? Array.from({ length: generationValues.length }, (_, i) => i + 1)
-      : [],
+    labels: timeLabels,
     datasets: [
       {
         label: "Generation (MWh)",
@@ -174,70 +177,91 @@ const Dashboard = () => {
     navigate('/px/generator/planning')
 }
 
-  const lineOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "MWh",
-        },
-      },
-      x: {
-        type: 'linear',
-        position: 'bottom',
-        min: 0,
-        max: 100,
-        title: {
-          display: true,
-          text: 'Time (15-minute intervalssss)',
-        },
-      },
-
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom', // Position legends at the bottom
-        align: 'end', // Align legends to the right
-        labels: {
-          padding: 20, // Add padding around legend items
-        },
-        title: {
-          display: true,
-          // text: `Energy Demand`, 
-          font: {
-            size: 18,
-          },
-        },
-      },
-      // zoom: {
-      //   pan: {
-      //     enabled: true,
-      //     mode: 'x',
-      //   },
-      //   zoom: {
-      //     wheel: {
-      //       enabled: true,
-      //     },
-      //     pinch: {
-      //       enabled: true,
-      //     },
-      //     mode: 'x',
-      //   },
-      // },
+const lineOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      type: 'category',
+      position: 'bottom',
       title: {
         display: true,
-        text: ` Energy Generation Pattern (${formattedDate})`,
-
+        text: 'Time (15-minute intervals)',
         font: {
-          size: 18,
+          weight: 'bold',
+          size: 16,
+        },
+      },
+    ticks: {
+  callback: function (val, index, values) {
+    // Show every 2 hours AND the last label (index 95 = "23:45")
+    if (index % 8 === 0 || index === values.length - 1) {
+      return this.getLabelForValue(val);
+    }
+    return '';
+  },
+  autoSkip: false,
+  font: {
+    size: 12,
+  },
+  color: '#333',
+},
+
+      grid: {
+        display: true,
+        drawOnChartArea: true,
+        color: '#e0e0e0', // Light grid lines
+      },
+    },
+    y: {
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'Generation (MWh)',
+        font: {
+          weight: 'bold',
+          size: 14,
+        },
+      },
+      ticks: {
+        color: '#333',
+        font: {
+          size: 12,
+        },
+      },
+      grid: {
+        display: true,
+        drawOnChartArea: true,
+        color: '#e0e0e0',
+      },
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: 'bottom',
+      align: 'end',
+      labels: {
+        padding: 20,
+        font: {
+          size: 12,
         },
       },
     },
-  };
+    title: {
+      display: true,
+      text: `Energy Generation Pattern (${formattedDate})`,
+      font: {
+        size: 18,
+        weight: 'bold',
+      },
+      padding: {
+        bottom: 10,
+      },
+    },
+  },
+};
+
 
   // Extract state names, total install capacity, and available capacity from dashboardData
   const solarData = dashboardData.solar || [];
@@ -341,12 +365,7 @@ const stateData = [
   })),
 ];
   
-const timeLabels = Array.from({ length: 96 }, (_, i) => {
-  const minutes = i * 15;
-  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
-  const mins = String(minutes % 60).padStart(2, '0');
-  return `${hours}:${mins}`;
-});
+
 
 
 const data = {
@@ -380,20 +399,26 @@ const options = {
       position: 'bottom',
       title: {
         display: true,
-        text: 'Time (15-minute intervals)',
+        text: 'Time (15-minute intervalssss)',
         font: {
           weight: 'bold',
           size: 16,
         },
       },
-      ticks: {
-        callback: function (val, index) {
-          // Show tick every 2 hours (8 * 15 = 120 mins)
-          return index % 8 === 0 ? this.getLabelForValue(val) : '';
-        },
-        autoSkip: false,
-        maxTicksLimit: 12, // Only show every 2 hours
-      },
+        ticks: {
+  callback: function (val, index, values) {
+    // Show every 2 hours AND the last label (index 95 = "23:45")
+    if (index % 8 === 0 || index === values.length - 1) {
+      return this.getLabelForValue(val);
+    }
+    return '';
+  },
+  autoSkip: false,
+  font: {
+    size: 12,
+  },
+  color: '#333',
+},
     },
     'y-axis-mcv': {
       type: 'linear',

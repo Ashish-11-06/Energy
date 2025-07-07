@@ -365,7 +365,6 @@ console.log('sensitivity data', sensitivityData);
             combination["per_unit_savings"] && !isNaN(combination["per_unit_savings"])
               ? combination["per_unit_savings"].toFixed(2)
               : 0,
-
           finalCost:
             combination["FinalCost"] && !isNaN(combination["Final Cost"])
               ? combination["Final Cost"].toFixed(2)

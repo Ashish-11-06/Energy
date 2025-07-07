@@ -33,7 +33,7 @@ const TrackStatusP = () => {
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
   const user_id = user.id;
   const [filteredTrackDataGen, setFilteredTrackDataGen] = useState([]);
-
+  const [selectedRequirement, setSelectedRequirement] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -102,17 +102,27 @@ const TrackStatusP = () => {
     fetchData();
   }, [user_id, dispatch]);
 
-  const handleStateChangee = (value) => {
-    setSelectedState(value);
+const handleStateChangee = (value) => {
+  const [state, industry, contracted_demand, consumption_unit] = value.split("||");
+console.log('va;ue',value);
 
-    // Find the requirement ID of the selected state
-    const selectedRequirement = consumerRequirement.find(
-      (item) => item.state === value
-    );
-    setSelectedRequirementId(
-      selectedRequirement ? selectedRequirement.id : null
-    );
-  };
+  const selectedRequirement = consumerRequirement.find(
+    (item) =>
+      item.state === state &&
+      item.industry === industry &&
+      String(item.contracted_demand) === contracted_demand &&
+      item.consumption_unit === consumption_unit
+  );
+console.log('selected requirement',selectedRequirement);
+
+  if (selectedRequirement) {
+    setSelectedState(value); // composite value
+    setSelectedRequirementId(selectedRequirement.id);
+  } else {
+    setSelectedRequirementId(null);
+  }
+};
+
 
   const genColumns = [
     {
@@ -135,6 +145,7 @@ const TrackStatusP = () => {
         {
           title: "Site Name",
           dataIndex: ["portfolio_details", "site_name"],
+          render: (text) => text || "N/A",
         },
         {
           title: "Available Capacity (MW)",
@@ -188,13 +199,13 @@ const TrackStatusP = () => {
   console.log("track data gen", trackDataGen);
 
   useEffect(() => {
-    if (selectedPortfolioId && trackDataGen.length) {
+    if (selectedPortfolioId) {
       const filtered = trackDataGen.filter(
         (item) => item.portfolio_details?.portfolio === selectedPortfolioId
       );
       setFilteredTrackDataGen(filtered);
     } else {
-      setFilteredTrackDataGen([]);
+      setFilteredTrackDataGen(trackDataGen); // Show all by default
     }
   }, [selectedPortfolioId, trackDataGen]);
 
@@ -256,13 +267,21 @@ const TrackStatusP = () => {
 
             {user_category === "Consumer" && (
               <Select
-                value={selectedState || undefined} // Ensures placeholder is visible when nothing is selected
+                value={
+                  selectedRequirementId
+                    ? `${selectedRequirement?.state}||${selectedRequirement?.industry}||${selectedRequirement?.contracted_demand}||${selectedRequirement?.consumption_unit}`
+                    : undefined
+                }
+                // Ensures placeholder is visible when nothing is selected
                 onChange={handleStateChangee}
                 style={{ width: "100%", borderColor: "#669800" }}
                 placeholder="Select Consumption Unit" // Placeholder text
               >
                 {consumerRequirement.map((item) => (
-                  <Select.Option key={item.id} value={item.state}>
+                  <Select.Option
+                    key={item.id}
+                    value={`${item.state}||${item.industry}||${item.contracted_demand}||${item.consumption_unit}`}
+                  >
                     {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
                   </Select.Option>
                 ))}
@@ -284,7 +303,11 @@ const TrackStatusP = () => {
         <Spin spinning={loading} tip="Loading...">
           <Table
             dataSource={
-              user_category === "Consumer" ? trackData : filteredTrackDataGen
+              user_category === "Consumer"
+                ? trackData
+                : selectedPortfolioId
+                ? filteredTrackDataGen
+                : trackDataGen // show all by default for Generator
             }
             columns={columns}
             style={{ textAlign: "center" }}

@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Table, Spin, Alert, Row, Button, Radio, Modal, Tooltip, message, Select, Typography, Col } from "antd";
 import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSlice";
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleOutlined } from '@ant-design/icons';
 import { fetchRequirements } from "../../Redux/Slices/Consumer/consumerRequirementSlice";
 
 const MatchingIPP = () => {
@@ -134,6 +134,8 @@ const role=userData?.role;
   const handleIPPClick = (record) => {
     setShowIPPModal(true);
     const { solar, wind, ess } = record;
+    console.log('record',record);
+    
     setSolarArray(solar || []); // Update solarArray with the selected IPP's solar data
     setWindArray(wind || []);  // Update windArray with the selected IPP's wind data
     setEssArray(ess || []);    // Update essArray with the selected IPP's ESS data
@@ -340,17 +342,35 @@ const role=userData?.role;
         width={800}
       >
         <Table
-          dataSource={[
-            ...solarArray.map(item => ({ ...item, technology: "Solar" })),
-            ...windArray.map(item => ({ ...item, technology: "Wind" })),
-            ...essArray.map(item => ({ ...item, technology: "ESS" })),
-          ]}
+      dataSource={[
+  ...solarArray.map(item => ({ ...item, technology: "Solar", banking_available: item.banking_available })),
+  ...windArray.map(item => ({ ...item, technology: "Wind", banking_available: item.banking_available ?? false })),
+  ...essArray.map(item => ({ ...item, technology: "ESS", banking_available: item.banking_available ?? false })),
+]}
+
+
           columns={[
             { title: "Technology", dataIndex: "technology", key: "technology" },
             { title: "State", dataIndex: "state", key: "state" },
             { title: "Connectivity", dataIndex: "connectivity", key: "connectivity" },
             { title: "Available Capacity (MW)", dataIndex: "available_capacity", key: "available_capacity" },
             { title: "Total Installed Capacity (MW)", dataIndex: "total_install_capacity", key: "total_install_capacity" },
+{
+      title: "Banking Available",
+      dataIndex: "banking_available",
+      key: "banking_available",
+      width: 300,
+      align: 'center',
+      render: (value) => (
+        <div style={{ textAlign: 'center' }}>
+          {value === false ? (
+            <CloseCircleTwoTone twoToneColor="#FF0000" />
+          ) : (
+            <CheckCircleTwoTone twoToneColor="#669800" />
+          )}
+        </div>
+      ),
+    }
           ]}
           rowKey={(record, index) => index}
           pagination={false}

@@ -26,6 +26,11 @@ const StatisticalInformation = () => {
   const [selectedForecast, setSelectedForecast] = useState('currentDay'); // Default: Current Day
   const [statisticsData, setStatisticsData] = useState(null); // Store both API data
   const [technology, setTechnology] = useState('Day Ahead'); // Define technology as a state variable
+ const [previousDate,setPreviousDate] = useState(null);
+  const [past30DaysStartDate,setPast30DaysStartDate] = useState(null);
+  const [past30DaysEndDate,setPast30DaysEndDate] = useState(null);
+   const [forecastType, setForecastType] = useState('currentDay'); // Default: Current Day
+ const [displayDateLabel, setDisplayDateLabel] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +48,27 @@ const StatisticalInformation = () => {
           const formatted = date.toLocaleDateString("en-US", options);
           setFormattedDate(formatted); // Example: "January 30"
         }
+
+      if (currentDayData?.payload?.date) {
+        const date = new Date(currentDayData.payload.date);
+        const options = { month: 'long', day: 'numeric' };
+        setPreviousDate(date.toLocaleDateString('en-US', options));
+      }
+
+      if (monthData?.payload.start_date) {
+        const date = new Date(monthData.payload.start_date);
+        const options = { month: 'long', day: 'numeric' };
+        setPast30DaysStartDate(date.toLocaleDateString('en-US', options));
+      }
+
+      if (monthData?.payload.end_date) {
+        const date = new Date(monthData.payload.end_date);
+        const options = { month: 'long', day: 'numeric' };
+        setPast30DaysEndDate(date.toLocaleDateString('en-US', options));
+      }
+
+      // setCurrentDayData(currentDayData.payload);
+      // setPast30DaysData(past30DaysResponse.payload);
 
         // Set default MCP data for current day
         setTableData(Array.isArray(currentDayData.payload.clean_data) ? currentDayData.payload.clean_data : []);
@@ -72,6 +98,16 @@ const StatisticalInformation = () => {
 
     fetchData();
   }, [dispatch]);
+
+useEffect(() => {
+  if (forecastType === 'currentDay') {
+    setDisplayDateLabel(formattedDate); // Already something like "July 8"
+  } else if (forecastType === 'past30') {
+    setDisplayDateLabel(`${past30DaysStartDate} - ${past30DaysEndDate}`); // "June 8 - July 8"
+  }
+}, [forecastType, formattedDate, past30DaysStartDate, past30DaysEndDate]);
+
+
 
   useEffect(() => {
     if (selectedForecast === 'currentDay') {
@@ -160,42 +196,6 @@ const dummyAccuracyData = [
     ],
   };
 
-  // const BothData = {
-  //   labels: Array.from({ length: 96 }, (_, i) => i + 1),
-  //   datasets: [
-  //     {
-  //       label: 'Forecast MCP Data (INR/MWh)',
-  //       data: foreCastedData.length ? foreCastedData : Array(96).fill(null),
-  //       borderColor: 'green',
-  //       fill: false,
-  //       yAxisID: 'y1',
-  //        ticks: {
-  //                 color: 'green', // Set scale number color for MCP
-  //               },
-  //     },
-  //     {
-  //       label: 'Past MCP Data (INR/MWh)',
-  //       data: pastData,
-  //       borderColor: 'orange',
-  //       fill: false,
-  //       yAxisID: 'y1',
-  //     },
-  //     {
-  //       label: 'Forecast MCV Data (MWh)',
-  //       data: mcvForeCastedData.length ? mcvForeCastedData : Array(96).fill(null),
-  //       borderColor: 'blue',
-  //       fill: false,
-  //       yAxisID: 'y2',
-  //     },
-  //     {
-  //       label: 'Past MCV Data (MWh)',
-  //       data: mcvPastData,
-  //       borderColor: 'red',
-  //       fill: false,
-  //       yAxisID: 'y2',
-  //     },
-  //   ],
-  // };
 
   const options = {
     responsive: true,
@@ -290,11 +290,31 @@ const dummyAccuracyData = [
   const handleDay = () => navigate('/px/consumer/day-ahead');
   const handleMonth = () => navigate('/px/consumer/month-ahead');
 
+console.log('forecast type',forecastType);
+console.log('selected forecsat',selectedForecast);
+
+
+
   return (
     <div style={{ padding: '20px' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800',fontWeight:'bold' }}>
-      Statistical Insights <span style={{fontSize:'20px'}}>({formattedDate})</span>
-      </h1>
+          <h1
+  style={{
+    textAlign: 'center',
+    marginBottom: '20px',
+    color: '#669800',
+    fontWeight: 'bold',
+  }}
+>
+  Statistical Insights{' '}
+  <span style={{ fontSize: '20px', fontWeight: 'normal' }}>
+    (
+    {selectedForecast === 'currentDay'
+      ? previousDate
+      : `${past30DaysStartDate} - ${past30DaysEndDate}`}
+    )
+  </span>
+</h1>
+
       {/* Dropdown for Forecast Selection */}
       <label htmlFor="" style={{fontWeight:'600',marginRight:'10px',fontSize:'18px'}}>Select Forecast</label>
       <Select
@@ -409,32 +429,10 @@ const dummyAccuracyData = [
               </Card>
             </Col>
           )}
-          {/* {selectedType === 'Both' && (
-            <Col span={24} >
-              <Card style={{  backgroundColor: 'white' }}>
-                <h3>MCP and MCV Data</h3>
-                <div >
-                  <Line 
-                    style={{height:'300px'}} 
-                    data={BothData} 
-                    options={options} 
-                  />
-                </div>
-              </Card>
-            </Col>
-          )} */}
         </Row>
       )}
-
-      {/* Table Display */}
-      {/* <Table columns={columns} dataSource={dummyAccuracyData} pagination={false} bordered style={{ marginTop: '20px' }} /> */}
-
-      {/* Navigation Buttons */}
       <div style={{ padding: '20px' }}>
         <Row justify="space-between">
-          {/* <Col style={{marginLeft:'75%'}}>
-            <Button onClick={handleMonth}>Month Ahead</Button>
-          </Col> */}
           <Col style={{marginLeft:'90%'}}>
             <Button onClick={handleDay} icon={<BackwardOutlined/>}>Back</Button>
           </Col>

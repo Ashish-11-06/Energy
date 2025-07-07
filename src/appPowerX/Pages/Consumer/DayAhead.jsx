@@ -159,7 +159,7 @@ const timeLabels = Array.from({ length: 96 }, (_, i) => {
 const mcp = Array.isArray(tableData[0]?.MCP) ? [...tableData[0].MCP] : [];
 const mcv = Array.isArray(tableData[0]?.MCV) ? [...tableData[0].MCV] : [];
 
-console.log('mcp',mcv);
+console.log('mcp',mcp);
 
 
 
@@ -186,32 +186,26 @@ const data = {
 
 const options = {
   responsive: true,
+  maintainAspectRatio: false,
   scales: {
     x: {
-      type: 'linear',
+      type: 'category',
       position: 'bottom',
-      min: 1,
-      max: 96,
-      ticks: {
-        callback: function (value) {
-          // Show label only every 8th interval (every 2 hours)
-          if ((value - 1) % 3 === 0) {
-            const totalMinutes = (value - 1) * 15;
-            const hours = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
-            const minutes = String(totalMinutes % 60).padStart(2, '0');
-            return `${hours}:${minutes}`;
-          }
-          return '';
-        },
-        autoSkip: false,
-        maxTicksLimit: 96,
-      },
       title: {
         display: true,
         text: 'Time (15-minute intervals)',
         font: {
           weight: 'bold',
           size: 16,
+        },
+      },
+      ticks: {
+        callback: function (val, index) {
+          return index % 8 === 0 || index === 95 ? this.getLabelForValue(val) : '';
+        },
+        autoSkip: false,
+        font: {
+          size: 12,
         },
       },
     },
@@ -260,13 +254,14 @@ const options = {
     },
     title: {
       display: true,
-      text: 'Day Ahead Market Forecast',
+      text: `Day Ahead Market Forecast (${nextDay})`,
       font: {
         size: 18,
       },
     },
   },
 };
+
 
 
   const columns = [
