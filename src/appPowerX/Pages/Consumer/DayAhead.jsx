@@ -51,39 +51,43 @@ const DayAhead = () => {
   //   setNextDay(tomorrow.toLocaleDateString(undefined, options));
   // }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const data = await dispatch(dayAheadData()).unwrap();
-        // console.log('data', data.predictions.map(item=>item.date));
-        if (data?.predictions?.length > 0) {
-          const dateStr = data.predictions[0]?.date;
-          const date = new Date(dateStr);
-          
-          const options = { month: "long", day: "2-digit" };
-          const formattedDate = date.toLocaleDateString("en-US", options);
-    
-          setNextDay(formattedDate); // Example output: "February 01"
-        }
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const data = await dispatch(dayAheadData()).unwrap();
+      console.log('data', data.predictions);
 
-        const mcpDataOriginal = data.predictions.map(item => item.mcp_prediction);
-        const mcpData=mcpDataOriginal.reverse();
-        const mcvData = data.predictions.map(item => item.mcv_prediction);
-
-        setTableData([{ MCP: mcpData, MCV: mcvData }]); // Ensure data is an array
-
-        setStatisticsData(data.statistics);
-        setLoading(false);
-        // console.log(data.statistics);
-        
-      } catch (error) {
-        // console.log(error);
-        setLoading(false);
+      // Format and set the next day's date for display
+      if (data?.predictions?.length > 0) {
+        const dateStr = data.predictions[0]?.date;
+        const date = new Date(dateStr);
+        const options = { month: "long", day: "2-digit" };
+        const formattedDate = date.toLocaleDateString("en-US", options);
+        setNextDay(formattedDate); // Example: "July 06"
       }
-    };
-    fetchData();
-  }, [dispatch]);
+
+      // Extract and reverse MCP and MCV values for the chart
+      const mcpData = data.predictions.map(item => item.mcp_prediction).reverse();
+      const mcvData = data.predictions.map(item => item.mcv_prediction).reverse();
+
+      setTableData([{ MCP: mcpData, MCV: mcvData }]);
+
+      // Set statistics if available
+      setStatisticsData(data.statistics);
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching day ahead data:', error);
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [dispatch]);
+
+console.log('table data 89',tableData);
+
 
   useEffect(() => {
     if (statistiicsData.mcp && statistiicsData.mcv) {
@@ -144,40 +148,41 @@ const detailColumns = [
   },
 ];
 
- const timeLabels = Array.from({ length: 96 }, (_, i) => {
-  const minutes = i * 15;
-  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
-  const mins = String(minutes % 60).padStart(2, '0');
-  return `${hours}:${mins}`;
+const timeLabels = Array.from({ length: 96 }, (_, i) => {
+  const totalMinutes = i * 15;
+  const hours = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
+  const minutes = String(totalMinutes % 60).padStart(2, '0');
+  return `${hours}:${minutes}`;
 });
 
-  const data = {
-    labels: timeLabels, // Ensure X-axis shows values from 1 to 96
-    datasets: [
-      {
-        label: 'MCP (INR/MWh)', // Label for MCP dataset
-        data: tableData[0]?.MCP || [], // Updated data for MCP
-        borderColor: 'blue',
-        fill: false,
-        color: 'blue',
-        font :{
-          weight: 'bold',
-        },
-        yAxisID: 'y-axis-mcp', // Assign to right Y-axis
-      },
-      {
-        label: 'MCV (MWh)', // Label for MCY dataset
-        data: tableData[0]?.MCV || [], // Updated data for MCY
-        borderColor: 'green',
-        fill: false,
-        color: 'green',
-        font :{
-          weight: 'bold',
-        },
-        yAxisID: 'y-axis-mcv', // Assign to left Y-axis
-      },
-    ],
-  };
+
+const mcp = Array.isArray(tableData[0]?.MCP) ? [...tableData[0].MCP] : [];
+const mcv = Array.isArray(tableData[0]?.MCV) ? [...tableData[0].MCV] : [];
+
+console.log('mcp',mcv);
+
+
+
+const data = {
+  labels: timeLabels, // 96 formatted time blocks
+  datasets: [
+    {
+      label: 'MCP (INR/MWh)',
+      data: mcp,
+      borderColor: 'blue',
+      fill: false,
+      yAxisID: 'y-axis-mcp',
+    },
+    {
+      label: 'MCV (MWh)',
+      data: mcv,
+      borderColor: 'green',
+      fill: false,
+      yAxisID: 'y-axis-mcv',
+    },
+  ],
+};
+
 
 const options = {
   responsive: true,

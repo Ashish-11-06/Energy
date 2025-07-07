@@ -309,7 +309,7 @@ const MCPData = {
 
       {/* Conditional Rendering of Graphs */}
       {selectedType && (
-        <Spin >
+        <Spin spinning={loading} tip="Loading...">
         <Row gutter={[16, 16]} style={{ marginTop: '20px', padding: '10px', marginBottom: '10px' }}>
           {selectedType === 'MCP' && (
             <Col span={24} >
