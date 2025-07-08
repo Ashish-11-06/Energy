@@ -257,6 +257,7 @@ const [mcvLowestDate,setMcvLowestDate]=useState('');
       <Card style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff', width:'100%' }}> {/* Updated shadow and card background color */}
       <div style={{ margin: '20px 0' }}></div>
       {/* {lineData.labels.length > 0 ? ( */}
+      <Spin spinning={loading} tip={'Loading'}>
               <Table 
                 columns={columns} 
                 dataSource={tableData} 
@@ -264,6 +265,7 @@ const [mcvLowestDate,setMcvLowestDate]=useState('');
                 bordered
                 // style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', width: '80%', backgroundColor: '#fff' }} // Updated shadow and table background color
               />
+              </Spin>
       {/* //     ) : (
       //       <div style={{ textAlign: 'center', padding: '20px' }}>
       //         <Spin />

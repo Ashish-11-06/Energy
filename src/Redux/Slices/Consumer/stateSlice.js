@@ -19,12 +19,28 @@ export const fetchState = createAsyncThunk(
     }
   }
 );
+export const fetchDistricts = createAsyncThunk(
+  "states/fetchDistricts",
+  async (stateName) => {
+    console.log('Fetching states name',stateName);
+    try {
+      const response = await stateApi.districts(stateName);
+      // console.log(response.data);
+      return response.data;
+      
+    } catch (error) {
+      console.error("Error fetching states:", error);
+      throw error;
+    }
+  }
+);
 
 // Slice for matching IPP
 const stateSlice = createSlice({
   name: "states",
   initialState: {
     state: [],
+    district:[],
     status: "idle",
     error: null,
   },
@@ -40,6 +56,18 @@ const stateSlice = createSlice({
         state.states = action.payload;
       })
       .addCase(fetchState.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || "Failed to fetch data";
+      })
+      .addCase(fetchDistricts.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchDistricts.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.district = action.payload;
+      })
+      .addCase(fetchDistricts.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Failed to fetch data";
       });

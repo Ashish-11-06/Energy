@@ -51,39 +51,43 @@ const DayAhead = () => {
   //   setNextDay(tomorrow.toLocaleDateString(undefined, options));
   // }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const data = await dispatch(dayAheadData()).unwrap();
-        // console.log('data', data.predictions.map(item=>item.date));
-        if (data?.predictions?.length > 0) {
-          const dateStr = data.predictions[0]?.date;
-          const date = new Date(dateStr);
-          
-          const options = { month: "long", day: "2-digit" };
-          const formattedDate = date.toLocaleDateString("en-US", options);
-    
-          setNextDay(formattedDate); // Example output: "February 01"
-        }
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const data = await dispatch(dayAheadData()).unwrap();
+      console.log('data', data.predictions);
 
-        const mcpDataOriginal = data.predictions.map(item => item.mcp_prediction);
-        const mcpData=mcpDataOriginal.reverse();
-        const mcvData = data.predictions.map(item => item.mcv_prediction);
-
-        setTableData([{ MCP: mcpData, MCV: mcvData }]); // Ensure data is an array
-
-        setStatisticsData(data.statistics);
-        setLoading(false);
-        // console.log(data.statistics);
-        
-      } catch (error) {
-        // console.log(error);
-        setLoading(false);
+      // Format and set the next day's date for display
+      if (data?.predictions?.length > 0) {
+        const dateStr = data.predictions[0]?.date;
+        const date = new Date(dateStr);
+        const options = { month: "long", day: "2-digit" };
+        const formattedDate = date.toLocaleDateString("en-US", options);
+        setNextDay(formattedDate); // Example: "July 06"
       }
-    };
-    fetchData();
-  }, [dispatch]);
+
+      // Extract and reverse MCP and MCV values for the chart
+      const mcpData = data.predictions.map(item => item.mcp_prediction).reverse();
+      const mcvData = data.predictions.map(item => item.mcv_prediction).reverse();
+
+      setTableData([{ MCP: mcpData, MCV: mcvData }]);
+
+      // Set statistics if available
+      setStatisticsData(data.statistics);
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching day ahead data:', error);
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [dispatch]);
+
+console.log('table data 89',tableData);
+
 
   useEffect(() => {
     if (statistiicsData.mcp && statistiicsData.mcv) {
@@ -113,130 +117,152 @@ const DayAhead = () => {
 // console.log('table data',detailDataSource);
 
 
-  const detailColumns = [
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-    },
-    {
-      title: 'Market Clearing Price (INR/MWh)',
-      dataIndex: 'mcp',
-      key: 'mcp',
-    },
-    {
-      title: 'Market Clearing Volume (MWh)',
-      dataIndex: 'mcv',
-      key: 'mcv',
-    },
-  ];
+const detailColumns = [
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+    align: 'center',
+  },
+  {
+    title: 'Market Clearing Price (INR/MWh)',
+    dataIndex: 'mcp',
+    key: 'mcp',
+    align: 'center',
+    render: (value) =>
+      Number(value).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+  },
+  {
+    title: 'Market Clearing Volume (MWh)',
+    dataIndex: 'mcv',
+    key: 'mcv',
+    align: 'center',
+    render: (value) =>
+      Number(value).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+  },
+];
 
-  const data = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1), // Ensure X-axis shows values from 1 to 96
-    datasets: [
-      {
-        label: 'MCP (INR/MWh)', // Label for MCP dataset
-        data: tableData[0]?.MCP || [], // Updated data for MCP
-        borderColor: 'blue',
-        fill: false,
-        color: 'blue',
-        font :{
-          weight: 'bold',
-        },
-        yAxisID: 'y-axis-mcp', // Assign to right Y-axis
-      },
-      {
-        label: 'MCV (MWh)', // Label for MCY dataset
-        data: tableData[0]?.MCV || [], // Updated data for MCY
-        borderColor: 'green',
-        fill: false,
-        color: 'green',
-        font :{
-          weight: 'bold',
-        },
-        yAxisID: 'y-axis-mcv', // Assign to left Y-axis
-      },
-    ],
-  };
+const timeLabels = Array.from({ length: 96 }, (_, i) => {
+  const totalMinutes = i * 15;
+  const hours = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
+  const minutes = String(totalMinutes % 60).padStart(2, '0');
+  return `${hours}:${minutes}`;
+});
 
-  const options = {
-    responsive: true,
-    scales: {
-      x: {
-        type: 'linear',
-        position: 'bottom',
-        min: 1, // Set minimum value for x-axis
-        max: 96, // Set maximum value for x-axis
-        ticks: {
-          callback: function(value) {
-            return value; // Show all values from 1 to 96
-          },
-          autoSkip: false, // Ensure all ticks are shown
-          maxTicksLimit: 96, // Ensure at least 96 ticks are shown
-        },
-        title: {
-          display: true,
-          text: 'Time (15-minute intervals)',
-          font: {
-            weight: 'bold',
-            size: 16,
-          }
-        },
-      },
-      'y-axis-mcv': {
-        type: 'linear',
-        position: 'left',
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'MCV (MWh)',
-          font: {
-            weight: 'bold', 
-          }
-        },
-        ticks: {
-          color: 'green', // Set scale number color for MCV
-        },
-      },
-      'y-axis-mcp': {
-        type: 'linear',
-        position: 'right',
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'MCP (INR/MWh)',
-          font :{
-            weight: 'bold',
-          }
-        },
-        grid: {
-          drawOnChartArea: false, // Only draw grid lines for one Y-axis
-        },
-        ticks: {
-          color: 'blue', // Set scale number color for MCP
-        },
-      },
+
+const mcp = Array.isArray(tableData[0]?.MCP) ? [...tableData[0].MCP] : [];
+const mcv = Array.isArray(tableData[0]?.MCV) ? [...tableData[0].MCV] : [];
+
+console.log('mcp',mcp);
+
+
+
+const data = {
+  labels: timeLabels, // 96 formatted time blocks
+  datasets: [
+    {
+      label: 'MCP (INR/MWh)',
+      data: mcp,
+      borderColor: 'blue',
+      fill: false,
+      yAxisID: 'y-axis-mcp',
     },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom', // Position legends at the bottom
-        align: 'end', // Align legends to the right
-        labels: {
-          // usePointStyle: true, // Use point style for legend items
-          padding: 20, // Add padding around legend items
-        },
-      },
-      // Removed zoom plugin configuration
+    {
+      label: 'MCV (MWh)',
+      data: mcv,
+      borderColor: 'green',
+      fill: false,
+      yAxisID: 'y-axis-mcv',
+    },
+  ],
+};
+
+
+const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      type: 'category',
+      position: 'bottom',
       title: {
         display: true,
-        text: 'Day Ahead Market Forecast',
+        text: 'Time (15-minute intervals)',
         font: {
-          size: 18,
+          weight: 'bold',
+          size: 16,
+        },
+      },
+      ticks: {
+        callback: function (val, index) {
+          return index % 8 === 0 || index === 95 ? this.getLabelForValue(val) : '';
+        },
+        autoSkip: false,
+        font: {
+          size: 12,
         },
       },
     },
-  };
+    'y-axis-mcv': {
+      type: 'linear',
+      position: 'left',
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'MCV (MWh)',
+        font: {
+          weight: 'bold',
+        },
+      },
+      ticks: {
+        color: 'green',
+      },
+    },
+    'y-axis-mcp': {
+      type: 'linear',
+      position: 'right',
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'MCP (INR/MWh)',
+        font: {
+          weight: 'bold',
+        },
+      },
+      grid: {
+        drawOnChartArea: false,
+      },
+      ticks: {
+        color: 'blue',
+      },
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: 'bottom',
+      align: 'end',
+      labels: {
+        padding: 20,
+      },
+    },
+    title: {
+      display: true,
+      text: `Day Ahead Market Forecast (${nextDay})`,
+      font: {
+        size: 18,
+      },
+    },
+  },
+};
+
+
 
   const columns = [
     {

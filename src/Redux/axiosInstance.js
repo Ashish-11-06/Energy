@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://ext.exgglobal.com/api/api',
+  baseURL: 'http://52.66.186.241:8000/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -14,15 +14,16 @@ axiosInstance.interceptors.request.use(
     try {
       const userData = JSON.parse(localStorage.getItem('user'));
       const token = userData?.token;
+// console.log('token',token);
 
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
         // console.log(`Token added to headers: ${token}`);
       } else {
-        // console.log('No token found in localStorage');
+        console.log('No token found in localStorage');
       }
     } catch (error) {
-      // console.error('Error getting token:', error);
+      console.error('Error getting token:', error);
     }
 
     return config;

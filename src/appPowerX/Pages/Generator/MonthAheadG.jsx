@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Button, Select, Table, Row, Col, Card } from 'antd';
+import { Button, Select, Table, Row, Col, Card, Spin } from 'antd';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, TimeScale } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -24,7 +24,7 @@ const MonthAheadG = () => {
   const  [mcpLowestDate,setMcpLowestDate]=useState('');
   const [mcvHighestDate,setMcvHighestDate]=useState('');
   const [mcvLowestDate,setMcvLowestDate]=useState('');
-
+const [tableLoading,setTableLoading] =useState(false);
   const start_date = new Date(); 
   start_date.setDate(start_date.getDate() + 1); // Set to tomorrow
   
@@ -36,6 +36,7 @@ const MonthAheadG = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setTableLoading(true);
       try {
         setLoading(true);
         const data = await dispatch(fetchMonthAheadData());
@@ -51,14 +52,6 @@ const MonthAheadG = () => {
           setMcpLowestDate(moment(responseData.overall_stats?.mcp_prediction?.lowest_date).format('DD-MM-YYYY'));
           setMcvHighestDate(moment(responseData.overall_stats?.mcv_prediction?.highest_date).format('DD-MM-YYYY'));
           setMcvLowestDate(moment(responseData.overall_stats?.mcv_prediction?.lowest_date).format('DD-MM-YYYY'));
-
-          // console.log(responseData.overall_stats?.mcp_prediction?.highest_date);
-          
-          // setMcpLowestDate(responseData.overall_stats?.mcp_prediction?.lowest_date);
-          // console.log("MCV Data:", mcvData);
-          // console.log("MCP Data:", mcpData);
-          // console.log("Labels:", labels);
-
           setLineData({
             labels,
             datasets: [
@@ -108,6 +101,8 @@ const MonthAheadG = () => {
       } catch (error) {
      // console.log("Error fetching data:", error);
       }
+         setTableLoading(false);
+
     };
 
     fetchData();
@@ -182,54 +177,64 @@ const MonthAheadG = () => {
   //   fetchData();
   // }, [dispatch]);
 
-  const columns = [
-    {
-      title: 'Details',
-      dataIndex: 'status',
-      key: 'status',
-      width: 200,
-    },
-    {
-      title: 'MCP (INR/MWh)',
-      children: [
-        {
-          title: 'Value',
-          dataIndex: 'mcp',
-          key: 'mcp',
+const columns = [
+  {
+    title: 'Details',
+    dataIndex: 'status',
+    key: 'status',
+    width: 200,
+  },
+  {
+    title: 'MCP (INR/MWh)',
+    children: [
+      {
+        title: 'Value',
+        dataIndex: 'mcp',
+        key: 'mcp',
+        render: (value) =>
+          Number(value).toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }),
+      },
+      {
+        title: 'Date',
+        dataIndex: 'mcpDate',
+        key: 'mcpDate',
+        render: (text, record) => {
+          if (record.status === 'Highest Forecasted Value') return mcpHighestDate;
+          if (record.status === 'Lowest Forecasted Value') return mcpLowestDate;
+          return '-';
         },
-        {
-          title: 'Date',
-          dataIndex: 'mcpDate',
-          key: 'mcpDate',
-          render: (text, record) => {
-            if (record.status === 'Highest Forecasted Value') return mcpHighestDate;
-            if (record.status === 'Lowest Forecasted Value') return mcpLowestDate;
-            return '-';
-          },
+      },
+    ],
+  },
+  {
+    title: 'MCV (MWh)',
+    children: [
+      {
+        title: 'Value',
+        dataIndex: 'mcv',
+        key: 'mcv',
+        render: (value) =>
+          Number(value).toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }),
+      },
+      {
+        title: 'Date',
+        dataIndex: 'mcvDate',
+        key: 'mcvDate',
+        render: (text, record) => {
+          if (record.status === 'Highest Forecasted Value') return mcvHighestDate;
+          if (record.status === 'Lowest Forecasted Value') return mcvLowestDate;
+          return '-';
         },
-      ],
-    },
-    {
-      title: 'MCV (MWh)',
-      children: [
-        {
-          title: 'Value',
-          dataIndex: 'mcv',
-          key: 'mcv',
-        },
-        {
-          title: 'Date',
-          dataIndex: 'mcvDate',
-          key: 'mcvDate',
-          render: (text, record) => {
-            if (record.status === 'Highest Forecasted Value') return mcvHighestDate;
-            if (record.status === 'Lowest Forecasted Value') return mcvLowestDate;
-            return '-';
-          },
-        },
-      ],
-    },
-  ];
+      },
+    ],
+  },
+];
 
   const handleNextTrade = () => {
     navigate('/px/generator/planning');
@@ -246,7 +251,9 @@ const MonthAheadG = () => {
         Market Forecast - Month Ahead <span style={{fontSize:'20px'}}>({startDateString} - {endDateString})</span>
       </h1>     
       <Card style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff', width: '100%' }}> {/* Updated shadow and card background color */}
+        <Spin spinning={tableLoading} tip="Loading...">
         <Table columns={columns}  dataSource={tableData} pagination={false} bordered />
+      </Spin>
       </Card>
       <div style={{ padding: '20px', width: '100%' }}>
         <Row justify="space-between">

@@ -319,18 +319,36 @@ console.log('sensitivity data', sensitivityData);
 
     const formattedCombinations = Object.entries(combinations).map(
       ([key, combination], index) => {
+        console.log('combinationsssssss',combination);
+        console.log("Full combination object:", JSON.stringify(combination, null, 2));
+console.log("Type of Annual Demand Met:", typeof combination["Annual Demand Met"]);
+const annual_demand_mett = Number(combination["Annual Demand Met"]?.toString().trim()) || 0;
+console.log('annual_demand_mett',annual_demand_mett);
+
+    const annualDemandRaw = combination["Annual Demand Met"];
+    const annual_demand_met = 
+      annualDemandRaw !== undefined && annualDemandRaw !== null && !isNaN(annualDemandRaw)
+        ? parseFloat(annualDemandRaw)
+        : 0;
+
+    console.log(`Index: ${index}`);
+    console.log("Annual Demand Met Raw:", annualDemandRaw);
+    console.log("Parsed Annual Demand Met:", annual_demand_met);
+
         const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
         const batteryCapacity =
           combination["Optimal Battery Capacity (MW)"] || 0;
-        const annual_demand_met = combination["Annual Demand Met"] || 0;
+          const annual_curtailment=combination["Annual Curtailment"];
+          // const annual=combination["Annual Demand Met"];
 
+// const annual_demand_met = parseFloat(combination["Annual Demand Met"]) || 0;
         return {
           key: index + 1,
           srNo: index + 1,
           combination: key,
-          annual_demand_met,
-
+  //        annual_demand_met: annual_demand_met,
+  // annual: annual_demand_met,
           technology: [
             { name: "Solar", capacity: `${solarCapacity} MW` },
             { name: "Wind", capacity: `${windCapacity} MW ` },
@@ -372,6 +390,10 @@ console.log('sensitivity data', sensitivityData);
           cod: combination["greatest_cod"]
             ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD")
             : 0,
+             annual_demand_met:
+            combination["Annual Demand Met"] && !isNaN(combination["Annual Demand Met"])
+              ? combination["Annual Demand Met"].toFixed(2)
+              : 0,
           reReplacement:
             reReplacementValue ||
             combination["Annual Demand Offset"]?.toFixed(2) ||
@@ -383,6 +405,7 @@ console.log('sensitivity data', sensitivityData);
           capital_cost_solar: combination.capital_cost_solar || 0,
           capital_cost_wind: combination.capital_cost_wind || 0,
           banking_available: combination.banking_available || 0,
+            // annual_cost:annual_cost,
           status: combination?.terms_sheet_sent
             ? combination?.sent_from_you === 1
               ? "Already Sent"
@@ -391,8 +414,14 @@ console.log('sensitivity data', sensitivityData);
         };
       }
     );
+console.log('formatted combinantion',formattedCombinations);
+console.log("Check:", formattedCombinations[0]?.annual_demand_met);
+console.log("Check:", formattedCombinations[0]?.annual_met);
+console.log("Check:", formattedCombinations[0]?.annual_cost);
+console.log('Before setting dataSource:', formattedCombinations);
 
     setDataSource(formattedCombinations);
+console.log('After setting dataSource:', dataSource); // This may still show the old state due to async nature
 
     // Only trigger fetchNextSensitivity here, not in any useEffect or handleSensitivity
     const ids = formattedCombinations.map((item) => item.combination);
@@ -436,6 +465,9 @@ console.log('dataSource', dataSource);
     });
   }, [isTableLoading, setIsTableLoading]);
 
+  useEffect(() => {
+  console.log('Updated dataSource:', dataSource);
+}, [dataSource]);
 
   // Remove fetchPatterns from the main useEffect and move it to its own useEffect
 useEffect(() => {
@@ -603,9 +635,14 @@ const handleRowSensitivity = async (combinationId) => {
 };
 
   const handleRowClick = (record) => {
+    console.log('handle click record',record);
+    
     setSelectedRow(record);
     setIsIPPModalVisible(true);
   };
+
+console.log('selected rowwwww',selectedRow);
+
 
   const re_index = combinationData.re_index || 0;
 
@@ -649,6 +686,7 @@ const handleOptimizeClick = async () => {
       const combinations = await dispatch(
         fetchOptimizedCombinations(modalData)
       ).unwrap();
+console.log('fetchOptimizedCombinationssssss',combinations);
 
       formatAndSetCombinations(combinations, sliderValue);
       setFetchingCombinations(false);
@@ -737,6 +775,11 @@ const handleOptimizeClick = async () => {
         </div>
       ),
     },
+    {
+  title: "Annual Demand Met",
+  dataIndex: "annual_demand_met",
+  key: "annual_demand_met"
+},
     {
       title: "% RE Replacement",
       dataIndex: "reReplacement",
@@ -1225,7 +1268,8 @@ const handleOptimizeClick = async () => {
             </div>
           )}
         </Modal>
-
+  {console.log('selected row',selectedRow)
+            }
         {isIPPModalVisible && (
           <IPPModal
             visible={isIPPModalVisible}
@@ -1237,7 +1281,9 @@ const handleOptimizeClick = async () => {
               capital_cost_wind: selectedRow?.capital_cost_wind,
               capital_cost_ess: selectedRow?.capital_cost_ess,
               banking_available: selectedRow?.banking_available,
+              annual_demand_met:selectedRow?.annual_demand_met
             }}
+          
             combination={combinationData}
             consumerDetails={consumerDetails}
             fromGenerator={true}

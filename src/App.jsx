@@ -75,6 +75,10 @@ import WhatWeOfferP from './appPowerX/Pages/WhatWeOfferP';
 import TrackStatusP from './appPowerX/Pages/TrackStatus';
 import ProtectedRoute from './ProtectedRoute';
 import ProfileGen from './appPowerX/Pages/Generator/ProfileGen';
+import ProtectedRouteAdmin from './Pages/Admin/ProtectedRouteAdmin.jsx';
+import { Content } from 'antd/es/layout/layout.js';
+import AdminRoutes from './Components/Admin/AdminRoutes.jsx';
+import Rooftop from './Pages/Consumer/Rooftop.jsx';
 
 // 🔒 Global Auth Guard
 function AuthGuard() {
@@ -180,6 +184,7 @@ function App() {
               <Route path="offer-recieved-from-ipp" element={<OfferRecieved />} />
               <Route path="transaction-window" element={<TransactionWindow />} />
               <Route path="status" element={<StatusApproval />} />
+              <Route path="rooftop" element={<Rooftop />} />
             </Route>
             {/* Generator Routes */}
             <Route path="/generator/*">
@@ -241,6 +246,24 @@ function App() {
               </Route>
             </Route>
           </Route>
+           <Route
+          path="admin/*"
+          element={
+            <ProtectedRouteAdmin>
+              <Content
+                style={{
+                  // marginTop: "60px",
+                  // padding: "30px",
+                  // overflowY: "auto",
+                  // flexGrow: 1,
+                  // height: "calc(100vh - 60px)",
+                }}
+              >
+                <AdminRoutes />
+              </Content>
+             </ProtectedRouteAdmin>
+          }
+        ></Route>
         </Route>
       </Routes>
     </Router>

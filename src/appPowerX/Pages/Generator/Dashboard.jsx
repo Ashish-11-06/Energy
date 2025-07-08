@@ -52,7 +52,7 @@ const Dashboard = () => {
   const [showDueModal,setShowDueModal]=useState(false);
   const [nextDay, setNextDay] = useState('');
   const [forecastDate, setForecastDate] = useState('');
-    
+  const [tableLoading,setTableLoading] = useState(false);
   var formattedDate = '';
 // console.log(user_id);
 // const nextDay = new Date();
@@ -61,7 +61,9 @@ const Dashboard = () => {
   useEffect(() => {
     const id = user_id;
     const fetchData = async () => {
+      setTableLoading(true);
       const res = await dispatch(fetchDashboardDataG(id));
+      setTableLoading(false);
       setDashboardData(res.payload || {});
     };
     fetchData();
@@ -106,7 +108,12 @@ const Dashboard = () => {
     fetchLineData();
   }, [dispatch]);
 
-
+const timeLabels = Array.from({ length: 96 }, (_, i) => {
+  const minutes = i * 15;
+  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
+  const mins = String(minutes % 60).padStart(2, '0');
+  return `${hours}:${mins}`;
+});
   
     useEffect(() => {
       const fetchData = async () => {
@@ -153,9 +160,7 @@ const Dashboard = () => {
   
   // Line Chart Data
   const lineData = {
-    labels: generationValues.length
-      ? Array.from({ length: generationValues.length }, (_, i) => i + 1)
-      : [],
+    labels: timeLabels,
     datasets: [
       {
         label: "Generation (MWh)",
@@ -172,70 +177,91 @@ const Dashboard = () => {
     navigate('/px/generator/planning')
 }
 
-  const lineOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "MWh",
-        },
-      },
-      x: {
-        type: 'linear',
-        position: 'bottom',
-        min: 0,
-        max: 100,
-        title: {
-          display: true,
-          text: 'Time (15-minute intervals)',
-        },
-      },
-
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom', // Position legends at the bottom
-        align: 'end', // Align legends to the right
-        labels: {
-          padding: 20, // Add padding around legend items
-        },
-        title: {
-          display: true,
-          // text: `Energy Demand`, 
-          font: {
-            size: 18,
-          },
-        },
-      },
-      // zoom: {
-      //   pan: {
-      //     enabled: true,
-      //     mode: 'x',
-      //   },
-      //   zoom: {
-      //     wheel: {
-      //       enabled: true,
-      //     },
-      //     pinch: {
-      //       enabled: true,
-      //     },
-      //     mode: 'x',
-      //   },
-      // },
+const lineOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      type: 'category',
+      position: 'bottom',
       title: {
         display: true,
-        text: ` Energy Generation Pattern (${formattedDate})`,
-
+        text: 'Time (15-minute intervals)',
         font: {
-          size: 18,
+          weight: 'bold',
+          size: 16,
+        },
+      },
+    ticks: {
+  callback: function (val, index, values) {
+    // Show every 2 hours AND the last label (index 95 = "23:45")
+    if (index % 8 === 0 || index === values.length - 1) {
+      return this.getLabelForValue(val);
+    }
+    return '';
+  },
+  autoSkip: false,
+  font: {
+    size: 12,
+  },
+  color: '#333',
+},
+
+      grid: {
+        display: true,
+        drawOnChartArea: true,
+        color: '#e0e0e0', // Light grid lines
+      },
+    },
+    y: {
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'Generation (MWh)',
+        font: {
+          weight: 'bold',
+          size: 14,
+        },
+      },
+      ticks: {
+        color: '#333',
+        font: {
+          size: 12,
+        },
+      },
+      grid: {
+        display: true,
+        drawOnChartArea: true,
+        color: '#e0e0e0',
+      },
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: 'bottom',
+      align: 'end',
+      labels: {
+        padding: 20,
+        font: {
+          size: 12,
         },
       },
     },
-  };
+    title: {
+      display: true,
+      text: `Energy Generation Pattern (${formattedDate})`,
+      font: {
+        size: 18,
+        weight: 'bold',
+      },
+      padding: {
+        bottom: 10,
+      },
+    },
+  },
+};
+
 
   // Extract state names, total install capacity, and available capacity from dashboardData
   const solarData = dashboardData.solar || [];
@@ -340,106 +366,113 @@ const stateData = [
 ];
   
 
-  const data = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1),
-    datasets: [
-      {
-        label: 'MCP (INR/MWh)',
-        data: tableData[0]?.MCP || [],
-        borderColor: 'blue',
-        fill: false,
-        font: {
-          weight: 'bold',
-        },
-        yAxisID: 'y-axis-mcp',
-      },
-      {
-        label: 'MCV (MWh)',
-        data: tableData[0]?.MCV || [],
-        borderColor: 'green',
-        fill: false,
-        font: {
-          weight: 'bold',
-        },
-        yAxisID: 'y-axis-mcv',
-      },
-    
-    ],
-  };
 
-  const options = {
-    responsive: true,
-    scales: {
-      x: {
-        type: 'linear',
-        position: 'bottom',
-        ticks: {
-          autoSkip: false,
-          maxTicksLimit: 96,
-        },
-        title: {
-          display: true,
-          text: 'Time (15-minute intervals)',
-          font: {
-            weight: 'bold',
-            size: 16,
-          },
-        },
-      },
-      'y-axis-mcv': {
-        type: 'linear',
-        position: 'left',
-        beginAtZero: true,
-        color: 'green',
-        title: {
-          display: true,
-          text: 'MCV (MWh)',
-          font: {
-            weight: 'bold',
-          },
-        },
-        ticks: {
-          color: 'green',
-        },
-      },
-      'y-axis-mcp': {
-        type: 'linear',
-        position: 'right',
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'MCP (INR/MWh)',
-          font: {
-            weight: 'bold',
-          },
-        },
-        ticks: {
-          color: 'blue',
-        },
-        grid: {
-          drawOnChartArea: false,
-        },
-      },
+
+const data = {
+  labels: timeLabels,
+  datasets: [
+    {
+      label: 'MCP (INR/MWh)',
+      data: tableData[0]?.MCP || [],
+      borderColor: 'blue',
+      fill: false,
+      font: { weight: 'bold' },
+      yAxisID: 'y-axis-mcp',
     },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'bottom', // Position legends at the bottom
-        align: 'end', // Align legends to the right
-        labels: {
-          // usePointStyle: true, // Use point style for legend items
-          padding: 20, // Add padding around legend items
-        },
-      },
+    {
+      label: 'MCV (MWh)',
+      data: tableData[0]?.MCV || [],
+      borderColor: 'green',
+      fill: false,
+      font: { weight: 'bold' },
+      yAxisID: 'y-axis-mcv',
+    },
+  ],
+};
+
+
+const options = {
+  responsive: true,
+  scales: {
+    x: {
+      type: 'category',
+      position: 'bottom',
       title: {
         display: true,
-        text: `Day Ahead Market Forecast (${forecastDate})`, // Use the nextDay variable here
+        text: 'Time (15-minute intervalssss)',
         font: {
-          size: 18,
+          weight: 'bold',
+          size: 16,
         },
       },
+        ticks: {
+  callback: function (val, index, values) {
+    // Show every 2 hours AND the last label (index 95 = "23:45")
+    if (index % 8 === 0 || index === values.length - 1) {
+      return this.getLabelForValue(val);
+    }
+    return '';
+  },
+  autoSkip: false,
+  font: {
+    size: 12,
+  },
+  color: '#333',
+},
     },
-  };
+    'y-axis-mcv': {
+      type: 'linear',
+      position: 'left',
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'MCV (MWh)',
+        font: {
+          weight: 'bold',
+        },
+      },
+      ticks: {
+        color: 'green',
+      },
+    },
+    'y-axis-mcp': {
+      type: 'linear',
+      position: 'right',
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'MCP (INR/MWh)',
+        font: {
+          weight: 'bold',
+        },
+      },
+      ticks: {
+        color: 'blue',
+      },
+      grid: {
+        drawOnChartArea: false,
+      },
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: 'bottom',
+      align: 'end',
+      labels: {
+        padding: 20,
+      },
+    },
+    title: {
+      display: true,
+      text: `Day Ahead Market Forecast (${forecastDate})`,
+      font: {
+        size: 18,
+      },
+    },
+  },
+};
+
 
   const chartDoughnutOptions = {
     responsive: true,
@@ -596,32 +629,6 @@ const stateData = [
       </h1> */}
       <Card style={{ margin: "20px" }}>
         <Typography.Title level={3} style={{textAlign:'center'}}>State wise Generation Portfolio</Typography.Title>
-        {/* <Row>
-          <Col span={12}>
-            <div
-              style={{
-                width: "100%",
-                height: "150px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                margin: "20px auto"
-              }}
-            >
-              <Doughnut
-                data={doughnutData}
-                options={chartDoughnutOptions}
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "100%"
-                }}
-              />
-            </div>
-          </Col>
-          <Col span={12}>
-            <Table columns={stateColumn} dataSource={stateData} pagination={false} />
-          </Col>
-        </Row> */}
           <Row>
                   <Col span={12}>
                     {/* <Typography.Title level={4}>State wise Requirements</Typography.Title> */}
@@ -650,6 +657,7 @@ const stateData = [
                     </Col>
                   </Col>
                   <Col span={12}>
+                  <Spin spinning={tableLoading} tip={'Loading'}>
           <Table
             columns={stateColumn}
             dataSource={stateData}
@@ -658,6 +666,7 @@ const stateData = [
             scroll={{ x: true, y: 300 }} // Enables horizontal and vertical scrolling
             style={{ maxHeight: "300px", overflowY: "auto" }} // Ensures the column does not exceed this height
           />
+          </Spin>
         </Col>
         
                 </Row>

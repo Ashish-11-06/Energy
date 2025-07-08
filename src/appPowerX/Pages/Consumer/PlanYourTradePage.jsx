@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { addDayAheadData } from "../../Redux/slices/consumer/dayAheadSlice";
 import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequirementSlice";
 import { fetchHolidayList } from "../../Redux/slices/consumer/holidayListSlice";
+import { Line } from "react-chartjs-2";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -67,74 +68,147 @@ useEffect(() => {
   fetchHolidayData();
 }, [dispatch]);
 
-  const handleContinue = async () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowFormatted = tomorrow.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+const GenerationLineChart = ({ data }) => {
+  const chartData = {
+    labels: data.map((item) => item.start_time),
+    datasets: [
+      {
+        label: 'Demand (MWh)',
+        data: data.map((item) => Number(item.generation)),
+        borderColor: '#1890ff',
+        backgroundColor: 'rgba(24, 144, 255, 0.2)',
+        tension: 0.4,
+        fill: true,
+        pointRadius: 0,
+      },
+    ],
+  };
 
-    if (disabledDates.includes(tomorrowFormatted)) {
-      message.error("Tomorrow is a holiday. You cannot add data.");
-      return;
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true },
+      tooltip: { mode: 'index', intersect: false },
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Start Time' },
+        ticks: { maxTicksLimit: 12 },
+      },
+      y: {
+        title: { display: true, text: 'Demand (MWh)' },
+        beginAtZero: true,
+      },
+    },
+  };
+
+  return <div style={{ height: 300 }}><Line data={chartData} options={options} /></div>;
+};
+
+
+const handleContinue = async () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
+
+  if (disabledDates.includes(tomorrowFormatted)) {
+    message.error("Tomorrow is a holiday. You cannot add data.");
+    return;
+  }
+
+  if (!selectedRequirementId) {
+    message.error("Please select a consumption unit.");
+    return;
+  }
+
+  if (!allFieldsFilled) {
+    message.error("Please fill all fields or upload a file.");
+    return;
+  }
+
+  console.log('table data', tableData);
+
+  // ✅ Create generationData for graph
+  const demandData = tableData.map(item => {
+    let [hours, minutes] = item.time.split(":").map(Number);
+    minutes += 15;
+
+    if (minutes >= 60) {
+      hours += 1;
+      minutes -= 60;
     }
 
-    if (!selectedRequirementId) {
-      message.error("Please select a consumption unit.");
-      return;
-    }
-    if (!allFieldsFilled ) {
-      message.error("Please fill all fields or upload a file.");
-      return;
-    }
-  
-    try {
-      const dayAheadDemand = {
-        requirement: selectedRequirementId,
-        demand_data: tableData.map(item => {
-          let [hours, minutes] = item.time.split(":").map(Number);
-          minutes += 15;
-  
-          if (minutes >= 60) {
-            hours += 1;
-            minutes -= 60;
-          }
-  
-          if (hours >= 24) {
-            hours = 0;
-          }
-  
-          let end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-  
-          return {
-            start_time: item.time,
-            end_time: end_time,
-            demand: item.demand
-          };
-        }),
-        price: (Array.isArray(selectedTechnology) ? selectedTechnology : [selectedTechnology]).reduce((acc, tech) => {
-          acc[tech] = parseFloat(price[tech]);
-          return acc;
-        }, {})
-      };
+    if (hours >= 24) hours = 0;
+
+    const end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+
+    return {
+      start_time: item.time,
+      end_time,
+      generation: item.demand
+    };
+  });
+
+// console.log('generation data',demandData);
+
+
+  // ✅ Show confirmation modal with chart
+  Modal.confirm({
+    title: 'Are you sure you want to submit the data?',
+    content: <GenerationLineChart data={demandData} />,
+    width: 850,
+    okText: 'Yes',
+    cancelText: 'No',
+    centered: true,
+    onOk: async () => {
       try {
-        const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
-        // console.log(res);
+        const dayAheadDemand = {
+          requirement: selectedRequirementId,
+          demand_data: tableData.map(item => {
+            let [hours, minutes] = item.time.split(":").map(Number);
+            minutes += 15;
+            if (minutes >= 60) {
+              hours += 1;
+              minutes -= 60;
+            }
+            if (hours >= 24) hours = 0;
 
-        if (res && res.status === 201) { // Check if status is 201
-          message.success(res.data.message || "Data uploaded successfully"); // Show success message
-          navigate('/px/track-status'); // Navigate to the track status page
+            const end_time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+
+            return {
+              start_time: item.time,
+              end_time,
+              demand: item.demand
+            };
+          }),
+          price: (Array.isArray(selectedTechnology) ? selectedTechnology : [selectedTechnology]).reduce((acc, tech) => {
+            acc[tech] = parseFloat(price[tech]);
+            return acc;
+          }, {})
+        };
+
+        console.log('demand data', dayAheadDemand?.demand_data);
+
+        // const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+        const res = null;
+
+        if (res && res.status === 201) {
+          message.success(res.data.message || "Data uploaded successfully");
+          navigate('/px/track-status');
         } else {
           message.error("Failed to submit data. Please try again.");
         }
       } catch (error) {
-     // console.log(error);
         message.error("Failed to submit data. Please try again.");
       }
-    } catch (error) {
-      message.error("Failed to submit data. Please try again.");
     }
-  };
+  });
+};
+
+
   
-// console.log('disabledDates',disabledDates);
+console.log('selectedRequirementId',selectedRequirementId);
 
   const onFinish = (values) => {
     // console.log("Received values of form: ", values);
@@ -158,14 +232,44 @@ useEffect(() => {
     setIsInfoModalVisible(true);
   };
 
-  const handleInputChange = (value, key) => {
-    const newData = [...tableData];
-    const index = newData.findIndex((item) => key === item.key);
-    if (index > -1) {
-      newData[index].demand = value;
-      setTableData(newData);
-    }
-  };
+
+console.log('consumer requirement',consumerRequirement);
+
+const handleInputChange = (value, key) => {
+  const newData = [...tableData];
+  const index = newData.findIndex((item) => key === item.key);
+
+  // Find the selected requirement by ID
+  const selectedRequirement = consumerRequirement.find(
+    (item) => item.id === selectedRequirementId
+  );
+
+  const contractedDemand = selectedRequirement?.contracted_demand;
+  const numericValue = Number(value);
+
+  // Show warning if demand exceeds contracted demand
+  if (contractedDemand && numericValue > contractedDemand) {
+    const modal = Modal.warning({
+      title: 'Warning',
+      content: `Entered demand (${numericValue}) exceeds contracted demand (${contractedDemand}).`,
+      okButtonProps: { style: { display: 'none' } },
+    });
+
+    setTimeout(() => {
+      modal.destroy();
+    }, 3000); // Auto-close after 3 seconds
+  }
+
+  if (index > -1) {
+    newData[index].demand = value;
+    setTableData(newData);
+  }
+
+  console.log('new data', newData);
+};
+
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -186,7 +290,7 @@ useEffect(() => {
     setSelectedState(value);
 
     // Find the requirement ID of the selected state
-    const selectedRequirement = consumerRequirement.find(item => item.state === value);
+    const selectedRequirement = consumerRequirement.find(item => item.id === value);
     setSelectedRequirementId(selectedRequirement ? selectedRequirement.id : null);
   };
 
@@ -259,6 +363,8 @@ const handleFileUpload = (file) => {
 
       try {
         const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+        console.log('res at 271',res);
+        
         if (res && res.status === 201) {
           message.success(res.data.message || "File uploaded successfully.");
           navigate('/px/track-status');
@@ -423,7 +529,7 @@ const handleFileUpload = (file) => {
     placeholder="Select Consumption Unit" // Placeholder text
   >
     {consumerRequirement.map(item => (
-      <Select.Option key={item.id} value={item.state}>
+      <Select.Option key={item.id} value={item.id}>
         {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
       </Select.Option>
     ))}

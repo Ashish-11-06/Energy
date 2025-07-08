@@ -127,6 +127,8 @@ const fetchNextSensitivity = async (combinationIds) => {
 
     const formattedCombinations = Object.entries(combinations).map(
       ([key, combination], index) => {
+        console.log('combinationsssss',combination);
+        
         const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
         const batteryCapacity =
@@ -136,6 +138,27 @@ const fetchNextSensitivity = async (combinationIds) => {
         // console.log(annual_demand_m
         // et);
         // console.log("status", combination.terms_sheet_sent);
+const parseLooseJson = (str) => {
+  try {
+    if (typeof str !== "string") return {};
+    // First, replace single quotes with double quotes
+    const cleaned = str
+      .replace(/'/g, '"')                          // replace all single quotes
+      .replace(/([a-zA-Z0-9_]+):/g, '"$1":')       // add quotes around keys if missing
+      .replace(/,\s*}/g, '}')                      // remove trailing comma if any
+      .replace(/,\s*]/g, ']');                     // remove trailing comma in arrays (if any)
+
+    return JSON.parse(cleaned);
+  } catch (err) {
+    console.warn("Failed to parse:", str, err);
+    return {};
+  }
+};
+  const downloadable = {
+      ...combination.downloadable,
+      cod: parseLooseJson(combination.downloadable?.cod),
+      generator_state: parseLooseJson(combination.downloadable?.generator_state),
+    };
 
         return {
           key: index + 1,
@@ -178,7 +201,9 @@ const fetchNextSensitivity = async (combinationIds) => {
             "NA", // updated to handle null or undefined values
           connectivity: combination.connectivity,
           states: combination.state,
+          site_names:combination.site_names,
           banking_available: combination.banking_available || 0,
+          downloadable,
           status: combination?.terms_sheet_sent
             ? combination?.sent_from_you === 1
               ? "Already Sent"
@@ -189,7 +214,7 @@ const fetchNextSensitivity = async (combinationIds) => {
     );
 
     // console.log('tech',tech);
-    // console.log("formatting com");
+    console.log("formatting com",formattedCombinations?.downloadable);
     setDataSource(formattedCombinations);
 
     // After setting dataSource, start sensitivity fetch for all combinations (only if not already fetched)
@@ -426,6 +451,8 @@ const handleGraphModalClose = () => {
   
   const handleRowClick = (record) => {
     setSelectedRow(record); // Record comes from the latest dataSource
+    console.log('record clicked consumer',record);
+    
     setIsIPPModalVisible(true);
   };
 
@@ -627,8 +654,8 @@ const handleSensitivityClick = () => {
       title: "Banking Available",
       dataIndex: "banking_available",
       key: "banking_available",
-      width: 300,
-      align: 'center',
+    width: 100,
+  align: 'center',
       render: (value) => (
         <div style={{ textAlign: 'center' }}>
           {value === 0 ? (
@@ -961,12 +988,11 @@ const lineChartData = {
           <IPPModal
             visible={isIPPModalVisible}
             // reReplacement={sliderValue} // Pass the latest slider value
-            ipp={selectedRow
-
-            }
+            ipp={selectedRow}
             combination={combinationData}
             fromGenerator={false}
             fromConsumer={true}
+              fromInitiateQuotation="true"
             // combination={combinationData}         // Ensure selectedRow is updated
             reIndex={re_index} // Pass re_index to the modal
             onClose={handleIPPCancel}
@@ -981,6 +1007,7 @@ const lineChartData = {
             onCancel={handleQuotationModalCancel}
             data={selectedRow}
             selectedDemandId={selectedDemandId}
+              fromInitiateQuotation="true"
             type="generator"
           />
         )}

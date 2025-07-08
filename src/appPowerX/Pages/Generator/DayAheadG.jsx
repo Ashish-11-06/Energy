@@ -55,7 +55,7 @@ const DayAheadG = () => {
       try {
         setLoading(true);
         const data = await dispatch(dayAheadData()).unwrap();
-        // console.log(data);
+        console.log('datssss',data);
         if (data?.predictions?.length > 0) {
           const dateStr = data.predictions[0]?.date;
           const date = new Date(dateStr);
@@ -82,6 +82,7 @@ const mcpData = data.predictions.map(item =>
     fetchData();
   }, [dispatch]);
 // console.log('mcpData', tableData);
+console.log('table dataaaaaa',tableData);
 
   useEffect(() => {
     if (statistiicsData.mcp && statistiicsData.mcv) {
@@ -108,88 +109,103 @@ const mcpData = data.predictions.map(item =>
     }
   }, [statistiicsData]);
 
-  const data = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1),
-    datasets: [
-     {
-  label: 'MCP (INR/MWh)',
-  data: (tableData[0]?.MCP && Array.isArray(tableData[0].MCP)) ? tableData[0].MCP : [],
-  borderColor: 'blue',
-  backgroundColor: 'rgba(0, 0, 255, 0.1)', // optional: fill under line
-  fill: false, // Set true if you want area fill like area chart
-  yAxisID: 'mcp',
-  pointRadius: 2,
-  tension: 0.3, // Smooths the curve (set same as MCV)
-  borderWidth: 2,
-}
-,
-      {
-        label: 'MCV (MWh)',
-        data: (tableData[0]?.MCV && Array.isArray(tableData[0].MCV)) ? tableData[0].MCV : [],
-        borderColor: 'green',
-        fill: false,
-        yAxisID: 'mcv',
-        pointRadius: 2,
-        tension: 0.3,
-        borderWidth: 2,
-      },
-    ],
-  };
+ const timeLabels = Array.from({ length: 96 }, (_, i) => {
+  const minutes = i * 15;
+  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
+  const mins = String(minutes % 60).padStart(2, '0');
+  return `${hours}:${mins}`;
+});
 
-  const options = {
-    responsive: true,
-    scales: {
-      x: {
-        type: 'linear',
-        position: 'bottom',
-        ticks: {
-          autoSkip: false,
-          maxTicksLimit: 96,
-        },
-        title: {
-          display: true,
-          text: '96 time blocks',
-          font: {
-            weight: 'bold',
-            size: 16,
-          },
+const data = {
+  labels: timeLabels,
+  datasets: [
+    {
+      label: 'MCP (INR / MWh)',
+      data: Array.isArray(tableData[0]?.MCP) ? tableData[0].MCP : [],
+      borderColor: 'blue',
+      backgroundColor: 'rgba(0, 0, 255, 0.1)',
+      fill: false,
+      yAxisID: 'mcp',
+      pointRadius: 2,
+      tension: 0.3,
+      borderWidth: 2,
+    },
+    {
+      label: 'MCV (MWh)',
+      data: Array.isArray(tableData[0]?.MCV) ? tableData[0].MCV : [],
+      borderColor: 'green',
+      backgroundColor: 'rgba(0, 255, 0, 0.1)',
+      fill: false,
+      yAxisID: 'mcv',
+      pointRadius: 2,
+      tension: 0.3,
+      borderWidth: 2,
+    },
+  ],
+};
+
+const options = {
+  responsive: true,
+  scales: {
+    x: {
+      type: 'category',
+      title: {
+        display: true,
+        text: 'Time (15-min interval)',
+        font: {
+          weight: 'bold',
+          size: 16,
         },
       },
-      mcv: {
-        type: 'linear',
-        position: 'left',
-        // beginAtZero: true,
+      ticks: {
+  callback: function (val, index, values) {
+    // Show every 2 hours AND the last label (index 95 = "23:45")
+    if (index % 8 === 0 || index === values.length - 1) {
+      return this.getLabelForValue(val);
+    }
+    return '';
+  },
+  autoSkip: false,
+  font: {
+    size: 12,
+  },
+  color: '#333',
+},
+    },
+    mcv: {
+      type: 'linear',
+      position: 'left',
+      title: {
+        display: true,
+        text: 'MCV (MWh)',
+        font: {
+          weight: 'bold',
+        },
+      },
+      ticks: {
         color: 'green',
-        title: {
-          display: true,
-          text: 'MCV (MWh)',
-          font: {
-            weight: 'bold',
-          },
-        },
-        ticks: {
-          color: 'green',
-        },
-      },
-      mcp: {
-        type: 'linear',
-        position: 'right',
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'MCP (INR/MWh)',
-          font: {
-            weight: 'bold',
-          },
-        },
-        ticks: {
-          color: 'blue',
-        },
-        grid: {
-          drawOnChartArea: false,
-        },
       },
     },
+    mcp: {
+      type: 'linear',
+      position: 'right',
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'MCP (INR / MWh)',
+        font: {
+          weight: 'bold',
+        },
+      },
+      ticks: {
+        color: 'blue',
+      },
+      grid: {
+        drawOnChartArea: false,
+      },
+    },
+  },
+  plugins: {
     title: {
       display: true,
       text: 'Day Ahead Market Forecast',
@@ -197,25 +213,44 @@ const mcpData = data.predictions.map(item =>
         size: 18,
       },
     },
-  };
+    legend: {
+      position: 'top',
+    },
+  },
+};
 
-  const detailColumns = [
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-    },
-    {
-      title: 'MCP (INR/MWh)',
-      dataIndex: 'mcp',
-      key: 'mcp',
-    },
-    {
-      title: 'MCV (MWh)',
-      dataIndex: 'mcv',
-      key: 'mcv',
-    },
-  ];
+
+
+
+const detailColumns = [
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+     align: 'center',
+  },
+  {
+    title: 'MCP (INR / MWh)',
+    dataIndex: 'mcp',
+     align: 'center',
+    key: 'mcp',
+    render: (value) => Number(value).toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }),
+  },
+  {
+    title: 'MCV (MWh)',
+    dataIndex: 'mcv',
+     align: 'center',
+    key: 'mcv',
+    render: (value) => Number(value).toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }),
+  },
+];
+
 
   const handleNextTrade = () => {
     navigate('/px/generator/plan-day-trade-page');
