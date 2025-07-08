@@ -190,8 +190,8 @@ const handleContinue = async () => {
 
         console.log('demand data', dayAheadDemand?.demand_data);
 
-        // const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
-        const res = null;
+        const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
+        // const res = null;
 
         if (res && res.status === 201) {
           message.success(res.data.message || "Data uploaded successfully");

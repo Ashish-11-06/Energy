@@ -157,8 +157,16 @@ const dummyAccuracyData = [
     setSelectedType(value);
   };
 
+
+  const timeLabels = Array.from({ length: 96 }, (_, i) => {
+  const minutes = i * 15;
+  const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
+  const mins = String(minutes % 60).padStart(2, '0');
+  return `${hours}:${mins}`;
+});
+
   const MCVData = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1), // Generates labels [1, 2, 3, ..., 96]
+    labels: timeLabels,
     datasets: [
       {
         label: "Forecast MCV Data",
@@ -179,7 +187,7 @@ const dummyAccuracyData = [
   };
 
   const MCPData = {
-    labels: Array.from({ length: 96 }, (_, i) => i + 1),
+    labels: timeLabels,
     datasets: [
       {
         label: 'Forecast MCP Data',
@@ -202,11 +210,11 @@ const dummyAccuracyData = [
     maintainAspectRatio: false,
     scales: {
       y1: {
-        type: 'linear',
+        type: 'category',
         position: 'right',
         title: {
           display: true,
-          text: 'MCP (INR/MWh)',
+          text: 'MCP (INR / MWh)',
         },
         ticks: {
           color: 'green', // Set scale number color for MCP
@@ -221,7 +229,7 @@ const dummyAccuracyData = [
       
       },
       y2: {
-        type: 'linear',
+        type: 'category',
         position: 'left',
         title: {
           display: true,
@@ -243,7 +251,7 @@ const dummyAccuracyData = [
       
       },
       x: {
-        type: 'linear',
+        type: 'category',
         position: 'bottom',
         min: 0,
         max: 100,
@@ -268,7 +276,7 @@ const dummyAccuracyData = [
 
   const columns = [
     { title: 'Details', dataIndex: 'metric', key: 'metric' , width: '30%'},
-    { title: 'MCP (INR/MWh)', dataIndex: 'mcp', key: 'mcp' },
+    { title: 'MCP (INR / MWh)', dataIndex: 'mcp', key: 'mcp' },
     { title: 'MCV (MWh)', dataIndex: 'mcv', key: 'mcv' },
   ];
 
@@ -352,19 +360,25 @@ console.log('selected forecsat',selectedForecast);
                         y: {
                           title: {
                             display: true,
-                            text: 'MCP (INR/MWh)',
+                            text: 'MCP (INR / MWh)',
                           },
                         },
-                        x: {
-                          type: 'linear',
-                          position: 'bottom',
-                          min: 0,
-                          max: 100,
-                          title: {
-                            display: true,
-                            text: '96 time blocks',
-                          },
-                        },
+                     x: {
+  type: 'category',
+  position: 'bottom',
+  ticks: {
+    callback: function (val, index, ticks) {
+      const isEvery8th = index % 8 === 0;
+      const isLastTick = index === ticks.length - 1;
+      return isEvery8th || isLastTick ? this.getLabelForValue(val) : '';
+    },
+  },
+  title: {
+    display: true,
+    text: '96 time blocks',
+  },
+},
+
                       },
                       plugins: {
                         legend: {
@@ -401,16 +415,23 @@ console.log('selected forecsat',selectedForecast);
                             text: 'MCV (MWh)',
                           },
                         },
-                        x: {
-                          type: 'linear',
-                          position: 'bottom',
-                          min: 0,
-                          max: 100,
-                          title: {
-                            display: true,
-                            text: '96 time blocks',
-                          },
-                        },
+  x: {
+  type: 'category',
+  position: 'bottom',
+  ticks: {
+    callback: function (val, index, ticks) {
+      const isEvery8th = index % 8 === 0;
+      const isLastTick = index === ticks.length - 1;
+      return isEvery8th || isLastTick ? this.getLabelForValue(val) : '';
+    },
+  },
+  title: {
+    display: true,
+    text: '96 time blocks',
+  },
+},
+
+
                       },
                       plugins: {
                         legend: {

@@ -631,7 +631,7 @@ console.log('state data',stateData);
     bordered
 
 
-    scroll={{ x: true, y: 300 }} // Enables horizontal and vertical scrolling
+    scroll={{ x: true, y: 240 }} // Enables horizontal and vertical scrolling
     style={{ maxHeight: "400px", overflowY: "auto",textAlign:'center',justifyContent:'center',alignContent:'center' }} // Ensures the column does not exceed this height
   />
   </Spin>
