@@ -202,6 +202,8 @@ const parseLooseJson = (str) => {
           connectivity: combination.connectivity,
           states: combination.state,
           site_names:combination.site_names,
+          state_charges:combination.state_charges,
+          ISTS_charges:combination.ISTS_charges,
           banking_available: combination.banking_available || 0,
           downloadable,
           status: combination?.terms_sheet_sent

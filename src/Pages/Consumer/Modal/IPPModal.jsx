@@ -34,9 +34,9 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
 {
   key: '6',
   label: 'ISTS Charges (INR/kWh)',
-  value: ipp?.ISTSCharges != null ? ipp.ISTSCharges : "N/A"
+  value: ipp?.ISTS_charges != null ? ipp.ISTS_charges : "N/A"
 },
-    { key: '7', label: 'State Charges (INR/kWh)', value: ipp?.stateCharges || "N/A" },
+    { key: '7', label: 'State Charges (INR/kWh)', value: ipp?.state_charges || "N/A" },
     { key: '8', label: 'Total Cost (INR/kWh)', value: ipp?.totalCost || "N/A" },
     { key: '9', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
     { key: '10', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
@@ -136,7 +136,7 @@ const technologyData = ipp?.technology.map((tech, index) => {
     { title: 'Technology', dataIndex: 'name', key: 'name' },
     { title: 'Capacity', dataIndex: 'capacity', key: 'capacity' },
     { title: 'State', dataIndex: 'state', key: 'state' },
-    { title: 'Site Name', dataIndex: 'site_names', key: 'site_names',}
+    // { title: 'Site Name', dataIndex: 'site_names', key: 'site_names',}
   ];
 
   return (

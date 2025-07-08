@@ -401,6 +401,8 @@ console.log('annual_demand_mett',annual_demand_mett);
           connectivity: combination.connectivity,
           states: combination.state,
           site_names: combination.site_names,
+            state_charges:combination.state_charges,
+          ISTS_charges:combination.ISTS_charges,
           capital_cost_ess: combination.capital_cost_ess || 0,
           capital_cost_solar: combination.capital_cost_solar || 0,
           capital_cost_wind: combination.capital_cost_wind || 0,
