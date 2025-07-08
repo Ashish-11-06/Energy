@@ -25,14 +25,16 @@ const MonthAheadG = () => {
   const [mcvHighestDate,setMcvHighestDate]=useState('');
   const [mcvLowestDate,setMcvLowestDate]=useState('');
 const [tableLoading,setTableLoading] =useState(false);
+const [startDateString, setStartDateString] = useState('');
+const [endDateString, setEndDateString] = useState('');
   const start_date = new Date(); 
   start_date.setDate(start_date.getDate() + 1); // Set to tomorrow
   
   const end_date = new Date(start_date); // Copy start_date
   end_date.setDate(start_date.getDate() + 30);
 
-  const startDateString = start_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const endDateString = end_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  // const startDateString = start_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  // const endDateString = end_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,9 +43,23 @@ const [tableLoading,setTableLoading] =useState(false);
         setLoading(true);
         const data = await dispatch(fetchMonthAheadData());
         const responseData = data.payload;
+        const dailyData = responseData.daily_data;
 
         if (Array.isArray(responseData?.daily_data)) {
+ const startDate = new Date(dailyData[0].date);
+  const endDate = new Date(dailyData[dailyData.length - 1].date);
 
+const startDateString = startDate.toLocaleDateString('en-US', {
+  month: 'long',  // use 'short' for "Jul" instead of "July"
+  day: 'numeric',
+});
+
+const endDateString = endDate.toLocaleDateString('en-US', {
+  month: 'short',
+  day: 'numeric',
+});
+setStartDateString(startDateString);
+setEndDateString(endDateString);
           const mcvData = responseData.daily_data.map(item => item.mcv_prediction?.avg ?? 0);
           const mcpDataOriginal = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
           const mcpData=mcpDataOriginal.reverse();
@@ -247,9 +263,14 @@ const columns = [
 
   return (
     <div style={{ padding: '3%', backgroundColor: '#f0f2f5', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center'}}> {/* Changed background color and set minHeight */}
-      <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800', fontWeight: 'bold' }}>
-        Market Forecast - Month Ahead <span style={{fontSize:'20px'}}>({startDateString} - {endDateString})</span>
-      </h1>     
+         <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#669800', fontWeight: 'bold' }}>
+  Market Forecast - Month Ahead 
+  {startDateString && endDateString && (
+    <span style={{ fontSize: '20px' }}>
+      ({startDateString} - {endDateString})
+    </span>
+  )}
+</h1>    
       <Card style={{ boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#fff', width: '100%' }}> {/* Updated shadow and card background color */}
         <Spin spinning={tableLoading} tip="Loading...">
         <Table columns={columns}  dataSource={tableData} pagination={false} bordered />
