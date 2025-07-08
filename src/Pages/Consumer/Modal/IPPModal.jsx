@@ -14,6 +14,8 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
   console.log('ippppp',ipp);
   console.log('consumerrrrrrr',consumerDetails);
   console.log('combination',combination);
+  console.log('annual_demand_met',ipp?.annual_demand_met);
+  console.log('annual_demand_met',combination?.annual_demand_met);
   
 
   const showQuotationModal = () => {
@@ -29,15 +31,12 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
     { key: '4', label: 'Per Unit Cost (INR/kWh)', value: ipp?.perUnitCost || "N/A" },
     { key: '5', label: 'OA Cost (INR/kWh)', value: ipp?.OACost || "N/A" },
-    { key: '6', label: 'ISTS Charges (INR/kWh)', value: ipp?.ISTSCharges || "N/A" },
+{
+  key: '6',
+  label: 'ISTS Charges (INR/kWh)',
+  value: ipp?.ISTSCharges != null ? ipp.ISTSCharges : "N/A"
+},
     { key: '7', label: 'State Charges (INR/kWh)', value: ipp?.stateCharges || "N/A" },
-    // { 
-    //   key: '5', 
-    //   label: 'OA Cost (INR/kWh)', 
-    //   value: ipp?.OACost !== undefined && ipp?.ISTSCharges !== undefined && ipp?.stateCharges !== undefined
-    //     ? `${ipp?.OACost} (${ipp?.stateCharges} [ISTS charges] + ${ipp?.ISTSCharges} [State charges])`
-    //     : "N/A"
-    // },
     { key: '8', label: 'Total Cost (INR/kWh)', value: ipp?.totalCost || "N/A" },
     { key: '9', label: 'COD', value: ipp?.cod ? moment(ipp.cod).format('DD-MM-YYYY') : "N/A" },
     { key: '10', label: 'Connectivity', value: ipp?.connectivity || "N/A" },
@@ -74,6 +73,7 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
   const getStateForTechnology = (techName) => {
     if (!techName || !ipp?.states) return "N/A";
     
+
     // Find the first matching state key that starts with the technology name
     const matchingStateKey = Object.keys(ipp.states).find((stateKey) =>
       stateKey.startsWith(techName)
@@ -82,24 +82,52 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
     return matchingStateKey ? ipp.states[matchingStateKey] : "N/A";
   };
   
-  const technologyData = ipp?.technology.map((tech, index) => {
-    // Find the state key for this technology
-    const stateKey = Object.keys(ipp?.states || {}).find((stateKey) =>
-      stateKey.startsWith(tech.name)
+  console.log('ippp technology',ipp?.technology);
+  
+const technologyData = ipp?.technology.map((tech, index) => {
+  const techNameLower = tech.name.toLowerCase();
+  const capacityValue = parseFloat(tech.capacity); // Extract numeric part from "10.53 MW" etc.
+
+  let state = "N/A";
+  let siteName = "N/A";
+
+  // For multiple sites stored as objects (e.g., { Solar_1: 'Madhya Pradesh' })
+  if (typeof ipp?.states === 'object' && ipp?.states !== null) {
+    const matchedKey = Object.keys(ipp.states).find(key =>
+      key.toLowerCase().includes(techNameLower)
     );
-    // Get the site name for this technology from ipp.site_names using the same key
-    let siteName = "N/A";
-    if (stateKey && ipp?.site_names && Object.prototype.hasOwnProperty.call(ipp.site_names, stateKey)) {
-      siteName = ipp.site_names[stateKey] ?? "N/A";
-    }
-    return {
-      key: index,
-      name: tech.name,
-      capacity: tech.capacity,
-      state: stateKey ? ipp.states[stateKey] : "N/A",
-      site_names: siteName,
-    };
-  });
+    state = matchedKey ? ipp.states[matchedKey] : "N/A";
+  }
+
+  if (typeof ipp?.site_names === 'object' && ipp?.site_names !== null) {
+    const matchedKey = Object.keys(ipp.site_names).find(key =>
+      key.toLowerCase().includes(techNameLower)
+    );
+    siteName = matchedKey ? ipp.site_names[matchedKey] : "N/A";
+  }
+
+  // For single site string - only if capacity is non-zero
+  if (
+    typeof ipp?.states === 'string' &&
+    typeof ipp?.site_names === 'string' &&
+    capacityValue > 0
+  ) {
+    state = ipp.states;
+    siteName = ipp.site_names;
+  }
+
+  return {
+    key: index,
+    name: tech.name,
+    capacity: tech.capacity,
+    state,
+    site_names: siteName,
+  };
+});
+
+
+  console.log('technology',technologyData);
+  
   
 
   // console.log(ipp?.technology);

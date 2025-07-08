@@ -48,6 +48,7 @@ const Planning = () => {
 const [disableDates, setDisableDates] = useState([]); // State to store holiday dates
   const [addLoading,setAddLoading]= useState(false);
   const [allFilled,setAllFilled] = useState(false);
+  const [selectedRequirement,setSelectedRequirement] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -189,11 +190,12 @@ useEffect(() => {
   };
 
   const handleStateChange = (value) => {
-    const selectedRequirement = consumerRequirement.find(item => item.state === value);
-    // console.log(selectedRequirement);
+    const selectedRequirement = consumerRequirement.find(item => item.id === value);
+    // console.log('selected req',selectedRequirement);
+    console.log('id',value);
     
     setSelectedRequirementId(selectedRequirement ? selectedRequirement.id : null);
-
+    setSelectedRequirement(selectedRequirement)
     setSelectedState(value);
   };
 
@@ -495,20 +497,20 @@ const checkAllFieldsFilled = (tech, priceObj, demandVal) => {
               </ol>
             </p>
              <Form.Item label="Select Consumption Unit" style={{ fontSize: '24px' }}>
-          <Select
-            value={selectedState || undefined}
-            onChange={handleStateChange}
-            style={{ width: "80%", borderColor: "#669800" }}
-            placeholder="Select Consumption Unit"
-          >
-          {Array.isArray(consumerRequirement) &&
-  consumerRequirement.map(item => (
-    <Select.Option key={item.id} value={item.state}>
-      {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
-    </Select.Option>
-))}
+         <Select
+  value={selectedRequirement ? selectedRequirement.id : undefined}
+  onChange={handleStateChange}
+  style={{ width: "80%", borderColor: "#669800" }}
+  placeholder="Select Consumption Unit"
+>
+  {Array.isArray(consumerRequirement) &&
+    consumerRequirement.map((item) => (
+      <Select.Option key={item.id} value={item.id}>
+        {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
+      </Select.Option>
+    ))}
+</Select>
 
-          </Select>
         </Form.Item>
             <Card className='mainCard' style={{ width: '90%', margin: 'auto', padding: '10px', backgroundColor: '#fff' }}> {/* Updated card background color */}
               <Row justify="space-between" align="middle" style={{ marginBottom: '10px' }}>
@@ -546,28 +548,25 @@ const checkAllFieldsFilled = (tech, priceObj, demandVal) => {
       </div>
       <Modal
         title="Plan for More Days"
-        visible={isInputModalVisible}
+        open={isInputModalVisible}
         footer={null} // Remove default footer
         onCancel={() => setIsInputModalVisible(false)}
       >
         <Form.Item label="Select Consumption Unit" style={{ fontSize: '24px' }}>
-          <Select
-            value={selectedState || undefined}
-            onChange={(value) => {
-              handleStateChange(value);
-              setAllFieldsFilled(value && selectedDate); // Check if both fields are filled
-            }}
-            style={{ width: "100%", borderColor: "#669800" }}
-            placeholder="Select Consumption Unit"
-          >
-           {Array.isArray(consumerRequirement) &&
-  consumerRequirement.map(item => (
-    <Select.Option key={item.id} value={item.state}>
-      {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
-    </Select.Option>
-))}
+       <Select
+  value={selectedRequirement ? selectedRequirement.id : undefined}
+  onChange={handleStateChange}
+  style={{ width: "80%", borderColor: "#669800" }}
+  placeholder="Select Consumption Unit"
+>
+  {Array.isArray(consumerRequirement) &&
+    consumerRequirement.map((item) => (
+      <Select.Option key={item.id} value={item.id}>
+        {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
+      </Select.Option>
+    ))}
+</Select>
 
-          </Select>
         </Form.Item>
         <Form.Item label="Select Date" style={{ fontSize: '16px', fontWeight: '600' }}>
           <DatePicker

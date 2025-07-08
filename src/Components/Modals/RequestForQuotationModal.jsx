@@ -35,11 +35,13 @@ const RequestForQuotationModal = ({
 }) => {
   const [ppaTerm, setPpaTerm] = useState(20);
   const [lockInPeriod, setLockInPeriod] = useState(10);
-  const [minimumSupply, setMinimumSupply] = useState(18);
   const [contractedEnergy, setContractedEnergy] = useState(data?.annual_demand_met);
   const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
   const [paymentSecurityDays, setPaymentSecurityDays] = useState(30);
   const [offerTariff, setOfferTariff] = useState(3.5);
+  const [minimumSupply, setMinimumSupply] = useState(
+  data?.annual_demand_met ? ((data.annual_demand_met * 80) / 100).toFixed(2) : 0
+);
   const [solar, setSolar] = useState(
     data?.technology?.find((tech) => tech.name === "Solar")?.capacity.replace(" MW", "") || 0
   );
@@ -388,7 +390,7 @@ console.log('user ',user);
               />
             </Typography.Paragraph>
           </Col>
-          {user_category === "Generator" && fromInitiateQuotation ? (
+          {fromInitiateQuotation ? (
           <Col span={12}>
             <Typography.Paragraph>
               <strong> Equity Contribution Required from Consumer:</strong>

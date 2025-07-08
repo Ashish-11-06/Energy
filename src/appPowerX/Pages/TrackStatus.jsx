@@ -34,6 +34,8 @@ const TrackStatusP = () => {
   const user_id = user.id;
   const [filteredTrackDataGen, setFilteredTrackDataGen] = useState([]);
   const [selectedRequirement, setSelectedRequirement] = useState(null);
+ const [filteredTrackData, setFilteredTrackData] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -104,7 +106,6 @@ const TrackStatusP = () => {
 
 const handleStateChangee = (value) => {
   const [state, industry, contracted_demand, consumption_unit] = value.split("||");
-console.log('va;ue',value);
 
   const selectedRequirement = consumerRequirement.find(
     (item) =>
@@ -113,13 +114,27 @@ console.log('va;ue',value);
       String(item.contracted_demand) === contracted_demand &&
       item.consumption_unit === consumption_unit
   );
-console.log('selected requirement',selectedRequirement);
 
   if (selectedRequirement) {
-    setSelectedState(value); // composite value
+    setSelectedState(value);
     setSelectedRequirementId(selectedRequirement.id);
+
+    // Filter the trackData here
+    const filtered = trackData.filter((item) => {
+      const detail = item.consumption_unit_details;
+      return (
+        item?.consumption_unit_details &&
+        detail.state === state &&
+        detail.industry === industry &&
+        String(detail.contracted_demand) === contracted_demand &&
+        detail.consumption_unit === consumption_unit
+      );
+    });
+
+    setFilteredTrackData(filtered);
   } else {
     setSelectedRequirementId(null);
+    setFilteredTrackData(trackData); // fallback to all
   }
 };
 
@@ -193,7 +208,7 @@ console.log('selected requirement',selectedRequirement);
   ];
 
   const columns = user_category === "Consumer" ? conColumns : genColumns;
-  console.log("filtered portfolio", generatorPortfolio);
+  console.log("filtered requ", generatorPortfolio);
   console.log("selected portfolio id", selectedPortfolioId);
   console.log("selected portfolio", selectedPortfolio);
   console.log("track data gen", trackDataGen);
@@ -208,6 +223,9 @@ console.log('selected requirement',selectedRequirement);
       setFilteredTrackDataGen(trackDataGen); // Show all by default
     }
   }, [selectedPortfolioId, trackDataGen]);
+
+console.log('track data',trackData);
+
 
   return (
     <div
@@ -266,26 +284,22 @@ console.log('selected requirement',selectedRequirement);
             )}
 
             {user_category === "Consumer" && (
-              <Select
-                value={
-                  selectedRequirementId
-                    ? `${selectedRequirement?.state}||${selectedRequirement?.industry}||${selectedRequirement?.contracted_demand}||${selectedRequirement?.consumption_unit}`
-                    : undefined
-                }
-                // Ensures placeholder is visible when nothing is selected
-                onChange={handleStateChangee}
-                style={{ width: "100%", borderColor: "#669800" }}
-                placeholder="Select Consumption Unit" // Placeholder text
-              >
-                {consumerRequirement.map((item) => (
-                  <Select.Option
-                    key={item.id}
-                    value={`${item.state}||${item.industry}||${item.contracted_demand}||${item.consumption_unit}`}
-                  >
-                    {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
-                  </Select.Option>
-                ))}
-              </Select>
+            <Select
+  value={selectedState || undefined} // use composite string directly
+  onChange={handleStateChangee}
+  style={{ width: "100%", borderColor: "#669800" }}
+  placeholder="Select Consumption Unit"
+>
+  {consumerRequirement.map((item) => (
+    <Select.Option
+      key={item.id}
+      value={`${item.state}||${item.industry}||${item.contracted_demand}||${item.consumption_unit}`}
+    >
+      {`State: ${item.state}, Industry: ${item.industry}, Contracted Demand: ${item.contracted_demand} MWh, Consumption Unit: ${item.consumption_unit}`}
+    </Select.Option>
+  ))}
+</Select>
+
             )}
           </Form.Item>
         </div>
@@ -301,19 +315,21 @@ console.log('selected requirement',selectedRequirement);
         }}
       >
         <Spin spinning={loading} tip="Loading...">
-          <Table
-            dataSource={
-              user_category === "Consumer"
-                ? trackData
-                : selectedPortfolioId
-                ? filteredTrackDataGen
-                : trackDataGen // show all by default for Generator
-            }
-            columns={columns}
-            style={{ textAlign: "center" }}
-            bordered
-            pagination={false}
-          />
+        <Table
+  dataSource={
+    user_category === "Consumer"
+      ? (selectedState ? filteredTrackData : trackData)
+      : selectedPortfolioId
+      ? filteredTrackDataGen
+      : trackDataGen
+  }
+  columns={columns}
+  style={{ textAlign: "center" }}
+  bordered
+  pagination={false}
+  scroll={{ y: 350 }}
+/>
+
         </Spin>
       </Card>
     </div>
