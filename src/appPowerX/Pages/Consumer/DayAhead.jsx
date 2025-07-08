@@ -314,6 +314,7 @@ const options = {
           dataSource={detailDataSource} 
           pagination={false} 
           style={{ textAlign: 'center', backgroundColor: '#fff' }} // Center-align table content
+          bordered
         />
       </Card>
       <div style={{ padding: '20px' }}>

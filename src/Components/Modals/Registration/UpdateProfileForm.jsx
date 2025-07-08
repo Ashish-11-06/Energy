@@ -522,7 +522,7 @@ const handleCloseWarningModal = () => {
   {lastUploadedFiles && (
     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
     <Button
-  type="link"
+  // type="link"
   href={hourly_data}
   target="_blank"
   rel="noopener noreferrer"
@@ -534,8 +534,6 @@ Last Uploaded File
     </div>
   )}
 </Col>
-
-
             <Col span={10}>
               {file && (
                 <Text type="secondary">

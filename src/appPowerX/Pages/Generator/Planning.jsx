@@ -118,10 +118,14 @@ setGeneratorPortfolio(filteredPortfolio);
   };
 
   const tileContent = (value) => {
+    console.log('value', value);
+    
     const date = value.toDate();
     const listData = getListData(date);
     const isToday = dayjs(date).isSame(dayjs(), 'day');
     const isPastDate = dayjs(date).isBefore(dayjs(), 'day');
+    console.log('list data', listData);
+    
     const isDisabledDate = disableDates.some(disabledDate =>
       dayjs(disabledDate).isSame(dayjs(date), 'day')
     );
@@ -206,6 +210,7 @@ Object ID: ${item.object_id}`}
       </div>
     );
   };
+console.log('tile content', tileContent(dayjs(new Date())));
 
   const handleChange = (e) => {
     setSelectedTechnology(e.target.value);
