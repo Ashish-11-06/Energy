@@ -214,11 +214,15 @@ setEndDateString(endDateString);
     {
       title: 'MCP (INR/MWh)',
       children: [
-        {
-          title: 'Value',
-          dataIndex: 'mcp',
-          key: 'mcp',
-        },
+     {
+  title: 'Value',
+  dataIndex: 'mcp',
+  key: 'mcp',
+  render: (value) => {
+    return value?.toLocaleString('en-IN');
+  },
+}
+,
         {
           title: 'Date',
           dataIndex: 'mcpDate',
@@ -238,6 +242,9 @@ setEndDateString(endDateString);
           title: 'Value',
           dataIndex: 'mcv',
           key: 'mcv',
+           render: (value) => {
+    return value?.toLocaleString('en-IN');
+  },
         },
         {
           title: 'Date',
