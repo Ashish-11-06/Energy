@@ -181,46 +181,58 @@ useEffect(() => {
     }
   };
 
-  const handleSubmit = (values) => {
-    console.log('values',values);
-     const locationValue = values.location
-      ? data.location
-      : {
-          latitude: values.latitude || '',
-          longitude: values.longitude || '',
-        };
-    const user = JSON.parse(localStorage.getItem("user")).user;
-    const formattedValues = {
-      id: data?.id,
-      user: user.id,
-      state: values.state,
-      industry: values.industry === "other" ? customIndustry : values.industry,
-      contracted_demand: values.contractedDemand,
-      tariff_category: values.tariffCategory,
-      voltage_level:
-        values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
-      procurement_date: values.procurement.format("YYYY-MM-DD"),
-      sub_industry:
-        values.sub_industry === "otherSub"
-          ? customSubIndustry
-          : values.sub_industry,
-      consumption_unit: values.consumption_unit,
-      annual_electricity_consumption: values.annual_electricity_consumption,
-      roof_area:values.roof_area,
-      solar_rooftop_capacity:values.solar_rooftop_capacity,
-      location:locationValue
-    };
+const handleSubmit = (values) => {
+  console.log('values', values);
 
-    onSubmit(formattedValues);
-    form.resetFields();
-    setCustomVoltage("");
-    setIsCustomVoltage(false);
-    setCustomIndustry("");
-    setIsCustomIndustry(false);
-    setCustomSubIndustry("");
-    setIsCustomSubIndustry(false);
-    setLocation('');
+  const user = JSON.parse(localStorage.getItem("user")).user;
+
+  const formattedValues = {
+    id: data?.id,
+    user: user.id,
+    state: values.state,
+    industry: values.industry === "other" ? customIndustry : values.industry,
+    contracted_demand: values.contractedDemand,
+    tariff_category: values.tariffCategory,
+    voltage_level:
+      values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
+    procurement_date: values.procurement.format("YYYY-MM-DD"),
+    sub_industry:
+      values.sub_industry === "otherSub"
+        ? customSubIndustry
+        : values.sub_industry,
+    consumption_unit: values.consumption_unit,
+    annual_electricity_consumption: values.annual_electricity_consumption,
+    roof_area: values.roof_area,
+    solar_rooftop_capacity: values.solar_rooftop_capacity,
   };
+
+  // ✅ Robust check for valid location
+  const hasValidLocation =
+    values.location &&
+    values.location.latitude &&
+    values.location.longitude;
+
+  if (hasValidLocation) {
+    formattedValues.location = values.location;
+  } else {
+    formattedValues.latitude = values.latitude || '';
+    formattedValues.longitude = values.longitude || '';
+  }
+
+  console.log('formattedValues', formattedValues);
+  onSubmit(formattedValues);
+
+  form.resetFields();
+  setCustomVoltage("");
+  setIsCustomVoltage(false);
+  setCustomIndustry("");
+  setIsCustomIndustry(false);
+  setCustomSubIndustry("");
+  setIsCustomSubIndustry(false);
+  setLocation('');
+};
+
+
 
   const renderLabelWithTooltip = (label, tooltip) => (
     <span>
@@ -647,7 +659,7 @@ useEffect(() => {
         </Col>
         <Col span={12}>
   <Form.Item
-    label="Coordinates (Latitude & Longitude)"
+    label="Coordinates (Lat & Long)"
     required
     style={{ marginBottom: 0 }}
   >

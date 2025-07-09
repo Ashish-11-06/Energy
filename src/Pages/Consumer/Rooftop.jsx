@@ -14,12 +14,22 @@ const Rooftop = () => {
   const [loading,setLoading]=useState(false);
   const [monthlyData,setMonthlyData]=useState([]);
   const [energyReplaced,setEnergyReplaced]=useState('');
+  const [requiredData, setRequiredData] = useState(null);
   //   console.log('user',userData);
 
-  const requirements = useSelector(
-    (state) => state.consumerRequirement.requirements || []
+const requirements = useSelector(
+  (state) => state.consumerRequirement.requirements || []
+);
+console.log('requirements', requirements);
+
+useEffect(() => {
+  const filtered = requirements.filter(
+    item => item.solar_rooftop_capacity && Number(item.solar_rooftop_capacity) > 0
   );
-  console.log("requirements", requirements);
+
+  setRequiredData(filtered);
+}, [requirements]);
+
 
   useEffect(() => {
     const fetchReq = async () => {
@@ -33,7 +43,7 @@ const Rooftop = () => {
     console.log('Selected value:', radioValueRef.current);
   };
   const handleRequirementChange =async (value) => {
-    const selected = requirements.find((req) => req.id === value);
+    const selected = requiredData.find((req) => req.id === value);
     setSelectedRequirement(selected);
   };
   // console.log('radion value',radioValueRef);
@@ -143,8 +153,8 @@ const columns = [
               value={selectedRequirement?.id}
               onChange={handleRequirementChange}
               options={
-                Array.isArray(requirements)
-                  ? requirements.map((req) => ({
+                Array.isArray(requiredData)
+                  ? requiredData.map((req) => ({
                       label: (
                         <span>
                           <strong>State:</strong> {req.state},{" "}
