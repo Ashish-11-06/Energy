@@ -8,7 +8,7 @@ const stateApi = {
   districts: (state_name) => {
     console.log('state name',state_name);
     
-    return axiosInstance.get(`/energy/districts/${state_name}`); 
+    return axiosInstance.get(`/energy/districts/${state_name}/`); 
   },
 };
 
