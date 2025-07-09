@@ -297,7 +297,7 @@ const MCPData = {
         onChange={handleForecastChange}
       >
         <Option value="currentDay">Previous Day</Option>
-        <Option value="past30Days">Past 30 Days</Option>
+        {/* <Option value="past30Days">Past 30 Days</Option> */}
       </Select>
 
       {/* Radio Buttons for Chart Selection */}

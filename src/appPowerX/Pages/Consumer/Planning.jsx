@@ -387,7 +387,7 @@ const Planning = () => {
       ),
     },
     {
-      title: "Technology & Price (INR/MWh)",
+      title: "Technology & Price (INR/kWh)",
       dataIndex: "technology",
       key: "technology",
     },
@@ -783,10 +783,10 @@ const Planning = () => {
           {/* Solar Price Input */}
           {selectedTechnology === "Solar" && (
             <div>
-              <label style={{ fontWeight: "bold" }}>Enter Solar Price:</label>
+              <label style={{ fontWeight: "bold" }}>Enter Solar Price (INR/kWh):</label>
               <Input
                 type="number"
-                placeholder="Enter solar price in INR/MWh"
+                placeholder="Enter solar price in INR/kWh"
                 value={price["Solar"] || ""}
                 min={0}
                 onChange={(e) => {
@@ -811,11 +811,11 @@ const Planning = () => {
           {selectedTechnology === "Non-Solar" && (
             <div>
               <label style={{ fontWeight: "bold" }}>
-                Enter Non Solar Price:
+                Enter Non Solar Price (INR/kWh):
               </label>
               <Input
                 type="number"
-                placeholder="Enter non-solar price in INR/MWh"
+                placeholder="Enter non-solar price in INR/kWh"
                 value={price["Non-Solar"] || ""}
                 min={0}
                 onChange={(e) => {

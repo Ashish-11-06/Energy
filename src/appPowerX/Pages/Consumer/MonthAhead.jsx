@@ -30,6 +30,12 @@ const [endDateString, setEndDateString] = useState('');
   const end_date = new Date(start_date); // Copy start_date
   end_date.setDate(start_date.getDate() + 30);
 
+  const centerStyle = {
+    textAlign: 'center',
+    verticalAlign: 'middle',
+  };
+
+
   // const startDateString = start_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   // const endDateString = end_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
@@ -41,9 +47,13 @@ const [endDateString, setEndDateString] = useState('');
         const responseData = data.payload;
         
         const dailyData = responseData.daily_data;
+        console.log('dailyData:', dailyData);
+        
         if (Array.isArray(responseData?.daily_data)) {
  const startDate = new Date(dailyData[0].date);
   const endDate = new Date(dailyData[dailyData.length - 1].date);
+console.log("Start Date:", startDate);
+console.log("End Date:", endDate);
 
 const startDateString = startDate.toLocaleDateString('en-US', {
   month: 'long',  // use 'short' for "Jul" instead of "July"
@@ -205,60 +215,66 @@ setEndDateString(endDateString);
     },
   };
 
-  const columns = [
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-    },
-    {
-      title: 'MCP (INR/MWh)',
-      children: [
-     {
-  title: 'Value',
-  dataIndex: 'mcp',
-  key: 'mcp',
-  render: (value) => {
-    return value?.toLocaleString('en-IN');
+const columns = [
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+    onCell: () => ({ style: centerStyle }),
+    onHeaderCell: () => ({ style: centerStyle }),
   },
-}
-,
-        {
-          title: 'Date',
-          dataIndex: 'mcpDate',
-          key: 'mcpDate',
-          render: (text, record) => {
-            if (record.status === 'Highest Forecasted Value') return mcpHighestDate;
-            if (record.status === 'Lowest Forecasted Value') return mcpLowestDate;
-            return '-';
-          },
+  {
+    title: 'MCP (INR/MWh)',
+    children: [
+      {
+        title: 'Value',
+        dataIndex: 'mcp',
+        key: 'mcp',
+        render: (value) => value?.toLocaleString('en-IN'),
+        onCell: () => ({ style: centerStyle }),
+        onHeaderCell: () => ({ style: centerStyle }),
+      },
+      {
+        title: 'Date',
+        dataIndex: 'mcpDate',
+        key: 'mcpDate',
+        render: (text, record) => {
+          if (record.status === 'Highest Forecasted Value') return mcpHighestDate;
+          if (record.status === 'Lowest Forecasted Value') return mcpLowestDate;
+          return '-';
         },
-      ],
-    },
-    {
-      title: 'MCV (MWh)',
-      children: [
-        {
-          title: 'Value',
-          dataIndex: 'mcv',
-          key: 'mcv',
-           render: (value) => {
-    return value?.toLocaleString('en-IN');
+        onCell: () => ({ style: centerStyle }),
+        onHeaderCell: () => ({ style: centerStyle }),
+      },
+    ],
   },
+  {
+    title: 'MCV (MWh)',
+    children: [
+      {
+        title: 'Value',
+        dataIndex: 'mcv',
+        key: 'mcv',
+        render: (value) => value?.toLocaleString('en-IN'),
+        onCell: () => ({ style: centerStyle }),
+        onHeaderCell: () => ({ style: centerStyle }),
+      },
+      {
+        title: 'Date',
+        dataIndex: 'mcvDate',
+        key: 'mcvDate',
+        render: (text, record) => {
+          if (record.status === 'Highest Forecasted Value') return mcvHighestDate;
+          if (record.status === 'Lowest Forecasted Value') return mcvLowestDate;
+          return '-';
         },
-        {
-          title: 'Date',
-          dataIndex: 'mcvDate',
-          key: 'mcvDate',
-          render: (text, record) => {
-            if (record.status === 'Highest Forecasted Value') return mcvHighestDate;
-            if (record.status === 'Lowest Forecasted Value') return mcvLowestDate;
-            return '-';
-          },
-        },
-      ],
-    },
-  ];
+        onCell: () => ({ style: centerStyle }),
+        onHeaderCell: () => ({ style: centerStyle }),
+      },
+    ],
+  },
+];
+
   
 
   return (

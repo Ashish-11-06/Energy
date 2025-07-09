@@ -331,7 +331,7 @@ console.log('selected forecsat',selectedForecast);
         onChange={handleForecastChange}
       >
         <Option value="currentDay">Previous day</Option>
-        <Option value="next30Day">Last 30 days</Option>
+        {/* <Option value="next30Day">Last 30 days</Option> */}
       </Select>
       {/* <h1>Model Statistical Information</h1> */}
 

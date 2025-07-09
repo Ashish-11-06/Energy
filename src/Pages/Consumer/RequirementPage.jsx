@@ -177,6 +177,8 @@ const companyName=userData.company;
       if (isEdit) {
         const res = dispatch(updateRequirements({ updatedData: values }));
         setIsModalVisible(false);
+        console.log('res',res);
+        
         if(res) {
           message.success('Requirement updated successfully!');
         }

@@ -33,6 +33,12 @@ const [endDateString, setEndDateString] = useState('');
   const end_date = new Date(start_date); // Copy start_date
   end_date.setDate(start_date.getDate() + 30);
 
+const centerStyle = {
+  textAlign: 'center',
+  verticalAlign: 'middle',
+};
+
+
   // const startDateString = start_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   // const endDateString = end_date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
@@ -124,81 +130,13 @@ setEndDateString(endDateString);
     fetchData();
   }, [dispatch]);
 
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const data = await dispatch(fetchMonthAheadData());
-  //       const responseData = data.payload;
-
-  //       if (Array.isArray(responseData?.daily_data)) {
-  //         const mcvData = responseData.daily_data.map(item => item.mcv_prediction?.avg ?? 0);
-  //         const mcpDataOriginal = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
-  //         const mcpData = mcpDataOriginal.reverse();
-  //         const labels = Array.from({ length: 31 }, (_, i) => i + 1); // Creates an array [1, 2, ..., 31]
-
-  //      // console.log("MCV Data:", mcvData);
-  //      // console.log("MCP Data:", mcpData);
-  //      // console.log("Labels:", labels);
-
-  //         setLineData({
-  //           labels,
-  //           datasets: [
-  //             {
-  //               label: 'MCP (INR/MWh)',
-  //               data: mcpData,
-  //               borderColor: 'blue',
-  //               fill: false,
-  //               yAxisID: 'y-axis-mcp',
-  //             },
-  //             {
-  //               label: 'MCV (MWh)',
-  //               data: mcvData,
-  //               borderColor: 'green',
-  //               fill: false,
-  //               yAxisID: 'y-axis-mcv',
-  //             },
-  //           ],
-  //         });
-
-  //         setTableData([
-  //           {
-  //             key: '1',
-  //             status: 'Highest',
-  //             mcp: responseData.overall_stats?.mcp_prediction?.highest ?? 0,
-  //             mcv: responseData.overall_stats?.mcv_prediction?.highest ?? 0,
-  //           },
-  //           {
-  //             key: '2',
-  //             status: 'Lowest',
-  //             mcp: responseData.overall_stats?.mcp_prediction?.lowest ?? 0,
-  //             mcv: responseData.overall_stats?.mcv_prediction?.lowest ?? 0,
-  //           },
-  //           {
-  //             key: '3',
-  //             status: 'Average',
-  //             mcp: responseData.overall_stats?.mcp_prediction?.average ?? 0,
-  //             mcv: responseData.overall_stats?.mcv_prediction?.average ?? 0,
-  //           },
-  //         ]);
-  //       } else {
-  //         console.error("Error: daily_data is missing or not an array", responseData);
-  //         setLineData({ labels: [], datasets: [] });
-  //       }
-  //     } catch (error) {
-  //    // console.log("Error fetching data:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [dispatch]);
-
 const columns = [
   {
     title: 'Details',
     dataIndex: 'status',
     key: 'status',
-    width: 200,
+    onCell: () => ({ style: centerStyle }),
+    onHeaderCell: () => ({ style: centerStyle }),
   },
   {
     title: 'MCP (INR/MWh)',
@@ -212,6 +150,8 @@ const columns = [
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }),
+        onCell: () => ({ style: centerStyle }),
+        onHeaderCell: () => ({ style: centerStyle }),
       },
       {
         title: 'Date',
@@ -222,6 +162,8 @@ const columns = [
           if (record.status === 'Lowest Forecasted Value') return mcpLowestDate;
           return '-';
         },
+        onCell: () => ({ style: centerStyle }),
+        onHeaderCell: () => ({ style: centerStyle }),
       },
     ],
   },
@@ -237,6 +179,8 @@ const columns = [
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }),
+        onCell: () => ({ style: centerStyle }),
+        onHeaderCell: () => ({ style: centerStyle }),
       },
       {
         title: 'Date',
@@ -247,10 +191,13 @@ const columns = [
           if (record.status === 'Lowest Forecasted Value') return mcvLowestDate;
           return '-';
         },
+        onCell: () => ({ style: centerStyle }),
+        onHeaderCell: () => ({ style: centerStyle }),
       },
     ],
   },
 ];
+
 
   const handleNextTrade = () => {
     navigate('/px/generator/planning');

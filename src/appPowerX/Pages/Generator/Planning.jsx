@@ -401,7 +401,7 @@ console.log('tile content', tileContent(dayjs(new Date())));
         </Tooltip>
       ),
     },
-    { title: 'Technology & Price (INR/MWh)', dataIndex: 'technology', key: 'technology' },
+    { title: 'Technology & Price (INR/kWh)', dataIndex: 'technology', key: 'technology' },
 
     // {title:'Portfolio',dataIndex:'portfolio',key:'portfolio'},
     {
@@ -724,10 +724,10 @@ handleStateChange(value)
         <div style={{ marginTop: "15px" }}>
           {selectedTechnology && (
             <div>
-              <label style={{ fontWeight: "bold" }}>Enter {selectedTechnology === 'non_solar' ? 'Non Solar' : selectedTechnology} Price (INR/MWh):</label>
+              <label style={{ fontWeight: "bold" }}>Enter {selectedTechnology === 'non_solar' ? 'Non Solar' : selectedTechnology} Price (INR/kWh):</label>
               <Input
                 type="number"
-placeholder={`Enter ${selectedTechnology === 'non_solar' ? 'Non Solar' : selectedTechnology} price in INR/MWh`}
+placeholder={`Enter ${selectedTechnology === 'non_solar' ? 'Non Solar' : selectedTechnology} price in INR/kWh`}
                 value={price}
                 min={0}
                 onChange={(e) => setPrice(e.target.value)}

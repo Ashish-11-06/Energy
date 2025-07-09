@@ -37,10 +37,19 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
 const isFetching = useRef(false);
+const [stateName, setStateName] = useState(""); // State to track selected state
   // console.log(data);
+console.log('isEdit',isEdit);
 
   useEffect(() => {
     if (data) {
+      console.log('data',data);
+       const locationValue = data.location
+      ? data.location
+      : {
+          latitude: data.latitude || '',
+          longitude: data.longitude || '',
+        };
       form.setFieldsValue({
         id: data?.id,
         state: data.state,
@@ -55,7 +64,7 @@ const isFetching = useRef(false);
           : null,
            roof_area:data.roof_area,
         solar_rooftop_capacity:data.solar_rooftop_capacity,
-        location:data.location
+        location:locationValue
       });
       // console.log(data);
       setSelectedIndustry(data.industry);
@@ -64,6 +73,7 @@ const isFetching = useRef(false);
       form.resetFields(); // Reset fields if no data is provided
     }
   }, [data, form, industryy]);
+console.log('state name',stateName);
 
   useEffect(() => {
     if (industryy.length < 1) {
@@ -111,6 +121,13 @@ console.log('districts',districts);
 
   useEffect(() => {
     if (data) {
+      console.log('data',data);
+       const locationValue = data.location
+      ? data.location
+      : {
+          latitude: data.latitude || '',
+          longitude: data.longitude || '',
+        };
       form.setFieldsValue({
         id: data?.id,
         state: data.state,
@@ -126,7 +143,7 @@ console.log('districts',districts);
           : null,
         roof_area:data.roof_area,
         solar_rooftop_capacity:data.solar_rooftop_capacity,
-        location:data.location
+        location:locationValue
       });
       // console.log(data);
       setSelectedIndustry(data.industry);
@@ -148,6 +165,13 @@ console.log('districts',districts);
     }
   };
 
+useEffect(() => {
+  if (isEdit && data?.state) {
+    fetchDistrict(data.state);
+  }
+}, [isEdit, data?.state]);
+
+
   const handleSubIndustryChange = (value) => {
     if (value === "otherSub") {
       setIsCustomSubIndustry(true);
@@ -159,6 +183,12 @@ console.log('districts',districts);
 
   const handleSubmit = (values) => {
     console.log('values',values);
+     const locationValue = values.location
+      ? data.location
+      : {
+          latitude: values.latitude || '',
+          longitude: values.longitude || '',
+        };
     const user = JSON.parse(localStorage.getItem("user")).user;
     const formattedValues = {
       id: data?.id,
@@ -178,7 +208,7 @@ console.log('districts',districts);
       annual_electricity_consumption: values.annual_electricity_consumption,
       roof_area:values.roof_area,
       solar_rooftop_capacity:values.solar_rooftop_capacity,
-      location:values.location
+      location:locationValue
     };
 
     onSubmit(formattedValues);
@@ -239,7 +269,7 @@ console.log('districts',districts);
                 showSearch
                 disabled={isEdit} // Disable only in edit mode
                 onChange={(value) => {
-  // handleStateChange(value);  // if needed
+  setStateName(value);  // if needed
   fetchDistrict(value);      // fetch districts when state changes
 }}
 
@@ -612,6 +642,7 @@ console.log('districts',districts);
                   </Select.Option>
                 ))}
             </Select>
+         {!stateName &&  <p>(First select state from above state drop down.)</p>}
           </Form.Item>
         </Col>
         <Col span={12}>
