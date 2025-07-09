@@ -654,7 +654,7 @@ const handleSubmit = (values) => {
                   </Select.Option>
                 ))}
             </Select>
-         {!stateName &&  <p>(First select state from above state drop down.)</p>}
+         {/* {!stateName &&  <p>(First select state from above state drop down.)</p>} */}
           </Form.Item>
         </Col>
         <Col span={12}>
