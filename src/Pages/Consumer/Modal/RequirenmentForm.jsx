@@ -119,39 +119,49 @@ const fetchDistrict = async (stateName) => {
 
 console.log('districts',districts);
 
-  useEffect(() => {
-    if (data) {
-      console.log('data',data);
-       const locationValue = data.location
-      ? data.location
-      : {
-          latitude: data.latitude || '',
-          longitude: data.longitude || '',
-        };
-      form.setFieldsValue({
-        id: data?.id,
-        state: data.state,
-        consumption_unit: data.consumption_unit,
-        industry: data.industry,
-        contractedDemand: data.contracted_demand,
-        tariffCategory: data.tariff_category,
-        voltageLevel: data.voltage_level,
-        sub_industry: data.sub_industry,
-        annual_electricity_consumption: data.annual_electricity_consumption,
-        procurement: data.procurement_date
-          ? dayjs(data.procurement_date, "YYYY-MM-DD") // Ensure it is a valid dayjs object
-          : null,
-        roof_area:data.roof_area,
-        solar_rooftop_capacity:data.solar_rooftop_capacity,
-        location:locationValue
-      });
-      // console.log(data);
-      setSelectedIndustry(data.industry);
-      setSubIndustries(industryy[data.industry] || []);
+useEffect(() => {
+  if (data) {
+    console.log('data', data);
+
+    const hasValidLocation = data.location;
+
+    let locationValue = null;
+    let latitude = '';
+    let longitude = '';
+
+    if (hasValidLocation) {
+      locationValue = data.location;
     } else {
-      form.resetFields(); // Reset fields if no data is provided
+      latitude = data.latitude || '';
+      longitude = data.longitude || '';
     }
-  }, [data, form, industryy]);
+
+    form.setFieldsValue({
+      id: data?.id,
+      state: data.state,
+      consumption_unit: data.consumption_unit,
+      industry: data.industry,
+      contractedDemand: data.contracted_demand,
+      tariffCategory: data.tariff_category,
+      voltageLevel: data.voltage_level,
+      sub_industry: data.sub_industry,
+      annual_electricity_consumption: data.annual_electricity_consumption,
+      procurement: data.procurement_date
+        ? dayjs(data.procurement_date, "YYYY-MM-DD")
+        : null,
+      roof_area: data.roof_area,
+      solar_rooftop_capacity: data.solar_rooftop_capacity,
+      location: locationValue,
+      latitude: latitude,
+      longitude: longitude,
+    });
+
+    setSelectedIndustry(data.industry);
+    setSubIndustries(industryy[data.industry] || []);
+  } else {
+    form.resetFields(); // Reset if no data
+  }
+}, [data, form, industryy]);
 
   const handleIndustryChange = (value) => {
     setSelectedIndustry(value); // Update selected industry
@@ -208,10 +218,11 @@ const handleSubmit = (values) => {
 
   // ✅ Robust check for valid location
   const hasValidLocation =
-    values.location &&
-    values.location.latitude &&
-    values.location.longitude;
+    values.location 
+    // values.location.latitude &&
+    // values.location.longitude;
 
+    // console.log('has validation',hasValidLocation);
   if (hasValidLocation) {
     formattedValues.location = values.location;
   } else {
