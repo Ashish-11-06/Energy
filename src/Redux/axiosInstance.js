@@ -2,36 +2,32 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://ext.exgglobal.com/api/api',
+  baseURL: import.meta.env.VITE_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Add a request interceptor
+// Attach auth token from localStorage to each request
 axiosInstance.interceptors.request.use(
   (config) => {
     try {
-      const userData = JSON.parse(localStorage.getItem('user'));
+      const storedUser = localStorage.getItem('user');
+      const userData = storedUser ? JSON.parse(storedUser) : null;
       const token = userData?.token;
-// console.log('token',token);
 
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
-        // console.log(`Token added to headers: ${token}`);
       } else {
-        console.log('No token found in localStorage');
+        console.warn('Authorization token not found in localStorage.');
       }
-    } catch (error) {
-      console.error('Error getting token:', error);
+    } catch (err) {
+      console.error('Failed to retrieve token from localStorage:', err);
     }
 
     return config;
   },
-  (error) => {
-    // Handle request error
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default axiosInstance;

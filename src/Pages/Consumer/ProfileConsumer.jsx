@@ -39,7 +39,7 @@ const ProfilePage = () => {
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
   const userId = initialUserData.id;
   console.log(userId);
-  const baseurl="http://52.66.186.241:8000"
+  const baseurl = "https://ext.exgglobal.com/api"
   const navigate = useNavigate();
 
   const role = initialUserData.role;
@@ -96,7 +96,7 @@ const ProfilePage = () => {
   const handleSave = (values) => {
     const storedUser = localStorage.getItem("user");
     const existingUserData = storedUser ? JSON.parse(storedUser) : {};
-console.log('credit rating:', values.proof);
+    console.log('credit rating:', values.proof);
 
     // Debug: log the proof field structure
  // console.log('values.proof:', values.proof);
@@ -115,40 +115,40 @@ console.log('credit rating:', values.proof);
     // }
 
     const updatedUserData = {
-        ...existingUserData.user,
-        company_representative: values.company_representative ?? existingUserData.user.company_representative,
-        company: values.company ?? existingUserData.user.company,
-        email: values.email ?? existingUserData.user.email,
-        mobile: values.mobile ?? existingUserData.user.mobile,
-        credit_rating: values.credit_rating ?? existingUserData.user.credit_rating,
-        credit_rating_proof: proofBase64,
+      ...existingUserData.user,
+      company_representative: values.company_representative ?? existingUserData.user.company_representative,
+      company: values.company ?? existingUserData.user.company,
+      email: values.email ?? existingUserData.user.email,
+      mobile: values.mobile ?? existingUserData.user.mobile,
+      credit_rating: values.credit_rating ?? existingUserData.user.credit_rating,
+      credit_rating_proof: proofBase64,
     };
 
  // console.log('Payload to backend:', { userId, userData: updatedUserData });
 
     dispatch(editUser({ userId, userData: updatedUserData }))
-        .then((res) => {
-            if (res.payload && res.payload.data && res.payload.data.data) {
-                const updatedLocalStorageData = {
-                    message: existingUserData.message || "Login successful",
-                    token: existingUserData.token,
-                    user: {
-                        ...existingUserData.user,
-                        ...res.payload.data.data, // Use the updated user data from the API response
-                    },
-                    subscription_type: existingUserData.subscription_type,
-                    start_date: existingUserData.start_date,
-                    end_date: existingUserData.end_date,
-                    status: existingUserData.status,
-                };
+      .then((res) => {
+        if (res.payload && res.payload.data && res.payload.data.data) {
+          const updatedLocalStorageData = {
+            message: existingUserData.message || "Login successful",
+            token: existingUserData.token,
+            user: {
+              ...existingUserData.user,
+              ...res.payload.data.data, // Use the updated user data from the API response
+            },
+            subscription_type: existingUserData.subscription_type,
+            start_date: existingUserData.start_date,
+            end_date: existingUserData.end_date,
+            status: existingUserData.status,
+          };
 
-                // Update localStorage immediately
-                localStorage.setItem("user", JSON.stringify(updatedLocalStorageData));
-                setUserData(updatedLocalStorageData.user); // Update state immediately
+          // Update localStorage immediately
+          localStorage.setItem("user", JSON.stringify(updatedLocalStorageData));
+          setUserData(updatedLocalStorageData.user); // Update state immediately
 
-                // Trigger custom event to notify HeaderComponent
-                const event = new Event("userDetailsUpdated");
-                window.dispatchEvent(event);
+          // Trigger custom event to notify HeaderComponent
+          const event = new Event("userDetailsUpdated");
+          window.dispatchEvent(event);
 
              // console.log("User updated successfully:", res);
             }
@@ -158,7 +158,7 @@ console.log('credit rating:', values.proof);
         });
 
     setIsModalVisible(false);
-};
+  };
 
   const handleSaveUser = (values) => {
     setIsUserModal(false);
@@ -171,15 +171,15 @@ console.log('credit rating:', values.proof);
       ]);
     }
   };
- 
-const credit_rating_proof=`${baseurl}${userData.credit_rating_proof}`|| "N/A";
+
+  const credit_rating_proof = `${baseurl}${userData.credit_rating_proof}` || "N/A";
   const handleLogOut = () => {
     localStorage.removeItem("user");
     localStorage.clear();
     navigate("/");
   };
 
-  
+
 
   const userColumns = [
     {
@@ -252,20 +252,20 @@ const credit_rating_proof=`${baseurl}${userData.credit_rating_proof}`|| "N/A";
                 <Text strong>Credit Rating</Text>
               </Col>
               <Col span={12}>
-                <Text> : {userData.credit_rating || "N/A"} {'    '}</Text> 
-  <a
-  href={credit_rating_proof}
-  target="_blank"
-  rel="noopener noreferrer"
-  download
-  style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)', textDecoration: 'underline' }}
->
-  {/* <DownloadOutlined />  */}
-  Proof
-</a>
-
+                <Text> : {userData.credit_rating || "N/A"} {'    '}</Text>
+                {userData.credit_rating && userData.credit_rating !== "N/A" && (
+                  <a
+                    href={credit_rating_proof}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                    style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)', textDecoration: 'underline' }}
+                  >
+                    Proof
+                  </a>
+                )}
               </Col>
-           
+
               <Col span={12}>
                 <Text strong>Subscription plan</Text>
               </Col>
@@ -301,8 +301,8 @@ const credit_rating_proof=`${baseurl}${userData.credit_rating_proof}`|| "N/A";
               <Button type="primary" onClick={handleEditToggle}>
                 Edit
               </Button>
-              <Button type="primary"          
-              icon={<LogoutOutlined />} onClick={handleLogOut}>
+              <Button type="primary"
+                icon={<LogoutOutlined />} onClick={handleLogOut}>
                 Log out
               </Button>
             </Row>

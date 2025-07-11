@@ -1,25 +1,25 @@
 export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onError) => {
   try {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://ext.exgglobal.com/api/api/energy/optimize-capactiy", true);
+    const VITE_BASE_URL = import.meta.env.VITE_ALT_BASE_URL;
+    const endpoint = `${VITE_BASE_URL}/energy/optimize-capactiy`;
 
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", endpoint, true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
-    // Add Bearer token from localStorage
+    // Attach token from localStorage if available
     try {
       const userData = JSON.parse(localStorage.getItem("user"));
       const token = userData?.token;
 
       if (token) {
         xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-     // console.log(`Token added to headers: ${token}`);
-      } else {
-     // console.log("No token found in localStorage");
       }
     } catch (err) {
-      console.error("Error getting token from localStorage:", err);
+      console.error("Error retrieving token from localStorage:", err);
     }
 
+    // Progress event
     xhr.onprogress = (event) => {
       if (event.lengthComputable) {
         const percentComplete = (event.loaded / event.total) * 100;
@@ -27,6 +27,7 @@ export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onE
       }
     };
 
+    // Load success
     xhr.onload = () => {
       if (xhr.status === 200) {
         const response = JSON.parse(xhr.responseText);
@@ -37,10 +38,12 @@ export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onE
       }
     };
 
+    // Network error
     xhr.onerror = () => {
       onError("Failed to fetch combinations.");
     };
 
+    // Send request
     xhr.send(JSON.stringify(modalData));
   } catch (error) {
     console.error("Error in fetchOptimizedCombinationsXHR:", error);

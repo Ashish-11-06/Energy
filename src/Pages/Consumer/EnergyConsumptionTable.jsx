@@ -115,16 +115,16 @@ const EnergyConsumptionTable = () => {
       "Off Peak Consumption (MWh)",
       "Monthly Bill Amount (INR cr)"
     ];
-  
+
     const months = [
       "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
     ];
-  
+
     // Create CSV content
     let csvContent = headers.join(",") + "\n";
     csvContent += months.map(month => `${month},,,,`).join("\n");
-  
+
     // Create a Blob and download link
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -136,7 +136,7 @@ const EnergyConsumptionTable = () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url); // Clean up the URL object
   };
-  
+
 
   const handleToggleDetails = () => {
 
@@ -209,14 +209,25 @@ const EnergyConsumptionTable = () => {
           // setDataSource(updatedDataSource);
 
           // Dispatch the uploadCSV thunk and wait for the result
-         const response = await dispatch(
+          const response = await dispatch(
             uploadCSV({ requirement_id: requirementId, file: base64File })
           ).unwrap();
           // console.log("CSV upload response:", response);
-
+          if (requirementId) {
+            try {
+              const response = await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
+              console.log('fetched successfully');
+              // if (temp > 0) {
+              setShowTable(true);
+              // }
+            } catch (error) {
+              console.error("Error fetching data:", error);
+            }
+          }
           // Mark action as completed only if upload succeeds
           setIsActionCompleted(true);
-          handleToggleDetails();
+
+          // handleToggleDetails();
         } catch (error) {
           // console.error("Error processing the file:", error);
           message.error(
@@ -283,26 +294,26 @@ const EnergyConsumptionTable = () => {
         try {
           const response = await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
           const temp = response.length;
-          
 
-        let allFieldsValid = true;
 
-        for (let item of response) {
-          // Check each key except 'monthlyBill'
-          const { monthly_consumption, peak_consumption, off_peak_consumption } = item;
-          if (
-            monthly_consumption === null ||
-            peak_consumption === null ||
-            off_peak_consumption === null
-          ) {
-            // console.log("Invalid data found:", item);
-            allFieldsValid = false;
-            break;
+          let allFieldsValid = true;
+
+          for (let item of response) {
+            // Check each key except 'monthlyBill'
+            const { monthly_consumption, peak_consumption, off_peak_consumption } = item;
+            if (
+              monthly_consumption === null ||
+              peak_consumption === null ||
+              off_peak_consumption === null
+            ) {
+              // console.log("Invalid data found:", item);
+              allFieldsValid = false;
+              break;
+            }
           }
-        }
-        
 
-        setFieldsUpdated(allFieldsValid);  
+
+          setFieldsUpdated(allFieldsValid);
 
           setTemp(response.length)
           if (temp > 0) {
@@ -453,7 +464,7 @@ const EnergyConsumptionTable = () => {
       setSaveSuccess(true); // Set save success to true
       setTimeout(() => setSaveSuccess(false), 3000);
       setSaveError(false); // Reset save error
-      
+
     } catch (error) {
       // ...existing code...
       message.error("Failed to add monthly data");
@@ -549,12 +560,12 @@ const EnergyConsumptionTable = () => {
 
   const EditableCell = ({ value, onChange, onBlur }) => {
     const [tempValue, setTempValue] = useState(value);
-  
+
     const handleBlur = () => {
       onChange(tempValue);
       onBlur();
     };
-  
+
     return (
       <InputNumber
         value={tempValue}
@@ -566,7 +577,7 @@ const EnergyConsumptionTable = () => {
       />
     );
   };
-  
+
 
   const columns = useMemo(() => [
     {
@@ -588,7 +599,7 @@ const EnergyConsumptionTable = () => {
         <EditableCell
           value={record.monthlyConsumption}
           onChange={(value) => handleInputChange(value, record.key, "monthlyConsumption")}
-          onBlur={() => {}}
+          onBlur={() => { }}
         />
       ),
     },
@@ -605,7 +616,7 @@ const EnergyConsumptionTable = () => {
         <EditableCell
           value={record.peakConsumption}
           onChange={(value) => handleInputChange(value, record.key, "peakConsumption")}
-          onBlur={() => {}}
+          onBlur={() => { }}
         />
       ),
     },
@@ -622,7 +633,7 @@ const EnergyConsumptionTable = () => {
         <EditableCell
           value={record.offPeakConsumption}
           onChange={(value) => handleInputChange(value, record.key, "offPeakConsumption")}
-          onBlur={() => {}}
+          onBlur={() => { }}
         />
       ),
     },
@@ -639,7 +650,7 @@ const EnergyConsumptionTable = () => {
         <EditableCell
           value={record.monthlyBill}
           onChange={(value) => handleInputChange(value, record.key, "monthlyBill")}
-          onBlur={() => {}}
+          onBlur={() => { }}
         />
       ),
     },
@@ -1004,7 +1015,7 @@ const EnergyConsumptionTable = () => {
                 <Button
                   type="primary"
                   onClick={handleContinue}
-                  disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource || !fieldsupdated } // Enable only if an action is completed
+                  disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource || !fieldsupdated} // Enable only if an action is completed
                   style={{ marginLeft: "86%", marginTop: "8px" }}
                 >
                   Continue {`>>`}
@@ -1026,7 +1037,7 @@ const EnergyConsumptionTable = () => {
                   <Button
                     type="primary"
                     onClick={handleContinue}
-                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource } // Enable only if an action is completed
+                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource} // Enable only if an action is completed
                     style={{ marginLeft: "86%", marginTop: "8px" }}
                   >
                     Continue {`>>`}
@@ -1037,7 +1048,7 @@ const EnergyConsumptionTable = () => {
                     type="primary"
                     onClick={handleContinue}
                     style={{ marginLeft: "86%", marginTop: "8px" }}
-                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource }
+                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource}
                   >
                     Continue {`>>`}
                   </Button>
