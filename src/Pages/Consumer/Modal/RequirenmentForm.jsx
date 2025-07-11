@@ -12,16 +12,19 @@ import {
   Row,
   Col,
   Tooltip,
+  Collapse,
+  message,
 } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import moment from "moment"; // Ensure moment is imported
-
+const { Panel } = Collapse;
 import { useDispatch, useSelector } from "react-redux";
 import { fetchState,fetchDistricts } from "../../../Redux/Slices/Consumer/stateSlice";
 import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
+import { updateRequirements } from "../../../Redux/Slices/Consumer/consumerRequirementSlice";
 const { Option } = Select;
 
-const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
+const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop,handleCancelModal }) => {
   const [form] = Form.useForm();
   const [customVoltage, setCustomVoltage] = useState("");
   const [isCustomVoltage, setIsCustomVoltage] = useState(false);
@@ -39,8 +42,8 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit }) => {
 const isFetching = useRef(false);
 const [stateName, setStateName] = useState(""); // State to track selected state
   // console.log(data);
-console.log('isEdit',isEdit);
-
+// console.log('isEdit',isEdit);
+console.log('fromrooftop',fromRooftop);
   useEffect(() => {
     if (data) {
       console.log('data',data);
@@ -231,7 +234,19 @@ const handleSubmit = (values) => {
   }
 
   console.log('formattedValues', formattedValues);
-  onSubmit(formattedValues);
+  if(!fromRooftop) {
+    onSubmit(formattedValues);
+  } else {
+       
+        const res = dispatch(updateRequirements({ updatedData: formattedValues }));
+       handleCancelModal();
+        console.log('res',res);
+        
+        if(res) {
+          message.success('Requirement updated successfully!');
+        }
+      
+  }
 
   form.resetFields();
   setCustomVoltage("");
@@ -292,8 +307,10 @@ const handleSubmit = (values) => {
                 showSearch
                 disabled={isEdit} // Disable only in edit mode
                 onChange={(value) => {
+                   setLocation('');
   setStateName(value);  // if needed
   fetchDistrict(value);      // fetch districts when state changes
+  form.setFieldsValue({ location: undefined });
 }}
 
               >
@@ -598,111 +615,167 @@ const handleSubmit = (values) => {
               <DatePicker style={{ width: "100%" }} format="DD-MM-YYYY" />
             </Form.Item>
           </Col>
-         <Col span={12}>
-            <Form.Item
-              label={renderLabelWithTooltip(
-                "Roof Area(sq m)",
-                "Enter the roof area in square meter."
-              )}
-              name="roof_area"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter the roof area in square meter!",
-                },
-              ]}
-            >
-              <Input
-                type="number"
-                min={1}
-                placeholder="Enter the roof area in square meter."
-              />
-            </Form.Item>
-          </Col>
-           <Col span={12}>
-            <Form.Item
-              label={renderLabelWithTooltip(
-                "Existing Solar Rooftop Capacity (kWp)",
-                "Enter the existing solar rooftop capacity."
-              )}
-              name="solar_rooftop_capacity"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter the existing solar rooftop capacity!",
-                },
-                {
-                  validator: (_, value) =>
-                    value > 0
-                      ? Promise.resolve()
-                      : Promise.reject(
-                          new Error(
-                            "Annual electricity consumption must be greater than 0!"
-                          )
-                        ),
-                },
-              ]}
-            >
-              <Input
-                type="number"
-                min={1}
-                placeholder="Enter the existing solar rooftop capacity"
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-          <Form.Item
-            label="District"
-            name="location"
-            rules={[{ validator: validateLocation }]}
-          >
-            <Select placeholder="Select District" allowClear
-             onChange={(e) => setLocation(e.target.value)}
-            >
-               {(Array.isArray(districts) ? districts : []).map((district, index) => (
-                  <Select.Option key={index} value={district}>
-                    {district}
-                  </Select.Option>
-                ))}
-            </Select>
-         {/* {!stateName &&  <p>(First select state from above state drop down.)</p>} */}
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-  <Form.Item
-    label="Coordinates (Lat & Long)"
-    required
-    style={{ marginBottom: 0 }}
-  >
-    <div style={{ display: "flex", gap: "10px" }}>
-      <Form.Item
-        name="latitude"
-        rules={[{ validator: validateLocation }]}
-        style={{ flex: 1, marginBottom: 0 }}
-      >
-        <Input
-          type="number"
-          placeholder="Enter Latitude"
-          step="any"
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="longitude"
-        rules={[{ validator: validateLocation }]}
-        style={{ flex: 1, marginBottom: 0 }}
-      >
-        <Input
-          type="number"
-          placeholder="Enter Longitude"
-          step="any"
-        />
-      </Form.Item>
-    </div>
-  </Form.Item>
-</Col>
 
         </Row>
+ <Collapse defaultActiveKey={fromRooftop ? ['1'] : []}>
+<Panel header={<strong style={{fontSize:'16px'}}>Rooftop Details</strong>} key="1">
+        <Row gutter={16}>
+          <Col span={24}>
+         <Form.Item
+  label={renderLabelWithTooltip(
+    "Roof Area available (including open space) in sq m",
+    "Enter the roof area available in square meter."
+  )}
+  name="roof_area"
+  rules={
+    fromRooftop
+      ? [
+          { required: true, message: "Please enter the roof area!" },
+          // { type: "number", min: 1, message: "Roof area must be greater than 0!" },
+        ]
+      : []
+  }
+>
+  <Input type="number" min={1} placeholder="Enter the roof area available in square meter." />
+</Form.Item>
+
+          </Col>
+
+          <Col span={12}>
+          <Form.Item
+  label={renderLabelWithTooltip(
+    "Existing Solar Rooftop Capacity (kWp)",
+    "Enter the existing solar rooftop capacity."
+  )}
+  name="solar_rooftop_capacity"
+  rules={
+    fromRooftop
+      ? [
+          { required: true, message: "Please enter the rooftop capacity!" },
+          {
+            validator: (_, value) =>
+              value > 0
+                ? Promise.resolve()
+                : Promise.reject(new Error("Capacity must be greater than 0!")),
+          },
+        ]
+      : []
+  }
+>
+  <Input type="number" min={1} placeholder="Enter the existing solar rooftop capacity" />
+</Form.Item>
+
+          </Col>
+
+          <Col span={12}>
+          <Form.Item
+  label={renderLabelWithTooltip(
+    "District of consumption unit",
+    "Select the district."
+  )}
+  name="location"
+  rules={
+    fromRooftop
+      ? [
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              const lat = getFieldValue("latitude");
+              const lng = getFieldValue("longitude");
+
+              if (value || (lat && lng)) {
+                return Promise.resolve();
+              }
+              return Promise.reject(
+                new Error("Please enter either a district or both coordinates.")
+              );
+            },
+          }),
+        ]
+      : []
+  }
+>
+  <Select
+    placeholder="Select District"
+    allowClear
+    onChange={(value) => setLocation(value)}
+  >
+    {(Array.isArray(districts) ? districts : []).map((district, index) => (
+      <Select.Option key={index} value={district}>
+        {district}
+      </Select.Option>
+    ))}
+  </Select>
+</Form.Item>
+
+          </Col>
+
+          <Col span={24}>
+            <Form.Item
+              // label="Coordinates (Lat & Long)"
+                   label={renderLabelWithTooltip(
+                "Coordinates (Lat & Long)",
+                "Enter the coordinates of the location.(e.g. Latitude: 12.9716, Longitude: 77.5946)"
+              )}
+              // required
+              style={{ marginBottom: 0 }}
+            >
+              <div style={{ display: "flex", gap: "10px" }}>
+              <Form.Item
+  name="latitude"
+  rules={
+    fromRooftop
+      ? [
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              const location = getFieldValue("location");
+              const lng = getFieldValue("longitude");
+              if (location || (value && lng)) {
+                return Promise.resolve();
+              }
+              return Promise.reject(
+                new Error("Please enter either district or both coordinates.")
+              );
+            },
+          }),
+        ]
+      : []
+  }
+  style={{ flex: 1, marginBottom: 0 }}
+>
+  <Input type="number" placeholder="Enter Latitude" step="any" />
+</Form.Item>
+
+<Form.Item
+  name="longitude"
+  rules={
+    fromRooftop
+      ? [
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              const location = getFieldValue("location");
+              const lat = getFieldValue("latitude");
+              if (location || (lat && value)) {
+                return Promise.resolve();
+              }
+              return Promise.reject(
+                new Error("Please enter either district or both coordinates.")
+              );
+            },
+          }),
+        ]
+      : []
+  }
+  style={{ flex: 1, marginBottom: 0 }}
+>
+  <Input type="number" placeholder="Enter Longitude" step="any" />
+</Form.Item>
+
+              </div>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Panel>
+    </Collapse>
         <p style={{ color: "GrayText" }}>(Note: All * fields are mandatory.)</p>
         <Form.Item style={{ textAlign: "center" }}>
           <Button

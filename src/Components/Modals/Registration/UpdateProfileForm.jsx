@@ -32,7 +32,7 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
   const user = JSON.parse(localStorage.getItem("user")).user;
 // console.log('project',project);
 // console.log('form',form);
-const baseURL = "https://ext.exgglobal.com/api";
+const baseURL = "http://52.66.186.241:8000";
 
   const project_type = project.type;
   const solar_template_downloaded = user.solar_template_downloaded;

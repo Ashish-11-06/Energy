@@ -132,11 +132,15 @@ const companyName=userData.company;
   }
 
   const handleEdit = (record) => {
+    console.log('record at 135', record);
+    
     const matchingRequirement = requirements.find((item) => item.id === record.id);
     const updatedRecord = {
       ...record,
       subIndustry: matchingRequirement ? matchingRequirement.sub_industry : null,
     };
+    console.log('updatedRecord', updatedRecord);
+    
     setEditData(updatedRecord);
     setEdit(true);
     setIsModalVisible(true);
@@ -335,6 +339,7 @@ const companyName=userData.company;
           onSubmit={handleSubmit}
           data={editData}
           isEdit={isEdit}
+          fromRooftop={false} // Pass the prop to indicate this is from the rooftop page
         />
       </div>
     </App>

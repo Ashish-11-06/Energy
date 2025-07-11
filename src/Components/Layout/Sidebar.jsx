@@ -49,7 +49,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Rooftop Onsite Assessment', key: '/consumer/rooftop', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Onsite RE options', key: '/consumer/rooftop', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
 
     { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     {
