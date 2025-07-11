@@ -38,8 +38,10 @@ const ProfilePage = () => {
   const storedUser = localStorage.getItem("user");
   const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
   const userId = initialUserData.id;
-  console.log(userId);
-  const baseurl = "https://ext.exgglobal.com/api"
+  // console.log(userId);
+  // const baseurl = "https://ext.exgglobal.com/api"
+    const baseurl= import.meta.env.VITE_BASE_URL;
+
   const navigate = useNavigate();
 
   const role = initialUserData.role;
@@ -96,7 +98,7 @@ const ProfilePage = () => {
   const handleSave = (values) => {
     const storedUser = localStorage.getItem("user");
     const existingUserData = storedUser ? JSON.parse(storedUser) : {};
-    console.log('credit rating:', values.proof);
+    // console.log('credit rating:', values.proof);
 
     // Debug: log the proof field structure
  // console.log('values.proof:', values.proof);

@@ -134,7 +134,7 @@ const role=userData?.role;
   const handleIPPClick = (record) => {
     setShowIPPModal(true);
     const { solar, wind, ess } = record;
-    console.log('record',record);
+    // console.log('record',record);
     
     setSolarArray(solar || []); // Update solarArray with the selected IPP's solar data
     setWindArray(wind || []);  // Update windArray with the selected IPP's wind data

@@ -47,13 +47,13 @@ const [endDateString, setEndDateString] = useState('');
         const responseData = data.payload;
         
         const dailyData = responseData.daily_data;
-        console.log('dailyData:', dailyData);
+        // console.log('dailyData:', dailyData);
         
         if (Array.isArray(responseData?.daily_data)) {
  const startDate = new Date(dailyData[0].date);
   const endDate = new Date(dailyData[dailyData.length - 1].date);
-console.log("Start Date:", startDate);
-console.log("End Date:", endDate);
+// console.log("Start Date:", startDate);
+// console.log("End Date:", endDate);
 
 const startDateString = startDate.toLocaleDateString('en-US', {
   month: 'long',  // use 'short' for "Jul" instead of "July"
@@ -66,8 +66,8 @@ const endDateString = endDate.toLocaleDateString('en-US', {
 });
 setStartDateString(startDateString);
 setEndDateString(endDateString);
-  console.log("Start Date:", startDateString);
-  console.log("End Date:", endDateString);       
+  // console.log("Start Date:", startDateString);
+  // console.log("End Date:", endDateString);       
           const mcvData = responseData.daily_data.map(item => item.mcv_prediction?.avg ?? 0);
           const mcpDataOriginal = responseData.daily_data.map(item => item.mcp_prediction?.avg ?? 0);
           const mcpData=mcpDataOriginal.reverse();

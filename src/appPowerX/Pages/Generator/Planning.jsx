@@ -118,13 +118,13 @@ setGeneratorPortfolio(filteredPortfolio);
   };
 
   const tileContent = (value) => {
-    console.log('value', value);
+    // console.log('value', value);
     
     const date = value.toDate();
     const listData = getListData(date);
     const isToday = dayjs(date).isSame(dayjs(), 'day');
     const isPastDate = dayjs(date).isBefore(dayjs(), 'day');
-    console.log('list data', listData);
+    // console.log('list data', listData);
     
     const isDisabledDate = disableDates.some(disabledDate =>
       dayjs(disabledDate).isSame(dayjs(date), 'day')
@@ -210,7 +210,7 @@ Object ID: ${item.object_id}`}
       </div>
     );
   };
-console.log('tile content', tileContent(dayjs(new Date())));
+// console.log('tile content', tileContent(dayjs(new Date())));
 
   const handleChange = (e) => {
     setSelectedTechnology(e.target.value);
@@ -238,7 +238,7 @@ console.log('tile content', tileContent(dayjs(new Date())));
       setSelectedPortfolioId(selectedItem.id);
 
       const tech = type === 'Solar' ? 'Solar' : 'non_solar';
-      console.log('techhhhhhh',tech);
+      // console.log('techhhhhhh',tech);
       
       setSelectedTechnology(tech);
       selectedTechnologyRef.current = tech;
@@ -248,7 +248,7 @@ console.log('tile content', tileContent(dayjs(new Date())));
 
 
   const handleSelectChange = (value, key) => {
-    console.log('handle select change',value,key);
+    // console.log('handle select change',value,key);
     
     const [id, type] = value.split('_');
     const selectedItem = generatorPortfolio.find(
@@ -257,12 +257,12 @@ console.log('tile content', tileContent(dayjs(new Date())));
     if (!selectedItem) return;
     const tech = type === 'Solar' ? 'Solar' : 'non_solar';
     if (key === 'primary') {
-      console.log('selected item primary',selectedItem);
+      // console.log('selected item primary',selectedItem);
       
       setPrimaryPortfolio(selectedItem);
       setPrimaryTechnology(tech);
     } else if (key === 'secondary') {
-      console.log('selected item',selectedItem);
+      // console.log('selected item',selectedItem);
       
       setSecondaryPortfolio(selectedItem);
       setSecondaryTechnology(tech);
@@ -316,11 +316,11 @@ console.log('tile content', tileContent(dayjs(new Date())));
       price: parseFloat(price),
     };
 
-    console.log("Submitting data to backend:", data);
+    // console.log("Submitting data to backend:", data);
 
     try {
       const res = await dispatch(addTableMonthData(data)).unwrap();
-      console.log('Response from addTableMonthData:', res);
+      // console.log('Response from addTableMonthData:', res);
 
       if (res) {
         setIsModalVisible(false);

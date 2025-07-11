@@ -175,7 +175,7 @@ const prepareGraphData = () => {
     });
   });
   const combinationIds = dataSource.map((item) => item.combination);
-  console.log(combinationIds, "combinationIds");
+  // console.log(combinationIds, "combinationIds");
   return {
     labels, // X-axis values (reReplacements)
     datasets: [
@@ -200,7 +200,7 @@ const prepareGraphData = () => {
   };
 };
 
-console.log(sensitivityData, "sensitivityData");
+// console.log(sensitivityData, "sensitivityData");
 
 const graphOptions = {
   responsive: true,
@@ -303,7 +303,7 @@ const prepareGraphDataForCombination = (combinationId) => {
       setDataSource([]);
       return;
     }
-console.log('sensitivity data', sensitivityData);
+// console.log('sensitivity data', sensitivityData);
 
 
     // useEffect(() => {
@@ -319,11 +319,11 @@ console.log('sensitivity data', sensitivityData);
 
     const formattedCombinations = Object.entries(combinations).map(
       ([key, combination], index) => {
-        console.log('combinationsssssss',combination);
-        console.log("Full combination object:", JSON.stringify(combination, null, 2));
-console.log("Type of Annual Demand Met:", typeof combination["Annual Demand Met"]);
+//         console.log('combinationsssssss',combination);
+//         console.log("Full combination object:", JSON.stringify(combination, null, 2));
+// console.log("Type of Annual Demand Met:", typeof combination["Annual Demand Met"]);
 const annual_demand_mett = Number(combination["Annual Demand Met"]?.toString().trim()) || 0;
-console.log('annual_demand_mett',annual_demand_mett);
+// console.log('annual_demand_mett',annual_demand_mett);
 
     const annualDemandRaw = combination["Annual Demand Met"];
     const annual_demand_met = 
@@ -331,9 +331,9 @@ console.log('annual_demand_mett',annual_demand_mett);
         ? parseFloat(annualDemandRaw)
         : 0;
 
-    console.log(`Index: ${index}`);
-    console.log("Annual Demand Met Raw:", annualDemandRaw);
-    console.log("Parsed Annual Demand Met:", annual_demand_met);
+    // console.log(`Index: ${index}`);
+    // console.log("Annual Demand Met Raw:", annualDemandRaw);
+    // console.log("Parsed Annual Demand Met:", annual_demand_met);
 
         const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
@@ -416,14 +416,14 @@ console.log('annual_demand_mett',annual_demand_mett);
         };
       }
     );
-console.log('formatted combinantion',formattedCombinations);
-console.log("Check:", formattedCombinations[0]?.annual_demand_met);
-console.log("Check:", formattedCombinations[0]?.annual_met);
-console.log("Check:", formattedCombinations[0]?.annual_cost);
-console.log('Before setting dataSource:', formattedCombinations);
+// console.log('formatted combinantion',formattedCombinations);
+// console.log("Check:", formattedCombinations[0]?.annual_demand_met);
+// console.log("Check:", formattedCombinations[0]?.annual_met);
+// console.log("Check:", formattedCombinations[0]?.annual_cost);
+// console.log('Before setting dataSource:', formattedCombinations);
 
     setDataSource(formattedCombinations);
-console.log('After setting dataSource:', dataSource); // This may still show the old state due to async nature
+// console.log('After setting dataSource:', dataSource); // This may still show the old state due to async nature
 
     // Only trigger fetchNextSensitivity here, not in any useEffect or handleSensitivity
     const ids = formattedCombinations.map((item) => item.combination);
@@ -436,7 +436,7 @@ if(dataSource?.length<=0) {
       setTryREreplacement(true);
     }
   }, [dataSource]);
-console.log('dataSource', dataSource);
+// console.log('dataSource', dataSource);
 
   // Redux selectors
   const consumptionPatterns = useSelector(
@@ -468,7 +468,7 @@ console.log('dataSource', dataSource);
   }, [isTableLoading, setIsTableLoading]);
 
   useEffect(() => {
-  console.log('Updated dataSource:', dataSource);
+  // console.log('Updated dataSource:', dataSource);
 }, [dataSource]);
 
   // Remove fetchPatterns from the main useEffect and move it to its own useEffect
@@ -637,13 +637,13 @@ const handleRowSensitivity = async (combinationId) => {
 };
 
   const handleRowClick = (record) => {
-    console.log('handle click record',record);
+    // console.log('handle click record',record);
     
     setSelectedRow(record);
     setIsIPPModalVisible(true);
   };
 
-console.log('selected rowwwww',selectedRow);
+// console.log('selected rowwwww',selectedRow);
 
 
   const re_index = combinationData.re_index || 0;
@@ -688,7 +688,7 @@ const handleOptimizeClick = async () => {
       const combinations = await dispatch(
         fetchOptimizedCombinations(modalData)
       ).unwrap();
-console.log('fetchOptimizedCombinationssssss',combinations);
+// console.log('fetchOptimizedCombinationssssss',combinations);
 
       formatAndSetCombinations(combinations, sliderValue);
       setFetchingCombinations(false);
@@ -1270,8 +1270,8 @@ console.log('fetchOptimizedCombinationssssss',combinations);
             </div>
           )}
         </Modal>
-  {console.log('selected row',selectedRow)
-            }
+  {/* {console.log('selected row',selectedRow)
+            } */}
         {isIPPModalVisible && (
           <IPPModal
             visible={isIPPModalVisible}

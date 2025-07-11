@@ -127,7 +127,7 @@ const handleContinue = async () => {
     return;
   }
 
-  console.log('table data', tableData);
+  // console.log('table data', tableData);
 
   // ✅ Create generationData for graph
   const demandData = tableData.map(item => {
@@ -188,7 +188,7 @@ const handleContinue = async () => {
           }, {})
         };
 
-        console.log('demand data', dayAheadDemand?.demand_data);
+        // console.log('demand data', dayAheadDemand?.demand_data);
 
         const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
         // const res = null;
@@ -208,7 +208,7 @@ const handleContinue = async () => {
 
 
   
-console.log('selectedRequirementId',selectedRequirementId);
+// console.log('selectedRequirementId',selectedRequirementId);
 
   const onFinish = (values) => {
     // console.log("Received values of form: ", values);
@@ -233,7 +233,7 @@ console.log('selectedRequirementId',selectedRequirementId);
   };
 
 
-console.log('consumer requirement',consumerRequirement);
+// console.log('consumer requirement',consumerRequirement);
 
 const handleInputChange = (value, key) => {
   const newData = [...tableData];
@@ -265,7 +265,7 @@ const handleInputChange = (value, key) => {
     setTableData(newData);
   }
 
-  console.log('new data', newData);
+  // console.log('new data', newData);
 };
 
 
@@ -363,7 +363,7 @@ const handleFileUpload = (file) => {
 
       try {
         const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
-        console.log('res at 271',res);
+        // console.log('res at 271',res);
         
         if (res && res.status === 201) {
           message.success(res.data.message || "File uploaded successfully.");

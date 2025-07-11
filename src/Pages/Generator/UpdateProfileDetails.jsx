@@ -129,7 +129,7 @@ const UpdateProfileDetails = () => {
     });
     setIsModalVisible(true);
   };
-console.log('selectedRecord:', selectedRecord); // Debug log
+// console.log('selectedRecord:', selectedRecord); // Debug log
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -141,7 +141,7 @@ console.log('selectedRecord:', selectedRecord); // Debug log
     setIsModalVisible(false);
   };
 
-  console.log('structuredProjects:', structuredProjects); // Debug log
+  // console.log('structuredProjects:', structuredProjects); // Debug log
   
   const allUpdated = structuredProjects.some(item => item.updated === true);
 

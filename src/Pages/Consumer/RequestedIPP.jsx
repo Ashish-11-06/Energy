@@ -257,7 +257,7 @@ const RequestedIPP = () => {
                 <p><strong>Payment Security Type:</strong> {modalContent.payment_security_type}</p>
               </Col>
             </Row>
-            {console.log('ipp', modalContent)}
+            {/* {console.log('ipp', modalContent)} */}
 
             {modalContent?.generator_status !== 'Rejected' && modalContent?.generator_status !== 'Accepted' && (
               <>

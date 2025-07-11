@@ -51,7 +51,7 @@ const TransactionWindowgen = () => {
 
   const record = location.state;
 
-  console.log(record);
+  // console.log(record);
 
   // Assuming record.end_time is in the format "2025-04-11 18:00:00"
   // const endDate = new Date(record.end_time);

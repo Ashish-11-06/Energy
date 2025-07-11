@@ -216,7 +216,7 @@ const EnergyConsumptionTable = () => {
           if (requirementId) {
             try {
               const response = await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
-              console.log('fetched successfully');
+              // console.log('fetched successfully');
               // if (temp > 0) {
               setShowTable(true);
               // }

@@ -208,10 +208,10 @@ const handleStateChangee = (value) => {
   ];
 
   const columns = user_category === "Consumer" ? conColumns : genColumns;
-  console.log("filtered requ", generatorPortfolio);
-  console.log("selected portfolio id", selectedPortfolioId);
-  console.log("selected portfolio", selectedPortfolio);
-  console.log("track data gen", trackDataGen);
+  // console.log("filtered requ", generatorPortfolio);
+  // console.log("selected portfolio id", selectedPortfolioId);
+  // console.log("selected portfolio", selectedPortfolio);
+  // console.log("track data gen", trackDataGen);
 
   useEffect(() => {
     if (selectedPortfolioId) {
@@ -224,7 +224,7 @@ const handleStateChangee = (value) => {
     }
   }, [selectedPortfolioId, trackDataGen]);
 
-console.log('track data',trackData);
+// console.log('track data',trackData);
 
 
   return (

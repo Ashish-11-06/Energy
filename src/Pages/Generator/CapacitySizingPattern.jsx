@@ -57,9 +57,9 @@ const CombinationPatternCap = () => {
   const dispatch = useDispatch();
 
   const user = JSON.parse(localStorage.getItem("user")).user;
-  console.log("state", user);
+  // console.log("state", user);
   const id = user?.id;
-  console.log("id", id);
+  // console.log("id", id);
 
   const formatAndSetCombinations = (combinations) => {
     if (
@@ -183,7 +183,7 @@ const CombinationPatternCap = () => {
       setIsTableLoading(false); // Stop loader if there's an error
     }
   }, [state]);
-  console.log("combination data", combinationData);
+  // console.log("combination data", combinationData);
 
   useEffect(() => {
     const fetchCombinations = async () => {
@@ -269,7 +269,7 @@ const CombinationPatternCap = () => {
     fetchCombinations();
   }, [state?.modalData]);
 
-  console.log("data source", dataSource);
+  // console.log("data source", dataSource);
 
   const onDownload = async (record) => {
     try {
@@ -302,14 +302,14 @@ const CombinationPatternCap = () => {
       loadingRef.current = null;
     }
   };
-console.log('saveRecord', saveRecord);
+// console.log('saveRecord', saveRecord);
 
   const handleSaveConfirm = async () => {
     if (!saveInput.trim()) {
       message.error("Please enter a valid name.");
       return;
     }
-console.log('saveRecord', saveRecord);
+// console.log('saveRecord', saveRecord);
 
     const data = {
       generator: user.id,
@@ -354,7 +354,7 @@ console.log('saveRecord', saveRecord);
   };
 
   const re_index = combinationData.re_index || 0;
-  console.log("comb", combinationData);
+  // console.log("comb", combinationData);
 
   const handleIPPCancel = () => {
     setIsIPPModalVisible(false);
@@ -547,7 +547,7 @@ console.log('saveRecord', saveRecord);
   ];
 
   // console.log(dataSource);
-  console.log(dataSource?.[0]?.annualDemandOffeset);
+  // console.log(dataSource?.[0]?.annualDemandOffeset);
 
   return (
     <div

@@ -168,7 +168,7 @@ const handleContinue = async () => {
         generation_data: generationData,
       };
 
-      console.log('day ahead demand', dayAheadDemand.generation_data);
+      // console.log('day ahead demand', dayAheadDemand.generation_data);
 
       const res = await dispatch(addDayAheadData(dayAheadDemand)).unwrap();
       // const res = null;
@@ -212,7 +212,7 @@ const handleContinue = async () => {
 
 
 const handleInputChange = (value, key) => {
-  console.log('value', value);
+  // console.log('value', value);
 
   const newData = [...tableData];
   const index = newData.findIndex((item) => key === item.key);
@@ -241,7 +241,7 @@ const handleInputChange = (value, key) => {
     }, 3000); // Auto close after 3 seconds
   }
 
-  console.log('selected portfolio 178', generationPotential);
+  // console.log('selected portfolio 178', generationPotential);
 };
 
 
@@ -477,7 +477,7 @@ const handleFileUploadModal = () => {
       ? generatorPortfolio
       : dummyConsumptionUnits;
 
-console.log('generator portfolio',generatorPortfolio);
+// console.log('generator portfolio',generatorPortfolio);
 
 
   return (

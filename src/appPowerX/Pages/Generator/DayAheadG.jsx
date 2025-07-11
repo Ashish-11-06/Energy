@@ -55,7 +55,7 @@ const DayAheadG = () => {
       try {
         setLoading(true);
         const data = await dispatch(dayAheadData()).unwrap();
-        console.log('datssss',data);
+        // console.log('datssss',data);
         if (data?.predictions?.length > 0) {
           const dateStr = data.predictions[0]?.date;
           const date = new Date(dateStr);
@@ -82,7 +82,7 @@ const mcpData = data.predictions.map(item =>
     fetchData();
   }, [dispatch]);
 // console.log('mcpData', tableData);
-console.log('table dataaaaaa',tableData);
+// console.log('table dataaaaaa',tableData);
 
   useEffect(() => {
     if (statistiicsData.mcp && statistiicsData.mcv) {

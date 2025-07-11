@@ -51,7 +51,7 @@ const TransactionWindow = () => {
   const userCategory = user?.user_category;
   const record = location.state;
 
-  console.log(record);
+  // console.log(record);
 
   // Assuming record.end_time is in the format "2025-04-11 18:00:00"
   const endDate = new Date(record.end_time);
@@ -79,7 +79,7 @@ const TransactionWindow = () => {
     0
   ); // Set end time to 12:30 PM
   const deadline = endDateTime.getTime();
-  console.log(deadline);
+  // console.log(deadline);
 
   useEffect(() => {
     const newSocket = connectWebSocket(user.id, record.tariff_id);

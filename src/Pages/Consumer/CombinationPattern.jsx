@@ -127,7 +127,7 @@ const fetchNextSensitivity = async (combinationIds) => {
 
     const formattedCombinations = Object.entries(combinations).map(
       ([key, combination], index) => {
-        console.log('combinationsssss',combination);
+        // console.log('combinationsssss',combination);
         
         const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
@@ -216,7 +216,7 @@ const parseLooseJson = (str) => {
     );
 
     // console.log('tech',tech);
-    console.log("formatting com",formattedCombinations?.downloadable);
+    // console.log("formatting com",formattedCombinations?.downloadable);
     setDataSource(formattedCombinations);
 
     // After setting dataSource, start sensitivity fetch for all combinations (only if not already fetched)
@@ -453,7 +453,7 @@ const handleGraphModalClose = () => {
   
   const handleRowClick = (record) => {
     setSelectedRow(record); // Record comes from the latest dataSource
-    console.log('record clicked consumer',record);
+    // console.log('record clicked consumer',record);
     
     setIsIPPModalVisible(true);
   };

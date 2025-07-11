@@ -298,8 +298,8 @@ const dummyAccuracyData = [
   const handleDay = () => navigate('/px/consumer/day-ahead');
   const handleMonth = () => navigate('/px/consumer/month-ahead');
 
-console.log('forecast type',forecastType);
-console.log('selected forecsat',selectedForecast);
+// console.log('forecast type',forecastType);
+// console.log('selected forecsat',selectedForecast);
 
 
 

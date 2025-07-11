@@ -447,7 +447,7 @@ const GeneratorInput = () => {
 
   const EditableCell = ({ value, onChange, onBlur }) => {
     const [tempValue, setTempValue] = useState(value);
-    console.log('vale', value);
+    // console.log('vale', value);
 
 
     const handleBlur = () => {

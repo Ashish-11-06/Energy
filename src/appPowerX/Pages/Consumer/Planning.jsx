@@ -75,7 +75,7 @@ const Planning = () => {
       const id = user_id; // Ensure `user_id` is defined in scope
       try {
         const res = await dispatch(fetchPlanningData(id));
-        console.log(res);
+        // console.log(res);
         // console.log(res.payload);
         setTableDemandData(res.payload);
         setRequirementId(res.payload.map((item) => item.requirement));
@@ -115,16 +115,16 @@ const Planning = () => {
         const id = user_id;
         const res = await dispatch(fetchRequirements(id)); // Wait for API response
         setConsumerRequirement(res.payload);
-        console.log("consumer requirement res", res);
+        // console.log("consumer requirement res", res);
 
-        console.log(res.payload);
+        // console.log(res.payload);
       } catch (error) {
         // console.log("Error fetching consumer requirements:", error);
       }
     };
     fetchData();
   }, [user_id, dispatch]);
-  console.log("table demand data", tableDemandData);
+  // console.log("table demand data", tableDemandData);
 
   const getListData = (date) => {
     const dateStr = dayjs(date).format("YYYY-MM-DD");
@@ -242,7 +242,7 @@ const Planning = () => {
       (item) => item.id === value
     );
     // console.log('selected req',selectedRequirement);
-    console.log("id", value);
+    // console.log("id", value);
 
     setSelectedRequirementId(
       selectedRequirement ? selectedRequirement.id : null
@@ -256,7 +256,7 @@ const Planning = () => {
     setIsModalVisible(true); // Show technology modal
   };
 
-  console.log("selected requirement", selectedRequirementId);
+  // console.log("selected requirement", selectedRequirementId);
 
   const handleModalOk = async () => {
     // console.log('all fields filled:', allFieldsFilled);
@@ -292,14 +292,14 @@ const Planning = () => {
       };
 
       const res = await dispatch(addMonthData(newData)).unwrap();
-      console.log("res add month data", res);
+      // console.log("res add month data", res);
 
       if (res) {
         message.success("Data added successfully");
 
         // Fetch updated planning data to show the newly added record
         const updatedData = await dispatch(fetchPlanningData(user_id));
-        console.log("updated data res", updatedData);
+        // console.log("updated data res", updatedData);
 
         setTableDemandData(
           Array.isArray(updatedData.payload) ? updatedData.payload : []

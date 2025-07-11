@@ -56,7 +56,7 @@ useEffect(() => {
     try {
       setLoading(true);
       const data = await dispatch(dayAheadData()).unwrap();
-      console.log('data', data.predictions);
+      // console.log('data', data.predictions);
 
       // Format and set the next day's date for display
       if (data?.predictions?.length > 0) {
@@ -86,7 +86,7 @@ useEffect(() => {
   fetchData();
 }, [dispatch]);
 
-console.log('table data 89',tableData);
+// console.log('table data 89',tableData);
 
 
   useEffect(() => {
@@ -159,7 +159,7 @@ const timeLabels = Array.from({ length: 96 }, (_, i) => {
 const mcp = Array.isArray(tableData[0]?.MCP) ? [...tableData[0].MCP] : [];
 const mcv = Array.isArray(tableData[0]?.MCV) ? [...tableData[0].MCV] : [];
 
-console.log('mcp',mcp);
+// console.log('mcp',mcp);
 
 
 

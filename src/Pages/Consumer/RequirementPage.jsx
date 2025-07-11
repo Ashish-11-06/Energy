@@ -132,14 +132,14 @@ const companyName=userData.company;
   }
 
   const handleEdit = (record) => {
-    console.log('record at 135', record);
+    // console.log('record at 135', record);
     
     const matchingRequirement = requirements.find((item) => item.id === record.id);
     const updatedRecord = {
       ...record,
       subIndustry: matchingRequirement ? matchingRequirement.sub_industry : null,
     };
-    console.log('updatedRecord', updatedRecord);
+    // console.log('updatedRecord', updatedRecord);
     
     setEditData(updatedRecord);
     setEdit(true);
@@ -175,13 +175,13 @@ const companyName=userData.company;
   };
 
   const handleSubmit = async (values) => {
-    console.log('valuesssss',values);
+    // console.log('valuesssss',values);
     
     try {
       if (isEdit) {
         const res = dispatch(updateRequirements({ updatedData: values }));
         setIsModalVisible(false);
-        console.log('res',res);
+        // console.log('res',res);
         
         if(res) {
           message.success('Requirement updated successfully!');

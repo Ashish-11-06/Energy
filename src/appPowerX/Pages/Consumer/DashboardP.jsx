@@ -233,7 +233,7 @@ setShowLineGraph(true); // Show line graph card
           const data = await dispatch(dayAheadData()).unwrap();
           // console.log('data response',data);
           
-          console.log('data', data.predictions.map(item=>item.date));
+          // console.log('data', data.predictions.map(item=>item.date));
           if (data?.predictions?.length > 0) {
             const dateStr = data.predictions[0]?.date;
             const date = new Date(dateStr);
@@ -293,7 +293,7 @@ setShowLineGraph(true); // Show line graph card
   const mins = String(minutes % 60).padStart(2, '0');
   return `${hours}:${mins}`;
 });
-      console.log('time labes',timeLabels);
+      // console.log('time labes',timeLabels);
       
         const data = {
            labels: timeLabels,
@@ -333,7 +333,7 @@ const options = {
       type: 'category',
       title: {
         display: true,
-        text: 'Timeee',
+        text: 'Time (15-minute intervals)',
       },
       ticks: {
         maxRotation: 90,
@@ -463,8 +463,8 @@ const lineOptions = {
   const stateLabels = Array.isArray(dashboardData) ? dashboardData.map(data => data.state) : [];
   const stateDemands = Array.isArray(dashboardData) ? dashboardData.map(data => data.contracted_demand) : [];
 
-  console.log('state label',stateLabels);
-  console.log('state demand',stateDemands);
+  // console.log('state label',stateLabels);
+  // console.log('state demand',stateDemands);
   
   
 
@@ -488,7 +488,7 @@ const lineOptions = {
       contracted_demand: stateDemands[index], // Corrected property name
     }));
 
-console.log('state data',stateData);
+// console.log('state data',stateData);
 
 
   const doughnutData = {
