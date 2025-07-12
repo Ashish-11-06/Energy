@@ -7,6 +7,8 @@ import Generator from "../../Pages/Admin/Generator";
 import Subscription from "../../Pages/Admin/Subscription";
 import Notification from "../../Pages/Admin/Notification";
 import Help from "../../Pages/Admin/Help";
+import OnlineSub from "../../Pages/Admin/OnlineSub";
+import OfflineSub from "../../Pages/Admin/OfflineSub";
 
 const AdminRoutes = () => {
   return (
@@ -16,7 +18,8 @@ const AdminRoutes = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/consumer" element={<Consumer />} />
         <Route path="/generator" element={<Generator />} />
-        <Route path="/subscription" element={<Subscription />} />
+        <Route path="/subscription/online" element={<OnlineSub />} />
+        <Route path="/subscription/offline" element={<OfflineSub />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="/help" element={<Help />} />
         </Route>

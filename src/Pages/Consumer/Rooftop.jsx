@@ -21,7 +21,8 @@ const Rooftop = () => {
   const [editModal, setEditModal] = useState(false);
   const [selectedRequirementId, setSelectedRequirementId] = useState(null);
 const [selectKey, setSelectKey] = useState(Date.now()); // initial unique key
-
+const [capacitySolar, setCapacitySolar] = useState("");
+const [totalSavings, setTotalSavings] = useState("");
   //   console.log('user',userData);
 
   const requirements = useSelector(
@@ -114,7 +115,9 @@ if(radioValueRef.current === "behind_the_meter") {
   console.log("Behind the meter data:", res?.payload?.hourly_data);
   
 }
-  setEnergyReplaced(res.payload.energy_replaced);
+  setEnergyReplaced(res?.payload.energy_replaced);
+  setCapacitySolar(res?.payload.capacity_of_solar_rooftop);
+  setTotalSavings(res?.payload.total_savings);
   setLoading(false);
 }
  else if (addPWatt.rejected.match(res)) {
@@ -257,24 +260,32 @@ const handleCancelWarning = () => {
                             </>
                           )}
 
-                          {req.location && (
+                         
+  {req.annual_electricity_consumption && (
+                            <>
+                              <strong>Annual Consumption:</strong>{" "}
+                              {req.annual_electricity_consumption} MWh,{" "}
+                            </>
+                          )}
+  {req.contracted_demand && (
+                            <>
+                              <strong>Contracted Demand:</strong>{" "}
+                              {req.contracted_demand} MW,{" "}
+                            </>
+                          )}
+
+                           {req.location && (
                             <>
                               <strong>Location:</strong> {req.location},{" "}
                             </>
                           )}
-
                           {req.voltage_level && (
                             <>
                               <strong>Voltage:</strong> {req.voltage_level} kV,{" "}
                             </>
                           )}
 
-                          {req.annual_electricity_consumption && (
-                            <>
-                              <strong>Annual Consumption:</strong>{" "}
-                              {req.annual_electricity_consumption} MWh,{" "}
-                            </>
-                          )}
+                        
 
                           {req.procurement_date && (
                             <>
@@ -338,7 +349,85 @@ const handleCancelWarning = () => {
           borderRadius: "10px",
         }}
       >
-        <p style={{ fontWeight: "bold" }}>Energy Replaced : {energyReplaced}</p>
+    {/* <Card style={{ marginTop: 24 }}>
+
+<Row gutter={16} style={{ marginTop: 24 }}>
+  <Col span={8}>
+    <Card
+      bordered={false}
+      style={{
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        borderRadius: 8,
+        textAlign: 'center',
+      }}
+    >
+      <p style={{ fontWeight: 'bold', marginBottom: 8 }}>Energy Replaced</p>
+      <p>{energyReplaced}</p>
+    </Card>
+  </Col>
+
+  <Col span={8}>
+    <Card
+      bordered={false}
+      style={{
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        borderRadius: 8,
+        textAlign: 'center',
+      }}
+    >
+      <p style={{ fontWeight: 'bold', marginBottom: 8 }}>Capacity of Solar Rooftop</p>
+      <p>{capacitySolar}</p>
+    </Card>
+  </Col>
+
+  <Col span={8}>
+    <Card
+      bordered={false}
+      style={{
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        borderRadius: 8,
+        textAlign: 'center',
+      }}
+    >
+      <p style={{ fontWeight: 'bold', marginBottom: 8 }}>Total Saving</p>
+      <p>{totalSavings}</p>
+    </Card>
+  </Col>
+</Row>
+
+</Card> */}
+
+{(energyReplaced || capacitySolar || totalSavings) && (
+  <Card style={{ marginTop: 24 }}>
+    <Row gutter={16}>
+      {energyReplaced && (
+        <Col span={8}>
+          <p style={{ fontWeight: 'bold' }}>
+            Energy Replaced (MWh): {energyReplaced}
+          </p>
+        </Col>
+      )}
+
+      {capacitySolar && (
+        <Col span={8}>
+          <p style={{ fontWeight: 'bold' }}>
+            Capacity of Solar Rooftop (kWp): {capacitySolar}
+          </p>
+        </Col>
+      )}
+
+      {totalSavings && (
+        <Col span={8}>
+          <p style={{ fontWeight: 'bold' }}>
+            Total Saving (INR): {totalSavings}
+          </p>
+        </Col>
+      )}
+    </Row>
+  </Card>
+)}
+
+
         <p style={{ textAlign: "center", fontWeight: "bold" }}>Monthly Data</p>
 
         <Row gutter={[16, 16]}>

@@ -1,43 +1,14 @@
 import React, { useState } from 'react';
 import { Button, Modal, Table, Switch, Select } from 'antd';
-import AddSubscriptionModal from './Modal/AddSubscriptionModal'; // Optional if you have a modal component
+import AddSubscriptionModal from './Modal/AddSubscriptionModal'; // Optional
 
 const { Option } = Select;
 
-const Subscription = () => {
+const OfflineSub = () => {
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isDocModalVisible, setIsDocModalVisible] = useState(false);
   const [documentUrl, setDocumentUrl] = useState('');
-
-  const [onlineUserTypeFilter, setOnlineUserTypeFilter] = useState('');
   const [offlineUserTypeFilter, setOfflineUserTypeFilter] = useState('');
-
-  const [onlineData, setOnlineData] = useState([
-    {
-      key: '1',
-      srNo: 1,
-      userType: 'Consumer',
-      name: 'Alice',
-      companyName: 'InnoTech',
-      siteName: 'Factory A',
-      subscriptionPlan: 'PRO',
-      enrollDate: '05-01-2024',
-      expiryDate: '05-01-2025',
-      status: true,
-    },
-    {
-      key: '2',
-      srNo: 2,
-      userType: 'Generator',
-      name: 'Bob',
-      companyName: 'GreenPower',
-      siteName: 'Solar Farm',
-      subscriptionPlan: 'LITE',
-      enrollDate: '10-01-2024',
-      expiryDate: '10-01-2025',
-      status: false,
-    },
-  ]);
 
   const [offlineData, setOfflineData] = useState([
     {
@@ -68,20 +39,12 @@ const Subscription = () => {
     },
   ]);
 
-  const toggleStatus = (key, type) => {
-    if (type === 'online') {
-      setOnlineData((prev) =>
-        prev.map((item) =>
-          item.key === key ? { ...item, status: !item.status } : item
-        )
-      );
-    } else {
-      setOfflineData((prev) =>
-        prev.map((item) =>
-          item.key === key ? { ...item, status: !item.status } : item
-        )
-      );
-    }
+  const toggleStatus = (key) => {
+    setOfflineData((prev) =>
+      prev.map((item) =>
+        item.key === key ? { ...item, status: !item.status } : item
+      )
+    );
   };
 
   const showDocumentModal = (url) => {
@@ -89,7 +52,7 @@ const Subscription = () => {
     setIsDocModalVisible(true);
   };
 
-  const baseColumns = (type) => [
+  const columns = [
     { title: 'Sr. No', dataIndex: 'srNo' },
     { title: 'User Category', dataIndex: 'userType' },
     { title: 'Name', dataIndex: 'name' },
@@ -104,15 +67,12 @@ const Subscription = () => {
       render: (_, record) => (
         <Switch
           checked={record.status}
-          onChange={() => toggleStatus(record.key, type)}
+          onChange={() => toggleStatus(record.key)}
           checkedChildren="Active"
           unCheckedChildren="Inactive"
         />
       ),
     },
-  ];
-
-  const offlineExtraColumns = [
     {
       title: 'View Document',
       dataIndex: 'document',
@@ -123,10 +83,6 @@ const Subscription = () => {
       ),
     },
   ];
-
-  const filteredOnlineData = onlineUserTypeFilter
-    ? onlineData.filter((item) => item.userType === onlineUserTypeFilter)
-    : onlineData;
 
   const filteredOfflineData = offlineUserTypeFilter
     ? offlineData.filter((item) => item.userType === offlineUserTypeFilter)
@@ -141,30 +97,6 @@ const Subscription = () => {
         </Button>
       </div>
 
-      {/* Online Subscriptions */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3>Online Subscriptions</h3>
-          <Select
-            style={{ width: 200 }}
-            placeholder="Filter by User Category"
-            allowClear
-            value={onlineUserTypeFilter || undefined}
-            onChange={(value) => setOnlineUserTypeFilter(value)}
-          >
-            <Option value="Consumer">Consumer</Option>
-            <Option value="Generator">Generator</Option>
-          </Select>
-        </div>
-        <Table
-          columns={baseColumns('online')}
-          dataSource={filteredOnlineData}
-          pagination={true}
-          bordered
-          scroll={{ x: 'max-content',y: 400 }}
-        />
-      </div>
-
       {/* Offline Subscriptions */}
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -175,26 +107,24 @@ const Subscription = () => {
             allowClear
             value={offlineUserTypeFilter || undefined}
             onChange={(value) => setOfflineUserTypeFilter(value)}
-            
           >
             <Option value="Consumer">Consumer</Option>
             <Option value="Generator">Generator</Option>
           </Select>
         </div>
         <Table
-          columns={[...baseColumns('offline'), ...offlineExtraColumns]}
+          columns={columns}
           dataSource={filteredOfflineData}
           pagination={true}
           bordered
-          scroll={{ x: 'max-content',y: 400 }}
-        
+          scroll={{ x: 'max-content' }}
         />
       </div>
 
       {/* Add Subscription Modal */}
       <Modal
         title="Add Subscription"
-        visible={isAddModalVisible}
+        open={isAddModalVisible}
         onCancel={() => setIsAddModalVisible(false)}
         footer={null}
       >
@@ -204,7 +134,7 @@ const Subscription = () => {
       {/* View Document Modal */}
       <Modal
         title="Document Preview"
-        visible={isDocModalVisible}
+        open={isDocModalVisible}
         onCancel={() => setIsDocModalVisible(false)}
         footer={null}
         width={400}
@@ -223,4 +153,4 @@ const Subscription = () => {
   );
 };
 
-export default Subscription;
+export default OfflineSub;

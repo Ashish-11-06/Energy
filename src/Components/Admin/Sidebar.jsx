@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Badge } from 'antd';
+import { Badge, Layout, Menu, Button, Drawer } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { connectWebSocket, connectOfferSocket } from '../../Redux/Slices/notificationSlice';
-import PropTypes from 'prop-types';
-import { Layout, Menu, Button, Drawer } from 'antd';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
 import dash from '../../assets/dashboard.png';
 import transaction from '../../assets/transaction.png';
 import subscriptionImg from '../../assets/subscription.png';
@@ -15,87 +15,86 @@ import profile from '../../assets/profile.png';
 import offerSend from '../../assets/offerSend.png';
 import portfolio from '../../assets/portfolio.png';
 import findConsumer from '../../assets/findConsumer.png';
+
 const { Sider } = Layout;
+const { SubMenu } = Menu;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const dispatch = useDispatch();
   const offerCount = useSelector((state) => state.notifications.offerCount);
-  // const notificationCount = 9;
-  const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
-  const subscription_type = subscription?.subscription_type;
-  // console.log(subscription_type);
-  // console.log(subscription);
-
-  // console.log(notificationCount);
-
   const location = useLocation();
   const navigate = useNavigate();
+
   const [selectedKey, setSelectedKey] = useState(location.pathname);
+  const [isDrawerVisible, setDrawerVisible] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user')).user;
+  const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
   const user_category = user?.user_category;
   const is_new_user = user?.is_new_user;
-  // console.log(is_new_user);
+  const subscription_type = subscription?.subscription_type;
+
+  const company = user?.company || 'Company';
+
+  const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
 
   useEffect(() => {
-    // Dispatch the thunk to connect to the WebSocket
     const userId = user?.id;
     dispatch(connectWebSocket(userId));
     dispatch(connectOfferSocket(userId));
-
   }, [dispatch, user]);
- 
-  const menuItems = [
-    { label: 'Dashboard', key: '/admin/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Consumer', key: '/admin/consumer', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Generator', key: '/admin/generator', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Subscription', key: '/admin/subscription', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Notification', key: '/admin/notification', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Help', key: '/admin/help', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
-    // {
-    //   label: (<span>Offers</span>),
-    //   key: '/offers',
-    //   icon: (
-    //     <Badge
-    //       style={{
-    //         transform: 'translate(50%, -50%)',
-    //         minWidth: '15px',
-    //         height: '15px'
-    //       }}
-    //       count={offerCount}
-    //       overflowCount={5}
-    //     >
-    //       <img src={offerSend} alt="Offers" style={{ width: '20px', height: '20px' }} />
-    //     </Badge>
-    //   )
-    // },
-    //  { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
-    // { label: 'Invoice', key: '/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
-    // { label: 'Profile', key: '/generator/profile', icon: <img src={profile} alt="" style={{ width: '20px', height: '20px' }} /> },
-  ];
-
-  const menuType = user_category === 'Consumer' ? 'consumer' : 'generator';
-  // const menuItems = menu
-  let lastMenuItem = { label: '', key: '/' }; // Fallback value
-  if (subscription_type === 'PRO') {
-    lastMenuItem = is_new_user 
-      ? { label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' }
-      : { label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' };
-  }
-  // if (subscription_type === 'PRO') {
-    // if (is_new_user == true) {
-    //   menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
-    // } else {
-    //   menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' });
-    // }
-  // }
 
   useEffect(() => {
-    // Update selectedKey whenever the location changes
     setSelectedKey(location.pathname);
   }, [location.pathname]);
 
-  const [isDrawerVisible, setDrawerVisible] = useState(false);
+  const lastMenuItem = subscription_type === 'PRO'
+    ? {
+        label: 'PowerX',
+        key: is_new_user
+          ? '/px/what-we-offer'
+          : menuType === 'consumer'
+          ? '/px/consumer/dashboard'
+          : '/px/generator/dashboard',
+      }
+    : { label: '', key: '/' };
+
+  const menuItems = [
+    {
+      label: 'Dashboard',
+      key: '/admin/dashboard',
+      icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} />,
+    },
+    {
+      label: 'Consumer',
+      key: '/admin/consumer',
+      icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} />,
+    },
+    {
+      label: 'Generator',
+      key: '/admin/generator',
+      icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} />,
+    },
+    {
+      label: 'Subscription',
+      key: '/admin/subscription',
+      icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />,
+      children: [
+        { label: 'Online Subscription', key: '/admin/subscription/online' },
+        { label: 'Offline Subscription', key: '/admin/subscription/offline' },
+      ],
+    },
+    {
+      label: 'Notification',
+      key: '/admin/notification',
+      icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
+    },
+    {
+      label: 'Help',
+      key: '/admin/help',
+      icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
+    },
+  ];
 
   const handleDrawerToggle = () => {
     setDrawerVisible(!isDrawerVisible);
@@ -105,6 +104,23 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     setDrawerVisible(false);
     navigate(url);
   };
+
+  const renderMenuItems = (items) =>
+    items.map((item) =>
+      item.children ? (
+        <SubMenu key={item.key} icon={item.icon} title={item.label}>
+          {item.children.map((child) => (
+            <Menu.Item key={child.key}>
+              <Link to={child.key}>{child.label}</Link>
+            </Menu.Item>
+          ))}
+        </SubMenu>
+      ) : (
+        <Menu.Item key={item.key} icon={item.icon}>
+          <Link to={item.key}>{item.label}</Link>
+        </Menu.Item>
+      )
+    );
 
   return (
     <>
@@ -121,7 +137,6 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
             top: 0,
             backgroundColor: '#f5f6fb',
             zIndex: 100,
-            // overflowY: 'auto',
           }}
           trigger={null}
         >
@@ -135,34 +150,29 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               backgroundColor: '#6698005c',
               height: '70px',
             }}
-          >
-{/* <p style={{ color: '#669800' }}><span style={{fontSize:'bold'}}>{company.toUpperCase()}</span></p> */}
-{/* <p style={{marginTop:'8%', marginLeft:'-100px'}}> Menu  </p> */}
-           
-          </div>
+          ></div>
+
           <Menu mode="inline" selectedKeys={[selectedKey]}>
-            {menuItems.map((item) => (
-              <Menu.Item key={item.key} icon={item.icon}>
-                <Link to={item.key}>{item.label}</Link>
-              </Menu.Item>
-            ))}
+            {renderMenuItems(menuItems)}
           </Menu>
+
           {subscription_type === 'PRO' && (
-            <div style={{
-              position: "absolute",
-              bottom: "20px",
-              left: "20px",
-              width: "80%",
-              backgroundColor: "rgb(102, 152, 0)",
-              borderColor: "rgb(102, 152, 0)",
-              padding: "5px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              height: "40px",
-              borderRadius: '10px'
-            }}>
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '20px',
+                left: '20px',
+                width: '80%',
+                backgroundColor: 'rgb(102, 152, 0)',
+                padding: '5px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                height: '40px',
+                borderRadius: '10px',
+              }}
+            >
               <Button type="primary" href={lastMenuItem.key} block>
                 {lastMenuItem.label}
               </Button>
@@ -181,29 +191,41 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               zIndex: 101,
             }}
           >
-            <p style={{ color: '#669800' }}><span style={{fontSize:'bold'}}>{company.toUpperCase()}</span></p>
-
+            <p style={{ color: '#669800' }}>
+              <strong>{company.toUpperCase()}</strong>
+            </p>
           </Button>
+
           <Drawer
             title="Navigation"
             placement="left"
             onClose={handleDrawerToggle}
-            visible={isDrawerVisible}
-            bodyStyle={{
-              padding: 0,
-              backgroundColor: '#f5f6fb',
-            }}
+            open={isDrawerVisible}
+            bodyStyle={{ padding: 0, backgroundColor: '#f5f6fb' }}
           >
             <Menu mode="inline" selectedKeys={[selectedKey]}>
-              {menuItems.map((item) => (
-                <Menu.Item
-                  key={item.key}
-                  icon={item.icon}
-                  onClick={() => closeDrawerAndNavigate(item.key)}
-                >
-                  {item.label}
-                </Menu.Item>
-              ))}
+              {menuItems.map((item) =>
+                item.children ? (
+                  <SubMenu key={item.key} icon={item.icon} title={item.label}>
+                    {item.children.map((child) => (
+                      <Menu.Item
+                        key={child.key}
+                        onClick={() => closeDrawerAndNavigate(child.key)}
+                      >
+                        {child.label}
+                      </Menu.Item>
+                    ))}
+                  </SubMenu>
+                ) : (
+                  <Menu.Item
+                    key={item.key}
+                    icon={item.icon}
+                    onClick={() => closeDrawerAndNavigate(item.key)}
+                  >
+                    {item.label}
+                  </Menu.Item>
+                )
+              )}
             </Menu>
           </Drawer>
         </>
