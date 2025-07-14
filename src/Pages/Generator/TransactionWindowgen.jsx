@@ -24,6 +24,7 @@ import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import time from '../../assets/time.png'
 import moment from "moment";
+import { decryptData } from "../../Utils/cryptoHelper.js";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
@@ -88,11 +89,13 @@ const TransactionWindowgen = () => {
     return remainingTime <= 0 || now < startDateTime.getTime() ? 0 : remainingTime;
   };
 
-  const user = JSON.parse(localStorage.getItem("user")).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
 
-  const loggedInUser = JSON.parse(localStorage.getItem("user"));
-  const loggedInUserId = loggedInUser?.user?.id;
+  // const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  const loggedInUserId = user?.id;
 
   useEffect(() => {
     setIsLoading(true);

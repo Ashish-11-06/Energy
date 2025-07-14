@@ -10,11 +10,14 @@ import AddPortfolioModal from './Modal/AddPortfolioModal';
 import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice';
 import moment from 'moment'; // Import moment
 import { CheckCircleOutlined, CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { decryptData } from '../../Utils/cryptoHelper';
 
 const { Title } = Typography;
 
 const GenerationPortfolio = () => {
-  const user = JSON.parse(localStorage.getItem('user')).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem('user')).user;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isNewUserModalVisible, setIsNewUserModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
@@ -28,14 +31,13 @@ const GenerationPortfolio = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const subscribed = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+  const subscribed = decryptData(localStorage.getItem("subscriptionPlanValidity"));
   const alreadysubscribed = subscribed?.status;
 
   const { status, projects } = useSelector((state) => state.portfolio);
   const is_new_user=user.is_new_user;
   // console.log(is_new_user);
-  const userDataa= JSON.parse(localStorage.getItem('user'));
-  const use=localStorage.getItem('user');
+
   // console.log('localStorage',use);
   
   // console.log('user',userDataa);
@@ -52,9 +54,9 @@ const GenerationPortfolio = () => {
   //  console.log('res',res);
     }
 
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const user = JSON.parse(storedUser).user;
+    // const storedUser = localStorage.getItem('user');
+    if (user) {
+      // const user = JSON.parse(storedUser).user;
       setUserName(user.company_representative || 'User');
     } else {
       setUserName('Guest');

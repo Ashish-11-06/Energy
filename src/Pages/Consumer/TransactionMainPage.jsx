@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import CounterOffer from '../../Components/Modals/CounterOffer';
 import DemandModal from './Modal/DemandModal';
+import { decryptData } from '../../Utils/cryptoHelper';
 
 const { Title } = Typography;
 
@@ -83,7 +84,9 @@ const handleChangeConfirm = async () => {
   setChangeLoading(false);
 };
 
-  const user = JSON.parse(localStorage.getItem('user')).user;
+ const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem('user')).user;
   const userId = user.id;
 
   const showRequirementModal = (record) => {
@@ -234,7 +237,7 @@ const handleChangeConfirm = async () => {
                 //   record.tariff_status !== 'Active'
                 // )
                 //   return; // Prevent navigation if not active or outside time window
-                const user = JSON.parse(localStorage.getItem('user')).user;
+                // const user = JSON.parse(localStorage.getItem('user')).user;
                 const path =
                   user.user_category === 'Generator'
                     ? '/generator/transaction-window'

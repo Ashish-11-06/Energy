@@ -13,6 +13,7 @@ import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons'; //
 import RegisterForm from '../Components/Modals/Registration/RegisterForm';
 import { fetchSubscriptionValidity } from '../Redux/Slices/Consumer/subscriptionEnrollSlice';
 import { resetState } from '../Redux/store';
+import { decryptData, encryptData } from '../Utils/cryptoHelper';
 
 const LandingPage = () => {
   const [animatedText, setAnimatedText] = useState('');
@@ -21,8 +22,7 @@ const LandingPage = () => {
   const [isForgotPasswordModalVisible, setIsForgotPasswordModalVisible] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [subscriptionPlanValidity, setSubscriptionPlanValidity] = useState([]);
-  const user = JSON.parse(localStorage.getItem('user'))?.user || null;
-  const lastVisitedPage = user?.last_visited_page || '/';
+
   // console.log('user',lastVisitedPage);
   const [otpVerified, setOtpVerified] = useState(false);
   const [emailForReset, setEmailForReset] = useState("");
@@ -35,6 +35,12 @@ const LandingPage = () => {
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
   const [error, setError] = useState(null);
+
+const user = decryptData(localStorage.getItem('user'));
+// console.log('user from landing page', user);
+
+  const lastVisitedPage = user?.last_visited_page || '/';
+  // const user = JSON.parse(localStorage.getItem('user'))?.user || null;
 
   useEffect(() => {
     // console.log('LandingPage mounted llklk');
@@ -99,8 +105,9 @@ const LandingPage = () => {
         const response = await dispatch(fetchSubscriptionValidity(id));
         setSubscriptionPlanValidity(response.payload);
         // console.log(response.payload);
-
-        localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
+        const encryptedUser = encryptData(response.payload);
+        // localStorage.setItem('subscriptionPlanValidity', JSON.stringify(response.payload));
+        localStorage.setItem('subscriptionPlanValidity', encryptedUser);  // ✅ Correct
 
 
 

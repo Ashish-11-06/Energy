@@ -23,6 +23,7 @@ import { addStatus } from "../../Redux/Slices/Generator/TermsAndConditionsSlice"
 import chat from "../../assets/need.png";
 import { negotiateTariff } from "../../Redux/Slices/Consumer/negotiateTariffSlice";
 import AgreementModal from "./AgreementModal";
+import { decryptData } from "../../Utils/cryptoHelper";
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { Panel } = Collapse;
@@ -41,12 +42,12 @@ const CounterOffer = ({ visible, onCancel, data, selectedDemandId, fromTransacti
   const [modalVisible, setModalVisible] = useState(false);
   const [isFieldEdited, setIsFieldEdited] = useState(false); // Track if any field is edited
   const [consumerDetailsVisible, setConsumerDetailsVisible] = useState(false); // State to toggle consumer details
-  const userData = JSON.parse(localStorage.getItem('user')).user;
+     const userr = decryptData(localStorage.getItem('user'));
+    const userData= userr?.user;
+  // const userData = JSON.parse(localStorage.getItem('user')).user;
 // console.log(userData?.role);
 const role=userData?.role;
-  const subscription = JSON.parse(
-    localStorage.getItem("subscriptionPlanValidity")
-  );
+  const subscription = decryptData(localStorage.getItem("subscriptionPlanValidity"))
 
   const activeSubscription = subscription?.status === "active";
   const showModal = () => {
@@ -71,8 +72,8 @@ const role=userData?.role;
   const dispatch = useDispatch();
   const [offerTariff, setOfferTariff] = useState(data.offer_tariff); // state for storing the tariff value
 
-  const user = JSON.parse(localStorage.getItem("user")).user;
-  const user_category = user.user_category;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
+  const user_category = userData.user_category;
   let temp = '';
   if (user_category == 'Consumer') {
     temp = "IPP"
@@ -94,7 +95,7 @@ const role=userData?.role;
 
   // console.log(commencementDate);
   
-  const userId = user.id;
+  const userId = userData.id;
 
   // Handle the DatePicker change event
   const handleDateChange = (date) => {
@@ -179,7 +180,7 @@ const role=userData?.role;
       const statusData = { action: action };
 
       const res = await dispatch(
-        addStatus({ user_id: user.id, term_id: data.id, statusData })
+        addStatus({ user_id: userData.id, term_id: data.id, statusData })
       );
 
       message.success(`Status updated to ${action}`);

@@ -17,6 +17,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const { Title, Text } = Typography;
 
@@ -31,11 +32,9 @@ const AnnualSvg = () => {
     useState(false);
 
   const requirementId = localStorage.getItem("selectedRequirementId");
-  const subscriptionPlan = JSON.parse(
-    localStorage.getItem("subscriptionPlanValidity")
-  );
-  const User = JSON.parse(localStorage.getItem("user"));
-  const userId = User.id;
+  const subscriptionPlan = decryptData(localStorage.getItem("subscriptionPlanValidity"))
+  // const User = JSON.parse(localStorage.getItem("user"));
+  // const userId = User.id;
 
   const status = subscriptionPlan.status;
 

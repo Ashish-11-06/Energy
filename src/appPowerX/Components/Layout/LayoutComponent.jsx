@@ -8,6 +8,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import MainHeader from './MainHeader';
 // import { FaRobot } from 'react-icons/fa';
 import intercomIcon from '../../assets/chatbot.svg';
+import { decryptData } from '../../../Utils/cryptoHelper';
 
 const { Header, Content } = Layout;
 
@@ -15,7 +16,9 @@ const LayoutComponent = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
-  const user = JSON.parse(localStorage.getItem("user"))?.user || null;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user"))?.user || null;
 const navigate=useNavigate();
 
   const isChatPage =

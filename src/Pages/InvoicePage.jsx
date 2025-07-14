@@ -6,6 +6,7 @@ import { fetchPerformaById } from '../Redux/Slices/Consumer/performaInvoiceSlice
 import { useDispatch } from "react-redux";
 import ProformaInvoiceModal from './Consumer/Modal/ProformaInvoiceModal';
 import moment from 'moment';
+import { decryptData } from '../Utils/cryptoHelper';
 
 const InvoicePage = () => {
   const [invoice, setInvoice] = useState([]);
@@ -14,7 +15,9 @@ const InvoicePage = () => {
   const [subscription_type, setSubscriptionType] = useState();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem("user")).user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
+     const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
   const userId = user.id;
 const [freeStatus,setFreeStatus]=useState('')
   const viewInvoice = (record) => {

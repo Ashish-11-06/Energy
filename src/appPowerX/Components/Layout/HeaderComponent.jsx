@@ -18,6 +18,7 @@ import userImage from "../../../assets/profile.png";
 import NotificationIcon from "../../../assets/not.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import { connectOfferSocket, connectPowerXWebSocket } from "../../../Redux/Slices/notificationSlice";
+import { decryptData } from "../../../Utils/cryptoHelper";
 
 const { Header } = Layout;
 
@@ -27,7 +28,9 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   // console.log('cc',currentPath);
     // const notificationCount = useSelector((state) => state.notifications.notificationCount);
   const dispatch = useDispatch();
-  const users = JSON.parse(localStorage.getItem('user')).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const users = JSON.parse(localStorage.getItem('user')).user;
 
   const notificationCount = useSelector((state) => state.notifications.powerxCount);
     const offerCount = useSelector((state) => state.notifications.offerCount);
@@ -36,7 +39,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
 
   useEffect(() => {
     // Dispatch the thunk to connect to the WebSocket
-    const userId = users?.id;
+    const userId = user?.id;
     dispatch(connectPowerXWebSocket(userId));
     dispatch(connectOfferSocket(userId));
 
@@ -44,13 +47,13 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     return () => {
       // You can add logic here to close the socket if needed
     };
-  }, [dispatch, users]);
+  }, [dispatch, user]);
 
   const navigate = useNavigate(); // Add useNavigate hook
   let username = ""; // Use let instead of const
-  const subscriptionValidity = JSON.parse(localStorage.getItem("subscriptionPlanValidity"));
+  const subscriptionValidity = decryptData(localStorage.getItem("subscriptionPlanValidity"));
   const subscription = subscriptionValidity?.status;
-  const matchingConsumerId = localStorage.getItem('matchingConsumerId');
+  const matchingConsumerId = decryptData(localStorage.getItem('matchingConsumerId'));
   const [matchingConsumer, setMatchingConsumer] = useState("");
   const [subscriptionRequires, setSubscriptionRequires] = useState("");
 // const currentPath=localStorage.getItem('currentPath');
@@ -71,7 +74,7 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     return item ? JSON.parse(item) : "";
   };
 
-  const user = getFromLocalStorage("user").user;
+  // const user = getFromLocalStorage("user").user;
   // console.log(user);
   
 const handleNotificationClick =() => {
@@ -85,8 +88,8 @@ const handleNotificationClick =() => {
   const handleProfileClick = () => {
     navigate(
       (user.user_category === 'Consumer')
-        ? "/px/consumer/profile"
-        : "/px/generator/profile-gen"
+        ? "/consumer/profile"
+        : "/generator/profile"
     );
   };
 
@@ -333,7 +336,7 @@ const handleNotificationClick =() => {
               // Show Tooltip with "My Profile" when there's a valid user_category and username
               <Tooltip title="My Profile" placement="top">
                 <p>
-                  Welcome,  <span onClick={()=> {navigate(`/px/${user_category}/profile`)}} style={{color:'rgb(154, 132, 6)'}}>{username}</span>
+                  Welcome,  <span onClick={()=> {navigate(`/${user_category}/profile`)}} style={{color:'rgb(154, 132, 6)'}}>{username}</span>
                 </p>
                 {/* <a href={`/${user_category}/profile`}>{username}!</a> */}
               </Tooltip>

@@ -18,6 +18,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { useDispatch } from "react-redux";
 import { editUser } from "../../Redux/Slices/userSlice";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const { Title, Text } = Typography;
 
@@ -32,24 +33,26 @@ const ProfilePage = () => {
 
   
   // Retrieve user data safely from localStorage
-  const storedUser = localStorage.getItem("user");
+  // const storedUser = localStorage.getItem("user");
   // console.log(storedUser);
-  const userDat = JSON.parse(localStorage.getItem('user')).user;
+  // const userDat = JSON.parse(localStorage.getItem('user')).user;
 
-  const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
+  // const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
   // console.log(`ajdfljk ${JSON.stringify(initialUserData)}`);
-const userId = initialUserData.id;
+   const userDataa = decryptData(localStorage.getItem('user'));
+  const user= userDataa?.user;
+const userId = user.id;
 // console.log(userDat);
 
   const navigate = useNavigate();
 
-  const role = initialUserData.role;
+  // const role = initialUserData.role;
   // console.log(role);
-  const [userData, setUserData] = useState(initialUserData);
+  const [userData, setUserData] = useState(user);
 
   // Retrieve subscription plan safely from localStorage
-  const storedPlan = localStorage.getItem("subscriptionPlanValidity");
-  const subscriptionPlan = storedPlan ? JSON.parse(storedPlan) : {};
+  // const storedPlan = localStorage.getItem("subscriptionPlanValidity");
+  const subscriptionPlan = decryptData(localStorage.getItem("subscriptionPlanValidity"));
 
   const start_date = subscriptionPlan?.start_date
     ? dayjs(subscriptionPlan.start_date).isValid()

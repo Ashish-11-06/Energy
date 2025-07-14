@@ -8,11 +8,14 @@ import { getAllProjectsById } from '../../Redux/Slices/Generator/portfolioSlice'
 import UpdateProfileForm from '../../Components/Modals/Registration/UpdateProfileForm';
 import { useLocation } from 'react-router-dom';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { decryptData } from '../../Utils/cryptoHelper';
 
 const { Title, Paragraph } = Typography;
 
 const UpdateProfileDetails = () => {
-  const user = JSON.parse(localStorage.getItem('user')).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem('user')).user;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

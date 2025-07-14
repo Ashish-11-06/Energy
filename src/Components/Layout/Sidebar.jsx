@@ -15,13 +15,14 @@ import profile from '../../assets/profile.png';
 import offerSend from '../../assets/offerSend.png';
 import portfolio from '../../assets/portfolio.png';
 import findConsumer from '../../assets/findConsumer.png';
+import { decryptData } from '../../Utils/cryptoHelper';
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const dispatch = useDispatch();
   const offerCount = useSelector((state) => state.notifications.offerCount);
   // const notificationCount = 9;
-  const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+    const subscription=decryptData(localStorage.getItem("subscriptionPlanValidity"));
   const subscription_type = subscription?.subscription_type;
   // console.log(subscription_type);
   // console.log(subscription);
@@ -31,8 +32,9 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState(location.pathname);
-
-  const user = JSON.parse(localStorage.getItem('user')).user;
+  const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category = user?.user_category;
   const is_new_user = user?.is_new_user;
   // console.log(is_new_user);

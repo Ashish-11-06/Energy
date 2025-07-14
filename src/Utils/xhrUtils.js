@@ -1,3 +1,5 @@
+import { decryptData } from "./cryptoHelper";
+
 export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onError) => {
   try {
     const VITE_BASE_URL = import.meta.env.VITE_ALT_BASE_URL;
@@ -9,8 +11,14 @@ export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onE
 
     // Attach token from localStorage if available
     try {
-      const userData = JSON.parse(localStorage.getItem("user"));
-      const token = userData?.token;
+        const user = decryptData(localStorage.getItem('user'));
+  // const userData= user?.user;
+  // console.log('user data from xhrUtils', userData);
+  // console.log('token from xhrUtils', userData?.token);
+  
+  
+      // const userData = JSON.parse(localStorage.getItem("user"));
+      const token = user?.token;
 
       if (token) {
         xhr.setRequestHeader("Authorization", `Bearer ${token}`);

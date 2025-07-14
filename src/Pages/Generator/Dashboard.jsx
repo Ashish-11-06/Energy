@@ -23,6 +23,7 @@ import wind from "../../assets/wind.jpg";
 import { loginUser } from "../../Redux/Slices/loginSlice";
 import SubscriptionDueModal from "../../Components/Modals/SubscriptionDueModal";
 import { useNavigate } from "react-router-dom";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const Dashboard = () => {
   const [generatorDetails, setGeneratorDetails] = useState({});
@@ -32,13 +33,13 @@ const Dashboard = () => {
   const [subscriptionDueModal,showSubscriptionDueModal]=useState(false);
   const [states, setStates] = useState([]);
 
-  const user = JSON.parse(localStorage.getItem("user")).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const userId = user.id;
 
   const navigate = useNavigate();
-  const subscription = JSON.parse(
-    localStorage.getItem("subscriptionPlanValidity")
-  );
+  const subscription = decryptData(localStorage.getItem("subscriptionPlanValidity"))
   const alreadySubscribed = subscription?.subscription_type;
 
   const time_remaining = alreadySubscribed ? (() => {

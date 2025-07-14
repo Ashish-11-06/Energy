@@ -10,6 +10,7 @@ import { addDayAheadData } from "../../Redux/slices/consumer/dayAheadSlice";
 import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequirementSlice";
 import { fetchHolidayList } from "../../Redux/slices/consumer/holidayListSlice";
 import { Line } from "react-chartjs-2";
+import { decryptData } from "../../../Utils/cryptoHelper";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -32,7 +33,9 @@ const PlanYourTradePage = () => {
   const [selectedRequirementId, setSelectedRequirementId] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem('user')).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem('user')).user;
   const user_id = user.id;
   const is_new_user = user?.is_new_user;
   const username = user?.company_representative;

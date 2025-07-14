@@ -31,6 +31,7 @@ import { fetchOptimizedCombinationsXHR } from "../../Utils/xhrUtils";
 import "./CombinationPattern.css"; // Import the custom CSS file
 import { fetchSensitivity } from "../../Redux/Slices/Generator/sensitivitySlice";
 import { set } from "nprogress";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const { Title, Text } = Typography;
 
@@ -108,8 +109,9 @@ const fetchNextSensitivity = async (combinationIds) => {
 };
 
   const dispatch = useDispatch();
-
-  const user = JSON.parse(localStorage.getItem("user")).user;
+  const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const role = user.role;
   // console.log(user.id);
   const user_id = user.id;

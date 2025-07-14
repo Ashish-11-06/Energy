@@ -16,13 +16,14 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSlice";
 import { fetchRequirements } from "../../Redux/Slices/Consumer/consumerRequirementSlice";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 
 const Dashboard = () => {
   const [consumerDetails, setConsumerDetails] = useState({});
   const [platformDetails, setPlatformDetails] = useState({});
   const [stateModal, showStateModal] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user")).user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const [subscriptionDueModal,showSubscriptionDueModal]=useState(false);
   const [windCapacity, setWindCapacity] = useState(0);
   const [solarCapacity, setSolarCapacity] = useState(0);
@@ -31,15 +32,19 @@ const Dashboard = () => {
     const [selectedRequirement, setSelectedRequirement] = useState(null); // State for selected requirement
     const requirements = useSelector((state) => state.consumerRequirement.requirements || []);
   const dispatch = useDispatch();
-
+const userData = decryptData(localStorage.getItem('user'));
+// console.log('user from dashboard', userData);
+const user = userData?.user;
   const userId = user.id;
   // console.log("userId", userId);
   
   const [states, setStates] = useState([]);
   const navigate=useNavigate();
-  const subscription = JSON.parse(
-    localStorage.getItem("subscriptionPlanValidity")
-  );
+    const subscription=decryptData(localStorage.getItem("subscriptionPlanValidity"));
+  
+  // const subscription = JSON.parse(
+  //   localStorage.getItem("subscriptionPlanValidity")
+  // );
   const alreadySubscribed = subscription?.subscription_type;
 // console.log(subscription);
 
@@ -86,7 +91,7 @@ useEffect(() => {
     dispatch(fetchRequirements(userId));
   } else {
     // only run restore logic once requirements are loaded
-    const storedId = JSON.parse(localStorage.getItem('selectedRequirementId'));
+    const storedId = decryptData(localStorage.getItem('selectedRequirementId'));
     if (storedId) {
       const found = requirements.find((r) => r.id === storedId);
       if (found) {

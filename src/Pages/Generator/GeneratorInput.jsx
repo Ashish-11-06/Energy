@@ -31,6 +31,7 @@ import { getAllProjectsById } from "../../Redux/Slices/Generator/portfolioSlice"
 import { getCapacitySizingData } from "../../Redux/Slices/Generator/capacitySizingSlice";
 import { handleDownloadExcel } from "./CapacitySizingDownload";
 import { Text } from "recharts";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const { Title } = Typography;
 
@@ -53,7 +54,9 @@ const GeneratorInput = () => {
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const user_id = user?.id;
   const { status, projects } = useSelector((state) => state.portfolio);
   const loadingRef = useRef(null); // Tracks current loading key
@@ -76,9 +79,7 @@ const GeneratorInput = () => {
   // console.log("checkPortfolio", checkPortfolio);
   // console.log("structuredProjects", Structuredprojects);
 
-  const subscription = JSON.parse(
-    localStorage.getItem("subscriptionPlanValidity")
-  );
+  const subscription =decryptData(localStorage.getItem("subscriptionPlanValidity"))
   const activeSubscription = subscription?.status === "active";
   const handleFormSubmit = (values) => {
     // Save the form values to dataSource for use in modalData

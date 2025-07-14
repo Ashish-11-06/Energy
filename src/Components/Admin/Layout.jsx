@@ -7,6 +7,7 @@ import HeaderComponent from "./Header";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { FaRobot } from "react-icons/fa"; // Chatbot icon
 import intercomIcon from "../../assets/chatbot.svg"; // Intercom icon
+import { decryptData } from "../../Utils/cryptoHelper";
 // import "./HeaderComponent.css"; // Add custom styles for header component
 
 const { Header, Content } = Layout;
@@ -34,7 +35,10 @@ const LayoutComponent = () => {
   const sidebarWidth = collapsed ? 80 : 250; // Adjust sidebar width based on collapsed state
 
   // Fetch user details from localStorage
-  const user = JSON.parse(localStorage.getItem("user"))?.user || null;
+  const userData = decryptData(localStorage.getItem('user'));
+  // console.log('user from dashboard', userData);
+  const user = userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user"))?.user || null;
   const userType = user?.type; // Assuming user type is stored (consumer/generator)
 
   const handleChatClick = () => {

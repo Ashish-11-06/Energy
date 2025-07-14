@@ -7,10 +7,13 @@ import { addPWatt } from "../../Redux/Slices/Consumer/pwattSlice";
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
 import { data } from "react-router-dom";
 import { Title } from "chart.js";
+import { decryptData } from "../../Utils/cryptoHelper";
 const Rooftop = () => {
   const [selectedRequirement, setSelectedRequirement] = useState(null); // State for selected requirement
   const dispatch = useDispatch();
-  const userData = JSON.parse(localStorage.getItem("user")).user;
+  // const userData = JSON.parse(localStorage.getItem("user")).user;
+   const user = decryptData(localStorage.getItem('user'));
+  const userData= user?.user;
   const radioValueRef = useRef(null); // store the selected value
   const [loading, setLoading] = useState(false);
   const [monthlyData, setMonthlyData] = useState([]);

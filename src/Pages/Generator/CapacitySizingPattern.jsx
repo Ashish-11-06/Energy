@@ -32,6 +32,7 @@ import {
 import "./CombinationPattern.css";
 import { handleDownloadExcel } from "./CapacitySizingDownload";
 import { getDemandSummary } from "../../Redux/Slices/Generator/demandSummarySlice";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const { Title, Text } = Typography;
 
@@ -55,8 +56,9 @@ const CombinationPatternCap = () => {
   // const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
-
-  const user = JSON.parse(localStorage.getItem("user")).user;
+ const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   // console.log("state", user);
   const id = user?.id;
   // console.log("id", id);
@@ -517,7 +519,7 @@ const CombinationPatternCap = () => {
       render: (text, record) => (
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <Button
-            type="link"
+            // type="link"
             icon={<DownloadOutlined style={{ color: "white" }} />}
             loading={loadingRef.current?.toString() === record.key?.toString()}
             onClick={() => {

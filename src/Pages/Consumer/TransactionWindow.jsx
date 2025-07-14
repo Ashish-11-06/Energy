@@ -27,6 +27,7 @@ import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import time from "../../assets/time.png";
 import moment from "moment";
+import { decryptData } from "../../Utils/cryptoHelper.js";
 
 const { Title, Text } = Typography;
 const { Countdown } = Statistic;
@@ -43,11 +44,14 @@ const TransactionWindow = () => {
   const contentRef = useRef();
   const [socket, setSocket] = useState(null);
   const [offerAccepted, setOfferAccepted] = useState(false); // Track if an offer is accepted
-  const userData = JSON.parse(localStorage.getItem('user')).user;
-  const role = userData?.role;
+  // const userData = JSON.parse(localStorage.getItem('user')).user;
   const location = useLocation();
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")).user;
+   const userDataa = decryptData(localStorage.getItem('user'));
+  const user= userDataa?.user;
+    const role = user?.role;
+
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const userCategory = user?.user_category;
   const record = location.state;
 

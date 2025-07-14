@@ -19,6 +19,7 @@ import {
   subscriptionEnroll,
 } from "../../../Redux/Slices/Consumer/subscriptionEnrollSlice";
 import { addOfflinePayment } from "../../../Redux/Slices/Consumer/offlinePaymentSlice";
+import { decryptData, encryptData } from "../../../Utils/cryptoHelper";
 
 // Utility function to convert numbers to words
 const numberToWords = (num) => {
@@ -96,7 +97,9 @@ const ProformaInvoiveModal = ({
   selectedPlanId,
   fromSubscription,
 }) => {
-  const userData = JSON.parse(localStorage.getItem("user")).user;
+     const userr = decryptData(localStorage.getItem('user'));
+    const userData= userr?.user;
+  // const userData = JSON.parse(localStorage.getItem("user")).user;
   const userId = userData?.id;
   const companyName=userData?.company;
   const [paymentModeModal,setPaymentModeModal] = useState(false);
@@ -287,9 +290,10 @@ const handleOfflineOk = async () => {
                
                    setSubscriptionPlanValidity(response.payload);
                 // console.log(response);
+                const encryptDataa = encryptData(response.payload);
                 localStorage.setItem(
                   "subscriptionPlanValidity",
-                  JSON.stringify(response.payload)
+                  encryptDataa
                 );
                 } catch (error) {
                   message.error(error);
@@ -347,9 +351,10 @@ const handleOfflineOk = async () => {
               const response = await dispatch(fetchSubscriptionValidity(userId));
            // console.log(response);
               setSubscriptionPlanValidity(response.payload);
+              const encryptDataa = encryptData(response.payload);
               localStorage.setItem(
                 "subscriptionPlanValidity",
-                JSON.stringify(response.payload)
+               encryptDataa
               );
             } catch (error) {
               message.error(error.message || "Failed to fetch subscription validity.");

@@ -20,6 +20,7 @@ import moment from "moment";
 import { render } from "less";
 import DemandModal from "./Modal/DemandModal";
 import CombinationModal from "./Modal/CombinationModal";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -42,7 +43,9 @@ const Offers = () => {
   const [combData, setCombData] = useState(null);
 
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem("user")).user;
+    const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 
   useEffect(() => {

@@ -23,13 +23,16 @@ import { useDispatch } from "react-redux";
 import { updateProject } from "../../../Redux/Slices/Generator/portfolioSlice";
 import { templateDownload } from "../../../Redux/Slices/Generator/templateDownloadSlice";
 import { fetchState } from "../../../Redux/Slices/Consumer/stateSlice";
+import { decryptData } from "../../../Utils/cryptoHelper";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
 
 const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorCloseModal, lastUploadedFile, updateLastUploadedFile }) => {
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem("user")).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
 // console.log('project',project);
 // console.log('form',form);
 const baseURL = "http://52.66.186.241:8000";

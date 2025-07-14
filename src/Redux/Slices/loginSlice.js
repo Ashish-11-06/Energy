@@ -1,6 +1,7 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import userApi from '../api/userApi';
+import { decryptData, encryptData } from '../../Utils/cryptoHelper';
 
 
 export const sendForgotPasswordOtp = createAsyncThunk(
@@ -53,7 +54,8 @@ export const loginUser = createAsyncThunk('users/loginUser', async (credentials,
         const response = await userApi.logInUser(credentials);
         // console.log('API response:', response);
         const loginUserResponse = response.data;
-        localStorage.setItem('user', JSON.stringify(loginUserResponse));
+        const encryptedUser = encryptData(loginUserResponse);
+localStorage.setItem('user', encryptedUser);  // ✅ Correct
         return loginUserResponse;
     } catch (error) {
         console.error('API error:', error.response.data);
@@ -66,12 +68,12 @@ export const logoutUser = createAsyncThunk('users/logoutUser', async () => {
     localStorage.clear();
     return {};
 });
-
+ 
 // User Slice
 const userSlice = createSlice({
     name: 'users',
     initialState: {
-        user: JSON.parse(localStorage.getItem('user')) || null,
+        user:  decryptData(localStorage.getItem('user')) || null,
         isAuthenticated: !!localStorage.getItem('user'),
         loading: false,
         error: null,

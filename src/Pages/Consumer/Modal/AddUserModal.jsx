@@ -4,13 +4,16 @@ import React from "react";
 import { Modal, Form, Input, Button, Row, Col, Select, message } from "antd";
 import { addSubUser } from "../../../Redux/Slices/Consumer/registerSlice";
 import { useDispatch } from "react-redux";
+import { decryptData } from "../../../Utils/cryptoHelper";
 
 const { Option } = Select;
 
 const AddUserModal = ({ isVisible, onCancel, onSave, editableData, edit }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem("user")).user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
+    const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
   const [loading, setLoading] = React.useState(false); // State to manage loading
 
   // console.log(user);

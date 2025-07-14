@@ -2,9 +2,11 @@
 /* eslint-disable no-unused-vars */
 import { Modal, Button } from 'antd';
 import React from 'react';
+import { decryptData } from '../../Utils/cryptoHelper';
 
 const SubscriptionDueModal = ({ open, onCancel, onConfirm, onOk, time_remaining }) => {
-  const subscription = JSON.parse(localStorage.getItem("subscriptionPlanValidity"));
+  const subscription=decryptData(localStorage.getItem("subscriptionPlanValidity"));
+  // const subscription = JSON.parse(localStorage.getItem("subscriptionPlanValidity"));
   const subscription_type = subscription?.subscription_type;
 
   return (

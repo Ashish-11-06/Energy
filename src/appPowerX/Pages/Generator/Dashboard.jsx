@@ -22,6 +22,7 @@ import statistics from "../../assets/statistics.png";
 import { fetchDashboardDataG, fetchDashboardLineG } from "../../Redux/slices/generator/dashboardSlice";
 import { error } from "pdf-lib";
 import { dayAheadData } from "../../Redux/slices/generator/dayAheadSliceG";
+import { decryptData } from "../../../Utils/cryptoHelper";
 
 // Register required chart.js components and plugins
 ChartJS.register(
@@ -45,8 +46,10 @@ const Dashboard = () => {
   const [tableData, setTableData] = useState([]);
   const [statistiicsData, setStatisticsData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
-  const user=JSON.parse(localStorage.getItem('user')).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  const user_id = user?.id;
+  // const user=JSON.parse(localStorage.getItem('user')).user;
   const [showLineGraph, setShowLineGraph] = useState(true); // New state to control line graph visibility
   const is_due_date=user.is_due_date;
   const [showDueModal,setShowDueModal]=useState(false);

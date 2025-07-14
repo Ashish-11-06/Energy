@@ -15,6 +15,7 @@ import profile from '../../assets/profile.png';
 import offerSend from '../../assets/offerSend.png';
 import portfolio from '../../assets/portfolio.png';
 import findConsumer from '../../assets/findConsumer.png';
+import { decryptData } from '../../Utils/cryptoHelper';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -28,8 +29,11 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const [selectedKey, setSelectedKey] = useState(location.pathname);
   const [isDrawerVisible, setDrawerVisible] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem('user')).user;
-  const subscription = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+  const userData = decryptData(localStorage.getItem('user'));
+  const user = userData?.user;
+  // const user = JSON.parse(localStorage.getItem('user')).user;
+
+    const subscription=decryptData(localStorage.getItem("subscriptionPlanValidity"));
   const user_category = user?.user_category;
   const is_new_user = user?.is_new_user;
   const subscription_type = subscription?.subscription_type;

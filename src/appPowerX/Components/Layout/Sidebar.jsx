@@ -25,6 +25,7 @@ import notificationImg from '../../../assets/notification.png';
 import portfolio from '../../../assets/portfolio.png';
 import trade from '../../assets/trade.png';
 import home from '../../assets/home.png';
+import { decryptData } from '../../../Utils/cryptoHelper';
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
@@ -32,7 +33,9 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState(location.pathname);
 
-  const user = JSON.parse(localStorage.getItem('user')).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category = user?.user_category;
 
   const consumerMenuItems = [

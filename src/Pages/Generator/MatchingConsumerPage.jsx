@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch an
 import { checkStatusById, fetchMatchingConsumersById } from '../../Redux/Slices/Generator/matchingConsumerSlice'; // Import the action to fetch data
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are imported
 import { Typography } from 'antd';
+import { decryptData, encryptData } from '../../Utils/cryptoHelper';
 
 
 const { Search } = Input;
@@ -16,8 +17,10 @@ const MatchingConsumerPage = () => {
   const dispatch = useDispatch(); // Initialize dispatch hook
   const navigate = useNavigate(); // Initialize navigate hook
   
-  const user = (JSON.parse(localStorage.getItem('user'))).user;
-  const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = (JSON.parse(localStorage.getItem('user'))).user;
+  const subscriptionPlan = decryptData(localStorage.getItem("subscriptionPlanValidity"));
 
   const [selectedConsumer, setSelectedConsumer] = useState(null); // Track the selected consumer
   const [searchText, setSearchText] = useState(''); // For search functionality
@@ -88,7 +91,8 @@ const MatchingConsumerPage = () => {
   // Handle radio button change for selecting a consumer
   const handleRadioChange = (e, key) => {
     // console.log(key);
-    localStorage.setItem('matchingConsumerId',key);
+    const encryptDataa=encryptData(key);
+    localStorage.setItem('matchingConsumerId',encryptDataa);
     const data={
           user_id:user.id,
           selected_requirement_id:key

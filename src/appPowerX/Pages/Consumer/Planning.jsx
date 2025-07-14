@@ -36,6 +36,7 @@ import { fetchRequirements } from "../../Redux/slices/consumer/consumerRequireme
 import { addMonthData } from "../../Redux/slices/consumer/monthAheadSlice";
 import { color } from "framer-motion";
 import { fetchHolidayList } from "../../Redux/slices/consumer/holidayListSlice";
+import { decryptData } from "../../../Utils/cryptoHelper";
 
 dayjs.locale("en");
 
@@ -55,7 +56,9 @@ const Planning = () => {
   const [price, setPrice] = useState({});
   const [selectedTechnology, setSelectedTechnology] = useState([]);
   const dispatch = useDispatch();
-  const user_id = Number(JSON.parse(localStorage.getItem("user")).user.id);
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  const user_id = user?.id || null; // Ensure user_id is defined
   const [selectedRequirementId, setSelectedRequirementId] = useState(null);
   const [isInputModalVisible, setIsInputModalVisible] = useState(false); // Separate state for input modal
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);

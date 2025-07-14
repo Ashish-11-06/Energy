@@ -2,12 +2,15 @@
 /* eslint-disable react/prop-types */
 import React from "react"; 
 import { Modal, Button, Row, Col, Card, Typography } from "antd";
+import { decryptData } from "../../../Utils/cryptoHelper";
 
 const { Text } = Typography;
 
 const CombinationModal = ({ open, onCancel, combinationContent }) => {
   // console.log(combinationContent);
-  const user = JSON.parse(localStorage.getItem("user")).user;
+    const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 //// console.log(user_category);
 

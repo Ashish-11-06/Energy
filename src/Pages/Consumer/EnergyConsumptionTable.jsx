@@ -39,6 +39,7 @@ import "../EnergyTable.css";
 import { consumptionBill } from "../../Redux/Slices/Consumer/monthlyConsumptionBillSlice";
 import { addScada } from "../../Redux/Slices/Consumer/uploadScadaSlice";
 import { uploadCSV } from "../../Redux/Slices/Consumer/uploadCSVFileSlice";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 
 
@@ -70,7 +71,9 @@ const EnergyConsumptionTable = () => {
   const [saveSuccess, setSaveSuccess] = useState(false); // State to track save success
   const [saveError, setSaveError] = useState(false); // State to track save error
   const [temp, setTemp] = useState('');
-  const user = JSON.parse(localStorage.getItem("user")).user;
+    const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const [buttonDisable, setButtonDisable] = useState(false);
   const currentYear = new Date().getFullYear(); // Get the current year
   const lastYear = currentYear - 1; // Calculate the last year

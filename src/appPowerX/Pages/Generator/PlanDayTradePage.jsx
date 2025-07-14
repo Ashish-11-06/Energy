@@ -30,6 +30,7 @@ import { getAllProjectsById } from "../../Redux/slices/generator/portfolioSlice"
 import { fetchHolidayList } from "../../Redux/slices/consumer/holidayListSlice";
 import ReactDOM from 'react-dom/client';
 import { Line } from "react-chartjs-2";
+import { decryptData } from "../../../Utils/cryptoHelper";
 
 const generateTimeLabels = () => {
   const times = [];
@@ -52,7 +53,9 @@ const PlanYourTradePage = () => {
   const [selectedPortfolioId, setSelectedPortfolioId] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem("user")).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const user_id = user.id;
   const is_new_user = user?.is_new_user;
   const username = user?.company_representative;

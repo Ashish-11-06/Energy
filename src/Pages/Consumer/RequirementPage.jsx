@@ -11,6 +11,7 @@ import { addNewRequirement } from '../../Redux/Slices/Consumer/consumerRequireme
 
 import moment from 'moment';
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
+import { decryptData, encryptData } from '../../Utils/cryptoHelper';
 
 const RequirementsPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -27,10 +28,12 @@ const RequirementsPage = () => {
   const [editData, setEditData] = useState(selectedRequirement);
   const [loading, setLoading] = useState(false);
 
-  const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
-  const userData = JSON.parse(localStorage.getItem('user')).user;
-  // const userDataa = JSON.parse(localStorage.getItem('user'));
-  // console.log(userDataa);
+      const subscriptionPlan=decryptData(localStorage.getItem("subscriptionPlanValidity"));
+  
+  // const subscriptionPlan = JSON.parse(localStorage.getItem('subscriptionPlanValidity'));
+  // const userData = JSON.parse(localStorage.getItem('user')).user;
+    const userData = decryptData(localStorage.getItem('user'));
+    const user= userData?.user;
   const use=localStorage.getItem('user');
   // console.log('localStorage',use);
   
@@ -147,13 +150,14 @@ const companyName=userData.company;
   };
 
   const handleAddDetails = (record) => {
-    localStorage.setItem('selectedRequirementId', record.id);
+
+    localStorage.setItem('selectedRequirementId', encryptData(record.id));
     navigate('/consumer/energy-consumption-table', );
   };
 
   const handleRowSelect = (record) => {
     // console.log('record', record);
-        localStorage.setItem('selectedRequirementId', record.id);
+        localStorage.setItem('selectedRequirementId', encryptData(record.id));
 
     setSelectedRowKeys([record.key]);
     setSelectedRequirement(record);
@@ -218,23 +222,39 @@ const companyName=userData.company;
     }
   };
 
-  useEffect(() => {
-    const user = getFromLocalStorage('user');
-    if (user && user.user.company_representative) {
-      setUsername(user.user.company_representative);
-    }
-    if (is_new_user) {
-      setIsInfoModalVisible(true);
-      // Update local storage when modal opens
-      localStorage.setItem('user', JSON.stringify({ ...user, user: { ...user.user, is_new_user: false } }));
-    }
-    if (requirements.length === 0) {
-      setLoading(true);
-      const id = user.user.id;
+useEffect(() => {
+  const decryptedData = decryptData(localStorage.getItem('user'));
+  const user = decryptedData?.user;
+  console.log('logged in user', user);
+
+  if (user?.company_representative) {
+    setUsername(user.company_representative);
+  }
+
+  // ✅ Show modal if new user
+  if (user?.is_new_user) {
+    setIsInfoModalVisible(true);
+
+    // ✅ Update is_new_user and re-save encrypted
+    const updatedData = {
+      ...decryptedData,
+      user: {
+        ...user,
+        is_new_user: false,
+      },
+    };
+    const encrypted = encryptData(updatedData);
+    localStorage.setItem('user', encrypted);
+  }
+
+  if (requirements.length === 0) {
+    setLoading(true);
+    const id = user?.id;
+    if (id) {
       dispatch(fetchRequirements(id)).finally(() => setLoading(false));
     }
-  }, [dispatch, requirements.length, newUser]);
-
+  }
+}, [dispatch, requirements.length, newUser]);
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);
   };

@@ -1,12 +1,14 @@
 import React from "react";
 import { Modal, Button, Row, Col, Card, Typography } from "antd";
+import { decryptData } from "../../../Utils/cryptoHelper";
 
 const { Text } = Typography;
 
 const DemandModal = ({ open, onCancel, requirementContent }) => {
   // console.log(requirementContent);
-
-  const user = JSON.parse(localStorage.getItem("user")).user;
+  const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 // console.log(user_category);
 // console.log(requirementContent);

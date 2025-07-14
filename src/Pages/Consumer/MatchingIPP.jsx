@@ -7,6 +7,7 @@ import { Table, Spin, Alert, Row, Button, Radio, Modal, Tooltip, message, Select
 import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSlice";
 import { CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleOutlined } from '@ant-design/icons';
 import { fetchRequirements } from "../../Redux/Slices/Consumer/consumerRequirementSlice";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const MatchingIPP = () => {
   const location = useLocation();
@@ -33,7 +34,9 @@ const selectedRequirements = location.state?.selectedRequirements || [];
     const item = localStorage.getItem(key);
     return item ? JSON.parse(item) : '';
   };
-  const userData = JSON.parse(localStorage.getItem('user')).user;
+  // const userData = JSON.parse(localStorage.getItem('user')).user;
+    const user  = decryptData(localStorage.getItem('user'));
+  const userData= user?.user;
 // console.log("User Data:", userData);
 const role=userData?.role;
 
@@ -112,7 +115,7 @@ const role=userData?.role;
   };
 
   const handleContinue = () => {
-    const subscriptionPlanValidity = getFromLocalStorage('subscriptionPlanValidity');
+    const subscriptionPlanValidity = decryptData(localStorage.getItem("subscriptionPlanValidity"));
     const matchingIPP = localStorage.getItem('matchingIPP');
     const selectedRequirementId = localStorage.getItem('selectedRequirementId');
   

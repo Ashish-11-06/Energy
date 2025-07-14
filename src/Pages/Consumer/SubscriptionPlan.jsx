@@ -42,6 +42,7 @@ import powerX from "../../assets/powerX.png";
 import advice from "../../assets/advice.png";
 import consumption from "../../assets/consumption.png";
 import invoice from "../../assets/invoice.png";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 
 const { Title, Text } = Typography;
@@ -59,9 +60,7 @@ const SubscriptionPlans = () => {
   const [loading, setLoading] = useState(false);
   const [subscriptionPlan, setSubscriptionPlan] = useState([]);
 
-  const subscription = JSON.parse(
-    localStorage.getItem("subscriptionPlanValidity")
-  );
+  const subscription =decryptData(localStorage.getItem("subscriptionPlanValidity"));
   const alreadySubscribed = subscription?.subscription_type;
   const time_remaining = alreadySubscribed === 'FREE' ? (() => {
     if (!subscription?.end_date) return 'Invalid Date';
@@ -90,8 +89,10 @@ const SubscriptionPlans = () => {
   
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const userData = useState(JSON.parse(localStorage.getItem("user")).user);
-  const user = JSON.parse(localStorage.getItem('user')).user;
+  // const userData = useState(JSON.parse(localStorage.getItem("user")).user);
+  // const user = JSON.parse(localStorage.getItem('user')).user;
+     const userData = decryptData(localStorage.getItem('user'));
+    const user= userData?.user;
   const user_category=user.user_category;
   const temp = user_category === 'Consumer' ? 'Matching IPP' : 'Find Consumer';
   const req=user_category === 'Consumer' ? 'Requirement' : 'Portfolio';
@@ -101,7 +102,7 @@ const SubscriptionPlans = () => {
   
   
   // const user_category = userData[0]?.user_category;
-  const userId = userData[0]?.id;
+  const userId = user?.id;
   const Razorpay = useRazorpay();
   const [orderId, setOrderId] = useState(null);
 

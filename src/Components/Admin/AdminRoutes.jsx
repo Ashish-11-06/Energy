@@ -4,7 +4,6 @@ import LayoutComponent from "./Layout";
 import Dashboard from "../../Pages/Admin/Dashboard";
 import Consumer from "../../Pages/Admin/Consumer";
 import Generator from "../../Pages/Admin/Generator";
-import Subscription from "../../Pages/Admin/Subscription";
 import Notification from "../../Pages/Admin/Notification";
 import Help from "../../Pages/Admin/Help";
 import OnlineSub from "../../Pages/Admin/OnlineSub";

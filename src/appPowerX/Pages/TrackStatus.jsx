@@ -10,13 +10,16 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { getAllProjectsById } from "../Redux/slices/generator/portfolioSlice";
 import { fetchRequirements } from "../Redux/slices/consumer/consumerRequirementSlice";
+import { decryptData } from "../../Utils/cryptoHelper";
 const approvals = [
   { text: "Demand added", status: "green" },
   { text: "aa", status: "yellow" },
 ];
 
 const TrackStatusP = () => {
-  const user = JSON.parse(localStorage.getItem("user")).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const dispatch = useDispatch();
   const user_category = user?.user_category;
   const titleText =

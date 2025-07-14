@@ -6,6 +6,7 @@ import { fetchNotificationById } from "../../Redux/Slices/Consumer/notificationS
 import { BellOutlined, MessageOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import "./Notification.css"; // Optional: Add custom CSS for additional styling
 import moment from "moment";
+import { decryptData } from "../../Utils/cryptoHelper.js";
 
 const { Title, Text } = Typography;
 
@@ -14,8 +15,9 @@ const Notification = () => {
   const dispatch = useDispatch();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
-  const userId = JSON.parse(localStorage.getItem("user")).user.id;
-
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  const userId = user?.id
   useEffect(() => {
     setLoading(true);
     dispatch(fetchNotificationById(userId))

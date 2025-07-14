@@ -21,6 +21,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { useDispatch } from "react-redux";
 import { editUser } from "../../Redux/Slices/userSlice";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const { Title, Text } = Typography;
 
@@ -36,21 +37,24 @@ const ProfilePage = () => {
 
   // Retrieve user data safely from localStorage
   const storedUser = localStorage.getItem("user");
-  const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
-  const userId = initialUserData.id;
+  // const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
+
+    const userDataa = decryptData(localStorage.getItem('user'));
+    const user= userDataa?.user;
+      const userId = user.id;
   // console.log(userId);
   // const baseurl = "https://ext.exgglobal.com/api"
     const baseurl= import.meta.env.VITE_BASE_URL;
 
   const navigate = useNavigate();
 
-  const role = initialUserData.role;
+  const role = user.role;
   // console.log(role);
-  const [userData, setUserData] = useState(initialUserData);
+  const [userData, setUserData] = useState(user);
 
   // Retrieve subscription plan safely from localStorage
-  const storedPlan = localStorage.getItem("subscriptionPlanValidity");
-  const subscriptionPlan = storedPlan ? JSON.parse(storedPlan) : {};
+  // const storedPlan = localStorage.getItem("subscriptionPlanValidity");
+  const subscriptionPlan = decryptData(localStorage.getItem("subscriptionPlanValidity"));
 
   const start_date = subscriptionPlan?.start_date
     ? dayjs(subscriptionPlan.start_date).isValid()
@@ -96,10 +100,11 @@ const ProfilePage = () => {
   const handleAddUser = () => setIsUserModal(true);
 
   const handleSave = (values) => {
-    const storedUser = localStorage.getItem("user");
-    const existingUserData = storedUser ? JSON.parse(storedUser) : {};
+    // const storedUser = localStorage.getItem("user");
+    // const existingUserData = storedUser ? JSON.parse(storedUser) : {};
     // console.log('credit rating:', values.proof);
-
+  const userData = decryptData(localStorage.getItem('user'));
+  const existingUserData= userData?.user;
     // Debug: log the proof field structure
  // console.log('values.proof:', values.proof);
 

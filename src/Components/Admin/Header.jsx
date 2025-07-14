@@ -15,6 +15,7 @@ import {
 import chat from "../../assets/need.png";
 import NotificationIcon from "../../assets/not.jpg";
 import { useSelector } from "react-redux";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const { Header } = Layout;
 
@@ -24,9 +25,8 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const navigate = useNavigate(); // Add useNavigate hook
   const [username, setUsername] = useState("");
   const [userCategory, setUserCategory] = useState("");
-  const subscriptionValidity = JSON.parse(
-    localStorage.getItem("subscriptionPlanValidity")
-  );
+    const subscriptionValidity=decryptData(localStorage.getItem("subscriptionPlanValidity"));
+
   const subscription = subscriptionValidity?.status;
   const matchingConsumerId = localStorage.getItem("matchingConsumerId");
   const [matchingConsumer, setMatchingConsumer] = useState("");
@@ -52,7 +52,10 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
   const userCategoryRef = useRef("");
 
   const updateUserDetails = () => {
-    const user = getFromLocalStorage("user").user;
+    const userData = decryptData(localStorage.getItem('user'));
+// console.log('user from dashboard', userData);
+const user = userData?.user;
+    // const user = getFromLocalStorage("user").user;
     usernameRef.current = user?.company_representative || "";
     userCategoryRef.current = user?.user_category === "Consumer" ? "consumer" : "generator";
     setUsername(usernameRef.current);

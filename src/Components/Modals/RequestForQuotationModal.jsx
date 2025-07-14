@@ -20,6 +20,7 @@ import SummaryOfferModal from "./SummaryOfferModal";
 import { useDispatch } from "react-redux";
 import { addTermsAndConditions } from "../../Redux/Slices/Generator/TermsAndConditionsSlice";
 import AgreementModal from "./AgreementModal";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -61,8 +62,9 @@ console.log('ddd',data);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const user = JSON.parse(localStorage.getItem("user")).user;
+  const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 console.log('user ',user);
 

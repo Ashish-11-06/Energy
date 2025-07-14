@@ -24,6 +24,7 @@ import {
 import market from "../../assets/market.png";
 import statistics from "../../assets/statistics.png";
 import { dayAheadData } from "../../Redux/slices/consumer/dayAheadSlice";
+import { decryptData } from "../../../Utils/cryptoHelper";
 
 // Register required chart.js components and plugins
 ChartJS.register(
@@ -51,8 +52,10 @@ const DashboardP = () => {
   const [nextDay, setNextDay] = useState('');
   const [showDueModal,setShowDueModal]=useState(false);
   const [showLineGraph, setShowLineGraph] = useState(true); // New state to control line graph visibility
-  const user_id = Number(JSON.parse(localStorage.getItem('user')).user.id);
-  const user=JSON.parse(localStorage.getItem('user')).user;
+   const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  const user_id =user?.id || null; // Ensure user_id is defined
+  // const user=JSON.parse(localStorage.getItem('user')).user;
   const is_due_date=user.is_due_date;
   const [tableLoading,setTableLoading] = useState(false);
   const tomorrow = new Date();

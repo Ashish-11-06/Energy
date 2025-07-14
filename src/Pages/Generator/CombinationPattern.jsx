@@ -30,6 +30,7 @@ import "./CombinationPattern.css"; // Import the custom CSS file
 import { fetchSensitivity } from "../../Redux/Slices/Generator/sensitivitySlice";
 import { Tooltip as ChartTooltip } from "chart.js";
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const { Title, Text } = Typography;
 
@@ -53,13 +54,14 @@ const CombinationPattern = () => {
 
   const location = useLocation();
   // const selectedDemandId = location.state?.selectedDemandId;
-  const selectedDemandId = localStorage.getItem('matchingConsumerId')
+  const selectedDemandId = decryptData(localStorage.getItem('matchingConsumerId'));
   const reReplacement = state?.reReplacement;
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 
   const dispatch = useDispatch();
-
-  const user = JSON.parse(localStorage.getItem("user")).user;
+ const userData = decryptData(localStorage.getItem('user'));
+  const user= userData?.user;
+  // const user = JSON.parse(localStorage.getItem("user")).user;
   const role = user.role;
   const user_id = user.id;
 
