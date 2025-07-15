@@ -21,7 +21,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { useDispatch } from "react-redux";
 import { editUser } from "../../Redux/Slices/userSlice";
-import { decryptData } from "../../Utils/cryptoHelper";
+import { decryptData, encryptData } from "../../Utils/cryptoHelper";
 
 const { Title, Text } = Typography;
 
@@ -105,8 +105,12 @@ const ProfilePage = () => {
     // const storedUser = localStorage.getItem("user");
     // const existingUserData = storedUser ? JSON.parse(storedUser) : {};
     // console.log('credit rating:', values.proof);
+    console.log('values profile consumer', values);
+    
   const userData = decryptData(localStorage.getItem('user'));
   const existingUserData= userData?.user;
+  console.log('existingUserData', existingUserData);
+  
     // Debug: log the proof field structure
  // console.log('values.proof:', values.proof);
 
@@ -133,11 +137,17 @@ const ProfilePage = () => {
       credit_rating_proof: proofBase64,
     };
 
- // console.log('Payload to backend:', { userId, userData: updatedUserData });
+    console.log('Updated user data:', updatedUserData);
+    
+ console.log('Payload to backend:', { userId, userData: updatedUserData });
 
     dispatch(editUser({ userId, userData: updatedUserData }))
       .then((res) => {
         if (res.payload && res.payload.data && res.payload.data.data) {
+          console.log("User updated successfully:", res.payload.data.data);
+          console.log("Updated user data:", res.payload.data);
+          
+          
           const updatedLocalStorageData = {
             message: existingUserData.message || "Login successful",
             token: existingUserData.token,
@@ -152,7 +162,7 @@ const ProfilePage = () => {
           };
 
           // Update localStorage immediately
-          localStorage.setItem("user", JSON.stringify(updatedLocalStorageData));
+          localStorage.setItem("user", encryptData(updatedLocalStorageData));
           setUserData(updatedLocalStorageData.user); // Update state immediately
 
           // Trigger custom event to notify HeaderComponent
