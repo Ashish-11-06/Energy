@@ -464,7 +464,7 @@ const handleNavigateSubscription=() => {
         </Col>
       </Row>
       
-<SubscriptionDueModal time_remaining={time_remaining} open={subscriptionDueModal} onCancel={() => showSubscriptionDueModal(false)} onConfirm={() => showSubscriptionDueModal(false)} onOk={handleNavigateSubscription} />
+<SubscriptionDueModal time_remaining={time_remaining} open={subscriptionDueModal} onCancel={() => showSubscriptionDueModal(false)} onConfirm={() => showSubscriptionDueModal(false)} onOk={() => showSubscriptionDueModal(false)} />
 
 
 
