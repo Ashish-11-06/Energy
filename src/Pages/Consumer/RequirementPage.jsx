@@ -39,8 +39,8 @@ const RequirementsPage = () => {
   
   const is_new_user = userData?.is_new_user;
 // console.log(userData);
-const companyName=userData.company;
-  const role = userData.role;
+const companyName=userData?.company;
+  const role = userData?.role;
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
     return item ? JSON.parse(item) : '';
@@ -162,7 +162,7 @@ const companyName=userData.company;
     setSelectedRowKeys([record.key]);
     setSelectedRequirement(record);
     const data = {
-      user_id: userData.id,
+      user_id: userData?.id,
       selected_requirement_id: record.id
     };
     message.success(`You selected record of site '${record.consumption_unit}'`);

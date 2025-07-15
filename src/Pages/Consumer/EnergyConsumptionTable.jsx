@@ -777,7 +777,7 @@ const EnergyConsumptionTable = () => {
             </Row>
           </span>
 
-          {(user.role !== "view") ? (<>
+          {(user?.role !== "view") ? (<>
             <span
               style={{
                 // display: "flex",
@@ -1003,7 +1003,7 @@ const EnergyConsumptionTable = () => {
 
           {showFileUploadTable && renderSixMonthFileUploadTables()}
 
-          {(user.role !== "view") ? (
+          {(user?.role !== "view") ? (
 
             <>
               <Tooltip

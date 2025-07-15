@@ -13,6 +13,7 @@ import {
   message,
   Card,
   Input,
+  Tooltip,
 } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -57,6 +58,7 @@ const RequestForQuotationModal = ({
   const [latePaymentSurcharge, setLatePaymentSurcharge] = useState(1.25);
   const [modalVisible, setModalVisible] = useState(false);
   
+
 console.log('ddd',data);
 // console.log('tech data',technologyData);
 
@@ -64,9 +66,12 @@ console.log('ddd',data);
   const navigate = useNavigate();
   const userData = decryptData(localStorage.getItem('user'));
   const user= userData?.user;
+  console.log('user in RFQ',user);
+  
   // const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 console.log('user ',user);
+  const isConsumerWithoutCredit = user_category === 'Consumer' && (!user?.credit_rating || user.credit_rating.trim() === '');
 
   useEffect(() => {
     if (contractedEnergy) {
@@ -77,6 +82,18 @@ console.log('user ',user);
   const handleChatWithExpert = () => {
     navigate("/chat-page");
   };
+
+const handleContinueClick = () => {
+  if (
+    user_category === 'Consumer' &&
+    (!user?.credit_rating || user.credit_rating.trim() === '')
+  ) {
+    message.warning('Please update profile by filling the credit rating in Profile section');
+    return;
+  }
+
+  handleContinue(); // proceed if valid
+};
 
   const handleSendToIPPs = () => {
     message.success("Your request has been sent to IPPs.");
@@ -447,18 +464,29 @@ console.log('user ',user);
                   View in Detail
                 </Button>
         <Row justify="end" style={{ marginTop: "20px" }}>
-          <Button
-            type="primary"
-            style={{
-              backgroundColor: "#669800",
-              borderColor: "#669800",
-              fontSize: "16px",
-              padding: "10px 20px",
-            }}
-            onClick={handleContinue}
-          >
-            {user_category === "Generator" ? "Send to Consumer" : "Send to IPPs"}
-          </Button>
+<Tooltip
+  title={
+    isConsumerWithoutCredit
+      ? 'Please update profile by filling the credit rating in Profile section'
+      : ''
+  }
+>
+  <span>
+    <Button
+      type="primary"
+      style={{
+        backgroundColor: "#669800",
+        borderColor: "#669800",
+        fontSize: "16px",
+        padding: "10px 20px",
+      }}
+      onClick={handleContinueClick}
+      disabled={isConsumerWithoutCredit}
+    >
+      {user_category === 'Generator' ? 'Send to Consumer' : 'Send to IPPs'}
+    </Button>
+  </span>
+</Tooltip>
         </Row>
       </Modal>
       <AgreementModal data={termsData} visible={modalVisible} onClose={handleCloseModal} />

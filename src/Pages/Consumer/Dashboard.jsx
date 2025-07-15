@@ -35,7 +35,7 @@ const Dashboard = () => {
 const userData = decryptData(localStorage.getItem('user'));
 // console.log('user from dashboard', userData);
 const user = userData?.user;
-  const userId = user.id;
+  const userId = user?.id;
   // console.log("userId", userId);
   
   const [states, setStates] = useState([]);

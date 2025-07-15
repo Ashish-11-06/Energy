@@ -40,15 +40,17 @@ const ProfilePage = () => {
   // const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
 
     const userDataa = decryptData(localStorage.getItem('user'));
+    console.log('userDataa', userDataa);
+    
     const user= userDataa?.user;
-      const userId = user.id;
+      const userId = user?.id;
   // console.log(userId);
   // const baseurl = "https://ext.exgglobal.com/api"
-    const baseurl= import.meta.env.VITE_BASE_URL;
+    const baseurl= import.meta.env.VITE_BASE_URL_GEN;
 
   const navigate = useNavigate();
 
-  const role = user.role;
+  const role = user?.role;
   // console.log(role);
   const [userData, setUserData] = useState(user);
 
@@ -179,7 +181,7 @@ const ProfilePage = () => {
     }
   };
 
-  const credit_rating_proof = `${baseurl}${userData.credit_rating_proof}` || "N/A";
+  const credit_rating_proof = `${baseurl}${userData?.credit_rating_proof}` || "N/A";
   const handleLogOut = () => {
     localStorage.removeItem("user");
     localStorage.clear();
@@ -223,44 +225,44 @@ const ProfilePage = () => {
                 <Text strong>CIN Number</Text>
               </Col>
               <Col span={12}>
-                <Text> : {userData.cin_number || "N/A"}</Text>
+                <Text> : {userData?.cin_number || "N/A"}</Text>
               </Col>
               <Col span={12}>
                 <Text strong>Company</Text>
               </Col>
               <Col span={12}>
-                <Text> : {userData.company || "N/A"}</Text>
+                <Text> : {userData?.company || "N/A"}</Text>
               </Col>
               <Col span={12}>
                 <Text strong>Representative</Text>
               </Col>
               <Col span={12}>
-                <Text> : {userData.company_representative || "N/A"}</Text>
+                <Text> : {userData?.company_representative || "N/A"}</Text>
               </Col>
               <Col span={12}>
                 <Text strong>Email</Text>
               </Col>
               <Col span={12}>
-                <Text> : {userData.email || "N/A"}</Text>
+                <Text> : {userData?.email || "N/A"}</Text>
               </Col>
               <Col span={12}>
                 <Text strong>Mobile</Text>
               </Col>
               <Col span={12}>
-                <Text> : {userData.mobile || "N/A"}</Text>
+                <Text> : {userData?.mobile || "N/A"}</Text>
               </Col>
               <Col span={12}>
                 <Text strong>User Category</Text>
               </Col>
               <Col span={12}>
-                <Text> : {userData.user_category || "N/A"}</Text>
+                <Text> : {userData?.user_category || "N/A"}</Text>
               </Col>
               <Col span={12}>
                 <Text strong>Credit Rating</Text>
               </Col>
               <Col span={12}>
-                <Text> : {userData.credit_rating || "N/A"} {'    '}</Text>
-                {userData.credit_rating && userData.credit_rating !== "N/A" && (
+                <Text> : {userData?.credit_rating || "N/A"} {'    '}</Text>
+                {userData?.credit_rating && userData?.credit_rating !== "N/A" && (
                   <a
                     href={credit_rating_proof}
                     target="_blank"

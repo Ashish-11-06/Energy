@@ -36,7 +36,7 @@ const Dashboard = () => {
    const userData = decryptData(localStorage.getItem('user'));
   const user= userData?.user;
   // const user = JSON.parse(localStorage.getItem("user")).user;
-  const userId = user.id;
+  const userId = user?.id;
 
   const navigate = useNavigate();
   const subscription = decryptData(localStorage.getItem("subscriptionPlanValidity"))

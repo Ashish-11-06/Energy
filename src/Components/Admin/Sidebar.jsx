@@ -98,6 +98,11 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
       key: '/admin/help',
       icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
     },
+    {
+      label: 'Demand Data',
+      key: '/admin/demand',
+      icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
+    },
   ];
 
   const handleDrawerToggle = () => {

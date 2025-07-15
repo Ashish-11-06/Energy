@@ -112,9 +112,9 @@ const fetchNextSensitivity = async (combinationIds) => {
   const userData = decryptData(localStorage.getItem('user'));
   const user= userData?.user;
   // const user = JSON.parse(localStorage.getItem("user")).user;
-  const role = user.role;
+  const role = user?.role;
   // console.log(user.id);
-  const user_id = user.id;
+  const user_id = user?.id;
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
     if (
