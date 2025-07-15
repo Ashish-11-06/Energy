@@ -114,18 +114,17 @@ const ProfilePage = () => {
     // Debug: log the proof field structure
  // console.log('values.proof:', values.proof);
 
-    // Extract base64 from proof upload
+    // Extract base64 from proof upload (remove prefix if present)
     let proofBase64 = undefined;
     if (values.proof && Array.isArray(values.proof) && values.proof.length > 0) {
-      proofBase64 = values.proof[0].base64;
+      const fileObj = values.proof[0];
+      if (fileObj.base64) {
+        // Remove "data:...;base64," prefix if present
+        proofBase64 = fileObj.base64.includes(",")
+          ? fileObj.base64.split(",")[1]
+          : fileObj.base64;
+      }
     }
- // console.log('proofBase64:', proofBase64);
-
-    // Prevent submission if proofBase64 is missing
-    // if (!proofBase64) {
-    //   alert("Please wait for the file to finish uploading/converting before submitting.");
-    //   return;
-    // }
 
     const updatedUserData = {
       ...existingUserData.user,
@@ -134,7 +133,7 @@ const ProfilePage = () => {
       email: values.email ?? existingUserData.user.email,
       mobile: values.mobile ?? existingUserData.user.mobile,
       credit_rating: values.credit_rating ?? existingUserData.user.credit_rating,
-      credit_rating_proof: proofBase64,
+      credit_rating_proof: proofBase64, // always base64 or undefined
     };
 
     console.log('Updated user data:', updatedUserData);
@@ -146,24 +145,18 @@ const ProfilePage = () => {
         if (res.payload && res.payload.data && res.payload.data.data) {
           console.log("User updated successfully:", res.payload.data.data);
           console.log("Updated user data:", res.payload.data);
-          
-          
+
+          // Merge updated fields into the existing user object, preserving all other fields
           const updatedLocalStorageData = {
-            message: existingUserData.message || "Login successful",
-            token: existingUserData.token,
+            ...userDataa, // the whole decrypted localStorage object
             user: {
-              ...existingUserData.user,
-              ...res.payload.data.data, // Use the updated user data from the API response
+              ...userDataa.user, // all previous user fields
+              ...res.payload.data.data, // overwrite only updated fields
             },
-            subscription_type: existingUserData.subscription_type,
-            start_date: existingUserData.start_date,
-            end_date: existingUserData.end_date,
-            status: existingUserData.status,
           };
 
-          // Update localStorage immediately
           localStorage.setItem("user", encryptData(updatedLocalStorageData));
-          setUserData(updatedLocalStorageData.user); // Update state immediately
+          setUserData(updatedLocalStorageData.user);
 
           // Trigger custom event to notify HeaderComponent
           const event = new Event("userDetailsUpdated");
@@ -328,7 +321,7 @@ const ProfilePage = () => {
           </Card>
         </Col>
 
-        {role === "Admin" ? (
+        {userData?.role === "Admin" ? (
           <Col span={12} xs={24} sm={12} md={12} lg={10}>
             <Card bordered style={{ borderRadius: "8px", minHeight: "400px" }}>
               <Title
@@ -395,3 +388,5 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+;
+;
