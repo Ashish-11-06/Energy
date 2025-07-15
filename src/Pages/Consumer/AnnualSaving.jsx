@@ -77,7 +77,7 @@ const AnnualSvg = () => {
         },
       });
     } else {
-      navigate("/subscription-plan");
+      navigate("/consumer/energy-consumption-table");
     }
   };
 
