@@ -9,6 +9,7 @@ import Help from "../../Pages/Admin/Help";
 import OnlineSub from "../../Pages/Admin/OnlineSub";
 import OfflineSub from "../../Pages/Admin/OfflineSub";
 import DemandData from "../../Pages/Admin/DemandData";
+import GenerationData from "../../Pages/Admin/GenerationData";
 
 const AdminRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const AdminRoutes = () => {
         <Route path="/notification" element={<Notification />} />
         <Route path="/help" element={<Help />} />
         <Route path="/demand" element={<DemandData />} />
+        <Route path="/generation" element={<GenerationData />} />
         </Route>
     </Routes>
   )

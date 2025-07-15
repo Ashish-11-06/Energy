@@ -1,17 +1,17 @@
 import React from 'react';
 import { Modal, Table } from 'antd';
 
-const ConsumptionUnitModal = ({ open, onClose, record }) => {
+const GenerationModal = ({ open, onClose, record }) => {
   if (!record) return null;
 
   const data = [
-    { key: '1', label: 'Consumer ID', value: record.cid },
+    { key: '1', label: 'Generation ID', value: record.gen_id },
     { key: '2', label: 'Consumption Unit', value: record.site_name },
-    { key: '3', label: 'Industry', value: record.industry },
-    { key: '4', label: 'Contracted Demand (MW)', value: record.contracted_demand },
-    { key: '5', label: 'Tariff Category', value: record.tariff_category },
-    { key: '6', label: 'Voltage Level (kV)', value: record.voltage_level },
-    { key: '7', label: 'Annual Electricity Consumption (MWh)', value: record.annual_electricity_consumption },
+    { key: '3', label: 'Available Capacity', value: record.available_capacity },
+    { key: '4', label: 'Total install capacity', value: record.total_install_capacity },
+    { key: '5', label: 'Capital cost', value: record.capital_cost },
+    { key: '6', label: 'Expected tariff', value: record.expected_tariff },
+    { key: '7', label: 'Annual generation', value: record.annual_generation },
     { key: '8', label: 'Expected Procurement Date', value: record.expected_date },
     // Add more fields if needed:
     // { key: '9', label: 'Phone', value: record.phone },
@@ -51,4 +51,4 @@ const ConsumptionUnitModal = ({ open, onClose, record }) => {
   );
 };
 
-export default ConsumptionUnitModal;
+export default GenerationModal;

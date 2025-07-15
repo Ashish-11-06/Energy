@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Table, Space, Button, Popconfirm, message, Input } from 'antd';
 import EditUser from './Modal/EditUser';
 import ConsumptionUnitModal from './Modal/ConsumptionUnitModal';
+import MonthData from './Modal/MonthData';
 
 const DemandData = () => {
   const [searchText, setSearchText] = useState('');
-  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [viewModal, setViewModal] = useState(false);
    const [modalOpen, setModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -19,6 +20,9 @@ const DemandData = () => {
       city: 'Pune',
       contracted_demand: '100 kW',
       tariff_category: 'Commercial',
+      voltage_level: '11 kV',
+      annual_electricity_consumption: '120 MWh',
+      expected_date: '2023-12-01',
     },
     {
       key: '2',
@@ -27,6 +31,11 @@ const DemandData = () => {
       industry: 'Consumer Discretionary',
       phone: '9123456780',
       city: 'Mumbai',
+      contracted_demand: '150 kW',
+      tariff_category: 'Commercial',
+      voltage_level: '33 kV',
+      annual_electricity_consumption: '120 MWh',
+      expected_date: '2023-12-01',
     },
     {
       key: '3',
@@ -35,25 +44,19 @@ const DemandData = () => {
       industry: 'Financials',
       phone: '9988776655',
       city: 'Delhi',
+      contracted_demand: '100 kW',
+      tariff_category: 'Commercial',
+      voltage_level: '66 kV',
+      annual_electricity_consumption: '120 MWh',
+      expected_date: '2023-12-01',
     },
   ]);
 
-  const handleEdit = (record) => {
+  const handleView = (record) => {
+    console.log('handle view called');
+    console.log('record is ', record);
     setSelectedUser(record);
-    setEditModalVisible(true);
-  };
-
-  const handleDelete = (record) => {
-    setData((prev) => prev.filter((item) => item.key !== record.key));
-    message.success(`Deleted DemandData: ${record.name}`);
-  };
-
-  const handleUpdate = (updatedUser) => {
-    setData((prev) =>
-      prev.map((item) => (item.key === updatedUser.key ? updatedUser : item))
-    );
-    message.success(`Updated DemandData: ${updatedUser.name}`);
-    setEditModalVisible(false);
+    setViewModal(true);
   };
 
   const filteredData = data.filter((item) => {
@@ -96,7 +99,7 @@ const DemandData = () => {
       align: 'center',
       render: (_, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleEdit(record)}>
+          <Button type="primary" onClick={() => handleView(record)}>
             View
           </Button>
         </Space>
@@ -124,13 +127,14 @@ const DemandData = () => {
         bordered
         pagination={{ pageSize: 10 }}
         rowKey="cid"
+        size='small'
       />
 
-      {/* Edit Modal */}
-      <EditUser
-        visible={editModalVisible}
-        onCancel={() => setEditModalVisible(false)}
-        onUpdate={handleUpdate}
+      {/* view Modal */}
+      <MonthData
+        open={viewModal}
+        onCancel={() => setViewModal(false)}
+        // onUpdate={handleUpdate}
         userData={selectedUser}
       />
       <ConsumptionUnitModal
