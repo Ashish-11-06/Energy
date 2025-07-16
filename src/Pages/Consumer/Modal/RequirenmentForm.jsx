@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchState,fetchDistricts } from "../../../Redux/Slices/Consumer/stateSlice";
 import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
 import { updateRequirements } from "../../../Redux/Slices/Consumer/consumerRequirementSlice";
+import { decryptData } from "../../../Utils/cryptoHelper";
 const { Option } = Select;
 
 const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop,handleCancelModal }) => {
@@ -197,7 +198,7 @@ useEffect(() => {
 const handleSubmit = (values) => {
   console.log('values', values);
 
-  const user = JSON.parse(localStorage.getItem("user")).user;
+  const user =decryptData(localStorage.getItem("user")).user;
 
   const formattedValues = {
     id: data?.id,

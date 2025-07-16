@@ -15,6 +15,7 @@ import TermsAndConditionModal from "./Modal/TermsAndConditionModal";
 import { motion } from "framer-motion"; // Import motion here
 import EXGLogo from "../../assets/EXG.png";
 import map from "../../assets/map.png";
+import { decryptData } from "../../Utils/cryptoHelper";
 // import { format } from "react-intl-number-format"; // Import for Indian number formatting
 
 const WhatWeOffer = () => {
@@ -28,7 +29,9 @@ const WhatWeOffer = () => {
     return new Intl.NumberFormat("en-IN").format(value);
   };
 
-  const user = JSON.parse(localStorage.getItem("user"))?.user;
+  const user = decryptData(localStorage.getItem("user"))?.user;
+  console.log('user', user);
+  
   const user_category = user?.user_category;
 
   useEffect(() => {
