@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Table, Space, Button, Input } from 'antd';
 import * as XLSX from 'xlsx'; // Import xlsx for Excel export
-import ConsumptionUnitModal from './Modal/ConsumptionUnitModal';
-import MonthData from './Modal/MonthData';
 import GenerationModal from './Modal/GenerationModal';
 
 const GenerationData = () => {
@@ -128,6 +126,7 @@ const GenerationData = () => {
         bordered
         pagination={{ pageSize: 10 }}
         rowKey="cid"
+        size='small'
       />
 
       <GenerationModal open={modalOpen} onClose={handleModalClose} record={selectedRecord} />

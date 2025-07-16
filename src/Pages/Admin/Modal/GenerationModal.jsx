@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { Modal, Table } from 'antd';
 
@@ -13,9 +15,6 @@ const GenerationModal = ({ open, onClose, record }) => {
     { key: '6', label: 'Expected tariff', value: record.expected_tariff },
     { key: '7', label: 'Annual generation', value: record.annual_generation },
     { key: '8', label: 'Expected Procurement Date', value: record.expected_date },
-    // Add more fields if needed:
-    // { key: '9', label: 'Phone', value: record.phone },
-    // { key: '10', label: 'City', value: record.city },
   ];
 
   const columns = [

@@ -76,9 +76,6 @@ if (isMissingFields) {
   }
 };
 
-
-
-
   // console.log('radion value',radioValueRef);
   const monthNames = [
   "January", "February", "March", "April", "May", "June",
@@ -91,7 +88,7 @@ if (isMissingFields) {
     if (!selectedRequirement)
       return message.error("Please select a requirement");
     if (!radioValueRef.current) return message.error("Please select a type");
-    setLoading(true);
+    // setLoading(true);
     const data = {
       requirement_id: selectedRequirement?.id,
       button_type: radioValueRef.current,
@@ -103,7 +100,7 @@ if (isMissingFields) {
 
    if (addPWatt.fulfilled.match(res)) {
     console.log("✅ Fulfilled response:", res.payload);
-    if(radioValueRef.current === "grid_connected") {
+    // if(radioValueRef.current === "grid_connected") {
   const convertedData = res?.payload?.monthly_data.map((item) => ({
     ...item,
     month: monthNames[item.month - 1],  // Convert number to name (e.g. 1 → January)
@@ -112,12 +109,12 @@ if (isMissingFields) {
     (a, b) => monthNames.indexOf(a.month) - monthNames.indexOf(b.month)
   );
   setMonthlyData(sortedData);
-}
-if(radioValueRef.current === "behind_the_meter") {
-  message.warning('Behind the meter data is not available yet. It is under development.');
-  console.log("Behind the meter data:", res?.payload?.hourly_data);
+// }
+// if(radioValueRef.current === "behind_the_meter") {
+//   message.warning('Behind the meter data is not available yet. It is under development.');
+//   console.log("Behind the meter data:", res?.payload?.hourly_data);
   
-}
+// }
   setEnergyReplaced(res?.payload.energy_replaced);
   setCapacitySolar(res?.payload.capacity_of_solar_rooftop);
   setTotalSavings(res?.payload.total_savings);
