@@ -590,7 +590,8 @@ const handleAccept = async () => {
           Continue
         </Button> */}
 
-          {user_category === "Consumer" && role !== 'View' && activeSubscription
+          {user_category === "Consumer" && role !== 'View'
+          //  && activeSubscription
             &&
             data?.generator_status !== "Rejected" &&
             data?.generator_status !== "Accepted" &&
@@ -686,7 +687,8 @@ const handleAccept = async () => {
             ) : null}
 
 
-          {!fromTransaction && user_category === "Generator" && role !== 'View' && activeSubscription
+          {!fromTransaction && user_category === "Generator" && role !== 'View' 
+          // && activeSubscription
             &&
             data?.consumer_status !== "Rejected" &&
             data?.consumer_status !== "Accepted" &&
