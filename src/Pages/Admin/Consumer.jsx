@@ -1,92 +1,102 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Space, Button, Popconfirm, message, Input } from 'antd';
 import EditUser from './Modal/EditUser';
+import { deleteConsumer, editConsumer, getConsumerList } from '../../Redux/Admin/slices/consumerSlice';
+import { useDispatch } from 'react-redux';
 
 const Consumer = () => {
   const [searchText, setSearchText] = useState('');
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [data, setData] = useState([
-    {
-      key: '1',
-      name: 'Samya K',
-      company: 'Tech Solutions',
-      email: 'samya@example.com',
-      phone: '9876543210',
-      city: 'Pune',
-    },
-    {
-      key: '2',
-      name: 'Ravi Sharma',
-      company: 'Green Solutions',
-      email: 'ravi@example.com',
-      phone: '9123456780',
-      city: 'Mumbai',
-    },
-    {
-      key: '3',
-      name: 'Anita Mehra',
-      company: 'Eco Innovations',
-      email: 'anita@example.com',
-      phone: '9988776655',
-      city: 'Delhi',
-    },
-  ]);
+  const [consumerList, setConsumerList] = useState([]);
+  const [loading,setLoading] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false); 
+  const dispatch = useDispatch();
+
+  const getList = async () => {
+    setLoading(true);
+    const res = await dispatch(getConsumerList());
+    if (res?.payload) {
+      setConsumerList(res.payload);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getList(); 
+  }, [dispatch]);
 
   const handleEdit = (record) => {
     setSelectedUser(record);
     setEditModalVisible(true);
   };
 
-  const handleDelete = (record) => {
-    setData((prev) => prev.filter((item) => item.key !== record.key));
-    message.success(`Deleted Consumer: ${record.name}`);
+  const handleDelete = async (record) => {
+    console.log('record',record);
+    const res=await dispatch(deleteConsumer(record?.id));
+    console.log('res delete',res);
+    if(res?.payload) {
+      message.success(res?.payload.detail || 'Consumer deleted successfully');
+    }
+    await getList(); 
   };
 
-  const handleUpdate = (updatedUser) => {
-    setData((prev) =>
-      prev.map((item) => (item.key === updatedUser.key ? updatedUser : item))
-    );
-    message.success(`Updated Consumer: ${updatedUser.name}`);
+const handleUpdate = async (updatedUser) => {
+  setModalLoading(true); 
+  const data = {
+    company: updatedUser?.company,
+    company_representative: updatedUser?.company_representative,
+    email: updatedUser?.email,
+    mobile: updatedUser?.mobile,
+  };
+
+  const res = await dispatch(editConsumer({ data, id: updatedUser?.id }));
+  setModalLoading(false); 
+
+  if (res?.meta?.requestStatus === 'fulfilled') {
+    message.success(`Consumer updated`);
     setEditModalVisible(false);
-  };
+    await getList(); 
+  } else {
+    message.error('Failed to update consumer');
+  }
+};
 
-  const filteredData = data.filter((item) => {
+
+  const filteredData = consumerList.filter((item) => {
     const lowerSearch = searchText.toLowerCase();
     return (
-      item.name.toLowerCase().includes(lowerSearch) ||
-      item.city.toLowerCase().includes(lowerSearch)
+      (item.company || '').toLowerCase().includes(lowerSearch) ||
+      (item.email || '').toLowerCase().includes(lowerSearch)
     );
   });
 
-const columns = [
-  { title: 'Name', dataIndex: 'name', key: 'name', align: 'center' },
-  { title: 'Company Name', dataIndex: 'company', key: 'company', align: 'center' },
-  { title: 'Email', dataIndex: 'email', key: 'email', align: 'center' },
-  { title: 'Phone', dataIndex: 'phone', key: 'phone', align: 'center' },
-  { title: 'City', dataIndex: 'city', key: 'city', align: 'center' },
-  {
-    title: 'Actions',
-    key: 'actions',
-    align: 'center',
-    render: (_, record) => (
-      <Space size="middle">
-        <Button type="primary" onClick={() => handleEdit(record)}>
-          Edit
-        </Button>
-        <Popconfirm
-          title="Are you sure to delete this Consumer?"
-          onConfirm={() => handleDelete(record)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button>Delete</Button>
-        </Popconfirm>
-      </Space>
-    ),
-  },
-];
-
+  const columns = [
+    { title: 'Name', dataIndex: 'company_representative', key: 'company_representative', align: 'center' },
+    { title: 'Company Name', dataIndex: 'company', key: 'company', align: 'center' },
+    { title: 'Email', dataIndex: 'email', key: 'email', align: 'center' },
+    { title: 'Phone', dataIndex: 'mobile', key: 'mobile', align: 'center' },
+    {
+      title: 'Actions',
+      key: 'actions',
+      align: 'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button type="primary" onClick={() => handleEdit(record)}>
+            Edit
+          </Button>
+          <Popconfirm
+            title="Are you sure to delete this Consumer?"
+            onConfirm={() => handleDelete(record)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button>Delete</Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <div style={{ padding: 24 }}>
@@ -104,15 +114,17 @@ const columns = [
         columns={columns}
         dataSource={filteredData}
         bordered
+        loading={loading}
         pagination={{ pageSize: 10 }}
+        size="small"
       />
 
-      {/* Edit Modal */}
       <EditUser
         visible={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
         onUpdate={handleUpdate}
         userData={selectedUser}
+        loading={modalLoading} 
       />
     </div>
   );

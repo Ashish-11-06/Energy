@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Modal, Table, Switch, Select } from 'antd';
 import AddSubscriptionModal from './Modal/AddSubscriptionModal'; // Optional
+import { onlineSubscription } from '../../Redux/Admin/slices/subscriptionSlice';
+import { useDispatch } from 'react-redux';
 
 const { Option } = Select;
 
@@ -9,33 +11,48 @@ const OnlineSub = () => {
   const [isDocModalVisible, setIsDocModalVisible] = useState(false);
   const [documentUrl, setDocumentUrl] = useState('');
   const [onlineUserTypeFilter, setOnlineUserTypeFilter] = useState('');
+  const dispatch=useDispatch();
+  const [onlineData, setOnlineData] = useState([]);
+  const [loading,setLoading] = useState(false);
+  useEffect(() => {
+    const onlineData =async () => {
+      setLoading(true);
+      const res=await dispatch(onlineSubscription());
+      console.log('online subscription data',res);
+      if(res?.payload) {
+        setOnlineData(res?.payload);
+        setLoading(false);
+      }
+    }
+    onlineData();
+  },[dispatch])
 
-  const [onlineData, setOnlineData] = useState([
-    {
-      key: '1',
-      srNo: 1,
-      userType: 'Consumer',
-      name: 'Alice',
-      companyName: 'InnoTech',
-      siteName: 'Factory A',
-      subscriptionPlan: 'PRO',
-      enrollDate: '05-01-2024',
-      expiryDate: '05-01-2025',
-      status: true,
-    },
-    {
-      key: '2',
-      srNo: 2,
-      userType: 'Generator',
-      name: 'Bob',
-      companyName: 'GreenPower',
-      siteName: 'Solar Farm',
-      subscriptionPlan: 'LITE',
-      enrollDate: '10-01-2024',
-      expiryDate: '10-01-2025',
-      status: false,
-    },
-  ]);
+  // const [onlineData, setOnlineData] = useState([
+  //   {
+  //     key: '1',
+  //     srNo: 1,
+  //     userType: 'Consumer',
+  //     name: 'Alice',
+  //     companyName: 'InnoTech',
+  //     siteName: 'Factory A',
+  //     subscriptionPlan: 'PRO',
+  //     enrollDate: '05-01-2024',
+  //     expiryDate: '05-01-2025',
+  //     status: true,
+  //   },
+  //   {
+  //     key: '2',
+  //     srNo: 2,
+  //     userType: 'Generator',
+  //     name: 'Bob',
+  //     companyName: 'GreenPower',
+  //     siteName: 'Solar Farm',
+  //     subscriptionPlan: 'LITE',
+  //     enrollDate: '10-01-2024',
+  //     expiryDate: '10-01-2025',
+  //     status: false,
+  //   },
+  // ]);
 
   const toggleStatus = (key) => {
     setOnlineData((prev) =>
@@ -50,30 +67,34 @@ const OnlineSub = () => {
     setIsDocModalVisible(true);
   };
 
-  const columns = [
-    { title: 'Sr. No', dataIndex: 'srNo' },
-    { title: 'User Category', dataIndex: 'userType' },
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Company Name', dataIndex: 'companyName' },
-    { title: 'Site Name', dataIndex: 'siteName' },
-    { title: 'Subscription Plan', dataIndex: 'subscriptionPlan' },
-    { title: 'Enroll Date', dataIndex: 'enrollDate' },
-    { title: 'Expiry Date', dataIndex: 'expiryDate' },
-    {
-  title: 'Status',
-  dataIndex: 'status',
-  render: (_, record) => (
-    <Switch
-      checked={record.status}
-      onChange={() => toggleStatus(record.key)}
-      checkedChildren="Active"
-      unCheckedChildren="Inactive"
-    //   {<span style={{ color: 'red' }}>Inactive</span>}
-    />
-  ),
-}
+const columns = [
+  {
+    title: 'Sr. No',
+    render: (text, record, index) => index + 1,
+  },
+  { title: 'User Category', dataIndex: 'user_category' },
+  { title: 'Name', dataIndex: 'user_name' },
+  { title: 'Company Name', dataIndex: 'company_name' },
+  { title: 'Site Name', dataIndex: 'siteName' },
+  { title: 'Subscription Plan', dataIndex: 'subscription_type' },
+  { title: 'Start Date', dataIndex: 'start_date' },
+  { title: 'End Date', dataIndex: 'end_date' },
+   {
+      title: 'Status',
+      dataIndex: 'status',
+      render: (status, record) => (
+        <Switch
+          checked={status === 'Active'}
+          onChange={(checked) =>
+            toggleStatus(record.key, checked ? 'Active' : 'Inactive')
+          }
+          checkedChildren="Active"
+          unCheckedChildren="Inactive"
+        />
+      ),
+    },
+];
 
-  ];
 
   const filteredOnlineData = onlineUserTypeFilter
     ? onlineData.filter((item) => item.userType === onlineUserTypeFilter)
@@ -108,7 +129,9 @@ const OnlineSub = () => {
           dataSource={filteredOnlineData}
           pagination={true}
           bordered
+          loading={loading}
           scroll={{ x: 'max-content' }}
+          size='small'
         />
       </div>
 

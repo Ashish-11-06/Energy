@@ -116,7 +116,7 @@ const EnergyConsumptionTable = () => {
       "Monthly Consumption (MWh)",
       "Peak Consumption (MWh)",
       "Off Peak Consumption (MWh)",
-      "Monthly Bill Amount (INR cr)"
+      "Monthly Bill Amount (INR lakhs)"
     ];
 
     const months = [
