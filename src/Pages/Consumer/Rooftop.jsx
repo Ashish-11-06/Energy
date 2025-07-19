@@ -4,6 +4,7 @@ import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSli
 import { Button, Card, Col, message, Modal, Radio, Row, Select, Table } from "antd";
 import { fetchRequirements } from "../../Redux/Slices/Consumer/consumerRequirementSlice";
 import { addPWatt } from "../../Redux/Slices/Consumer/pwattSlice";
+import * as XLSX from "xlsx";
 import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
 import { data } from "react-router-dom";
 import { Title } from "chart.js";
@@ -26,6 +27,7 @@ const Rooftop = () => {
 const [selectKey, setSelectKey] = useState(Date.now()); // initial unique key
 const [capacitySolar, setCapacitySolar] = useState("");
 const [totalSavings, setTotalSavings] = useState("");
+const [hourlyData,setHourlyData] = useState([]);
   //   console.log('user',userData);
 
   const requirements = useSelector(
@@ -85,10 +87,12 @@ if (isMissingFields) {
   const handleSubmit = async () => {
     setMonthlyData([]);
     setEnergyReplaced("");
+    setTotalSavings("");
+    setCapacitySolar("");
     if (!selectedRequirement)
       return message.error("Please select a requirement");
     if (!radioValueRef.current) return message.error("Please select a type");
-    // setLoading(true);
+    setLoading(true);
     const data = {
       requirement_id: selectedRequirement?.id,
       button_type: radioValueRef.current,
@@ -101,6 +105,7 @@ if (isMissingFields) {
    if (addPWatt.fulfilled.match(res)) {
     console.log("✅ Fulfilled response:", res.payload);
     // if(radioValueRef.current === "grid_connected") {
+    setHourlyData(res?.payload?.hourly_data);
   const convertedData = res?.payload?.monthly_data.map((item) => ({
     ...item,
     month: monthNames[item.month - 1],  // Convert number to name (e.g. 1 → January)
@@ -109,6 +114,7 @@ if (isMissingFields) {
     (a, b) => monthNames.indexOf(a.month) - monthNames.indexOf(b.month)
   );
   setMonthlyData(sortedData);
+  setLoading(false);
 // }
 // if(radioValueRef.current === "behind_the_meter") {
 //   message.warning('Behind the meter data is not available yet. It is under development.');
@@ -128,6 +134,7 @@ if (isMissingFields) {
     }
   };
 console.log('selected requirement', selectedRequirement);
+console.log('hourly data',hourlyData);
 
 const onModalClick = () => {
 console.log("Modal OK clicked");
@@ -166,6 +173,29 @@ const handleCancelWarning = () => {
     "November",
     "December",
   ];
+
+const handleDownload = () => {
+  if (!hourlyData || !Array.isArray(hourlyData)) {
+    console.error("No data found or data is not an array");
+    return;
+  }
+
+  // Transform keys to desired header names
+  const formattedData = hourlyData.map(item => ({
+    "Hours": item.hour,
+    "Solar Generation (kWh)": item.generation,
+    "Power Consumption": item.consumption,
+    "Used Solar": item.used_solar,
+    "Savings (INR)": item.savings,
+    "Curtailment (kWh)": item.curtailment,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(formattedData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Hourly Data");
+
+  XLSX.writeFile(workbook, "hourly_data.xlsx");
+};
 
   // Sort monthlyData by correct calendar order
   const sortedMonthlyData = [...monthlyData].sort((a, b) => {
@@ -397,7 +427,7 @@ const handleCancelWarning = () => {
 
 </Card> */}
 
-{(energyReplaced || capacitySolar || totalSavings) && (
+
   <Card style={{ marginTop: 24 }}>
     <Row gutter={16}>
       {energyReplaced && (
@@ -425,7 +455,7 @@ const handleCancelWarning = () => {
       )}
     </Row>
   </Card>
-)}
+
 
 
         <p style={{ textAlign: "center", fontWeight: "bold" }}>Monthly Data</p>
@@ -452,6 +482,18 @@ const handleCancelWarning = () => {
             />
           </Col>
         </Row>
+{radioValueRef.current === 'behind_the_meter' && Array.isArray(hourlyData) && hourlyData.length > 0 && (
+  <Row style={{ marginTop: "20px" }}>
+    <Col span={24}>
+      <div style={{ textAlign: "right" }}>
+        <Button type="primary" onClick={handleDownload}>
+          Download Hourly Data
+        </Button>
+      </div>
+    </Col>
+  </Row>
+)}
+
         <Modal
           title="Warning"
           open={warningModal}
