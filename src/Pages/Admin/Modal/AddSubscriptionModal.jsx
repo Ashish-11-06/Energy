@@ -1,154 +1,205 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Modal, Card, Row, Col, Form, Input } from 'antd';
+import { editSubscriptionPlan, getSubscriptionPlan } from '../../../Redux/Admin/slices/subscriptionSlice';
+import { useDispatch } from 'react-redux';
+import { decryptData } from '../../../Utils/cryptoHelper';
 
-const initialPlans = [
-  {
-    id: 'free',
-    title: 'EXT FREE Plan',
-    price: 'NIL',
-    validity: '7 days',
-    features: ['Add Requirement', 'Matching IPP', 'Create optimized offering'],
-    status: 'Closed',
-  },
-  {
-    id: 'lite',
-    title: 'EXT LITE Plan',
-    price: '5 Lakh INR',
-    validity: '180 days',
-    features: ['FREE Plan +', 'Requirement', 'Finalize Transaction'],
-    status: 'Active Subscription',
-  },
-  {
-    id: 'pro',
-    title: 'EXT PRO Plan',
-    price: '10 Lakh INR',
-    validity: '365 days',
-    features: ['Lite Plan +', 'Requirement', 'Dashboard Analytics', 'PowerX subscription'],
-    status: 'Select Plan',
-  },
+const dummyFeatures = [
+  'Add Requirement',
+  'Matching IPP',
+  'Create Optimized Offering',
+  'Dashboard Analytics',
 ];
 
 const PlanEditor = ({ visible, onCancel }) => {
-  const [plans, setPlans] = useState(initialPlans);
+  const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
+  const [loading,setLoading] = useState(false);
+  const userData = decryptData(localStorage.getItem('user'));
+  const user = userData?.user;
+  const [editLoading,setEditLoading] = useState(false);
+    const fetchPlan = async () => {
+      try {
+        setLoading(true);
+        const response = await dispatch(getSubscriptionPlan());
+        if (response?.payload) {
+          if (user?.user_category && Array.isArray(response.payload)) {
+            const filteredPlans = response.payload
+              .filter((plan) => plan.user_type === user.user_category)
+              .map((plan) => ({
+                ...plan,
+                features: plan.description
+                  ? plan.description.split(',').map((f) => f.trim())
+                  : dummyFeatures,
+              }));
+            setPlans(filteredPlans);
+            setLoading(false);
+          } else {
+            setPlans([]);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching plans', err);
+        setPlans([]);
+      }
+    };
 
   const handleCardClick = (plan) => {
     setSelectedPlan(plan);
     form.setFieldsValue({
-      title: plan.title,
-      price: plan.price,
-      validity: plan.validity,
-      features: plan.features.join(', '),
-    //   status: plan.status,
+      id:plan.id,
+      user_type:plan.user_type,
+      subscription_type: plan.subscription_type,
+      price: plan.price, // kept as number/string
+      duration_in_days: plan.duration_in_days.toString(),
+      description: plan.description || dummyFeatures.join(', '),
     });
   };
 
-  const handleSave = (values) => {
+  const handleSave =async (values) => {
+    console.log('values',values);
+    const data={
+      discription:values.discription,
+      duration_in_days:values.duration_in_days,
+      price:values.price,
+      subscription_type:values.subscription_type
+    }
+    console.log('data ',data);
+    setEditLoading(true);
+    const response = await dispatch(editSubscriptionPlan({id:values?.id,data}));
+    console.log('response',response);
+    if(response?.payload) {
+      fetchPlan();
+      setEditLoading(false);
+    }
     const updatedPlans = plans.map((p) =>
       p.id === selectedPlan.id
         ? {
             ...p,
-            title: values.title,
+            subscription_type: values.title,
             price: values.price,
-            validity: values.validity,
-            // status: values.status,
-            features: values.features.split(',').map((f) => f.trim()),
+            duration_in_days: parseInt(values.validity),
+            description: values.features,
           }
         : p
     );
     setPlans(updatedPlans);
     setSelectedPlan(null);
+     setEditLoading(false);
   };
+
+
+
+useEffect(() => {
+fetchPlan();
+},[dispatch, user?.user_category])
 
   return (
     <Modal
       title="Edit Subscription Plans"
-      visible={visible}
+      open={visible}
       onCancel={() => {
         setSelectedPlan(null);
         onCancel();
       }}
       footer={null}
-      width={1000}
+  width={selectedPlan ? 600 : 1000}  // <-- conditional width here
     >
+
       {!selectedPlan ? (
         <Row gutter={16} justify="center">
-          {plans.map((plan) => (
-            <Col span={8} key={plan.id}>
-<Card
-  title={plan.title}
-  headStyle={{ backgroundColor: '#669800', color: 'white', textAlign: 'center' }}
-  hoverable
-  onClick={() => handleCardClick(plan)}
-  style={{
-    cursor: 'pointer',
-    marginBottom: '16px',
-    height: '100%',
-  }}
-  bodyStyle={{
-    height: '300px', // same height for all
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  }}
->
-  <div>
-    <div style={{ textAlign: 'center', fontSize: '18px', marginBottom: '8px' }}>
-      <strong>{plan.price}</strong>
-      <div><b>Validity:</b> {plan.validity}</div>
-    </div>
-    <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
-      {plan.features.map((f, i) => (
-        <li key={i} style={{ marginBottom: '6px', color: '#4d4d4d' }}>✅ {f}</li>
-      ))}
-    </ul>
-  </div>
-  <div style={{ textAlign: 'center', marginTop: 'auto' }}>
-    <Button>Edit Plan</Button>
-  </div>
-</Card>
-
-
-            </Col>
-          ))}
+          {Array.isArray(plans) &&
+            plans.map((plan) => (
+              <Col span={8} key={plan.id}>
+                <Card
+                  title={plan.subscription_type}
+                  headStyle={{
+                    backgroundColor: '#669800',
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                  hoverable
+                  onClick={() => handleCardClick(plan)}
+                  style={{
+                    cursor: 'pointer',
+                    marginBottom: '16px',
+                    height: '100%',
+                  }}
+                  bodyStyle={{
+                    height: '300px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        textAlign: 'center',
+                        fontSize: '18px',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      <strong>
+                        {parseFloat(plan.price).toLocaleString('en-IN')} INR
+                      </strong>
+                      <div>
+                        <b>Validity:</b> {plan.duration_in_days} days
+                      </div>
+                    </div>
+                    <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
+                      {(Array.isArray(plan.features) ? plan.features : []).map((f, i) => (
+                        <li key={i} style={{ marginBottom: '6px', color: '#4d4d4d' }}>
+                          ✅ {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div style={{ textAlign: 'center', marginTop: 'auto' }}>
+                    <Button>Edit Plan</Button>
+                  </div>
+                </Card>
+              </Col>
+            ))}
         </Row>
+     
       ) : (
         <>
-          <h3>{selectedPlan.title}</h3>
-          <Form form={form} layout="vertical" onFinish={handleSave}>
-            <Form.Item label="Title" name="title" rules={[{ required: true }]}>
+        <div style={{  margin: '0 auto' }}>
+          <h3>{selectedPlan.subscription_type}</h3>
+          <Form form={form} layout="vertical" onFinish={handleSave} >
+            <Form.Item label="Subscription Type" name="subscription_type" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-
+<Form.Item name="id" hidden>
+  <Input />
+</Form.Item>
             <Form.Item label="Price" name="price" rules={[{ required: true }]}>
-              <Input />
+              <Input addonAfter="INR" type="number" />
             </Form.Item>
 
-            <Form.Item label="Validity" name="validity" rules={[{ required: true }]}>
-              <Input />
+            <Form.Item label="Validity (in days)" name="duration_in_days" rules={[{ required: true }]}>
+              <Input type="number" />
             </Form.Item>
 
             <Form.Item
               label="Features (comma-separated)"
-              name="features"
+              name="description"
               rules={[{ required: true }]}
             >
               <Input.TextArea rows={3} />
             </Form.Item>
 
-            {/* <Form.Item label="Status" name="status" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item> */}
-
-        <Form.Item>
-  <Button type="primary" htmlType="submit" style={{ marginRight: 20 }}>
-    Save
-  </Button>
-  <Button onClick={() => setSelectedPlan(null)}>Back</Button>
-</Form.Item>
-
+            <Form.Item>
+              <Button type="primary" htmlType="submit" style={{ marginRight: 20 }} loading={editLoading}> 
+                Save
+              </Button>
+              <Button onClick={() => setSelectedPlan(null)}>Back</Button>
+            </Form.Item>
           </Form>
+          </div>
         </>
       )}
     </Modal>

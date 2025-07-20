@@ -57,13 +57,18 @@ const OfflineSub = () => {
   //   },
   // ]);
 
-  const toggleStatus = (key) => {
-    setOfflineData((prev) =>
-      prev.map((item) =>
-        item.key === key ? { ...item, status: !item.status } : item
-      )
-    );
-  };
+const toggleStatus = (key) => {
+  setOfflineData((prev) =>
+    prev.map((item) =>
+      item.key === key
+        ? {
+            ...item,
+            status: item.status === 'Active' ? 'Inactive' : 'Active',
+          }
+        : item
+    )
+  );
+};
 
   const showDocumentModal = (url) => {
     setDocumentUrl(url);
@@ -78,7 +83,6 @@ const columns = [
   { title: 'User Category', dataIndex: 'user_category' },
   { title: 'Name', dataIndex: 'user_name' },
   { title: 'Company Name', dataIndex: 'company_name' },
-  { title: 'Site Name', dataIndex: 'siteName' },
   { title: 'Subscription Plan', dataIndex: 'subscription_type' },
   { title: 'Start Date', dataIndex: 'start_date' },
   { title: 'Ent Date', dataIndex: 'end_date' },
@@ -109,9 +113,12 @@ const columns = [
 ];
 
 
-  const filteredOfflineData = offlineUserTypeFilter
-    ? offlineData.filter((item) => item.userType === offlineUserTypeFilter)
-    : offlineData;
+const filteredOfflineData = Array.isArray(offlineData)
+  ? (offlineUserTypeFilter
+      ? offlineData.filter(item => item.user_category === offlineUserTypeFilter)
+      : offlineData)
+  : [];
+
 
   return (
     <div style={{ padding: '16px' }}>

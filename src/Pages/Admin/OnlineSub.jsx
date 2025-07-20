@@ -54,13 +54,19 @@ const OnlineSub = () => {
   //   },
   // ]);
 
-  const toggleStatus = (key) => {
-    setOnlineData((prev) =>
-      prev.map((item) =>
-        item.key === key ? { ...item, status: !item.status } : item
-      )
-    );
-  };
+const toggleStatus = (key) => {
+  setOnlineData((prev) =>
+    prev.map((item) =>
+      item.key === key
+        ? {
+            ...item,
+            status: item.status === 'Active' ? 'Inactive' : 'Active',
+          }
+        : item
+    )
+  );
+};
+
 
   const showDocumentModal = (url) => {
     setDocumentUrl(url);
@@ -75,24 +81,24 @@ const columns = [
   { title: 'User Category', dataIndex: 'user_category' },
   { title: 'Name', dataIndex: 'user_name' },
   { title: 'Company Name', dataIndex: 'company_name' },
-  { title: 'Site Name', dataIndex: 'siteName' },
   { title: 'Subscription Plan', dataIndex: 'subscription_type' },
   { title: 'Start Date', dataIndex: 'start_date' },
   { title: 'End Date', dataIndex: 'end_date' },
-   {
-      title: 'Status',
-      dataIndex: 'status',
-      render: (status, record) => (
-        <Switch
-          checked={status === 'Active'}
-          onChange={(checked) =>
-            toggleStatus(record.key, checked ? 'Active' : 'Inactive')
-          }
-          checkedChildren="Active"
-          unCheckedChildren="Inactive"
-        />
-      ),
-    },
+ {
+  title: 'Status',
+  dataIndex: 'status',
+  render: (status, record) => (
+    <Switch
+      checked={status === 'Active'}
+      onChange={(checked) =>
+        toggleStatus(record.key, checked ? 'Active' : 'Inactive')
+      }
+      checkedChildren="Active"
+      unCheckedChildren="Inactive"
+    />
+  ),
+}
+
 ];
 
 

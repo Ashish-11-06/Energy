@@ -100,7 +100,7 @@ const handleUpdate = async (updatedUser) => {
 
   return (
     <div style={{ padding: 24 }}>
-      <h2>Consumer List</h2>
+      <h2>Generator List</h2>
 
       <Input
         placeholder="Search by Name or City"
