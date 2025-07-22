@@ -2,7 +2,7 @@ import { decryptData } from "./cryptoHelper";
 
 export const fetchOptimizedCombinationsXHR = (modalData, onProgress, onLoad, onError) => {
   try {
-    const VITE_BASE_URL = import.meta.env.VITE_ALT_BASE_URL;
+    const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
     const endpoint = `${VITE_BASE_URL}/energy/optimize-capactiy`;
 
     const xhr = new XMLHttpRequest();

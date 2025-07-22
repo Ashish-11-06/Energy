@@ -40,7 +40,6 @@ const RequestForQuotationModal = ({
   const [contractedEnergy, setContractedEnergy] = useState(data?.annual_demand_met);
   const [paymentSecurityType, setPaymentSecurityType] = useState("Bank Guarantee");
   const [paymentSecurityDays, setPaymentSecurityDays] = useState(30);
-  const [offerTariff, setOfferTariff] = useState(3.5);
   const [minimumSupply, setMinimumSupply] = useState(
   data?.annual_demand_met ? ((data.annual_demand_met * 80) / 100).toFixed(2) : 0
 );
@@ -79,9 +78,6 @@ const RequestForQuotationModal = ({
     }
   }, [contractedEnergy]);
 
-  const handleChatWithExpert = () => {
-    navigate("/chat-page");
-  };
 
 const handleContinueClick = () => {
   if (
@@ -108,6 +104,7 @@ const handleContinueClick = () => {
   };
 
   const downloadable = data?.downloadable;
+  // console.log(downloadable);
 
   // const downloadableData = {
   //   term_of_ppa:ppaTerm,
@@ -138,9 +135,22 @@ const handleContinueClick = () => {
     payment_security_day: paymentSecurityDays || 0,
     termination_compensation: terminationCompensation || 0,
     late_payment_surcharge: latePaymentSurcharge || 0,
+    solar: Number(solar) || 0,
+    wind: Number(wind) || 0,
+    ess: Number(battery) || 0,
+    generator: downloadable.generator || "N/A",
+    consumer: downloadable.consumer || "N/A",
+    consumer_state: downloadable.consumer_state || "N/A",
+    minimum_generation_obligation: downloadable.minimum_generation_obligation || "N/A",
+    voltage_level_of_generation: downloadable.voltage_level_of_generation || "N/A",
+
+    // generator_state: downloadable.generator_state,
   };
 
-  // console.log('termsData',terminationCompensation,latePaymentSurcharge);
+// console.log('solar', solar);
+// console.log('wind', wind);
+// console.log('battery', battery);
+//   console.log('termsData', termsData);
 
   const handleContinue = async () => {
  // console.log('user', user);
