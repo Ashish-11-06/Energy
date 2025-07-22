@@ -53,8 +53,8 @@ const DemandData = () => {
   ]);
 
   const handleView = (record) => {
-    console.log('handle view called');
-    console.log('record is ', record);
+    // console.log('handle view called');
+    // console.log('record is ', record);
     setSelectedUser(record);
     setViewModal(true);
   };
@@ -68,7 +68,7 @@ const DemandData = () => {
   });
 
  const handleConsumptionUnitClick = (record) => {
-    console.log('record is ',record);
+    // console.log('record is ',record);
     
     setSelectedRecord(record);
     setModalOpen(true);

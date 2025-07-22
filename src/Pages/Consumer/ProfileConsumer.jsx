@@ -105,11 +105,11 @@ const ProfilePage = () => {
     // const storedUser = localStorage.getItem("user");
     // const existingUserData = storedUser ? JSON.parse(storedUser) : {};
     // console.log('credit rating:', values.proof);
-    console.log('values profile consumer', values);
+    // console.log('values profile consumer', values);
     
   const userData = decryptData(localStorage.getItem('user'));
   const existingUserData= userData?.user;
-  console.log('existingUserData', existingUserData);
+  // console.log('existingUserData', existingUserData);
   
     // Debug: log the proof field structure
  // console.log('values.proof:', values.proof);
@@ -136,15 +136,15 @@ const ProfilePage = () => {
       credit_rating_proof: proofBase64, // always base64 or undefined
     };
 
-    console.log('Updated user data:', updatedUserData);
+    // console.log('Updated user data:', updatedUserData);
     
- console.log('Payload to backend:', { userId, userData: updatedUserData });
+//  console.log('Payload to backend:', { userId, userData: updatedUserData });
 
     dispatch(editUser({ userId, userData: updatedUserData }))
       .then((res) => {
         if (res.payload && res.payload.data && res.payload.data.data) {
-          console.log("User updated successfully:", res.payload.data.data);
-          console.log("Updated user data:", res.payload.data);
+          // console.log("User updated successfully:", res.payload.data.data);
+          // console.log("Updated user data:", res.payload.data);
 
           // Merge updated fields into the existing user object, preserving all other fields
           const updatedLocalStorageData = {
@@ -166,7 +166,7 @@ const ProfilePage = () => {
             }
         })
         .catch((error) => {
-            console.error("Failed to update user:", error);
+            // console.error("Failed to update user:", error);
         });
 
     setIsModalVisible(false);

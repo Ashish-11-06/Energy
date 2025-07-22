@@ -59,18 +59,18 @@ const RequestForQuotationModal = ({
   const [modalVisible, setModalVisible] = useState(false);
   
 
-console.log('ddd',data);
+// console.log('ddd',data);
 // console.log('tech data',technologyData);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userData = decryptData(localStorage.getItem('user'));
   const user= userData?.user;
-  console.log('user in RFQ',user);
+  // console.log('user in RFQ',user);
   
   // const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
-console.log('user ',user);
+// console.log('user ',user);
   const isConsumerWithoutCredit = user_category === 'Consumer' && (!user?.credit_rating || user.credit_rating.trim() === '');
 
   useEffect(() => {
@@ -140,7 +140,7 @@ const handleContinueClick = () => {
     late_payment_surcharge: latePaymentSurcharge || 0,
   };
 
-  console.log('termsData',terminationCompensation,latePaymentSurcharge);
+  // console.log('termsData',terminationCompensation,latePaymentSurcharge);
 
   const handleContinue = async () => {
  // console.log('user', user);
@@ -243,7 +243,7 @@ const handleContinueClick = () => {
     setEquityContribution(calculateEquityContribution());
     // eslint-disable-next-line
   }, [solar, wind, battery, data?.capital_cost_solar, data?.capital_cost_wind, data?.capital_cost_ess]);
-  console.log('termsData',terminationCompensation,latePaymentSurcharge);
+  // console.log('termsData',terminationCompensation,latePaymentSurcharge);
 
   return (
     <>

@@ -33,7 +33,7 @@ const [hourlyData,setHourlyData] = useState([]);
   const requirements = useSelector(
     (state) => state.consumerRequirement.requirements || []
   );
-  console.log("requirements", requirements);
+  // console.log("requirements", requirements);
 
   useEffect(() => {
     const filtered = requirements.filter(
@@ -47,13 +47,13 @@ const [hourlyData,setHourlyData] = useState([]);
   useEffect(() => {
     const fetchReq = async () => {
       const res = await dispatch(fetchRequirements(userData?.id));
-      console.log("res", res);
+      // console.log("res", res);
     };
     fetchReq();
   }, [dispatch]);
   const handleRadioChange = (e) => {
     radioValueRef.current = e.target.value;
-    console.log("Selected value:", radioValueRef.current);
+    // console.log("Selected value:", radioValueRef.current);
   };
 
 const handleRequirementChange = (value) => {
@@ -103,7 +103,7 @@ if (isMissingFields) {
     const res = await dispatch(addPWatt(data));
 
    if (addPWatt.fulfilled.match(res)) {
-    console.log("✅ Fulfilled response:", res.payload);
+    // console.log("✅ Fulfilled response:", res.payload);
     // if(radioValueRef.current === "grid_connected") {
     setHourlyData(res?.payload?.hourly_data);
   const convertedData = res?.payload?.monthly_data.map((item) => ({
@@ -133,12 +133,12 @@ if (isMissingFields) {
       console.error("❌ Rejected:", res.payload);
     }
   };
-console.log('selected requirement', selectedRequirement);
-console.log('hourly data',hourlyData);
+// console.log('selected requirement', selectedRequirement);
+// console.log('hourly data',hourlyData);
 
 const onModalClick = () => {
-console.log("Modal OK clicked");
-console.log("Selected requirement:", incompleteRequirement);
+// console.log("Modal OK clicked");
+// console.log("Selected requirement:", incompleteRequirement);
 setEditModal(true);
   // setWarningModal(false);
 }

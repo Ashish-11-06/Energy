@@ -57,25 +57,15 @@ const Dashboard = () => {
   useEffect(() => {
     const getData=async () => {
       const response = await dispatch(getDashboardData());
-      console.log('response dashboard',response);
+      // console.log('response dashboard',response);
       if(response?.payload) {
         setDashboardData(response?.payload);
       }
     }
     getData();
   },[dispatch])
-  const validateUserAccess = () => {
-    if (!userData || !userData.encryptedKey) return false;
-    const secretPassphrase = 'samya';
-    try {
-      const bytes = CryptoJS.AES.decrypt(userData.encryptedKey, secretPassphrase);
-      const decryptedKey = bytes.toString(CryptoJS.enc.Utf8);
-      return decryptedKey === 'samya';
-    } catch {
-      return false;
-    }
-  };
-console.log('dashboard data',dashboardData);
+ 
+// console.log('dashboard data',dashboardData);
 
   const barDataByYear = {
     '2022': {

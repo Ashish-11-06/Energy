@@ -53,7 +53,7 @@ const EditProfileModal = ({ isVisible, onCancel, onSave, initialValues }) => {
       proof: base64Proof,
     };
 
-    console.log('payload profile consumer', payload);
+    // console.log('payload profile consumer', payload);
     
     onSave(payload);
   };

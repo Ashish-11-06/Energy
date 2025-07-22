@@ -32,9 +32,9 @@ const Generator = () => {
   };
 
   const handleDelete = async (record) => {
-    console.log('record',record);
+    // console.log('record',record);
     const res=await dispatch(deleteGenerator(record?.id));
-    console.log('res delete',res);
+    // console.log('res delete',res);
     if(res?.payload) {
       message.success(res?.payload.detail || 'Consumer deleted successfully');
     }

@@ -123,7 +123,7 @@ useEffect(() => {
 useEffect(() => {
   const key = forecastType === 'currentDay' ? 'current' : 'past30';
 
-console.log('forecast type',forecastType);
+// console.log('forecast type',forecastType);
 
   if (selectedType === 'MCP') {
     setForeCastedData(mcpData[key]?.forecast || []);
@@ -136,8 +136,8 @@ console.log('forecast type',forecastType);
 }, [forecastType, selectedType, mcpData, mcvData]);
 
 
-console.log('mcp data',mcpData);
-console.log('mcv data',mcvData);
+// console.log('mcp data',mcpData);
+// console.log('mcv data',mcvData);
 
 
 // console.log('formated date',formattedDate);

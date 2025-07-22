@@ -53,10 +53,10 @@ export const addTableMonthData = createAsyncThunk(
   "monthAheadData/addTableMonthData",
   async (newData, { rejectWithValue }) => {
     try {
-   console.log("Data in slice:", newData); 
+  //  console.log("Data in slice:", newData); 
       
       const response = await monthAheadApi.addTableMonthData(newData);
-      console.log("Response:", response); // Log the response status for debugging
+      // console.log("Response:", response); // Log the response status for debugging
       // console.log("Response from addTableMonthData:", response.data); // Log the response for debugging
       
       if(response.data) {

@@ -9,7 +9,7 @@ export const fetchPlanningData = createAsyncThunk(
     try {
         // console.log("User ID:", id, typeof id);
         const response = await planningApi.getPlanningData(Number(id)); 
-console.log(response);
+// console.log(response);
 
       if (response.status === 200 && response.data) {
         // console.log(response.data);

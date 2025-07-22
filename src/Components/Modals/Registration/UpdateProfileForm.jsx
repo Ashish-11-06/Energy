@@ -53,15 +53,15 @@ const UpdateProfileForm = ({ form, project, onCancel, fromPortfolio, onErrorClos
   const [windFile, setWindFile] = useState("");
   const continueButtonRef = useRef(false); // Ref to track the state of the "Continue" button
 const [warningModal, setWarningModal] = useState(false); // State to control tupdatehe warning modal
-console.log('selectedProject',selectedProject);
+// console.log('selectedProject',selectedProject);
 const [lastUploadedFiles, setLastUploadedFiles] = useState({
   hourly_data: selectedProject.hourly_data
 });
 
 const hourly_data=`${baseURL}${selectedProject.hourly_data}`;
-console.log('hourly_data',hourly_data);
+// console.log('hourly_data',hourly_data);
 
-console.log('ii',lastUploadedFiles);
+// console.log('ii',lastUploadedFiles);
 
   useEffect(() => {
     if (user.solar_template_downloaded) {
@@ -90,9 +90,9 @@ const handleResubmit =async () => {
     updated:"False",
     id: selectedProject.id,
   }
-  console.log('resubmit data',data);
+  // console.log('resubmit data',data);
   const res=await dispatch(updateProject(data)).unwrap();
-  console.log('res',res);
+  // console.log('res',res);
 }
   // Function to download Excel template
   const downloadExcelTemplate = () => {

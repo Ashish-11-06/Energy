@@ -11,11 +11,11 @@ const { Title, Text } = Typography;
 const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerator, onClose, onRequestForQuotation, consumerDetails }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
-  console.log('ippppp',ipp);
-  console.log('consumerrrrrrr',consumerDetails);
-  console.log('combination',combination);
-  console.log('annual_demand_met',ipp?.annual_demand_met);
-  console.log('annual_demand_met',combination?.annual_demand_met);
+  // console.log('ippppp',ipp);
+  // console.log('consumerrrrrrr',consumerDetails);
+  // console.log('combination',combination);
+  // console.log('annual_demand_met',ipp?.annual_demand_met);
+  // console.log('annual_demand_met',combination?.annual_demand_met);
   
 
   const showQuotationModal = () => {
@@ -82,7 +82,7 @@ const IPPModal = ({ visible, ipp, reIndex,fromConsumer,combination, fromGenerato
     return matchingStateKey ? ipp.states[matchingStateKey] : "N/A";
   };
   
-  console.log('ippp technology',ipp?.technology);
+  // console.log('ippp technology',ipp?.technology);
   
 const technologyData = ipp?.technology.map((tech, index) => {
   const techNameLower = tech.name.toLowerCase();
@@ -126,7 +126,7 @@ const technologyData = ipp?.technology.map((tech, index) => {
 });
 
 
-  console.log('technology',technologyData);
+  // console.log('technology',technologyData);
   
   
 

@@ -59,17 +59,17 @@ const PlanEditor = ({ visible, onCancel }) => {
   };
 
   const handleSave =async (values) => {
-    console.log('values',values);
+    // console.log('values',values);
     const data={
       discription:values.discription,
       duration_in_days:values.duration_in_days,
       price:values.price,
       subscription_type:values.subscription_type
     }
-    console.log('data ',data);
+    // console.log('data ',data);
     setEditLoading(true);
     const response = await dispatch(editSubscriptionPlan({id:values?.id,data}));
-    console.log('response',response);
+    // console.log('response',response);
     if(response?.payload) {
       fetchPlan();
       setEditLoading(false);

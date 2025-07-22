@@ -7,9 +7,9 @@ export const addPWatt = createAsyncThunk(
   "pwatt/addPWatt",
   async (data, { rejectWithValue }) => {
     try {
-      console.log('calling pwattApi with data:', data);
+      // console.log('calling pwattApi with data:', data);
       const response = await pwattApi.addPWatt(data);
-      console.log('response pwatt slice', response); // Not printed if above line throws
+      // console.log('response pwatt slice', response); // Not printed if above line throws
       if (response.status === 200 && response.data) {
         return response.data;
       }

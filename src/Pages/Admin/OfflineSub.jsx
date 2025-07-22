@@ -19,7 +19,7 @@ const OfflineSub = () => {
     const offlineData =async () => {
       setLoading(true);
       const res=await dispatch(offlineSubscription());
-      console.log('offline subscription data',res);
+      // console.log('offline subscription data',res);
       if(res?.payload) {
         setOfflineData(res?.payload);
         setLoading(false);

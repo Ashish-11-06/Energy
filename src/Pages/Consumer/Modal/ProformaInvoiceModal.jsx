@@ -113,9 +113,9 @@ const ProformaInvoiveModal = ({
   const dispatch = useDispatch();
   // console.log(selectedPlan);
   const amount=selectedPlan?.subscription?.price;
-  console.log('selected plan',amount);
+  // console.log('selected plan',amount);
   
-console.log('invoice number',selectedPlan?.id);
+// console.log('invoice number',selectedPlan?.id);
 
   //  const selectedPlan = fromSubscription ? selectedPlan : selectedPlan.subscription;
   // //  console.log(selected_plan);

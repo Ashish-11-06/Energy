@@ -225,7 +225,7 @@ const companyName=userData?.company;
 useEffect(() => {
   const decryptedData = decryptData(localStorage.getItem('user'));
   const user = decryptedData?.user;
-  console.log('logged in user', user);
+  // console.log('logged in user', user);
 
   if (user?.company_representative) {
     setUsername(user.company_representative);

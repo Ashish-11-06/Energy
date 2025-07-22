@@ -22,14 +22,14 @@ export const fetchState = createAsyncThunk(
 export const fetchDistricts = createAsyncThunk(
   "states/fetchDistricts",
   async (stateName) => {
-    console.log('Fetching states name',stateName);
+    // console.log('Fetching states name',stateName);
     try {
       const response = await stateApi.districts(stateName);
       // console.log(response.data);
       return response.data;
       
     } catch (error) {
-      console.error("Error fetching states:", error);
+      // console.error("Error fetching states:", error);
       throw error;
     }
   }

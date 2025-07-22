@@ -12,14 +12,14 @@ const Login = () => {
       const navigate=useNavigate();
     const dispatch = useDispatch();
   const onFinish =async (values) => {
-    console.log('Received values:', values);
+    // console.log('Received values:', values);
     const data={
 email: values?.email,
 password: values?.password,
 user_type: values?.user_type
     }   
     const res = await dispatch(loginSlice(data));
-    console.log('login res',res);
+    // console.log('login res',res);
 
 
 // Inside your login response handling:
@@ -28,22 +28,22 @@ if (res?.payload.message) {
   const key = 'samya';
 
   const secretPassphrase = 'samya'; // Use a better secret in production
-console.log('secret',secretPassphrase);
+// console.log('secret',secretPassphrase);
 
   // Encrypt the key
   const encryptedKey = CryptoJS.AES.encrypt(key, secretPassphrase).toString();
-console.log('encrypt',encryptedKey);
+// console.log('encrypt',encryptedKey);
 
   // Combine user and encrypted key
   const userWithKey = {
     ...user,
     encryptedKey: encryptedKey,
   };
-console.log('userwithkey',userWithKey);
+// console.log('userwithkey',userWithKey);
 
   // Convert to string and store in localStorage
   const userString = JSON.stringify(userWithKey);
-  console.log('user string',userString);
+  // console.log('user string',userString);
   
   localStorage.setItem('userrr', userString);
 
@@ -57,11 +57,11 @@ console.log('userwithkey',userWithKey);
 
   const handleForgotPassword = () =>
     {
-        console.log('Forgot password clicked');
+        // console.log('Forgot password clicked');
     }
   const onFinishFailed = () =>
     {
-        console.log('on finish failed');
+        // console.log('on finish failed');
     }
 
 return (

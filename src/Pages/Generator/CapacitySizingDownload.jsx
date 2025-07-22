@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx-js-style';
 
 export const handleDownloadPdf = (record) => {
   const container = document.createElement("div");
-  console.log("container", container);
+  // console.log("container", container);
 
   try {
     container.innerHTML = `

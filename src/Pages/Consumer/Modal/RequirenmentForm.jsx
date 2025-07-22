@@ -19,13 +19,13 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import moment from "moment"; // Ensure moment is imported
 const { Panel } = Collapse;
 import { useDispatch, useSelector } from "react-redux";
-import { fetchState,fetchDistricts } from "../../../Redux/Slices/Consumer/stateSlice";
+import { fetchState, fetchDistricts } from "../../../Redux/Slices/Consumer/stateSlice";
 import { fetchIndustry } from "../../../Redux/Slices/Consumer/industrySlice";
 import { updateRequirements } from "../../../Redux/Slices/Consumer/consumerRequirementSlice";
 import { decryptData } from "../../../Utils/cryptoHelper";
 const { Option } = Select;
 
-const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop,handleCancelModal }) => {
+const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, handleCancelModal }) => {
   const [form] = Form.useForm();
   const [customVoltage, setCustomVoltage] = useState("");
   const [isCustomVoltage, setIsCustomVoltage] = useState(false);
@@ -35,22 +35,22 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop,h
   const [subIndustries, setSubIndustries] = useState([]);
   const [customSubIndustry, setCustomSubIndustry] = useState("");
   const [isCustomSubIndustry, setIsCustomSubIndustry] = useState(false);
-  const [districts,setDistricts]=useState([]);
-  const [locations,setLocation] =useState('');
+  const [districts, setDistricts] = useState([]);
+  const [locations, setLocation] = useState('');
   const dispatch = useDispatch();
   const industryy = useSelector((state) => state.industry.industry);
   const statee = useSelector((state) => state.states.states);
-const isFetching = useRef(false);
-const [stateName, setStateName] = useState(""); // State to track selected state
+  const isFetching = useRef(false);
+  const [stateName, setStateName] = useState(""); // State to track selected state
   // console.log(data);
-// console.log('isEdit',isEdit);
-console.log('fromrooftop',fromRooftop);
+  // console.log('isEdit',isEdit);
+  // console.log('fromrooftop',fromRooftop);
   useEffect(() => {
     if (data) {
-      console.log('data',data);
-       const locationValue = data.location
-      ? data.location
-      : {
+      // console.log('data', data);
+      const locationValue = data.location
+        ? data.location
+        : {
           latitude: data.latitude || '',
           longitude: data.longitude || '',
         };
@@ -66,9 +66,9 @@ console.log('fromrooftop',fromRooftop);
         procurement: data.procurement_date
           ? dayjs(data.procurement_date, "YYYY-MM-DD") // Ensure it is a valid dayjs object
           : null,
-           roof_area:data.roof_area,
-        solar_rooftop_capacity:data.solar_rooftop_capacity,
-        location:locationValue
+        roof_area: data.roof_area,
+        solar_rooftop_capacity: data.solar_rooftop_capacity,
+        location: locationValue
       });
       // console.log(data);
       setSelectedIndustry(data.industry);
@@ -77,7 +77,7 @@ console.log('fromrooftop',fromRooftop);
       form.resetFields(); // Reset fields if no data is provided
     }
   }, [data, form, industryy]);
-console.log('state name',stateName);
+  // console.log('state name',stateName);
 
   useEffect(() => {
     if (industryy.length < 1) {
@@ -105,67 +105,67 @@ console.log('state name',stateName);
     const res = dispatch(fetchState());
   }, [dispatch]);
 
-const fetchDistrict = async (stateName) => {
-  if (isFetching.current) return;
-  isFetching.current = true;
+  const fetchDistrict = async (stateName) => {
+    if (isFetching.current) return;
+    isFetching.current = true;
 
-  try {
-    const response = await dispatch(fetchDistricts(stateName));
-    console.log('response',response);
-    
-    setDistricts(response?.payload);
-  } catch (error) {
-    console.error("Failed to fetch districts", error);
-  } finally {
-    isFetching.current = false;
-  }
-};
+    try {
+      const response = await dispatch(fetchDistricts(stateName));
+      // console.log('response', response);
 
-console.log('districts',districts);
-
-useEffect(() => {
-  if (data) {
-    console.log('data', data);
-
-    const hasValidLocation = data.location;
-
-    let locationValue = null;
-    let latitude = '';
-    let longitude = '';
-
-    if (hasValidLocation) {
-      locationValue = data.location;
-    } else {
-      latitude = data.latitude || '';
-      longitude = data.longitude || '';
+      setDistricts(response?.payload);
+    } catch (error) {
+      // console.error("Failed to fetch districts", error);
+    } finally {
+      isFetching.current = false;
     }
+  };
 
-    form.setFieldsValue({
-      id: data?.id,
-      state: data.state,
-      consumption_unit: data.consumption_unit,
-      industry: data.industry,
-      contractedDemand: data.contracted_demand,
-      tariffCategory: data.tariff_category,
-      voltageLevel: data.voltage_level,
-      sub_industry: data.sub_industry,
-      annual_electricity_consumption: data.annual_electricity_consumption,
-      procurement: data.procurement_date
-        ? dayjs(data.procurement_date, "YYYY-MM-DD")
-        : null,
-      roof_area: data.roof_area,
-      solar_rooftop_capacity: data.solar_rooftop_capacity,
-      location: locationValue,
-      latitude: latitude,
-      longitude: longitude,
-    });
+  // console.log('districts',districts);
 
-    setSelectedIndustry(data.industry);
-    setSubIndustries(industryy[data.industry] || []);
-  } else {
-    form.resetFields(); // Reset if no data
-  }
-}, [data, form, industryy]);
+  useEffect(() => {
+    if (data) {
+      // console.log('data', data);
+
+      const hasValidLocation = data.location;
+
+      let locationValue = null;
+      let latitude = '';
+      let longitude = '';
+
+      if (hasValidLocation) {
+        locationValue = data.location;
+      } else {
+        latitude = data.latitude || '';
+        longitude = data.longitude || '';
+      }
+
+      form.setFieldsValue({
+        id: data?.id,
+        state: data.state,
+        consumption_unit: data.consumption_unit,
+        industry: data.industry,
+        contractedDemand: data.contracted_demand,
+        tariffCategory: data.tariff_category,
+        voltageLevel: data.voltage_level,
+        sub_industry: data.sub_industry,
+        annual_electricity_consumption: data.annual_electricity_consumption,
+        procurement: data.procurement_date
+          ? dayjs(data.procurement_date, "YYYY-MM-DD")
+          : null,
+        roof_area: data.roof_area,
+        solar_rooftop_capacity: data.solar_rooftop_capacity,
+        location: locationValue,
+        latitude: latitude,
+        longitude: longitude,
+      });
+
+      setSelectedIndustry(data.industry);
+      setSubIndustries(industryy[data.industry] || []);
+    } else {
+      form.resetFields(); // Reset if no data
+    }
+  }, [data, form, industryy]);
 
   const handleIndustryChange = (value) => {
     setSelectedIndustry(value); // Update selected industry
@@ -179,11 +179,11 @@ useEffect(() => {
     }
   };
 
-useEffect(() => {
-  if (isEdit && data?.state) {
-    fetchDistrict(data.state);
-  }
-}, [isEdit, data?.state]);
+  useEffect(() => {
+    if (isEdit && data?.state) {
+      fetchDistrict(data.state);
+    }
+  }, [isEdit, data?.state]);
 
 
   const handleSubIndustryChange = (value) => {
@@ -195,69 +195,69 @@ useEffect(() => {
     }
   };
 
-const handleSubmit = (values) => {
-  console.log('values', values);
+  const handleSubmit = (values) => {
+    // console.log('values', values);
 
-  const user =decryptData(localStorage.getItem("user")).user;
+    const user = decryptData(localStorage.getItem("user")).user;
 
-  const formattedValues = {
-    id: data?.id,
-    user: user.id,
-    state: values.state,
-    industry: values.industry === "other" ? customIndustry : values.industry,
-    contracted_demand: values.contractedDemand,
-    tariff_category: values.tariffCategory,
-    voltage_level:
-      values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
-    procurement_date: values.procurement.format("YYYY-MM-DD"),
-    sub_industry:
-      values.sub_industry === "otherSub"
-        ? customSubIndustry
-        : values.sub_industry,
-    consumption_unit: values.consumption_unit,
-    annual_electricity_consumption: values.annual_electricity_consumption,
-    roof_area: values.roof_area,
-    solar_rooftop_capacity: values.solar_rooftop_capacity,
-  };
+    const formattedValues = {
+      id: data?.id,
+      user: user.id,
+      state: values.state,
+      industry: values.industry === "other" ? customIndustry : values.industry,
+      contracted_demand: values.contractedDemand,
+      tariff_category: values.tariffCategory,
+      voltage_level:
+        values.voltageLevel === "other" ? customVoltage : values.voltageLevel,
+      procurement_date: values.procurement.format("YYYY-MM-DD"),
+      sub_industry:
+        values.sub_industry === "otherSub"
+          ? customSubIndustry
+          : values.sub_industry,
+      consumption_unit: values.consumption_unit,
+      annual_electricity_consumption: values.annual_electricity_consumption,
+      roof_area: values.roof_area,
+      solar_rooftop_capacity: values.solar_rooftop_capacity,
+    };
 
-  // ✅ Robust check for valid location
-  const hasValidLocation =
-    values.location 
+    // ✅ Robust check for valid location
+    const hasValidLocation =
+      values.location
     // values.location.latitude &&
     // values.location.longitude;
 
     // console.log('has validation',hasValidLocation);
-  if (hasValidLocation) {
-    formattedValues.location = values.location;
-  } else {
-    formattedValues.latitude = values.latitude || '';
-    formattedValues.longitude = values.longitude || '';
-  }
+    if (hasValidLocation) {
+      formattedValues.location = values.location;
+    } else {
+      formattedValues.latitude = values.latitude || '';
+      formattedValues.longitude = values.longitude || '';
+    }
 
-  console.log('formattedValues', formattedValues);
-  if(!fromRooftop) {
-    onSubmit(formattedValues);
-  } else {
-       
-        const res = dispatch(updateRequirements({ updatedData: formattedValues }));
-       handleCancelModal();
-        console.log('res',res);
-        
-        if(res) {
-          message.success('Requirement updated successfully!');
-        }
-      
-  }
+    // console.log('formattedValues', formattedValues);
+    if (!fromRooftop) {
+      onSubmit(formattedValues);
+    } else {
 
-  form.resetFields();
-  setCustomVoltage("");
-  setIsCustomVoltage(false);
-  setCustomIndustry("");
-  setIsCustomIndustry(false);
-  setCustomSubIndustry("");
-  setIsCustomSubIndustry(false);
-  setLocation('');
-};
+      const res = dispatch(updateRequirements({ updatedData: formattedValues }));
+      handleCancelModal();
+      // console.log('res', res);
+
+      if (res) {
+        message.success('Requirement updated successfully!');
+      }
+
+    }
+
+    form.resetFields();
+    setCustomVoltage("");
+    setIsCustomVoltage(false);
+    setCustomIndustry("");
+    setIsCustomIndustry(false);
+    setCustomSubIndustry("");
+    setIsCustomSubIndustry(false);
+    setLocation('');
+  };
 
 
 
@@ -308,11 +308,11 @@ const handleSubmit = (values) => {
                 showSearch
                 disabled={isEdit} // Disable only in edit mode
                 onChange={(value) => {
-                   setLocation('');
-  setStateName(value);  // if needed
-  fetchDistrict(value);      // fetch districts when state changes
-  form.setFieldsValue({ location: undefined });
-}}
+                  setLocation('');
+                  setStateName(value);  // if needed
+                  fetchDistrict(value);      // fetch districts when state changes
+                  form.setFieldsValue({ location: undefined });
+                }}
 
               >
                 {(Array.isArray(statee) ? statee : []).map((state, index) => (
@@ -584,10 +584,10 @@ const handleSubmit = (values) => {
                     value > 0
                       ? Promise.resolve()
                       : Promise.reject(
-                          new Error(
-                            "Annual electricity consumption must be greater than 0!"
-                          )
-                        ),
+                        new Error(
+                          "Annual electricity consumption must be greater than 0!"
+                        )
+                      ),
                 },
               ]}
             >
@@ -618,165 +618,165 @@ const handleSubmit = (values) => {
           </Col>
 
         </Row>
- <Collapse defaultActiveKey={fromRooftop ? ['1'] : []}>
-<Panel header={<strong style={{fontSize:'16px'}}>Rooftop Details</strong>} key="1">
-        <Row gutter={16}>
-          <Col span={24}>
-         <Form.Item
-  label={renderLabelWithTooltip(
-    "Roof Area available (including open space) in sq m",
-    "Enter the roof area available in square meter."
-  )}
-  name="roof_area"
-  rules={
-    fromRooftop
-      ? [
-          { required: true, message: "Please enter the roof area!" },
-          // { type: "number", min: 1, message: "Roof area must be greater than 0!" },
-        ]
-      : []
-  }
->
-  <Input type="number" min={1} placeholder="Enter the roof area available in square meter." />
-</Form.Item>
+        <Collapse defaultActiveKey={fromRooftop ? ['1'] : []}>
+          <Panel header={<strong style={{ fontSize: '16px' }}>Rooftop Details</strong>} key="1">
+            <Row gutter={16}>
+              <Col span={24}>
+                <Form.Item
+                  label={renderLabelWithTooltip(
+                    "Roof Area available (including open space) in sq m",
+                    "Enter the roof area available in square meter."
+                  )}
+                  name="roof_area"
+                  rules={
+                    fromRooftop
+                      ? [
+                        { required: true, message: "Please enter the roof area!" },
+                        // { type: "number", min: 1, message: "Roof area must be greater than 0!" },
+                      ]
+                      : []
+                  }
+                >
+                  <Input type="number" min={1} placeholder="Enter the roof area available in square meter." />
+                </Form.Item>
 
-          </Col>
+              </Col>
 
-          <Col span={12}>
-          <Form.Item
-  label={renderLabelWithTooltip(
-    "Existing Solar Rooftop Capacity (kWp)",
-    "Enter the existing solar rooftop capacity."
-  )}
-  name="solar_rooftop_capacity"
-  rules={
-    fromRooftop
-      ? [
-          { required: true, message: "Please enter the rooftop capacity!" },
-          {
-            validator: (_, value) =>
-              value > 0
-                ? Promise.resolve()
-                : Promise.reject(new Error("Capacity must be greater than 0!")),
-          },
-        ]
-      : []
-  }
->
-  <Input type="number" min={1} placeholder="Enter the existing solar rooftop capacity" />
-</Form.Item>
+              <Col span={12}>
+                <Form.Item
+                  label={renderLabelWithTooltip(
+                    "Existing Solar Rooftop Capacity (kWp)",
+                    "Enter the existing solar rooftop capacity."
+                  )}
+                  name="solar_rooftop_capacity"
+                  rules={
+                    fromRooftop
+                      ? [
+                        { required: true, message: "Please enter the rooftop capacity!" },
+                        {
+                          validator: (_, value) =>
+                            value > 0
+                              ? Promise.resolve()
+                              : Promise.reject(new Error("Capacity must be greater than 0!")),
+                        },
+                      ]
+                      : []
+                  }
+                >
+                  <Input type="number" min={1} placeholder="Enter the existing solar rooftop capacity" />
+                </Form.Item>
 
-          </Col>
+              </Col>
 
-          <Col span={12}>
-          <Form.Item
-  label={renderLabelWithTooltip(
-    "District of consumption unit",
-    "Select the district."
-  )}
-  name="location"
-  rules={
-    fromRooftop
-      ? [
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              const lat = getFieldValue("latitude");
-              const lng = getFieldValue("longitude");
+              <Col span={12}>
+                <Form.Item
+                  label={renderLabelWithTooltip(
+                    "District of consumption unit",
+                    "Select the district."
+                  )}
+                  name="location"
+                  rules={
+                    fromRooftop
+                      ? [
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            const lat = getFieldValue("latitude");
+                            const lng = getFieldValue("longitude");
 
-              if (value || (lat && lng)) {
-                return Promise.resolve();
-              }
-              return Promise.reject(
-                new Error("Please enter either a district or both coordinates.")
-              );
-            },
-          }),
-        ]
-      : []
-  }
->
-  <Select
-    placeholder="Select District"
-    allowClear
-    onChange={(value) => setLocation(value)}
-  >
-    {(Array.isArray(districts) ? districts : []).map((district, index) => (
-      <Select.Option key={index} value={district}>
-        {district}
-      </Select.Option>
-    ))}
-  </Select>
-</Form.Item>
+                            if (value || (lat && lng)) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error("Please enter either a district or both coordinates.")
+                            );
+                          },
+                        }),
+                      ]
+                      : []
+                  }
+                >
+                  <Select
+                    placeholder="Select District"
+                    allowClear
+                    onChange={(value) => setLocation(value)}
+                  >
+                    {(Array.isArray(districts) ? districts : []).map((district, index) => (
+                      <Select.Option key={index} value={district}>
+                        {district}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
 
-          </Col>
+              </Col>
 
-          <Col span={24}>
-            <Form.Item
-              // label="Coordinates (Lat & Long)"
-                   label={renderLabelWithTooltip(
-                "Coordinates (Lat & Long)",
-                "Enter the coordinates of the location.(e.g. Latitude: 12.9716, Longitude: 77.5946)"
-              )}
-              // required
-              style={{ marginBottom: 0 }}
-            >
-              <div style={{ display: "flex", gap: "10px" }}>
-              <Form.Item
-  name="latitude"
-  rules={
-    fromRooftop
-      ? [
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              const location = getFieldValue("location");
-              const lng = getFieldValue("longitude");
-              if (location || (value && lng)) {
-                return Promise.resolve();
-              }
-              return Promise.reject(
-                new Error("Please enter either district or both coordinates.")
-              );
-            },
-          }),
-        ]
-      : []
-  }
-  style={{ flex: 1, marginBottom: 0 }}
->
-  <Input type="number" placeholder="Enter Latitude" step="any" />
-</Form.Item>
+              <Col span={24}>
+                <Form.Item
+                  // label="Coordinates (Lat & Long)"
+                  label={renderLabelWithTooltip(
+                    "Coordinates (Lat & Long)",
+                    "Enter the coordinates of the location.(e.g. Latitude: 12.9716, Longitude: 77.5946)"
+                  )}
+                  // required
+                  style={{ marginBottom: 0 }}
+                >
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Form.Item
+                      name="latitude"
+                      rules={
+                        fromRooftop
+                          ? [
+                            ({ getFieldValue }) => ({
+                              validator(_, value) {
+                                const location = getFieldValue("location");
+                                const lng = getFieldValue("longitude");
+                                if (location || (value && lng)) {
+                                  return Promise.resolve();
+                                }
+                                return Promise.reject(
+                                  new Error("Please enter either district or both coordinates.")
+                                );
+                              },
+                            }),
+                          ]
+                          : []
+                      }
+                      style={{ flex: 1, marginBottom: 0 }}
+                    >
+                      <Input type="number" placeholder="Enter Latitude" step="any" />
+                    </Form.Item>
 
-<Form.Item
-  name="longitude"
-  rules={
-    fromRooftop
-      ? [
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              const location = getFieldValue("location");
-              const lat = getFieldValue("latitude");
-              if (location || (lat && value)) {
-                return Promise.resolve();
-              }
-              return Promise.reject(
-                new Error("Please enter either district or both coordinates.")
-              );
-            },
-          }),
-        ]
-      : []
-  }
-  style={{ flex: 1, marginBottom: 0 }}
->
-  <Input type="number" placeholder="Enter Longitude" step="any" />
-</Form.Item>
+                    <Form.Item
+                      name="longitude"
+                      rules={
+                        fromRooftop
+                          ? [
+                            ({ getFieldValue }) => ({
+                              validator(_, value) {
+                                const location = getFieldValue("location");
+                                const lat = getFieldValue("latitude");
+                                if (location || (lat && value)) {
+                                  return Promise.resolve();
+                                }
+                                return Promise.reject(
+                                  new Error("Please enter either district or both coordinates.")
+                                );
+                              },
+                            }),
+                          ]
+                          : []
+                      }
+                      style={{ flex: 1, marginBottom: 0 }}
+                    >
+                      <Input type="number" placeholder="Enter Longitude" step="any" />
+                    </Form.Item>
 
-              </div>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Panel>
-    </Collapse>
+                  </div>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Panel>
+        </Collapse>
         <p style={{ color: "GrayText" }}>(Note: All * fields are mandatory.)</p>
         <Form.Item style={{ textAlign: "center" }}>
           <Button
