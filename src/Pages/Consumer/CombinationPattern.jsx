@@ -809,6 +809,7 @@ const lineChartData = {
         <Descriptions.Item label="Voltage Level">{consumerDetails.voltage_level} kV</Descriptions.Item>
         <Descriptions.Item label="Contracted Demand">{consumerDetails.contracted_demand} MW</Descriptions.Item>
         <Descriptions.Item label="Industry">{consumerDetails.industry}</Descriptions.Item>
+        <Descriptions.Item label="Annual Consumption">{consumerDetails.annual_consumption || 'N/A'}</Descriptions.Item>
       </Descriptions>
     </Card>
 

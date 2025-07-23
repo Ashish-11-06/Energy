@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo,  useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Table,
@@ -71,8 +71,8 @@ const EnergyConsumptionTable = () => {
   const [saveSuccess, setSaveSuccess] = useState(false); // State to track save success
   const [saveError, setSaveError] = useState(false); // State to track save error
   const [temp, setTemp] = useState('');
-    const userData = decryptData(localStorage.getItem('user'));
-  const user= userData?.user;
+  const userData = decryptData(localStorage.getItem('user'));
+  const user = userData?.user;
   // const user = JSON.parse(localStorage.getItem("user")).user;
   const [buttonDisable, setButtonDisable] = useState(false);
   const currentYear = new Date().getFullYear(); // Get the current year
@@ -92,6 +92,8 @@ const EnergyConsumptionTable = () => {
   // console.log(isActionCompleted);
 
   // console.log(user.role);
+
+const { Text } = Typography;
 
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);
@@ -392,8 +394,8 @@ const EnergyConsumptionTable = () => {
         offPeakConsumption: null,
         monthlyBill: null,
       });
-   // console.log('newData',newData);
-      
+      // console.log('newData',newData);
+
       setDataSource(newData);
       message.success(`${file.name} uploaded successfully`);
       setUploadMonthlyFile(file.name);
@@ -436,8 +438,10 @@ const EnergyConsumptionTable = () => {
 
     try {
       const values = dataSource.map((item) => ({
+        
         requirement: requirementId,
         month: item.month,
+        year: item.year,
         monthly_consumption: item.monthlyConsumption,
         peak_consumption: item.peakConsumption,
         off_peak_consumption: item.offPeakConsumption,
@@ -448,8 +452,8 @@ const EnergyConsumptionTable = () => {
 
       const response = await dispatch(addConsumption(values)).unwrap();
 
-   // console.log("resssss", response);
-      setFieldsUpdated(response.fields_updated); 
+      // console.log("resssss", response);
+      setFieldsUpdated(response.fields_updated);
 
       message.success({
         content: response.message || "Monthly data added successfully!",
@@ -488,8 +492,8 @@ const EnergyConsumptionTable = () => {
         item[dataIndex] = firstValue;
       }
     });
- // console.log('fill below fun',newData);
-    
+    // console.log('fill below fun',newData);
+
     setDataSource(newData);
   };
 
@@ -582,6 +586,55 @@ const EnergyConsumptionTable = () => {
   };
 
 
+
+const EditableYearCell = ({ value, onChange, onBlur }) => {
+  const [tempValue, setTempValue] = useState(value);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setTempValue(value);
+  }, [value]);
+
+  const handleBlur = () => {
+    const currentYear = new Date().getFullYear();
+    const allowedYears = [currentYear, currentYear - 1, currentYear - 2];
+    const numericValue = parseInt(tempValue, 10);
+
+    if (allowedYears.includes(numericValue)) {
+      setError("");
+      onChange(numericValue);
+    } else {
+      setError(`Only ${allowedYears.join(", ")} are allowed.`);
+      // Optionally prevent update
+      // Or: onChange(numericValue); if you still want to allow it
+    }
+
+    onBlur();
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <InputNumber
+        value={tempValue}
+        onChange={(val) => setTempValue(val)}
+        onFocus={(e) => e.target.select()}
+        onBlur={handleBlur}
+        style={{ width: "100%" }}
+        min={0}
+      />
+      {error && (
+        <Text type="danger" style={{ fontSize: 12, marginTop: 4 }}>
+          {error}
+        </Text>
+      )}
+    </div>
+  );
+};
+
+
+
+
+
   const columns = useMemo(() => [
     {
       title: "Month",
@@ -589,6 +642,29 @@ const EnergyConsumptionTable = () => {
       key: "month",
       width: 150,
     },
+    {
+      title: renderLabelWithTooltip(
+        "Year",
+        "Year of the consumption month.",
+        () => handleFillBelow("year")
+      ),
+      dataIndex: "year",
+      key: "year",
+      editable: true,
+      render: (_, record) => (
+        <EditableYearCell
+          value={record.year}
+          onChange={(value) => {
+            handleInputChange(value, record.key, "year");
+          }}
+          onBlur={() => { }}
+        />
+
+
+      ),
+      // width: 150,
+    },
+
     {
       title: renderLabelWithTooltip(
         "Monthly Consumption (MWh)",
@@ -924,7 +1000,6 @@ const EnergyConsumptionTable = () => {
 
                   style={{
                     marginTop: "20px",
-
                   }}
                 />
 
@@ -946,6 +1021,7 @@ const EnergyConsumptionTable = () => {
           {/* </div> */}
           {showTable && (
             <>
+              {/* main table */}
               <Table
                 rowKey="key"
                 dataSource={memoizedDataSource}
@@ -1008,7 +1084,7 @@ const EnergyConsumptionTable = () => {
             <>
               <Tooltip
                 title={
-                  (monthlyData.length < 1 && !scadaFileUpload && !dataSource || !fieldsupdated )
+                  (monthlyData.length < 1 && !scadaFileUpload && !dataSource || !fieldsupdated)
                     ? "Please fill the complete details or upload a file"
                     : "Proceed to the next step"
                 }

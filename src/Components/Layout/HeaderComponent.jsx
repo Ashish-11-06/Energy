@@ -117,14 +117,14 @@ const HeaderComponent = ({ isMobile, drawerVisible, toggleDrawer }) => {
     },
     {
       path: "/consumer/energy-consumption-table",
-      label: "Monthly consumption input",
+      label: "Monthly cons. input",
       icon: <BookOutlined />,
       requiresSubscription: subscriptionRequires,
       requiresMatchingConsumer: false,
     },
     {
       path: "/consumer/consumption-pattern",
-      label: "Potential Transition Options",
+      label: "Potential Trans. Options",
       icon: <WalletOutlined />,
       requiresSubscription: true,
       requiresMatchingConsumer: true,
