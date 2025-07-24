@@ -115,6 +115,7 @@ const { Text } = Typography;
     // Define the headers and rows
     const headers = [
       "Month",
+      "Year",
       "Monthly Consumption (MWh)",
       "Peak Consumption (MWh)",
       "Off Peak Consumption (MWh)",
