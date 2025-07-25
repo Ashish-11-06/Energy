@@ -1099,7 +1099,7 @@ const EnergyConsumptionTable = () => {
             <>
               <Tooltip
                 title={
-                  (monthlyData.length < 1 && !scadaFileUpload && !dataSource || !fieldsupdated)
+                  (monthlyData.length < 1 || !scadaFileUpload || !dataSource || !fieldsupdated)
                     ? "Please fill the complete details or upload a file"
                     : "Proceed to the next step"
                 }
@@ -1109,7 +1109,7 @@ const EnergyConsumptionTable = () => {
                 <Button
                   type="primary"
                   onClick={handleContinue}
-                  disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource || !fieldsupdated} // Enable only if an action is completed
+                  disabled={monthlyData.length < 1 || !scadaFileUpload || !dataSource || !fieldsupdated} // Enable only if an action is completed
                   style={{ marginLeft: "86%", marginTop: "8px" }}
                 >
                   Continue {`>>`}
@@ -1142,7 +1142,7 @@ const EnergyConsumptionTable = () => {
                     type="primary"
                     onClick={handleContinue}
                     style={{ marginLeft: "86%", marginTop: "8px" }}
-                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource}
+                    disabled={ monthlyData.length < 1 && !scadaFileUpload && !dataSource}
                   >
                     Continue {`>>`}
                   </Button>

@@ -51,7 +51,7 @@ const CombinationPattern = () => {
   const navigate = useNavigate();
   const [dataSourceError, setdataSourceError] = useState();
 
-  const selectedDemandId = localStorage.getItem("selectedRequirementId");
+  const selectedDemandId = decryptData(localStorage.getItem("selectedRequirementId"));
   const reReplacement = state?.reReplacement;
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State to control modal visibility
