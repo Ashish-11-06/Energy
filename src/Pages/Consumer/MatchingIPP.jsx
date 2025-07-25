@@ -7,7 +7,7 @@ import { Table, Spin, Alert, Row, Button, Radio, Modal, Tooltip, message, Select
 import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSlice";
 import { CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleOutlined } from '@ant-design/icons';
 import { fetchRequirements } from "../../Redux/Slices/Consumer/consumerRequirementSlice";
-import { decryptData } from "../../Utils/cryptoHelper";
+import { decryptData, encryptData } from "../../Utils/cryptoHelper";
 
 const MatchingIPP = () => {
   const location = useLocation();
@@ -26,9 +26,11 @@ const MatchingIPP = () => {
   const [solarArray, setSolarArray] = useState([]);
   const [windArray, setWindArray] = useState([]);
   const [essArray, setEssArray] = useState([]);
-const selectedRequirements = location.state?.selectedRequirements || [];
-  const selectedRequirementId = location.state?.selectedRequirement?.id || null; // Get selected requirement ID from location state
-  const requirementId = localStorage.getItem('selectedRequirementId');
+
+
+  // const requirementId = localStorage.getItem('selectedRequirementId');
+
+    const requirementId = decryptData(localStorage.getItem('selectedRequirementId'));
 
   const getFromLocalStorage = (key) => {
     const item = localStorage.getItem(key);
@@ -80,13 +82,13 @@ const role=userData?.role;
 
   useEffect(() => {
     const selectedRequirementId = selectedRequirement?.id;
-    localStorage.setItem('selectedRequirementId', selectedRequirementId);
+    localStorage.setItem('selectedRequirementId', encryptData(selectedRequirementId));
   }, [selectedRequirement]);
 
   const handleRequirementChange = (value) => {
     const selected = requirements.find((req) => req.id === value);
     setSelectedRequirement(selected);
-    localStorage.setItem('selectedRequirementId', selected.id); // Update localStorage
+    localStorage.setItem('selectedRequirementId', encryptData(selected.id)); // Update localStorage
     dispatch(fetchMatchingIPPById(selected.id)); // Fetch matching IPPs for the selected requirement
   };
 
@@ -117,7 +119,7 @@ const role=userData?.role;
   const handleContinue = () => {
     const subscriptionPlanValidity = decryptData(localStorage.getItem("subscriptionPlanValidity"));
     const matchingIPP = localStorage.getItem('matchingIPP');
-    const selectedRequirementId = localStorage.getItem('selectedRequirementId');
+    const selectedRequirementId = decryptData(localStorage.getItem('selectedRequirementId'));
   
     if(role !== 'View') {
       if (selectedRequirementId && matchingIPP && subscriptionPlanValidity?.status === 'active') {

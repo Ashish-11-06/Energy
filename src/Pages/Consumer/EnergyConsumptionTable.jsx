@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-import React, { useState, useEffect, useMemo,  useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Table,
@@ -16,6 +16,7 @@ import {
   Row,
   Col,
   Select,
+  Spin,
 } from "antd";
 import {
   UploadOutlined,
@@ -62,7 +63,7 @@ const renderLabelWithTooltip = (label, tooltipText, onClick) => (
 const EnergyConsumptionTable = () => {
   const location = useLocation();
   const { reReplacement } = location.state || {};
-  const requirementId = localStorage.getItem('selectedRequirementId') // Destructure state to get `requirementId` and `annualSaving`
+  // Destructure state to get `requirementId` and `annualSaving`
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false); // State for info modal
   const [showTable, setShowTable] = useState(false); // State to control table visibility
   const [activeButton, setActiveButton] = useState(null); // State to control active button
@@ -72,6 +73,7 @@ const EnergyConsumptionTable = () => {
   const [saveError, setSaveError] = useState(false); // State to track save error
   const [temp, setTemp] = useState('');
   const userData = decryptData(localStorage.getItem('user'));
+  const requirementId = decryptData(localStorage.getItem('selectedRequirementId'));
   const user = userData?.user;
   // const user = JSON.parse(localStorage.getItem("user")).user;
   const [buttonDisable, setButtonDisable] = useState(false);
@@ -91,9 +93,10 @@ const EnergyConsumptionTable = () => {
 
   // console.log(isActionCompleted);
 
+
   // console.log(user.role);
 
-const { Text } = Typography;
+  const { Text } = Typography;
 
   const handleInfoModalOk = () => {
     setIsInfoModalVisible(false);
@@ -280,6 +283,7 @@ const { Text } = Typography;
       offPeakConsumption: null,
       monthlyBill: null,
       fileUploaded: null,
+      year: null,
     }))
   );
 
@@ -347,6 +351,7 @@ const { Text } = Typography;
             peakConsumption: data.peak_consumption,
             offPeakConsumption: data.off_peak_consumption,
             monthlyBill: data.monthly_bill_amount,
+            year: data.year,
           }
           : item;
       });
@@ -439,7 +444,7 @@ const { Text } = Typography;
 
     try {
       const values = dataSource.map((item) => ({
-        
+
         requirement: requirementId,
         month: item.month,
         year: item.year,
@@ -588,49 +593,49 @@ const { Text } = Typography;
 
 
 
-const EditableYearCell = ({ value, onChange, onBlur }) => {
-  const [tempValue, setTempValue] = useState(value);
-  const [error, setError] = useState("");
+  const EditableYearCell = ({ value, onChange, onBlur }) => {
+    const [tempValue, setTempValue] = useState(value);
+    const [error, setError] = useState("");
 
-  useEffect(() => {
-    setTempValue(value);
-  }, [value]);
+    useEffect(() => {
+      setTempValue(value);
+    }, [value]);
 
-  const handleBlur = () => {
-    const currentYear = new Date().getFullYear();
-    const allowedYears = [currentYear, currentYear - 1, currentYear - 2];
-    const numericValue = parseInt(tempValue, 10);
+    const handleBlur = () => {
+      const currentYear = new Date().getFullYear();
+      const allowedYears = [currentYear, currentYear - 1, currentYear - 2];
+      const numericValue = parseInt(tempValue, 10);
 
-    if (allowedYears.includes(numericValue)) {
-      setError("");
-      onChange(numericValue);
-    } else {
-      setError(`Only ${allowedYears.join(", ")} are allowed.`);
-      // Optionally prevent update
-      // Or: onChange(numericValue); if you still want to allow it
-    }
+      if (allowedYears.includes(numericValue)) {
+        setError("");
+        onChange(numericValue);
+      } else {
+        setError(`Only ${allowedYears.join(", ")} are allowed.`);
+        // Optionally prevent update
+        // Or: onChange(numericValue); if you still want to allow it
+      }
 
-    onBlur();
+      onBlur();
+    };
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <InputNumber
+          value={tempValue}
+          onChange={(val) => setTempValue(val)}
+          onFocus={(e) => e.target.select()}
+          onBlur={handleBlur}
+          style={{ width: "100%" }}
+          min={0}
+        />
+        {error && (
+          <Text type="danger" style={{ fontSize: 12, marginTop: 4 }}>
+            {error}
+          </Text>
+        )}
+      </div>
+    );
   };
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <InputNumber
-        value={tempValue}
-        onChange={(val) => setTempValue(val)}
-        onFocus={(e) => e.target.select()}
-        onBlur={handleBlur}
-        style={{ width: "100%" }}
-        min={0}
-      />
-      {error && (
-        <Text type="danger" style={{ fontSize: 12, marginTop: 4 }}>
-          {error}
-        </Text>
-      )}
-    </div>
-  );
-};
 
 
 
@@ -1020,7 +1025,15 @@ const EditableYearCell = ({ value, onChange, onBlur }) => {
 
         >
           {/* </div> */}
-          {showTable && (
+          {/* main table */}
+
+          {showFileUploadTable ? (
+            renderSixMonthFileUploadTables()
+          ) : !showTable || !memoizedDataSource ? (
+            <div style={{ textAlign: "center", marginTop: 50 }}>
+              <Spin size="large" tip="Loading table..." />
+            </div>
+          ) : (
             <>
               {/* main table */}
               <Table
@@ -1040,7 +1053,8 @@ const EditableYearCell = ({ value, onChange, onBlur }) => {
                         <tr
                           {...restProps}
                           style={{
-                            backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#e0e0e054",
+                            backgroundColor:
+                              index % 2 === 0 ? "#f9f9f9" : "#e0e0e054",
                           }}
                         >
                           {children}
@@ -1050,6 +1064,7 @@ const EditableYearCell = ({ value, onChange, onBlur }) => {
                   },
                 }}
               />
+
               <div
                 style={{
                   marginTop: "30px",
@@ -1078,7 +1093,6 @@ const EditableYearCell = ({ value, onChange, onBlur }) => {
             </>
           )}
 
-          {showFileUploadTable && renderSixMonthFileUploadTables()}
 
           {(user?.role !== "view") ? (
 

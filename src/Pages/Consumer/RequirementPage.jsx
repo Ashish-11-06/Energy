@@ -216,7 +216,7 @@ const companyName=userData?.company;
     if (selectedRequirement) {
       localStorage.setItem('selectedRequirement', JSON.stringify(selectedRequirement)); // Store selected requirement in localStorage
       navigate('/consumer/matching-ipp', { state: selectedRequirement });
-      localStorage.setItem('selectedRequirementId', selectedRequirement.id);
+      localStorage.setItem('selectedRequirementId', encryptData(selectedRequirement.id));
     } else {
       message.error('Please select a single requirement before continuing.');
     }

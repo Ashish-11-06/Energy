@@ -22,30 +22,30 @@ user_type: values?.user_type
     // console.log('login res',res);
 
 
-// Inside your login response handling:
+// // Inside your login response handling:
 if (res?.payload.message) {
-  const user = res?.payload.user;
-  const key = 'samya';
+//   const user = res?.payload.user;
+//   const key = 'samya';
 
-  const secretPassphrase = 'samya'; // Use a better secret in production
+//   const secretPassphrase = 'samya'; // Use a better secret in production
 // console.log('secret',secretPassphrase);
 
   // Encrypt the key
-  const encryptedKey = CryptoJS.AES.encrypt(key, secretPassphrase).toString();
-// console.log('encrypt',encryptedKey);
+//   const encryptedKey = CryptoJS.AES.encrypt(key, secretPassphrase).toString();
+// // console.log('encrypt',encryptedKey);
 
-  // Combine user and encrypted key
-  const userWithKey = {
-    ...user,
-    encryptedKey: encryptedKey,
-  };
+//   // Combine user and encrypted key
+//   const userWithKey = {
+//     ...user,
+//     encryptedKey: encryptedKey,
+//   };
 // console.log('userwithkey',userWithKey);
 
   // Convert to string and store in localStorage
-  const userString = JSON.stringify(userWithKey);
+  // const userString = JSON.stringify(userWithKey);
   // console.log('user string',userString);
   
-  localStorage.setItem('userrr', userString);
+  // localStorage.setItem('userrr', userString);
 
   // Show success message
   message.success(res?.payload.message || 'Login successfully!');
