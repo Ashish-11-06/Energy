@@ -304,7 +304,7 @@ const EnergyConsumptionTable = () => {
         try {
           const response = await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
           const temp = response.length;
-
+          setShowTable(true);
 
           let allFieldsValid = true;
 
@@ -1029,7 +1029,7 @@ const EnergyConsumptionTable = () => {
 
           {showFileUploadTable ? (
             renderSixMonthFileUploadTables()
-          ) : !showTable || !memoizedDataSource ? (
+          ) : !showTable ? (
             <div style={{ textAlign: "center", marginTop: 50 }}>
               <Spin size="large" tip="Loading table..." />
             </div>
