@@ -637,7 +637,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
                       : []
                   }
                 >
-                  <Input type="number" min={1} placeholder="Enter the roof area available in square meter." />
+                  <Input type="number" min={0} placeholder="Enter the roof area available in square meter." />
                 </Form.Item>
 
               </Col>
@@ -653,17 +653,17 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
                     fromRooftop
                       ? [
                         { required: true, message: "Please enter the rooftop capacity!" },
-                        {
-                          validator: (_, value) =>
-                            value > 0
-                              ? Promise.resolve()
-                              : Promise.reject(new Error("Capacity must be greater than 0!")),
-                        },
+                        // {
+                        //   validator: (_, value) =>
+                        //     value > 0
+                        //       ? Promise.resolve()
+                        //       : Promise.reject(new Error("Capacity must be greater than 0!")),
+                        // },
                       ]
                       : []
                   }
                 >
-                  <Input type="number" min={1} placeholder="Enter the existing solar rooftop capacity" />
+                  <Input type="number" min={0} placeholder="Enter the existing solar rooftop capacity" />
                 </Form.Item>
 
               </Col>
@@ -709,6 +709,11 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
                 </Form.Item>
 
               </Col>
+              
+           
+              <div style={{ marginBottom: '10px', color: 'gray' }}>
+                   (optional : You can add district or latitude and longitude.)
+              </div>
 
               <Col span={24}>
                 <Form.Item
@@ -777,7 +782,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
             </Row>
           </Panel>
         </Collapse>
-        <p style={{ color: "GrayText" }}>(Note: All * fields are mandatory.)</p>
+        <p style={{ color: "GrayText" , marginTop:'10px' }}>(Note: All * fields are mandatory.)</p>
         <Form.Item style={{ textAlign: "center" }}>
           <Button
             type="primary"

@@ -6,7 +6,7 @@ const stateApi = {
     return axiosInstance.get(`/energy/state-list`); 
   },
   districts: (state_name) => {
-    console.log('state name',state_name);
+    // console.log('state name',state_name);
     
     return axiosInstance.get(`/energy/districts/${state_name}/`); 
   },
