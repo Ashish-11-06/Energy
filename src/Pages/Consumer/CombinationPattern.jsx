@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-useless-catch */
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Typography,
@@ -42,79 +42,81 @@ const CombinationPattern = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [ value, setValue ] = useState(65);
+  const [value, setValue] = useState(65);
   const [fetchingCombinations, setFetchingCombinations] = useState(false);
   const [progress, setProgress] = useState(0);
   const [combinationData, setCombinationData] = useState([]);
-  const [tryLowerModal,setTryLowerModal]=useState(false);
   const { state } = useLocation();
   const navigate = useNavigate();
   const [dataSourceError, setdataSourceError] = useState();
-
   const selectedDemandId = decryptData(localStorage.getItem("selectedRequirementId"));
-  const reReplacement = state?.reReplacement;
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
-const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State to control modal visibility
-const [isGraphLoading, setIsGraphLoading] = useState(true); // State to control loader in the button
-const [hasRunSensitivity, setHasRunSensitivity] = useState(false); // Track sensitivity execution
-const [lastSensitivityRunId, setLastSensitivityRunId] = useState(null); // Track the last ID for sensitivity
-  const [sensitivityData, setSensitivityData] = useState();
+  const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State to control modal visibility
+  const [isGraphLoading, setIsGraphLoading] = useState(true); // State to control loader in the button
   const [consumptionPatterns, setConsumptionPatterns] = useState([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [consumerDetails, setConsumerDetails] = useState({});
-
   const [rowSensitivityLoading, setRowSensitivityLoading] = useState({}); // {combinationId: boolean}
   const [rowSensitivityData, setRowSensitivityData] = useState({}); // {combinationId: data}
   const [activeGraphCombination, setActiveGraphCombination] = useState(null); // combinationId for modal
 
+
   // Sequentially fetch sensitivity for each combinationId, one at a time, only if not already fetched/loading
-const fetchNextSensitivity = async (combinationIds) => {
-  if (!combinationIds || combinationIds.length === 0) return;
-  const combinationId = combinationIds[0];
-  if (rowSensitivityData[combinationId] || rowSensitivityLoading[combinationId]) {
-    // Already fetched or loading, skip to next
-    if (combinationIds.length > 1) {
-      fetchNextSensitivity(combinationIds.slice(1));
+  const fetchNextSensitivity = async (combinationIds) => {
+    if (!combinationIds || combinationIds.length === 0) return;
+    const combinationId = combinationIds[0];
+    if (rowSensitivityData[combinationId] || rowSensitivityLoading[combinationId]) {
+      // Already fetched or loading, skip to next
+      if (combinationIds.length > 1) {
+        fetchNextSensitivity(combinationIds.slice(1));
+      }
+      return;
     }
-    return;
-  }
-  setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: true }));
-  try {
-    const data = {
-      requirement_id: selectedDemandId,
-      optimize_capacity_user: user.user_category,
-      user_id: user.id,
-      combinations: [combinationId],
-    };
-    const res = await dispatch(fetchSensitivity(data)).unwrap();
-    if (res.error) {
-      message.error(res.error);
+    setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: true }));
+    try {
+      const data = {
+        requirement_id: selectedDemandId,
+        optimize_capacity_user: user.user_category,
+        user_id: user.id,
+        combinations: [combinationId],
+      };
+      const res = await dispatch(fetchSensitivity(data)).unwrap();
+      if (res.error) {
+        message.error(res.error);
+        setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+      } else {
+        setRowSensitivityData((prev) => ({
+          ...prev,
+          [combinationId]: res[combinationId]
+        }));
+        setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+      }
+      if (combinationIds.length > 1) {
+        fetchNextSensitivity(combinationIds.slice(1));
+      }
+    } catch (error) {
       setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
-    } else {
-      setRowSensitivityData((prev) => ({
-        ...prev,
-        [combinationId]: res[combinationId]
-      }));
-      setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+      message.error("Failed to fetch sensitivity data.");
+      if (combinationIds.length > 1) {
+        fetchNextSensitivity(combinationIds.slice(1));
+      }
     }
-    if (combinationIds.length > 1) {
-      fetchNextSensitivity(combinationIds.slice(1));
-    }
-  } catch (error) {
-    setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
-    message.error("Failed to fetch sensitivity data.");
-    if (combinationIds.length > 1) {
-      fetchNextSensitivity(combinationIds.slice(1));
-    }
-  }
-};
+  };
 
   const dispatch = useDispatch();
   const userData = decryptData(localStorage.getItem('user'));
-  const user= userData?.user;
+  const user = userData?.user;
   // const user = JSON.parse(localStorage.getItem("user")).user;
   const role = user?.role;
   // console.log(user.id);
   const user_id = user?.id;
+
+  const cellStyle = {
+    padding: '6px 12px',
+    borderBottom: '1px solid #eee',
+    verticalAlign: 'top',
+  };
+
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
     if (
@@ -130,7 +132,7 @@ const fetchNextSensitivity = async (combinationIds) => {
     const formattedCombinations = Object.entries(combinations).map(
       ([key, combination], index) => {
         // console.log('combinationsssss',combination);
-        
+
         const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
         const batteryCapacity =
@@ -140,27 +142,27 @@ const fetchNextSensitivity = async (combinationIds) => {
         // console.log(annual_demand_m
         // et);
         // console.log("status", combination.terms_sheet_sent);
-const parseLooseJson = (str) => {
-  try {
-    if (typeof str !== "string") return {};
-    // First, replace single quotes with double quotes
-    const cleaned = str
-      .replace(/'/g, '"')                          // replace all single quotes
-      .replace(/([a-zA-Z0-9_]+):/g, '"$1":')       // add quotes around keys if missing
-      .replace(/,\s*}/g, '}')                      // remove trailing comma if any
-      .replace(/,\s*]/g, ']');                     // remove trailing comma in arrays (if any)
+        const parseLooseJson = (str) => {
+          try {
+            if (typeof str !== "string") return {};
+            // First, replace single quotes with double quotes
+            const cleaned = str
+              .replace(/'/g, '"')                          // replace all single quotes
+              .replace(/([a-zA-Z0-9_]+):/g, '"$1":')       // add quotes around keys if missing
+              .replace(/,\s*}/g, '}')                      // remove trailing comma if any
+              .replace(/,\s*]/g, ']');                     // remove trailing comma in arrays (if any)
 
-    return JSON.parse(cleaned);
-  } catch (err) {
-    console.warn("Failed to parse:", str, err);
-    return {};
-  }
-};
-  const downloadable = {
-      ...combination.downloadable,
-      cod: parseLooseJson(combination.downloadable?.cod),
-      generator_state: parseLooseJson(combination.downloadable?.generator_state),
-    };
+            return JSON.parse(cleaned);
+          } catch (err) {
+            console.warn("Failed to parse:", str, err);
+            return {};
+          }
+        };
+        const downloadable = {
+          ...combination.downloadable,
+          cod: parseLooseJson(combination.downloadable?.cod),
+          generator_state: parseLooseJson(combination.downloadable?.generator_state),
+        };
 
         return {
           key: index + 1,
@@ -183,9 +185,9 @@ const parseLooseJson = (str) => {
               : "N/A",
           totalCapacity: `${(
             windCapacity +
-            solarCapacity 
+            solarCapacity
           ).toFixed(2)}`,
-          elite_generator:combination.elite_generator,
+          elite_generator: combination.elite_generator,
           perUnitCost:
             combination["Per Unit Cost"] && !isNaN(combination["Per Unit Cost"])
               ? combination["Per Unit Cost"].toFixed(2)
@@ -203,11 +205,20 @@ const parseLooseJson = (str) => {
             "NA", // updated to handle null or undefined values
           connectivity: combination.connectivity,
           states: combination.state,
-          site_names:combination.site_names,
-          state_charges:combination.state_charges,
-          ISTS_charges:combination.ISTS_charges,
+          site_names: combination.site_names,
+          state_charges: combination.state_charges,
+          ISTS_charges: combination.ISTS_charges,
           banking_available: combination.banking_available || 0,
           downloadable,
+          OA_additional_surcharge: combination.OA_additional_surcharge,
+          OA_banking_charges: combination.OA_banking_charges,
+          OA_cross_subsidy_surcharge: combination.OA_cross_subsidy_surcharge,
+          OA_electricity_tax: combination.OA_electricity_tax,
+          OA_standby_charges: combination.OA_standby_charges,
+          OA_transmission_charges: combination.OA_transmission_charges,
+          OA_transmission_losses: combination.OA_transmission_losses,
+          OA_wheeling_charges: combination.OA_wheeling_charges,
+          OA_wheeling_losses: combination.OA_wheeling_losses,
           status: combination?.terms_sheet_sent
             ? combination?.sent_from_you === 1
               ? "Already Sent"
@@ -220,6 +231,7 @@ const parseLooseJson = (str) => {
     // console.log('tech',tech);
     // console.log("formatting com",formattedCombinations?.downloadable);
     setDataSource(formattedCombinations);
+    console.log("formattedCombinations", formattedCombinations);
 
     // After setting dataSource, start sensitivity fetch for all combinations (only if not already fetched)
     const ids = formattedCombinations.map((item) => item.combination);
@@ -255,12 +267,12 @@ const parseLooseJson = (str) => {
   useEffect(() => {
     const fetchPatterns = async () => {
       try {
-          const response = await dispatch(
-            fetchConsumptionPattern({ id: selectedDemandId, user_id })
-          ).unwrap();
-          // console.log(response);
-          setConsumptionPatterns(response.monthly_consumption);
-          setConsumerDetails(response.consumer_details);
+        const response = await dispatch(
+          fetchConsumptionPattern({ id: selectedDemandId, user_id })
+        ).unwrap();
+        // console.log(response);
+        setConsumptionPatterns(response.monthly_consumption);
+        setConsumerDetails(response.consumer_details);
       } catch (error) {
         message.error(error.message || "Failed to fetch consumption patterns.");
       }
@@ -287,8 +299,8 @@ const parseLooseJson = (str) => {
               message.error(response.error); // Display error message
               setTimeout(() => {
                 message.error('Please try in lower RE Replacement'); // Display second message after 5 seconds
-            }, 2000); 
-                         setIsTableLoading(false);
+              }, 2000);
+              setIsTableLoading(false);
               setFetchingCombinations(false);
               throw new Error(response.error);
             }
@@ -329,111 +341,110 @@ const parseLooseJson = (str) => {
     // console.log(combinationData);
 
     fetchPatterns();
-    // 
     loadCombinations();
-    
+
   }, [dispatch, selectedDemandId]);
 
 
   const prepareGraphDataForCombination = (combinationId) => {
-  const dataObj = rowSensitivityData[combinationId];
-  if (!dataObj) return null;
+    const dataObj = rowSensitivityData[combinationId];
+    if (!dataObj) return null;
 
-  const labels = [];
-  const tariffData = [];
-  const finalCostData = [];
-  const technologyCombinationData = [];
+    const labels = [];
+    const tariffData = [];
+    const finalCostData = [];
+    const technologyCombinationData = [];
 
-  Object.entries(dataObj).forEach(([reReplacement, data]) => {
-    if (typeof data !== "string") {
-      labels.push(reReplacement);
-      tariffData.push(data["Per Unit Cost"]);
-      finalCostData.push(data["Final Cost"]);
-      technologyCombinationData.push(
-        `Solar: ${data["Optimal Solar Capacity (MW)"]} MW, Wind: ${data["Optimal Wind Capacity (MW)"]} MW, Battery: ${data["Optimal Battery Capacity (MW)"]} MW`
-      );
-    }
-  });
+    Object.entries(dataObj).forEach(([reReplacement, data]) => {
+      if (typeof data !== "string") {
+        labels.push(reReplacement);
+        tariffData.push(data["Per Unit Cost"]);
+        finalCostData.push(data["Final Cost"]);
+        technologyCombinationData.push(
+          `Solar: ${data["Optimal Solar Capacity (MW)"]} MW, Wind: ${data["Optimal Wind Capacity (MW)"]} MW, Battery: ${data["Optimal Battery Capacity (MW)"]} MW`
+        );
+      }
+    });
 
-  return {
-    labels,
-    datasets: [
-      {
-        label: "Tariff (INR/kWh)",
-        data: tariffData,
-        borderColor: "#FF5733",
-        backgroundColor: "rgba(255, 87, 51, 0.2)",
-        borderWidth: 2,
-        fill: true,
-      },
-      {
-        label: "Final Cost (INR)",
-        data: finalCostData,
-        borderColor: "#337AFF",
-        backgroundColor: "rgba(51, 122, 255, 0.2)",
-        borderWidth: 2,
-        fill: true,
-      },
-    ],
-    technologyCombinationData,
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Tariff (INR/kWh)",
+          data: tariffData,
+          borderColor: "#FF5733",
+          backgroundColor: "rgba(255, 87, 51, 0.2)",
+          borderWidth: 2,
+          fill: true,
+        },
+        {
+          label: "Final Cost (INR)",
+          data: finalCostData,
+          borderColor: "#337AFF",
+          backgroundColor: "rgba(51, 122, 255, 0.2)",
+          borderWidth: 2,
+          fill: true,
+        },
+      ],
+      technologyCombinationData,
+    };
   };
-};
 
 
-const graphOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    tooltip: {
-      callbacks: {
-        label: (context) => {
-          // Use activeGraphCombination for correct tooltip data
-          const index = context.dataIndex;
-          const graphData = prepareGraphDataForCombination(activeGraphCombination);
-          const techData = graphData?.technologyCombinationData[index];
+  const graphOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            // Use activeGraphCombination for correct tooltip data
+            const index = context.dataIndex;
+            const graphData = prepareGraphDataForCombination(activeGraphCombination);
+            const techData = graphData?.technologyCombinationData[index];
 
-          if (context.raw === null) {
-            return `${context.label}: Demand cannot be met`;
-          }
+            if (context.raw === null) {
+              return `${context.label}: Demand cannot be met`;
+            }
 
-          return [
-            `${context.dataset.label}: ${context.raw}`,
-            techData,
-          ];
+            return [
+              `${context.dataset.label}: ${context.raw}`,
+              techData,
+            ];
+          },
         },
       },
-    },
-    legend: {
-      position: "bottom",
-    },
-  },
-  scales: {
-    x: {
-      title: {
-        display: true,
-        text: "RE Replacement (%)",
+      legend: {
+        position: "bottom",
       },
     },
-    y: {
-      title: {
-        display: true,
-        text: "Values",
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "RE Replacement (%)",
+        },
       },
-      beginAtZero: true,
+      y: {
+        title: {
+          display: true,
+          text: "Values",
+        },
+        beginAtZero: true,
+      },
     },
-  },
-};
+  };
   // console.log(combinationData, "combinationData");
   // const re_index = combinationData.re_index || "NA";
-// useEffect(() => {
-//   if (dataSource.length > 0 && selectedDemandId !== lastSensitivityRunId) {
-//     handleSensitivity(); // Call sensitivity only if it hasn't run for the current selectedDemandId
-//     setLastSensitivityRunId(selectedDemandId); // Update the last ID for sensitivity
-//   }
-// }, [dataSource, selectedDemandId]); // Remove hasRunSensitivity dependency
-const handleGraphModalClose = () => {
-  setIsGraphModalVisible(false); // Close the modal
-};
+  // useEffect(() => {
+  //   if (dataSource.length > 0 && selectedDemandId !== lastSensitivityRunId) {
+  //     handleSensitivity(); // Call sensitivity only if it hasn't run for the current selectedDemandId
+  //     setLastSensitivityRunId(selectedDemandId); // Update the last ID for sensitivity
+  //   }
+  // }, [dataSource, selectedDemandId]); // Remove hasRunSensitivity dependency
+  const handleGraphModalClose = () => {
+    setIsGraphModalVisible(false); // Close the modal
+  };
   useEffect(() => {
     if (isTableLoading) {
       const interval = setInterval(() => {
@@ -447,18 +458,24 @@ const handleGraphModalClose = () => {
       }, 100);
       return () => clearInterval(interval);
 
-   
+
     }
   }, [isTableLoading]);
 
   // console.log('consumption pattern',consumptionPatterns);
-  
+
   const handleRowClick = (record) => {
     setSelectedRow(record); // Record comes from the latest dataSource
-    // console.log('record clicked consumer',record);
-    
-    setIsIPPModalVisible(true);
+    // console.log('record clicked by consumer', record);
+    setIsModalVisible(true);
+    // setIsIPPModalVisible(true);
   };
+
+  const handleCombinationClick = (record) => {
+    setSelectedRow(record); // Set the selected row for the modal
+    // console.log('Combination clicked:', record);
+    setIsIPPModalVisible(true);
+  }
 
   const re_index = combinationData.re_index || "NA";
   // console.log(re_index);
@@ -531,9 +548,9 @@ const handleGraphModalClose = () => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
   };
-const handleSensitivityClick = () => {
-  setIsGraphModalVisible(true); // Show the modal
-}
+  const handleSensitivityClick = () => {
+    setIsGraphModalVisible(true); // Show the modal
+  }
 
   const marks = {
     0: "0%",
@@ -565,43 +582,42 @@ const handleSensitivityClick = () => {
       dataIndex: "combination",
       key: "combination",
       width: 120,
-      render: (text) => {
-        // Extract the parts using split()
+      render: (text, record) => {
         const parts = text.split("-");
+        let shortId = text;
+
         if (parts.length === 4) {
-          // Extract the desired parts
           const a = parts[0];
           const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
           const c = parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1);
           const d = parts[3].charAt(0) + parts[3].charAt(parts[3].length - 1);
-          // Construct the new string
-          return a + b + c + d;
-        }
-        if (parts.length === 3) {
-          // Extract the desired parts
+          shortId = a + b + c + d;
+        } else if (parts.length === 3) {
           const a = parts[0];
           const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
           const c = parts[2].charAt(0) + parts[2].charAt(parts[2].length - 1);
-          // Construct the new string
-          return a + b + c;
-        }
-        if (parts.length === 2) {
-          // Extract the desired parts
+          shortId = a + b + c;
+        } else if (parts.length === 2) {
           const a = parts[0];
-          const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1); // Extract first and last characters
-          // Construct the new string
-          return a + b;
-        } else {
-          // Handle cases where the combination doesn't have the expected format
-          return text; // Or return an empty string, or handle the error as needed
+          const b = parts[1].charAt(0) + parts[1].charAt(parts[1].length - 1);
+          shortId = a + b;
         }
+
+        return (
+          <a
+            onClick={() => handleCombinationClick(record)}
+            style={{ cursor: 'pointer', color: '#9a8406' }}
+          >
+            {shortId}
+          </a>
+        );
       },
     },
     {
       title: "Generator's Connectivity",
       dataIndex: "connectivity",
       key: "connectivity",
-       width: 120,
+      width: 120,
     },
     {
       title: "Technology",
@@ -628,25 +644,43 @@ const handleSensitivityClick = () => {
       title: "Total Capacity (MW)",
       dataIndex: "totalCapacity",
       key: "totalCapacity",
-       width: 120,
+      width: 120,
     },
     {
       title: "Per Unit Cost (INR/kWh)",
       dataIndex: "perUnitCost",
       key: "perUnitCost",
-       width: 140,
+      width: 140,
     },
     {
       title: "OA Cost (INR/kWh)",
       dataIndex: "OACost",
       key: "OACost",
-       width: 120,
+      width: 120,
+      render: (value, record) => {
+        const isExpanded = expandedRowKeys.includes(record.key);
+        return (
+          <a
+            style={{ color: "#9a8406", cursor: "pointer" }}
+            onClick={() => {
+              // console.log("OACost clicked", record);
+              setExpandedRowKeys((prev) =>
+                isExpanded
+                  ? prev.filter((key) => key !== record.key)
+                  : [...prev, record.key]
+              );
+            }}
+          >
+            {value}
+          </a>
+        );
+      },
     },
     {
       title: "Final Cost (INR/kWh)",
       dataIndex: "totalCost",
       key: "totalCost",
-       width: 120,
+      width: 120,
     },
     {
       title: "COD",
@@ -658,8 +692,8 @@ const handleSensitivityClick = () => {
       title: "Banking Available",
       dataIndex: "banking_available",
       key: "banking_available",
-    width: 100,
-  align: 'center',
+      width: 100,
+      align: 'center',
       render: (value) => (
         <div style={{ textAlign: 'center' }}>
           {value === 0 ? (
@@ -670,7 +704,7 @@ const handleSensitivityClick = () => {
         </div>
       ),
     },
-    
+
   ];
 
   if (role !== "View") {
@@ -679,13 +713,13 @@ const handleSensitivityClick = () => {
       dataIndex: "status",
       key: "status",
       width: 120,
-      render: (text, record) => 
+      render: (text, record) =>
         text !== "Send Quotation" ? (
           <Tooltip title="refer offer">
-          <Link to={`/offers`} style={{ textDecoration: "none", color: "#9A8406" }}>
-            {text}
-          </Link>
-        </Tooltip>
+            <Link to={`/offers`} style={{ textDecoration: "none", color: "#9A8406" }}>
+              {text}
+            </Link>
+          </Tooltip>
         ) : (
           <button
             style={{ padding: "2px 2px" }} // Minimize button size
@@ -697,79 +731,79 @@ const handleSensitivityClick = () => {
     });
   }
 
-  if(role !== 'View') {
+  if (role !== 'View') {
     const isDisabled = !combinationData || isGraphLoading;
-    columns.push(  {
-          title: "Sensitivity",
-          key: "sensitivity",
-          render: (_, record) => (
-            <Tooltip
-              title={
-                rowSensitivityLoading[record.combination]
-                  ? "Please wait while we optimize the model for different RE replacements."
-                  : rowSensitivityData[record.combination]
-                  ? "View Sensitivity Graph"
-                  : "Sensitivity data is loading..."
+    columns.push({
+      title: "Sensitivity",
+      key: "sensitivity",
+      render: (_, record) => (
+        <Tooltip
+          title={
+            rowSensitivityLoading[record.combination]
+              ? "Please wait while we optimize the model for different RE replacements."
+              : rowSensitivityData[record.combination]
+                ? "View Sensitivity Graph"
+                : "Sensitivity data is loading..."
+          }
+        >
+          <Button
+            type="primary"
+            disabled={!!rowSensitivityLoading[record.combination] || !rowSensitivityData[record.combination]}
+            loading={!!rowSensitivityLoading[record.combination]}
+            onClick={() => {
+              if (rowSensitivityData[record.combination]) {
+                setActiveGraphCombination(record.combination);
               }
-            >
-              <Button
-                type="primary"
-                disabled={!!rowSensitivityLoading[record.combination] || !rowSensitivityData[record.combination]}
-                loading={!!rowSensitivityLoading[record.combination]}
-                onClick={() => {
-                  if (rowSensitivityData[record.combination]) {
-                    setActiveGraphCombination(record.combination);
-                  }
-                }}
-              >
-                Sensitivity
-              </Button>
-            </Tooltip>
-          ),
-        },
-      )
-    }
+            }}
+          >
+            Sensitivity
+          </Button>
+        </Tooltip>
+      ),
+    },
+    )
+  }
 
 
-const lineChartData = {
-  labels: Array.isArray(consumptionPatterns)
-    ? consumptionPatterns.map((pattern) => pattern.month)
-    : [], // Safely check if it's an array
-  datasets: [
-    {
-      type: "bar",
-      label: "Consumption (MWh)",
-      data: Array.isArray(consumptionPatterns)
-        ? consumptionPatterns.map((pattern) => pattern.consumption)
-        : [], // Safely check if it's an array
-      backgroundColor: "#669800",
-      barThickness: 10, // Set bar thickness
-    },
-    {
-      type: "line",
-      label: "Consumption during Peak hours(MWh)",
-      data: Array.isArray(consumptionPatterns)
-        ? consumptionPatterns.map((pattern) => pattern.peak_consumption)
-        : [], // Safely check if it's an array
-      borderColor: "#FF5733",
-      borderWidth: 5, // Increase line thickness
-      fill: false,
-    },
-    {
-      type: "line",
-      label: "Consumption during Off-Peak hours(MWh)",
-      data: Array.isArray(consumptionPatterns)
-        ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption)
-        : [], // Safely check if it's an array
-      borderColor: "#337AFF",
-      borderWidth: 5, // Increase line thickness
-      fill: false,
-    },
-  ],
-};
+  const lineChartData = {
+    labels: Array.isArray(consumptionPatterns)
+      ? consumptionPatterns.map((pattern) => pattern.month)
+      : [], // Safely check if it's an array
+    datasets: [
+      {
+        type: "bar",
+        label: "Consumption (MWh)",
+        data: Array.isArray(consumptionPatterns)
+          ? consumptionPatterns.map((pattern) => pattern.consumption)
+          : [], // Safely check if it's an array
+        backgroundColor: "#669800",
+        barThickness: 10, // Set bar thickness
+      },
+      {
+        type: "line",
+        label: "Consumption during Peak hours(MWh)",
+        data: Array.isArray(consumptionPatterns)
+          ? consumptionPatterns.map((pattern) => pattern.peak_consumption)
+          : [], // Safely check if it's an array
+        borderColor: "#FF5733",
+        borderWidth: 5, // Increase line thickness
+        fill: false,
+      },
+      {
+        type: "line",
+        label: "Consumption during Off-Peak hours(MWh)",
+        data: Array.isArray(consumptionPatterns)
+          ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption)
+          : [], // Safely check if it's an array
+        borderColor: "#337AFF",
+        borderWidth: 5, // Increase line thickness
+        fill: false,
+      },
+    ],
+  };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif", paddingBottom:'50px'}}>
+    <div style={{ padding: "20px", fontFamily: "'Inter', sans-serif", paddingBottom: '50px' }}>
       <Row
         justify="center"
         align="middle"
@@ -794,24 +828,24 @@ const lineChartData = {
                 margin: "0 auto",
               }}
             >
-                <Line data={lineChartData} options={chartOptions} />
+              <Line data={lineChartData} options={chartOptions} />
               {/* <Bar data={stackedBarChartData} options={stackedBarChartOptions} /> */}
             </div>
           </Col>
         </Card>
 
-      <Card title="Demand's Details" bordered={true} >
-      <Descriptions column={3} size="small">
-        <Descriptions.Item label="Username">{consumerDetails.username}</Descriptions.Item>
-        <Descriptions.Item label="Credit Rating"> {consumerDetails.credit_rating || "N/A"}</Descriptions.Item>
-        <Descriptions.Item label="State">{consumerDetails.state}</Descriptions.Item>
-        <Descriptions.Item label="Tariff Category">{consumerDetails.tariff_category}</Descriptions.Item>
-        <Descriptions.Item label="Voltage Level">{consumerDetails.voltage_level} kV</Descriptions.Item>
-        <Descriptions.Item label="Contracted Demand">{consumerDetails.contracted_demand} MW</Descriptions.Item>
-        <Descriptions.Item label="Industry">{consumerDetails.industry}</Descriptions.Item>
-        <Descriptions.Item label="Annual Consumption">{consumerDetails.annual_consumption || 'N/A'}</Descriptions.Item>
-      </Descriptions>
-    </Card>
+        <Card title="Demand's Details" bordered={true} >
+          <Descriptions column={3} size="small">
+            <Descriptions.Item label="Username">{consumerDetails.username}</Descriptions.Item>
+            <Descriptions.Item label="Credit Rating"> {consumerDetails.credit_rating || "N/A"}</Descriptions.Item>
+            <Descriptions.Item label="State">{consumerDetails.state}</Descriptions.Item>
+            <Descriptions.Item label="Tariff Category">{consumerDetails.tariff_category}</Descriptions.Item>
+            <Descriptions.Item label="Voltage Level">{consumerDetails.voltage_level} kV</Descriptions.Item>
+            <Descriptions.Item label="Contracted Demand">{consumerDetails.contracted_demand} MW</Descriptions.Item>
+            <Descriptions.Item label="Industry">{consumerDetails.industry}</Descriptions.Item>
+            {/* <Descriptions.Item label="Annual Consumption">{consumerDetails.annual_consumption || 'N/A'}</Descriptions.Item> */}
+          </Descriptions>
+        </Card>
 
         {/* Combination Table */}
         <Col span={24}
@@ -822,8 +856,8 @@ const lineChartData = {
           }}
         >
           <div>
-            <Title level={4} style={{ color: "#669800", background:'#f8f8f8', marginBottom: "10px", padding: '10px' }}>
-            Choose Your RE transition Goal!
+            <Title level={4} style={{ color: "#669800", background: '#f8f8f8', marginBottom: "10px", padding: '10px' }}>
+              Choose Your RE transition Goal!
             </Title>
           </div>
           <div style={{ marginBottom: "20px" }}>
@@ -881,7 +915,7 @@ const lineChartData = {
             </Card>
           </div>
           <Card
-        
+
           >
             <Title level={4} style={{ color: "#001529", marginBottom: "10px" }}>
               Optimized Combinations for {value}% RE replacement
@@ -909,26 +943,118 @@ const lineChartData = {
                     textAlign: "center",
                   }}
                 >
-                Please wait while we are fetching you the best matching Renewable Capacity
+                  Please wait while we are fetching you the best matching Renewable Capacity
                 </div>
                 {/* <Progress percent={progress} /> */}
               </>
             ) : dataSource.length > 0 ? (
+
+              // main table
               <Table
                 dataSource={dataSource}
                 columns={columns}
                 pagination={false}
                 bordered
-                size="small" // Adjust table size
+                size="small"
                 style={{
                   backgroundColor: "#FFFFFF",
                   border: "1px solid #E6E8F1",
                   overflowX: "auto",
-                  // padding: '5px 10px'
                 }}
-                scroll={{ x: "max-content" }} // Enable horizontal scrolling
-                rowClassName={() => "custom-row"} // Add a custom row class
+                scroll={{ x: "max-content" }}
+                rowClassName={() => "custom-row"}
+                expandable={{
+                  expandedRowRender: (record) => {
+                    const transposedColumns = [
+                      {
+                        title: 'OA Additional Surcharge',
+                        dataIndex: 'OA_additional_surcharge',
+                        key: 'OA_additional_surcharge',
+                      },
+                      {
+                        title: 'OA Banking Charges',
+                        dataIndex: 'OA_banking_charges',
+                        key: 'OA_banking_charges',
+                      },
+                      {
+                        title: 'OA Cross Subsidy Surcharge',
+                        dataIndex: 'OA_cross_subsidy_surcharge',
+                        key: 'OA_cross_subsidy_surcharge',
+                      },
+                      {
+                        title: 'OA Electricity Tax',
+                        dataIndex: 'OA_electricity_tax',
+                        key: 'OA_electricity_tax',
+                      },
+                      {
+                        title: 'OA Standby Charges',
+                        dataIndex: 'OA_standby_charges',
+                        key: 'OA_standby_charges',
+                      },
+                      {
+                        title: 'OA Transmission Charges',
+                        dataIndex: 'OA_transmission_charges',
+                        key: 'OA_transmission_charges',
+                      },
+                      {
+                        title: 'OA Transmission Loss',
+                        dataIndex: 'OA_transmission_losses',
+                        key: 'OA_transmission_losses',
+                      },
+                      {
+                        title: 'OA Wheeling Charges',
+                        dataIndex: 'OA_wheeling_charges',
+                        key: 'OA_wheeling_charges',
+                      },
+                      {
+                        title: 'OA Wheeling Losses',
+                        dataIndex: 'OA_wheeling_losses',
+                        key: 'OA_wheeling_losses',
+                      },
+                    ];
+
+
+
+                    const transposedData = [
+                      {
+                        key: '1',
+                        OA_additional_surcharge: record.OA_additional_surcharge ?? 'N/A',
+                        OA_banking_charges: record.OA_banking_charges ?? 'N/A',
+                        OA_combined_average_replacement_PLF: record.OA_combined_average_replacement_PLF ?? 'N/A',
+                        OA_cross_subsidy_surcharge: record.OA_cross_subsidy_surcharge ?? 'N/A',
+                        OA_electricity_tax: record.OA_electricity_tax ?? 'N/A',
+                        OA_standby_charges: record.OA_standby_charges ?? 'N/A',
+                        OA_transmission_charges: record.OA_transmission_charges ?? 'N/A',
+                        OA_transmission_losses: record.OA_transmission_losses ?? 'N/A',
+                        OA_wheeling_charges: record.OA_wheeling_charges ?? 'N/A',
+                        OA_wheeling_losses: record.OA_wheeling_losses ?? 'N/A',
+                      },
+                    ];
+
+
+                    return (
+                      <div
+                        style={{ padding: '10px', marginLeft: '-55px', background: '#9a840675' }}>
+                        <Table
+                          columns={transposedColumns}
+                          dataSource={transposedData}
+                          pagination={false}
+                          size="small"
+                          bordered
+                        />
+                      </div>
+
+                    );
+                  },
+
+                  expandedRowKeys: expandedRowKeys,
+                  onExpandedRowsChange: setExpandedRowKeys,
+                  // Optional
+                  // rowExpandable: (record) => record.OA_transmission_charge !== undefined,
+                }}
+
               />
+
             ) : (
               <div
                 style={{
@@ -942,16 +1068,16 @@ const lineChartData = {
                   textAlign: "center",
                 }}
               >
-                 No optimized combinations available at the moment. Please try
-                 again later.
+                No optimized combinations available at the moment. Please try
+                again later.
                 {/* {console.log(dataSourceError)} */}
-              {dataSourceError}
+                {dataSourceError}
               </div>
             )}
           </Card>
         </Col>
 
-     <Modal
+        <Modal
           title="Sensitivity Analysis Graph"
           open={!!activeGraphCombination}
           onCancel={() => setActiveGraphCombination(null)}
@@ -997,7 +1123,7 @@ const lineChartData = {
             combination={combinationData}
             fromGenerator={false}
             fromConsumer={true}
-              fromInitiateQuotation="true"
+            fromInitiateQuotation="true"
             // combination={combinationData}         // Ensure selectedRow is updated
             reIndex={re_index} // Pass re_index to the modal
             onClose={handleIPPCancel}
@@ -1006,18 +1132,29 @@ const lineChartData = {
         )}
 
         {/* Request for Quotation Modal */}
+
+
+        {/* <RequestForQuotationModal
+        visible={isQuotationModalVisible}
+        onCancel={handleQuotationCancel}
+        data={ipp}
+        fromModal={true}
+        selectedDemandId={ipp?.selectedDemandId}
+     
+      /> */}
+
         {isModalVisible && (
           <RequestForQuotationModal
             visible={isModalVisible}
             onCancel={handleQuotationModalCancel}
             data={selectedRow}
             selectedDemandId={selectedDemandId}
-              fromInitiateQuotation="true"
-            type="generator"
+            fromInitiateQuotation="true"
+          // type="generator"
           />
         )}
         {/* <Modal open={tryLowerModal} onOk={()=> setTryLowerModal(false)} footer={null} onCancel={()=> setTryLowerModal(false)> */}
-{/* <p>Please try in lower RE Replacement</p> */}
+        {/* <p>Please try in lower RE Replacement</p> */}
         {/* </Modal> */}
       </Row>
     </div>
@@ -1025,4 +1162,3 @@ const lineChartData = {
 };
 
 export default CombinationPattern;
-                 

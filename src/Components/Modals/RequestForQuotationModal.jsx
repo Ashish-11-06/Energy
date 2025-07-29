@@ -29,7 +29,7 @@ const { Option } = Select;
 const RequestForQuotationModal = ({
   visible,
   onCancel,
-  type,
+
   data,
   fromModal,
   selectedDemandId,

@@ -31,7 +31,9 @@ const AnnualSvg = () => {
   const [isRequirementModalVisible, setIsRequirementModalVisible] =
     useState(false);
 
-  const requirementId = localStorage.getItem("selectedRequirementId");
+  // const requirementId = localStorage.getItem("selectedRequirementId");
+  const requirementId = decryptData(localStorage.getItem("selectedRequirementId"));
+  // const requirementId = localStorage.getItem(" 
   const subscriptionPlan = decryptData(localStorage.getItem("subscriptionPlanValidity"))
   // const User = JSON.parse(localStorage.getItem("user"));
   // const userId = User.id;

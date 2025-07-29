@@ -215,7 +215,7 @@ const technologyData = ipp?.technology.map((tech, index) => {
             </Card>
           </Col>
 
-          <Col span={24} style={{ textAlign: "center" }}>
+          {/* <Col span={24} style={{ textAlign: "center" }}>
             <Button
               type="primary"
               onClick={showQuotationModal}
@@ -232,7 +232,7 @@ const technologyData = ipp?.technology.map((tech, index) => {
             >
               Send Quotation
             </Button>
-          </Col>
+          </Col> */}
         </Row>
         </div>
       </Modal>
@@ -243,7 +243,7 @@ const technologyData = ipp?.technology.map((tech, index) => {
         data={ipp}
         fromModal={true}
         selectedDemandId={ipp?.selectedDemandId}
-        type="generator"
+     
       />
     </div>
   );
