@@ -1,34 +1,51 @@
-import React, { useState } from 'react';
-import { Table, Button, Space, Typography, Card } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Table, Button, Space, Typography, Card, Popconfirm, message } from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import masterTableApi from '../../Redux/Admin/api/masterTableApi';
 
 const { Title } = Typography;
 
 const MasterTable = () => {
-    const [data, setData] = useState([
-        {
-            id: 1,
-            state: 'Maharashtra',
-            ISTS_charges: 0.31,
-            state_charges: 1.2,
-            banking_charges: 8.0,
-            rooftop_price: 1.0,
-            max_capacity: 1.0,
-            transmission_charge: 126819.0,
-            transmission_loss: 3.84,
-            wheeling_charges: 0.2053,
-            wheeling_losses: 7.25,
-            combined_average_replacement_PLF: 43.0,
-        },
-    ]);
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const handleEdit = (record) => {
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const response = await masterTableApi.getData();
+            if (response.status === 200) {
+                setData(response.data);
+            } else {
+                message.error('Failed to fetch data');
+            }
+        } catch (error) {
+            message.error(error?.response?.data?.message || 'Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleEdit = async (record) => {
         console.log('Edit', record);
-        // Open modal or form here
+        // You can open a modal with form to update values
+        // And call masterTableApi.editData({ data, id }) after submitting
     };
 
-    const handleDelete = (id) => {
-        setData((prev) => prev.filter((item) => item.id !== id));
+    const handleDelete = async (record) => {
+        try {
+            const res = await masterTableApi.deleteData(record.id);
+            if (res.status === 200) {
+                message.success('Deleted successfully');
+                fetchData();
+            }
+        } catch (error) {
+            message.error(error?.response?.data?.message || 'Delete failed');
+        }
     };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const columns = [
         { title: 'State', dataIndex: 'state', key: 'state' },
@@ -46,9 +63,19 @@ const MasterTable = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <Space>
-                    <Button type="link" onClick={() => handleEdit(record)}>Edit</Button>
-                    <Button danger type="link" onClick={() => handleDelete(record.id)}>Delete</Button>
+                <Space size="middle">
+                    <EditOutlined
+                        onClick={() => handleEdit(record)}
+                        style={{ color: '#669800', cursor: 'pointer' }}
+                    />
+                    <Popconfirm
+                        title="Are you sure to delete this record?"
+                        onConfirm={() => handleDelete(record)}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <DeleteOutlined style={{ color: 'red', cursor: 'pointer' }} />
+                    </Popconfirm>
                 </Space>
             ),
         },
@@ -58,7 +85,13 @@ const MasterTable = () => {
         <div style={{ padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
                 <Title level={4} style={{ margin: 0 }}>State-wise Transmission Details</Title>
-                <Button type="primary" onClick={() => console.log('Open Add Modal')}>Add Data</Button>
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={() => console.log('Open Add Modal')}
+                >
+                    Add Data
+                </Button>
             </div>
             <Card>
                 <Table
@@ -67,6 +100,7 @@ const MasterTable = () => {
                     rowKey="id"
                     bordered
                     scroll={{ x: 'max-content' }}
+                    loading={loading}
                 />
             </Card>
         </div>
