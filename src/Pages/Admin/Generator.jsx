@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Space, Button, Popconfirm, message, Input } from 'antd';
+import { Table, Space, Button, Popconfirm, message, Input, Card } from 'antd';
 import EditUser from './Modal/EditUser';
 import { useDispatch } from 'react-redux';
 import { deleteGenerator, editGenerator, getGeneratorList } from '../../Redux/Admin/slices/generatorSlice';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const Generator = () => {
   const [searchText, setSearchText] = useState('');
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [consumerList, setConsumerList] = useState([]);
-  const [loading,setLoading] = useState(false);
-  const [modalLoading, setModalLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
   const dispatch = useDispatch();
 
   const getList = async () => {
@@ -23,7 +24,7 @@ const Generator = () => {
   };
 
   useEffect(() => {
-    getList(); 
+    getList();
   }, [dispatch]);
 
   const handleEdit = (record) => {
@@ -33,34 +34,34 @@ const Generator = () => {
 
   const handleDelete = async (record) => {
     // console.log('record',record);
-    const res=await dispatch(deleteGenerator(record?.id));
+    const res = await dispatch(deleteGenerator(record?.id));
     // console.log('res delete',res);
-    if(res?.payload) {
+    if (res?.payload) {
       message.success(res?.payload.detail || 'Consumer deleted successfully');
     }
-    await getList(); 
+    await getList();
   };
 
-const handleUpdate = async (updatedUser) => {
-  setModalLoading(true); 
-  const data = {
-    company: updatedUser?.company,
-    company_representative: updatedUser?.company_representative,
-    email: updatedUser?.email,
-    mobile: updatedUser?.mobile,
+  const handleUpdate = async (updatedUser) => {
+    setModalLoading(true);
+    const data = {
+      company: updatedUser?.company,
+      company_representative: updatedUser?.company_representative,
+      email: updatedUser?.email,
+      mobile: updatedUser?.mobile,
+    };
+
+    const res = await dispatch(editGenerator({ data, id: updatedUser?.id }));
+    setModalLoading(false);
+
+    if (res?.meta?.requestStatus === 'fulfilled') {
+      message.success(`Consumer updated`);
+      setEditModalVisible(false);
+      await getList();
+    } else {
+      message.error('Failed to update consumer');
+    }
   };
-
-  const res = await dispatch(editGenerator({ data, id: updatedUser?.id }));
-  setModalLoading(false); 
-
-  if (res?.meta?.requestStatus === 'fulfilled') {
-    message.success(`Consumer updated`);
-    setEditModalVisible(false);
-    await getList(); 
-  } else {
-    message.error('Failed to update consumer');
-  }
-};
 
 
   const filteredData = consumerList.filter((item) => {
@@ -72,30 +73,31 @@ const handleUpdate = async (updatedUser) => {
   });
 
   const columns = [
-    { title: 'Name', dataIndex: 'company_representative', key: 'company_representative', align: 'center' },
-    { title: 'Company Name', dataIndex: 'company', key: 'company', align: 'center' },
-    { title: 'Email', dataIndex: 'email', key: 'email', align: 'center' },
-    { title: 'Phone', dataIndex: 'mobile', key: 'mobile', align: 'center' },
+    { title: 'Name', dataIndex: 'company_representative', key: 'company_representative' },
+    { title: 'Company Name', dataIndex: 'company', key: 'company' },
+    { title: 'Email', dataIndex: 'email', key: 'email' },
+    { title: 'Phone', dataIndex: 'mobile', key: 'mobile' },
     {
       title: 'Actions',
       key: 'actions',
-      align: 'center',
       render: (_, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleEdit(record)}>
-            Edit
-          </Button>
+          <EditOutlined
+            onClick={() => handleEdit(record)}
+            style={{ color: '#669800', cursor: 'pointer' }}
+          />
           <Popconfirm
             title="Are you sure to delete this Consumer?"
             onConfirm={() => handleDelete(record)}
             okText="Yes"
             cancelText="No"
           >
-            <Button>Delete</Button>
+            <DeleteOutlined style={{ color: 'red', cursor: 'pointer' }} />
           </Popconfirm>
         </Space>
       ),
-    },
+    }
+
   ];
 
   return (
@@ -103,28 +105,32 @@ const handleUpdate = async (updatedUser) => {
       <h2>Generator List</h2>
 
       <Input
-        placeholder="Search by Name or City"
+        placeholder="Search by name, email or company"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
         allowClear
         style={{ width: 300, marginBottom: 16 }}
       />
 
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        bordered
-        loading={loading}
-        pagination={{ pageSize: 10 }}
-        size="small"
-      />
+      <Card
+        style={{ borderRadius: 8 }}
+      >
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          bordered
+          loading={loading}
+          pagination={{ pageSize: 10 }}
+          size="small"
+        />
+      </Card>
 
       <EditUser
         visible={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
         onUpdate={handleUpdate}
         userData={selectedUser}
-        loading={modalLoading} 
+        loading={modalLoading}
       />
     </div>
   );

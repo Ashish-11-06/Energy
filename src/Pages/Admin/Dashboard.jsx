@@ -52,20 +52,20 @@ const DoughnutChart = ({ label, dataValues = [Math.floor(Math.random() * 100), 1
 const Dashboard = () => {
   const userData = JSON.parse(localStorage.getItem('userrr'));
   const [selectedYear, setSelectedYear] = React.useState('2024');
-  const [dashboardData,setDashboardData] = useState(null);
-  const dispatch=useDispatch();
+  const [dashboardData, setDashboardData] = useState(null);
+  const dispatch = useDispatch();
   useEffect(() => {
-    const getData=async () => {
+    const getData = async () => {
       const response = await dispatch(getDashboardData());
       // console.log('response dashboard',response);
-      if(response?.payload) {
+      if (response?.payload) {
         setDashboardData(response?.payload);
       }
     }
     getData();
-  },[dispatch])
- 
-// console.log('dashboard data',dashboardData);
+  }, [dispatch])
+
+  // console.log('dashboard data',dashboardData);
 
   const barDataByYear = {
     '2022': {
@@ -117,39 +117,39 @@ const Dashboard = () => {
 
   const barData = barDataByYear[selectedYear];
 
-const barOptions = {
-  responsive: true,
-  plugins: {
-    legend: { position: 'top' },
-  },
-  scales: {
-    x: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Month',
-        color: '#333',
-        font: {
-          size: 14,
-          weight: 'bold',
+  const barOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Month',
+          color: '#333',
+          font: {
+            size: 14,
+            weight: 'bold',
+          },
+        },
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number',
+          color: '#333',
+          font: {
+            size: 14,
+            weight: 'bold',
+          },
         },
       },
     },
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Number',
-        color: '#333',
-        font: {
-          size: 14,
-          weight: 'bold',
-        },
-      },
-    },
-  },
-  maintainAspectRatio: false,
-};
+    maintainAspectRatio: false,
+  };
 
 
   // Uncomment below to enable access control
@@ -168,22 +168,22 @@ const barOptions = {
               style={{ height: '100%' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%' }}>
-               <DoughnutChart
-  label="HT Commercial"
-  dataValues={[dashboardData?.HT_Commercial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.HT_Commercial ?? 0)]}
-/>
-<DoughnutChart
-  label="HT Industrial"
-  dataValues={[dashboardData?.HT_Industrial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.HT_Industrial ?? 0)]}
-/>
-<DoughnutChart
-  label="LT Commercial"
-  dataValues={[dashboardData?.LT_Commercial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.LT_Commercial ?? 0)]}
-/>
-<DoughnutChart
-  label="LT Industrial"
-  dataValues={[dashboardData?.LT_Industrial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.LT_Industrial ?? 0)]}
-/>
+                <DoughnutChart
+                  label="HT Commercial"
+                  dataValues={[dashboardData?.HT_Commercial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.HT_Commercial ?? 0)]}
+                />
+                <DoughnutChart
+                  label="HT Industrial"
+                  dataValues={[dashboardData?.HT_Industrial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.HT_Industrial ?? 0)]}
+                />
+                <DoughnutChart
+                  label="LT Commercial"
+                  dataValues={[dashboardData?.LT_Commercial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.LT_Commercial ?? 0)]}
+                />
+                <DoughnutChart
+                  label="LT Industrial"
+                  dataValues={[dashboardData?.LT_Industrial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.LT_Industrial ?? 0)]}
+                />
 
               </div>
             </Card>
@@ -195,59 +195,59 @@ const barOptions = {
               style={{ height: '100%' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%' }}>
-              <DoughnutChart
-  label="Solar"
-  dataValues={[dashboardData?.solar_projects ?? 0, (dashboardData?.total_projects ?? 5) - (dashboardData?.solar_projects ?? 0)]}
-/>
-<DoughnutChart
-  label="Wind"
-  dataValues={[dashboardData?.wind_projects ?? 0, (dashboardData?.total_projects ?? 5) - (dashboardData?.wind_projects ?? 0)]}
-/>
-<DoughnutChart
-  label="ESS"
-  dataValues={[dashboardData?.ess_projects ?? 0, (dashboardData?.total_projects ?? 5) - (dashboardData?.ess_projects ?? 0)]}
-/>
+                <DoughnutChart
+                  label="Solar"
+                  dataValues={[dashboardData?.solar_projects ?? 0, (dashboardData?.total_projects ?? 5) - (dashboardData?.solar_projects ?? 0)]}
+                />
+                <DoughnutChart
+                  label="Wind"
+                  dataValues={[dashboardData?.wind_projects ?? 0, (dashboardData?.total_projects ?? 5) - (dashboardData?.wind_projects ?? 0)]}
+                />
+                <DoughnutChart
+                  label="ESS"
+                  dataValues={[dashboardData?.ess_projects ?? 0, (dashboardData?.total_projects ?? 5) - (dashboardData?.ess_projects ?? 0)]}
+                />
 
               </div>
             </Card>
           </Col>
 
-<Col span={3}>
-  <Card
-    title={<div style={{ textAlign: 'center', fontWeight: 'bold' }}>Offers</div>}
-    style={{ height: '100%' }}
-  >
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
-    <DoughnutChart
-  label="Offers"
-  dataValues={[
-    dashboardData?.offers_accepted ?? 0,
-    dashboardData?.offers_rejected ?? 0,
-    dashboardData?.offers_pending ?? 0
-  ]}
-  backgroundColors={['#52c41a', '#ff4d4f', '#faad14']}
-  legendLabels={['Accepted', 'Rejected', 'Pending']}
-/>
+          <Col span={3}>
+            <Card
+              title={<div style={{ textAlign: 'center', fontWeight: 'bold' }}>Offers</div>}
+              style={{ height: '100%' }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
+                <DoughnutChart
+                  label="Offers"
+                  dataValues={[
+                    dashboardData?.offers_accepted ?? 0,
+                    dashboardData?.offers_rejected ?? 0,
+                    dashboardData?.offers_pending ?? 0
+                  ]}
+                  backgroundColors={['#52c41a', '#ff4d4f', '#faad14']}
+                  legendLabels={['Accepted', 'Rejected', 'Pending']}
+                />
 
-      <div style={{ marginTop: 8, fontSize: 12 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 10, height: 10, backgroundColor: '#52c41a' }}></div>
-            <span>Accepted</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 10, height: 10, backgroundColor: '#ff4d4f' }}></div>
-            <span>Rejected</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 10, height: 10, backgroundColor: '#faad14' }}></div>
-            <span>Pending</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </Card>
-</Col>
+                <div style={{ marginTop: 8, fontSize: 12 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ width: 10, height: 10, backgroundColor: '#52c41a' }}></div>
+                      <span>Accepted</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ width: 10, height: 10, backgroundColor: '#ff4d4f' }}></div>
+                      <span>Rejected</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ width: 10, height: 10, backgroundColor: '#faad14' }}></div>
+                      <span>Pending</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </Col>
 
 
 
@@ -258,26 +258,26 @@ const barOptions = {
       <Card style={{ flex: '1 1 30%', overflow: 'hidden' }}>
         <Card
           title={
-           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-  <span>Monthly User Distribution</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>Monthly User Distribution</span>
 
- <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-  <div style={{ width: 12, height: 12, backgroundColor: '#1890ff', marginRight: 6 }}></div>
-  Total Consumer: {dashboardData?.total_consumers ?? 100}
-</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <div style={{ width: 12, height: 12, backgroundColor: '#1890ff', marginRight: 6 }}></div>
+                Total Consumer: {dashboardData?.total_consumers ?? 100}
+              </span>
 
-<span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-  <div style={{ width: 12, height: 12, backgroundColor: '#f0ad4e', marginRight: 6 }}></div>
-  Total Generator: {dashboardData?.total_generators ?? 200}
-</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <div style={{ width: 12, height: 12, backgroundColor: '#f0ad4e', marginRight: 6 }}></div>
+                Total Generator: {dashboardData?.total_generators ?? 200}
+              </span>
 
 
-  <Select value={selectedYear} onChange={setSelectedYear} style={{ width: 100 }}>
-    <Option value="2022">2022</Option>
-    <Option value="2023">2023</Option>
-    <Option value="2024">2024</Option>
-  </Select>
-</div>
+              <Select value={selectedYear} onChange={setSelectedYear} style={{ width: 100 }}>
+                <Option value="2022">2022</Option>
+                <Option value="2023">2023</Option>
+                <Option value="2024">2024</Option>
+              </Select>
+            </div>
 
           }
           style={{ height: '100%' }}

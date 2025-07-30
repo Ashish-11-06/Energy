@@ -92,7 +92,7 @@ function AuthGuard() {
     const isPublic = publicRoutes.includes(location.pathname) || emailRoute;
 
     const user = localStorage.getItem('user');
-    
+
     if (!user && !isPublic) {
       navigate('/', { replace: true });
     }
@@ -129,7 +129,7 @@ function App() {
         const diff = now - parseInt(lastActive, 10);
         if (diff > EXPIRY_MS) {
           localStorage.clear();
-       // console.log('localStorage cleared due to 24h inactivity');
+          // console.log('localStorage cleared due to 24h inactivity');
         }
       }
     };
@@ -246,24 +246,16 @@ function App() {
               </Route>
             </Route>
           </Route>
-           <Route
-          path="admin/*"
-          element={
-            <ProtectedRouteAdmin>
-              <Content
-                style={{
-                  // marginTop: "60px",
-                  // padding: "30px",
-                  // overflowY: "auto",
-                  // flexGrow: 1,
-                  // height: "calc(100vh - 60px)",
-                }}
-              >
-                <AdminRoutes />
-              </Content>
-             </ProtectedRouteAdmin>
-          }
-        ></Route>
+          <Route
+            path="admin/*"
+            element={
+              <ProtectedRouteAdmin>
+                <Content>
+                  <AdminRoutes />
+                </Content>
+              </ProtectedRouteAdmin>
+            }
+          ></Route>
         </Route>
       </Routes>
     </Router>

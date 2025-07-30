@@ -10,12 +10,13 @@ import OnlineSub from "../../Pages/Admin/OnlineSub";
 import OfflineSub from "../../Pages/Admin/OfflineSub";
 import DemandData from "../../Pages/Admin/DemandData";
 import GenerationData from "../../Pages/Admin/GenerationData";
+import MasterTable from "../../Pages/Admin/MasterTable";
 
 const AdminRoutes = () => {
   return (
     <Routes>
-        <Route path="/" element={<Login />} />
-        <Route element={<LayoutComponent/>}>
+      <Route path="/" element={<Login />} />
+      <Route element={<LayoutComponent />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/consumer" element={<Consumer />} />
         <Route path="/generator" element={<Generator />} />
@@ -25,7 +26,10 @@ const AdminRoutes = () => {
         <Route path="/help" element={<Help />} />
         <Route path="/demand" element={<DemandData />} />
         <Route path="/generation" element={<GenerationData />} />
-        </Route>
+        <Route path="/master-table" element={<MasterTable />} />
+
+
+      </Route>
     </Routes>
   )
 }

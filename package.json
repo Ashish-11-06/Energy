@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "ashish": "vite"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.2",

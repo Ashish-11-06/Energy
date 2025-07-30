@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Space, Button, Popconfirm, message, Input } from 'antd';
+import { Table, Space, Button, Popconfirm, message, Input, Card } from 'antd';
 import EditUser from './Modal/EditUser';
 import {
   deleteConsumer,
@@ -7,6 +7,7 @@ import {
   getConsumerList,
 } from '../../Redux/Admin/slices/consumerSlice';
 import { useDispatch } from 'react-redux';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const Consumer = () => {
   const [searchText, setSearchText] = useState('');
@@ -81,12 +82,12 @@ const Consumer = () => {
 
   const filteredData = Array.isArray(consumerList)
     ? consumerList.filter((item) => {
-        const lowerSearch = searchText.toLowerCase();
-        return (
-          (item.company || '').toLowerCase().includes(lowerSearch) ||
-          (item.email || '').toLowerCase().includes(lowerSearch)
-        );
-      })
+      const lowerSearch = searchText.toLowerCase();
+      return (
+        (item.company || '').toLowerCase().includes(lowerSearch) ||
+        (item.email || '').toLowerCase().includes(lowerSearch)
+      );
+    })
     : [];
 
   const columns = [
@@ -94,36 +95,43 @@ const Consumer = () => {
       title: 'Name',
       dataIndex: 'company_representative',
       key: 'company_representative',
-      align: 'center',
+      // align: 'center',
     },
     {
       title: 'Company Name',
       dataIndex: 'company',
       key: 'company',
-      align: 'center',
+      // align: 'center',
     },
-    { title: 'Email', dataIndex: 'email', key: 'email', align: 'center' },
-    { title: 'Phone', dataIndex: 'mobile', key: 'mobile', align: 'center' },
+    {
+      title: 'Email', dataIndex: 'email', key: 'email',
+      // align: 'center'
+    },
+    {
+      title: 'Phone', dataIndex: 'mobile', key: 'mobile',
+      //  align: 'center' 
+    },
     {
       title: 'Actions',
       key: 'actions',
-      align: 'center',
       render: (_, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleEdit(record)}>
-            Edit
-          </Button>
+          <EditOutlined
+            onClick={() => handleEdit(record)}
+            style={{ color: '#669800', cursor: 'pointer' }}
+          />
           <Popconfirm
             title="Are you sure to delete this Consumer?"
             onConfirm={() => handleDelete(record)}
             okText="Yes"
             cancelText="No"
           >
-            <Button>Delete</Button>
+            <DeleteOutlined style={{ color: 'red', cursor: 'pointer' }} />
           </Popconfirm>
         </Space>
       ),
-    },
+    }
+
   ];
 
   return (
@@ -138,15 +146,19 @@ const Consumer = () => {
         style={{ width: 300, marginBottom: 16 }}
       />
 
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        rowKey="id"
-        bordered
-        loading={loading}
-        pagination={{ pageSize: 10 }}
-        size="small"
-      />
+      <Card
+        style={{ borderRadius: 8 }}
+      >
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          rowKey="id"
+          bordered
+          loading={loading}
+          pagination={{ pageSize: 10 }}
+          size="small"
+        />
+      </Card>
 
       <EditUser
         visible={editModalVisible}

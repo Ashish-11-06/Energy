@@ -33,7 +33,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const user = userData?.user;
   // const user = JSON.parse(localStorage.getItem('user')).user;
 
-    const subscription=decryptData(localStorage.getItem("subscriptionPlanValidity"));
+  const subscription = decryptData(localStorage.getItem("subscriptionPlanValidity"));
   const user_category = user?.user_category;
   const is_new_user = user?.is_new_user;
   const subscription_type = subscription?.subscription_type;
@@ -54,13 +54,13 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 
   const lastMenuItem = subscription_type === 'PRO'
     ? {
-        label: 'PowerX',
-        key: is_new_user
-          ? '/px/what-we-offer'
-          : menuType === 'consumer'
+      label: 'PowerX',
+      key: is_new_user
+        ? '/px/what-we-offer'
+        : menuType === 'consumer'
           ? '/px/consumer/dashboard'
           : '/px/generator/dashboard',
-      }
+    }
     : { label: '', key: '/' };
 
   const menuItems = [
@@ -107,6 +107,18 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
       label: 'Generation Data',
       key: '/admin/generation',
       icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
+    },
+    {
+      label: 'Master Data',
+      key: '/admin/subscriptioad',
+      icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />,
+      children: [
+        { label: 'Master Table', key: '/admin/master-table' },
+        { label: 'RE Tariff', key: '/admin/r-e-tarrif-table' },
+        { label: 'Grid Tariff', key: '/admin/grid-tariff' },
+        { label: 'Peak Hours', key: '/admin/peak-hours' },
+        { label: 'National Holidays', key: '/admin/national-holidays' },
+      ],
     },
   ];
 

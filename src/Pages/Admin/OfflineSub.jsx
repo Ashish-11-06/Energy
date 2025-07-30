@@ -1,140 +1,103 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Table, Switch, Select } from 'antd';
-import AddSubscriptionModal from './Modal/AddSubscriptionModal'; // Optional
+import { Button, Modal, Table, Switch, Select, Typography } from 'antd';
+import AddSubscriptionModal from './Modal/AddSubscriptionModal';
 import { offlineSubscription } from '../../Redux/Admin/slices/subscriptionSlice';
 import { useDispatch } from 'react-redux';
 
 const { Option } = Select;
+const { Title } = Typography;
 
 const OfflineSub = () => {
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isDocModalVisible, setIsDocModalVisible] = useState(false);
   const [documentUrl, setDocumentUrl] = useState('');
   const [offlineUserTypeFilter, setOfflineUserTypeFilter] = useState('');
-  const dispatch=useDispatch();
   const [offlineData, setOfflineData] = useState([]);
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const offlineData =async () => {
+    const fetchOfflineData = async () => {
       setLoading(true);
-      const res=await dispatch(offlineSubscription());
-      // console.log('offline subscription data',res);
-      if(res?.payload) {
-        setOfflineData(res?.payload);
-        setLoading(false);
+      const res = await dispatch(offlineSubscription());
+      if (res?.payload) {
+        setOfflineData(res.payload);
       }
-    }
-    offlineData();
-  },[dispatch])
+      setLoading(false);
+    };
+    fetchOfflineData();
+  }, [dispatch]);
 
-  // const [offlineData, setOfflineData] = useState([
-  //   {
-  //     key: '1',
-  //     srNo: 1,
-  //     userType: 'Generator',
-  //     name: 'John Doe',
-  //     companyName: 'TechCorp',
-  //     siteName: 'Main Office',
-  //     subscriptionPlan: 'LITE',
-  //     enrollDate: '01-01-2024',
-  //     expiryDate: '01-01-2025',
-  //     status: true,
-  //     document: 'https://via.placeholder.com/300x400?text=Document',
-  //   },
-  //   {
-  //     key: '2',
-  //     srNo: 2,
-  //     userType: 'Consumer',
-  //     name: 'Jane Smith',
-  //     companyName: 'EcoEnergy',
-  //     siteName: 'Wind Park',
-  //     subscriptionPlan: 'PRO',
-  //     enrollDate: '02-01-2024',
-  //     expiryDate: '02-01-2025',
-  //     status: false,
-  //     document: 'https://via.placeholder.com/300x400?text=Another+Doc',
-  //   },
-  // ]);
-
-const toggleStatus = (key) => {
-  setOfflineData((prev) =>
-    prev.map((item) =>
-      item.key === key
-        ? {
-            ...item,
-            status: item.status === 'Active' ? 'Inactive' : 'Active',
-          }
-        : item
-    )
-  );
-};
+  const toggleStatus = (key) => {
+    setOfflineData((prev) =>
+      prev.map((item) =>
+        item.key === key
+          ? { ...item, status: item.status === 'Active' ? 'Inactive' : 'Active' }
+          : item
+      )
+    );
+  };
 
   const showDocumentModal = (url) => {
     setDocumentUrl(url);
     setIsDocModalVisible(true);
   };
 
-const columns = [
-  {
-    title: 'Sr. No',
-    render: (text, record, index) => index + 1,
-  },
-  { title: 'User Category', dataIndex: 'user_category' },
-  { title: 'Name', dataIndex: 'user_name' },
-  { title: 'Company Name', dataIndex: 'company_name' },
-  { title: 'Subscription Plan', dataIndex: 'subscription_type' },
-  { title: 'Start Date', dataIndex: 'start_date' },
-  { title: 'Ent Date', dataIndex: 'end_date' },
-  { title: 'Payment Status', dataIndex: 'payment_status' },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    render: (status, record) => (
-      <Switch
-        checked={status === 'Active'}
-        onChange={(checked) =>
-          toggleStatus(record.key, checked ? 'Active' : 'Inactive')
-        }
-        checkedChildren="Active"
-        unCheckedChildren="Inactive"
-      />
-    ),
-  },
-  {
-    title: 'View Document',
-    dataIndex: 'document',
-    render: (url) => (
-      <Button onClick={() => showDocumentModal(url)}>
-        View
-      </Button>
-    ),
-  },
-];
+  const columns = [
+    {
+      title: 'Sr. No',
+      render: (text, record, index) => index + 1,
+    },
+    { title: 'User Category', dataIndex: 'user_category' },
+    { title: 'Name', dataIndex: 'user_name' },
+    { title: 'Company Name', dataIndex: 'company_name' },
+    { title: 'Subscription Plan', dataIndex: 'subscription_type' },
+    { title: 'Start Date', dataIndex: 'start_date' },
+    { title: 'Ent Date', dataIndex: 'end_date' },
+    { title: 'Payment Status', dataIndex: 'payment_status' },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      render: (status, record) => (
+        <Switch
+          checked={status === 'Active'}
+          onChange={() => toggleStatus(record.key)}
+          checkedChildren="Active"
+          unCheckedChildren="Inactive"
+        />
+      ),
+    },
+    {
+      title: 'View Document',
+      dataIndex: 'document',
+      render: (url) => (
+        <Button onClick={() => showDocumentModal(url)}>View</Button>
+      ),
+    },
+  ];
 
-
-const filteredOfflineData = Array.isArray(offlineData)
-  ? (offlineUserTypeFilter
-      ? offlineData.filter(item => item.user_category === offlineUserTypeFilter)
-      : offlineData)
-  : [];
-
+  const filteredOfflineData = Array.isArray(offlineData)
+    ? offlineUserTypeFilter
+      ? offlineData.filter((item) => item.user_category === offlineUserTypeFilter)
+      : offlineData
+    : [];
 
   return (
-    <div style={{ padding: '16px' }}>
-      {/* Top Right Button */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+    <div style={{ padding: 24 }}>
+      {/* Top Action */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
         <Button type="primary" onClick={() => setIsAddModalVisible(true)}>
           View Subscription Plans
         </Button>
       </div>
 
-      {/* Offline Subscriptions */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3>Offline Subscriptions</h3>
+      {/* Offline Subscriptions Table */}
+      <div style={{ marginBottom: 40 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <Title level={4} style={{ margin: 0 }}>Offline Subscriptions</Title>
           <Select
-            style={{ width: 200 }}
+            style={{ width: 240 }}
             placeholder="Filter by User Category"
             allowClear
             value={offlineUserTypeFilter || undefined}
@@ -147,11 +110,11 @@ const filteredOfflineData = Array.isArray(offlineData)
         <Table
           columns={columns}
           dataSource={filteredOfflineData}
-          pagination={true}
+          pagination={{ pageSize: 10 }}
           loading={loading}
-          size='small'
           bordered
           scroll={{ x: 'max-content' }}
+          size="middle"
         />
       </div>
 
@@ -161,22 +124,25 @@ const filteredOfflineData = Array.isArray(offlineData)
         open={isAddModalVisible}
         onCancel={() => setIsAddModalVisible(false)}
         footer={null}
+        destroyOnClose
+        centered
       >
         <p>Form goes here...</p>
       </Modal>
 
-      {/* View Document Modal */}
+      {/* Document Preview Modal */}
       <Modal
         title="Document Preview"
         open={isDocModalVisible}
         onCancel={() => setIsDocModalVisible(false)}
         footer={null}
-        width={400}
+        width={500}
+        centered
       >
-        <img src={documentUrl} alt="Document" style={{ width: '100%' }} />
+        <img src={documentUrl} alt="Document" style={{ width: '100%', borderRadius: 4 }} />
       </Modal>
 
-      {/* Optional: Custom AddSubscriptionModal Component */}
+      {/* Optional Custom Modal */}
       {typeof AddSubscriptionModal === 'function' && (
         <AddSubscriptionModal
           visible={isAddModalVisible}
