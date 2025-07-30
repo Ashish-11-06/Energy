@@ -11,6 +11,7 @@ import OfflineSub from "../../Pages/Admin/OfflineSub";
 import DemandData from "../../Pages/Admin/DemandData";
 import GenerationData from "../../Pages/Admin/GenerationData";
 import MasterTable from "../../Pages/Admin/MasterTable";
+import RETariffTable from "../../Pages/Admin/RETariffTable";
 
 const AdminRoutes = () => {
   return (
@@ -27,6 +28,7 @@ const AdminRoutes = () => {
         <Route path="/demand" element={<DemandData />} />
         <Route path="/generation" element={<GenerationData />} />
         <Route path="/master-table" element={<MasterTable />} />
+        <Route path="/r-e-tariff-table" element={<RETariffTable/>} />
 
 
       </Route>

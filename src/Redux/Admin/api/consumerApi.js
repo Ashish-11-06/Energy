@@ -8,7 +8,7 @@ const consumerApi = {
         return axiosInstance.put(`/consumer/${id}`,data);
     },
     deleteConsumer: (id) => {
-        console.log('id in api delete',id);
+        // console.log('id in api delete',id);
         
         return axiosInstance.delete(`/consumer/${id}`);
     },

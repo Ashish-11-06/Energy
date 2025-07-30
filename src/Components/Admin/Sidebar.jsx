@@ -114,7 +114,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
       icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} />,
       children: [
         { label: 'Master Table', key: '/admin/master-table' },
-        { label: 'RE Tariff', key: '/admin/r-e-tarrif-table' },
+        { label: 'RE Tariff', key: '/admin/r-e-tariff-table' },
         { label: 'Grid Tariff', key: '/admin/grid-tariff' },
         { label: 'Peak Hours', key: '/admin/peak-hours' },
         { label: 'National Holidays', key: '/admin/national-holidays' },
