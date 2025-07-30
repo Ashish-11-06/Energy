@@ -15,6 +15,7 @@ import GridTariff from "../../Pages/Admin/GridTariff";
 import PeakHours from "../../Pages/Admin/PeakHours";
 import NationalHoliday from "../../Pages/Admin/NationalHoliday";
 
+import RETariffTable from "../../Pages/Admin/RETariffTable";
 
 const AdminRoutes = () => {
   return (
@@ -31,6 +32,7 @@ const AdminRoutes = () => {
         <Route path="/demand" element={<DemandData />} />
         <Route path="/generation" element={<GenerationData />} />
         <Route path="/master-table" element={<MasterTable />} />
+        <Route path="/r-e-tariff-table" element={<RETariffTable/>} />
         <Route path="/grid-tariff" element={<GridTariff />} />
         <Route path="/peak-hours" element={<PeakHours />} />
         <Route path="/national-holidays" element={<NationalHoliday />} />

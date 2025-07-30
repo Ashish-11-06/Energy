@@ -1,13 +1,18 @@
+// components/MasterTable.js
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Typography, Card, Popconfirm, message } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import masterTableApi from '../../Redux/Admin/api/masterTableApi';
+import MasterTableEditModal from './Modal/MasterTableEditModal';
 
 const { Title } = Typography;
 
 const MasterTable = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState(null);
+    const [modalMode, setModalMode] = useState('edit');
 
     const fetchData = async () => {
         setLoading(true);
@@ -25,10 +30,16 @@ const MasterTable = () => {
         }
     };
 
-    const handleEdit = async (record) => {
-        console.log('Edit', record);
-        // You can open a modal with form to update values
-        // And call masterTableApi.editData({ data, id }) after submitting
+    const handleEdit = (record) => {
+        setSelectedRecord(record);
+        setModalMode('edit');
+        setEditModalVisible(true);
+    };
+
+    const handleAdd = () => {
+        setSelectedRecord(null);
+        setModalMode('add');
+        setEditModalVisible(true);
     };
 
     const handleDelete = async (record) => {
@@ -85,11 +96,7 @@ const MasterTable = () => {
         <div style={{ padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
                 <Title level={4} style={{ margin: 0 }}>State-wise Transmission Details</Title>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => console.log('Open Add Modal')}
-                >
+                <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
                     Add Data
                 </Button>
             </div>
@@ -103,6 +110,15 @@ const MasterTable = () => {
                     loading={loading}
                 />
             </Card>
+
+            {/* Edit Modal */}
+            <MasterTableEditModal
+                visible={editModalVisible}
+                onClose={() => setEditModalVisible(false)}
+                record={selectedRecord}
+                onUpdate={fetchData}
+                mode={modalMode}
+            />
         </div>
     );
 };
