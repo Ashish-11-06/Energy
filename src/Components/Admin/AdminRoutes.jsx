@@ -11,6 +11,10 @@ import OfflineSub from "../../Pages/Admin/OfflineSub";
 import DemandData from "../../Pages/Admin/DemandData";
 import GenerationData from "../../Pages/Admin/GenerationData";
 import MasterTable from "../../Pages/Admin/MasterTable";
+import GridTariff from "../../Pages/Admin/GridTariff";
+import PeakHours from "../../Pages/Admin/PeakHours";
+import NationalHoliday from "../../Pages/Admin/NationalHoliday";
+
 
 const AdminRoutes = () => {
   return (
@@ -27,8 +31,9 @@ const AdminRoutes = () => {
         <Route path="/demand" element={<DemandData />} />
         <Route path="/generation" element={<GenerationData />} />
         <Route path="/master-table" element={<MasterTable />} />
-
-
+        <Route path="/grid-tariff" element={<GridTariff />} />
+        <Route path="/peak-hours" element={<PeakHours />} />
+        <Route path="/national-holidays" element={<NationalHoliday />} />
       </Route>
     </Routes>
   )
