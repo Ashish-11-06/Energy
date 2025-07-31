@@ -10,6 +10,9 @@ const masterTableApi = {
     deleteData: (id) => {
         return axiosInstance.delete(`/master-table/${id}`);
     },
+    addData: (data) => {
+        return axiosInstance.post(`/master-table`, data);
+    }
 }
 
 export default masterTableApi;
