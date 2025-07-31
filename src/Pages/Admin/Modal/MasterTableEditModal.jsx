@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, InputNumber, message, Row, Col } from 'antd';
+import { Modal, Form, InputNumber, message, Row, Col, Select } from 'antd';
 import masterTableApi from '../../../Redux/Admin/api/masterTableApi';
+import stateApi from '../../../Redux/api/consumer/stateApi';
 
 const MasterTableEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit' }) => {
     const [form] = Form.useForm();
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [states, setStates] = useState([]);
 
     useEffect(() => {
         if (mode === 'edit' && record) {
@@ -13,6 +15,22 @@ const MasterTableEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit
             form.resetFields();
         }
     }, [record, mode, visible]);
+
+    useEffect(() => {
+        const fetchStates = async () => {
+            try {
+                const response = await stateApi.states();
+                if (response.status === 200 && Array.isArray(response.data)) {
+                    // console.log('Fetched states:', response.data);
+                    setStates(response.data);
+                }
+            } catch (error) {
+                message.error('Failed to fetch states');
+            }
+        };
+
+        fetchStates();
+    }, []);
 
     const handleSubmit = async () => {
         try {
@@ -62,9 +80,24 @@ const MasterTableEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit
                             label="State"
                             rules={[{ required: true, message: 'State is required' }]}
                         >
-                            <Input />
+                            <Select
+                                placeholder="Select State"
+                                showSearch
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option?.children?.toLowerCase().includes(input.toLowerCase())
+                                }
+                            >
+                                {states.map((state) => (
+                                    <Select.Option key={state} value={state}>
+                                        {state}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                     </Col>
+
+                    {/* The rest of the form items remain unchanged */}
                     <Col span={12}>
                         <Form.Item name="ISTS_charges" label="ISTS Charges" rules={[numberValidationRule]}>
                             <InputNumber style={{ width: '100%' }} />
