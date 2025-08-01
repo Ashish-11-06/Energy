@@ -134,17 +134,11 @@ const CombinationPattern = () => {
 
         const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
-        const batteryCapacity =
-          combination["Optimal Battery Capacity (MW)"] || 0;
-        // console.log("format", combination);
+        const batteryCapacity = combination["Optimal Battery Capacity (MW)"] || 0;
         const annual_demand_met = combination["Annual Demand Met"] || 0;
-        // console.log(annual_demand_m
-        // et);
-        // console.log("status", combination.terms_sheet_sent);
         const parseLooseJson = (str) => {
           try {
             if (typeof str !== "string") return {};
-            // First, replace single quotes with double quotes
             const cleaned = str
               .replace(/'/g, '"')                          // replace all single quotes
               .replace(/([a-zA-Z0-9_]+):/g, '"$1":')       // add quotes around keys if missing
@@ -209,6 +203,7 @@ const CombinationPattern = () => {
           ISTS_charges: combination.ISTS_charges,
           banking_available: combination.banking_available || 0,
           downloadable,
+          equity_contribution: combination.equity_contribution_required_from_consumer,
           status: combination?.terms_sheet_sent
             ? combination?.sent_from_you === 1
               ? "Already Sent"
@@ -330,7 +325,7 @@ const CombinationPattern = () => {
     // console.log(combinationData);
 
     fetchPatterns();
-    // loadCombinations();
+    loadCombinations();
 
   }, [dispatch, selectedDemandId]);
 
@@ -628,7 +623,7 @@ const CombinationPattern = () => {
     //   dataIndex: "reReplacement",
     //   key: "reReplacement",
     //   // width: 100,
-    // },
+    // },OA_transmission_charge
     {
       title: "Total Capacity (MW)",
       dataIndex: "totalCapacity",
@@ -676,7 +671,7 @@ const CombinationPattern = () => {
       dataIndex: "cod",
       key: "cod",
       width: 120,
-      render: (text) => dayjs(text).format("DD-MM-YYYY"),
+      render: (text) => dayjs(text).format("DD-MM-YYYY"), OA_transmission_charge
     }, {
       title: "Banking Available",
       dataIndex: "banking_available",
@@ -1000,17 +995,17 @@ const CombinationPattern = () => {
                     ];
 
                     return (
-                      <div 
-                        style={{ padding:'10px', marginLeft:'-55px', background: '#9a840675' }}>
-                         <Table
-                        columns={transposedColumns}
-                        dataSource={transposedData}
-                        pagination={false}
-                        size="small"
-                        bordered
-                      />
+                      <div
+                        style={{ padding: '10px', marginLeft: '-55px', background: '#9a840675' }}>
+                        <Table
+                          columns={transposedColumns}
+                          dataSource={transposedData}
+                          pagination={false}
+                          size="small"
+                          bordered
+                        />
                       </div>
-                     
+
                     );
                   },
 
