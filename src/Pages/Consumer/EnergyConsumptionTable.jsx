@@ -224,7 +224,7 @@ const EnergyConsumptionTable = () => {
           // console.log("CSV upload response:", response);
           if (requirementId) {
             try {
-              const response = await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
+              await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
               // console.log('fetched successfully');
               // if (temp > 0) {
               setShowTable(true);
@@ -291,10 +291,11 @@ const EnergyConsumptionTable = () => {
   const memoizedDataSource = useMemo(() => dataSource, [dataSource]);
 
   // console.log(dataSource);
-  const monthlyData = useSelector(
+  const monthlyDataWithPickHours = useSelector(
     (state) => state.monthlyData?.monthlyData || []
   );
 
+  const monthlyData = monthlyDataWithPickHours.monthly_consumption || [];
 
   // Fetch monthly data when requirementId changes
   // Fetch monthly data when requirementId changes
@@ -303,12 +304,12 @@ const EnergyConsumptionTable = () => {
       if (requirementId) {
         try {
           const response = await dispatch(fetchMonthlyDataById(requirementId)).unwrap();
-          const temp = response.length;
+          const temp = response.monthly_consumption.length;
           setShowTable(true);
 
           let allFieldsValid = true;
 
-          for (let item of response) {
+          for (let item of response.monthly_consumption) {
             // Check each key except 'monthlyBill'
             const { monthly_consumption, peak_consumption, off_peak_consumption } = item;
             if (
@@ -325,7 +326,7 @@ const EnergyConsumptionTable = () => {
 
           setFieldsUpdated(allFieldsValid);
 
-          setTemp(response.length)
+          setTemp(response.monthly_consumption.length)
           if (temp > 0) {
             setShowTable(true);
           }
@@ -805,6 +806,74 @@ const EnergyConsumptionTable = () => {
     );
   };
 
+  const PeakHoursCard = ({ peakHours }) => {
+    const renderDynamicHours = (data, type) => {
+      const result = [];
+
+      // Regex pattern to find matching keys: e.g., 'peak_start_1'
+      const startKeys = Object.keys(data).filter(key => key.startsWith(`${type}_start_`));
+
+      startKeys.forEach(startKey => {
+        const index = startKey.split('_').pop(); // e.g., '1', '2', '3'
+        const endKey = `${type}_end_${index}`;
+
+        if (data[startKey] && data[endKey]) {
+          result.push({
+            start: data[startKey],
+            end: data[endKey],
+            label: `${type === 'peak' ? 'Peak' : 'Off-Peak'} ${index}`
+          });
+        }
+      });
+
+      return result;
+    };
+
+    // Inside your component:
+    const peakTimeSlots = renderDynamicHours(peakHours, 'peak');
+    const offPeakTimeSlots = renderDynamicHours(peakHours, 'off_peak');
+
+    return (
+      <Card
+        title="Consumption Hours for the State"
+        style={{ width:'100%'}}
+        bordered
+      >
+        <Row gutter={16}>
+          <Col span={12}>
+            <h4>Peak Hours</h4>
+            <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
+              {peakTimeSlots.length > 0 ? (
+                peakTimeSlots.map((slot, index) => (
+                  <li key={`peak-${index}`}>
+                    <strong>{slot.label}:</strong> {slot.start} - {slot.end}
+                  </li>
+                ))
+              ) : (
+                <li>Not Available</li>
+              )}
+            </ul>
+          </Col>
+
+          <Col span={12}>
+            <h4>Off-Peak Hours</h4>
+            <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
+              {offPeakTimeSlots.length > 0 ? (
+                offPeakTimeSlots.map((slot, index) => (
+                  <li key={`offpeak-${index}`}>
+                    <strong>{slot.label}:</strong> {slot.start} - {slot.end}
+                  </li>
+                ))
+              ) : (
+                <li>Not Available</li>
+              )}
+            </ul>
+          </Col>
+        </Row>
+      </Card>
+    );
+  };
+
   return (
     <div className="energy-table-container" >
       <Card style={{ maxWidth: "100%", margin: "0 auto", backgroundColor: "#f0f2f5" }}>
@@ -1035,6 +1104,9 @@ const EnergyConsumptionTable = () => {
             </div>
           ) : (
             <>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px'}}>
+                <PeakHoursCard peakHours={monthlyDataWithPickHours.peak_hours} />
+              </div>
               {/* main table */}
               <Table
                 rowKey="key"
@@ -1142,7 +1214,7 @@ const EnergyConsumptionTable = () => {
                     type="primary"
                     onClick={handleContinue}
                     style={{ marginLeft: "86%", marginTop: "8px" }}
-                    disabled={ monthlyData.length < 1 && !scadaFileUpload && !dataSource}
+                    disabled={monthlyData.length < 1 && !scadaFileUpload && !dataSource}
                   >
                     Continue {`>>`}
                   </Button>
