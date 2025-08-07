@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Select,
   Input,
@@ -11,16 +11,78 @@ import {
   Card,
   Divider,
   Radio,
+  message,
 } from 'antd';
+import notificationApi from '../../Redux/Admin/api/notificationApi';
+import consumerApi from '../../Redux/Admin/api/consumerApi';
+import generatorApi from '../../Redux/Admin/api/generatorApi';
 
 const { Option } = Select;
 const { Title } = Typography;
 
 const Notification = () => {
-  const [type, setType] = useState(''); // 'email' or 'notification'
-  const [userNumber, setUserNumber] = useState(null); // 'single_user' or 'all_user'
-  const [userType, setUserType] = useState(null); // 'Consumer' or 'Generator'
-  const [selectedUser, setSelectedUser] = useState(null); // To be populated via API
+  const [type, setType] = useState('');
+  const [userNumber, setUserNumber] = useState(null);
+  const [userType, setUserType] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userList, setUserList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (userType && userNumber === 'single_user') {
+      fetchUserList();
+    }
+  }, [userType, userNumber]);
+
+  const fetchUserList = async () => {
+    try {
+      let res;
+      if (userType === 'Consumer') {
+        res = await consumerApi.getConsumerList();
+      } else if (userType === 'Generator') {
+        res = await generatorApi.getGeneratorList();
+      }
+      if (res && res.status === 200 && Array.isArray(res.data)) {
+        setUserList(res.data);
+      } else {
+        setUserList([]);
+      }
+    } catch {
+      setUserList([]);
+    }
+  };
+
+  const handleSend = async () => {
+    try {
+      const values = await form.validateFields();
+      setLoading(true);
+
+      let user_id = 'all';
+      if (userNumber === 'single_user' && selectedUser) {
+        user_id = selectedUser;
+      }
+
+      const payload = {
+        user_id,
+        user_category: userType,
+        send_type: type,
+        title: values.title || values.subject || '',
+        message: values.message || values.content || '',
+      };
+
+      await notificationApi.addData(payload);
+      message.success('Notification sent successfully');
+      form.resetFields();
+      setUserType(null);
+      setUserNumber(null);
+      setSelectedUser(null);
+    } catch (error) {
+      message.error(error?.response?.data?.message || 'Failed to send notification');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div style={{ padding: '40px', backgroundColor: '#f5f5f5', minHeight: '90vh' }}>
@@ -61,10 +123,10 @@ const Notification = () => {
             <Title level={5}>Select User Category</Title>
             <Select
               value={userType}
-              // allowClear
               onChange={(val) => {
                 setUserType(val);
-                setSelectedUser(null); // Reset selected user
+                setSelectedUser(null);
+                setUserNumber(null);
               }}
               style={{ width: '100%' }}
               placeholder="Choose User Type"
@@ -77,7 +139,10 @@ const Notification = () => {
           <Col span={8}>
             <Title level={5}>Select User</Title>
             <Radio.Group
-              onChange={(e) => setUserNumber(e.target.value)}
+              onChange={(e) => {
+                setUserNumber(e.target.value);
+                setSelectedUser(null);
+              }}
               value={userNumber}
               style={{ display: 'flex', gap: '16px' }}
             >
@@ -94,17 +159,20 @@ const Notification = () => {
                 onChange={(val) => setSelectedUser(val)}
                 style={{ width: '100%' }}
                 placeholder={`Choose a ${userType}`}
+                loading={loading && userList.length === 0}
               >
-                {/* Dummy options for now */}
-                <Option value="user1">{userType} 1</Option>
-                <Option value="user2">{userType} 2</Option>
+                {userList.map((u) => (
+                  <Option key={u.id} value={u.id}>
+                    {u.name || u.username || u.email || `${userType} ${u.id}`}
+                  </Option>
+                ))}
               </Select>
             </Col>
           )}
         </Row>
 
         {/* Form Inputs */}
-        <Form layout="vertical">
+        <Form form={form} layout="vertical">
           {type === 'email' ? (
             <>
               <Form.Item
@@ -143,8 +211,9 @@ const Notification = () => {
 
           <Form.Item>
             <Space style={{ marginTop: 16 }}>
-              <Button type="primary">Schedule</Button>
-              <Button type="default">Send</Button>
+              <Button type="primary" loading={loading} onClick={handleSend}>
+                Send
+              </Button>
             </Space>
           </Form.Item>
         </Form>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Select, Table, Typography, Space, Switch, Card } from 'antd';
+import { Button, Modal, Select, Table, Typography, Space, Switch, Card, Input, Tag } from 'antd';
 import AddSubscriptionModal from './Modal/AddSubscriptionModal'; // Optional
 import { onlineSubscription } from '../../Redux/Admin/slices/subscriptionSlice';
 import { useDispatch } from 'react-redux';
@@ -12,9 +12,11 @@ const OnlineSub = () => {
   const [isDocModalVisible, setIsDocModalVisible] = useState(false);
   const [documentUrl, setDocumentUrl] = useState('');
   const [onlineUserTypeFilter, setOnlineUserTypeFilter] = useState('');
+  const [searchText, setSearchText] = useState('');
   const dispatch = useDispatch();
   const [onlineData, setOnlineData] = useState([]);
   const [loading, setLoading] = useState(false);
+  
   useEffect(() => {
     const onlineData = async () => {
       setLoading(true);
@@ -28,32 +30,7 @@ const OnlineSub = () => {
     onlineData();
   }, [dispatch])
 
-  // const [onlineData, setOnlineData] = useState([
-  //   {
-  //     key: '1',
-  //     srNo: 1,
-  //     userType: 'Consumer',
-  //     name: 'Alice',
-  //     companyName: 'InnoTech',
-  //     siteName: 'Factory A',
-  //     subscriptionPlan: 'PRO',
-  //     enrollDate: '05-01-2024',
-  //     expiryDate: '05-01-2025',
-  //     status: true,
-  //   },
-  //   {
-  //     key: '2',
-  //     srNo: 2,
-  //     userType: 'Generator',
-  //     name: 'Bob',
-  //     companyName: 'GreenPower',
-  //     siteName: 'Solar Farm',
-  //     subscriptionPlan: 'LITE',
-  //     enrollDate: '10-01-2024',
-  //     expiryDate: '10-01-2025',
-  //     status: false,
-  //   },
-  // ]);
+ 
 
   const toggleStatus = (key) => {
     setOnlineData((prev) =>
@@ -77,35 +54,55 @@ const OnlineSub = () => {
   const columns = [
     {
       title: 'Sr. No',
-      render: (text, record, index) => index + 1,
+      render: (text, record, index) => index + 1, align: 'center'
     },
-    { title: 'User Category', dataIndex: 'user_category' },
-    { title: 'Name', dataIndex: 'user_name' },
-    { title: 'Company Name', dataIndex: 'company_name' },
-    { title: 'Subscription Plan', dataIndex: 'subscription_type' },
-    { title: 'Start Date', dataIndex: 'start_date' },
-    { title: 'End Date', dataIndex: 'end_date' },
+    { title: 'User Category', dataIndex: 'user_category', render: (v) => v || 'N/A' },
+    { title: 'Name', dataIndex: 'user_name', render: (v) => v || 'N/A' },
+    { title: 'Company Name', dataIndex: 'company_name', render: (v) => v || 'N/A' },
+    { title: 'Subscription Plan', dataIndex: 'subscription_type', align : 'center',
+      render: (plan) => {
+        let color = '';
+        if (plan?.toLowerCase() === 'lite') color = 'green';
+        else if (plan?.toLowerCase() === 'pro') color = 'pink';
+        else if (plan?.toLowerCase() === 'free') color = 'yellow';
+        else color = 'default';
+
+        return <Tag color={color}>{plan ? plan.charAt(0).toUpperCase() + plan.slice(1).toUpperCase() : 'N/A'}</Tag>;
+      },
+
+    },
+    { title: 'Start Date', dataIndex: 'start_date', render: (v) => v || 'N/A' },
+    { title: 'End Date', dataIndex: 'end_date', render: (v) => v || 'N/A' },
     {
       title: 'Status',
       dataIndex: 'status',
-      render: (status, record) => (
-        <Switch
-          checked={status === 'Active'}
-          onChange={(checked) =>
-            toggleStatus(record.key, checked ? 'Active' : 'Inactive')
-          }
-          checkedChildren="Active"
-          unCheckedChildren="Inactive"
-        />
-      ),
+      // render: (status, record) => (
+      //   <Switch
+      //     checked={status === 'Active'}
+      //     onChange={() =>
+      //       toggleStatus(record.key ?? record.id)
+      //     }
+      //     checkedChildren="Active"
+      //     unCheckedChildren="Inactive"
+      //   />
+      // ),
     }
-
   ];
 
 
   const filteredOnlineData = onlineUserTypeFilter
     ? onlineData.filter((item) => item.user_category === onlineUserTypeFilter)
     : onlineData;
+
+  const finalFilterData = filteredOnlineData.filter((item) => {
+    const lowerSearch = searchText.toLowerCase();
+    return (
+      (item.user_name?.toLowerCase().includes(lowerSearch) || '') ||
+      (item.company_name?.toLowerCase().includes(lowerSearch) || '') ||
+      (item.subscription_type?.toLowerCase().includes(lowerSearch) || '') ||
+      (item.user_category?.toLowerCase().includes(lowerSearch) || '')
+    );
+  });
 
   return (
     <div style={{ padding: 24 }}>
@@ -136,12 +133,17 @@ const OnlineSub = () => {
             <Option value="Generator">Generator</Option>
           </Select>
         </div>
-        <Card
-          style={{ borderRadius: 8 }}
-        >
+        <Input
+          placeholder="Search by name, company name, subscription type, user catagory"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          allowClear
+          style={{ width: 500, marginBottom: 16 }}
+        />
+        <Card style={{ borderRadius: 8 }}>
           <Table
             columns={columns}
-            dataSource={filteredOnlineData}
+            dataSource={finalFilterData}
             pagination={{ pageSize: 10 }}
             bordered
             loading={loading}
@@ -153,6 +155,8 @@ const OnlineSub = () => {
       </div>
 
       {/* Add Subscription Modal */}
+      {/* Remove or comment out this block to prevent the modal from showing */}
+      {/* 
       <Modal
         title="Add Subscription"
         open={isAddModalVisible}
@@ -163,6 +167,7 @@ const OnlineSub = () => {
       >
         <p>Form goes here...</p>
       </Modal>
+      */}
 
       {/* Document Preview Modal */}
       <Modal
@@ -188,3 +193,4 @@ const OnlineSub = () => {
 };
 
 export default OnlineSub;
+

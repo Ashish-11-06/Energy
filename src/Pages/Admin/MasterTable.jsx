@@ -1,6 +1,6 @@
 // components/MasterTable.js
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Card, Popconfirm, message } from 'antd';
+import { Table, Button, Space, Typography, Card, Popconfirm, message, Input } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import masterTableApi from '../../Redux/Admin/api/masterTableApi';
 import MasterTableEditModal from './Modal/MasterTableEditModal';
@@ -13,6 +13,7 @@ const MasterTable = () => {
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [modalMode, setModalMode] = useState('edit');
+    const [searchText, setSearchText] = useState('');
 
     const fetchData = async () => {
         setLoading(true);
@@ -58,18 +59,45 @@ const MasterTable = () => {
         fetchData();
     }, []);
 
+    const filteredData = data.filter((item) => {
+        const lowerSearch = searchText.toLowerCase();
+        return (
+            (item.state?.toLowerCase().includes(lowerSearch) || '') 
+        );
+    });
+
     const columns = [
-        { title: 'State', dataIndex: 'state', key: 'state' },
-        { title: 'ISTS Charges', dataIndex: 'ISTS_charges', key: 'ISTS_charges' },
-        { title: 'State Charges', dataIndex: 'state_charges', key: 'state_charges' },
-        { title: 'Banking Charges', dataIndex: 'banking_charges', key: 'banking_charges' },
-        { title: 'Rooftop Price', dataIndex: 'rooftop_price', key: 'rooftop_price' },
-        { title: 'Max Capacity', dataIndex: 'max_capacity', key: 'max_capacity' },
-        { title: 'Transmission Charge', dataIndex: 'transmission_charge', key: 'transmission_charge' },
-        { title: 'Transmission Loss (%)', dataIndex: 'transmission_loss', key: 'transmission_loss' },
-        { title: 'Wheeling Charges', dataIndex: 'wheeling_charges', key: 'wheeling_charges' },
-        { title: 'Wheeling Losses (%)', dataIndex: 'wheeling_losses', key: 'wheeling_losses' },
-        { title: 'Avg Replacement PLF (%)', dataIndex: 'combined_average_replacement_PLF', key: 'combined_average_replacement_PLF' },
+        { title: 'State', dataIndex: 'state', key: 'state', render: (v) => v || 'N/A' },
+        { title: 'ISTS Charges', dataIndex: 'ISTS_charges', key: 'ISTS_charges',
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'State Charges', dataIndex: 'state_charges', key: 'state_charges', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'Banking Charges', dataIndex: 'banking_charges', key: 'banking_charges', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'Rooftop Price', dataIndex: 'rooftop_price', key: 'rooftop_price', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'Max Capacity', dataIndex: 'max_capacity', key: 'max_capacity', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'Transmission Charge', dataIndex: 'transmission_charge', key: 'transmission_charge', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'Transmission Loss (%)', dataIndex: 'transmission_loss', key: 'transmission_loss', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'Wheeling Charges', dataIndex: 'wheeling_charges', key: 'wheeling_charges', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'Wheeling Losses (%)', dataIndex: 'wheeling_losses', key: 'wheeling_losses', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'Avg Replacement PLF (%)', dataIndex: 'combined_average_replacement_PLF', key: 'combined_average_replacement_PLF', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
         {
             title: 'Actions',
             key: 'actions',
@@ -100,9 +128,16 @@ const MasterTable = () => {
                     Add Data
                 </Button>
             </div>
+            <Input
+                placeholder='Search by State'
+                value={searchText}
+                style={{ width: 300, marginBottom: 16 }}
+                onChange={(e) => setSearchText(e.target.value)}
+                allowClear
+            />
             <Card>
                 <Table
-                    dataSource={data}
+                    dataSource={filteredData}
                     columns={columns}
                     rowKey="id"
                     bordered

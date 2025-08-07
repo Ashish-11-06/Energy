@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Typography, Card, message } from 'antd';
+import { Table, Button, Space, Typography, Card, message, Input } from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Popconfirm } from 'antd';
 import peakHoursApi from '../../Redux/Admin/api/peakHoursApi';
+import PeakHoursEditModal from './Modal/PeakHoursEditModal';
 
 const { Title } = Typography;
 
@@ -18,6 +21,10 @@ const PeakHours = () => {
     const [data, setData] = useState([]);
     const [hoveredId, setHoveredId] = useState({ edit: null, delete: null });
     const [loading, setLoading] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState(null);
+    const [searchText, setSearchText] = useState('');
+    const [modalMode, setModalMode] = useState('edit');
 
     const fetchData = async () => {
         setLoading(true);
@@ -40,8 +47,15 @@ const PeakHours = () => {
     }, []);
 
     const handleEdit = (record) => {
-        console.log('Edit', record);
-        // Open modal or form here
+        setSelectedRecord(record);
+        setModalMode('edit');
+        setEditModalVisible(true);
+    };
+
+    const handleAdd = () => {
+        setSelectedRecord(null);
+        setModalMode('add');
+        setEditModalVisible(true);
     };
 
     const handleDelete = async (record) => {
@@ -56,39 +70,56 @@ const PeakHours = () => {
         }
     };
 
+    const filteredData = data.filter((item) => {
+        const lowerSearch = searchText.toLowerCase();
+        return (
+            (item.name?.toLowerCase().includes(lowerSearch) || '')
+        );
+    });
+
     const columns = [
-        { title: 'State', dataIndex: 'state', key: 'state' },
-        { title: 'Peak Hours', dataIndex: 'peak_hours', key: 'peak_hours' },
-        { title: 'Off Peak Hours', dataIndex: 'off_peak_hours', key: 'off_peak_hours' },
-        { title: 'Peak Start 1', dataIndex: 'peak_start_1', key: 'peak_start_1' },
-        { title: 'Peak End 1', dataIndex: 'peak_end_1', key: 'peak_end_1' },
-        { title: 'Peak Start 2', dataIndex: 'peak_start_2', key: 'peak_start_2' },
-        { title: 'Peak End 2', dataIndex: 'peak_end_2', key: 'peak_end_2' },
-        { title: 'Off Peak Start', dataIndex: 'off_peak_start', key: 'off_peak_start' },
-        { title: 'Off Peak End', dataIndex: 'off_peak_end', key: 'off_peak_end' },
+        { title: 'State', dataIndex: 'name', key: 'name', render: (v) => v || 'N/A' },
+        { title: 'Peak Hours', dataIndex: 'peak_hours', key: 'peak_hours', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'Off Peak Hours', dataIndex: 'off_peak_hours', key: 'off_peak_hours', 
+            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        },
+        { title: 'Peak Start 1', dataIndex: 'peak_start_1', key: 'peak_start_1', 
+            render: (v) => v || 'N/A' 
+        },
+        { title: 'Peak End 1', dataIndex: 'peak_end_1', key: 'peak_end_1', 
+            render: (v) => v || 'N/A' 
+        },
+        { title: 'Peak Start 2', dataIndex: 'peak_start_2', key: 'peak_start_2', 
+            render: (v) => v || 'N/A' 
+        },
+        { title: 'Peak End 2', dataIndex: 'peak_end_2', key: 'peak_end_2', 
+            render: (v) => v || 'N/A' 
+        },
+        { title: 'Off Peak Start', dataIndex: 'off_peak_start', key: 'off_peak_start', 
+            render: (v) => v || 'N/A' 
+        },
+        { title: 'Off Peak End', dataIndex: 'off_peak_end', key: 'off_peak_end', 
+            render: (v) => v || 'N/A' 
+        },
         {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <Space>
-                    <Button
-                        type="link"
-                        style={hoveredId.edit === record.id ? { ...buttonStyle, ...buttonHoverStyle } : buttonStyle}
-                        onMouseEnter={() => setHoveredId(h => ({ ...h, edit: record.id }))}
-                        onMouseLeave={() => setHoveredId(h => ({ ...h, edit: null }))}
+                <Space size="middle">
+                    <EditOutlined
                         onClick={() => handleEdit(record)}
+                        style={{ color: '#669800', cursor: 'pointer' }}
+                    />
+                    <Popconfirm
+                        title="Are you sure to delete this record?"
+                        onConfirm={() => handleDelete(record)}
+                        okText="Yes"
+                        cancelText="No"
                     >
-                        Edit
-                    </Button>
-                    <Button
-                        type="link"
-                        style={hoveredId.delete === record.id ? { ...buttonStyle, ...buttonHoverStyle } : buttonStyle}
-                        onMouseEnter={() => setHoveredId(h => ({ ...h, delete: record.id }))}
-                        onMouseLeave={() => setHoveredId(h => ({ ...h, delete: null }))}
-                        onClick={() => handleDelete(record)}
-                    >
-                        Delete
-                    </Button>
+                        <DeleteOutlined style={{ color: 'red', cursor: 'pointer' }} />
+                    </Popconfirm>
                 </Space>
             ),
         },
@@ -98,11 +129,20 @@ const PeakHours = () => {
         <div style={{ padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
                 <Title level={4} style={{ margin: 0 }}>State-wise Peak/Off-Peak Hours</Title>
-                <Button type="primary" onClick={() => console.log('Open Add Modal')}>Add Data</Button>
+                <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+                    Add Data
+                </Button>
             </div>
+            <Input
+                placeholder="Search by State"
+                value={searchText}               
+                onChange={(e) => setSearchText(e.target.value)}
+                style={{ width: 300, marginBottom: 16 }}
+                allowClear
+            />
             <Card>
                 <Table
-                    dataSource={data}
+                    dataSource={filteredData}
                     columns={columns}
                     rowKey="id"
                     bordered
@@ -110,6 +150,13 @@ const PeakHours = () => {
                     loading={loading}
                 />
             </Card>
+            <PeakHoursEditModal
+                visible={editModalVisible}
+                onClose={() => setEditModalVisible(false)}
+                record={selectedRecord}
+                onUpdate={fetchData}
+                mode={modalMode}
+            />
         </div>
     );
 };

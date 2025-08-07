@@ -1,60 +1,40 @@
-import React, { useState } from 'react';
-import { Table, Space, Button, Popconfirm, message, Input } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Table, Space, Button, Popconfirm, message, Input, Card } from 'antd';
 import EditUser from './Modal/EditUser';
 import ConsumptionUnitModal from './Modal/ConsumptionUnitModal';
 import MonthData from './Modal/MonthData';
+import demandDataApi from '../../Redux/Admin/api/demandDataApi';
 
 const DemandData = () => {
   const [searchText, setSearchText] = useState('');
   const [viewModal, setViewModal] = useState(false);
-   const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [data, setData] = useState([
-    {
-      key: '1',
-      cid: 'CUD1234',
-      site_name: 'Tech Solutions',
-      industry: 'Information Technology',
-      phone: '9876543210',
-      city: 'Pune',
-      contracted_demand: '100 kW',
-      tariff_category: 'Commercial',
-      voltage_level: '11 kV',
-      annual_electricity_consumption: '120 MWh',
-      expected_date: '2023-12-01',
-    },
-    {
-      key: '2',
-      cid: 'CUD2345',
-      site_name: 'Green Solutions',
-      industry: 'Consumer Discretionary',
-      phone: '9123456780',
-      city: 'Mumbai',
-      contracted_demand: '150 kW',
-      tariff_category: 'Commercial',
-      voltage_level: '33 kV',
-      annual_electricity_consumption: '120 MWh',
-      expected_date: '2023-12-01',
-    },
-    {
-      key: '3',
-      cid: 'CUD6789',
-      site_name: 'Eco Innovations',
-      industry: 'Financials',
-      phone: '9988776655',
-      city: 'Delhi',
-      contracted_demand: '100 kW',
-      tariff_category: 'Commercial',
-      voltage_level: '66 kV',
-      annual_electricity_consumption: '120 MWh',
-      expected_date: '2023-12-01',
-    },
-  ]);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await demandDataApi.getData();
+      if (response.status === 200) {
+        setData(response.data);
+      } else {
+        message.error('Failed to fetch data');
+      }
+    } catch (error) {
+      message.error(error?.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleView = (record) => {
-    // console.log('handle view called');
-    // console.log('record is ', record);
     setSelectedUser(record);
     setViewModal(true);
   };
@@ -62,14 +42,12 @@ const DemandData = () => {
   const filteredData = data.filter((item) => {
     const lowerSearch = searchText.toLowerCase();
     return (
-      item.site_name.toLowerCase().includes(lowerSearch) ||
-      item.industry.toLowerCase().includes(lowerSearch)
+      (item.consumption_unit?.toLowerCase().includes(lowerSearch) || '') ||
+      (item.industry?.toLowerCase().includes(lowerSearch) || '')
     );
   });
 
- const handleConsumptionUnitClick = (record) => {
-    // console.log('record is ',record);
-    
+  const handleConsumptionUnitClick = (record) => {
     setSelectedRecord(record);
     setModalOpen(true);
   };
@@ -80,18 +58,31 @@ const DemandData = () => {
   };
 
   const columns = [
-    { title: 'Consumer ID', dataIndex: 'cid', key: 'cid', align: 'center' },
+    {
+      title: 'Sr.No.',
+      dataIndex: 'sr_no',
+      key: 'sr_no',
+      align: 'center',
+      render: (_, __, index) => index + 1,
+    },
+    // {
+    //   title: 'Consumer ID',
+    //   dataIndex: 'username',
+    //   key: 'username',
+    //   align: 'center',
+    // },
     {
       title: 'Consumption Unit',
-      dataIndex: 'site_name',
-      key: 'site_name',
+      dataIndex: 'consumption_unit',
+      key: 'consumption_unit',
       align: 'center',
       render: (_, record) => (
         <p type="link" onClick={() => handleConsumptionUnitClick(record)} style={{ color: 'rgb(154, 132, 6)', cursor: 'pointer' }}>
-          {record.site_name}
+          {record.consumption_unit}
         </p>
       ),
     },
+    {title: 'State', dataIndex: 'state', key: 'state', align: 'center'},
     { title: 'Industry', dataIndex: 'industry', key: 'industry', align: 'center' },
     {
       title: '12 Month Demand Data',
@@ -107,12 +98,9 @@ const DemandData = () => {
     },
   ];
 
-
-
   return (
     <div style={{ padding: 24 }}>
       <h2>DemandData List</h2>
-
       <Input
         placeholder="Search by consumption Unit or Industry"
         value={searchText}
@@ -120,21 +108,21 @@ const DemandData = () => {
         allowClear
         style={{ width: 300, marginBottom: 16 }}
       />
-
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        bordered
-        pagination={{ pageSize: 10 }}
-        rowKey="cid"
-        size='small'
-      />
-
+      <Card>
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          bordered
+          pagination={{ pageSize: 10 }}
+          rowKey="id"
+          size="small"
+          loading={loading}
+        />
+      </Card>
       {/* view Modal */}
       <MonthData
         open={viewModal}
         onCancel={() => setViewModal(false)}
-        // onUpdate={handleUpdate}
         userData={selectedUser}
       />
       <ConsumptionUnitModal
@@ -147,3 +135,4 @@ const DemandData = () => {
 };
 
 export default DemandData;
+     

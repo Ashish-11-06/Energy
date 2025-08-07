@@ -18,6 +18,25 @@ export const offlineSubscription = createAsyncThunk(
   }
 );
 
+export const offlineSubscriptionStatus = createAsyncThunk(
+  'subscription/offlineSubscriptionStatus',
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      const response = await subscriptionApi.offlineSubscriptionStatus(id, { status }); 
+
+      if (response.status === 200 && response.data) {
+        return response.data;
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } catch (error) {
+      console.error('🔴 Error in offlineSubscriptionStatus:', error); // ✅ debug
+      return rejectWithValue(error.response?.data?.message || error.message || 'Something went wrong');
+    }
+  }
+);
+
+
 
 export const onlineSubscription = createAsyncThunk(
   'subscription/onlineSubscription',

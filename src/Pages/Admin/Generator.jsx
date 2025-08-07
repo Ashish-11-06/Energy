@@ -73,6 +73,10 @@ const Generator = () => {
   });
 
   const columns = [
+    {
+      title: 'Sr.No', dataIndex: 'sr_no', key: 'sr_no',
+      render: (_, __, index) => index + 1, align: 'center'
+    },
     { title: 'Name', dataIndex: 'company_representative', key: 'company_representative' },
     { title: 'Company Name', dataIndex: 'company', key: 'company' },
     { title: 'Email', dataIndex: 'email', key: 'email' },

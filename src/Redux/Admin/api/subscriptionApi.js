@@ -7,6 +7,9 @@ const subscriptionApi = {
     offlineSubscription: () => {
         return axiosInstance.get(`/offline-subscriptions`);
     },
+    offlineSubscriptionStatus: (id, data) => {
+        return axiosInstance.put(`/offline-subscription/${id}`, data);
+    },
     getSubscriptionPlan : () => {
         return axiosInstance.get(`/subscription-plans`);
     },

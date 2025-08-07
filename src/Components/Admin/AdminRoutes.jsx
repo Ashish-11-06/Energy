@@ -16,6 +16,7 @@ import PeakHours from "../../Pages/Admin/PeakHours";
 import NationalHoliday from "../../Pages/Admin/NationalHoliday";
 
 import RETariffTable from "../../Pages/Admin/RETariffTable";
+import CreditRatingVerification from "../../Pages/Admin/CreditRatingVerification";
 
 const AdminRoutes = () => {
   return (
@@ -24,6 +25,7 @@ const AdminRoutes = () => {
       <Route element={<LayoutComponent />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/consumer" element={<Consumer />} />
+        <Route path="/consumer/rating" element={<CreditRatingVerification />} />
         <Route path="/generator" element={<Generator />} />
         <Route path="/subscription/online" element={<OnlineSub />} />
         <Route path="/subscription/offline" element={<OfflineSub />} />
