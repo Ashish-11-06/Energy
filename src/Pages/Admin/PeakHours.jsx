@@ -1,24 +1,35 @@
-// components/MasterTable.js
-import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Card, Popconfirm, message, Input } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Table, Button, Space, Typography, Card, message, Input } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import masterTableApi from '../../Redux/Admin/api/masterTableApi';
-import MasterTableEditModal from './Modal/MasterTableEditModal';
+import { Popconfirm } from 'antd';
+import peakHoursApi from '../../Redux/Admin/api/peakHoursApi';
+import PeakHoursEditModal from './Modal/PeakHoursEditModal';
 
 const { Title } = Typography;
 
-const MasterTable = () => {
+const buttonStyle = {
+    background: '#d4f7d4',
+    border: '1px solid #d9d9d9',
+    color: '#333',
+    transition: 'background 0.3s'
+};
+const buttonHoverStyle = {
+    background: '#fff'
+};
+
+const PeakHours = () => {
     const [data, setData] = useState([]);
+    const [hoveredId, setHoveredId] = useState({ edit: null, delete: null });
     const [loading, setLoading] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState(null);
-    const [modalMode, setModalMode] = useState('edit');
     const [searchText, setSearchText] = useState('');
+    const [modalMode, setModalMode] = useState('edit');
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await masterTableApi.getData();
+            const response = await peakHoursApi.getData();
             if (response.status === 200) {
                 setData(response.data);
             } else {
@@ -30,6 +41,10 @@ const MasterTable = () => {
             setLoading(false);
         }
     };
+    
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const handleEdit = (record) => {
         setSelectedRecord(record);
@@ -45,7 +60,7 @@ const MasterTable = () => {
 
     const handleDelete = async (record) => {
         try {
-            const res = await masterTableApi.deleteData(record.id);
+            const res = await peakHoursApi.deleteData(record.id);
             if (res.status === 200) {
                 message.success('Deleted successfully');
                 fetchData();
@@ -55,48 +70,38 @@ const MasterTable = () => {
         }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
     const filteredData = data.filter((item) => {
         const lowerSearch = searchText.toLowerCase();
         return (
-            (item.state?.toLowerCase().includes(lowerSearch) || '') 
+            (item.name?.toLowerCase().includes(lowerSearch) || '')
         );
     });
 
     const columns = [
-        { title: 'State', dataIndex: 'state', key: 'state', render: (v) => v || 'N/A' },
-        { title: 'ISTS Charges', dataIndex: 'ISTS_charges', key: 'ISTS_charges',
+        { title: 'State', dataIndex: 'name', key: 'name', render: (v) => v || 'N/A' },
+        { title: 'Peak Hours', dataIndex: 'peak_hours', key: 'peak_hours', 
             render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
         },
-        { title: 'State Charges', dataIndex: 'state_charges', key: 'state_charges', 
+        { title: 'Off Peak Hours', dataIndex: 'off_peak_hours', key: 'off_peak_hours', 
             render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
         },
-        { title: 'Banking Charges', dataIndex: 'banking_charges', key: 'banking_charges', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        { title: 'Peak Start 1', dataIndex: 'peak_start_1', key: 'peak_start_1', 
+            render: (v) => v || 'N/A' 
         },
-        { title: 'Rooftop Price', dataIndex: 'rooftop_price', key: 'rooftop_price', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        { title: 'Peak End 1', dataIndex: 'peak_end_1', key: 'peak_end_1', 
+            render: (v) => v || 'N/A' 
         },
-        { title: 'Max Capacity', dataIndex: 'max_capacity', key: 'max_capacity', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        { title: 'Peak Start 2', dataIndex: 'peak_start_2', key: 'peak_start_2', 
+            render: (v) => v || 'N/A' 
         },
-        { title: 'Transmission Charge', dataIndex: 'transmission_charge', key: 'transmission_charge', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        { title: 'Peak End 2', dataIndex: 'peak_end_2', key: 'peak_end_2', 
+            render: (v) => v || 'N/A' 
         },
-        { title: 'Transmission Loss (%)', dataIndex: 'transmission_loss', key: 'transmission_loss', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        { title: 'Off Peak Start', dataIndex: 'off_peak_start', key: 'off_peak_start', 
+            render: (v) => v || 'N/A' 
         },
-        { title: 'Wheeling Charges', dataIndex: 'wheeling_charges', key: 'wheeling_charges', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'Wheeling Losses (%)', dataIndex: 'wheeling_losses', key: 'wheeling_losses', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'Avg Replacement PLF (%)', dataIndex: 'combined_average_replacement_PLF', key: 'combined_average_replacement_PLF', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+        { title: 'Off Peak End', dataIndex: 'off_peak_end', key: 'off_peak_end', 
+            render: (v) => v || 'N/A' 
         },
         {
             title: 'Actions',
@@ -123,16 +128,16 @@ const MasterTable = () => {
     return (
         <div style={{ padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-                <Title level={4} style={{ margin: 0 }}>State-wise Transmission Details</Title>
+                <Title level={4} style={{ margin: 0 }}>State-wise Peak/Off-Peak Hours</Title>
                 <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
                     Add Data
                 </Button>
             </div>
             <Input
-                placeholder='Search by State'
-                value={searchText}
-                style={{ width: 300, marginBottom: 16 }}
+                placeholder="Search by State"
+                value={searchText}               
                 onChange={(e) => setSearchText(e.target.value)}
+                style={{ width: 300, marginBottom: 16 }}
                 allowClear
             />
             <Card>
@@ -145,9 +150,7 @@ const MasterTable = () => {
                     loading={loading}
                 />
             </Card>
-
-            {/* Edit Modal */}
-            <MasterTableEditModal
+            <PeakHoursEditModal
                 visible={editModalVisible}
                 onClose={() => setEditModalVisible(false)}
                 record={selectedRecord}
@@ -158,4 +161,4 @@ const MasterTable = () => {
     );
 };
 
-export default MasterTable;
+export default PeakHours;

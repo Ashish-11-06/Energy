@@ -5,14 +5,14 @@ const ConsumptionUnitModal = ({ open, onClose, record }) => {
   if (!record) return null;
 
   const data = [
-    { key: '1', label: 'Consumer ID', value: record.cid },
-    { key: '2', label: 'Consumption Unit', value: record.site_name },
+    { key: '1', label: 'Consumer ID', value: record.username },
+    { key: '2', label: 'Consumption Unit', value: record.consumption_unit },
     { key: '3', label: 'Industry', value: record.industry },
     { key: '4', label: 'Contracted Demand (MW)', value: record.contracted_demand },
     { key: '5', label: 'Tariff Category', value: record.tariff_category },
     { key: '6', label: 'Voltage Level (kV)', value: record.voltage_level },
     { key: '7', label: 'Annual Electricity Consumption (MWh)', value: record.annual_electricity_consumption },
-    { key: '8', label: 'Expected Procurement Date', value: record.expected_date },
+    { key: '8', label: 'Expected Procurement Date', value: record.procurement_date },
     // Add more fields if needed:
     // { key: '9', label: 'Phone', value: record.phone },
     // { key: '10', label: 'City', value: record.city },
@@ -36,7 +36,7 @@ const ConsumptionUnitModal = ({ open, onClose, record }) => {
   return (
     <Modal
       open={open}
-      title={`Details for Consumption Unit: ${record.site_name}`}
+      title={`Details for Consumption Unit: ${record.consumption_unit}`}
       onCancel={onClose}
       footer={null}
     >

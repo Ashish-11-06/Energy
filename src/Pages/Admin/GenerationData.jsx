@@ -1,61 +1,53 @@
-import React, { useState } from 'react';
-import { Table, Space, Button, Input } from 'antd';
-import * as XLSX from 'xlsx'; // Import xlsx for Excel export
+import React, { useState, useEffect } from 'react';
+import { Table, Space, Button, Input, message, Card } from 'antd';
+import * as XLSX from 'xlsx';
 import GenerationModal from './Modal/GenerationModal';
+import generationDataApi from '../../Redux/Admin/api/generationDataApi';
 
 const GenerationData = () => {
   const [searchText, setSearchText] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const [data] = useState([
-    {
-      key: '1',
-      gen_id: 'GEN1234',
-      site_name: 'Tech Solutions',
-      technology: 'Solar',
-      connectivity: 'CTU',
-      available_capacity: '120 kW',
-      total_install_capacity: '150 kW',
-      capital_cost: 100,
-      expected_tariff: 5,
-      annual_generation: '120 MWh',
-      expected_date: '2023-12-01',
-    },
-    {
-      key: '2',
-      gen_id: 'GEN2345',
-      site_name: 'Green Solutions',
-      technology: 'Wind',
-      connectivity: 'STU',
-      available_capacity: '120 kW',
-      total_install_capacity: '150 kW',
-      capital_cost: 100,
-      expected_tariff: 5,
-      annual_generation: '120 MWh',
-      expected_date: '2023-12-01',
-    },
-    {
-      key: '3',
-      gen_id: 'GEN6789',
-      site_name: 'Eco Innovations',
-      technology: 'ESS',
-      connectivity: 'STU',
-      available_capacity: '120 kW',
-      total_install_capacity: '150 kW',
-      capital_cost: 100,
-      expected_tariff: 5,
-      annual_generation: '120 MWh',
-      expected_date: '2023-12-01',
-    },
-  ]);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await generationDataApi.getGeneratorList();
+      if (response.status === 200) {
+        // If your API returns an object with keys (Solar, Wind, ESS), flatten it
+        let flatData = [];
+        if (typeof response.data === 'object' && !Array.isArray(response.data)) {
+          Object.entries(response.data).forEach(([tech, arr]) => {
+            arr.forEach(item => {
+              flatData.push({ ...item, technology: tech });
+            });
+          });
+        } else {
+          flatData = response.data;
+        }
+        setData(flatData);
+      } else {
+        message.error('Failed to fetch data');
+      }
+    } catch (error) {
+      message.error(error?.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
-  // Filter records by site_name or industry (optional field)
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const filteredData = data.filter((item) => {
     const lowerSearch = searchText.toLowerCase();
     return (
-      item.site_name.toLowerCase().includes(lowerSearch) ||
-      (item.industry?.toLowerCase().includes(lowerSearch) ?? false)
+      (item.site_name?.toLowerCase().includes(lowerSearch) || '') ||
+      (item.technology?.toLowerCase().includes(lowerSearch) || '')
     );
   });
 
@@ -69,7 +61,6 @@ const GenerationData = () => {
     setSelectedRecord(null);
   };
 
-  // ✅ Export selected record to Excel
   const downloadExcel = (record) => {
     const worksheet = XLSX.utils.json_to_sheet([record]);
     const workbook = XLSX.utils.book_new();
@@ -78,7 +69,9 @@ const GenerationData = () => {
   };
 
   const columns = [
-    { title: 'Generator ID', dataIndex: 'gen_id', key: 'cid', align: 'center' },
+    {title: 'Sr.No.', dataIndex: 'sr_no', key: 'sr_no', align: 'center',
+       render: (_, __, index) => index + 1
+    },
     {
       title: 'Site Name',
       dataIndex: 'site_name',
@@ -94,6 +87,7 @@ const GenerationData = () => {
         </p>
       ),
     },
+    { title: 'State', dataIndex: 'state', key: 'state', align: 'center' },
     { title: 'Technology', dataIndex: 'technology', key: 'technology', align: 'center' },
     { title: 'Connectivity', dataIndex: 'connectivity', key: 'connectivity', align: 'center' },
     {
@@ -111,27 +105,28 @@ const GenerationData = () => {
   return (
     <div style={{ padding: 24 }}>
       <h2>Generation Data List</h2>
-
       <Input
-        placeholder="Search by consumption Unit or Industry"
+        placeholder="Search by Site Name or Technology"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
         allowClear
         style={{ width: 300, marginBottom: 16 }}
       />
-
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        bordered
-        pagination={{ pageSize: 10 }}
-        rowKey="cid"
-        size='small'
-      />
-
+      <Card>
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          bordered
+          pagination={{ pageSize: 10 }}
+          rowKey="id"
+          size="small"
+          loading={loading}
+        />
+      </Card>
       <GenerationModal open={modalOpen} onClose={handleModalClose} record={selectedRecord} />
     </div>
   );
 };
 
 export default GenerationData;
+ 

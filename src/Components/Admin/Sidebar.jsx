@@ -73,6 +73,11 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
       label: 'Consumer',
       key: '/admin/consumer',
       icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} />,
+       children: [
+        { label: 'Consumer List', key: '/admin/consumer' },
+        { label: 'Credit Rating', key: '/admin/consumer/rating' },
+
+      ],
     },
     {
       label: 'Generator',

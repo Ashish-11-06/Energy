@@ -87,10 +87,8 @@ const PlanEditor = ({ visible, onCancel }) => {
     );
     setPlans(updatedPlans);
     setSelectedPlan(null);
-     setEditLoading(false);
+    setEditLoading(false);
   };
-
-
 
 useEffect(() => {
 fetchPlan();
@@ -173,9 +171,9 @@ fetchPlan();
             <Form.Item label="Subscription Type" name="subscription_type" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-<Form.Item name="id" hidden>
-  <Input />
-</Form.Item>
+            <Form.Item name="id" hidden>
+              <Input />
+            </Form.Item>
             <Form.Item label="Price" name="price" rules={[{ required: true }]}>
               <Input addonAfter="INR" type="number" />
             </Form.Item>

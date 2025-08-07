@@ -1,24 +1,34 @@
-// components/MasterTable.js
-import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Card, Popconfirm, message, Input } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Table, Button, Space, Typography, Card, message, Popconfirm, Input } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import masterTableApi from '../../Redux/Admin/api/masterTableApi';
-import MasterTableEditModal from './Modal/MasterTableEditModal';
+import gridTraiffApi from '../../Redux/Admin/api/gridTraiffApi';
+import GridTariffEditModal from './Modal/GridTariffEditModal';
 
 const { Title } = Typography;
 
-const MasterTable = () => {
+const buttonStyle = {
+    background: '#d4f7d4',
+    border: '1px solid #d9d9d9',
+    color: '#333',
+    transition: 'background 0.3s'
+};
+const buttonHoverStyle = {
+    background: '#fff'
+};
+
+const GridTariff = () => {
     const [data, setData] = useState([]);
+    const [hoveredId, setHoveredId] = useState({ edit: null, delete: null });
     const [loading, setLoading] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [searchText, setSearchText] = useState('');
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [modalMode, setModalMode] = useState('edit');
-    const [searchText, setSearchText] = useState('');
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await masterTableApi.getData();
+            const response = await gridTraiffApi.getData();
             if (response.status === 200) {
                 setData(response.data);
             } else {
@@ -30,6 +40,10 @@ const MasterTable = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const handleEdit = (record) => {
         setSelectedRecord(record);
@@ -45,7 +59,7 @@ const MasterTable = () => {
 
     const handleDelete = async (record) => {
         try {
-            const res = await masterTableApi.deleteData(record.id);
+            const res = await gridTraiffApi.deleteData(record.id);
             if (res.status === 200) {
                 message.success('Deleted successfully');
                 fetchData();
@@ -55,49 +69,21 @@ const MasterTable = () => {
         }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
     const filteredData = data.filter((item) => {
         const lowerSearch = searchText.toLowerCase();
         return (
-            (item.state?.toLowerCase().includes(lowerSearch) || '') 
-        );
+            (item.state?.toLowerCase().includes(lowerSearch) || '') ||
+            (item.tariff_category?.toLowerCase().includes(lowerSearch) || '')
+        );  
     });
 
     const columns = [
+        {title: 'Sr.No.', dataIndex: 'sr_no', key: 'sr_no', align: 'center',
+            render: (_, __, index) => index + 1
+        },
         { title: 'State', dataIndex: 'state', key: 'state', render: (v) => v || 'N/A' },
-        { title: 'ISTS Charges', dataIndex: 'ISTS_charges', key: 'ISTS_charges',
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'State Charges', dataIndex: 'state_charges', key: 'state_charges', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'Banking Charges', dataIndex: 'banking_charges', key: 'banking_charges', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'Rooftop Price', dataIndex: 'rooftop_price', key: 'rooftop_price', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'Max Capacity', dataIndex: 'max_capacity', key: 'max_capacity', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'Transmission Charge', dataIndex: 'transmission_charge', key: 'transmission_charge', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'Transmission Loss (%)', dataIndex: 'transmission_loss', key: 'transmission_loss', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'Wheeling Charges', dataIndex: 'wheeling_charges', key: 'wheeling_charges', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'Wheeling Losses (%)', dataIndex: 'wheeling_losses', key: 'wheeling_losses', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
-        { title: 'Avg Replacement PLF (%)', dataIndex: 'combined_average_replacement_PLF', key: 'combined_average_replacement_PLF', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
-        },
+        { title: 'Tariff Category', dataIndex: 'tariff_category', key: 'tariff_category', render: (v) => v || 'N/A' },
+        { title: 'Cost', dataIndex: 'cost', key: 'cost', render: (v) => (v !== undefined && v !== null ? v : 'N/A') },
         {
             title: 'Actions',
             key: 'actions',
@@ -123,18 +109,19 @@ const MasterTable = () => {
     return (
         <div style={{ padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-                <Title level={4} style={{ margin: 0 }}>State-wise Transmission Details</Title>
+                <Title level={4} style={{ margin: 0 }}>State-wise Grid Tariff Details</Title>
                 <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
                     Add Data
                 </Button>
             </div>
             <Input
-                placeholder='Search by State'
+                placeholder='Search by State or Tariff Category'
                 value={searchText}
                 style={{ width: 300, marginBottom: 16 }}
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={(e) => {setSearchText(e.target.value)}}
                 allowClear
             />
+            
             <Card>
                 <Table
                     dataSource={filteredData}
@@ -145,9 +132,7 @@ const MasterTable = () => {
                     loading={loading}
                 />
             </Card>
-
-            {/* Edit Modal */}
-            <MasterTableEditModal
+            <GridTariffEditModal
                 visible={editModalVisible}
                 onClose={() => setEditModalVisible(false)}
                 record={selectedRecord}
@@ -158,4 +143,5 @@ const MasterTable = () => {
     );
 };
 
-export default MasterTable;
+export default GridTariff;
+
