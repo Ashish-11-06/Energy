@@ -140,6 +140,11 @@ const Consumer = () => {
       //  align: 'center'
     },
     {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+    },
+    {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
@@ -178,7 +183,7 @@ const Consumer = () => {
             onChange={(value) => setStatusFilter(value)}
       >
         <Option value="Active">Active</Option>
-        <Option value="Disable">Disable</Option>
+        <Option value="Inactive">Inactive</Option>
       </Select>
 
       <Card style={{ borderRadius: 8 }}>
