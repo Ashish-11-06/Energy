@@ -107,17 +107,18 @@ const PeakHoursEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit' 
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name="off_peak_hours"
-                            label="Off Peak Hours"
-                            rules={[numberValidationRule]}
-                        >
-                            <InputNumber style={{ width: '100%' }} />
-                        </Form.Item>
+    name="off_peak_hours"
+    label="Off Peak Hours"
+    rules={[numberValidationRule, { required: true, message: 'Off Peak Hours is required' }]}
+>
+    <InputNumber style={{ width: '100%' }} />
+</Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
                             name="peak_start_1"
                             label="Peak Start 1"
+                            rules={[{ required: true, message: 'Peak Start 1 is required' }]}
                         >
                             <Input />
                         </Form.Item>
@@ -126,6 +127,7 @@ const PeakHoursEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit' 
                         <Form.Item
                             name="peak_end_1"
                             label="Peak End 1"
+                            rules={[{ required: true, message: 'Peak End 1 is required' }]}
                         >
                             <Input />
                         </Form.Item>
@@ -134,6 +136,7 @@ const PeakHoursEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit' 
                         <Form.Item
                             name="peak_start_2"
                             label="Peak Start 2"
+                            rules={[{ required: true, message: 'Peak Start 2 is required' }]}
                         >
                             <Input />
                         </Form.Item>
@@ -142,22 +145,43 @@ const PeakHoursEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit' 
                         <Form.Item
                             name="peak_end_2"
                             label="Peak End 2"
+                            rules={[{ required: true, message: 'Peak End 2 is required' }]}
                         >
                             <Input />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name="off_peak_start"
-                            label="Off Peak Start"
+                            name="off_peak_start_1"
+                            label="Off Peak Start 1"
+                            rules={[{ required: true, message: 'Off Peak Start 1 is required' }]}
                         >
                             <Input />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name="off_peak_end"
-                            label="Off Peak End"
+                            name="off_peak_end_1"
+                            label="Off Peak End 1"
+                            rules={[{ required: true, message: 'Off Peak End 1 is required' }]}
+                        >
+                            <Input />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="off_peak_start_2"
+                            label="Off Peak Start 2"
+                            rules={[{ required: true, message: 'Off Peak Start 2 is required' }]}
+                        >
+                            <Input />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="off_peak_end_2"
+                            label="Off Peak End 2"
+                            rules={[{ required: true, message: 'Off Peak End 2 is required' }]}
                         >
                             <Input />
                         </Form.Item>

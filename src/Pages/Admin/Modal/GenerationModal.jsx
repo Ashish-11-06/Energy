@@ -11,10 +11,10 @@ const GenerationModal = ({ open, onClose, record }) => {
     { key: '1', label: 'Consumption Unit', value: record.site_name },
     { key: '2', label: 'Available Capacity', value: record.available_capacity },
     { key: '3', label: 'Total install capacity', value: record.total_install_capacity },
-    { key: '4', label: 'Capital cost', value: record.capital_cost },
-    { key: '5', label: 'Expected tariff', value: record.expected_tariff },
-    { key: '6', label: 'Annual generation', value: record.annual_generation_potential },
-    { key: '7', label: 'Expected Procurement Date', value: record.cod },
+    // { key: '4', label: 'Capital cost', value: record.capital_cost },
+    // { key: '5', label: 'Expected tariff', value: record.expected_tariff },
+    { key: '4', label: 'Annual generation', value: record.annual_generation_potential },
+    { key: '5', label: 'Expected Procurement Date', value: record.cod },
   ];
 
   const columns = [

@@ -43,7 +43,8 @@ const DemandData = () => {
     const lowerSearch = searchText.toLowerCase();
     return (
       (item.consumption_unit?.toLowerCase().includes(lowerSearch) || '') ||
-      (item.industry?.toLowerCase().includes(lowerSearch) || '')
+      (item.industry?.toLowerCase().includes(lowerSearch) || '') ||
+      (item.state?.toLowerCase().includes(lowerSearch) || '')
     );
   });
 
@@ -102,11 +103,11 @@ const DemandData = () => {
     <div style={{ padding: 24 }}>
       <h2>DemandData List</h2>
       <Input
-        placeholder="Search by consumption Unit or Industry"
+        placeholder="Search by consumption Unit, State, Industry"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
         allowClear
-        style={{ width: 300, marginBottom: 16 }}
+        style={{ width: 400, marginBottom: 16 }}
       />
       <Card>
         <Table

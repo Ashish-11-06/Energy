@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Space, Button, Input, message, Card } from 'antd';
-import * as XLSX from 'xlsx';
-import GenerationModal from './Modal/GenerationModal';
-import generationDataApi from '../../Redux/Admin/api/generationDataApi';
+import React, { useState, useEffect } from "react";
+import { Table, Space, Button, Input, message, Card, Modal } from "antd";
+import GenerationModal from "./Modal/GenerationModal";
+import generationDataApi from "../../Redux/Admin/api/generationDataApi";
+import Notification from "./Notification"; // Import your Notification component
 
 const GenerationData = () => {
-  const [searchText, setSearchText] = useState('');
-  const [modalOpen, setModalOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [generationModalOpen, setGenerationModalOpen] = useState(false);
+  const [notificationModalOpen, setNotificationModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,11 +17,13 @@ const GenerationData = () => {
     try {
       const response = await generationDataApi.getGeneratorList();
       if (response.status === 200) {
-        // If your API returns an object with keys (Solar, Wind, ESS), flatten it
         let flatData = [];
-        if (typeof response.data === 'object' && !Array.isArray(response.data)) {
+        if (
+          typeof response.data === "object" &&
+          !Array.isArray(response.data)
+        ) {
           Object.entries(response.data).forEach(([tech, arr]) => {
-            arr.forEach(item => {
+            arr.forEach((item) => {
               flatData.push({ ...item, technology: tech });
             });
           });
@@ -29,15 +32,14 @@ const GenerationData = () => {
         }
         setData(flatData);
       } else {
-        message.error('Failed to fetch data');
+        message.error("Failed to fetch data");
       }
     } catch (error) {
-      message.error(error?.response?.data?.message || 'Something went wrong');
+      message.error(error?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     fetchData();
@@ -46,57 +48,80 @@ const GenerationData = () => {
   const filteredData = data.filter((item) => {
     const lowerSearch = searchText.toLowerCase();
     return (
-      (item.site_name?.toLowerCase().includes(lowerSearch) || '') ||
-      (item.technology?.toLowerCase().includes(lowerSearch) || '')
+      item.site_name?.toLowerCase().includes(lowerSearch) ||
+      "" ||
+      item.technology?.toLowerCase().includes(lowerSearch) ||
+      "" ||
+      item.state?.toLowerCase().includes(lowerSearch) ||
+      ""
     );
   });
 
   const handleConsumptionUnitClick = (record) => {
     setSelectedRecord(record);
-    setModalOpen(true);
+    setGenerationModalOpen(true);
   };
 
-  const handleModalClose = () => {
-    setModalOpen(false);
+  const handleGenerationModalClose = () => {
+    setGenerationModalOpen(false);
     setSelectedRecord(null);
   };
 
-  const downloadExcel = (record) => {
-    const worksheet = XLSX.utils.json_to_sheet([record]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Generation Data');
-    XLSX.writeFile(workbook, `${record.site_name}_details.xlsx`);
+  const handleNotificationClick = (record) => {
+    setSelectedRecord(record);
+    setNotificationModalOpen(true);
+  };
+
+  const handleNotificationModalClose = () => {
+    setNotificationModalOpen(false);
+    setSelectedRecord(null);
   };
 
   const columns = [
-    {title: 'Sr.No.', dataIndex: 'sr_no', key: 'sr_no', align: 'center',
-       render: (_, __, index) => index + 1
+    {
+      title: "Sr.No.",
+      dataIndex: "sr_no",
+      key: "sr_no",
+      align: "center",
+      render: (_, __, index) => index + 1,
     },
     {
-      title: 'Site Name',
-      dataIndex: 'site_name',
-      key: 'site_name',
-      align: 'center',
+      title: "Site Name",
+      dataIndex: "site_name",
+      key: "site_name",
+      align: "center",
       render: (_, record) => (
         <p
           type="link"
           onClick={() => handleConsumptionUnitClick(record)}
-          style={{ color: 'rgb(154, 132, 6)', cursor: 'pointer' }}
+          style={{ color: "rgb(154, 132, 6)", cursor: "pointer" }}
         >
           {record.site_name}
         </p>
       ),
     },
-    { title: 'State', dataIndex: 'state', key: 'state', align: 'center' },
-    { title: 'Technology', dataIndex: 'technology', key: 'technology', align: 'center' },
-    { title: 'Connectivity', dataIndex: 'connectivity', key: 'connectivity', align: 'center' },
+    { title: "State", dataIndex: "state", key: "state", align: "center" },
     {
-      title: 'Actions',
-      key: 'actions',
-      align: 'center',
+      title: "Technology",
+      dataIndex: "technology",
+      key: "technology",
+      align: "center",
+    },
+    {
+      title: "Connectivity",
+      dataIndex: "connectivity",
+      key: "connectivity",
+      align: "center",
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
-          <Button onClick={() => downloadExcel(record)}>Download</Button>
+          <Button onClick={() => handleNotificationClick(record)}>
+            Send Notification
+          </Button>
         </Space>
       ),
     },
@@ -106,7 +131,7 @@ const GenerationData = () => {
     <div style={{ padding: 24 }}>
       <h2>Generation Data List</h2>
       <Input
-        placeholder="Search by Site Name or Technology"
+        placeholder="Search by Site Name, State, Technology"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
         allowClear
@@ -123,10 +148,38 @@ const GenerationData = () => {
           loading={loading}
         />
       </Card>
-      <GenerationModal open={modalOpen} onClose={handleModalClose} record={selectedRecord} />
+      <GenerationModal
+        open={generationModalOpen}
+        onClose={handleGenerationModalClose}
+        record={selectedRecord}
+      />
+
+      {/* Notification Modal */}
+      <Modal
+        title={`Send Notification to ${
+          selectedRecord?.site_name || "Generator"
+        }`}
+        open={notificationModalOpen}
+        onCancel={handleNotificationModalClose}
+        footer={null}
+        width={800}
+        destroyOnClose
+        style={{ top: 20 }}
+        bodyStyle={{
+          padding: "24px",
+          overflowY: "auto",
+          maxHeight: "calc(100vh - 160px)",
+        }}
+      >
+        <Notification
+          isModal={true} // Explicitly pass as boolean
+          preselectedUserType="Generator"
+          preselectedUser={selectedRecord?.id}
+          onClose={handleNotificationModalClose}
+        />
+      </Modal>
     </div>
   );
 };
 
 export default GenerationData;
- 

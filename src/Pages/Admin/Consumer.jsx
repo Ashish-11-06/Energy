@@ -1,21 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Space, Button, Popconfirm, message, Input, Card } from 'antd';
-import EditUser from './Modal/EditUser';
+import React, { useEffect, useState } from "react";
+import {
+  Table,
+  Space,
+  Button,
+  Popconfirm,
+  message,
+  Input,
+  Card,
+  Select,
+} from "antd";
+import EditUser from "./Modal/EditUser";
 import {
   deleteConsumer,
   editConsumer,
   getConsumerList,
-} from '../../Redux/Admin/slices/consumerSlice';
-import { useDispatch } from 'react-redux';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+} from "../../Redux/Admin/slices/consumerSlice";
+import { useDispatch } from "react-redux";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const Consumer = () => {
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [consumerList, setConsumerList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("all");
+
   const dispatch = useDispatch();
 
   const getList = async () => {
@@ -26,10 +37,10 @@ const Consumer = () => {
         setConsumerList(res.payload);
       } else {
         setConsumerList([]);
-        console.error('Unexpected response:', res.payload);
+        console.error("Unexpected response:", res.payload);
       }
     } catch (error) {
-      console.error('Error fetching consumer list:', error);
+      console.error("Error fetching consumer list:", error);
       setConsumerList([]);
     } finally {
       setLoading(false);
@@ -49,13 +60,13 @@ const Consumer = () => {
     try {
       const res = await dispatch(deleteConsumer(record?.id));
       if (res?.payload) {
-        message.success(res.payload.detail || 'Consumer deleted successfully');
+        message.success(res.payload.detail || "Consumer deleted successfully");
         await getList();
       } else {
-        message.error('Failed to delete consumer');
+        message.error("Failed to delete consumer");
       }
     } catch (error) {
-      message.error('Delete failed');
+      message.error("Delete failed");
     }
   };
 
@@ -71,71 +82,83 @@ const Consumer = () => {
     const res = await dispatch(editConsumer({ data, id: updatedUser?.id }));
     setModalLoading(false);
 
-    if (res?.meta?.requestStatus === 'fulfilled') {
-      message.success('Consumer updated');
+    if (res?.meta?.requestStatus === "fulfilled") {
+      message.success("Consumer updated");
       setEditModalVisible(false);
       await getList();
     } else {
-      message.error('Failed to update consumer');
+      message.error("Failed to update consumer");
     }
   };
 
   const filteredData = Array.isArray(consumerList)
     ? consumerList.filter((item) => {
-      const lowerSearch = searchText.toLowerCase();
-      return (
-        (item.company || '').toLowerCase().includes(lowerSearch) ||
-        (item.email || '').toLowerCase().includes(lowerSearch)
-      );
-    })
+        const lowerSearch = searchText.toLowerCase();
+        const matchesSearch =
+          (item.company || "").toLowerCase().includes(lowerSearch) ||
+          (item.email || "").toLowerCase().includes(lowerSearch);
+
+        const matchesStatus =
+          statusFilter === "all" || item.status === statusFilter;
+
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      // .sort((a, b) => b.id - a.id)  // Sort by newest first
     : [];
 
   const columns = [
     {
-      title: 'Sr.No', dataIndex: 'sr_no', key: 'sr_no',
-      render: (_, __, index) => index + 1, align: 'center'
+      title: "Sr.No",
+      dataIndex: "sr_no",
+      key: "sr_no",
+      render: (_, __, index) => index + 1,
+      align: "center",
     },
     {
-      title: 'Name',
-      dataIndex: 'company_representative',
-      key: 'company_representative',
+      title: "Name",
+      dataIndex: "company_representative",
+      key: "company_representative",
       // align: 'center',
     },
     {
-      title: 'Company Name',
-      dataIndex: 'company',
-      key: 'company',
+      title: "Company Name",
+      dataIndex: "company",
+      key: "company",
       // align: 'center',
     },
     {
-      title: 'Email', dataIndex: 'email', key: 'email',
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
       // align: 'center'
     },
     {
-      title: 'Phone', dataIndex: 'mobile', key: 'mobile',
-      //  align: 'center' 
+      title: "Phone",
+      dataIndex: "mobile",
+      key: "mobile",
+      //  align: 'center'
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_, record) => (
         <Space size="middle">
           <EditOutlined
             onClick={() => handleEdit(record)}
-            style={{ color: '#669800', cursor: 'pointer' }}
+            style={{ color: "#669800", cursor: "pointer" }}
           />
-          <Popconfirm
+          {/* <Popconfirm
             title="Are you sure to delete this Consumer?"
             onConfirm={() => handleDelete(record)}
             okText="Yes"
             cancelText="No"
           >
             <DeleteOutlined style={{ color: 'red', cursor: 'pointer' }} />
-          </Popconfirm>
+          </Popconfirm> */}
         </Space>
       ),
-    }
-
+    },
   ];
 
   return (
@@ -149,10 +172,16 @@ const Consumer = () => {
         allowClear
         style={{ width: 300, marginBottom: 16 }}
       />
-
-      <Card
-        style={{ borderRadius: 8 }}
+      <Select
+        placeholder="Filter by Status"
+            style={{ width: 200 }}
+            onChange={(value) => setStatusFilter(value)}
       >
+        <Option value="Active">Active</Option>
+        <Option value="Disable">Disable</Option>
+      </Select>
+
+      <Card style={{ borderRadius: 8 }}>
         <Table
           columns={columns}
           dataSource={filteredData}

@@ -77,31 +77,50 @@ const PeakHours = () => {
         );
     });
 
+    // Utility to format HH:mm:ss → HH:mm
+    const formatTime = (time) => {
+    if (!time) return 'N/A';
+    return time.slice(0, 5); // First 5 chars: HH:mm
+    };
+
+
     const columns = [
-        { title: 'State', dataIndex: 'name', key: 'name', render: (v) => v || 'N/A' },
+        { title: 'State', dataIndex: 'name', key: 'name', render: formatTime  },
         { title: 'Peak Hours', dataIndex: 'peak_hours', key: 'peak_hours', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+            render: formatTime  
         },
         { title: 'Off Peak Hours', dataIndex: 'off_peak_hours', key: 'off_peak_hours', 
-            render: (v) => (v !== undefined && v !== null ? v : 'N/A') 
+            render: formatTime  
         },
         { title: 'Peak Start 1', dataIndex: 'peak_start_1', key: 'peak_start_1', 
-            render: (v) => v || 'N/A' 
+            render: formatTime 
         },
         { title: 'Peak End 1', dataIndex: 'peak_end_1', key: 'peak_end_1', 
-            render: (v) => v || 'N/A' 
+            render: formatTime  
         },
         { title: 'Peak Start 2', dataIndex: 'peak_start_2', key: 'peak_start_2', 
-            render: (v) => v || 'N/A' 
+            render: formatTime  
         },
         { title: 'Peak End 2', dataIndex: 'peak_end_2', key: 'peak_end_2', 
-            render: (v) => v || 'N/A' 
+            render: formatTime  
         },
         { title: 'Off Peak Start', dataIndex: 'off_peak_start', key: 'off_peak_start', 
-            render: (v) => v || 'N/A' 
+            render: formatTime  
         },
         { title: 'Off Peak End', dataIndex: 'off_peak_end', key: 'off_peak_end', 
-            render: (v) => v || 'N/A' 
+            render: formatTime  
+        },
+        { title: 'Off Peak Start 1', dataIndex: 'off_peak_start_1', key: 'off_peak_start_1', 
+            render: formatTime 
+        },
+        { title: 'Off Peak End 1', dataIndex: 'off_peak_end_1', key: 'off_peak_end_1', 
+            render: formatTime  
+        },
+        { title: 'Off Peak Start 2', dataIndex: 'off_peak_start_2', key: 'off_peak_start_2', 
+            render: formatTime  
+        },
+        { title: 'Off Peak End 2', dataIndex: 'off_peak_end_2', key: 'off_peak_end_2', 
+            render: formatTime  
         },
         {
             title: 'Actions',

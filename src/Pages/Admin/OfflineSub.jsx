@@ -8,6 +8,7 @@ import AssignPlanUserModal from './Modal/AssignPlanUserModal';
 
 const { Option } = Select;
 const { Title } = Typography;
+const { confirm } = Modal;
 
 const OfflineSub = () => {
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
@@ -35,6 +36,18 @@ const OfflineSub = () => {
     };
     fetchOfflineData();
   }, [dispatch]);
+
+  // Wrapper to show confirmation before updating status
+const confirmUpdateStatus = (id, newStatus) => {
+  confirm({
+    title: `Are you sure you want to ${newStatus.toLowerCase()} this subscription?`,
+    content: `This will mark the payment status as ${newStatus}.`,
+    okText: 'Yes',
+    cancelText: 'No',
+     centered: true,
+    onOk: () => updateStatus(id, newStatus),
+  });
+};
 
   const toggleStatus = (key) => {
     setOfflineData((prev) =>
@@ -122,34 +135,35 @@ const OfflineSub = () => {
       // ),
     },
   {
-    title: 'Action',
-    dataIndex: 'document',
-    render: (_, record) => (
-      <Space>
-        {/* Approve Icon - disable if already approved */}
-        <CheckCircleOutlined
-          style={{
-            color: record.payment_status === 'Approved' ? 'gray' : 'green',
-            cursor: record.payment_status === 'Approved' ? 'not-allowed' : 'pointer',
-            pointerEvents: record.payment_status === 'Approved' ? 'none' : 'auto',
-          }}
-          title="Approve"
-          onClick={() => updateStatus(record.id, 'Approved')}
-        />
+  title: 'Action',
+  dataIndex: 'document',
+  render: (_, record) => (
+    <Space>
+      {/* Approve Icon */}
+      <CheckCircleOutlined
+        style={{
+          color: record.payment_status === 'Approved' ? 'gray' : 'green',
+          cursor: record.payment_status === 'Approved' ? 'not-allowed' : 'pointer',
+          pointerEvents: record.payment_status === 'Approved' ? 'none' : 'auto',
+        }}
+        title="Approve"
+        onClick={() => confirmUpdateStatus(record.id, 'Approved')}
+      />
 
-        {/* Reject Icon - disable if already rejected */}
-        <CloseCircleOutlined
-          style={{
-            color: record.payment_status === 'Rejected' ? 'gray' : 'red',
-            cursor: record.payment_status === 'Rejected' ? 'not-allowed' : 'pointer',
-            pointerEvents: record.payment_status === 'Rejected' ? 'none' : 'auto',
-          }}
-          title="Reject"
-          onClick={() => updateStatus(record.id, 'Rejected')}
-        />
-      </Space>
-    ),
-  }
+      {/* Reject Icon */}
+      <CloseCircleOutlined
+        style={{
+          color: record.payment_status === 'Rejected' ? 'gray' : 'red',
+          cursor: record.payment_status === 'Rejected' ? 'not-allowed' : 'pointer',
+          pointerEvents: record.payment_status === 'Rejected' ? 'none' : 'auto',
+        }}
+        title="Reject"
+        onClick={() => confirmUpdateStatus(record.id, 'Rejected')}
+      />
+    </Space>
+  ),
+}
+
 ];
 
   const filteredOfflineData = Array.isArray(offlineData)

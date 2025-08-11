@@ -153,6 +153,7 @@ const MasterTable = () => {
                 record={selectedRecord}
                 onUpdate={fetchData}
                 mode={modalMode}
+                existingData={data} 
             />
         </div>
     );
