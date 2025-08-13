@@ -1,7 +1,7 @@
 // src/api/websocketConf.js
 
-export const SOCKET_URL = 'wss://ext.exgglobal.com/ws';
-export const SOCKET_PATH = '/api/energy/ws/test-negotiation/';
+export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+export const SOCKET_PATH = import.meta.env.VITE_SOCKET_PATH;
 
 // Function to get the notification WebSocket URL
 export const getNotification = (id) => {

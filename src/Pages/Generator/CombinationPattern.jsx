@@ -59,242 +59,155 @@ const CombinationPattern = () => {
   const [sliderValue, setSliderValue] = useState(65); // Default value set to 65
 
   const dispatch = useDispatch();
- const userData = decryptData(localStorage.getItem('user'));
-  const user= userData?.user;
+  const userData = decryptData(localStorage.getItem('user'));
+  const user = userData?.user;
   // const user = JSON.parse(localStorage.getItem("user")).user;
   const role = user.role;
   const user_id = user.id;
 
-const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State to control modal visibility
-const [isGraphLoading, setIsGraphLoading] = useState(false); // State to control loader in the button
-const [hasRunSensitivity, setHasRunSensitivity] = useState(false); // Track sensitivity execution
-const [lastSensitivityRunId, setLastSensitivityRunId] = useState(null); // Track the last ID for sensitivity
-const [rowSensitivityLoading, setRowSensitivityLoading] = useState({}); // {combinationId: boolean}
-const [rowSensitivityData, setRowSensitivityData] = useState({}); // {combinationId: data}
-const [activeGraphCombination, setActiveGraphCombination] = useState(null); // combinationId for modal
-
-// Sequentially fetch sensitivity for each combinationId, one at a time
-const fetchNextSensitivity = async (combinationIds) => {
-  if (!combinationIds || combinationIds.length === 0) return;
-  const combinationId = combinationIds[0];
-  // Prevent duplicate API call for same combinationId
-  if (rowSensitivityData[combinationId] || rowSensitivityLoading[combinationId]) {
-    // Already fetched or loading, skip to next
-    if (combinationIds.length > 1) {
-      fetchNextSensitivity(combinationIds.slice(1));
-    }
-    return;
-  }
-  setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: true }));
-  try {
-    const data = {
-      requirement_id: selectedDemandId,
-      optimize_capacity_user: user.user_category,
-      user_id: user.id,
-      combinations: [combinationId],
-    };
-    const res = await dispatch(fetchSensitivity(data)).unwrap();
-    if (res.error) {
-      message.error(res.error);
-      setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
-    } else {
-      setRowSensitivityData((prev) => ({
-        ...prev,
-        [combinationId]: res[combinationId]
-      }));
-      setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
-    }
-    if (combinationIds.length > 1) {
-      fetchNextSensitivity(combinationIds.slice(1));
-    }
-  } catch (error) {
-    setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
-    message.error("Failed to fetch sensitivity data.");
-    if (combinationIds.length > 1) {
-      fetchNextSensitivity(combinationIds.slice(1));
-    }
-  }
-};
-
-const handleSensitivity = async () => {
-  if (hasRunSensitivity) return; // Prevent re-execution
-  setIsGraphLoading(true); // Show loader in the button
-
-  const combinationIds = dataSource.map((item) => item.combination);
+  const [isGraphModalVisible, setIsGraphModalVisible] = useState(false); // State to control modal visibility
+  const [isGraphLoading, setIsGraphLoading] = useState(false); // State to control loader in the button
+  const [hasRunSensitivity, setHasRunSensitivity] = useState(false); // Track sensitivity execution
+  const [lastSensitivityRunId, setLastSensitivityRunId] = useState(null); // Track the last ID for sensitivity
+  const [rowSensitivityLoading, setRowSensitivityLoading] = useState({}); // {combinationId: boolean}
+  const [rowSensitivityData, setRowSensitivityData] = useState({}); // {combinationId: data}
+  const [activeGraphCombination, setActiveGraphCombination] = useState(null); // combinationId for modal
 
   // Sequentially fetch sensitivity for each combinationId, one at a time
-  let mergedResult = {};
-  try {
-    for (let i = 0; i < combinationIds.length; i++) {
+  const fetchNextSensitivity = async (combinationIds) => {
+    if (!combinationIds || combinationIds.length === 0) return;
+    const combinationId = combinationIds[0];
+    // Prevent duplicate API call for same combinationId
+    if (rowSensitivityData[combinationId] || rowSensitivityLoading[combinationId]) {
+      // Already fetched or loading, skip to next
+      if (combinationIds.length > 1) {
+        fetchNextSensitivity(combinationIds.slice(1));
+      }
+      return;
+    }
+    setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: true }));
+    try {
       const data = {
         requirement_id: selectedDemandId,
         optimize_capacity_user: user.user_category,
         user_id: user.id,
-        combinations: [combinationIds[i]], // always array, one at a time
+        combinations: [combinationId],
       };
       const res = await dispatch(fetchSensitivity(data)).unwrap();
       if (res.error) {
         message.error(res.error);
-        setIsGraphLoading(false);
-        return;
+        setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+      } else {
+        setRowSensitivityData((prev) => ({
+          ...prev,
+          [combinationId]: res[combinationId]
+        }));
+        setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
       }
-      // Merge response into mergedResult
-      mergedResult = { ...mergedResult, ...res };
+      if (combinationIds.length > 1) {
+        fetchNextSensitivity(combinationIds.slice(1));
+      }
+    } catch (error) {
+      setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
+      message.error("Failed to fetch sensitivity data.");
+      if (combinationIds.length > 1) {
+        fetchNextSensitivity(combinationIds.slice(1));
+      }
     }
-    setSensitivityData(mergedResult);
-    setHasRunSensitivity(true);
-    setIsGraphModalVisible(true); // Show the modal after all data is ready
-  } catch (error) {
-    console.error("Error fetching sensitivity data:", error);
-    message.error("Failed to fetch sensitivity data.");
-  } finally {
-    setIsGraphLoading(false);
-  }
-};
+  };
 
-const prepareGraphData = () => {
-  if (!sensitivityData) return null;
+  
+  const graphOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            // Use activeGraphCombination for correct tooltip data
+            const index = context.dataIndex;
+            const graphData = prepareGraphDataForCombination(activeGraphCombination);
+            const techData = graphData?.technologyCombinationData[index];
 
-  const labels = [];
-  const tariffData = [];
-  const finalCostData = [];
-  const technologyCombinationData = []; // Store for tooltips
+            if (context.raw === null) {
+              return `${context.label}: Demand cannot be met`;
+            }
 
-  Object.entries(sensitivityData).forEach(([combination, reReplacements]) => {
-    Object.entries(reReplacements).forEach(([reReplacement, data]) => {
+            return [
+              `${context.dataset.label}: ${context.raw}`,
+              techData,
+            ];
+          },
+        },
+      },
+      legend: {
+        position: "bottom",
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "RE Replacement (%)",
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Values",
+        },
+        beginAtZero: true,
+      },
+    },
+  };
+
+  const handleGraphModalClose = () => {
+    setActiveGraphCombination(null);
+  };
+
+  const prepareGraphDataForCombination = (combinationId) => {
+    const dataObj = rowSensitivityData[combinationId];
+    if (!dataObj) return null;
+
+    const labels = [];
+    const tariffData = [];
+    const finalCostData = [];
+    const technologyCombinationData = [];
+
+    Object.entries(dataObj).forEach(([reReplacement, data]) => {
       if (typeof data !== "string") {
-        labels.push(reReplacement); // X-axis labels
-
-        // Y-axis datasets
+        labels.push(reReplacement);
         tariffData.push(data["Per Unit Cost"]);
         finalCostData.push(data["Final Cost"]);
-
-        // Store technology combination for tooltips
         technologyCombinationData.push(
           `Solar: ${data["Optimal Solar Capacity (MW)"]} MW, Wind: ${data["Optimal Wind Capacity (MW)"]} MW, Battery: ${data["Optimal Battery Capacity (MW)"]} MW`
         );
       }
     });
-  });
-  const combinationIds = dataSource.map((item) => item.combination);
-  // console.log(combinationIds, "combinationIds");
-  return {
-    labels, // X-axis values (reReplacements)
-    datasets: [
-      {
-        label: "Tariff (INR/kWh)",
-        data: tariffData,
-        borderColor: "#FF5733",
-        backgroundColor: "rgba(255, 87, 51, 0.2)",
-        borderWidth: 2,
-        fill: true,
-      },
-      {
-        label: "Final Cost (INR)",
-        data: finalCostData,
-        borderColor: "#337AFF",
-        backgroundColor: "rgba(51, 122, 255, 0.2)",
-        borderWidth: 2,
-        fill: true,
-      },
-    ],
-    technologyCombinationData: technologyCombinationData, // Pass separately for tooltips
-  };
-};
 
-// console.log(sensitivityData, "sensitivityData");
-
-const graphOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    tooltip: {
-      callbacks: {
-        label: (context) => {
-          // Use activeGraphCombination for correct tooltip data
-          const index = context.dataIndex;
-          const graphData = prepareGraphDataForCombination(activeGraphCombination);
-          const techData = graphData?.technologyCombinationData[index];
-
-          if (context.raw === null) {
-            return `${context.label}: Demand cannot be met`;
-          }
-
-          return [
-            `${context.dataset.label}: ${context.raw}`,
-            techData,
-          ];
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Tariff (INR/kWh)",
+          data: tariffData,
+          borderColor: "#FF5733",
+          backgroundColor: "rgba(255, 87, 51, 0.2)",
+          borderWidth: 2,
+          fill: true,
         },
-      },
-    },
-    legend: {
-      position: "bottom",
-    },
-  },
-  scales: {
-    x: {
-      title: {
-        display: true,
-        text: "RE Replacement (%)",
-      },
-    },
-    y: {
-      title: {
-        display: true,
-        text: "Values",
-      },
-      beginAtZero: true,
-    },
-  },
-};
-
-const handleGraphModalClose = () => {
-  setActiveGraphCombination(null);
-};
-
-const prepareGraphDataForCombination = (combinationId) => {
-  const dataObj = rowSensitivityData[combinationId];
-  if (!dataObj) return null;
-
-  const labels = [];
-  const tariffData = [];
-  const finalCostData = [];
-  const technologyCombinationData = [];
-
-  Object.entries(dataObj).forEach(([reReplacement, data]) => {
-    if (typeof data !== "string") {
-      labels.push(reReplacement);
-      tariffData.push(data["Per Unit Cost"]);
-      finalCostData.push(data["Final Cost"]);
-      technologyCombinationData.push(
-        `Solar: ${data["Optimal Solar Capacity (MW)"]} MW, Wind: ${data["Optimal Wind Capacity (MW)"]} MW, Battery: ${data["Optimal Battery Capacity (MW)"]} MW`
-      );
-    }
-  });
-
-  return {
-    labels,
-    datasets: [
-      {
-        label: "Tariff (INR/kWh)",
-        data: tariffData,
-        borderColor: "#FF5733",
-        backgroundColor: "rgba(255, 87, 51, 0.2)",
-        borderWidth: 2,
-        fill: true,
-      },
-      {
-        label: "Final Cost (INR)",
-        data: finalCostData,
-        borderColor: "#337AFF",
-        backgroundColor: "rgba(51, 122, 255, 0.2)",
-        borderWidth: 2,
-        fill: true,
-      },
-    ],
-    technologyCombinationData,
+        {
+          label: "Final Cost (INR)",
+          data: finalCostData,
+          borderColor: "#337AFF",
+          backgroundColor: "rgba(51, 122, 255, 0.2)",
+          borderWidth: 2,
+          fill: true,
+        },
+      ],
+      technologyCombinationData,
+    };
   };
-};
 
   const formatAndSetCombinations = (combinations, reReplacementValue) => {
     if (
@@ -305,52 +218,41 @@ const prepareGraphDataForCombination = (combinationId) => {
       setDataSource([]);
       return;
     }
-// console.log('sensitivity data', sensitivityData);
-
-
-    // useEffect(() => {
-    //   if(!isTableLoading){
-    //     window.scrollTo({
-    //       top: document.body.scrollHeight,
-    //       behavior: "smooth",
-    //     });
-    //     // console.log('scrolled');
-    //   }
-    // }, [isTableLoading, setIsTableLoading]);
+    
 
 
     const formattedCombinations = Object.entries(combinations).map(
       ([key, combination], index) => {
-//         console.log('combinationsssssss',combination);
-//         console.log("Full combination object:", JSON.stringify(combination, null, 2));
-// console.log("Type of Annual Demand Met:", typeof combination["Annual Demand Met"]);
-const annual_demand_mett = Number(combination["Annual Demand Met"]?.toString().trim()) || 0;
-// console.log('annual_demand_mett',annual_demand_mett);
+        //         console.log('combinationsssssss',combination);
+        //         console.log("Full combination object:", JSON.stringify(combination, null, 2));
+        // console.log("Type of Annual Demand Met:", typeof combination["Annual Demand Met"]);
+        const annual_demand_mett = Number(combination["Annual Demand Met"]?.toString().trim()) || 0;
+        // console.log('annual_demand_mett',annual_demand_mett);
 
-    const annualDemandRaw = combination["Annual Demand Met"];
-    const annual_demand_met = 
-      annualDemandRaw !== undefined && annualDemandRaw !== null && !isNaN(annualDemandRaw)
-        ? parseFloat(annualDemandRaw)
-        : 0;
+        const annualDemandRaw = combination["Annual Demand Met"];
+        const annual_demand_met =
+          annualDemandRaw !== undefined && annualDemandRaw !== null && !isNaN(annualDemandRaw)
+            ? parseFloat(annualDemandRaw)
+            : 0;
 
-    // console.log(`Index: ${index}`);
-    // console.log("Annual Demand Met Raw:", annualDemandRaw);
-    // console.log("Parsed Annual Demand Met:", annual_demand_met);
+        // console.log(`Index: ${index}`);
+        // console.log("Annual Demand Met Raw:", annualDemandRaw);
+        // console.log("Parsed Annual Demand Met:", annual_demand_met);
 
         const windCapacity = combination["Optimal Wind Capacity (MW)"] || 0;
         const solarCapacity = combination["Optimal Solar Capacity (MW)"] || 0;
         const batteryCapacity =
           combination["Optimal Battery Capacity (MW)"] || 0;
-          const annual_curtailment=combination["Annual Curtailment"];
-          // const annual=combination["Annual Demand Met"];
+        const annual_curtailment = combination["Annual Curtailment"];
+        // const annual=combination["Annual Demand Met"];
 
-// const annual_demand_met = parseFloat(combination["Annual Demand Met"]) || 0;
+        // const annual_demand_met = parseFloat(combination["Annual Demand Met"]) || 0;
         return {
           key: index + 1,
           srNo: index + 1,
           combination: key,
-  //        annual_demand_met: annual_demand_met,
-  // annual: annual_demand_met,
+          //        annual_demand_met: annual_demand_met,
+          // annual: annual_demand_met,
           technology: [
             { name: "Solar", capacity: `${solarCapacity} MW` },
             { name: "Wind", capacity: `${windCapacity} MW ` },
@@ -392,7 +294,7 @@ const annual_demand_mett = Number(combination["Annual Demand Met"]?.toString().t
           cod: combination["greatest_cod"]
             ? dayjs(combination["greatest_cod"]).format("YYYY-MM-DD")
             : 0,
-             annual_demand_met:
+          annual_demand_met:
             combination["Annual Demand Met"] && !isNaN(combination["Annual Demand Met"])
               ? combination["Annual Demand Met"].toFixed(2)
               : 0,
@@ -403,13 +305,13 @@ const annual_demand_mett = Number(combination["Annual Demand Met"]?.toString().t
           connectivity: combination.connectivity,
           states: combination.state,
           site_names: combination.site_names,
-            state_charges:combination.state_charges,
-          ISTS_charges:combination.ISTS_charges,
+          state_charges: combination.state_charges,
+          ISTS_charges: combination.ISTS_charges,
           capital_cost_ess: combination.capital_cost_ess || 0,
           capital_cost_solar: combination.capital_cost_solar || 0,
           capital_cost_wind: combination.capital_cost_wind || 0,
           banking_available: combination.banking_available || 0,
-            // annual_cost:annual_cost,
+          // annual_cost:annual_cost,
           status: combination?.terms_sheet_sent
             ? combination?.sent_from_you === 1
               ? "Already Sent"
@@ -418,14 +320,9 @@ const annual_demand_mett = Number(combination["Annual Demand Met"]?.toString().t
         };
       }
     );
-// console.log('formatted combinantion',formattedCombinations);
-// console.log("Check:", formattedCombinations[0]?.annual_demand_met);
-// console.log("Check:", formattedCombinations[0]?.annual_met);
-// console.log("Check:", formattedCombinations[0]?.annual_cost);
-// console.log('Before setting dataSource:', formattedCombinations);
-
+   
     setDataSource(formattedCombinations);
-// console.log('After setting dataSource:', dataSource); // This may still show the old state due to async nature
+    // console.log('After setting dataSource:', dataSource); // This may still show the old state due to async nature
 
     // Only trigger fetchNextSensitivity here, not in any useEffect or handleSensitivity
     const ids = formattedCombinations.map((item) => item.combination);
@@ -433,12 +330,12 @@ const annual_demand_mett = Number(combination["Annual Demand Met"]?.toString().t
       fetchNextSensitivity(ids);
     }
   };
-useEffect(()=> {
-if(dataSource?.length<=0) {
+  useEffect(() => {
+    if (dataSource?.length <= 0) {
       setTryREreplacement(true);
     }
   }, [dataSource]);
-// console.log('dataSource', dataSource);
+  // console.log('dataSource', dataSource);
 
   // Redux selectors
   const consumptionPatterns = useSelector(
@@ -470,37 +367,37 @@ if(dataSource?.length<=0) {
   }, [isTableLoading, setIsTableLoading]);
 
   useEffect(() => {
-  // console.log('Updated dataSource:', dataSource);
-}, [dataSource]);
+    // console.log('Updated dataSource:', dataSource);
+  }, [dataSource]);
 
   // Remove fetchPatterns from the main useEffect and move it to its own useEffect
-useEffect(() => {
-  const fetchPatterns = async () => {
-    // Don't clear previous data here, just fetch new data
-    try {
-      if (
-        (!consumptionPatterns.length &&
-          consumptionPatternStatus === "idle") ||
-        consumptionPatternStatus === "failed" ||
-        consumptionPatternStatus === "succeeded"
-      ) {
-        const response = await dispatch(
-          fetchConsumptionPattern({ id: selectedDemandId, user_id })
-        );
-        setConsumerDetails(response.payload?.consumer_details);
+  useEffect(() => {
+    const fetchPatterns = async () => {
+      // Don't clear previous data here, just fetch new data
+      try {
+        if (
+          (!consumptionPatterns.length &&
+            consumptionPatternStatus === "idle") ||
+          consumptionPatternStatus === "failed" ||
+          consumptionPatternStatus === "succeeded"
+        ) {
+          const response = await dispatch(
+            fetchConsumptionPattern({ id: selectedDemandId, user_id })
+          );
+          setConsumerDetails(response.payload?.consumer_details);
+        }
+      } catch (error) {
+        message.error("Failed to fetch consumption patterns.");
       }
-    } catch (error) {
-      message.error("Failed to fetch consumption patterns.");
+    };
+
+    if (selectedDemandId) {
+      fetchPatterns();
     }
-  };
+    // eslint-disable-next-line
+  }, [selectedDemandId, user_id]); // Only refetch when selectedDemandId or user_id changes
 
-  if (selectedDemandId) {
-    fetchPatterns();
-  }
-  // eslint-disable-next-line
-}, [selectedDemandId, user_id]); // Only refetch when selectedDemandId or user_id changes
-
-useEffect(() => {
+  useEffect(() => {
     const loadCombinations = async () => {
       try {
         setIsTableLoading(true);
@@ -520,9 +417,9 @@ useEffect(() => {
             // If no error, process the response
             if (response?.error) {
               message.error(response.error); // Display error message
-               setTimeout(() => {
-                        message.error('Please try in lower RE Replacement'); // Display second message after 5 seconds
-                    }, 2000); 
+              setTimeout(() => {
+                message.error('Please try in lower RE Replacement'); // Display second message after 5 seconds
+              }, 2000);
               setIsTableLoading(false);
               setFetchingCombinations(false);
               throw new Error(response.error);
@@ -530,8 +427,8 @@ useEffect(() => {
 
             // Success actions
             setCombinationData(response);
-         // console.log('set combination 387',response);
-            
+            // console.log('set combination 387',response);
+
             formatAndSetCombinations(response);
             setIsTableLoading(false);
             setFetchingCombinations(false);
@@ -547,7 +444,7 @@ useEffect(() => {
             message.error(errorMessage);
             setIsTableLoading(false);
             setFetchingCombinations(false);
-            throw new Error(errorMessage);
+            // throw new Error(errorMessage);
           }
         );
 
@@ -585,67 +482,20 @@ useEffect(() => {
       }, 100);
       return () => clearInterval(interval);
 
-      // const xhr = new XMLHttpRequest();
-      // xhr.open("GET", "/path/to/your/api", true); // Update with the actual API endpoint
-      // xhr.onprogress = (event) => {
-      //   if (event.lengthComputable) {
-      //     const percentComplete = (event.loaded / event.total) * 100;
-      //     setProgress(percentComplete);
-      //   }
-      // };
-      // xhr.onload = () => {
-      //   if (xhr.status === 200) {
-      //     setProgress(100);
-      //     setIsTableLoading(false);
-      //   } else {
-      //     message.error("Failed to load data.");
-      //     setIsTableLoading(false);
-      //   }
-      // };
-      // xhr.onerror = () => {
-      //   message.error("Failed to load data.");
-      //   setIsTableLoading(false);
-      // };
-      // xhr.send();
+
     }
   }, [isTableLoading]);
 
-const handleSensitivityClick = () => {
-  setIsGraphModalVisible(true); // Show the modal
-}
 
-const handleRowSensitivity = async (combinationId) => {
-  setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: true }));
-  try {
-    const data = {
-      requirement_id: selectedDemandId,
-      optimize_capacity_user: user.user_category,
-      user_id: user.id,
-      combinations: [combinationId],
-    };
-    const res = await dispatch(fetchSensitivity(data)).unwrap();
-    if (res.error) {
-      message.error(res.error);
-      setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
-      return;
-    }
-    setRowSensitivityData((prev) => ({ ...prev, ...res }));
-    setActiveGraphCombination(combinationId); // Show modal for this row
-  } catch (error) {
-    message.error("Failed to fetch sensitivity data.");
-  } finally {
-    setRowSensitivityLoading((prev) => ({ ...prev, [combinationId]: false }));
-  }
-};
 
   const handleRowClick = (record) => {
     // console.log('handle click record',record);
-    
+
     setSelectedRow(record);
     setIsIPPModalVisible(true);
   };
 
-// console.log('selected rowwwww',selectedRow);
+  // console.log('selected rowwwww',selectedRow);
 
 
   const re_index = combinationData.re_index || 0;
@@ -667,52 +517,52 @@ const handleRowSensitivity = async (combinationId) => {
     setSliderValue(value);
   };
 
-const handleOptimizeClick = async () => {
-  setValue(sliderValue);
-  setLastSensitivityRunId(null); // Reset sensitivity execution flag for new data
-  try {
-    setIsTableLoading(true);
-    setFetchingCombinations(true);
-
-    const modalData = {
-      user_id: user_id,
-      requirement_id: selectedDemandId,
-      optimize_capacity_user: user.user_category,
-      re_replacement: sliderValue,
-    };
-
+  const handleOptimizeClick = async () => {
+    setValue(sliderValue);
+    setLastSensitivityRunId(null); // Reset sensitivity execution flag for new data
     try {
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: "smooth",
-      });
-      setDataSource([]);
-      const combinations = await dispatch(
-        fetchOptimizedCombinations(modalData)
-      ).unwrap();
-// console.log('fetchOptimizedCombinationssssss',combinations);
+      setIsTableLoading(true);
+      setFetchingCombinations(true);
 
-      formatAndSetCombinations(combinations, sliderValue);
+      const modalData = {
+        user_id: user_id,
+        requirement_id: selectedDemandId,
+        optimize_capacity_user: user.user_category,
+        re_replacement: sliderValue,
+      };
+
+      try {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+        setDataSource([]);
+        const combinations = await dispatch(
+          fetchOptimizedCombinations(modalData)
+        ).unwrap();
+        // console.log('fetchOptimizedCombinationssssss',combinations);
+
+        formatAndSetCombinations(combinations, sliderValue);
+        setFetchingCombinations(false);
+        setIsTableLoading(false);
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      } catch (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.error("Error in handleOptimizeClick:", error);
+      message.error(error);
+      message.error('Try in lower RE Replacement value');
+    } finally {
       setFetchingCombinations(false);
       setIsTableLoading(false);
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: "smooth",
-      });
-    } catch (error) {
-      throw error;
-    }
-  } catch (error) {
-    console.error("Error in handleOptimizeClick:", error);
-    message.error(error);
-    message.error('Try in lower RE Replacement value');
-  } finally {
-    setFetchingCombinations(false);
-    setIsTableLoading(false);
 
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  }
-};
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+  };
 
   const sliderStyle = {
     height: "20px",
@@ -780,10 +630,10 @@ const handleOptimizeClick = async () => {
       ),
     },
     {
-  title: "Annual Demand Met",
-  dataIndex: "annual_demand_met",
-  key: "annual_demand_met"
-},
+      title: "Annual Demand Met",
+      dataIndex: "annual_demand_met",
+      key: "annual_demand_met"
+    },
     {
       title: "% RE Replacement",
       dataIndex: "reReplacement",
@@ -821,22 +671,22 @@ const handleOptimizeClick = async () => {
       width: 300,
       render: (text) => dayjs(text).format("DD-MM-YYYY"),
     },
- {
-  title: "Banking Available",
-  dataIndex: "banking_available",
-  key: "banking_available",
-  width: 300,
-  align: 'center',
-  render: (value) => (
-    <div style={{ textAlign: 'center' }}>
-      {value === 0 ? (
-        <CloseCircleTwoTone twoToneColor="#FF0000" />
-      ) : (
-        <CheckCircleTwoTone twoToneColor="#669800" />
-      )}
-    </div>
-  ),
-},
+    {
+      title: "Banking Available",
+      dataIndex: "banking_available",
+      key: "banking_available",
+      width: 300,
+      align: 'center',
+      render: (value) => (
+        <div style={{ textAlign: 'center' }}>
+          {value === 0 ? (
+            <CloseCircleTwoTone twoToneColor="#FF0000" />
+          ) : (
+            <CheckCircleTwoTone twoToneColor="#669800" />
+          )}
+        </div>
+      ),
+    },
     {
       title: "Status",
       dataIndex: "status",
@@ -869,8 +719,8 @@ const handleOptimizeClick = async () => {
             rowSensitivityLoading[record.combination]
               ? "Please wait while we optimize the model for different RE replacements."
               : rowSensitivityData[record.combination]
-              ? "View Sensitivity Graph"
-              : "Sensitivity data is loading..."
+                ? "View Sensitivity Graph"
+                : "Sensitivity data is loading..."
           }
         >
           <Button
@@ -958,61 +808,6 @@ const handleOptimizeClick = async () => {
     },
   };
 
-  // const stackedBarChartData = {
-  //   labels: Array.isArray(consumptionPatterns)
-  //     ? consumptionPatterns.map((pattern) => pattern.month)
-  //     : [],
-  //   datasets: [
-  //     {
-  //       label: "Consumption (MWh)",
-  //       data: Array.isArray(consumptionPatterns)
-  //         ? consumptionPatterns.map((pattern) => pattern.consumption)
-  //         : [],
-  //       backgroundColor: "#4CAF50",
-  //     },
-  //     {
-  //       label: "Consumption during Peak hours (MWh)",
-  //       data: Array.isArray(consumptionPatterns)
-  //         ? consumptionPatterns.map((pattern) => pattern.peak_consumption)
-  //         : [],
-  //       backgroundColor: "#FF5733",
-  //     },
-  //     {
-  //       label: "Consumption during Off-Peak hours (MWh)",
-  //       data: Array.isArray(consumptionPatterns)
-  //         ? consumptionPatterns.map((pattern) => pattern.off_peak_consumption)
-  //         : [],
-  //       backgroundColor: "#337AFF",
-  //     },
-  //   ],
-  // };
-  
-  // const stackedBarChartOptions = {
-  //   responsive: true,
-  //   maintainAspectRatio: false,
-  //   plugins: {
-  //     legend: {
-  //       position: "bottom",
-  //     },
-  //   },
-  //   scales: {
-  //     x: {
-  //       stacked: true,
-  //       title: {
-  //         display: true,
-  //         text: "Months",
-  //       },
-  //     },
-  //     y: {
-  //       stacked: true,
-  //       title: {
-  //         display: true,
-  //         text: "Consumption (MWh)",
-  //       },
-  //       beginAtZero: true,
-  //     },
-  //   },
-  // };
 
   const chartOptions = {
     responsive: true,
@@ -1054,11 +849,7 @@ const handleOptimizeClick = async () => {
               Monthly Demand Pattern
             </Title>
           </Col>
-          {/* <Col span={24} style={{ textAlign: "center" }}>
-            <p  style={{ color: "#001529" }}>
-            Consumer ID: {consumerDetails?.username || "N/A"}
-            </p>
-          </Col> */}
+
 
           <Col span={24} style={{ marginBottom: "20px" }}>
             <div
@@ -1069,22 +860,22 @@ const handleOptimizeClick = async () => {
                 margin: "0 auto",
               }}
             >
-               <Line data={lineChartData} options={chartOptionss} />
+              <Line data={lineChartData} options={chartOptionss} />
               {/* <Bar data={stackedBarChartData} options={stackedBarChartOptions} /> */}
             </div>
           </Col>
         </Card>
-   <Card title="Demand's Details" variant={true} >
-      <Descriptions column={3} size="small">
-        <Descriptions.Item label="Username">{consumerDetails.username}</Descriptions.Item>
-        <Descriptions.Item label="Credit Rating"> {consumerDetails.credit_rating || "N/A"}</Descriptions.Item>
-        <Descriptions.Item label="State">{consumerDetails.state}</Descriptions.Item>
-        <Descriptions.Item label="Tariff Category">{consumerDetails.tariff_category}</Descriptions.Item>
-        <Descriptions.Item label="Voltage Level">{consumerDetails.voltage_level} kV</Descriptions.Item>
-        <Descriptions.Item label="Contracted Demand">{consumerDetails.contracted_demand} MW</Descriptions.Item>
-        <Descriptions.Item label="Industry">{consumerDetails.industry}</Descriptions.Item>
-      </Descriptions>
-    </Card>
+        <Card title="Demand's Details" variant={true} >
+          <Descriptions column={3} size="small">
+            <Descriptions.Item label="Username">{consumerDetails?.username || 'N/A'}</Descriptions.Item>
+            <Descriptions.Item label="Credit Rating"> {consumerDetails?.credit_rating || "N/A"}</Descriptions.Item>
+            <Descriptions.Item label="State">{consumerDetails?.state || 'N/A'}</Descriptions.Item>
+            <Descriptions.Item label="Tariff Category">{consumerDetails?.tariff_category || 'N/A'}</Descriptions.Item>
+            <Descriptions.Item label="Voltage Level">{consumerDetails?.voltage_level || 'N/A'} kV</Descriptions.Item>
+            <Descriptions.Item label="Contracted Demand">{consumerDetails?.contracted_demand || 'N/A'} MW</Descriptions.Item>
+            <Descriptions.Item label="Industry">{consumerDetails?.industry || 'N/A'}</Descriptions.Item>
+          </Descriptions>
+        </Card>
         <Col
           span={24}
           style={{
@@ -1111,47 +902,47 @@ const handleOptimizeClick = async () => {
               <br />
               <p>(You can change your RE Replacement from below bar. )</p>
               <span>
-              <div
-                style={{
-                  position: "relative",
-                  width: "80%",
-                  marginLeft: "5%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <Slider
-                  min={0}
-                  max={100}
-                  marks={marks}
-                  style={{ width: "70%", marginRight: "10px", zIndex: 0 }}
-                  onChange={handleSliderChange}
-                  value={sliderValue}
-                  tooltip={{
-                    open: !isIPPModalVisible && !isModalVisible,
-                  }}
-                  trackStyle={{ height: 20 }}
-                  handleStyle={{ height: 20, width: 20 }}
-                />
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={sliderValue}
-                  onChange={(e) => {
-                    const value = Math.min(Math.max(Number(e.target.value), 0), 100); // Clamp value between 0 and 100
-                    setSliderValue(value);
-                  }}
+                <div
                   style={{
-                    width: "60px",
-                    height: "30px",
-                    marginLeft: "30px",
-                    textAlign: "center",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
+                    position: "relative",
+                    width: "80%",
+                    marginLeft: "5%",
+                    display: "flex",
+                    alignItems: "center",
                   }}
-                />
-              </div>
+                >
+                  <Slider
+                    min={0}
+                    max={100}
+                    marks={marks}
+                    style={{ width: "70%", marginRight: "10px", zIndex: 0 }}
+                    onChange={handleSliderChange}
+                    value={sliderValue}
+                    tooltip={{
+                      open: !isIPPModalVisible && !isModalVisible,
+                    }}
+                    trackStyle={{ height: 20 }}
+                    handleStyle={{ height: 20, width: 20 }}
+                  />
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={sliderValue}
+                    onChange={(e) => {
+                      const value = Math.min(Math.max(Number(e.target.value), 0), 100); // Clamp value between 0 and 100
+                      setSliderValue(value);
+                    }}
+                    style={{
+                      width: "60px",
+                      height: "30px",
+                      marginLeft: "30px",
+                      textAlign: "center",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                    }}
+                  />
+                </div>
                 <Button
                   type="primary"
                   onClick={handleOptimizeClick}
@@ -1196,7 +987,7 @@ const handleOptimizeClick = async () => {
                     textAlign: "center",
                   }}
                 >
-                Please wait while we are fetching you the best matching Renewable Capacity
+                  Please wait while we are fetching you the best matching Renewable Capacity
                 </div>
               </>
             ) : dataSource.length > 0 ? (
@@ -1272,7 +1063,7 @@ const handleOptimizeClick = async () => {
             </div>
           )}
         </Modal>
-  {/* {console.log('selected row',selectedRow)
+        {/* {console.log('selected row',selectedRow)
             } */}
         {isIPPModalVisible && (
           <IPPModal
@@ -1285,9 +1076,9 @@ const handleOptimizeClick = async () => {
               capital_cost_wind: selectedRow?.capital_cost_wind,
               capital_cost_ess: selectedRow?.capital_cost_ess,
               banking_available: selectedRow?.banking_available,
-              annual_demand_met:selectedRow?.annual_demand_met
+              annual_demand_met: selectedRow?.annual_demand_met
             }}
-          
+
             combination={combinationData}
             consumerDetails={consumerDetails}
             fromGenerator={true}
