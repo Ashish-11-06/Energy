@@ -89,7 +89,7 @@ const Rooftop = () => {
       } catch (err) {
         setError(err.message);
         setLoading(false);
-        console.error("Error fetching data:", err);
+        // console.error("Error fetching data:", err);
       }
     };
 
@@ -137,6 +137,8 @@ const Rooftop = () => {
   };
 
   const handleRequirementChange = (value) => {
+    console.log("Selected requirement ID:", value);
+    
     const selected = requirements.find((req) => req.id === value);
 
     const isMissingFields =
