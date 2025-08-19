@@ -14,6 +14,7 @@ import invoice from '../../assets/invoice.png';
 import profile from '../../assets/profile.png';
 import offerSend from '../../assets/offerSend.png';
 import portfolio from '../../assets/portfolio.png';
+import query from '../../assets/query.png';
 import findConsumer from '../../assets/findConsumer.png';
 import { decryptData } from '../../Utils/cryptoHelper';
 
@@ -101,7 +102,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     {
       label: 'Help',
       key: '/admin/help',
-      icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} />,
+      icon: <img src={query} alt="" style={{ width: '20px', height: '20px' }} />,
     },
     {
       label: 'Demand Data',

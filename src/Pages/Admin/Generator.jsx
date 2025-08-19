@@ -70,7 +70,9 @@ const Generator = () => {
       (item.company || '').toLowerCase().includes(lowerSearch) ||
       (item.email || '').toLowerCase().includes(lowerSearch)
     );
-  });
+  })
+  // .sort((a, b) => b.id - a.id); // Sort by ID descending (newest first)
+  .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 
   const columns = [
     {

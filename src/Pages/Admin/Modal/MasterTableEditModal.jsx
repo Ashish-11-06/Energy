@@ -3,10 +3,10 @@ import { Modal, Form, InputNumber, message, Row, Col, Select } from 'antd';
 import masterTableApi from '../../../Redux/Admin/api/masterTableApi';
 import stateApi from '../../../Redux/api/consumer/stateApi';
 
-const MasterTableEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit' }) => {
+const MasterTableEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit', existingData = [] }) => {
     const [form] = Form.useForm();
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [states, setStates] = useState([]);
+    const [allStates, setAllStates] = useState([]);
 
     useEffect(() => {
         if (mode === 'edit' && record) {
@@ -16,13 +16,12 @@ const MasterTableEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit
         }
     }, [record, mode, visible]);
 
-    useEffect(() => {
+     useEffect(() => {
         const fetchStates = async () => {
             try {
                 const response = await stateApi.states();
                 if (response.status === 200 && Array.isArray(response.data)) {
-                    // console.log('Fetched states:', response.data);
-                    setStates(response.data);
+                    setAllStates(response.data);
                 }
             } catch (error) {
                 message.error('Failed to fetch states');
@@ -31,6 +30,16 @@ const MasterTableEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit
 
         fetchStates();
     }, []);
+
+    // Filter out states that already exist in the data
+    const availableStates = allStates.filter(state => {
+        // For edit mode, include the current record's state
+        if (mode === 'edit' && record && record.state === state) {
+            return true;
+        }
+        // Otherwise, only include states not in existingData
+        return !existingData.some(item => item.state === state);
+    });
 
     const handleSubmit = async () => {
         try {
@@ -87,8 +96,9 @@ const MasterTableEditModal = ({ visible, onClose, record, onUpdate, mode = 'edit
                                 filterOption={(input, option) =>
                                     option?.children?.toLowerCase().includes(input.toLowerCase())
                                 }
+                                disabled={mode === 'edit'}  // Disable editing state in edit mode
                             >
-                                {states.map((state) => (
+                                {availableStates.map((state) => (
                                     <Select.Option key={state} value={state}>
                                         {state}
                                     </Select.Option>

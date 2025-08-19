@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import CryptoJS from 'crypto-js';
 import { Card, Col, Row, Select } from 'antd';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import {
@@ -18,55 +17,153 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarEle
 
 const { Option } = Select;
 
-// Doughnut Chart Component with label
-const DoughnutChart = ({ label, dataValues = [Math.floor(Math.random() * 100), 100], backgroundColors = ['#669800', '#e8e8e8'], legendLabels }) => {
+// Demand Doughnut Chart Component
+const DemandDoughnutChart = ({ demandData }) => {
   const data = {
-    labels: legendLabels,
-    datasets: [
-      {
-        data: dataValues,
-        backgroundColor: backgroundColors,
-        borderWidth: 1,
-      },
-    ],
+    labels: ['HT Commercial', 'HT Industrial', 'LT Commercial', 'LT Industrial'],
+    datasets: [{
+      data: [
+        demandData?.HT_Commercial ?? 0,
+        demandData?.HT_Industrial ?? 0,
+        demandData?.LT_Commercial ?? 0,
+        demandData?.LT_Industrial ?? 0
+      ],
+      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8AC24A'],
+      borderWidth: 1
+    }]
   };
 
   const options = {
     plugins: {
-      legend: { display: false },
-      tooltip: { enabled: true },
+      legend: {
+        position: 'right',
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.raw || 0;
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = Math.round((value / total) * 100);
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        }
+      }
     },
     cutout: '50%',
+    maintainAspectRatio: false
   };
 
   return (
-    <div style={{ width: 90, textAlign: 'center' }}>
+    <div style={{ height: '250px' }}>
       <Doughnut data={data} options={options} />
-      <div style={{ fontSize: 12, marginTop: 4 }}>{label}</div>
     </div>
   );
 };
 
+// Projects Doughnut Chart Component
+const ProjectsDoughnutChart = ({ projectsData }) => {
+  const data = {
+    labels: ['Solar Projects', 'Wind Projects', 'ESS Projects'],
+    datasets: [{
+      data: [
+        projectsData?.solar_projects ?? 0,
+        projectsData?.wind_projects ?? 0,
+        projectsData?.ess_projects ?? 0
+      ],
+      backgroundColor: ['#9966FF', '#FF9F40', '#8AC24A'],
+      borderWidth: 1
+    }]
+  };
+
+  const options = {
+    plugins: {
+      legend: {
+        position: 'right',
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.raw || 0;
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = Math.round((value / total) * 100);
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        }
+      }
+    },
+    cutout: '50%',
+    maintainAspectRatio: false
+  };
+
+  return (
+    <div style={{ height: '250px' }}>
+      <Doughnut data={data} options={options} />
+    </div>
+  );
+};
+
+// Offers Doughnut Chart Component
+const OffersDoughnutChart = ({ offersData }) => {
+  const data = {
+    labels: ['Accepted', 'Rejected', 'Pending'],
+    datasets: [{
+      data: [
+        offersData?.offers_accepted ?? 0,
+        offersData?.offers_rejected ?? 0,
+        offersData?.offers_pending ?? 0
+      ],
+      backgroundColor: ['#52c41a', '#ff4d4f', '#faad14'],
+      borderWidth: 1
+    }]
+  };
+
+  const options = {
+    plugins: {
+      legend: {
+        position: 'right',
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.raw || 0;
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = Math.round((value / total) * 100);
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        }
+      }
+    },
+    cutout: '50%',
+    maintainAspectRatio: false
+  };
+
+  return (
+    <div style={{ height: '250px' }}>
+      <Doughnut data={data} options={options} />
+    </div>
+  );
+};
 
 // Main Dashboard Component
 const Dashboard = () => {
-  const userData = JSON.parse(localStorage.getItem('userrr'));
   const [selectedYear, setSelectedYear] = React.useState('2024');
   const [dashboardData, setDashboardData] = useState(null);
   const dispatch = useDispatch();
+
   useEffect(() => {
     const getData = async () => {
       const response = await dispatch(getDashboardData());
-      // console.log('response dashboard',response);
       if (response?.payload) {
         setDashboardData(response?.payload);
       }
     }
     getData();
-  }, [dispatch])
+  }, [dispatch]);
 
-  // console.log('dashboard data',dashboardData);
-
+  // Bar chart data
   const barDataByYear = {
     '2022': {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -151,138 +248,60 @@ const Dashboard = () => {
     maintainAspectRatio: false,
   };
 
-
-  // Uncomment below to enable access control
-  // if (!validateUserAccess()) {
-  //   return <div style={{ padding: '2rem', textAlign: 'center' }}>🔒 Access Denied</div>;
-  // }
-
   return (
-    <div style={{ height: '88vh', display: 'flex', flexDirection: 'column', gap: '8px', padding: '8px' }}>
-      {/* Top Row - Doughnut Charts */}
-      <Card style={{ flex: '0 0 40%' }}>
-        <Row gutter={8} style={{ height: '100%' }}>
-          <Col span={12}>
-            <Card
-              title={<div style={{ textAlign: 'center', fontWeight: 'bold' }}>Demand</div>}
-              style={{ height: '100%' }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%' }}>
-                <DoughnutChart
-                  label="HT Commercial"
-                  dataValues={[dashboardData?.HT_Commercial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.HT_Commercial ?? 0)]}
-                />
-                <DoughnutChart
-                  label="HT Industrial"
-                  dataValues={[dashboardData?.HT_Industrial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.HT_Industrial ?? 0)]}
-                />
-                <DoughnutChart
-                  label="LT Commercial"
-                  dataValues={[dashboardData?.LT_Commercial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.LT_Commercial ?? 0)]}
-                />
-                <DoughnutChart
-                  label="LT Industrial"
-                  dataValues={[dashboardData?.LT_Industrial ?? 0, (dashboardData?.total_demand ?? 100) - (dashboardData?.LT_Industrial ?? 0)]}
-                />
-
-              </div>
-            </Card>
-          </Col>
-
-          <Col span={9}>
-            <Card
-              title={<div style={{ textAlign: 'center', fontWeight: 'bold' }}>Projects</div>}
-              style={{ height: '100%' }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%' }}>
-                <DoughnutChart
-                  label="Solar"
-                  dataValues={[dashboardData?.solar_projects ?? 0, (dashboardData?.total_projects ?? 5) - (dashboardData?.solar_projects ?? 0)]}
-                />
-                <DoughnutChart
-                  label="Wind"
-                  dataValues={[dashboardData?.wind_projects ?? 0, (dashboardData?.total_projects ?? 5) - (dashboardData?.wind_projects ?? 0)]}
-                />
-                <DoughnutChart
-                  label="ESS"
-                  dataValues={[dashboardData?.ess_projects ?? 0, (dashboardData?.total_projects ?? 5) - (dashboardData?.ess_projects ?? 0)]}
-                />
-
-              </div>
-            </Card>
-          </Col>
-
-          <Col span={3}>
-            <Card
-              title={<div style={{ textAlign: 'center', fontWeight: 'bold' }}>Offers</div>}
-              style={{ height: '100%' }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
-                <DoughnutChart
-                  label="Offers"
-                  dataValues={[
-                    dashboardData?.offers_accepted ?? 0,
-                    dashboardData?.offers_rejected ?? 0,
-                    dashboardData?.offers_pending ?? 0
-                  ]}
-                  backgroundColors={['#52c41a', '#ff4d4f', '#faad14']}
-                  legendLabels={['Accepted', 'Rejected', 'Pending']}
-                />
-
-                <div style={{ marginTop: 8, fontSize: 12 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: 10, height: 10, backgroundColor: '#52c41a' }}></div>
-                      <span>Accepted</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: 10, height: 10, backgroundColor: '#ff4d4f' }}></div>
-                      <span>Rejected</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: 10, height: 10, backgroundColor: '#faad14' }}></div>
-                      <span>Pending</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </Col>
-
-
-
-        </Row>
-      </Card>
+    <div style={{ 
+      padding: '16px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '16px',
+      height: '100vh',
+      overflow: 'hidden'
+    }}>
+      {/* Top Row - Charts */}
+      <Row gutter={16} style={{ flex: '0 0 auto' }}>
+        <Col span={8}>
+          <Card title="Demand Overview" style={{ height: '100%' }}>
+            <DemandDoughnutChart demandData={dashboardData} />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card title="Projects Overview" style={{ height: '100%' }}>
+            <ProjectsDoughnutChart projectsData={dashboardData} />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card title="Offers Status" style={{ height: '100%' }}>
+            <OffersDoughnutChart offersData={dashboardData} />
+          </Card>
+        </Col>
+      </Row>
 
       {/* Bottom Row - Bar Chart */}
-      <Card style={{ flex: '1 1 30%', overflow: 'hidden' }}>
+      <Card style={{ flex: '1 1 auto' }}>
         <Card
           title={
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>Monthly User Distribution</span>
-
-              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <div style={{ width: 12, height: 12, backgroundColor: '#1890ff', marginRight: 6 }}></div>
-                Total Consumer: {dashboardData?.total_consumers ?? 100}
-              </span>
-
-              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <div style={{ width: 12, height: 12, backgroundColor: '#f0ad4e', marginRight: 6 }}></div>
-                Total Generator: {dashboardData?.total_generators ?? 200}
-              </span>
-
-
-              <Select value={selectedYear} onChange={setSelectedYear} style={{ width: 100 }}>
-                <Option value="2022">2022</Option>
-                <Option value="2023">2023</Option>
-                <Option value="2024">2024</Option>
-              </Select>
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <div style={{ width: 12, height: 12, backgroundColor: '#1890ff', marginRight: 6 }}></div>
+                  Total Consumer: {dashboardData?.total_consumers ?? 100}
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <div style={{ width: 12, height: 12, backgroundColor: '#f0ad4e', marginRight: 6 }}></div>
+                  Total Generator: {dashboardData?.total_generators ?? 200}
+                </span>
+                <Select value={selectedYear} onChange={setSelectedYear} style={{ width: 100 }}>
+                  <Option value="2022">2022</Option>
+                  <Option value="2023">2023</Option>
+                  <Option value="2024">2024</Option>
+                </Select>
+              </div>
             </div>
-
           }
           style={{ height: '100%' }}
         >
-          <div style={{ height: '100%' }}>
+          <div style={{ height: 'calc(100% - 60px)' }}>
             <Bar data={barData} options={barOptions} />
           </div>
         </Card>

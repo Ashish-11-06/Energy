@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 
 const { Option } = Select;
 
-const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', onUpdate }) => {
+const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', onUpdate, recordList = [] }) => {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -24,8 +24,22 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      setConfirmLoading(true);
 
+      // Check for duplicate plan assignment
+      const isDuplicate = recordList?.some((item) =>
+        item.userCategory === values.userCategory &&
+        item.name === values.name &&
+        item.companyName === values.companyName &&
+        item.subscriptionPlan === values.subscriptionPlan
+      );
+
+      if (isDuplicate && mode === 'add') {
+        message.warning('This plan for the user is already present');
+        return;
+      }
+
+      setConfirmLoading(true);
+    
       const payload = {
         ...values,
         startDate: values.startDate.format('YYYY-MM-DD'),
@@ -53,27 +67,6 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
     { title: 'Start Date', dataIndex: 'startDate', key: 'startDate' },
     { title: 'End Date', dataIndex: 'endDate', key: 'endDate' },
   ];
-
-//   const data = [
-//     {
-//       key: '1',
-//       userCategory: 'Consumer',
-//       name: 'John Doe',
-//       companyName: 'Acme Corp',
-//       subscriptionPlan: 'Gold',
-//       startDate: '2025-08-01',
-//       endDate: '2026-08-01',
-//     },
-//     {
-//       key: '2',
-//       userCategory: 'Generator',
-//       name: 'Jane Smith',
-//       companyName: 'Freelancer',
-//       subscriptionPlan: 'Silver',
-//       startDate: '2025-07-15',
-//       endDate: '2026-07-15',
-//     },
-//   ];
 
   return (
     <Modal

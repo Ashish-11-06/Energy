@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Select,
   Input,
@@ -12,16 +12,19 @@ import {
   Divider,
   Radio,
   message,
-} from 'antd';
-import notificationApi from '../../Redux/Admin/api/notificationApi';
-import consumerApi from '../../Redux/Admin/api/consumerApi';
-import generatorApi from '../../Redux/Admin/api/generatorApi';
+} from "antd";
+import notificationApi from "../../Redux/Admin/api/notificationApi";
+import consumerApi from "../../Redux/Admin/api/consumerApi";
+import generatorApi from "../../Redux/Admin/api/generatorApi";
 
 const { Option } = Select;
 const { Title } = Typography;
 
-const Notification = () => {
-  const [type, setType] = useState('');
+const Notification = ({
+  isModal = false, // Default to false if not provided
+  onClose = () => {},
+}) => {
+  const [type, setType] = useState("");
   const [userNumber, setUserNumber] = useState(null);
   const [userType, setUserType] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -30,7 +33,7 @@ const Notification = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (userType && userNumber === 'single_user') {
+    if (userType && userNumber === "single_user") {
       fetchUserList();
     }
   }, [userType, userNumber]);
@@ -38,9 +41,9 @@ const Notification = () => {
   const fetchUserList = async () => {
     try {
       let res;
-      if (userType === 'Consumer') {
+      if (userType === "Consumer") {
         res = await consumerApi.getConsumerList();
-      } else if (userType === 'Generator') {
+      } else if (userType === "Generator") {
         res = await generatorApi.getGeneratorList();
       }
       if (res && res.status === 200 && Array.isArray(res.data)) {
@@ -58,8 +61,8 @@ const Notification = () => {
       const values = await form.validateFields();
       setLoading(true);
 
-      let user_id = 'all';
-      if (userNumber === 'single_user' && selectedUser) {
+      let user_id = "all";
+      if (userNumber === "single_user" && selectedUser) {
         user_id = selectedUser;
       }
 
@@ -67,36 +70,49 @@ const Notification = () => {
         user_id,
         user_category: userType,
         send_type: type,
-        title: values.title || values.subject || '',
-        message: values.message || values.content || '',
+        title: values.title || values.subject || "",
+        message: values.message || values.content || "",
       };
 
       await notificationApi.addData(payload);
-      message.success('Notification sent successfully');
+      message.success("Notification sent successfully");
       form.resetFields();
       setUserType(null);
       setUserNumber(null);
       setSelectedUser(null);
     } catch (error) {
-      message.error(error?.response?.data?.message || 'Failed to send notification');
+      message.error(
+        error?.response?.data?.message || "Failed to send notification"
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: '40px', backgroundColor: '#f5f5f5', minHeight: '90vh' }}>
+    <div
+      style={{
+        padding: isModal ? 0 : "40px",
+        backgroundColor: isModal ? "transparent" : "#f5f5f5",
+        minHeight: isModal ? "auto" : "90vh",
+      }}
+    >
       <Card
         bordered={false}
         style={{
-          maxWidth: '90%',
-          margin: '0 auto',
-          background: '#fff',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          maxWidth: isModal ? "100%" : "90%", // Full width in modal
+          margin: isModal ? 0 : "0 auto", // Remove margin in modal
+          background: "#fff",
+          boxShadow: isModal ? "none" : "0 2px 10px rgba(0,0,0,0.1)",
+          padding: isModal ? 0 : "40px", // Remove padding in modal
         }}
       >
         {/* Header Section */}
-        <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
+        <Row
+          justify="space-between"
+          align="middle"
+          style={{ marginBottom: 16 }}
+        >
           <Col>
             <Title level={4} style={{ margin: 0 }}>
               Send Notification / Email
@@ -128,7 +144,7 @@ const Notification = () => {
                 setSelectedUser(null);
                 setUserNumber(null);
               }}
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               placeholder="Choose User Type"
             >
               <Option value="Consumer">Consumer</Option>
@@ -144,20 +160,20 @@ const Notification = () => {
                 setSelectedUser(null);
               }}
               value={userNumber}
-              style={{ display: 'flex', gap: '16px' }}
+              style={{ display: "flex", gap: "16px" }}
             >
               <Radio value="single_user">Single {userType}</Radio>
               <Radio value="all_user">All {userType}</Radio>
             </Radio.Group>
           </Col>
 
-          {userType && userNumber === 'single_user' && (
+          {userType && userNumber === "single_user" && (
             <Col span={10}>
               <Title level={5}>Select {userType}</Title>
               <Select
                 value={selectedUser}
                 onChange={(val) => setSelectedUser(val)}
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
                 placeholder={`Choose a ${userType}`}
                 loading={loading && userList.length === 0}
               >
@@ -173,21 +189,24 @@ const Notification = () => {
 
         {/* Form Inputs */}
         <Form form={form} layout="vertical">
-          {type === 'email' ? (
+          {type === "email" ? (
             <>
               <Form.Item
                 label="Subject"
                 name="subject"
-                rules={[{ required: true, message: 'Please enter a subject' }]}
+                rules={[{ required: true, message: "Please enter a subject" }]}
               >
                 <Input placeholder="Enter email subject" />
               </Form.Item>
               <Form.Item
                 label="Message"
                 name="message"
-                rules={[{ required: true, message: 'Please enter a message' }]}
+                rules={[{ required: true, message: "Please enter a message" }]}
               >
-                <Input.TextArea rows={4} placeholder="Enter your message here" />
+                <Input.TextArea
+                  rows={4}
+                  placeholder="Enter your message here"
+                />
               </Form.Item>
             </>
           ) : (
@@ -195,16 +214,19 @@ const Notification = () => {
               <Form.Item
                 label="Title"
                 name="title"
-                rules={[{ required: true, message: 'Please enter a title' }]}
+                rules={[{ required: true, message: "Please enter a title" }]}
               >
                 <Input placeholder="Enter notification title" />
               </Form.Item>
               <Form.Item
                 label="Content"
                 name="content"
-                rules={[{ required: true, message: 'Please enter content' }]}
+                rules={[{ required: true, message: "Please enter content" }]}
               >
-                <Input.TextArea rows={4} placeholder="Enter notification content" />
+                <Input.TextArea
+                  rows={4}
+                  placeholder="Enter notification content"
+                />
               </Form.Item>
             </>
           )}
