@@ -625,7 +625,9 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
                 <Form.Item
                   label={renderLabelWithTooltip(
                     "Roof Area available (including open space) in sq m",
-                    "Enter the roof area available in square meter."
+                    <>
+                    Enter the roof area available in square meter.<br/>(1 Acre = 4046.86 Square meters)
+                    </>
                   )}
                   name="roof_area"
                   rules={
@@ -637,7 +639,8 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
                       : []
                   }
                 >
-                  <Input type="number" min={0} placeholder="Enter the roof area available in square meter." />
+                  <Input type="number" min={0} placeholder="Enter the roof area available in square meter.
+                  (1 Acre = 4046.86 square meters)" />
                 </Form.Item>
 
               </Col>

@@ -1,20 +1,37 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMatchingIPPById } from "../../Redux/Slices/Consumer/matchingIPPSlice";
-import { Button, Card, Col, message, Modal, Radio, Row, Select, Table } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  message,
+  Modal,
+  Radio,
+  Row,
+  Select,
+  Table,
+  Tooltip,
+} from "antd";
 import { fetchRequirements } from "../../Redux/Slices/Consumer/consumerRequirementSlice";
 import { addPWatt } from "../../Redux/Slices/Consumer/pwattSlice";
 import * as XLSX from "xlsx";
-import RequirementForm from './Modal/RequirenmentForm'; // Import the RequirementForm component
+import RequirementForm from "./Modal/RequirenmentForm"; // Import the RequirementForm component
 import { data } from "react-router-dom";
-import { Title } from "chart.js";
+import { Legend, Title } from "chart.js";
 import { decryptData } from "../../Utils/cryptoHelper";
+import { CartesianGrid, LineChart, XAxis, YAxis } from "recharts";
+import { Line } from "react-chartjs-2";
+import { EyeOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { handleDownloadPDF } from "../../Components/Consumer/downloadOnsitePdf";
+import AnnualGenerationChart from "../../Components/Consumer/AnnualGenerationChart";
+
 const Rooftop = () => {
   const [selectedRequirement, setSelectedRequirement] = useState(null); // State for selected requirement
   const dispatch = useDispatch();
   // const userData = JSON.parse(localStorage.getItem("user")).user;
-   const user = decryptData(localStorage.getItem('user'));
-  const userData= user?.user;
+  const user = decryptData(localStorage.getItem("user"));
+  const userData = user?.user;
   const radioValueRef = useRef(null); // store the selected value
   const [loading, setLoading] = useState(false);
   const [monthlyData, setMonthlyData] = useState([]);
@@ -24,11 +41,74 @@ const Rooftop = () => {
   const [incompleteRequirement, setIncompleteRequirement] = useState(null);
   const [editModal, setEditModal] = useState(false);
   const [selectedRequirementId, setSelectedRequirementId] = useState(null);
-const [selectKey, setSelectKey] = useState(Date.now()); // initial unique key
-const [capacitySolar, setCapacitySolar] = useState("");
-const [totalSavings, setTotalSavings] = useState("");
-const [hourlyData,setHourlyData] = useState([]);
-  //   console.log('user',userData);
+  const [selectKey, setSelectKey] = useState(Date.now()); // initial unique key
+  const [capacitySolar, setCapacitySolar] = useState("");
+  const [totalSavings, setTotalSavings] = useState("");
+  const [hourlyData, setHourlyData] = useState([]);
+  const [selectedType, setSelectedType] = useState("");
+  const [submittedType, setSubmittedType] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [chartData, setChartData] = useState([]);
+  const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(false);
+
+  // Dummy data for hours 0–24
+  // const chartData = Array.from({ length: 25 }, (_, hour) => ({
+  //   hour,
+  //   generation: Math.floor(Math.random() * 100) + 10, // always 10–109
+  // }));
+
+  // console.log(chartData);
+
+  // Download all tha data as PDF
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await pwattApi.addPWatt({});
+
+        // Add debug logging to inspect the API response
+        console.log("API Response:", response);
+
+        // Ensure the data exists and is in expected format
+        if (response.data && response.data.daily_average) {
+          const transformedData = response.data.daily_average.map(
+            (value, hour) => ({
+              hour: hour.toString(), // Convert hour to string for better display
+              generation: Number(value), // Ensure value is a number
+            })
+          );
+
+          console.log("Transformed Data:", transformedData);
+          setChartData(transformedData);
+        } else {
+          throw new Error("Invalid data format from API");
+        }
+
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+        console.error("Error fetching data:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Helper functions
+  const formatNumber = (num, decimals = 3) => {
+    if (num === undefined || num === null) return "N/A";
+    return parseFloat(num).toFixed(decimals);
+  };
+
+  const formatCurrency = (amount) => {
+    if (amount === undefined || amount === null) return "N/A";
+    return `₹${new Intl.NumberFormat("en-IN", {
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 2,
+    }).format(amount)}`;
+  };
 
   const requirements = useSelector(
     (state) => state.consumerRequirement.requirements || []
@@ -56,33 +136,42 @@ const [hourlyData,setHourlyData] = useState([]);
     // console.log("Selected value:", radioValueRef.current);
   };
 
-const handleRequirementChange = (value) => {
-  const selected = requirements.find((req) => req.id === value);
+  const handleRequirementChange = (value) => {
+    const selected = requirements.find((req) => req.id === value);
 
-  const isMissingFields =
-    !selected?.roof_area ||
-    !selected?.solar_rooftop_capacity ||
-    !selected?.location;
+    const isMissingFields =
+      !selected?.roof_area ||
+      !selected?.solar_rooftop_capacity ||
+      !selected?.location;
 
-if (isMissingFields) {
-  setIncompleteRequirement(selected);
-  setWarningModal(true);
-  setSelectedRequirement(null);
-  setSelectedRequirementId(null);
-  setSelectKey(Date.now()); // 🔁 Force re-render by changing key
-  return;
-}
- else {
-    setSelectedRequirement(selected);
-    setSelectedRequirementId(selected.id); // Set dropdown value
-  }
-};
+    if (isMissingFields) {
+      setIncompleteRequirement(selected);
+      setWarningModal(true);
+      setSelectedRequirement(null);
+      setSelectedRequirementId(null);
+      setSelectKey(Date.now()); // 🔁 Force re-render by changing key
+      return;
+    } else {
+      setSelectedRequirement(selected);
+      setSelectedRequirementId(selected.id); // Set dropdown value
+    }
+  };
 
   // console.log('radion value',radioValueRef);
   const monthNames = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   const handleSubmit = async () => {
     setMonthlyData([]);
@@ -102,62 +191,62 @@ if (isMissingFields) {
 
     const res = await dispatch(addPWatt(data));
 
-   if (addPWatt.fulfilled.match(res)) {
-    // console.log("✅ Fulfilled response:", res.payload);
-    // if(radioValueRef.current === "grid_connected") {
-    setHourlyData(res?.payload?.hourly_data);
-  const convertedData = res?.payload?.monthly_data.map((item) => ({
-    ...item,
-    month: monthNames[item.month - 1],  // Convert number to name (e.g. 1 → January)
-  }));
-  const sortedData = [...convertedData].sort(
-    (a, b) => monthNames.indexOf(a.month) - monthNames.indexOf(b.month)
-  );
-  setMonthlyData(sortedData);
-  setLoading(false);
-// }
-// if(radioValueRef.current === "behind_the_meter") {
-//   message.warning('Behind the meter data is not available yet. It is under development.');
-//   console.log("Behind the meter data:", res?.payload?.hourly_data);
-  
-// }
-  setEnergyReplaced(res?.payload.energy_replaced);
-  setCapacitySolar(res?.payload.capacity_of_solar_rooftop);
-  setTotalSavings(res?.payload.total_savings);
-  setLoading(false);
-}
- else if (addPWatt.rejected.match(res)) {
+    if (addPWatt.fulfilled.match(res)) {
+      // console.log("✅ Fulfilled response:", res.payload);
+      // if(radioValueRef.current === "grid_connected") {
+      setHourlyData(res?.payload?.hourly_data);
+      const convertedData = res?.payload?.monthly_data.map((item) => ({
+        ...item,
+        month: monthNames[item.month - 1], // Convert number to name (e.g. 1 → January)
+      }));
+      const sortedData = [...convertedData].sort(
+        (a, b) => monthNames.indexOf(a.month) - monthNames.indexOf(b.month)
+      );
+      setMonthlyData(sortedData);
+      setLoading(false);
+      // }
+      // if(radioValueRef.current === "behind_the_meter") {
+      //   message.warning('Behind the meter data is not available yet. It is under development.');
+      //   console.log("Behind the meter data:", res?.payload?.hourly_data);
+
+      // }
+      setEnergyReplaced(res?.payload.energy_replaced);
+      setCapacitySolar(res?.payload.capacity_of_solar_rooftop);
+      setTotalSavings(res?.payload.total_savings);
+      setLoading(false);
+    } else if (addPWatt.rejected.match(res)) {
       // ❌ failed — show error message
       message.error(res.payload); // e.g. "no master data found for this state."
       setLoading(false);
       console.error("❌ Rejected:", res.payload);
     }
   };
-// console.log('selected requirement', selectedRequirement);
-// console.log('hourly data',hourlyData);
+  // console.log('selected requirement', selectedRequirement);
+  // console.log('hourly data',hourlyData);
 
-const onModalClick = () => {
-// console.log("Modal OK clicked");
-// console.log("Selected requirement:", incompleteRequirement);
-setEditModal(true);
-  // setWarningModal(false);
-}
-// console.log('incompleteRequirement', incompleteRequirement);
-// console.log('selected requirement', selectedRequirement);
-const handleCancel = () => {
-  setEditModal(false);
-  setWarningModal(false);
-  setIncompleteRequirement(null);
-  setSelectedRequirement(null);
-  setSelectedRequirementId(null); // Clear dropdown value
-};
-const handleCancelWarning = () => {
-  setWarningModal(false);
-  setIncompleteRequirement(null);
-  setSelectedRequirement(null);
-  setSelectedRequirementId(null); // Clear dropdown value
-  setSelectKey(Date.now());
-};
+  const onModalClick = () => {
+    // console.log("Modal OK clicked");
+    // console.log("Selected requirement:", incompleteRequirement);
+    setEditModal(true);
+    // setWarningModal(false);
+  };
+  // console.log('incompleteRequirement', incompleteRequirement);
+  // console.log('selected requirement', selectedRequirement);
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setEditModal(false);
+    setWarningModal(false);
+    setIncompleteRequirement(null);
+    setSelectedRequirement(null);
+    setSelectedRequirementId(null); // Clear dropdown value
+  };
+  const handleCancelWarning = () => {
+    setWarningModal(false);
+    setIncompleteRequirement(null);
+    setSelectedRequirement(null);
+    setSelectedRequirementId(null); // Clear dropdown value
+    setSelectKey(Date.now());
+  };
 
   const monthOrder = [
     "January",
@@ -174,28 +263,28 @@ const handleCancelWarning = () => {
     "December",
   ];
 
-const handleDownload = () => {
-  if (!hourlyData || !Array.isArray(hourlyData)) {
-    console.error("No data found or data is not an array");
-    return;
-  }
+  const handleDownload = () => {
+    if (!hourlyData || !Array.isArray(hourlyData)) {
+      console.error("No data found or data is not an array");
+      return;
+    }
 
-  // Transform keys to desired header names
-  const formattedData = hourlyData.map(item => ({
-    "Hours": item.hour,
-    "Solar Generation (kWh)": item.generation,
-    "Power Consumption": item.consumption,
-    "Used Solar": item.used_solar,
-    "Savings (INR)": item.savings,
-    "Curtailment (kWh)": item.curtailment,
-  }));
+    // Transform keys to desired header names
+    const formattedData = hourlyData.map((item) => ({
+      Hours: item.hour,
+      "Solar Generation (kWh)": item.generation,
+      "Power Consumption": item.consumption,
+      "Used Solar": item.used_solar,
+      "Savings (INR)": item.savings,
+      "Curtailment (kWh)": item.curtailment,
+    }));
 
-  const worksheet = XLSX.utils.json_to_sheet(formattedData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Hourly Data");
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Hourly Data");
 
-  XLSX.writeFile(workbook, "hourly_data.xlsx");
-};
+    XLSX.writeFile(workbook, "hourly_data.xlsx");
+  };
 
   // Sort monthlyData by correct calendar order
   const sortedMonthlyData = [...monthlyData].sort((a, b) => {
@@ -217,13 +306,30 @@ const handleDownload = () => {
       dataIndex: "generation",
       key: "generation",
       align: "center",
+      render: (value) =>
+        new Intl.NumberFormat("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(value),
     },
     {
       title: "Savings (INR)",
       dataIndex: "savings",
       key: "savings",
       align: "center",
-      render: (value) => `${value.toFixed(2)}`,
+      render: (value) =>
+        new Intl.NumberFormat("en-IN", {
+          style: "decimal",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(value),
+    },
+    {
+      title: "RE Replacement",
+      dataIndex: "offset",
+      key: "offset",
+      align: "center",
+      render: (text) => (text ? text : "NA"),
     },
   ];
 
@@ -264,7 +370,7 @@ const handleDownload = () => {
             <Select
               key={selectKey} // 💥 This will force the dropdown to reset visually
               style={{ width: "100%" }}
-  value={selectedRequirementId || undefined} // Control only by ID
+              value={selectedRequirementId || undefined} // Control only by ID
               onChange={handleRequirementChange}
               options={
                 Array.isArray(requirements)
@@ -290,21 +396,20 @@ const handleDownload = () => {
                             </>
                           )}
 
-                         
-  {req.annual_electricity_consumption && (
+                          {req.annual_electricity_consumption && (
                             <>
                               <strong>Annual Consumption:</strong>{" "}
                               {req.annual_electricity_consumption} MWh,{" "}
                             </>
                           )}
-  {req.contracted_demand && (
+                          {req.contracted_demand && (
                             <>
                               <strong>Contracted Demand:</strong>{" "}
                               {req.contracted_demand} MW,{" "}
                             </>
                           )}
 
-                           {req.location && (
+                          {req.location && (
                             <>
                               <strong>Location:</strong> {req.location},{" "}
                             </>
@@ -314,8 +419,6 @@ const handleDownload = () => {
                               <strong>Voltage:</strong> {req.voltage_level} kV,{" "}
                             </>
                           )}
-
-                        
 
                           {req.procurement_date && (
                             <>
@@ -348,6 +451,7 @@ const handleDownload = () => {
               <Radio.Group
                 onChange={(e) => {
                   radioValueRef.current = e.target.value;
+                  setSelectedType(e.target.value);
                   handleRadioChange(e);
                 }}
                 style={{ width: "100%" }}
@@ -365,7 +469,18 @@ const handleDownload = () => {
             marginTop: "20px",
           }}
         >
-          <Button type="primary" onClick={handleSubmit} loading={loading}>
+          <Button
+            type="primary"
+            onClick={() => {
+              if (!selectedType) {
+                message.warning("Please select a type first");
+                return;
+              }
+              setSubmittedType(selectedType);
+              handleSubmit();
+            }}
+            loading={loading}
+          >
             Submit
           </Button>
         </div>
@@ -379,7 +494,7 @@ const handleDownload = () => {
           borderRadius: "10px",
         }}
       >
-    {/* <Card style={{ marginTop: 24 }}>
+        {/* <Card style={{ marginTop: 24 }}>
 
 <Row gutter={16} style={{ marginTop: 24 }}>
   <Col span={8}>
@@ -427,38 +542,82 @@ const handleDownload = () => {
 
 </Card> */}
 
+        <Card style={{ marginTop: 24 }}>
+          <Row gutter={16}>
+            {energyReplaced && (
+              <Col span={8}>
+                <p style={{ fontWeight: "bold" }}>
+                  Energy Replaced (MWh): {energyReplaced}
+                </p>
+              </Col>
+            )}
 
-  <Card style={{ marginTop: 24 }}>
-    <Row gutter={16}>
-      {energyReplaced && (
-        <Col span={8}>
-          <p style={{ fontWeight: 'bold' }}>
-            Energy Replaced (MWh): {energyReplaced}
-          </p>
-        </Col>
-      )}
-
-      {capacitySolar && (
+            {/* {capacitySolar && (
         <Col span={8}>
           <p style={{ fontWeight: 'bold' }}>
             Capacity of Solar Rooftop (kWp): {capacitySolar}
           </p>
         </Col>
-      )}
+      )} */}
 
-      {totalSavings && (
-        <Col span={8}>
-          <p style={{ fontWeight: 'bold' }}>
-            Total Saving (INR): {totalSavings}
-          </p>
-        </Col>
-      )}
-    </Row>
-  </Card>
+            {capacitySolar && (
+              <Col span={8}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      whiteSpace: "nowrap",
+                      marginRight: 8,
+                    }}
+                  >
+                    Capacity of Solar Rooftop (kWp):{" "}
+                    {new Intl.NumberFormat("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).format(Number(capacitySolar))}
+                  </span>
+                  <Tooltip
+                    title={`Rooftop solar price considered at ₹${
+                      selectedRequirement?.solar_rooftop_cost || "N/A"
+                    } per kWp`}
+                  >
+                    <InfoCircleOutlined
+                      style={{ color: "#999", cursor: "pointer" }}
+                    />
+                  </Tooltip>
+                </div>
+              </Col>
+            )}
 
+            {totalSavings && (
+              <Col span={8}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>
+                    Total Annual Saving (INR):{" "}
+                    {new Intl.NumberFormat("en-IN", {
+                      maximumFractionDigits: totalSavings % 1 === 0 ? 0 : 2,
+                    }).format(parseFloat(totalSavings))}
+                  </span>
+                </div>
+              </Col>
+            )}
+          </Row>
+        </Card>
 
+        {submittedType && (
+          <h2 style={{ textAlign: "center" }}>
+            Optimized Onsite Solar Option for{" "}
+            {submittedType === "grid_connected"
+              ? "Grid connected"
+              : submittedType === "behind_the_meter"
+              ? "Behind the meter"
+              : ""}
+          </h2>
+        )}
 
-        <p style={{ textAlign: "center", fontWeight: "bold" }}>Monthly Data</p>
+        <p style={{ textAlign: "center", fontWeight: "bold" }}>
+          Monthly Summary Of Replacement
+        </p>
 
         <Row gutter={[16, 16]}>
           <Col xs={24} md={12}>
@@ -482,17 +641,63 @@ const handleDownload = () => {
             />
           </Col>
         </Row>
-{radioValueRef.current === 'behind_the_meter' && Array.isArray(hourlyData) && hourlyData.length > 0 && (
-  <Row style={{ marginTop: "20px" }}>
-    <Col span={24}>
-      <div style={{ textAlign: "right" }}>
-        <Button type="primary" onClick={handleDownload}>
-          Download Hourly Data
-        </Button>
-      </div>
-    </Col>
-  </Row>
-)}
+
+        <AnnualGenerationChart chartData={chartData} />
+
+        <Row style={{ marginTop: "20px" }} gutter={16}>
+          {radioValueRef.current === "behind_the_meter" &&
+            Array.isArray(hourlyData) &&
+            hourlyData.length > 0 && (
+              <Col span={12}>
+                <div style={{ textAlign: "right" }}>
+                  <Button type="primary" onClick={handleDownload}>
+                    Download Hourly Data (Excel)
+                  </Button>
+                </div>
+              </Col>
+            )}
+
+          {(monthlyData.length > 0 || hourlyData.length > 0) && (
+            <Col span={radioValueRef.current === "behind_the_meter" ? 12 : 24}>
+              <div style={{ textAlign: "right" }}>
+                <Button
+                  type="primary"
+                  onClick={() =>
+                    handleDownloadPDF(
+                      userData,
+                      selectedRequirement,
+                      capacitySolar,
+                      submittedType,
+                      energyReplaced,
+                      totalSavings,
+                      sortedMonthlyData
+                    )
+                  }
+                  style={{
+                    backgroundColor: "#669800",
+                    borderColor: "#669800",
+                  }}
+                >
+                  Download Full Report (PDF)
+                </Button>
+              </div>
+            </Col>
+          )}
+        </Row>
+
+        {/* {radioValueRef.current === "behind_the_meter" &&
+          Array.isArray(hourlyData) &&
+          hourlyData.length > 0 && (
+            <Row style={{ marginTop: "20px" }}>
+              <Col span={24}>
+                <div style={{ textAlign: "right" }}>
+                  <Button type="primary" onClick={handleDownload}>
+                    Download Hourly Data
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+          )}
 
         <Modal
           title="Warning"
@@ -507,16 +712,16 @@ const handleDownload = () => {
           <p>
             Please ensure that the selected requirement has valid roof area,
             solar rooftop capacity, and location before proceeding.
-          </p>  
-        </Modal>
-            <RequirementForm
+          </p>
+        </Modal> */}
+        <RequirementForm
           open={editModal}
           onCancel={handleCancel}
           // onSubmit={handleSubmit}
           handleCancelModal={handleCancel}
           data={incompleteRequirement}
           fromRooftop={true}
-           isEdit={true}
+          isEdit={true}
         />
       </Card>
     </main>
