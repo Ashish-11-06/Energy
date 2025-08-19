@@ -210,6 +210,7 @@ const CombinationPattern = () => {
           ISTS_charges: combination.ISTS_charges,
           banking_available: combination.banking_available || 0,
           downloadable,
+          equity_contribution: combination.equity_contribution_required_from_consumer,
           OA_additional_surcharge: combination.OA_additional_surcharge,
           OA_banking_charges: combination.OA_banking_charges,
           OA_cross_subsidy_surcharge: combination.OA_cross_subsidy_surcharge,
@@ -473,7 +474,7 @@ const CombinationPattern = () => {
 
   const handleCombinationClick = (record) => {
     setSelectedRow(record); // Set the selected row for the modal
-    // console.log('Combination clicked:', record);
+    console.log('Combination clicked:', record);
     setIsIPPModalVisible(true);
   }
 
@@ -967,39 +968,9 @@ const CombinationPattern = () => {
                   expandedRowRender: (record) => {
                     const transposedColumns = [
                       {
-                        title: 'OA Additional Surcharge',
-                        dataIndex: 'OA_additional_surcharge',
-                        key: 'OA_additional_surcharge',
-                      },
-                      {
-                        title: 'OA Banking Charges',
-                        dataIndex: 'OA_banking_charges',
-                        key: 'OA_banking_charges',
-                      },
-                      {
-                        title: 'OA Cross Subsidy Surcharge',
-                        dataIndex: 'OA_cross_subsidy_surcharge',
-                        key: 'OA_cross_subsidy_surcharge',
-                      },
-                      {
-                        title: 'OA Electricity Tax',
-                        dataIndex: 'OA_electricity_tax',
-                        key: 'OA_electricity_tax',
-                      },
-                      {
-                        title: 'OA Standby Charges',
-                        dataIndex: 'OA_standby_charges',
-                        key: 'OA_standby_charges',
-                      },
-                      {
-                        title: 'OA Transmission Charges',
-                        dataIndex: 'OA_transmission_charges',
-                        key: 'OA_transmission_charges',
-                      },
-                      {
-                        title: 'OA Transmission Loss',
-                        dataIndex: 'OA_transmission_losses',
-                        key: 'OA_transmission_losses',
+                        title: 'OA Wheeling Losses',
+                        dataIndex: 'OA_wheeling_losses',
+                        key: 'OA_wheeling_losses',
                       },
                       {
                         title: 'OA Wheeling Charges',
@@ -1007,9 +978,39 @@ const CombinationPattern = () => {
                         key: 'OA_wheeling_charges',
                       },
                       {
-                        title: 'OA Wheeling Losses',
-                        dataIndex: 'OA_wheeling_losses',
-                        key: 'OA_wheeling_losses',
+                        title: 'OA Transmission Loss',
+                        dataIndex: 'OA_transmission_losses',
+                        key: 'OA_transmission_losses',
+                      },
+                      {
+                        title: 'OA Transmission Charges',
+                        dataIndex: 'OA_transmission_charges',
+                        key: 'OA_transmission_charges',
+                      },
+                      {
+                        title: 'OA Standby Charges',
+                        dataIndex: 'OA_standby_charges',
+                        key: 'OA_standby_charges',
+                      },
+                      {
+                        title: 'OA Electricity Tax',
+                        dataIndex: 'OA_electricity_tax',
+                        key: 'OA_electricity_tax',
+                      },
+                      {
+                        title: 'OA Cross Subsidy Surcharge',
+                        dataIndex: 'OA_cross_subsidy_surcharge',
+                        key: 'OA_cross_subsidy_surcharge',
+                      },
+                      {
+                        title: 'OA Banking Charges',
+                        dataIndex: 'OA_banking_charges',
+                        key: 'OA_banking_charges',
+                      },
+                      {
+                        title: 'OA Additional Surcharge',
+                        dataIndex: 'OA_additional_surcharge',
+                        key: 'OA_additional_surcharge',
                       },
                     ];
 

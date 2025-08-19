@@ -39,14 +39,14 @@ const ProfilePage = () => {
   const storedUser = localStorage.getItem("user");
   // const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
 
-    const userDataa = decryptData(localStorage.getItem('user'));
-    console.log('userDataa', userDataa);
-    
-    const user= userDataa?.user;
-      const userId = user?.id;
+  const userDataa = decryptData(localStorage.getItem('user'));
+  // console.log('userDataa', userDataa);
+
+  const user = userDataa?.user;
+  const userId = user?.id;
   // console.log(userId);
   // const baseurl = "https://ext.exgglobal.com/api"
-    const baseurl= import.meta.env.VITE_BASE_URL_GEN;
+  const baseurl = import.meta.env.VITE_BASE_URL_GEN;
 
   const navigate = useNavigate();
 
@@ -106,13 +106,13 @@ const ProfilePage = () => {
     // const existingUserData = storedUser ? JSON.parse(storedUser) : {};
     // console.log('credit rating:', values.proof);
     // console.log('values profile consumer', values);
-    
-  const userData = decryptData(localStorage.getItem('user'));
-  const existingUserData= userData?.user;
-  // console.log('existingUserData', existingUserData);
-  
+
+    const userData = decryptData(localStorage.getItem('user'));
+    const existingUserData = userData?.user;
+    // console.log('existingUserData', existingUserData);
+
     // Debug: log the proof field structure
- // console.log('values.proof:', values.proof);
+    // console.log('values.proof:', values.proof);
 
     // Extract base64 from proof upload (remove prefix if present)
     let proofBase64 = undefined;
@@ -137,8 +137,8 @@ const ProfilePage = () => {
     };
 
     // console.log('Updated user data:', updatedUserData);
-    
-//  console.log('Payload to backend:', { userId, userData: updatedUserData });
+
+    //  console.log('Payload to backend:', { userId, userData: updatedUserData });
 
     dispatch(editUser({ userId, userData: updatedUserData }))
       .then((res) => {
@@ -162,12 +162,12 @@ const ProfilePage = () => {
           const event = new Event("userDetailsUpdated");
           window.dispatchEvent(event);
 
-             // console.log("User updated successfully:", res);
-            }
-        })
-        .catch((error) => {
-            // console.error("Failed to update user:", error);
-        });
+          // console.log("User updated successfully:", res);
+        }
+      })
+      .catch((error) => {
+        // console.error("Failed to update user:", error);
+      });
 
     setIsModalVisible(false);
   };

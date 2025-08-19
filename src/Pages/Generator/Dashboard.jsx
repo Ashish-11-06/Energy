@@ -17,10 +17,8 @@ import DashboardApi from "../../Redux/api/dashboard";
 import totalIPP from "../../assets/totalIPP.png";
 import demands from "../../assets/capacityAvailable.png";
 import state from "../../assets/state.png";
-import solar from "../../assets/solar.avif";
 import battery from "../../assets/battery.webp";
 import wind from "../../assets/wind.jpg";
-import { loginUser } from "../../Redux/Slices/loginSlice";
 import SubscriptionDueModal from "../../Components/Modals/SubscriptionDueModal";
 import { useNavigate } from "react-router-dom";
 import { decryptData } from "../../Utils/cryptoHelper";
@@ -71,13 +69,13 @@ const Dashboard = () => {
   // useEffect(() => {
   //   showSubscriptionDueModal(true);
   // })
-  useEffect (() => {
-    if(time_remaining=== 'Expired' || time_remaining=== 'Expiring' ){
-      // console.log('expired');    
-      showSubscriptionDueModal(true);
-  }
-},[time_remaining]
-)
+//   useEffect (() => {
+//     if(time_remaining=== 'Expired' || time_remaining=== 'Expiring' ){
+//       // console.log('expired');    
+//       showSubscriptionDueModal(true);
+//   }
+// },[time_remaining])
+
   useEffect(() => {
     const fetchData = async () => {
       try {

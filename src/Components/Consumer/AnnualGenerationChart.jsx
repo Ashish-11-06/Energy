@@ -1,12 +1,25 @@
 import React from 'react';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const AnnualGenerationChart = ({ chartData }) => {
+  // console.log("Chart Data:", chartData);
+
   if (!chartData || chartData.length === 0) {
-    return <div style={{ marginTop: 30, textAlign: "center" }}>
-      <h3>Annual Generation Summary</h3>
-      <p>No data available for the chart</p>
-    </div>;
+    return (
+      <div style={{ marginTop: 30, textAlign: "center" }}>
+        <h3>Annual Generation Summary</h3>
+        <p>No data available for the chart</p>
+      </div>
+    );
   }
 
   return (
@@ -21,8 +34,10 @@ const AnnualGenerationChart = ({ chartData }) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="hour"
+              ticks={[...Array(24).keys()]} // 0 → 23
+              tickFormatter={(hour) => `${hour.toString().padStart(2, "0")}:00`}
               label={{
-                value: "Hour of Day",
+                // value: "Hour of Day",
                 position: "insideBottom",
                 offset: -5,
               }}
@@ -34,18 +49,20 @@ const AnnualGenerationChart = ({ chartData }) => {
                 position: "insideLeft",
               }}
             />
-            <Tooltip 
+            <Tooltip
               formatter={(value) => [`${value} kWh`, 'Generation']}
-              labelFormatter={(hour) => `Hour: ${hour}`}
+              labelFormatter={(hour) =>
+                `Hour: ${hour.toString().padStart(2, "0")}:00`
+              }
             />
             <Legend />
-            <Line 
-              type="monotone" 
-              dataKey="generation" 
-              stroke="#8884d8" 
-              name="Generation (kWh)"
-              dot={false} // Remove dots for cleaner look with many data points
-              activeDot={{ r: 6 }} // Make active dot larger when hovered
+            <Line
+              type="monotone"
+              dataKey="generation"
+              stroke="#669800"
+              name="Hourly Generation"
+              dot={false}
+              activeDot={{ r: 6 }}
             />
           </LineChart>
         </ResponsiveContainer>
