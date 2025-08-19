@@ -25,6 +25,7 @@ import { Line } from "react-chartjs-2";
 import { EyeOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { handleDownloadPDF } from "../../Components/Consumer/downloadOnsitePdf";
 import AnnualGenerationChart from "../../Components/Consumer/AnnualGenerationChart";
+import { set } from "nprogress";
 
 const Rooftop = () => {
   const [selectedRequirement, setSelectedRequirement] = useState(null); // State for selected requirement
@@ -61,40 +62,7 @@ const Rooftop = () => {
   // console.log(chartData);
 
   // Download all tha data as PDF
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await pwattApi.addPWatt({});
 
-        // Add debug logging to inspect the API response
-        console.log("API Response:", response);
-
-        // Ensure the data exists and is in expected format
-        if (response.data && response.data.daily_average) {
-          const transformedData = response.data.daily_average.map(
-            (value, hour) => ({
-              hour: hour.toString(), // Convert hour to string for better display
-              generation: Number(value), // Ensure value is a number
-            })
-          );
-
-          console.log("Transformed Data:", transformedData);
-          setChartData(transformedData);
-        } else {
-          throw new Error("Invalid data format from API");
-        }
-
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-        console.error("Error fetching data:", err);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   // Helper functions
   const formatNumber = (num, decimals = 3) => {
@@ -174,6 +142,7 @@ const Rooftop = () => {
   ];
 
   const handleSubmit = async () => {
+    setChartData([]);
     setMonthlyData([]);
     setEnergyReplaced("");
     setTotalSavings("");
@@ -204,6 +173,45 @@ const Rooftop = () => {
       );
       setMonthlyData(sortedData);
       setLoading(false);
+      // console.log("response payload:", res?.payload.hourly_generation);
+
+      const hourly_generation = res?.payload.hourly_generation; // array of 8760
+
+      if (hourly_generation && hourly_generation.length === 8760) {
+        const hoursInDay = 24;
+        const days = 365;
+        const averages = new Array(hoursInDay).fill(0);
+
+        for (let hour = 0; hour < hoursInDay; hour++) {
+          let sum = 0;
+          for (let day = 0; day < days; day++) {
+            sum += hourly_generation[day * hoursInDay + hour];
+          }
+          averages[hour] = sum / days;
+        }
+
+        // console.log("24-hour averages:", averages);
+
+        const roundedAverages = averages.map(val => Number(val.toFixed(2)));
+
+        // console.log("Rounded 24-hour averages:", roundedAverages);
+
+        const chartData = roundedAverages.map((value, index) => ({
+          hour: index,
+          generation: value,
+        }));
+
+        setChartData(chartData);
+
+      } else {
+        console.error("hourly_generation data is missing or not 8760 values.");
+      }
+
+
+
+
+
+
       // }
       // if(radioValueRef.current === "behind_the_meter") {
       //   message.warning('Behind the meter data is not available yet. It is under development.');
@@ -375,61 +383,61 @@ const Rooftop = () => {
               options={
                 Array.isArray(requirements)
                   ? requirements.map((req) => ({
-                      label: (
-                        <span>
-                          {req.state && (
-                            <>
-                              <strong>State:</strong> {req.state},{" "}
-                            </>
-                          )}
+                    label: (
+                      <span>
+                        {req.state && (
+                          <>
+                            <strong>State:</strong> {req.state},{" "}
+                          </>
+                        )}
 
-                          {req.roof_area && (
-                            <>
-                              <strong>Roof Area:</strong> {req.roof_area} sq m,{" "}
-                            </>
-                          )}
+                        {req.roof_area && (
+                          <>
+                            <strong>Roof Area:</strong> {req.roof_area} sq m,{" "}
+                          </>
+                        )}
 
-                          {req.solar_rooftop_capacity && (
-                            <>
-                              <strong>Solar Rooftop Capacity:</strong>{" "}
-                              {req.solar_rooftop_capacity} kWp,{" "}
-                            </>
-                          )}
+                        {req.solar_rooftop_capacity && (
+                          <>
+                            <strong>Solar Rooftop Capacity:</strong>{" "}
+                            {req.solar_rooftop_capacity} kWp,{" "}
+                          </>
+                        )}
 
-                          {req.annual_electricity_consumption && (
-                            <>
-                              <strong>Annual Consumption:</strong>{" "}
-                              {req.annual_electricity_consumption} MWh,{" "}
-                            </>
-                          )}
-                          {req.contracted_demand && (
-                            <>
-                              <strong>Contracted Demand:</strong>{" "}
-                              {req.contracted_demand} MW,{" "}
-                            </>
-                          )}
+                        {req.annual_electricity_consumption && (
+                          <>
+                            <strong>Annual Consumption:</strong>{" "}
+                            {req.annual_electricity_consumption} MWh,{" "}
+                          </>
+                        )}
+                        {req.contracted_demand && (
+                          <>
+                            <strong>Contracted Demand:</strong>{" "}
+                            {req.contracted_demand} MW,{" "}
+                          </>
+                        )}
 
-                          {req.location && (
-                            <>
-                              <strong>Location:</strong> {req.location},{" "}
-                            </>
-                          )}
-                          {req.voltage_level && (
-                            <>
-                              <strong>Voltage:</strong> {req.voltage_level} kV,{" "}
-                            </>
-                          )}
+                        {req.location && (
+                          <>
+                            <strong>Location:</strong> {req.location},{" "}
+                          </>
+                        )}
+                        {req.voltage_level && (
+                          <>
+                            <strong>Voltage:</strong> {req.voltage_level} kV,{" "}
+                          </>
+                        )}
 
-                          {req.procurement_date && (
-                            <>
-                              <strong>Procurement Date:</strong>{" "}
-                              {req.procurement_date}
-                            </>
-                          )}
-                        </span>
-                      ),
-                      value: req.id,
-                    }))
+                        {req.procurement_date && (
+                          <>
+                            <strong>Procurement Date:</strong>{" "}
+                            {req.procurement_date}
+                          </>
+                        )}
+                      </span>
+                    ),
+                    value: req.id,
+                  }))
                   : []
               }
               placeholder="Select the requirement"
@@ -542,6 +550,17 @@ const Rooftop = () => {
 
 </Card> */}
 
+        {submittedType && (
+          <h2 style={{ textAlign: "center" }}>
+            Optimized Onsite Solar Option for{" "}
+            {submittedType === "grid_connected"
+              ? "Grid connected"
+              : submittedType === "behind_the_meter"
+                ? "Behind the meter"
+                : ""}
+          </h2>
+        )}
+
         <Card style={{ marginTop: 24 }}>
           <Row gutter={16}>
             {energyReplaced && (
@@ -576,15 +595,7 @@ const Rooftop = () => {
                       maximumFractionDigits: 2,
                     }).format(Number(capacitySolar))}
                   </span>
-                  <Tooltip
-                    title={`Rooftop solar price considered at ₹${
-                      selectedRequirement?.solar_rooftop_cost || "N/A"
-                    } per kWp`}
-                  >
-                    <InfoCircleOutlined
-                      style={{ color: "#999", cursor: "pointer" }}
-                    />
-                  </Tooltip>
+                
                 </div>
               </Col>
             )}
@@ -598,24 +609,23 @@ const Rooftop = () => {
                       maximumFractionDigits: totalSavings % 1 === 0 ? 0 : 2,
                     }).format(parseFloat(totalSavings))}
                   </span>
+                    <Tooltip
+                    title={`Rooftop solar price considered at ${selectedRequirement?.solar_rooftop_cost || "1 INR"
+                      } / kWp`}
+                  >
+                    <InfoCircleOutlined
+                      style={{ color: "#999", cursor: "pointer", marginLeft: 8 }}
+                    />
+                  </Tooltip>
                 </div>
               </Col>
             )}
           </Row>
         </Card>
 
-        {submittedType && (
-          <h2 style={{ textAlign: "center" }}>
-            Optimized Onsite Solar Option for{" "}
-            {submittedType === "grid_connected"
-              ? "Grid connected"
-              : submittedType === "behind_the_meter"
-              ? "Behind the meter"
-              : ""}
-          </h2>
-        )}
 
-        <p style={{ textAlign: "center", fontWeight: "bold" }}>
+
+        <p style={{ textAlign: "center", fontWeight: "bold", marginTop: "20px" }}>
           Monthly Summary Of Replacement
         </p>
 
@@ -657,7 +667,7 @@ const Rooftop = () => {
               </Col>
             )}
 
-          {(monthlyData.length > 0 || hourlyData.length > 0) && (
+          {(monthlyData?.length > 0 || hourlyData?.length > 0) && (
             <Col span={radioValueRef.current === "behind_the_meter" ? 12 : 24}>
               <div style={{ textAlign: "right" }}>
                 <Button
@@ -679,6 +689,14 @@ const Rooftop = () => {
                   }}
                 >
                   Download Full Report (PDF)
+                </Button>
+
+                <Button
+                 style={{
+                   marginLeft: "10px",
+                  }}
+                >
+                  Request Quotation
                 </Button>
               </div>
             </Col>
