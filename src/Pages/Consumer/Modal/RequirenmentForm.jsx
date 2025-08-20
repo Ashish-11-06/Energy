@@ -234,19 +234,33 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
       formattedValues.longitude = values.longitude || '';
     }
 
+    // Ensure rooftop fields are always present, default to 0 if not filled
+    // formattedValues.roof_area =
+    //   values.roof_area !== undefined && values.roof_area !== null && values.roof_area !== ""
+    //     ? values.roof_area
+    //     : 0;
+    formattedValues.solar_rooftop_capacity =
+      values.solar_rooftop_capacity !== undefined && values.solar_rooftop_capacity !== null && values.solar_rooftop_capacity !== ""
+        ? values.solar_rooftop_capacity
+        : 0;
+
+    // Add console log to check what values are being set
+    console.log("Rooftop values being set:", {
+      input_roof_area: values.roof_area,
+      input_solar_rooftop_capacity: values.solar_rooftop_capacity,
+      formatted_roof_area: formattedValues.roof_area,
+      formatted_solar_rooftop_capacity: formattedValues.solar_rooftop_capacity,
+    });
+
     // console.log('formattedValues', formattedValues);
     if (!fromRooftop) {
       onSubmit(formattedValues);
     } else {
-
       const res = dispatch(updateRequirements({ updatedData: formattedValues }));
       handleCancelModal();
-      // console.log('res', res);
-
       if (res) {
         message.success('Requirement updated successfully!');
       }
-
     }
 
     form.resetFields();

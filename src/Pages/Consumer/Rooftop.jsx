@@ -27,7 +27,7 @@ import { handleDownloadPDF } from "../../Components/Consumer/downloadOnsitePdf";
 import AnnualGenerationChart from "../../Components/Consumer/AnnualGenerationChart";
 import { set } from "nprogress";
 
-const Rooftop = () => {
+const Rooftop = (props) => {
   const [selectedRequirement, setSelectedRequirement] = useState(null); // State for selected requirement
   const dispatch = useDispatch();
   // const userData = JSON.parse(localStorage.getItem("user")).user;
@@ -52,17 +52,6 @@ const Rooftop = () => {
   const [chartData, setChartData] = useState([]);
   const [error, setError] = useState(null);
   // const [loading, setLoading] = useState(false);
-
-  // Dummy data for hours 0–24
-  // const chartData = Array.from({ length: 25 }, (_, hour) => ({
-  //   hour,
-  //   generation: Math.floor(Math.random() * 100) + 10, // always 10–109
-  // }));
-
-  // console.log(chartData);
-
-  // Download all tha data as PDF
-
 
   // Helper functions
   const formatNumber = (num, decimals = 3) => {
@@ -104,9 +93,34 @@ const Rooftop = () => {
     // console.log("Selected value:", radioValueRef.current);
   };
 
+  // const handleRequirementChange = (value) => {
+  //   console.log("Selected requirement ID:", value);
+
+  //   const selected = requirements.find((req) => req.id === value);
+
+  //   const isMissingFields =
+  //     !selected?.roof_area ||
+  //     !selected?.solar_rooftop_capacity ||
+  //     !selected?.location;
+
+  //   if (isMissingFields) {
+  //     setIncompleteRequirement(selected);
+  //     setWarningModal(true);
+  //     setSelectedRequirement(null);
+  //     setSelectedRequirementId(null);
+  //     setSelectKey(Date.now()); // 🔁 Force re-render by changing key
+  //     return;
+  //   } else {
+  //     setSelectedRequirement(selected);
+  //     setSelectedRequirementId(selected.id); // Set dropdown value
+  //   }
+  // };
+
+  // console.log('radion value',radioValueRef);
+
   const handleRequirementChange = (value) => {
     console.log("Selected requirement ID:", value);
-    
+
     const selected = requirements.find((req) => req.id === value);
 
     const isMissingFields =
@@ -114,20 +128,15 @@ const Rooftop = () => {
       !selected?.solar_rooftop_capacity ||
       !selected?.location;
 
-    if (isMissingFields) {
-      setIncompleteRequirement(selected);
-      setWarningModal(true);
-      setSelectedRequirement(null);
-      setSelectedRequirementId(null);
-      setSelectKey(Date.now()); // 🔁 Force re-render by changing key
-      return;
-    } else {
-      setSelectedRequirement(selected);
-      setSelectedRequirementId(selected.id); // Set dropdown value
-    }
+    // if (isMissingFields) {
+    //   message.warning("Some fields are missing, but selection allowed.");
+    // }
+
+    // ✅ Always allow setting
+    setSelectedRequirement(selected);
+    setSelectedRequirementId(selected.id);
   };
 
-  // console.log('radion value',radioValueRef);
   const monthNames = [
     "January",
     "February",
@@ -194,7 +203,7 @@ const Rooftop = () => {
 
         // console.log("24-hour averages:", averages);
 
-        const roundedAverages = averages.map(val => Number(val.toFixed(2)));
+        const roundedAverages = averages.map((val) => Number(val.toFixed(2)));
 
         // console.log("Rounded 24-hour averages:", roundedAverages);
 
@@ -204,15 +213,9 @@ const Rooftop = () => {
         }));
 
         setChartData(chartData);
-
       } else {
         console.error("hourly_generation data is missing or not 8760 values.");
       }
-
-
-
-
-
 
       // }
       // if(radioValueRef.current === "behind_the_meter") {
@@ -231,6 +234,7 @@ const Rooftop = () => {
       console.error("❌ Rejected:", res.payload);
     }
   };
+
   // console.log('selected requirement', selectedRequirement);
   // console.log('hourly data',hourlyData);
 
@@ -335,11 +339,14 @@ const Rooftop = () => {
         }).format(value),
     },
     {
-      title: "RE Replacement",
+      title: "RE Replacement (%)",
       dataIndex: "offset",
       key: "offset",
       align: "center",
-      render: (text) => (text ? text : "NA"),
+      render: (text) =>
+        text !== undefined && text !== null
+          ? (Number(text) * 100).toFixed(2)
+          : "NA",
     },
   ];
 
@@ -378,68 +385,68 @@ const Rooftop = () => {
               Select Consumption Unit
             </p>
             <Select
-              key={selectKey} // 💥 This will force the dropdown to reset visually
+              key={selectKey}
               style={{ width: "100%" }}
-              value={selectedRequirementId || undefined} // Control only by ID
+              value={selectedRequirementId || undefined}
               onChange={handleRequirementChange}
               options={
                 Array.isArray(requirements)
                   ? requirements.map((req) => ({
-                    label: (
-                      <span>
-                        {req.state && (
-                          <>
-                            <strong>State:</strong> {req.state},{" "}
-                          </>
-                        )}
-
-                        {req.roof_area && (
-                          <>
-                            <strong>Roof Area:</strong> {req.roof_area} sq m,{" "}
-                          </>
-                        )}
-
-                        {req.solar_rooftop_capacity && (
+                      label: (
+                        <span>
+                          {req.state && (
+                            <>
+                              <strong>State:</strong> {req.state || "N/A"},{" "}
+                            </>
+                          )}
+                          {/* Always show Solar Rooftop Capacity label, show value or N/A */}
                           <>
                             <strong>Solar Rooftop Capacity:</strong>{" "}
-                            {req.solar_rooftop_capacity} kWp,{" "}
+                            {req.solar_rooftop_capacity !== undefined && req.solar_rooftop_capacity !== null
+                              ? `${req.solar_rooftop_capacity} kWp`
+                              : "N/A"}
+                            ,{" "}
                           </>
-                        )}
-
-                        {req.annual_electricity_consumption && (
-                          <>
-                            <strong>Annual Consumption:</strong>{" "}
-                            {req.annual_electricity_consumption} MWh,{" "}
-                          </>
-                        )}
-                        {req.contracted_demand && (
-                          <>
-                            <strong>Contracted Demand:</strong>{" "}
-                            {req.contracted_demand} MW,{" "}
-                          </>
-                        )}
-
-                        {req.location && (
-                          <>
-                            <strong>Location:</strong> {req.location},{" "}
-                          </>
-                        )}
-                        {req.voltage_level && (
-                          <>
-                            <strong>Voltage:</strong> {req.voltage_level} kV,{" "}
-                          </>
-                        )}
-
-                        {req.procurement_date && (
-                          <>
-                            <strong>Procurement Date:</strong>{" "}
-                            {req.procurement_date}
-                          </>
-                        )}
-                      </span>
-                    ),
-                    value: req.id,
-                  }))
+                          {req.roof_area && (
+                            <>
+                              <strong>Roof Area:</strong>{" "}
+                              {req.roof_area || "N/A"} sq m,{" "}
+                            </>
+                          )}
+                          {req.annual_electricity_consumption && (
+                            <>
+                              <strong>Annual Consumption:</strong>{" "}
+                              {req.annual_electricity_consumption || "N/A"} MWh,{" "}
+                            </>
+                          )}
+                          {req.contracted_demand && (
+                            <>
+                              <strong>Contracted Demand:</strong>{" "}
+                              {req.contracted_demand || "N/A"} MW,{" "}
+                            </>
+                          )}
+                          {req.location && (
+                            <>
+                              <strong>Location:</strong> {req.location || "N/A"}
+                              ,{" "}
+                            </>
+                          )}
+                          {req.voltage_level && (
+                            <>
+                              <strong>Voltage:</strong>{" "}
+                              {req.voltage_level || "N/A"} kV,{" "}
+                            </>
+                          )}
+                          {req.procurement_date && (
+                            <>
+                              <strong>Procurement Date:</strong>{" "}
+                              {req.procurement_date || "N/A"}
+                            </>
+                          )}
+                        </span>
+                      ),
+                      value: req.id,
+                    }))
                   : []
               }
               placeholder="Select the requirement"
@@ -447,6 +454,75 @@ const Rooftop = () => {
               optionFilterProp="children"
             />
           </Col>
+          {/* Show details card after selection */}
+          {selectedRequirement && (
+            <Col span={24} style={{ marginTop: 16 }}>
+              <Card bordered style={{ background: "#fafbfc", marginBottom: 16 }}>
+                <Row gutter={24}>
+                  <Col span={8}>
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ color: "#888" }}>State: </span>
+                      <span style={{ fontWeight: 500 }}>{selectedRequirement.state || "N/A"}</span>
+                    </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ color: "#888" }}>Roof Area: </span>
+                      <span style={{ fontWeight: 500 }}>
+                        {selectedRequirement.roof_area
+                          ? `${selectedRequirement.roof_area} sq m`
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ color: "#888" }}>Solar Rooftop Capacity: </span>
+                      <span style={{ fontWeight: 500 }}>
+                        {selectedRequirement.solar_rooftop_capacity
+                          ? `${selectedRequirement.solar_rooftop_capacity} kWp`
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ color: "#888" }}>Annual Consumption: </span>
+                      <span style={{ fontWeight: 500 }}>
+                        {selectedRequirement.annual_electricity_consumption
+                          ? `${selectedRequirement.annual_electricity_consumption} MWh`
+                          : "N/A"}
+                      </span>
+                    </div>
+                  </Col>
+                  <Col span={8}>
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ color: "#888" }}>Contracted Demand: </span>
+                      <span style={{ fontWeight: 500 }}>
+                        {selectedRequirement.contracted_demand
+                          ? `${selectedRequirement.contracted_demand} MW`
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ color: "#888" }}>Location: </span>
+                      <span style={{ fontWeight: 500 }}>
+                        {selectedRequirement.location || "N/A"}
+                      </span>
+                    </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ color: "#888" }}>Voltage: </span>
+                      <span style={{ fontWeight: 500 }}>
+                        {selectedRequirement.voltage_level
+                          ? `${selectedRequirement.voltage_level} kV`
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <span style={{ color: "#888" }}>Procurement Date: </span>
+                      <span style={{ fontWeight: 500 }}>
+                        {selectedRequirement.procurement_date || "N/A"}
+                      </span>
+                    </div>
+                  </Col>
+                </Row>
+              </Card>
+            </Col>
+          )}
           {/* Radio buttons */}
           <Row gutter={[16, 16]}>
             <p
@@ -558,8 +634,8 @@ const Rooftop = () => {
             {submittedType === "grid_connected"
               ? "Grid connected"
               : submittedType === "behind_the_meter"
-                ? "Behind the meter"
-                : ""}
+              ? "Behind the meter"
+              : ""}
           </h2>
         )}
 
@@ -568,7 +644,8 @@ const Rooftop = () => {
             {energyReplaced && (
               <Col span={8}>
                 <p style={{ fontWeight: "bold" }}>
-                  Energy Replaced (MWh): {energyReplaced}
+                  Energy Replaced (%): {energyReplaced}
+                  {/* Energy Replaced (%): {Number(energyReplaced) * 100} */}
                 </p>
               </Col>
             )}
@@ -597,7 +674,6 @@ const Rooftop = () => {
                       maximumFractionDigits: 2,
                     }).format(Number(capacitySolar))}
                   </span>
-                
                 </div>
               </Col>
             )}
@@ -606,17 +682,24 @@ const Rooftop = () => {
               <Col span={8}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>
-                    Total Annual Saving (INR):{" "}
+                    Total Annual Saving (INR/kWh):{" "}
                     {new Intl.NumberFormat("en-IN", {
                       maximumFractionDigits: totalSavings % 1 === 0 ? 0 : 2,
                     }).format(parseFloat(totalSavings))}
                   </span>
-                    <Tooltip
-                    title={`Rooftop solar price considered at ${selectedRequirement?.solar_rooftop_cost || "1 INR"
-                      } / kWp`}
+                  <Tooltip
+                    title={`Rooftop solar price considered at ${
+                      selectedRequirement?.rooftop_price
+                        ? `${selectedRequirement.rooftop_price} `
+                        : "3.5"
+                    } INR/kWh`}
                   >
                     <InfoCircleOutlined
-                      style={{ color: "#999", cursor: "pointer", marginLeft: 8 }}
+                      style={{
+                        color: "#999",
+                        cursor: "pointer",
+                        marginLeft: 8,
+                      }}
                     />
                   </Tooltip>
                 </div>
@@ -625,9 +708,9 @@ const Rooftop = () => {
           </Row>
         </Card>
 
-
-
-        <p style={{ textAlign: "center", fontWeight: "bold", marginTop: "20px" }}>
+        <p
+          style={{ textAlign: "center", fontWeight: "bold", marginTop: "20px" }}
+        >
           Monthly Summary Of Replacement
         </p>
 
@@ -676,13 +759,14 @@ const Rooftop = () => {
                   type="primary"
                   onClick={() =>
                     handleDownloadPDF(
-                      userData,
-                      selectedRequirement,
-                      capacitySolar,
-                      submittedType,
-                      energyReplaced,
-                      totalSavings,
-                      sortedMonthlyData
+                      {
+                        ...selectedRequirement,
+                        energyReplaced,
+                        totalSavings,
+                        capacitySolar,
+                      },
+                      selectedRequirement?.id,
+                      monthlyData
                     )
                   }
                   style={{
@@ -694,8 +778,8 @@ const Rooftop = () => {
                 </Button>
 
                 <Button
-                 style={{
-                   marginLeft: "10px",
+                  style={{
+                    marginLeft: "10px",
                   }}
                 >
                   Request Quotation
@@ -747,5 +831,7 @@ const Rooftop = () => {
     </main>
   );
 };
+
+
 
 export default Rooftop;

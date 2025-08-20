@@ -808,26 +808,31 @@ const EnergyConsumptionTable = () => {
 
   const PeakHoursCard = ({ peakHours }) => {
     const renderDynamicHours = (data, type) => {
+      if (!data || typeof data !== "object") return []; // safeguard
+
       const result = [];
 
       // Regex pattern to find matching keys: e.g., 'peak_start_1'
-      const startKeys = Object.keys(data).filter(key => key.startsWith(`${type}_start_`));
+      const startKeys = Object.keys(data).filter(
+        (key) => key.startsWith(`${type}_start_`)
+      );
 
-      startKeys.forEach(startKey => {
-        const index = startKey.split('_').pop(); // e.g., '1', '2', '3'
+      startKeys.forEach((startKey) => {
+        const index = startKey.split("_").pop(); // e.g., '1', '2', '3'
         const endKey = `${type}_end_${index}`;
 
         if (data[startKey] && data[endKey]) {
           result.push({
             start: data[startKey],
             end: data[endKey],
-            label: `${type === 'peak' ? 'Peak' : 'Off-Peak'} ${index}`
+            label: `${type === "peak" ? "Peak" : "Off-Peak"} ${index}`,
           });
         }
       });
 
       return result;
     };
+
 
     // Inside your component:
     const peakTimeSlots = renderDynamicHours(peakHours, 'peak');
