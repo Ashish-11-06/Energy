@@ -638,9 +638,16 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
               <Col span={24}>
                 <Form.Item
                   label={renderLabelWithTooltip(
-                    "Roof Area available (including open space) in sq m",
+                    "Roof Area available (including open space) in m²",
                     <>
-                    Enter the roof area available in square meter.<br/>(1 Acre = 4046.86 Square meters)
+                      Enter the roof area available in square meters.<br />
+                      <strong>Eg. Conversions:</strong>
+                      <div style={{ marginTop: 6, fontSize: 12}}>
+                        <div>1 ft² = 0.092903 m²</div>
+                        <div>1 yd² = 0.836127 m²</div>
+                        <div>1 acre = 4046.86 m²</div>
+                        <div>1 hectare = 10000 m²</div>
+                      </div>
                     </>
                   )}
                   name="roof_area"
@@ -653,11 +660,14 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
                       : []
                   }
                 >
-                  <Input type="number" min={0} placeholder="Enter the roof area available in square meter.
-                  (1 Acre = 4046.86 square meters)" />
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="Enter the roof area available in square meters (1 Acre = 4046.86 m²)"
+                  />
                 </Form.Item>
-
               </Col>
+
 
               <Col span={12}>
                 <Form.Item
@@ -726,10 +736,10 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
                 </Form.Item>
 
               </Col>
-              
-           
+
+
               <div style={{ marginBottom: '10px', color: 'gray' }}>
-                   (optional : You can add district or latitude and longitude.)
+                (optional : You can add district or latitude and longitude.)
               </div>
 
               <Col span={24}>
@@ -799,7 +809,7 @@ const RequirementForm = ({ open, onCancel, onSubmit, data, isEdit, fromRooftop, 
             </Row>
           </Panel>
         </Collapse>
-        <p style={{ color: "GrayText" , marginTop:'10px' }}>(Note: All * fields are mandatory.)</p>
+        <p style={{ color: "GrayText", marginTop: '10px' }}>(Note: All * fields are mandatory.)</p>
         <Form.Item style={{ textAlign: "center" }}>
           <Button
             type="primary"

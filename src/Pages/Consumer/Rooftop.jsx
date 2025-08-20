@@ -50,6 +50,7 @@ const Rooftop = (props) => {
   const [submittedType, setSubmittedType] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chartData, setChartData] = useState([]);
+  const [responseData, setResponseData] = useState(null);
   const [error, setError] = useState(null);
   // const [loading, setLoading] = useState(false);
 
@@ -93,30 +94,6 @@ const Rooftop = (props) => {
     // console.log("Selected value:", radioValueRef.current);
   };
 
-  // const handleRequirementChange = (value) => {
-  //   console.log("Selected requirement ID:", value);
-
-  //   const selected = requirements.find((req) => req.id === value);
-
-  //   const isMissingFields =
-  //     !selected?.roof_area ||
-  //     !selected?.solar_rooftop_capacity ||
-  //     !selected?.location;
-
-  //   if (isMissingFields) {
-  //     setIncompleteRequirement(selected);
-  //     setWarningModal(true);
-  //     setSelectedRequirement(null);
-  //     setSelectedRequirementId(null);
-  //     setSelectKey(Date.now()); // 🔁 Force re-render by changing key
-  //     return;
-  //   } else {
-  //     setSelectedRequirement(selected);
-  //     setSelectedRequirementId(selected.id); // Set dropdown value
-  //   }
-  // };
-
-  // console.log('radion value',radioValueRef);
 
   const handleRequirementChange = (value) => {
     console.log("Selected requirement ID:", value);
@@ -182,48 +159,23 @@ const Rooftop = (props) => {
       const sortedData = [...convertedData].sort(
         (a, b) => monthNames.indexOf(a.month) - monthNames.indexOf(b.month)
       );
+      setResponseData(res?.payload);
       setMonthlyData(sortedData);
       setLoading(false);
       // console.log("response payload:", res?.payload.hourly_generation);
 
-      const hourly_generation = res?.payload.hourly_generation; // array of 8760
+      const hourly_generation = res?.payload.hourly_averages; // array of 8760
 
-      if (hourly_generation && hourly_generation.length === 8760) {
-        const hoursInDay = 24;
-        const days = 365;
-        const averages = new Array(hoursInDay).fill(0);
+      const chartData = hourly_generation.map((value, index) => ({
+        hour: index,
+        generation: value,
+      }));
 
-        for (let hour = 0; hour < hoursInDay; hour++) {
-          let sum = 0;
-          for (let day = 0; day < days; day++) {
-            sum += hourly_generation[day * hoursInDay + hour];
-          }
-          averages[hour] = sum / days;
-        }
+      setChartData(chartData);
 
-        // console.log("24-hour averages:", averages);
 
-        const roundedAverages = averages.map((val) => Number(val.toFixed(2)));
 
-        // console.log("Rounded 24-hour averages:", roundedAverages);
-
-        const chartData = roundedAverages.map((value, index) => ({
-          hour: index,
-          generation: value,
-        }));
-
-        setChartData(chartData);
-      } else {
-        console.error("hourly_generation data is missing or not 8760 values.");
-      }
-
-      // }
-      // if(radioValueRef.current === "behind_the_meter") {
-      //   message.warning('Behind the meter data is not available yet. It is under development.');
-      //   console.log("Behind the meter data:", res?.payload?.hourly_data);
-
-      // }
-      setEnergyReplaced(res?.payload.energy_replaced);
+      setEnergyReplaced(res?.payload.total_energy_replaced);
       setCapacitySolar(res?.payload.capacity_of_solar_rooftop);
       setTotalSavings(res?.payload.total_savings);
       setLoading(false);
@@ -235,17 +187,7 @@ const Rooftop = (props) => {
     }
   };
 
-  // console.log('selected requirement', selectedRequirement);
-  // console.log('hourly data',hourlyData);
 
-  const onModalClick = () => {
-    // console.log("Modal OK clicked");
-    // console.log("Selected requirement:", incompleteRequirement);
-    setEditModal(true);
-    // setWarningModal(false);
-  };
-  // console.log('incompleteRequirement', incompleteRequirement);
-  // console.log('selected requirement', selectedRequirement);
   const handleCancel = () => {
     setIsModalOpen(false);
     setEditModal(false);
@@ -340,15 +282,13 @@ const Rooftop = (props) => {
     },
     {
       title: "RE Replacement (%)",
-      dataIndex: "offset",
-      key: "offset",
+      dataIndex: "energy_replaced",
+      key: "energy_replaced",
       align: "center",
-      render: (text) =>
-        text !== undefined && text !== null
-          ? (Number(text) * 100).toFixed(2)
-          : "NA",
-    },
+    }
   ];
+
+  // console.log("selected requirement", selectedRequirement);
 
   return (
     <main
@@ -392,61 +332,61 @@ const Rooftop = (props) => {
               options={
                 Array.isArray(requirements)
                   ? requirements.map((req) => ({
-                      label: (
-                        <span>
-                          {req.state && (
-                            <>
-                              <strong>State:</strong> {req.state || "N/A"},{" "}
-                            </>
-                          )}
-                          {/* Always show Solar Rooftop Capacity label, show value or N/A */}
+                    label: (
+                      <span>
+                        {req.state && (
                           <>
-                            <strong>Solar Rooftop Capacity:</strong>{" "}
-                            {req.solar_rooftop_capacity !== undefined && req.solar_rooftop_capacity !== null
-                              ? `${req.solar_rooftop_capacity} kWp`
-                              : "N/A"}
+                            <strong>State:</strong> {req.state || "N/A"},{" "}
+                          </>
+                        )}
+                        {/* Always show Solar Rooftop Capacity label, show value or N/A */}
+                        <>
+                          <strong>Solar Rooftop Capacity:</strong>{" "}
+                          {req.solar_rooftop_capacity !== undefined && req.solar_rooftop_capacity !== null
+                            ? `${req.solar_rooftop_capacity} kWp`
+                            : "N/A"}
+                          ,{" "}
+                        </>
+                        {req.roof_area && (
+                          <>
+                            <strong>Roof Area:</strong>{" "}
+                            {req.roof_area || "N/A"} square meters,{" "}
+                          </>
+                        )}
+                        {req.annual_electricity_consumption && (
+                          <>
+                            <strong>Annual Consumption:</strong>{" "}
+                            {req.annual_electricity_consumption || "N/A"} MWh,{" "}
+                          </>
+                        )}
+                        {req.contracted_demand && (
+                          <>
+                            <strong>Contracted Demand:</strong>{" "}
+                            {req.contracted_demand || "N/A"} MW,{" "}
+                          </>
+                        )}
+                        {req.location && (
+                          <>
+                            <strong>Location:</strong> {req.location || "N/A"}
                             ,{" "}
                           </>
-                          {req.roof_area && (
-                            <>
-                              <strong>Roof Area:</strong>{" "}
-                              {req.roof_area || "N/A"} sq m,{" "}
-                            </>
-                          )}
-                          {req.annual_electricity_consumption && (
-                            <>
-                              <strong>Annual Consumption:</strong>{" "}
-                              {req.annual_electricity_consumption || "N/A"} MWh,{" "}
-                            </>
-                          )}
-                          {req.contracted_demand && (
-                            <>
-                              <strong>Contracted Demand:</strong>{" "}
-                              {req.contracted_demand || "N/A"} MW,{" "}
-                            </>
-                          )}
-                          {req.location && (
-                            <>
-                              <strong>Location:</strong> {req.location || "N/A"}
-                              ,{" "}
-                            </>
-                          )}
-                          {req.voltage_level && (
-                            <>
-                              <strong>Voltage:</strong>{" "}
-                              {req.voltage_level || "N/A"} kV,{" "}
-                            </>
-                          )}
-                          {req.procurement_date && (
-                            <>
-                              <strong>Procurement Date:</strong>{" "}
-                              {req.procurement_date || "N/A"}
-                            </>
-                          )}
-                        </span>
-                      ),
-                      value: req.id,
-                    }))
+                        )}
+                        {req.voltage_level && (
+                          <>
+                            <strong>Voltage:</strong>{" "}
+                            {req.voltage_level || "N/A"} kV,{" "}
+                          </>
+                        )}
+                        {req.procurement_date && (
+                          <>
+                            <strong>Procurement Date:</strong>{" "}
+                            {req.procurement_date || "N/A"}
+                          </>
+                        )}
+                      </span>
+                    ),
+                    value: req.id,
+                  }))
                   : []
               }
               placeholder="Select the requirement"
@@ -464,22 +404,66 @@ const Rooftop = (props) => {
                       <span style={{ color: "#888" }}>State: </span>
                       <span style={{ fontWeight: 500 }}>{selectedRequirement.state || "N/A"}</span>
                     </div>
-                    <div style={{ marginBottom: 8 }}>
+                    <div style={{ marginBottom: 8, display: "flex", alignItems: "center" }}>
                       <span style={{ color: "#888" }}>Roof Area: </span>
-                      <span style={{ fontWeight: 500 }}>
+                      <span style={{ fontWeight: 500, marginLeft: 4 }}>
                         {selectedRequirement.roof_area
-                          ? `${selectedRequirement.roof_area} sq m`
+                          ? `${selectedRequirement.roof_area} m²`
                           : "N/A"}
                       </span>
+
+                      {selectedRequirement.roof_area && (
+                        <Tooltip
+                          title={
+                            <>
+                              <div>
+                                {new Intl.NumberFormat("en-IN").format(
+                                  selectedRequirement.roof_area * 10.7639
+                                )}{" "}
+                                ft²
+                              </div>
+                              <div>
+                                {new Intl.NumberFormat("en-IN").format(
+                                  selectedRequirement.roof_area * 1.19599
+                                )}{" "}
+                                yd²
+                              </div>
+                              <div>
+                                {new Intl.NumberFormat("en-IN", {
+                                  maximumFractionDigits: 4,
+                                }).format(selectedRequirement.roof_area * 0.000247105)}{" "}
+                                acres
+                              </div>
+                              <div>
+                                {new Intl.NumberFormat("en-IN", {
+                                  maximumFractionDigits: 4,
+                                }).format(selectedRequirement.roof_area * 0.0001)}{" "}
+                                hectares
+                              </div>
+                            </>
+                          }
+                        >
+                          <InfoCircleOutlined
+                            style={{
+                              marginLeft: 6,
+                              color: "#999",
+                              cursor: "pointer",
+                            }}
+                          />
+                        </Tooltip>
+                      )}
                     </div>
+
                     <div style={{ marginBottom: 8 }}>
                       <span style={{ color: "#888" }}>Solar Rooftop Capacity: </span>
                       <span style={{ fontWeight: 500 }}>
-                        {selectedRequirement.solar_rooftop_capacity
+                        {selectedRequirement.solar_rooftop_capacity !== null &&
+                          selectedRequirement.solar_rooftop_capacity !== undefined
                           ? `${selectedRequirement.solar_rooftop_capacity} kWp`
                           : "N/A"}
                       </span>
                     </div>
+
                     <div style={{ marginBottom: 8 }}>
                       <span style={{ color: "#888" }}>Annual Consumption: </span>
                       <span style={{ fontWeight: 500 }}>
@@ -580,53 +564,7 @@ const Rooftop = (props) => {
           borderRadius: "10px",
         }}
       >
-        {/* <Card style={{ marginTop: 24 }}>
 
-<Row gutter={16} style={{ marginTop: 24 }}>
-  <Col span={8}>
-    <Card
-      bordered={false}
-      style={{
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        borderRadius: 8,
-        textAlign: 'center',
-      }}
-    >
-      <p style={{ fontWeight: 'bold', marginBottom: 8 }}>Energy Replaced</p>
-      <p>{energyReplaced}</p>
-    </Card>
-  </Col>
-
-  <Col span={8}>
-    <Card
-      bordered={false}
-      style={{
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        borderRadius: 8,
-        textAlign: 'center',
-      }}
-    >
-      <p style={{ fontWeight: 'bold', marginBottom: 8 }}>Capacity of Solar Rooftop</p>
-      <p>{capacitySolar}</p>
-    </Card>
-  </Col>
-
-  <Col span={8}>
-    <Card
-      bordered={false}
-      style={{
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        borderRadius: 8,
-        textAlign: 'center',
-      }}
-    >
-      <p style={{ fontWeight: 'bold', marginBottom: 8 }}>Total Saving</p>
-      <p>{totalSavings}</p>
-    </Card>
-  </Col>
-</Row>
-
-</Card> */}
 
         {submittedType && (
           <h2 style={{ textAlign: "center" }}>
@@ -634,32 +572,23 @@ const Rooftop = (props) => {
             {submittedType === "grid_connected"
               ? "Grid connected"
               : submittedType === "behind_the_meter"
-              ? "Behind the meter"
-              : ""}
+                ? "Behind the meter"
+                : ""}
           </h2>
         )}
 
         <Card style={{ marginTop: 24 }}>
-          <Row gutter={16}>
+          <Row gutter={[16, 16]}>
             {energyReplaced && (
-              <Col span={8}>
+              <Col xs={24} sm={12} md={8}>
                 <p style={{ fontWeight: "bold" }}>
                   Energy Replaced (%): {energyReplaced}
-                  {/* Energy Replaced (%): {Number(energyReplaced) * 100} */}
                 </p>
               </Col>
             )}
 
-            {/* {capacitySolar && (
-        <Col span={8}>
-          <p style={{ fontWeight: 'bold' }}>
-            Capacity of Solar Rooftop (kWp): {capacitySolar}
-          </p>
-        </Col>
-      )} */}
-
             {capacitySolar && (
-              <Col span={8}>
+              <Col xs={24} sm={12} md={8}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span
                     style={{
@@ -679,20 +608,19 @@ const Rooftop = (props) => {
             )}
 
             {totalSavings && (
-              <Col span={8}>
+              <Col xs={24} sm={12} md={8}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>
-                    Total Annual Saving (INR/kWh):{" "}
+                    Total Annual Saving (INR):{" "}
                     {new Intl.NumberFormat("en-IN", {
                       maximumFractionDigits: totalSavings % 1 === 0 ? 0 : 2,
                     }).format(parseFloat(totalSavings))}
                   </span>
                   <Tooltip
-                    title={`Rooftop solar price considered at ${
-                      selectedRequirement?.rooftop_price
-                        ? `${selectedRequirement.rooftop_price} `
-                        : "3.5"
-                    } INR/kWh`}
+                    title={`Rooftop solar price considered at ${responseData?.rooftop_price
+                      ? `${responseData.rooftop_price} `
+                      : "N/A"
+                      } INR/kWh`}
                   >
                     <InfoCircleOutlined
                       style={{
@@ -707,6 +635,7 @@ const Rooftop = (props) => {
             )}
           </Row>
         </Card>
+
 
         <p
           style={{ textAlign: "center", fontWeight: "bold", marginTop: "20px" }}
