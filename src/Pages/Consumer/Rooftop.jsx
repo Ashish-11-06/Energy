@@ -25,7 +25,6 @@ import { Line } from "react-chartjs-2";
 import { EyeOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { handleDownloadPDF } from "../../Components/Consumer/downloadOnsitePdf";
 import AnnualGenerationChart from "../../Components/Consumer/AnnualGenerationChart";
-import { set } from "nprogress";
 
 const Rooftop = (props) => {
   const [selectedRequirement, setSelectedRequirement] = useState(null); // State for selected requirement
@@ -52,7 +51,7 @@ const Rooftop = (props) => {
   const [chartData, setChartData] = useState([]);
   const [responseData, setResponseData] = useState(null);
   const [error, setError] = useState(null);
-  // const [loading, setLoading] = useState(false);
+  const [hourlyAverages, setHourlyAverages] = useState([]); // <-- Add this state
 
   // Helper functions
   const formatNumber = (num, decimals = 3) => {
@@ -455,7 +454,7 @@ const Rooftop = (props) => {
                     </div>
 
                     <div style={{ marginBottom: 8 }}>
-                      <span style={{ color: "#888" }}>Solar Rooftop Capacity: </span>
+                      <span style={{ color: "#888" }}>Existing Solar Rooftop Capacity: </span>
                       <span style={{ fontWeight: 500 }}>
                         {selectedRequirement.solar_rooftop_capacity !== null &&
                           selectedRequirement.solar_rooftop_capacity !== undefined
@@ -597,11 +596,12 @@ const Rooftop = (props) => {
                       marginRight: 8,
                     }}
                   >
-                    Capacity of Solar Rooftop (kWp):{" "}
+                    Capacity of Solar Rooftop (kWp): {capacitySolar}
+                    {/* Capacity of Solar Rooftop (kWp):{" "}
                     {new Intl.NumberFormat("en-IN", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
-                    }).format(Number(capacitySolar))}
+                    }).format(Number(capacitySolar))} */}
                   </span>
                 </div>
               </Col>
@@ -666,7 +666,13 @@ const Rooftop = (props) => {
           </Col>
         </Row>
 
-        <AnnualGenerationChart chartData={chartData} />
+        {/* Show graph for behind_the_meter using hourly_averages */}
+        {radioValueRef.current === "behind_the_meter" && hourlyAverages.length > 0 && (
+          <AnnualGenerationChart chartData={hourlyAverages} />
+        )}
+
+        {/* Default chart for grid_connected or if nothing else */}
+        {radioValueRef.current !== "behind_the_meter" && <AnnualGenerationChart chartData={chartData} />}
 
         <Row style={{ marginTop: "20px" }} gutter={16}>
           {radioValueRef.current === "behind_the_meter" &&
@@ -760,7 +766,5 @@ const Rooftop = (props) => {
     </main>
   );
 };
-
-
 
 export default Rooftop;
