@@ -21,8 +21,16 @@ const formatNumber = (num, decimals = 3) => {
 };
 
 const superscriptMap = {
-  "⁰": "0","¹": "1","²": "2","³": "3","⁴": "4",
-  "⁵": "5","⁶": "6","⁷": "7","⁸": "8","⁹": "9",
+  "⁰": "0",
+  "¹": "1",
+  "²": "2",
+  "³": "3",
+  "⁴": "4",
+  "⁵": "5",
+  "⁶": "6",
+  "⁷": "7",
+  "⁸": "8",
+  "⁹": "9",
 };
 
 const normalizeNumber = (val) => {
@@ -88,20 +96,33 @@ export const handleDownloadPDF = (
     const requirementData = [
       ["State", req.state || "N/A"],
       ["Roof Area", req.roof_area ? `${req.roof_area} sq m` : "N/A"],
-      ["Existing Solar Rooftop Capacity", req.solar_rooftop_capacity ? `${req.solar_rooftop_capacity} kWp` : "N/A"],
-      ["Annual Consumption", req.annual_electricity_consumption ? `${req.annual_electricity_consumption} MWh` : "N/A"],
-      ["Contracted Demand", req.contracted_demand ? `${req.contracted_demand} MW` : "N/A"],
+      [
+        "Existing Solar Rooftop Capacity",
+        req.existing_rooftop_capacity
+          ? `${req.existing_rooftop_capacity} kWp`
+          : "N/A",
+      ],
+      [
+        "Annual Consumption",
+        req.annual_electricity_consumption
+          ? `${req.annual_electricity_consumption} MWh`
+          : "N/A",
+      ],
+      [
+        "Contracted Demand",
+        req.contracted_demand ? `${req.contracted_demand} MW` : "N/A",
+      ],
       ["Location", req.location || "N/A"],
       ["Voltage", req.voltage_level ? `${req.voltage_level} kV` : "N/A"],
       // ["Procurement Date", req.procurement_date || "N/A"],
-      [
-        "Date",
-        new Date().toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-      ],
+      // [
+      //   "Date",
+      //   new Date().toLocaleDateString("en-US", {
+      //     year: "numeric",
+      //     month: "long",
+      //     day: "numeric",
+      //   }),
+      // ],
     ];
 
     doc.autoTable({
@@ -115,7 +136,7 @@ export const handleDownloadPDF = (
       },
       margin: { left: 20, right: 20 },
       tableWidth: "auto",
-      pageBreak: 'avoid'
+      pageBreak: "avoid",
     });
 
     // ===== PERFORMANCE SUMMARY =====
@@ -124,29 +145,36 @@ export const handleDownloadPDF = (
     doc.text("Performance Summary", 20, doc.lastAutoTable.finalY + 12);
 
     // Use the root object for Rooftop page
-    const energyReplaced =
-      req.energyReplaced ?? req.energy_replaced ?? "";
-    const totalSavings =
-      req.totalSavings ?? req.total_savings ?? "";
+    const energyReplaced = req.energyReplaced ?? req.energy_replaced ?? "";
+    const totalSavings = req.totalSavings ?? req.total_savings ?? "";
     const capacitySolar =
-      req.capacitySolar ?? req.capacity_of_solar_rooftop ?? req.solar_rooftop_capacity ?? "";
+      req.capacitySolar ??
+      req.capacity_of_solar_rooftop ??
+      req.existing_rooftop_capacity ??
+      "";
 
     const metrics = [
       [
-        "Energy Replaced (%)",
-        energyReplaced !== undefined && energyReplaced !== null && energyReplaced !== ""
+        "Total Energy Replaced (%)",
+        energyReplaced !== undefined &&
+        energyReplaced !== null &&
+        energyReplaced !== ""
           ? `${(Number(energyReplaced) * 100).toFixed(2)} %`
           : "N/A",
       ],
       [
-        "Toatl Annual Savings (INR/kWh)",
-        totalSavings !== undefined && totalSavings !== null && totalSavings !== ""
+        "Total Annual Savings (INR/kWh)",
+        totalSavings !== undefined &&
+        totalSavings !== null &&
+        totalSavings !== ""
           ? `${formatCurrency(totalSavings)}`
           : "N/A",
       ],
       [
         "Capacity of Solar Rooftop (kWp)",
-        capacitySolar !== undefined && capacitySolar !== null && capacitySolar !== ""
+        capacitySolar !== undefined &&
+        capacitySolar !== null &&
+        capacitySolar !== ""
           ? formatNumber(capacitySolar, 4)
           : "N/A",
       ],
@@ -172,34 +200,39 @@ export const handleDownloadPDF = (
       },
       margin: { left: 20, right: 20 },
       tableWidth: "auto",
-      pageBreak: 'avoid'
+      pageBreak: "avoid",
     });
 
     // ===== MONTHLY GENERATION DATA =====
     doc.setFontSize(13);
     doc.setTextColor(colors.primary);
-    doc.text("Monthly Generation Data", 20, doc.lastAutoTable.finalY + 12);
+    doc.text("Monthly Summary Of Replacement", 20, doc.lastAutoTable.finalY + 12);
 
     // Use monthlyData directly
-    const monthlyArr = Array.isArray(monthlyData) && monthlyData.length > 0 ? monthlyData : [];
+    const monthlyArr =
+      Array.isArray(monthlyData) && monthlyData.length > 0 ? monthlyData : [];
 
     doc.autoTable({
       startY: doc.lastAutoTable.finalY + 16,
-      head: [["Month", "Generation (kWh)", "Savings(INR)", "RE Replacement (%)"]],
-      body: monthlyArr.length > 0
-        ? monthlyArr.map((item) => [
-            item.month || "",
-            item.generation !== undefined && item.generation !== null
-              ? formatNumber(item.generation, 2)
-              : "",
-            item.savings !== undefined && item.savings !== null
-              ? formatCurrency(item.savings)
-              : "",
-            item.offset !== undefined && item.offset !== null
-              ? (Number(item.offset) * 100).toFixed(2)
-              : "N/A",
-          ])
-        : [["No data available", "", "", ""]],
+      head: [
+        ["Month", "Generation (kWh)", "Savings(INR)", "Energy Replaced (%)"],
+      ],
+      body:
+        monthlyArr.length > 0
+          ? monthlyArr.map((item) => [
+              item.month || "",
+              item.generation !== undefined && item.generation !== null
+                ? formatNumber(item.generation, 2)
+                : "",
+              item.savings !== undefined && item.savings !== null
+                ? formatCurrency(item.savings)
+                : "",
+              item.energy_replaced !== undefined &&
+              item.energy_replaced !== null
+                ? formatCurrency(item.energy_replaced)
+                : "N/A",
+            ])
+          : [["No data available", "", "", ""]],
       theme: "grid",
       headStyles: {
         fillColor: colors.primary,
@@ -220,7 +253,7 @@ export const handleDownloadPDF = (
         3: { cellWidth: 38 },
       },
       tableWidth: "auto",
-      pageBreak: 'avoid'
+      pageBreak: "avoid",
     });
 
     // ===== FOOTER =====
@@ -256,7 +289,9 @@ export const handleDownloadPDF = (
 
     // Draw the clickable email right after the info text
     doc.setTextColor(0, 102, 204); // blue color for link
-    doc.textWithLink(email, startX + infoTextWidth, pageHeight - 8, { url: "mailto:info@exgglobal.com" });
+    doc.textWithLink(email, startX + infoTextWidth, pageHeight - 8, {
+      url: "mailto:info@exgglobal.com",
+    });
 
     // ===== SAVE =====
     doc.save(

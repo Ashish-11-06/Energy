@@ -25,7 +25,6 @@ import { Line } from "react-chartjs-2";
 import { EyeOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { handleDownloadPDF } from "../../Components/Consumer/downloadOnsitePdf";
 import AnnualGenerationChart from "../../Components/Consumer/AnnualGenerationChart";
-import { set } from "nprogress";
 
 const Rooftop = (props) => {
   const [selectedRequirement, setSelectedRequirement] = useState(null); // State for selected requirement
@@ -51,7 +50,7 @@ const Rooftop = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [error, setError] = useState(null);
-  // const [loading, setLoading] = useState(false);
+  const [hourlyAverages, setHourlyAverages] = useState([]); // <-- Add this state
 
   // Helper functions
   const formatNumber = (num, decimals = 3) => {
@@ -217,13 +216,22 @@ const Rooftop = (props) => {
         console.error("hourly_generation data is missing or not 8760 values.");
       }
 
+      // Show graph for behind_the_meter using hourly_averages from backend
+      if (radioValueRef.current === "behind_the_meter" && Array.isArray(res?.payload?.hourly_averages)) {
+        // Format for AnnualGenerationChart: [{ hour: 0, generation: ... }, ...]
+        const chartData = res.payload.hourly_averages.map((generation, hour) => ({
+          hour,
+          generation,
+        }));
+        setHourlyAverages(chartData);
+      }
       // }
       // if(radioValueRef.current === "behind_the_meter") {
       //   message.warning('Behind the meter data is not available yet. It is under development.');
       //   console.log("Behind the meter data:", res?.payload?.hourly_data);
 
       // }
-      setEnergyReplaced(res?.payload.energy_replaced);
+      setEnergyReplaced(res?.payload.total_energy_replaced);
       setCapacitySolar(res?.payload.capacity_of_solar_rooftop);
       setTotalSavings(res?.payload.total_savings);
       setLoading(false);
@@ -339,13 +347,13 @@ const Rooftop = (props) => {
         }).format(value),
     },
     {
-      title: "RE Replacement (%)",
-      dataIndex: "offset",
-      key: "offset",
+      title: "Energy Replaced(%)",
+      dataIndex: "energy_replaced",
+      key: "energy_replaced",
       align: "center",
       render: (text) =>
         text !== undefined && text !== null
-          ? (Number(text) * 100).toFixed(2)
+          ? text
           : "NA",
     },
   ];
@@ -401,7 +409,7 @@ const Rooftop = (props) => {
                           )}
                           {/* Always show Solar Rooftop Capacity label, show value or N/A */}
                           <>
-                            <strong>Solar Rooftop Capacity:</strong>{" "}
+                            <strong>Existing Solar Rooftop Capacity:</strong>{" "}
                             {req.solar_rooftop_capacity !== undefined && req.solar_rooftop_capacity !== null
                               ? `${req.solar_rooftop_capacity} kWp`
                               : "N/A"}
@@ -473,7 +481,7 @@ const Rooftop = (props) => {
                       </span>
                     </div>
                     <div style={{ marginBottom: 8 }}>
-                      <span style={{ color: "#888" }}>Solar Rooftop Capacity: </span>
+                      <span style={{ color: "#888" }}>Existing Solar Rooftop Capacity: </span>
                       <span style={{ fontWeight: 500 }}>
                         {selectedRequirement.solar_rooftop_capacity
                           ? `${selectedRequirement.solar_rooftop_capacity} kWp`
@@ -580,53 +588,6 @@ const Rooftop = (props) => {
           borderRadius: "10px",
         }}
       >
-        {/* <Card style={{ marginTop: 24 }}>
-
-<Row gutter={16} style={{ marginTop: 24 }}>
-  <Col span={8}>
-    <Card
-      bordered={false}
-      style={{
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        borderRadius: 8,
-        textAlign: 'center',
-      }}
-    >
-      <p style={{ fontWeight: 'bold', marginBottom: 8 }}>Energy Replaced</p>
-      <p>{energyReplaced}</p>
-    </Card>
-  </Col>
-
-  <Col span={8}>
-    <Card
-      bordered={false}
-      style={{
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        borderRadius: 8,
-        textAlign: 'center',
-      }}
-    >
-      <p style={{ fontWeight: 'bold', marginBottom: 8 }}>Capacity of Solar Rooftop</p>
-      <p>{capacitySolar}</p>
-    </Card>
-  </Col>
-
-  <Col span={8}>
-    <Card
-      bordered={false}
-      style={{
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        borderRadius: 8,
-        textAlign: 'center',
-      }}
-    >
-      <p style={{ fontWeight: 'bold', marginBottom: 8 }}>Total Saving</p>
-      <p>{totalSavings}</p>
-    </Card>
-  </Col>
-</Row>
-
-</Card> */}
 
         {submittedType && (
           <h2 style={{ textAlign: "center" }}>
@@ -641,22 +602,15 @@ const Rooftop = (props) => {
 
         <Card style={{ marginTop: 24 }}>
           <Row gutter={16}>
-            {energyReplaced && (
-              <Col span={8}>
-                <p style={{ fontWeight: "bold" }}>
-                  Energy Replaced (%): {energyReplaced}
-                  {/* Energy Replaced (%): {Number(energyReplaced) * 100} */}
-                </p>
-              </Col>
-            )}
-
-            {/* {capacitySolar && (
-        <Col span={8}>
-          <p style={{ fontWeight: 'bold' }}>
-            Capacity of Solar Rooftop (kWp): {capacitySolar}
-          </p>
-        </Col>
-      )} */}
+            {/* Always show Energy Replaced, even if value is 0 or empty string */}
+            <Col span={8}>
+              <p style={{ fontWeight: "bold" }}>
+                Total Energy Replaced (%):{" "}
+                {energyReplaced !== undefined && energyReplaced !== null && energyReplaced !== ""
+                  ? energyReplaced
+                  : "N/A"}
+              </p>
+            </Col>
 
             {capacitySolar && (
               <Col span={8}>
@@ -668,11 +622,12 @@ const Rooftop = (props) => {
                       marginRight: 8,
                     }}
                   >
-                    Capacity of Solar Rooftop (kWp):{" "}
+                    Capacity of Solar Rooftop (kWp): {capacitySolar}
+                    {/* Capacity of Solar Rooftop (kWp):{" "}
                     {new Intl.NumberFormat("en-IN", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
-                    }).format(Number(capacitySolar))}
+                    }).format(Number(capacitySolar))} */}
                   </span>
                 </div>
               </Col>
@@ -737,7 +692,13 @@ const Rooftop = (props) => {
           </Col>
         </Row>
 
-        <AnnualGenerationChart chartData={chartData} />
+        {/* Show graph for behind_the_meter using hourly_averages */}
+        {radioValueRef.current === "behind_the_meter" && hourlyAverages.length > 0 && (
+          <AnnualGenerationChart chartData={hourlyAverages} />
+        )}
+
+        {/* Default chart for grid_connected or if nothing else */}
+        {radioValueRef.current !== "behind_the_meter" && <AnnualGenerationChart chartData={chartData} />}
 
         <Row style={{ marginTop: "20px" }} gutter={16}>
           {radioValueRef.current === "behind_the_meter" &&
@@ -831,7 +792,5 @@ const Rooftop = (props) => {
     </main>
   );
 };
-
-
 
 export default Rooftop;
