@@ -16,6 +16,7 @@ import offerSend from '../../assets/offerSend.png';
 import portfolio from '../../assets/portfolio.png';
 import findConsumer from '../../assets/findConsumer.png';
 import { decryptData } from '../../Utils/cryptoHelper';
+import EXGLogo from "../../../src/assets/EXG_green.png";
 const { Sider } = Layout;
 
 const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
@@ -195,9 +196,22 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               fontSize: '18px',
               backgroundColor: '#6698005c',
               height: '70px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-{/* <p style={{ color: '#669800' }}><span style={{fontSize:'bold'}}>{company.toUpperCase()}</span></p> */}
+            <img
+              src={EXGLogo}
+              alt="EXG Logo"
+              style={{
+                height: '40px',
+                width: 'auto',
+                marginRight: '10px',
+                objectFit: 'contain'
+              }}
+            />
+            {/* <p style={{ color: '#669800' }}><span style={{fontSize:'bold'}}>{company.toUpperCase()}</span></p> */}
 {/* <p style={{marginTop:'8%', marginLeft:'-100px'}}> Menu  </p> */}
            
           </div>
