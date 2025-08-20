@@ -95,7 +95,7 @@ export const handleDownloadPDF = (
 
     const requirementData = [
       ["State", req.state || "N/A"],
-      ["Roof Area", req.roof_area ? `${req.roof_area} sq m` : "N/A"],
+      ["Roof Area", req.roof_area ? `${req.roof_area} square meters` : "N/A"],
       [
         "Existing Solar Rooftop Capacity",
         req.existing_rooftop_capacity
