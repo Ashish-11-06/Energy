@@ -93,20 +93,22 @@ export const handleDownloadPDF = (
     // Use annualSavingResponse directly as the requirement object (flat structure)
     const req = annualSavingResponse || {};
 
+    console.log("Requirement Data:", req);
+
     const requirementData = [
       ["State", req.state || "N/A"],
       ["Roof Area", req.roof_area ? `${req.roof_area} square meters` : "N/A"],
       [
         "Existing Solar Rooftop Capacity",
-        req.existing_rooftop_capacity
-          ? `${req.existing_rooftop_capacity} kWp`
+        req.solar_rooftop_capacity !== null && req.solar_rooftop_capacity !== undefined
+          ? `${req.solar_rooftop_capacity} kWp`
           : "N/A",
       ],
       [
-        "Annual Consumption",
-        req.annual_electricity_consumption
-          ? `${req.annual_electricity_consumption} MWh`
-          : "N/A",
+      "Annual Consumption",
+      req.annual_electricity_consumption
+        ? `${req.annual_electricity_consumption} MWh`
+        : "N/A",
       ],
       [
         "Contracted Demand",
@@ -157,24 +159,24 @@ export const handleDownloadPDF = (
       [
         "Total Energy Replaced (%)",
         energyReplaced !== undefined &&
-        energyReplaced !== null &&
-        energyReplaced !== ""
-          ? `${(Number(energyReplaced) * 100).toFixed(2)} %`
+          energyReplaced !== null &&
+          energyReplaced !== ""
+          ? `${energyReplaced} %`
           : "N/A",
       ],
       [
-        "Total Annual Savings (INR/kWh)",
+        "Total Annual Savings (INR)",
         totalSavings !== undefined &&
-        totalSavings !== null &&
-        totalSavings !== ""
+          totalSavings !== null &&
+          totalSavings !== ""
           ? `${formatCurrency(totalSavings)}`
           : "N/A",
       ],
       [
         "Capacity of Solar Rooftop (kWp)",
         capacitySolar !== undefined &&
-        capacitySolar !== null &&
-        capacitySolar !== ""
+          capacitySolar !== null &&
+          capacitySolar !== ""
           ? formatNumber(capacitySolar, 4)
           : "N/A",
       ],
@@ -220,18 +222,18 @@ export const handleDownloadPDF = (
       body:
         monthlyArr.length > 0
           ? monthlyArr.map((item) => [
-              item.month || "",
-              item.generation !== undefined && item.generation !== null
-                ? formatNumber(item.generation, 2)
-                : "",
-              item.savings !== undefined && item.savings !== null
-                ? formatCurrency(item.savings)
-                : "",
-              item.energy_replaced !== undefined &&
+            item.month || "",
+            item.generation !== undefined && item.generation !== null
+              ? formatNumber(item.generation, 2)
+              : "",
+            item.savings !== undefined && item.savings !== null
+              ? formatCurrency(item.savings)
+              : "",
+            item.energy_replaced !== undefined &&
               item.energy_replaced !== null
-                ? formatCurrency(item.energy_replaced)
-                : "N/A",
-            ])
+              ? formatCurrency(item.energy_replaced)
+              : "N/A",
+          ])
           : [["No data available", "", "", ""]],
       theme: "grid",
       headStyles: {

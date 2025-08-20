@@ -495,12 +495,12 @@ const Rooftop = (props) => {
                           : "N/A"}
                       </span>
                     </div>
-                    <div style={{ marginBottom: 8 }}>
+                    {/* <div style={{ marginBottom: 8 }}>
                       <span style={{ color: "#888" }}>Procurement Date: </span>
                       <span style={{ fontWeight: 500 }}>
                         {selectedRequirement.procurement_date || "N/A"}
                       </span>
-                    </div>
+                    </div> */}
                   </Col>
                 </Row>
               </Card>
@@ -667,8 +667,8 @@ const Rooftop = (props) => {
         </Row>
 
         {/* Show graph for behind_the_meter using hourly_averages */}
-        {radioValueRef.current === "behind_the_meter" && hourlyAverages.length > 0 && (
-          <AnnualGenerationChart chartData={hourlyAverages} />
+        {radioValueRef.current === "behind_the_meter" && chartData.length > 0 && (
+          <AnnualGenerationChart chartData={chartData} />
         )}
 
         {/* Default chart for grid_connected or if nothing else */}

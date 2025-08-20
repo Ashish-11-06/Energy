@@ -23,7 +23,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const dispatch = useDispatch();
   const offerCount = useSelector((state) => state.notifications.offerCount);
   // const notificationCount = 9;
-    const subscription=decryptData(localStorage.getItem("subscriptionPlanValidity"));
+  const subscription = decryptData(localStorage.getItem("subscriptionPlanValidity"));
   const subscription_type = subscription?.subscription_type;
   // console.log(subscription_type);
   // console.log(subscription);
@@ -34,7 +34,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState(location.pathname);
   const userData = decryptData(localStorage.getItem('user'));
-  const user= userData?.user;
+  const user = userData?.user;
   // const user = JSON.parse(localStorage.getItem('user')).user;
   const user_category = user?.user_category;
   const is_new_user = user?.is_new_user;
@@ -140,16 +140,16 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
 
   let lastMenuItem = { label: '', key: '/' }; // Fallback value
   if (subscription_type === 'PRO') {
-    lastMenuItem = is_new_user 
+    lastMenuItem = is_new_user
       ? { label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' }
       : { label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' };
   }
   // if (subscription_type === 'PRO') {
-    // if (is_new_user == true) {
-    //   menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
-    // } else {
-    //   menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' });
-    // }
+  // if (is_new_user == true) {
+  //   menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/what-we-offer' : '/px/what-we-offer' });
+  // } else {
+  //   menuItems.push({ label: 'PowerX', key: menuType === 'consumer' ? '/px/consumer/dashboard' : '/px/generator/dashboard' });
+  // }
   // }
 
   useEffect(() => {
@@ -190,8 +190,9 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
           <div
             className="logo"
             style={{
-              color: 'white',
-              padding: '20px',
+              // color: 'white',
+              // padding: '20px',
+
               textAlign: 'center',
               fontSize: '18px',
               backgroundColor: '#6698005c',
@@ -256,7 +257,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               zIndex: 101,
             }}
           >
-            <p style={{ color: '#669800' }}><span style={{fontSize:'bold'}}>{company.toUpperCase()}</span></p>
+            <p style={{ color: '#669800' }}><span style={{ fontSize: 'bold' }}>{company.toUpperCase()}</span></p>
 
           </Button>
           <Drawer
