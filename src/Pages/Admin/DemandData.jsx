@@ -19,7 +19,7 @@ const DemandData = () => {
     try {
       const response = await demandDataApi.getData();
       if (response.status === 200) {
-        setData(response.data);
+        setData(response.data.results);
       } else {
         message.error('Failed to fetch data');
       }
@@ -39,14 +39,17 @@ const DemandData = () => {
     setViewModal(true);
   };
 
-  const filteredData = data.filter((item) => {
-    const lowerSearch = searchText.toLowerCase();
-    return (
-      (item.consumption_unit?.toLowerCase().includes(lowerSearch) || '') ||
-      (item.industry?.toLowerCase().includes(lowerSearch) || '') ||
-      (item.state?.toLowerCase().includes(lowerSearch) || '')
-    );
-  });
+  // Fix: Ensure data is always an array before using filter
+  const filteredData = Array.isArray(data)
+    ? data.filter((item) => {
+        const lowerSearch = searchText.toLowerCase();
+        return (
+          (item.consumption_unit?.toLowerCase().includes(lowerSearch) || '') ||
+          (item.industry?.toLowerCase().includes(lowerSearch) || '') ||
+          (item.state?.toLowerCase().includes(lowerSearch) || '')
+        );
+      })
+    : [];
 
   const handleConsumptionUnitClick = (record) => {
     setSelectedRecord(record);
@@ -136,4 +139,3 @@ const DemandData = () => {
 };
 
 export default DemandData;
-     

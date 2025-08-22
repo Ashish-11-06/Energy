@@ -18,17 +18,18 @@ const GenerationData = () => {
       const response = await generationDataApi.getGeneratorList();
       if (response.status === 200) {
         let flatData = [];
-        if (
-          typeof response.data === "object" &&
-          !Array.isArray(response.data)
-        ) {
-          Object.entries(response.data).forEach(([tech, arr]) => {
-            arr.forEach((item) => {
-              flatData.push({ ...item, technology: tech });
-            });
+        // Fix: Handle paginated API with results containing technology keys
+        const results = response.data?.results || response.data;
+        if (results && typeof results === "object" && !Array.isArray(results)) {
+          Object.entries(results).forEach(([tech, arr]) => {
+            if (Array.isArray(arr)) {
+              arr.forEach((item) => {
+                flatData.push({ ...item, technology: tech });
+              });
+            }
           });
-        } else {
-          flatData = response.data;
+        } else if (Array.isArray(results)) {
+          flatData = results;
         }
         setData(flatData);
       } else {

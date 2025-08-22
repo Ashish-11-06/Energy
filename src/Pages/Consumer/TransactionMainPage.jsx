@@ -286,11 +286,12 @@ const handleChangeConfirm = async () => {
           <br />
            <Button
             type="primary"
-            disabled={record.tariff_status !== 'Upcoming'}
+            disabled={record.tariff_status !== 'Upcoming' || user.user_category === 'Generator'}
             style={{
               backgroundColor: '#669800',
               borderColor: '#88B04B',
               width: '150px',
+              display: user.user_category === 'Generator' ? 'none' : 'inline-block'
             }}
             onClick={() => {
               handleChangeDate(record);

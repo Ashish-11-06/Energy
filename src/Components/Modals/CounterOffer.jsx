@@ -542,6 +542,28 @@ const handleAccept = async () => {
               />
             </Typography.Paragraph>
           </Col>
+          <Col span={12}>
+            <Typography.Paragraph>
+              <strong>Equity Contribution Required From Consumer:</strong>
+              <InputNumber
+                min={1}
+                value={
+                  data.equity_contribution_required_from_consumer !== null &&
+                  data.equity_contribution_required_from_consumer !== undefined
+                    ? data.equity_contribution_required_from_consumer
+                    : 0
+                }
+                disabled={fromTransaction}
+                style={{
+                  width: "100%",
+                  color: "#000", // Use hex for black, not red
+                  backgroundColor: "#fff",
+                  border: "1px solid #d9d9d9", // Explicitly set border
+                  boxShadow: "none", // Remove any error shadow
+                }}
+              />
+            </Typography.Paragraph>
+          </Col>
           {/* <Button
                       // style={{
                       //   color: "#ff5858",

@@ -18,7 +18,7 @@ const Generator = () => {
     setLoading(true);
     const res = await dispatch(getGeneratorList());
     if (res?.payload) {
-      setConsumerList(res.payload);
+      setConsumerList(res.payload.results);
       setLoading(false);
     }
   };
@@ -63,16 +63,17 @@ const Generator = () => {
     }
   };
 
-
-  const filteredData = consumerList.filter((item) => {
-    const lowerSearch = searchText.toLowerCase();
-    return (
-      (item.company || '').toLowerCase().includes(lowerSearch) ||
-      (item.email || '').toLowerCase().includes(lowerSearch)
-    );
-  })
-  // .sort((a, b) => b.id - a.id); // Sort by ID descending (newest first)
-  .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  // Fix: Ensure consumerList is always an array
+  const filteredData = Array.isArray(consumerList)
+    ? consumerList.filter((item) => {
+        const lowerSearch = searchText.toLowerCase();
+        return (
+          (item.company || '').toLowerCase().includes(lowerSearch) ||
+          (item.email || '').toLowerCase().includes(lowerSearch)
+        );
+      })
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    : [];
 
   const columns = [
     {

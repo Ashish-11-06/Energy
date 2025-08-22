@@ -11,11 +11,15 @@ const { Title, Text } = Typography;
 const IPPModal = ({ visible, ipp, reIndex, fromConsumer, combination, fromGenerator, onClose, onRequestForQuotation, consumerDetails }) => {
   const [isQuotationModalVisible, setIsQuotationModalVisible] = useState(false);
 
-  // console.log('ippppp',ipp);
+  console.log('ippppp',ipp);
   // console.log('consumerrrrrrr',consumerDetails);
-  // console.log('combination',combination);
-  // console.log('annual_demand_met',ipp?.annual_demand_met);
+  console.log('combination',combination);
+  // console.log('annual_demand_met ipp',ipp?.annual_demand_met);
   // console.log('annual_demand_met',combination?.annual_demand_met);
+  console.log("ipp", ipp?.equity_contribution);
+  console.log("combinationss", combination?.equity_contribution_required_from_consumer);
+  
+  
 
 
   const showQuotationModal = () => {
@@ -29,6 +33,8 @@ const IPPModal = ({ visible, ipp, reIndex, fromConsumer, combination, fromGenera
   const dataSource = [
     { key: '1', label: 'Annual Contracted Energy (million units)', value: ipp?.annual_demand_met || "N/A" },
     { key: '2', label: 'Equity Contribution Required from Consumer', value: ipp?.equity_contribution || "N/A" },
+    // console.log("kkkkkkkkkk",ipp?.equity_contribution_required_from_consumer),
+    
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
     { key: '4', label: 'Per Unit Cost (INR/kWh)', value: ipp?.perUnitCost || "N/A" },
     { key: '5', label: 'OA Cost (INR/kWh)', value: ipp?.OACost || "N/A" },
@@ -59,6 +65,7 @@ const IPPModal = ({ visible, ipp, reIndex, fromConsumer, combination, fromGenera
       },] : [])
   ];
 
+console.log("f",dataSource);
 
 
 

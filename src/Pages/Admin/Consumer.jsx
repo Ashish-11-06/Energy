@@ -18,6 +18,8 @@ import {
 import { useDispatch } from "react-redux";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
+const { Option } = Select;
+
 const Consumer = () => {
   const [searchText, setSearchText] = useState("");
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -33,11 +35,11 @@ const Consumer = () => {
     try {
       setLoading(true);
       const res = await dispatch(getConsumerList());
-      if (Array.isArray(res?.payload)) {
-        setConsumerList(res.payload);
+      if (Array.isArray(res?.payload.results)) {
+        setConsumerList(res.payload.results);
       } else {
         setConsumerList([]);
-        console.error("Unexpected response:", res.payload);
+        console.error("Unexpected response:", res.payload.results);
       }
     } catch (error) {
       console.error("Error fetching consumer list:", error);
@@ -140,9 +142,10 @@ const Consumer = () => {
       //  align: 'center'
     },
     {
-    title: "Status",
-    dataIndex: "status",
-    key: "status",
+      title: "Status",
+      dataIndex: "is_active",
+      key: "is_active",
+      render: (value) => value ? "Active" : "Inactive",
     },
     {
       title: "Actions",

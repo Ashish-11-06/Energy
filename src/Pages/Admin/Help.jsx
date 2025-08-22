@@ -40,19 +40,26 @@ const Help = () => {
 
   const handleStatusChange = async () => {
     if (!selectedQuery || !status) return;
-    
+
     setLoading(true);
     try {
-      const response = await helpApi.updateStatus(selectedQuery.id, { status });
+      const response = await helpApi.editData({ data: { status }, id: selectedQuery.id });
       if (response.status === 200) {
         message.success('Status updated successfully');
         fetchData(); // Refresh the data
         setIsModalOpen(false);
+      } else if (response.data?.detail) {
+        message.error(response.data.detail);
       } else {
         message.error('Failed to update status');
       }
     } catch (error) {
-      message.error(error?.response?.data?.message || 'Something went wrong');
+      // Show backend error detail if present
+      if (error?.response?.data?.detail) {
+        message.error(error.response.data.detail);
+      } else {
+        message.error(error?.response?.data?.message || 'Something went wrong');
+      }
     } finally {
       setLoading(false);
     }
@@ -228,7 +235,19 @@ const Help = () => {
               <Select
                 style={{ width: '100%' }}
                 value={status}
-                onChange={(value) => setStatus(value)}
+                onChange={async (value) => {
+                  setStatus(value);
+                  if (selectedQuery) {
+                    try {
+                      await helpApi.editData({ data: { status: value }, id: selectedQuery.id });
+                      message.success('Status updated successfully');
+                      fetchData();
+                      setIsModalOpen(false);
+                    } catch (error) {
+                      message.error(error?.response?.data?.message || 'Failed to update status');
+                    }
+                  }
+                }}
               >
                 <Option value="Pending">Pending</Option>
                 <Option value="In Progress">In Progress</Option>
