@@ -47,7 +47,7 @@ const CombinationPattern = () => {
   const [combinationData, setCombinationData] = useState([]);
   const [tryREreplacement, setTryREreplacement] = useState(false);
   const [consumerDetails, setConsumerDetails] = useState("");
-    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [sensitivityData, setSensitivityData] = useState();
   const [showGraph, setShowGraph] = useState(false); // State to control graph visibility
   const { state } = useLocation();
@@ -117,7 +117,7 @@ const CombinationPattern = () => {
     }
   };
 
-  
+
   const graphOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -219,7 +219,7 @@ const CombinationPattern = () => {
       setDataSource([]);
       return;
     }
-    
+
 
 
     const formattedCombinations = Object.entries(combinations).map(
@@ -332,7 +332,7 @@ const CombinationPattern = () => {
         };
       }
     );
-   
+
     setDataSource(formattedCombinations);
     // console.log('After setting dataSource:', dataSource); // This may still show the old state due to async nature
 
@@ -501,7 +501,7 @@ const CombinationPattern = () => {
 
 
   const handleRowClick = (record) => {
-    console.log('handle click record',record);
+    console.log('handle click record', record);
 
     setSelectedRow(record);
     setIsIPPModalVisible(true);
@@ -650,6 +650,7 @@ const CombinationPattern = () => {
       title: "% RE Replacement",
       dataIndex: "reReplacement",
       key: "reReplacement",
+      render: (value) => Math.round(Number(value) || 0),
     },
     {
       title: "Total Capacity (MW)",
@@ -1036,95 +1037,95 @@ const CombinationPattern = () => {
                 scroll={{ x: 1200 }} // Enable horizontal scrolling with a minimum width
 
                 rowClassName={() => "custom-row"}
-                                expandable={{
-                                  expandedRowRender: (record) => {
-                                    const transposedColumns = [
-                                      {
-                                        title: 'OA Wheeling Losses',
-                                        dataIndex: 'OA_wheeling_losses',
-                                        key: 'OA_wheeling_losses',
-                                      },
-                                      {
-                                        title: 'OA Wheeling Charges',
-                                        dataIndex: 'OA_wheeling_charges',
-                                        key: 'OA_wheeling_charges',
-                                      },
-                                      {
-                                        title: 'OA Transmission Loss',
-                                        dataIndex: 'OA_transmission_losses',
-                                        key: 'OA_transmission_losses',
-                                      },
-                                      {
-                                        title: 'OA Transmission Charges',
-                                        dataIndex: 'OA_transmission_charges',
-                                        key: 'OA_transmission_charges',
-                                      },
-                                      {
-                                        title: 'OA Standby Charges',
-                                        dataIndex: 'OA_standby_charges',
-                                        key: 'OA_standby_charges',
-                                      },
-                                      {
-                                        title: 'OA Electricity Tax',
-                                        dataIndex: 'OA_electricity_tax',
-                                        key: 'OA_electricity_tax',
-                                      },
-                                      {
-                                        title: 'OA Cross Subsidy Surcharge',
-                                        dataIndex: 'OA_cross_subsidy_surcharge',
-                                        key: 'OA_cross_subsidy_surcharge',
-                                      },
-                                      {
-                                        title: 'OA Banking Charges',
-                                        dataIndex: 'OA_banking_charges',
-                                        key: 'OA_banking_charges',
-                                      },
-                                      {
-                                        title: 'OA Additional Surcharge',
-                                        dataIndex: 'OA_additional_surcharge',
-                                        key: 'OA_additional_surcharge',
-                                      },
-                                    ];
-                
-                
-                
-                                    const transposedData = [
-                                      {
-                                        key: '1',
-                                        OA_additional_surcharge: record.OA_additional_surcharge ?? 'N/A',
-                                        OA_banking_charges: record.OA_banking_charges ?? 'N/A',
-                                        OA_combined_average_replacement_PLF: record.OA_combined_average_replacement_PLF ?? 'N/A',
-                                        OA_cross_subsidy_surcharge: record.OA_cross_subsidy_surcharge ?? 'N/A',
-                                        OA_electricity_tax: record.OA_electricity_tax ?? 'N/A',
-                                        OA_standby_charges: record.OA_standby_charges ?? 'N/A',
-                                        OA_transmission_charges: record.OA_transmission_charges ?? 'N/A',
-                                        OA_transmission_losses: record.OA_transmission_losses ?? 'N/A',
-                                        OA_wheeling_charges: record.OA_wheeling_charges ?? 'N/A',
-                                        OA_wheeling_losses: record.OA_wheeling_losses ?? 'N/A',
-                                      },
-                                    ];
-                
-                
-                                    return (
-                                      <div
-                                        style={{ padding: '10px', marginLeft: '-55px', background: '#9a840675' }}>
-                                        <Table
-                                          columns={transposedColumns}
-                                          dataSource={transposedData}
-                                          pagination={false}
-                                          size="small"
-                                          bordered
-                                        />
-                                      </div>
-                
-                                    );
-                                  },
-                
-                                  expandedRowKeys: expandedRowKeys,
-                                  onExpandedRowsChange: setExpandedRowKeys,
-                                }}
+                expandable={{
+                  expandedRowRender: (record) => {
+                    const transposedColumns = [
+                      {
+                        title: 'OA Wheeling Losses',
+                        dataIndex: 'OA_wheeling_losses',
+                        key: 'OA_wheeling_losses',
+                      },
+                      {
+                        title: 'OA Wheeling Charges',
+                        dataIndex: 'OA_wheeling_charges',
+                        key: 'OA_wheeling_charges',
+                      },
+                      {
+                        title: 'OA Transmission Loss',
+                        dataIndex: 'OA_transmission_losses',
+                        key: 'OA_transmission_losses',
+                      },
+                      {
+                        title: 'OA Transmission Charges',
+                        dataIndex: 'OA_transmission_charges',
+                        key: 'OA_transmission_charges',
+                      },
+                      {
+                        title: 'OA Standby Charges',
+                        dataIndex: 'OA_standby_charges',
+                        key: 'OA_standby_charges',
+                      },
+                      {
+                        title: 'OA Electricity Tax',
+                        dataIndex: 'OA_electricity_tax',
+                        key: 'OA_electricity_tax',
+                      },
+                      {
+                        title: 'OA Cross Subsidy Surcharge',
+                        dataIndex: 'OA_cross_subsidy_surcharge',
+                        key: 'OA_cross_subsidy_surcharge',
+                      },
+                      {
+                        title: 'OA Banking Charges',
+                        dataIndex: 'OA_banking_charges',
+                        key: 'OA_banking_charges',
+                      },
+                      {
+                        title: 'OA Additional Surcharge',
+                        dataIndex: 'OA_additional_surcharge',
+                        key: 'OA_additional_surcharge',
+                      },
+                    ];
+
+
+
+                    const transposedData = [
+                      {
+                        key: '1',
+                        OA_additional_surcharge: record.OA_additional_surcharge ?? 'N/A',
+                        OA_banking_charges: record.OA_banking_charges ?? 'N/A',
+                        OA_combined_average_replacement_PLF: record.OA_combined_average_replacement_PLF ?? 'N/A',
+                        OA_cross_subsidy_surcharge: record.OA_cross_subsidy_surcharge ?? 'N/A',
+                        OA_electricity_tax: record.OA_electricity_tax ?? 'N/A',
+                        OA_standby_charges: record.OA_standby_charges ?? 'N/A',
+                        OA_transmission_charges: record.OA_transmission_charges ?? 'N/A',
+                        OA_transmission_losses: record.OA_transmission_losses ?? 'N/A',
+                        OA_wheeling_charges: record.OA_wheeling_charges ?? 'N/A',
+                        OA_wheeling_losses: record.OA_wheeling_losses ?? 'N/A',
+                      },
+                    ];
+
+
+                    return (
+                      <div
+                        style={{ padding: '10px', marginLeft: '-55px', background: '#9a840675' }}>
+                        <Table
+                          columns={transposedColumns}
+                          dataSource={transposedData}
+                          pagination={false}
+                          size="small"
+                          bordered
+                        />
+                      </div>
+
+                    );
+                  },
+
+                  expandedRowKeys: expandedRowKeys,
+                  onExpandedRowsChange: setExpandedRowKeys,
+                }}
               /></>
-             
+
             ) : (
               <>
                 <div

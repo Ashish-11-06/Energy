@@ -205,7 +205,7 @@ const handleContinueClick = () => {
       minimum_supply_obligation: minimumSupply || 0,
       payment_security_type: paymentSecurityType || "",
       payment_security_day: paymentSecurityDays || 0,
-      re_replacement: Number(data?.reReplacement) || 0,
+      re_replacement: Math.round(Number(data?.reReplacement) || 0),
       solar_capacity: Number(solar) || 0,
       wind_capacity:Number(wind)  || 0,
       ess_capacity: Number(battery) || 0,
