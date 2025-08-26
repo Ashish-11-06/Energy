@@ -423,7 +423,7 @@ const handleContinueClick = () => {
           {fromInitiateQuotation ? (
           <Col span={12}>
             <Typography.Paragraph>
-              <strong> Equity Contribution Required from Consumer:</strong>
+              <strong> Equity Contribution Required From Consumer (INR Cr):</strong>
               <InputNumber
                 min={0}
                 value={equityContribution}
@@ -446,7 +446,7 @@ const handleContinueClick = () => {
           </Col>
           <Col span={12}>
             <Typography.Paragraph>
-              <strong>Termination Compensation</strong>
+              <strong>Termination Compensation (months)</strong>
               <InputNumber
                 min={0}
                 value={terminationCompensation}

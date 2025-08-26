@@ -30,7 +30,7 @@ const IPPModal = ({ visible, ipp, reIndex, fromConsumer, combination, fromGenera
 
   const dataSource = [
     { key: '1', label: 'Annual Contracted Energy (million units)', value: ipp?.annual_demand_met || "N/A" },
-    { key: '2', label: 'Equity Contribution Required from Consumer',  value: ipp?.equity_contribution ?? "N/A"  },
+    { key: '2', label: 'Equity Contribution Required From Consumer (INR Cr)',  value: ipp?.equity_contribution ?? "N/A"  },
     // console.log("kkkkkkkkkk",ipp?.equity_contribution_required_from_consumer),
     
     { key: '3', label: 'Potential RE Replacement (%)', value: ipp?.reReplacement || "N/A" },
