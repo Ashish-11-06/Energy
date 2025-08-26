@@ -103,6 +103,7 @@ const handleContinueClick = () => {
     setModalVisible(false);
   };
 
+  // console.log('data in RFQ modal',data);
   const downloadable = data?.downloadable;
   // console.log(downloadable);
 
@@ -138,7 +139,7 @@ const handleContinueClick = () => {
     solar: Number(solar) || 0,
     wind: Number(wind) || 0,
     ess: Number(battery) || 0,
-    generator: downloadable.generator || "N/A",
+    generator: downloadable?.generator || "N/A",
     consumer: downloadable.consumer || "N/A",
     consumer_state: downloadable.consumer_state || "N/A",
     minimum_generation_obligation: downloadable.minimum_generation_obligation || "N/A",

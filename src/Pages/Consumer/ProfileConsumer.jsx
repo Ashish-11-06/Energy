@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -8,18 +7,20 @@ import {
   Avatar,
   Button,
   Table,
-  Modal,
-  Form,
   Spin,
+  message,
+  Upload
 } from "antd";
-import EditProfileModal from "./Modal/EditProfileModal";
-import dayjs from "dayjs";
-import AddUserModal from "./Modal/AddUserModal";
-import { render } from "less";
-import { DeleteOutlined, DownloadOutlined, EditOutlined, LogoutOutlined } from "@ant-design/icons";
-import { Navigate, useNavigate } from "react-router-dom";
-import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
+import {
+  LogoutOutlined,
+  UploadOutlined
+} from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import dayjs from "dayjs";
+import EditProfileModal from "./Modal/EditProfileModal";
+import AddUserModal from "./Modal/AddUserModal";
+import { fetchSubUserById } from "../../Redux/Slices/Consumer/subUserSlice";
 import { editUser } from "../../Redux/Slices/userSlice";
 import { decryptData, encryptData } from "../../Utils/cryptoHelper";
 
@@ -28,35 +29,24 @@ const { Title, Text } = Typography;
 const ProfilePage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUserModal, setIsUserModal] = useState(false);
-  const [editableData, setEditaleData] = useState("");
-  const [editValue, setEditValue] = useState(false);
-  const [form] = Form.useForm();
-  const dispatch = useDispatch();
   const [userDataSource, setUserDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
-  // Retrieve user data safely from localStorage
-  const storedUser = localStorage.getItem("user");
-  // const initialUserData = storedUser ? JSON.parse(storedUser).user : {};
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
+  // Retrieve user data
   const userDataa = decryptData(localStorage.getItem('user'));
-  // console.log('userDataa', userDataa);
-
   const user = userDataa?.user;
   const userId = user?.id;
-  // console.log(userId);
-  // const baseurl = "https://ext.exgglobal.com/api"
-  const baseurl = import.meta.env.VITE_BASE_URL_GEN;
-
-  const navigate = useNavigate();
-
   const role = user?.role;
-  // console.log(role);
   const [userData, setUserData] = useState(user);
-
-  // Retrieve subscription plan safely from localStorage
-  // const storedPlan = localStorage.getItem("subscriptionPlanValidity");
+  
+  // Retrieve subscription plan
   const subscriptionPlan = decryptData(localStorage.getItem("subscriptionPlanValidity"));
+  const baseurl = import.meta.env.VITE_BASE_URL_GEN;
 
   const start_date = subscriptionPlan?.start_date
     ? dayjs(subscriptionPlan.start_date).isValid()
@@ -75,10 +65,9 @@ const ProfilePage = () => {
       try {
         setLoading(true);
         const res = await dispatch(fetchSubUserById(userId));
-        const users = res.payload; // Assuming the response is in the payload
+        const users = res.payload;
         const formattedUsers = users.map((user) => ({
           key: user.id,
-          // username: user.email.split("@")[0], // Assuming username is the part before the email
           email: user.email,
           role: user.role,
         }));
@@ -90,92 +79,82 @@ const ProfilePage = () => {
     };
 
     fetchData();
-  }, [dispatch]);
+  }, [dispatch, userId]);
 
   const handleEditToggle = () => setIsModalVisible(true);
   const handleCancel = () => setIsModalVisible(false);
-  const handleUserCancel = () => {
-    setIsUserModal(false);
-    setEditValue(false);
-    form.resetFields();
-  };
   const handleAddUser = () => setIsUserModal(true);
+  const handleUserCancel = () => setIsUserModal(false);
 
-  const handleSave = (values) => {
-    // const storedUser = localStorage.getItem("user");
-    // const existingUserData = storedUser ? JSON.parse(storedUser) : {};
-    // console.log('credit rating:', values.proof);
-    // console.log('values profile consumer', values);
-
-    const userData = decryptData(localStorage.getItem('user'));
-    const existingUserData = userData?.user;
-    // console.log('existingUserData', existingUserData);
-
-    // Debug: log the proof field structure
-    // console.log('values.proof:', values.proof);
-
-    // Extract base64 from proof upload (remove prefix if present)
-    let proofBase64 = undefined;
-    if (values.proof && Array.isArray(values.proof) && values.proof.length > 0) {
-      const fileObj = values.proof[0];
-      if (fileObj.base64) {
-        // Remove "data:...;base64," prefix if present
-        proofBase64 = fileObj.base64.includes(",")
-          ? fileObj.base64.split(",")[1]
-          : fileObj.base64;
-      }
-    }
-
-    const updatedUserData = {
-      ...existingUserData.user,
-      company_representative: values.company_representative ?? existingUserData.user.company_representative,
-      company: values.company ?? existingUserData.user.company,
-      email: values.email ?? existingUserData.user.email,
-      mobile: values.mobile ?? existingUserData.user.mobile,
-      credit_rating: values.credit_rating ?? existingUserData.user.credit_rating,
-      credit_rating_proof: proofBase64, // always base64 or undefined
-    };
-
-    // console.log('Updated user data:', updatedUserData);
-
-    //  console.log('Payload to backend:', { userId, userData: updatedUserData });
-
-    dispatch(editUser({ userId, userData: updatedUserData }))
-      .then((res) => {
-        if (res.payload && res.payload.data && res.payload.data.data) {
-          // console.log("User updated successfully:", res.payload.data.data);
-          // console.log("Updated user data:", res.payload.data);
-
-          // Merge updated fields into the existing user object, preserving all other fields
-          const updatedLocalStorageData = {
-            ...userDataa, // the whole decrypted localStorage object
-            user: {
-              ...userDataa.user, // all previous user fields
-              ...res.payload.data.data, // overwrite only updated fields
-            },
-          };
-
-          localStorage.setItem("user", encryptData(updatedLocalStorageData));
-          setUserData(updatedLocalStorageData.user);
-
-          // Trigger custom event to notify HeaderComponent
-          const event = new Event("userDetailsUpdated");
-          window.dispatchEvent(event);
-
-          // console.log("User updated successfully:", res);
+  const handleSave = async (values) => {
+    try {
+      const userData = decryptData(localStorage.getItem('user'));
+      const existingUserData = userData?.user;
+      
+      let proofBase64 = undefined;
+      
+      // Handle file upload
+      if (values.proof && Array.isArray(values.proof) && values.proof.length > 0) {
+        const file = values.proof[0].originFileObj;
+        
+        if (file) {
+          proofBase64 = await convertToBase64(file);
         }
-      })
-      .catch((error) => {
-        // console.error("Failed to update user:", error);
-      });
-
+      }
+      
+      const updatedUserData = {
+        ...existingUserData,
+        company_representative: values.company_representative ?? existingUserData.company_representative,
+        company: values.company ?? existingUserData.company,
+        email: values.email ?? existingUserData.email,
+        mobile: values.mobile ?? existingUserData.mobile,
+        credit_rating: values.credit_rating ?? existingUserData.credit_rating,
+        credit_rating_proof: proofBase64 !== undefined ? proofBase64 : existingUserData.credit_rating_proof,
+      };
+      
+      const res = await dispatch(editUser({ userId, userData: updatedUserData }));
+      
+      if (res.payload && res.payload.data && res.payload.data.data) {
+        const updatedLocalStorageData = {
+          ...userData,
+          user: {
+            ...userData.user,
+            ...res.payload.data.data,
+          },
+        };
+        
+        localStorage.setItem("user", encryptData(updatedLocalStorageData));
+        setUserData(updatedLocalStorageData.user);
+        
+        // Trigger custom event to notify HeaderComponent
+        const event = new Event("userDetailsUpdated");
+        window.dispatchEvent(event);
+        
+        message.success("Profile updated successfully!");
+      }
+    } catch (error) {
+      console.error("Failed to update user:", error);
+      message.error("Failed to update profile. Please try again.");
+    }
+    
     setIsModalVisible(false);
+  };
+
+  // Helper function to convert file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64 = reader.result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = error => reject(error);
+    });
   };
 
   const handleSaveUser = (values) => {
     setIsUserModal(false);
-
-    // Ensure `values` is an object before updating state
     if (values && typeof values === "object") {
       setUserDataSource([
         ...userDataSource,
@@ -184,20 +163,21 @@ const ProfilePage = () => {
     }
   };
 
-  const credit_rating_proof = `${baseurl}${userData?.credit_rating_proof}` || "N/A";
+  const credit_rating_proof = userData?.credit_rating_proof 
+    ? `${baseurl}${userData.credit_rating_proof}` 
+    : null;
+
   const handleLogOut = () => {
     localStorage.removeItem("user");
     localStorage.clear();
     navigate("/");
   };
 
-
-
   const userColumns = [
     {
       title: "SR No.",
       key: "srNo",
-      render: (text, record, index) => index + 1, // This will display the serial number starting from 1
+      render: (text, record, index) => index + 1,
     },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Role", dataIndex: "role", key: "role" },
@@ -270,7 +250,7 @@ const ProfilePage = () => {
                     href={credit_rating_proof}
                     target="_blank"
                     rel="noopener noreferrer"
-                    download
+                    download="credit_rating_proof.pdf"
                     style={{ cursor: 'pointer', color: 'rgb(154, 132, 6)', textDecoration: 'underline' }}
                   >
                     Proof
@@ -346,7 +326,7 @@ const ProfilePage = () => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    height: "60vh", // Full height of the viewport
+                    height: "60vh",
                   }}
                 >
                   <Spin />
@@ -380,13 +360,9 @@ const ProfilePage = () => {
         isVisible={isUserModal}
         onCancel={handleUserCancel}
         onSave={handleSaveUser}
-        editableData={editableData}
-        edit={editValue}
       />
     </Row>
   );
 };
 
 export default ProfilePage;
-;
-;

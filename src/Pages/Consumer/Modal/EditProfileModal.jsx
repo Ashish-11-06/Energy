@@ -1,61 +1,40 @@
-import React from "react";
-import { Modal, Form, Input, Button, Row, Upload, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from 'react';
+import { Modal, Form, Input, Button, Upload, message } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 
 const EditProfileModal = ({ isVisible, onCancel, onSave, initialValues }) => {
   const [form] = Form.useForm();
+  const [fileList, setFileList] = useState([]);
 
-  // Synchronous getValueFromEvent for AntD
-  const normFile = (e) => {
-    if (Array.isArray(e)) return e;
-    return e && e.fileList;
-  };
-
-  // Convert file to base64 and set in form
-  const handleProofChange = async ({ file, fileList }) => {
-    if (file.status === "removed") {
-      form.setFieldsValue({ proof: [] });
-      return;
+  useEffect(() => {
+    if (isVisible) {
+      form.setFieldsValue(initialValues);
+      setFileList([]);
     }
-    if (fileList.length > 0) {
-      const latestFile = fileList[0];
-      if (!latestFile.originFileObj) {
-        message.error("No file selected or file is invalid.");
-        return;
-      }
-      const toBase64 = (fileObj) =>
-        new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(fileObj);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = (error) => reject(error);
-        });
-      try {
-        const base64 = await toBase64(latestFile.originFileObj);
-        latestFile.base64 = base64;
-        form.setFieldsValue({ proof: [latestFile] });
-      } catch (e) {
-        message.error("Failed to read file. Please ensure the file is not corrupted and is less than 5MB.");
-      }
-    }
-  };
+  }, [isVisible, initialValues, form]);
 
-  // On form submit, extract base64 and send to backend
-  const handleFinish = (values) => {
-    let base64Proof = null;
-    if (values.proof && values.proof.length > 0 && values.proof[0].base64) {
-      // Remove the prefix "data:...;base64," if needed
-      const base64String = values.proof[0].base64;
-      base64Proof = base64String.split(",")[1];
+  const beforeUpload = (file) => {
+    const isPdfOrImage = file.type === 'application/pdf' || 
+                         file.type === 'image/jpeg' || 
+                         file.type === 'image/png';
+    if (!isPdfOrImage) {
+      message.error('You can only upload PDF, JPG, or PNG files!');
     }
-    const payload = {
-      ...values,
-      proof: base64Proof,
-    };
-
-    // console.log('payload profile consumer', payload);
     
-    onSave(payload);
+    const isLt5M = file.size / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      message.error('File must be smaller than 5MB!');
+    }
+    
+    return isPdfOrImage && isLt5M ? true : Upload.LIST_IGNORE;
+  };
+
+  const handleChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
+
+  const onFinish = (values) => {
+    onSave(values);
   };
 
   return (
@@ -64,104 +43,85 @@ const EditProfileModal = ({ isVisible, onCancel, onSave, initialValues }) => {
       open={isVisible}
       onCancel={onCancel}
       footer={null}
+      width={600}
     >
       <Form
         form={form}
         layout="vertical"
-        onFinish={handleFinish}
+        onFinish={onFinish}
         initialValues={initialValues}
       >
         <Form.Item
-          label="Company Representative"
           name="company_representative"
+          label="Company Representative"
+          rules={[{ required: true, message: 'Please input company representative!' }]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          label="Company"
           name="company"
+          label="Company"
+          rules={[{ required: true, message: 'Please input company name!' }]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          label="Email"
           name="email"
+          label="Email"
           rules={[
-            {
-              type: "email",
-              message: "The input is not valid E-mail!",
-            },
-            {
-              required: true,
-              message: "Please input your E-mail!",
-            },
+            { required: true, message: 'Please input email!' },
+            { type: 'email', message: 'Please enter a valid email!' }
           ]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          label="Mobile"
           name="mobile"
-          rules={[
-            {
-              required: true,
-              message: "Please input your mobile number!",
-            },
-            {
-              pattern: /^[0-9]{10}$/,
-              message: "Mobile number must be 10 digits!",
-            },
-          ]}
+          label="Mobile"
+          rules={[{ required: true, message: 'Please input mobile number!' }]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          label="Credit Rating"
           name="credit_rating"
-          rules={[
-            {
-              required: true,
-              message: "Please input credit rating!",
-            },
-          ]}
+          label="Credit Rating"
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          label="Proof"
           name="proof"
+          label="Credit Rating Proof"
           valuePropName="fileList"
-          getValueFromEvent={normFile}
-          rules={[
-            {
-              required: true,
-              message: "Please upload proof document!",
-            },
-          ]}
+          getValueFromEvent={(e) => {
+            if (Array.isArray(e)) {
+              return e;
+            }
+            return e && e.fileList;
+          }}
         >
           <Upload
-            beforeUpload={() => false}
-            accept=".pdf,.doc,.docx"
+            beforeUpload={beforeUpload}
+            onChange={handleChange}
+            fileList={fileList}
             maxCount={1}
-            onChange={handleProofChange}
           >
-            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            <Button icon={<UploadOutlined />}>Click to upload</Button>
           </Upload>
         </Form.Item>
 
-        <Row justify="end">
-          <Button onClick={onCancel} style={{ marginRight: "10px" }}>
+        <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
+          <Button style={{ marginRight: 8 }} onClick={onCancel}>
             Cancel
           </Button>
           <Button type="primary" htmlType="submit">
-            Save Changes
+            Save
           </Button>
-        </Row>
+        </Form.Item>
       </Form>
     </Modal>
   );

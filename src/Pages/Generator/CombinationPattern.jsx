@@ -47,6 +47,7 @@ const CombinationPattern = () => {
   const [combinationData, setCombinationData] = useState([]);
   const [tryREreplacement, setTryREreplacement] = useState(false);
   const [consumerDetails, setConsumerDetails] = useState("");
+    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [sensitivityData, setSensitivityData] = useState();
   const [showGraph, setShowGraph] = useState(false); // State to control graph visibility
   const { state } = useLocation();
@@ -311,6 +312,17 @@ const CombinationPattern = () => {
           capital_cost_solar: combination.capital_cost_solar || 0,
           capital_cost_wind: combination.capital_cost_wind || 0,
           banking_available: combination.banking_available || 0,
+          downloadable: combination.downloadable || 'N/A',
+          equity_contribution: combination.equity_contribution_required_from_consumer,
+          OA_additional_surcharge: combination.OA_additional_surcharge,
+          OA_banking_charges: combination.OA_banking_charges,
+          OA_cross_subsidy_surcharge: combination.OA_cross_subsidy_surcharge,
+          OA_electricity_tax: combination.OA_electricity_tax,
+          OA_standby_charges: combination.OA_standby_charges,
+          OA_transmission_charges: combination.OA_transmission_charges,
+          OA_transmission_losses: combination.OA_transmission_losses,
+          OA_wheeling_charges: combination.OA_wheeling_charges,
+          OA_wheeling_losses: combination.OA_wheeling_losses,
           // annual_cost:annual_cost,
           status: combination?.terms_sheet_sent
             ? combination?.sent_from_you === 1
@@ -489,7 +501,7 @@ const CombinationPattern = () => {
 
 
   const handleRowClick = (record) => {
-    // console.log('handle click record',record);
+    console.log('handle click record',record);
 
     setSelectedRow(record);
     setIsIPPModalVisible(true);
@@ -653,6 +665,25 @@ const CombinationPattern = () => {
       title: "OA Cost (INR/kWh)",
       dataIndex: "OACost",
       key: "OACost",
+      width: 120,
+      render: (value, record) => {
+        const isExpanded = expandedRowKeys.includes(record.key);
+        return (
+          <a
+            style={{ color: "#9a8406", cursor: "pointer" }}
+            onClick={() => {
+              // console.log("OACost clicked", record);
+              setExpandedRowKeys((prev) =>
+                isExpanded
+                  ? prev.filter((key) => key !== record.key)
+                  : [...prev, record.key]
+              );
+            }}
+          >
+            {value}
+          </a>
+        );
+      },
     },
     {
       title: "Total Cost (INR/kWh)",
@@ -991,7 +1022,7 @@ const CombinationPattern = () => {
                 </div>
               </>
             ) : dataSource.length > 0 ? (
-              <Table
+              <> <Table
                 dataSource={dataSource}
                 columns={columns}
                 pagination={false}
@@ -1003,8 +1034,97 @@ const CombinationPattern = () => {
                   overflowX: "auto",
                 }}
                 scroll={{ x: 1200 }} // Enable horizontal scrolling with a minimum width
+
                 rowClassName={() => "custom-row"}
-              />
+                                expandable={{
+                                  expandedRowRender: (record) => {
+                                    const transposedColumns = [
+                                      {
+                                        title: 'OA Wheeling Losses',
+                                        dataIndex: 'OA_wheeling_losses',
+                                        key: 'OA_wheeling_losses',
+                                      },
+                                      {
+                                        title: 'OA Wheeling Charges',
+                                        dataIndex: 'OA_wheeling_charges',
+                                        key: 'OA_wheeling_charges',
+                                      },
+                                      {
+                                        title: 'OA Transmission Loss',
+                                        dataIndex: 'OA_transmission_losses',
+                                        key: 'OA_transmission_losses',
+                                      },
+                                      {
+                                        title: 'OA Transmission Charges',
+                                        dataIndex: 'OA_transmission_charges',
+                                        key: 'OA_transmission_charges',
+                                      },
+                                      {
+                                        title: 'OA Standby Charges',
+                                        dataIndex: 'OA_standby_charges',
+                                        key: 'OA_standby_charges',
+                                      },
+                                      {
+                                        title: 'OA Electricity Tax',
+                                        dataIndex: 'OA_electricity_tax',
+                                        key: 'OA_electricity_tax',
+                                      },
+                                      {
+                                        title: 'OA Cross Subsidy Surcharge',
+                                        dataIndex: 'OA_cross_subsidy_surcharge',
+                                        key: 'OA_cross_subsidy_surcharge',
+                                      },
+                                      {
+                                        title: 'OA Banking Charges',
+                                        dataIndex: 'OA_banking_charges',
+                                        key: 'OA_banking_charges',
+                                      },
+                                      {
+                                        title: 'OA Additional Surcharge',
+                                        dataIndex: 'OA_additional_surcharge',
+                                        key: 'OA_additional_surcharge',
+                                      },
+                                    ];
+                
+                
+                
+                                    const transposedData = [
+                                      {
+                                        key: '1',
+                                        OA_additional_surcharge: record.OA_additional_surcharge ?? 'N/A',
+                                        OA_banking_charges: record.OA_banking_charges ?? 'N/A',
+                                        OA_combined_average_replacement_PLF: record.OA_combined_average_replacement_PLF ?? 'N/A',
+                                        OA_cross_subsidy_surcharge: record.OA_cross_subsidy_surcharge ?? 'N/A',
+                                        OA_electricity_tax: record.OA_electricity_tax ?? 'N/A',
+                                        OA_standby_charges: record.OA_standby_charges ?? 'N/A',
+                                        OA_transmission_charges: record.OA_transmission_charges ?? 'N/A',
+                                        OA_transmission_losses: record.OA_transmission_losses ?? 'N/A',
+                                        OA_wheeling_charges: record.OA_wheeling_charges ?? 'N/A',
+                                        OA_wheeling_losses: record.OA_wheeling_losses ?? 'N/A',
+                                      },
+                                    ];
+                
+                
+                                    return (
+                                      <div
+                                        style={{ padding: '10px', marginLeft: '-55px', background: '#9a840675' }}>
+                                        <Table
+                                          columns={transposedColumns}
+                                          dataSource={transposedData}
+                                          pagination={false}
+                                          size="small"
+                                          bordered
+                                        />
+                                      </div>
+                
+                                    );
+                                  },
+                
+                                  expandedRowKeys: expandedRowKeys,
+                                  onExpandedRowsChange: setExpandedRowKeys,
+                                }}
+              /></>
+             
             ) : (
               <>
                 <div
