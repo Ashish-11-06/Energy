@@ -106,6 +106,7 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Portfolio', key: '/generator/portfolio', icon: <img src={portfolio} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Find Consumer', key: '/generator/matching-consumer', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Capacity Sizing', key: '/generator/GeneratorInput', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Onsite RE Lead Generation', key: '/generator/rooftop', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Matching Consumer', key: '/generator/matching-consumer', icon: <TeamOutlined /> },
     {

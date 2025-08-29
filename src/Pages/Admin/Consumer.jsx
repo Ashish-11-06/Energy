@@ -8,15 +8,19 @@ import {
   Input,
   Card,
   Select,
+  Popover,
+  Modal,
 } from "antd";
 import EditUser from "./Modal/EditUser";
+import Notification from "./Notification";
+import AssignPlanUserModal from "./Modal/AssignPlanUserModal";
 import {
   deleteConsumer,
   editConsumer,
   getConsumerList,
 } from "../../Redux/Admin/slices/consumerSlice";
 import { useDispatch } from "react-redux";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, SettingOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -28,6 +32,11 @@ const Consumer = () => {
   const [loading, setLoading] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [actionPopoverVisible, setActionPopoverVisible] = useState(null);
+  const [notificationModalVisible, setNotificationModalVisible] = useState(false);
+  const [notificationUser, setNotificationUser] = useState(null);
+  const [assignPlanModalVisible, setAssignPlanModalVisible] = useState(false);
+  const [assignPlanUser, setAssignPlanUser] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -93,12 +102,33 @@ const Consumer = () => {
     }
   };
 
+  const handleActionClick = (record) => {
+    setActionPopoverVisible(record.id);
+  };
+
+  const handleClosePopover = () => {
+    setActionPopoverVisible(null);
+  };
+
+  const handleSendNotification = (record) => {
+    setNotificationUser(record);
+    setNotificationModalVisible(true);
+    handleClosePopover();
+  };
+
+  const handleAssignPlan = (record) => {
+    setAssignPlanUser(record);
+    setAssignPlanModalVisible(true);
+    handleClosePopover();
+  };
+
   const filteredData = Array.isArray(consumerList)
     ? consumerList.filter((item) => {
         const lowerSearch = searchText.toLowerCase();
         const matchesSearch =
           (item.company || "").toLowerCase().includes(lowerSearch) ||
-          (item.email || "").toLowerCase().includes(lowerSearch);
+          (item.email || "").toLowerCase().includes(lowerSearch) ||
+          (item.company_representative || "").toLowerCase().includes(lowerSearch);
 
         const matchesStatus =
           statusFilter === "all" || item.status === statusFilter;
@@ -151,21 +181,29 @@ const Consumer = () => {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <Space size="middle">
-          <EditOutlined
-            onClick={() => handleEdit(record)}
-            style={{ color: "#669800", cursor: "pointer" }}
-          />
-          {/* <Popconfirm
-            title="Are you sure to delete this Consumer?"
-            onConfirm={() => handleDelete(record)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <DeleteOutlined style={{ color: 'red', cursor: 'pointer' }} />
-          </Popconfirm> */}
-        </Space>
+        <Popover
+          content={
+            <Space direction="vertical">
+              <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }} 
+              onClick={() => { handleEdit(record); handleClosePopover(); }}>Edit</Button>
+              <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }} 
+              onClick={() => handleSendNotification(record)}>Send Notification</Button>
+              <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }} 
+              onClick={() => handleAssignPlan(record)}>Assign Plan</Button>
+            </Space>
+          }
+          trigger="click"
+          open={actionPopoverVisible === record.id}
+          onOpenChange={(visible) => {
+            if (visible) handleActionClick(record);
+            else handleClosePopover();
+          }}
+          placement="bottom"
+        >
+          <SettingOutlined style={{ color: "#669800", cursor: "pointer", fontSize: 18 }} />
+        </Popover>
       ),
+      align: "center",
     },
   ];
 
@@ -174,7 +212,7 @@ const Consumer = () => {
       <h2>Consumer List</h2>
 
       <Input
-        placeholder="Search by Company or Email"
+        placeholder="Search by Name, Company or Email"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
         allowClear
@@ -207,6 +245,32 @@ const Consumer = () => {
         onUpdate={handleUpdate}
         userData={selectedUser}
         loading={modalLoading}
+      />
+      {/* Notification Modal */}
+      <Modal
+        open={notificationModalVisible}
+        footer={null}
+        onCancel={() => setNotificationModalVisible(false)}
+        width={600}
+        destroyOnClose
+      >
+        <Notification
+          isModal={true}
+          onClose={() => setNotificationModalVisible(false)}
+          initialUserType="Consumer"
+          initialUserNumber="single_user"
+          initialSelectedUser={notificationUser?.id}
+        />
+      </Modal>
+      {/* Assign Plan Modal */}
+      <AssignPlanUserModal
+        visible={assignPlanModalVisible}
+        onCancel={() => setAssignPlanModalVisible(false)}
+        record={assignPlanUser}
+        mode="add"
+        onUpdate={getList}
+        // You can pass recordList={consumerList} if needed for duplicate check
+        recordList={consumerList}
       />
     </div>
   );

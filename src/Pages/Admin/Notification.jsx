@@ -21,20 +21,27 @@ const { Option } = Select;
 const { Title } = Typography;
 
 const Notification = ({
-  isModal = false, // Default to false if not provided
+  isModal = false,
   onClose = () => {},
+  initialUserType = null,
+  initialUserNumber = null,
+  initialSelectedUser = null,
 }) => {
   const [type, setType] = useState("");
-  const [userNumber, setUserNumber] = useState(null);
-  const [userType, setUserType] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [userNumber, setUserNumber] = useState(initialUserNumber);
+  const [userType, setUserType] = useState(initialUserType);
+  const [selectedUser, setSelectedUser] = useState(initialSelectedUser);
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [dropdownLoading, setDropdownLoading] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
     if (userType && userNumber === "single_user") {
+      setDropdownLoading(true);
       fetchUserList();
+    } else {
+      setUserList([]);
     }
   }, [userType, userNumber]);
 
@@ -46,13 +53,15 @@ const Notification = ({
       } else if (userType === "Generator") {
         res = await generatorApi.getGeneratorList();
       }
-      if (res && res.status === 200 && Array.isArray(res.data)) {
-        setUserList(res.data);
+      if (res && res.status === 200 && Array.isArray(res.data.results)) {
+        setUserList(res.data.results);
       } else {
         setUserList([]);
       }
     } catch {
       setUserList([]);
+    } finally {
+      setDropdownLoading(false);
     }
   };
 
@@ -89,6 +98,9 @@ const Notification = ({
     }
   };
 
+  // Only apply modal logic if initialSelectedUser is set (from Consumer page)
+  const isSingleConsumerModal = !!initialSelectedUser;
+
   return (
     <div
       style={{
@@ -100,11 +112,11 @@ const Notification = ({
       <Card
         bordered={false}
         style={{
-          maxWidth: isModal ? "100%" : "90%", // Full width in modal
-          margin: isModal ? 0 : "0 auto", // Remove margin in modal
+          maxWidth: isModal ? "100%" : "90%",
+          margin: isModal ? 0 : "0 auto",
           background: "#fff",
           boxShadow: isModal ? "none" : "0 2px 10px rgba(0,0,0,0.1)",
-          padding: isModal ? 0 : "40px", // Remove padding in modal
+          padding: isModal ? 0 : "40px",
         }}
       >
         {/* Header Section */}
@@ -133,59 +145,85 @@ const Notification = ({
 
         <Divider />
 
-        {/* User Selection Section */}
-        <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-          <Col span={6}>
-            <Title level={5}>Select User Category</Title>
-            <Select
-              value={userType}
-              onChange={(val) => {
-                setUserType(val);
-                setSelectedUser(null);
-                setUserNumber(null);
-              }}
-              style={{ width: "100%" }}
-              placeholder="Choose User Type"
-            >
-              <Option value="Consumer">Consumer</Option>
-              <Option value="Generator">Generator</Option>
-            </Select>
-          </Col>
-
-          <Col span={8}>
-            <Title level={5}>Select User</Title>
-            <Radio.Group
-              onChange={(e) => {
-                setUserNumber(e.target.value);
-                setSelectedUser(null);
-              }}
-              value={userNumber}
-              style={{ display: "flex", gap: "16px" }}
-            >
-              <Radio value="single_user">Single {userType}</Radio>
-              <Radio value="all_user">All {userType}</Radio>
-            </Radio.Group>
-          </Col>
-
-          {userType && userNumber === "single_user" && (
-            <Col span={10}>
-              <Title level={5}>Select {userType}</Title>
-              <Select
-                value={selectedUser}
-                onChange={(val) => setSelectedUser(val)}
+        {/* Only show selected consumer info if opened from Consumer page */}
+        {isSingleConsumerModal ? (
+          <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+            <Col span={24}>
+              <Title level={5}>Selected Consumer</Title>
+              <Input
+                value={
+                  userList.find((u) => u.id === initialSelectedUser)?.name ||
+                  userList.find((u) => u.id === initialSelectedUser)?.username ||
+                  userList.find((u) => u.id === initialSelectedUser)?.email ||
+                  `Consumer ${initialSelectedUser}`
+                }
+                disabled
                 style={{ width: "100%" }}
-                placeholder={`Choose a ${userType}`}
-                loading={loading && userList.length === 0}
+              />
+            </Col>
+          </Row>
+        ) : (
+          // Show full notification page as usual
+          <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+            <Col span={6}>
+              <Title level={5}>Select User Category</Title>
+              <Select
+                value={userType}
+                onChange={(val) => {
+                  setUserType(val);
+                  setSelectedUser(null);
+                  setUserNumber(null);
+                }}
+                style={{ width: "100%" }}
+                placeholder="Choose User Type"
               >
-                {userList.map((u) => (
-                  <Option key={u.id} value={u.id}>
-                    {u.name || u.username || u.email || `${userType} ${u.id}`}
-                  </Option>
-                ))}
+                <Option value="Consumer">Consumer</Option>
+                <Option value="Generator">Generator</Option>
               </Select>
             </Col>
-          )}
-        </Row>
+
+            <Col span={8}>
+              <Title level={5}>Select User</Title>
+              <Radio.Group
+                onChange={(e) => {
+                  setUserNumber(e.target.value);
+                  setSelectedUser(null);
+                }}
+                value={userNumber}
+                style={{ display: "flex", gap: "16px" }}
+              >
+                <Radio value="single_user">Single {userType}</Radio>
+                <Radio value="all_user">All {userType}</Radio>
+              </Radio.Group>
+            </Col>
+
+            {userType && userNumber === "single_user" && (
+              <Col span={10}>
+                <Title level={5}>Select {userType}</Title>
+                <Select
+                  value={selectedUser}
+                  onChange={(val) => setSelectedUser(val)}
+                  style={{ width: "100%" }}
+                  placeholder={`Choose a ${userType}`}
+                  loading={dropdownLoading}
+                  showSearch
+                  filterOption={(input, option) =>
+                    (option?.children ?? "").toLowerCase().includes(input.toLowerCase())
+                  }
+                  notFoundContent={dropdownLoading ? "Loading..." : "No users found"}
+                >
+                  {userList && userList.length > 0 ? (
+                    userList.map((u) => (
+                      <Option key={u.id} value={u.id}>
+                        {u.name || u.username || u.email || `${userType} ${u.username}`}
+                      </Option>
+                    ))
+                  ) : null}
+                </Select>
+              </Col>
+            )}
+          </Row>
+        )}
 
         {/* Form Inputs */}
         <Form form={form} layout="vertical">
@@ -245,3 +283,4 @@ const Notification = ({
 };
 
 export default Notification;
+

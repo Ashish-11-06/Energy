@@ -45,6 +45,7 @@ import StatusApproval from './Pages/TrackStatus';
 import Agreements from './Pages/Agreements';
 import GeneratorInput from './Pages/Generator/GeneratorInput';
 import CombinationPatternCap from './Pages/Generator/CapacitySizingPattern.jsx';
+import RequestQuatation from "./Components/Consumer/RequestQuatation";
 
 // powerX
 import PLayoutComponent from './appPowerX/Components/Layout/LayoutComponent';
@@ -79,6 +80,7 @@ import ProtectedRouteAdmin from './Pages/Admin/ProtectedRouteAdmin.jsx';
 import { Content } from 'antd/es/layout/layout.js';
 import AdminRoutes from './Components/Admin/AdminRoutes.jsx';
 import Rooftop from './Pages/Consumer/Rooftop.jsx';
+import GeneratorRooftop from './Pages/Generator/Rooftop.jsx';
 
 // 🔒 Global Auth Guard
 function AuthGuard() {
@@ -185,6 +187,7 @@ function App() {
               <Route path="transaction-window" element={<TransactionWindow />} />
               <Route path="status" element={<StatusApproval />} />
               <Route path="rooftop" element={<Rooftop />} />
+              <Route path="request-quotation" element={<RequestQuatation />} />
             </Route>
             {/* Generator Routes */}
             <Route path="/generator/*">
@@ -206,6 +209,7 @@ function App() {
               <Route path="transaction-window" element={<TransactionWindowGen />} />
               <Route path="generatorInput" element={<GeneratorInput />} />
               <Route path="status" element={<StatusApproval />} />
+              <Route path="rooftop" element={<GeneratorRooftop />} />
               <Route path="capacity-sizing-pattern" element={<CombinationPatternCap />} />
             </Route>
           </Route>
@@ -230,6 +234,7 @@ function App() {
                 <Route path="trading" element={<Trading />} />
                 <Route path="powerx-subscription" element={<Subscription />} />
                 <Route path="profile" element={<ProfilePage />} />
+                
               </Route>
               <Route path="generator">
                 <Route path="dashboard" element={<DashboardPG />} />
@@ -257,9 +262,11 @@ function App() {
             }
           ></Route>
         </Route>
+        
       </Routes>
     </Router>
   );
 }
 
 export default App;
+

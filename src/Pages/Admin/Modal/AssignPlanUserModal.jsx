@@ -128,9 +128,9 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
                 rules={[{ required: true, message: 'Subscription plan is required' }]}
               >
                 <Select placeholder="Select plan">
+                  <Option value="Free">FREE</Option>
                   <Option value="Lite">LITE</Option>
                   <Option value="Pro">PRO</Option>
-                  <Option value="Free">FREE</Option>
                 </Select>
               </Form.Item>
             </Col>

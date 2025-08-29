@@ -66,9 +66,10 @@ const Help = () => {
   };
 
   const filteredData = data.filter((item) => {
-    const userMatch = userTypeFilter ? item.userType === userTypeFilter : true;
-    const statusMatch = statusFilter ? item.status === statusFilter : true;
-    return userMatch && statusMatch;
+    return (
+      (userTypeFilter ? item.user_category === userTypeFilter : true) &&
+      (statusFilter ? item.status === statusFilter : true)
+    );
   });
 
   const columns = [

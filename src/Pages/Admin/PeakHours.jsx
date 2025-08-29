@@ -85,7 +85,12 @@ const PeakHours = () => {
 
 
     const columns = [
-        { title: 'State', dataIndex: 'name', key: 'name', render: formatTime  },
+        { 
+            title: 'State', 
+            dataIndex: 'name', 
+            key: 'name', 
+            render: (text) => text || 'N/A' // Show full state name
+        },
         { title: 'Peak Hours', dataIndex: 'peak_hours', key: 'peak_hours', 
             render: formatTime  
         },
