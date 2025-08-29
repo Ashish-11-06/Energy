@@ -1,15 +1,34 @@
 import React from "react";
-import { Form, Input, Select, Button, message, Modal } from "antd";
+import { Form, Input, Radio, Button, message, Modal } from "antd";
+import roofTop from "../../Redux/api/roofTop";
 
-const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop }) => {
+const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop, rooftop_type, requirement }) => {
+
   const [form] = Form.useForm();
 
-  const handleSubmit = (values) => {
-    // Add your request logic here
-    message.success("Quotation request submitted!");
-    form.resetFields();
-    if (onCancel) onCancel();
+  const handleSubmit = async (values) => {
+    try {
+      const payload = {
+        capacity: values.capacity,
+        mode_of_development: values.mode,
+        rooftop_type: rooftop_type,
+        requirement_id: requirement?.id,
+      };
+
+
+      const response = await roofTop.requestQuotation(payload); // wait for API response
+
+
+      message.success("Quotation request submitted!");
+      form.resetFields();
+
+      if (onCancel) onCancel();
+    } catch (error) {
+      console.error("Error submitting quotation:", error);
+      message.error("Failed to submit quotation. Please try again.");
+    }
   };
+
 
   return (
     <Modal
@@ -41,16 +60,18 @@ const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop }) => {
             disabled
           />
         </Form.Item>
+
         <Form.Item
           label="Mode of Development"
           name="mode"
           rules={[{ required: true, message: "Please select mode" }]}
         >
-          <Select placeholder="Select mode">
-            <Select.Option value="CAPEX">CAPEX</Select.Option>
-            <Select.Option value="RESCO">RESCO</Select.Option>
-          </Select>
+          <Radio.Group>
+            <Radio value="CAPEX">CAPEX</Radio>
+            <Radio value="RESCO">RESCO</Radio>
+          </Radio.Group>
         </Form.Item>
+
         <Form.Item>
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
             Send Quotation

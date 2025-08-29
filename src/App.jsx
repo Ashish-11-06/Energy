@@ -81,6 +81,7 @@ import { Content } from 'antd/es/layout/layout.js';
 import AdminRoutes from './Components/Admin/AdminRoutes.jsx';
 import Rooftop from './Pages/Consumer/Rooftop.jsx';
 import GeneratorRooftop from './Pages/Generator/Rooftop.jsx';
+import OnsiteREOffers from './Pages/Consumer/OnsiteREOffers.jsx';
 
 // 🔒 Global Auth Guard
 function AuthGuard() {
@@ -188,6 +189,7 @@ function App() {
               <Route path="status" element={<StatusApproval />} />
               <Route path="rooftop" element={<Rooftop />} />
               <Route path="request-quotation" element={<RequestQuatation />} />
+              <Route path="rooftop-offers" element={<OnsiteREOffers />} />
             </Route>
             {/* Generator Routes */}
             <Route path="/generator/*">
