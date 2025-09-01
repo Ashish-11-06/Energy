@@ -1,37 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Button, Card } from "antd";
 import RooftopModal from "../../Components/Generator/RooftopModal";
-
-// Dummy data for demonstration
-const consumers = [
-  {
-    consumer_id: "C001",
-    industry: "Manufacturing",
-    state: "Maharashtra",
-    required_capacity: "500 kWp",
-    name: "ABC Industries",
-    address: "123 Industrial Area, Pune",
-    contact: "9876543210",
-    email: "abc@industry.com",
-    details: "Large scale manufacturer of automotive parts.",
-  },
-  {
-    consumer_id: "C002",
-    industry: "Pharma",
-    state: "Gujarat",
-    required_capacity: "300 kWp",
-    name: "XYZ Pharma",
-    address: "456 Pharma Park, Ahmedabad",
-    contact: "9123456780",
-    email: "xyz@pharma.com",
-    details: "Pharmaceutical company specializing in generics.",
-  },
-  // ...more consumers
-];
+import roofTop from "../../Redux/api/roofTop";
+import { decryptData } from "../../Utils/cryptoHelper";
 
 const GeneratorRooftop = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedConsumer, setSelectedConsumer] = useState(null);
+  const [user, setUser] = useState(null);
+  const [consumers, setConsumers] = useState([]); // ✅ state for API data
+
+  // ✅ Load user only once on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const userData = decryptData(storedUser);
+        const parsedUser =
+          typeof userData === "string" ? JSON.parse(userData) : userData;
+        setUser(parsedUser.user); // adjust if your decrypted data structure differs
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+  }, []);
+
+  // ✅ Fetch offers when user ID is available
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user?.id) return; // only fetch if user exists
+      try {
+        console.log("Fetching offers for user ID:", user.id);
+        const response = await roofTop.getOffersById(user.id);
+        console.log("API Response:", response.data);
+        setConsumers(response.data); // ✅ update table data
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+      }
+    };
+
+    fetchData();
+  }, [user]);
 
   const columns = [
     {
@@ -42,8 +51,8 @@ const GeneratorRooftop = () => {
     },
     {
       title: "Consumer ID",
-      dataIndex: "consumer_id",
-      key: "consumer_id",
+      dataIndex: "consumer",
+      key: "consumer",
       align: "center",
     },
     {
@@ -53,28 +62,31 @@ const GeneratorRooftop = () => {
       align: "center",
     },
     {
-      title: "State",
-      dataIndex: "state",
-      key: "state",
+      title: "Contracted Demand",
+      dataIndex: "contracted_demand",
+      key: "contracted_demand",
       align: "center",
     },
     {
-      title: "Required Capacity",
-      dataIndex: "required_capacity",
-      key: "required_capacity",
+      title: "Roof Area",
+      dataIndex: "roof_area",
+      key: "roof_area",
       align: "center",
     },
     {
       title: "Action",
-      dataIndex: "action",
       key: "action",
       align: "center",
-      render: () => (
-        <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }}>
+      render: (_, record) => (
+        <Button
+          type="link"
+          style={{ color: "#fff", background: "#669800", borderRadius: 4 }}
+          onClick={() => handleRowClick(record)} // ✅ open modal with record
+        >
           View Details
         </Button>
       ),
-    }
+    },
   ];
 
   const handleRowClick = (record) => {
@@ -84,19 +96,15 @@ const GeneratorRooftop = () => {
 
   return (
     <div style={{ padding: 24 }}>
-        <Card>
-      <Table
-        columns={columns}
-        dataSource={consumers}
-        rowKey="consumer_id"
-        bordered
-        onRow={(record) => ({
-          onClick: () => handleRowClick(record),
-          onMouseEnter: () => setSelectedConsumer(record),
-        })}
-        pagination={false}
-        style={{ cursor: "pointer" }}
-      />
+      <Card>
+        <Table
+          columns={columns}
+          dataSource={consumers}
+          rowKey="id" // ✅ use API "id" as unique key
+          bordered
+          pagination={false}
+          style={{ cursor: "pointer" }}
+        />
       </Card>
 
       <RooftopModal

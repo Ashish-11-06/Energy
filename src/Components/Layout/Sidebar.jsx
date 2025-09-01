@@ -52,9 +52,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
     { label: 'Dashboard', key: '/consumer/dashboard', icon: <img src={dash} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Consumption Units', key: '/consumer/requirement', icon: <img src={consumption} alt="" style={{ width: '20px', height: '20px' }} /> },
     { label: 'Matching IPP', key: '/consumer/matching-ipp', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
-    { label: 'Onsite RE options', key: '/consumer/rooftop', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
-
-    { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Onsite RE Options', key: '/consumer/rooftop', icon: <img src={findConsumer} alt="" style={{ width: '20px', height: '20px' }} /> },
+    { label: 'Onsite RE Offers', key: '/consumer/rooftop-offers', icon: <img src={offerSend} alt="" style={{ width: '20px', height: '20px' }} /> },
     {
       label: (<span>Offers</span>),
       key: '/offers',
@@ -72,6 +71,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
         </Badge>
       )
     },
+    { label: 'Transaction Window', key: '/transaction-page', icon: <img src={transaction} alt="" style={{ width: '20px', height: '20px' }} /> },
+
     // { label: 'Subscription Plan', key: '/subscription-plan', icon: <img src={subscriptionImg} alt="" style={{ width: '20px', height: '20px' }} /> },
     // { label: 'Invoice', key: '/invoice', icon: <img src={invoice} alt="" style={{ width: '20px', height: '20px' }} /> },
     // {
@@ -214,8 +215,8 @@ const Sidebar = ({ collapsed, setCollapsed, isMobile }) => {
               }}
             />
             {/* <p style={{ color: '#669800' }}><span style={{fontSize:'bold'}}>{company.toUpperCase()}</span></p> */}
-{/* <p style={{marginTop:'8%', marginLeft:'-100px'}}> Menu  </p> */}
-           
+            {/* <p style={{marginTop:'8%', marginLeft:'-100px'}}> Menu  </p> */}
+
           </div>
           <Menu mode="inline" selectedKeys={[selectedKey]}>
             {menuItems.map((item) => (

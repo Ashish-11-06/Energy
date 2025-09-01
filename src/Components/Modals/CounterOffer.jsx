@@ -544,7 +544,7 @@ const handleAccept = async () => {
           </Col>
           <Col span={12}>
             <Typography.Paragraph>
-              <strong>Equity Contribution Required From Consumer:</strong>
+              <strong>Equity Contribution Required From Consumer (INR Cr):</strong>
               <InputNumber
                 min={1}
                 value={

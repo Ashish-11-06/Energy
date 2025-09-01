@@ -19,8 +19,7 @@ import { fetchRequirements } from "../../Redux/Slices/Consumer/consumerRequireme
 import { addPWatt } from "../../Redux/Slices/Consumer/pwattSlice";
 import * as XLSX from "xlsx";
 import RequirementForm from "./Modal/RequirenmentForm"; // Import the RequirementForm component
-import { data } from "react-router-dom";
-import { Legend, Title } from "chart.js";
+// ...existing code...
 import { decryptData } from "../../Utils/cryptoHelper";
 import { CartesianGrid, LineChart, XAxis, YAxis } from "recharts";
 import { Line } from "react-chartjs-2";
@@ -54,25 +53,9 @@ const Rooftop = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [responseData, setResponseData] = useState(null);
-  const [error, setError] = useState(null);
-  const [hourlyAverages, setHourlyAverages] = useState([]); // <-- Add this state
+  // ...existing code...
   const [quotationModalVisible, setQuotationModalVisible] = useState(false);
-  const [quotationForm] = Form.useForm();
-  const navigate = useNavigate();
 
-  // Helper functions
-  const formatNumber = (num, decimals = 3) => {
-    if (num === undefined || num === null) return "N/A";
-    return parseFloat(num).toFixed(decimals);
-  };
-
-  const formatCurrency = (amount) => {
-    if (amount === undefined || amount === null) return "N/A";
-    return `₹${new Intl.NumberFormat("en-IN", {
-      maximumFractionDigits: 2,
-      minimumFractionDigits: 2,
-    }).format(amount)}`;
-  };
 
   const requirements = useSelector(
     (state) => state.consumerRequirement.requirements || []
@@ -101,18 +84,10 @@ const Rooftop = (props) => {
   };
 
   const handleRequirementChange = (value) => {
-    console.log("Selected requirement ID:", value);
 
     const selected = requirements.find((req) => req.id === value);
 
-    const isMissingFields =
-      !selected?.roof_area ||
-      !selected?.solar_rooftop_capacity ||
-      !selected?.location;
-
-    // if (isMissingFields) {
-    //   message.warning("Some fields are missing, but selection allowed.");
-    // }
+    
 
     // ✅ Always allow setting
     setSelectedRequirement(selected);
@@ -198,13 +173,7 @@ const Rooftop = (props) => {
     setSelectedRequirement(null);
     setSelectedRequirementId(null); // Clear dropdown value
   };
-  const handleCancelWarning = () => {
-    setWarningModal(false);
-    setIncompleteRequirement(null);
-    setSelectedRequirement(null);
-    setSelectedRequirementId(null); // Clear dropdown value
-    setSelectKey(Date.now());
-  };
+
 
   const monthOrder = [
     "January",
@@ -518,12 +487,7 @@ const Rooftop = (props) => {
                           : "N/A"}
                       </span>
                     </div>
-                    {/* <div style={{ marginBottom: 8 }}>
-                      <span style={{ color: "#888" }}>Procurement Date: </span>
-                      <span style={{ fontWeight: 500 }}>
-                        {selectedRequirement.procurement_date || "N/A"}
-                      </span>
-                    </div> */}
+                   
                   </Col>
                 </Row>
               </Card>
@@ -618,11 +582,7 @@ const Rooftop = (props) => {
                     }}
                   >
                     Capacity of Solar Rooftop (kWp): {capacitySolar}
-                    {/* Capacity of Solar Rooftop (kWp):{" "}
-                    {new Intl.NumberFormat("en-IN", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }).format(Number(capacitySolar))} */}
+                   
                   </span>
                 </div>
               </Col>
@@ -750,41 +710,15 @@ const Rooftop = (props) => {
                   open={quotationModalVisible}
                   onCancel={() => setQuotationModalVisible(false)}
                   capacity_of_solar_rooftop={capacitySolar}
+                  rooftop_type={radioValueRef.current}
+                  requirement={selectedRequirement}
                 />
               </div>
             </Col>
           )}
         </Row>
 
-        {/* {radioValueRef.current === "behind_the_meter" &&
-          Array.isArray(hourlyData) &&
-          hourlyData.length > 0 && (
-            <Row style={{ marginTop: "20px" }}>
-              <Col span={24}>
-                <div style={{ textAlign: "right" }}>
-                  <Button type="primary" onClick={handleDownload}>
-                    Download Hourly Data
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-          )}
-
-        <Modal
-          title="Warning"
-          open={warningModal}
-          onCancel={handleCancelWarning}
-          footer={[
-            <Button key="ok" onClick={onModalClick}>
-              OK
-            </Button>,
-          ]}
-        >
-          <p>
-            Please ensure that the selected requirement has valid roof area,
-            solar rooftop capacity, and location before proceeding.
-          </p>
-        </Modal> */}
+        
         <RequirementForm
           open={editModal}
           onCancel={handleCancel}
@@ -795,45 +729,6 @@ const Rooftop = (props) => {
           isEdit={true}
         />
 
-        {/* Request Quotation Modal */}
-        {/* <Modal
-          title="Request Quotation"
-          open={quotationModalVisible}
-          onCancel={handleQuotationCancel}
-          footer={null}
-        >
-          <Form
-            form={quotationForm}
-            layout="vertical"
-            onFinish={handleQuotationSubmit}
-          >
-            <Form.Item
-              label="Capacity (kWp/MW)*"
-              name="capacity"
-              rules={[
-                { required: true, message: "Please enter capacity" },
-                { pattern: /^[0-9.]+$/, message: "Enter a valid number" },
-              ]}
-            >
-              <Input placeholder="Enter capacity (kWp/MW)" />
-            </Form.Item>
-            <Form.Item
-              label="Mode of Development"
-              name="mode"
-              rules={[{ required: true, message: "Please select mode" }]}
-            >
-              <Select placeholder="Select mode">
-                <Select.Option value="CAPEX">CAPEX</Select.Option>
-                <Select.Option value="RESCO">RESCO</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
-                Submit Request
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal> */}
       </Card>
     </main>
   );
