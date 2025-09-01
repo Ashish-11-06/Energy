@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Space, Button, Popconfirm, message, Input, Card } from 'antd';
+import {
+  Table,
+  Space,
+  Button,
+  Popconfirm,
+  message,
+  Input,
+  Card,
+  Popover,
+  Modal,
+} from 'antd';
 import EditUser from './Modal/EditUser';
+import AssignPlanUserModal from './Modal/AssignPlanUserModal';
+import Notification from "./Notification";
 import { useDispatch } from 'react-redux';
 import { deleteGenerator, editGenerator, getGeneratorList } from '../../Redux/Admin/slices/generatorSlice';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CloseOutlined, EditOutlined, SettingOutlined } from '@ant-design/icons';
 
 const Generator = () => {
   const [searchText, setSearchText] = useState('');
@@ -12,6 +24,11 @@ const Generator = () => {
   const [consumerList, setConsumerList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
+  const [actionPopoverVisible, setActionPopoverVisible] = useState(null);
+  const [assignPlanModalVisible, setAssignPlanModalVisible] = useState(false);
+  const [assignPlanUser, setAssignPlanUser] = useState(null);
+  const [notificationModalVisible, setNotificationModalVisible] = useState(false);
+  const [notificationUser, setNotificationUser] = useState(null);
   const dispatch = useDispatch();
 
   const getList = async () => {
@@ -63,6 +80,26 @@ const Generator = () => {
     }
   };
 
+  const handleActionClick = (record) => {
+    setActionPopoverVisible(record.id);
+  };
+
+  const handleClosePopover = () => {
+    setActionPopoverVisible(null);
+  };
+
+  const handleAssignPlan = (record) => {
+    setAssignPlanUser({ ...record, fromGeneratorPage: true });
+    setAssignPlanModalVisible(true);
+    handleClosePopover();
+  };
+
+  const handleSendNotification = (record) => {
+    setNotificationUser(record);
+    setNotificationModalVisible(true);
+    handleClosePopover();
+  };
+
   // Fix: Ensure consumerList is always an array
   const filteredData = Array.isArray(consumerList)
     ? consumerList.filter((item) => {
@@ -88,23 +125,44 @@ const Generator = () => {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
-        <Space size="middle">
-          <EditOutlined
-            onClick={() => handleEdit(record)}
-            style={{ color: '#669800', cursor: 'pointer' }}
-          />
-          <Popconfirm
-            title="Are you sure to delete this Consumer?"
-            onConfirm={() => handleDelete(record)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <DeleteOutlined style={{ color: 'red', cursor: 'pointer' }} />
-          </Popconfirm>
-        </Space>
+       <Popover
+          content={
+            <div style={{ position: "relative", minWidth: 160 }}>
+              <CloseOutlined
+                style={{
+                  position: "absolute",
+                  top: 6,
+                  right: 6,
+                  color: "#669800",
+                  cursor: "pointer",
+                  fontSize: 16,
+                  zIndex: 2,
+                }}
+                onClick={handleClosePopover}
+              />
+              <Space direction="vertical" style={{ marginTop: 24 }}>
+                <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }}
+                  onClick={() => { handleEdit(record); handleClosePopover(); }}>Edit</Button>
+                <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }}
+                  onClick={() => handleSendNotification(record)}>Send Notification</Button>
+                <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }}
+                  onClick={() => handleAssignPlan(record)}>Assign Plan</Button>
+              </Space>
+            </div>
+          }
+          trigger="click"
+          open={actionPopoverVisible === record.id}
+          onOpenChange={(visible) => {
+            if (visible) handleActionClick(record);
+            else handleClosePopover();
+          }}
+          placement="bottom"
+        >
+          <SettingOutlined style={{ color: "#669800", cursor: "pointer", fontSize: 18 }} />
+        </Popover>
       ),
+      align: "center",
     }
-
   ];
 
   return (
@@ -119,9 +177,7 @@ const Generator = () => {
         style={{ width: 300, marginBottom: 16 }}
       />
 
-      <Card
-        style={{ borderRadius: 8 }}
-      >
+      <Card style={{ borderRadius: 8 }}>
         <Table
           columns={columns}
           dataSource={filteredData}
@@ -138,6 +194,31 @@ const Generator = () => {
         onUpdate={handleUpdate}
         userData={selectedUser}
         loading={modalLoading}
+      />
+      {/* Notification Modal */}
+      <Modal
+        open={notificationModalVisible}
+        footer={null}
+        onCancel={() => setNotificationModalVisible(false)}
+        width={600}
+        destroyOnClose
+      >
+        <Notification
+          isModal={true}
+          onClose={() => setNotificationModalVisible(false)}
+          initialUserType="Generator"
+          initialUserNumber="single_user"
+          initialSelectedUser={notificationUser?.id}
+        />
+      </Modal>
+      {/* Assign Plan Modal */}
+      <AssignPlanUserModal
+        visible={assignPlanModalVisible}
+        onCancel={() => setAssignPlanModalVisible(false)}
+        record={assignPlanUser}
+        mode="add"
+        onUpdate={getList}
+        recordList={consumerList}
       />
     </div>
   );

@@ -193,15 +193,15 @@ const confirmUpdateStatus = (id, newStatus) => {
         <Button type="primary" onClick={() => setIsAddModalVisible(true)}>
           View Subscription Plans
         </Button>
-        <Button type="primary" onClick={() => setIsAddAssignPlan(true)} style={{ marginLeft: 8 }}>
+        {/* <Button type="primary" onClick={() => setIsAddAssignPlan(true)} style={{ marginLeft: 8 }}>
           Assign Plan To User
-        </Button>
+        </Button> */}
       </div>
 
       {/* Offline Subscriptions Table */}
       <div style={{ marginBottom: 40 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <Title level={4} style={{ margin: 0 }}>Offline Subscriptions</Title>
+          <Title level={4} style={{ margin: 0 }}>Offline Subscription Required</Title>
           <Select
             style={{ width: 240 }}
             placeholder="Filter by User Category"
@@ -267,12 +267,12 @@ const confirmUpdateStatus = (id, newStatus) => {
       )}
 
        {/* Optional Custom Modal */}
-      {typeof AssignPlanUserModal === 'function' && (
+      {/* {typeof AssignPlanUserModal === 'function' && (
         <AssignPlanUserModal
           visible={isAddAssignPlan}
           onCancel={() => setIsAddAssignPlan(false)}
         />
-      )}
+      )} */}
     </div>
   );
 };

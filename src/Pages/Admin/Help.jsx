@@ -38,32 +38,38 @@ const Help = () => {
     fetchData();
   }, []);
 
-  const handleStatusChange = async () => {
-    if (!selectedQuery || !status) return;
+const handleStatusChange = async () => {
+  if (!selectedQuery || !status) return;
 
-    setLoading(true);
-    try {
-      const response = await helpApi.editData({ data: { status }, id: selectedQuery.id });
-      if (response.status === 200) {
-        message.success('Status updated successfully');
-        fetchData(); // Refresh the data
-        setIsModalOpen(false);
-      } else if (response.data?.detail) {
-        message.error(response.data.detail);
-      } else {
-        message.error('Failed to update status');
-      }
-    } catch (error) {
-      // Show backend error detail if present
-      if (error?.response?.data?.detail) {
-        message.error(error.response.data.detail);
-      } else {
-        message.error(error?.response?.data?.message || 'Something went wrong');
-      }
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  try {
+    // Ensure you pass the actual ID value, not the object
+    const response = await helpApi.editData({ data: { status }, id: selectedQuery.query.id });
+    console.log('ppp', selectedQuery);
+    
+    console.log('kkkk', selectedQuery.id);
+    
+    
+    if (response.status === 200) {
+      message.success('Status updated successfully');
+      fetchData(); // Refresh the data
+      setIsModalOpen(false);
+    } else if (response.data?.detail) {
+      message.error(response.data.detail);
+    } else {
+      message.error('Failed to update status');
     }
-  };
+  } catch (error) {
+    if (error?.response?.data?.detail) {
+      message.error(error.response.data.detail);
+    } else {
+      message.error(error?.response?.data?.message || 'Something went wrong');
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const filteredData = data.filter((item) => {
     return (
