@@ -1,28 +1,108 @@
-import React from "react";
-import { Table, Button, Card, Typography } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Button, Typography } from "antd";
+import { decryptData } from "../../Utils/cryptoHelper";
+import roofTop from "../../Redux/api/roofTop";
+import OnSiteOfferSendModal from "../../Components/Modals/OnSiteOfferSendModal";
 
 const { Title } = Typography;
 
 const OnsiteREOffers = () => {
-  const dataSource = [
-    { key: "1", contractedDemand: "500 kW", roofArea: "2000 sq.ft", demandId: "DEM001" },
-    { key: "2", contractedDemand: "750 kW", roofArea: "3500 sq.ft", demandId: "DEM002" },
-    { key: "3", contractedDemand: "1000 kW", roofArea: "5000 sq.ft", demandId: "DEM003" },
-  ];
+  const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(false); // 👈 loader state
+  const [refreshData, setRefreshData] = useState(false); // to trigger data refresh after actions     
+  const [offerModalVisible, setOfferModalVisible] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+
+  const handleOfferAction = (record) => {
+    setSelectedOffer(record);
+    setOfferModalVisible(true);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) {
+        console.log("No user found in localStorage");
+        return;
+      }
+
+      try {
+        setLoading(true); // 👈 start loader
+        const userData = decryptData(storedUser);
+        console.log("Decrypted user data:", userData);
+
+        let parsedUser;
+        if (typeof userData === "string") {
+          parsedUser = JSON.parse(userData)?.user;
+        } else {
+          parsedUser = userData?.user;
+        }
+
+        console.log("Parsed user data:", parsedUser);
+
+        if (parsedUser?.id) {
+          try {
+            const response = await roofTop.getOnSiteOffersById(parsedUser.id);
+            console.log("API Response:", response);
+            setOffers(response.data || []);
+          } catch (apiError) {
+            console.error("Error fetching offers:", apiError);
+          }
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      } finally {
+        setLoading(false); // 👈 stop loader
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const columns = [
-    { title: "Contracted Demand", dataIndex: "contractedDemand", key: "contractedDemand" },
-    { title: "Roof Area", dataIndex: "roofArea", key: "roofArea" },
-    { title: "Demand ID", dataIndex: "demandId", key: "demandId" },
+    {
+      title: "Sr. No.",
+      key: "index",
+      render: (_, __, index) => index + 1,
+    },
+    {
+      title: "Generator ID",
+      dataIndex: "generator",
+      key: "generator",
+    },
+    {
+      title: "Industry",
+      dataIndex: "industry",
+      key: "industry",
+    },
+    {
+      title: "State",
+      dataIndex: "state",
+      key: "state",
+    },
+    {
+      title: "Required Capacity",
+      dataIndex: "offered_capacity",
+      key: "offered_capacity",
+      render: (value) => value ?? "NA",
+    },
+    {
+      title: "status",
+      dataIndex: "consumer_status",
+      key: "consumer_status",
+    },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button type="primary" onClick={() => console.log("Clicked:", record)}>
-          View
-        </Button>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <Button type="primary" onClick={() => handleOfferAction(record)} style={{ background: "#669800" }}>
+            View
+          </Button>
+        </div>
       ),
     },
+
   ];
 
   return (
@@ -30,14 +110,25 @@ const OnsiteREOffers = () => {
       <Title level={4} style={{ marginBottom: 20 }}>
         Onsite RE Offers
       </Title>
-        <Table
+      <Table
         style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.15)", borderRadius: 8 }}
-          dataSource={dataSource}
-          columns={columns}
-          pagination={false}
-          bordered
+        dataSource={offers}
+        columns={columns}
+        pagination={false}
+        bordered
+        loading={loading} // 👈 loader here
+        rowKey={(record, index) => record.id || index} // ensure unique keys
+      />
+
+      {selectedOffer && (
+        <OnSiteOfferSendModal
+          visible={offerModalVisible}
+          onClose={() => setOfferModalVisible(false)}
+          formValues={selectedOffer}
+          fromConsumer={true}
+          selectedOffer={selectedOffer}
         />
-     
+      )}
     </div>
   );
 };

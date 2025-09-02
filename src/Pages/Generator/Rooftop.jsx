@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Card } from "antd";
+import { Table, Typography, Button, Modal, Col, Row, Input } from "antd";
 import RooftopModal from "../../Components/Generator/RooftopModal";
+import OnSiteOfferSendModal from "../../Components/Modals/OnSiteOfferSendModal";
 import roofTop from "../../Redux/api/roofTop";
 import { decryptData } from "../../Utils/cryptoHelper";
+
+const { Title } = Typography;
 
 const GeneratorRooftop = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedConsumer, setSelectedConsumer] = useState(null);
   const [user, setUser] = useState(null);
-  const [consumers, setConsumers] = useState([]); // ✅ state for API data
+  const [consumers, setConsumers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Load user only once on mount
+  const [offerModalVisible, setOfferModalVisible] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [refreshData, setRefreshData] = useState(false);
+  
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -18,35 +26,48 @@ const GeneratorRooftop = () => {
         const userData = decryptData(storedUser);
         const parsedUser =
           typeof userData === "string" ? JSON.parse(userData) : userData;
-        setUser(parsedUser.user); // adjust if your decrypted data structure differs
+        setUser(parsedUser.user);
       } catch (error) {
         console.error("Error parsing user data:", error);
       }
     }
   }, []);
 
-  // ✅ Fetch offers when user ID is available
   useEffect(() => {
     const fetchData = async () => {
-      if (!user?.id) return; // only fetch if user exists
+      if (!user?.id) return;
+      setLoading(true);
       try {
-        console.log("Fetching offers for user ID:", user.id);
         const response = await roofTop.getOffersById(user.id);
-        console.log("API Response:", response.data);
-        setConsumers(response.data); // ✅ update table data
+        setConsumers(response.data);
       } catch (error) {
         console.error("Error fetching offers:", error);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchData();
-  }, [user]);
+  }, [user, refreshData]);
+
+  const handleRowClick = (record) => {
+    setSelectedConsumer(record);
+    setModalVisible(true);
+  };
+
+  const handleOfferAction = (record) => {
+    setSelectedOffer(record);
+    setOfferModalVisible(true);
+  };
+
+  const handleInputChange = (field, value) => {
+    setSelectedOffer((prev) => ({ ...prev, [field]: value }));
+  };
 
   const columns = [
     {
       title: "Sr. No.",
       key: "srno",
-      render: (text, record, index) => index + 1,
+      render: (_, __, index) => index + 1,
       align: "center",
     },
     {
@@ -54,6 +75,14 @@ const GeneratorRooftop = () => {
       dataIndex: "consumer",
       key: "consumer",
       align: "center",
+      render: (text, record) => (
+        <a
+          style={{ color: "#9a8406", cursor: "pointer" }}
+          onClick={() => handleRowClick(record)}
+        >
+          {text}
+        </a>
+      ),
     },
     {
       title: "Industry",
@@ -74,44 +103,61 @@ const GeneratorRooftop = () => {
       align: "center",
     },
     {
+      title: "Status",
+      dataIndex: "generator_status",
+      key: "generator_status",
+    },
+    {
       title: "Action",
       key: "action",
       align: "center",
       render: (_, record) => (
         <Button
-          type="link"
-          style={{ color: "#fff", background: "#669800", borderRadius: 4 }}
-          onClick={() => handleRowClick(record)} // ✅ open modal with record
+          type="primary"
+          style={{ background: "#669800", borderRadius: 4 }}
+          onClick={() => handleOfferAction(record)}
         >
-          View Details
+        View
         </Button>
       ),
     },
   ];
 
-  const handleRowClick = (record) => {
-    setSelectedConsumer(record);
-    setModalVisible(true);
-  };
-
   return (
     <div style={{ padding: 24 }}>
-      <Card>
-        <Table
-          columns={columns}
-          dataSource={consumers}
-          rowKey="id" // ✅ use API "id" as unique key
-          bordered
-          pagination={false}
-          style={{ cursor: "pointer" }}
-        />
-      </Card>
+      <Title level={4} style={{ marginBottom: 20 }}>
+        Onsite RE Offers
+      </Title>
+      <Table
+        columns={columns}
+        dataSource={consumers}
+        rowKey="id"
+        bordered
+        pagination={false}
+        style={{
+          boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+          borderRadius: 8,
+          cursor: "pointer",
+        }}
+        loading={loading}
+      />
 
+      {/* Consumer details modal */}
       <RooftopModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         consumer={selectedConsumer}
       />
+
+      <OnSiteOfferSendModal
+        visible={offerModalVisible}
+        onClose={() => setOfferModalVisible(false)}
+        selectedOffer={selectedOffer}
+        handleInputChange={handleInputChange}
+        setRefreshData={setRefreshData}
+        fromConsumer={false}
+      />
+
     </div>
   );
 };
