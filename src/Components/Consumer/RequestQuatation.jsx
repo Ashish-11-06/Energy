@@ -24,8 +24,8 @@ const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop, rooftop_t
 
       if (onCancel) onCancel();
     } catch (error) {
-      console.error("Error submitting quotation:", error);
-      message.error("Failed to submit quotation. Please try again.");
+      console.error("Error submitting quotation:", error.response.data.error);
+      message.error(error.response.data.error || "Failed to submit quotation. Please try again.", 5);
     }
   };
 
