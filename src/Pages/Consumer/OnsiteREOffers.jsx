@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Typography } from "antd";
+import { Table, Button, Typography, Empty } from "antd";
 import { decryptData } from "../../Utils/cryptoHelper";
 import roofTop from "../../Redux/api/roofTop";
 import OnSiteOfferSendModal from "../../Components/Modals/OnSiteOfferSendModal";
@@ -29,7 +29,7 @@ const OnsiteREOffers = () => {
       try {
         setLoading(true); // 👈 start loader
         const userData = decryptData(storedUser);
-        console.log("Decrypted user data:", userData);
+        // console.log("Decrypted user data:", userData);
 
         let parsedUser;
         if (typeof userData === "string") {
@@ -38,12 +38,12 @@ const OnsiteREOffers = () => {
           parsedUser = userData?.user;
         }
 
-        console.log("Parsed user data:", parsedUser);
+        // console.log("Parsed user data:", parsedUser);
 
         if (parsedUser?.id) {
           try {
             const response = await roofTop.getOnSiteOffersById(parsedUser.id);
-            console.log("API Response:", response);
+            // console.log("API Response:", response);
             setOffers(response.data || []);
           } catch (apiError) {
             console.error("Error fetching offers:", apiError);
@@ -118,6 +118,9 @@ const OnsiteREOffers = () => {
         bordered
         loading={loading} // 👈 loader here
         rowKey={(record, index) => record.id || index} // ensure unique keys
+        locale={{
+          emptyText: <Empty description="No offers sent yet" />,
+        }}
       />
 
       {selectedOffer && (
