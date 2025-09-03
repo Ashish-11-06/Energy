@@ -10,11 +10,20 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
   const [selectedPlan, setSelectedPlan] = useState(null);
 
   useEffect(() => {
-    if (mode === 'edit' && record) {
+    if ((mode === 'edit' && record) || (mode === 'add' && record)) {
+      // Determine user category based on the page context
+      let userCategory = "Consumer";
+      // If record comes from generator page, set to Generator
+      if (record?.fromGeneratorPage || (!record?.company_representative && record?.company)) {
+        userCategory = "Generator";
+      }
       form.setFieldsValue({
         ...record,
-        startDate: dayjs(record.startDate),
-        endDate: dayjs(record.endDate),
+        userCategory,
+        name: record?.company_representative || record?.name || "",
+        companyName: record?.company || record?.companyName || "",
+        startDate: record?.startDate ? dayjs(record.startDate) : undefined,
+        endDate: record?.endDate ? dayjs(record.endDate) : undefined,
       });
     } else {
       form.resetFields();
@@ -94,33 +103,30 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
                 label="User Category"
                 rules={[{ required: true, message: 'User category is required' }]}
               >
-                <Select placeholder="Select category">
+                <Select placeholder="Select category" disabled>
                   <Option value="Consumer">Consumer</Option>
                   <Option value="Generator">Generator</Option>
                 </Select>
               </Form.Item>
             </Col>
-
             <Col span={12}>
               <Form.Item
                 name="name"
                 label="Name"
                 rules={[{ required: true, message: 'Name is required' }]}
               >
-                <Input />
+                <Input disabled />
               </Form.Item>
             </Col>
-
             <Col span={12}>
               <Form.Item
                 name="companyName"
                 label="Company Name"
                 rules={[{ required: true, message: 'Company name is required' }]}
               >
-                <Input />
+                <Input disabled />
               </Form.Item>
             </Col>
-
             <Col span={12}>
               <Form.Item
                 name="subscriptionPlan"
@@ -134,7 +140,6 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
                 </Select>
               </Form.Item>
             </Col>
-
             <Col span={12}>
               <Form.Item
                 name="startDate"
@@ -144,7 +149,6 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
                 <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
               </Form.Item>
             </Col>
-
             <Col span={12}>
               <Form.Item
                 name="endDate"

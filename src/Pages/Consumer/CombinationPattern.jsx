@@ -32,7 +32,8 @@ import "./CombinationPattern.css"; // Import the custom CSS file
 import { fetchSensitivity } from "../../Redux/Slices/Generator/sensitivitySlice";
 import { set } from "nprogress";
 import { decryptData } from "../../Utils/cryptoHelper";
-
+// import { handleDownloadConsumptionPDF } from "../../Components/Consumer/downloadConsumptionPdf";
+import { handleDownloadCombinationPatternPDF } from "../../Components/Consumer/Pdf";
 const { Title, Text } = Typography;
 
 const CombinationPattern = () => {
@@ -571,6 +572,7 @@ const CombinationPattern = () => {
       },
     },
   };
+  // Build columns array
   const columns = [
     {
       title: "Sr. No.",
@@ -689,7 +691,8 @@ const CombinationPattern = () => {
       key: "cod",
       width: 120,
       render: (text) => dayjs(text).format("DD-MM-YYYY"),
-    }, {
+    }, 
+    {
       title: "Banking Available",
       dataIndex: "banking_available",
       key: "banking_available",
@@ -705,9 +708,9 @@ const CombinationPattern = () => {
         </div>
       ),
     },
-
   ];
 
+  
   if (role !== "View") {
     columns.push({
       title: "Status",
@@ -731,9 +734,8 @@ const CombinationPattern = () => {
         ),
     });
   }
-
+  // Sensitivity column (if role !== 'View')
   if (role !== 'View') {
-    const isDisabled = !combinationData || isGraphLoading;
     columns.push({
       title: "Sensitivity",
       key: "sensitivity",
@@ -761,9 +763,28 @@ const CombinationPattern = () => {
           </Button>
         </Tooltip>
       ),
-    },
-    )
+    });
   }
+
+// Action column (always after Sensitivity)
+columns.push({
+  title: "Action",
+  key: "action",
+  width: 120,
+  render: (_, record) => (
+    <Button
+      type="primary"
+      style={{ background: "#669800", borderColor: "#669800" }}
+      onClick={() => {
+        // Pass the record, consumerDetails, and any quotation data
+        handleDownloadCombinationPatternPDF(record, consumerDetails);
+        // console.log(record);
+      }}
+    >
+      Download
+    </Button>
+  ),
+});
 
 
   const lineChartData = {
@@ -1161,5 +1182,6 @@ const CombinationPattern = () => {
     </div>
   );
 };
+
 
 export default CombinationPattern;

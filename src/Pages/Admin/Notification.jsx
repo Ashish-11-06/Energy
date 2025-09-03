@@ -71,8 +71,13 @@ const Notification = ({
       setLoading(true);
 
       let user_id = "all";
-      if (userNumber === "single_user" && selectedUser) {
+      // If opened from Consumer/Generator page for a single user, send only to that user
+      if (initialSelectedUser) {
+        user_id = initialSelectedUser;
+      } else if (userNumber === "single_user" && selectedUser) {
         user_id = selectedUser;
+      } else if (userNumber === "all_user" && userType && userList.length > 0) {
+        user_id = userList.map((u) => u.id);
       }
 
       const payload = {
@@ -89,6 +94,9 @@ const Notification = ({
       setUserType(null);
       setUserNumber(null);
       setSelectedUser(null);
+      if (isModal && typeof onClose === "function") {
+        onClose();
+      }
     } catch (error) {
       message.error(
         error?.response?.data?.message || "Failed to send notification"
@@ -145,83 +153,52 @@ const Notification = ({
 
         <Divider />
 
-        {/* Only show selected consumer info if opened from Consumer page */}
-        {isSingleConsumerModal ? (
+        {/* Only show selected user info if initialSelectedUser is set */}
+        {initialSelectedUser && (
           <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
             <Col span={24}>
-              <Title level={5}>Selected Consumer</Title>
+              <Title level={5}>
+                {initialUserType === "Generator" ? "Selected Generator" : "Selected Consumer"}
+              </Title>
               <Input
                 value={
                   userList.find((u) => u.id === initialSelectedUser)?.name ||
+                  userList.find((u) => u.id === initialSelectedUser)?.company_representative ||
                   userList.find((u) => u.id === initialSelectedUser)?.username ||
                   userList.find((u) => u.id === initialSelectedUser)?.email ||
-                  `Consumer ${initialSelectedUser}`
+                  `${initialUserType} ${initialSelectedUser}`
                 }
                 disabled
                 style={{ width: "100%" }}
               />
             </Col>
           </Row>
-        ) : (
-          // Show full notification page as usual
-          <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-            <Col span={6}>
-              <Title level={5}>Select User Category</Title>
-              <Select
-                value={userType}
-                onChange={(val) => {
-                  setUserType(val);
-                  setSelectedUser(null);
-                  setUserNumber(null);
-                }}
-                style={{ width: "100%" }}
-                placeholder="Choose User Type"
-              >
-                <Option value="Consumer">Consumer</Option>
-                <Option value="Generator">Generator</Option>
-              </Select>
-            </Col>
+        )}
 
-            <Col span={8}>
-              <Title level={5}>Select User</Title>
+        {/* Only show user selection controls if not opened from Consumer/Generator page */}
+        {!initialSelectedUser && (
+          <Row
+            gutter={[16, 16]}
+            style={{
+              marginBottom: 16,
+              justifyContent: "center",
+              display: "flex",
+            }}
+          >
+            <Col span={12} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Title level={5} style={{ textAlign: "center", width: "100%" }}>Select User Category</Title>
               <Radio.Group
+                value={userType}
                 onChange={(e) => {
-                  setUserNumber(e.target.value);
+                  setUserType(e.target.value);
                   setSelectedUser(null);
                 }}
-                value={userNumber}
-                style={{ display: "flex", gap: "16px" }}
+                style={{ display: "flex", gap: "16px", justifyContent: "center" }}
               >
-                <Radio value="single_user">Single {userType}</Radio>
-                <Radio value="all_user">All {userType}</Radio>
+                <Radio value="Consumer">Consumer</Radio>
+                <Radio value="Generator">Generator</Radio>
               </Radio.Group>
             </Col>
-
-            {userType && userNumber === "single_user" && (
-              <Col span={10}>
-                <Title level={5}>Select {userType}</Title>
-                <Select
-                  value={selectedUser}
-                  onChange={(val) => setSelectedUser(val)}
-                  style={{ width: "100%" }}
-                  placeholder={`Choose a ${userType}`}
-                  loading={dropdownLoading}
-                  showSearch
-                  filterOption={(input, option) =>
-                    (option?.children ?? "").toLowerCase().includes(input.toLowerCase())
-                  }
-                  notFoundContent={dropdownLoading ? "Loading..." : "No users found"}
-                >
-                  {userList && userList.length > 0 ? (
-                    userList.map((u) => (
-                      <Option key={u.id} value={u.id}>
-                        {u.name || u.username || u.email || `${userType} ${u.username}`}
-                      </Option>
-                    ))
-                  ) : null}
-                </Select>
-              </Col>
-            )}
           </Row>
         )}
 
@@ -281,6 +258,7 @@ const Notification = ({
     </div>
   );
 };
+
 
 export default Notification;
 

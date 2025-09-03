@@ -20,7 +20,7 @@ import {
   getConsumerList,
 } from "../../Redux/Admin/slices/consumerSlice";
 import { useDispatch } from "react-redux";
-import { EditOutlined, DeleteOutlined, SettingOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, SettingOutlined, CloseOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -183,14 +183,28 @@ const Consumer = () => {
       render: (_, record) => (
         <Popover
           content={
-            <Space direction="vertical">
-              <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }} 
-              onClick={() => { handleEdit(record); handleClosePopover(); }}>Edit</Button>
-              <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }} 
-              onClick={() => handleSendNotification(record)}>Send Notification</Button>
-              <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }} 
-              onClick={() => handleAssignPlan(record)}>Assign Plan</Button>
-            </Space>
+            <div style={{ position: "relative", minWidth: 160 }}>
+              <CloseOutlined
+                style={{
+                  position: "absolute",
+                  top: 6,
+                  right: 6,
+                  color: "#669800",
+                  cursor: "pointer",
+                  fontSize: 16,
+                  zIndex: 2,
+                }}
+                onClick={handleClosePopover}
+              />
+              <Space direction="vertical" style={{ marginTop: 24 }}>
+                <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }}
+                  onClick={() => { handleEdit(record); handleClosePopover(); }}>Edit</Button>
+                <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }}
+                  onClick={() => handleSendNotification(record)}>Send Notification</Button>
+                <Button type="link" style={{ color: "#fff", background: "#669800", borderRadius: 4 }}
+                  onClick={() => handleAssignPlan(record)}>Assign Plan</Button>
+              </Space>
+            </div>
           }
           trigger="click"
           open={actionPopoverVisible === record.id}

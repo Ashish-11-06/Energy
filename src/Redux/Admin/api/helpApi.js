@@ -4,10 +4,9 @@ const helpApi = {
     getData: () => {
         return axiosInstance.get(`/queries`);
     },
-    editData: ({data,id}) => {
+    editData: (id, data) => {
         return axiosInstance.put(`/queries/${id}`, data);
     },
-   
 }
 
 export default helpApi;
