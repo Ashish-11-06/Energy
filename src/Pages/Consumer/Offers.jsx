@@ -11,7 +11,8 @@ import {
   Modal,
   message,
   Spin,
-  Tag
+  Tag,
+  Empty
 } from "antd";
 import { useDispatch } from "react-redux";
 import { getOffers } from "../../Redux/Slices/Consumer/offersSlice";
@@ -38,13 +39,13 @@ const Offers = () => {
   const [searchText, setSearchText] = useState("");
   const [ippData, setIppData] = useState([]);
   const [error, setError] = useState(null);
-  const [loading,setLoader]=useState(false);
-  const [ refresh, setRefresh] = useState(false);
+  const [loading, setLoader] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [combData, setCombData] = useState(null);
 
   const dispatch = useDispatch();
-    const userData = decryptData(localStorage.getItem('user'));
-  const user= userData?.user;
+  const userData = decryptData(localStorage.getItem('user'));
+  const user = userData?.user;
   // const user = JSON.parse(localStorage.getItem("user")).user;
   const user_category = user.user_category;
 
@@ -75,7 +76,7 @@ const Offers = () => {
   }, [dispatch, user.id, refresh]);
 
 
- 
+
 
   const showModal = (record) => {
     // console.log(record);
@@ -122,10 +123,10 @@ const Offers = () => {
     setIsRequirementModalVisible(false);
     // setRequirementContent(null);
   };
-// console.log(combData);
-// console.log(combinationContent);
+  // console.log(combData);
+  // console.log(combinationContent);
 
-// console.log(requirementContent);
+  // console.log(requirementContent);
 
   const handleStatusChange = (value) => {
     setStatusFilter(value);
@@ -137,38 +138,38 @@ const Offers = () => {
 
   const filteredData = Array.isArray(ippData)
     ? ippData.filter((record) => {
-        const statusMatch = statusFilter
-          ? record.consumer_status === statusFilter
-          : true;
-        const searchMatch = searchText
-          ? Object.values(record).some(
-              (value) =>
-                value &&
-                value
-                  .toString()
-                  .toLowerCase()
-                  .includes(searchText.toLowerCase())
-            ) ||
-            Object.values(record.requirement || {}).some(
-              (value) =>
-                value &&
-                value
-                  .toString()
-                  .toLowerCase()
-                  .includes(searchText.toLowerCase())
-            ) ||
-            Object.values(record.combination || {}).some(
-              (value) =>
-                value &&
-                value
-                  .toString()
-                  .toLowerCase()
-                  .includes(searchText.toLowerCase())
-            )
-          : true;
+      const statusMatch = statusFilter
+        ? record.consumer_status === statusFilter
+        : true;
+      const searchMatch = searchText
+        ? Object.values(record).some(
+          (value) =>
+            value &&
+            value
+              .toString()
+              .toLowerCase()
+              .includes(searchText.toLowerCase())
+        ) ||
+        Object.values(record.requirement || {}).some(
+          (value) =>
+            value &&
+            value
+              .toString()
+              .toLowerCase()
+              .includes(searchText.toLowerCase())
+        ) ||
+        Object.values(record.combination || {}).some(
+          (value) =>
+            value &&
+            value
+              .toString()
+              .toLowerCase()
+              .includes(searchText.toLowerCase())
+        )
+        : true;
 
-        return statusMatch && searchMatch;
-      })
+      return statusMatch && searchMatch;
+    })
     : [];
 
   // console.log(filteredData);
@@ -266,7 +267,7 @@ const Offers = () => {
       dataIndex: "combination",
       key: "final_cost",
       render: (combination) => combination?.final_cost || "-",
-      
+
     },
     {
       title: "Term of PPA (Years)",
@@ -301,16 +302,16 @@ const Offers = () => {
       width: "15%",
       render: (_, record) => {
         if (user_category === "Consumer") {
-          return (record.consumer_status === "Offer Sent" || record.consumer_status === "Counter Offer Sent" ) 
+          return (record.consumer_status === "Offer Sent" || record.consumer_status === "Counter Offer Sent")
             ? <>
-                {record.consumer_status} - <Tag color="blue">Generator response awaited</Tag>
-              </>
+              {record.consumer_status} - <Tag color="blue">Generator response awaited</Tag>
+            </>
             : record.consumer_status || "";
         } else {
-          return (record.generator_status === "Offer Sent" || record.generator_status === "Counter Offer Sent") 
+          return (record.generator_status === "Offer Sent" || record.generator_status === "Counter Offer Sent")
             ? <>
-                {record.generator_status} - <Tag color="green">Consumer response awaited</Tag>
-              </>
+              {record.generator_status} - <Tag color="green">Consumer response awaited</Tag>
+            </>
             : record.generator_status || "";
         }
       },
@@ -342,7 +343,7 @@ const Offers = () => {
         }
       },
     },
-    
+
     // {
     //   title: "Bidding Window Date",
     //   dataIndex: "transaction_window_date",
@@ -354,7 +355,7 @@ const Offers = () => {
     //   key: "action",
     //   render: (_, record) => {
     //     return (
-          
+
     //         record.consumer_status === 'Accepted' || record.consumer_status === 'Rejected' ||  record.generator_status === 'Accepted' || record.generator_status === 'Rejected'   ? (
     //           {(user_category=== 'Consumer' && record.consumer_status==='Counter Offer Sent') || (user_category === 'Generator' && record.generator_status==='Counter Offer Sent') ? (
     //           <Button type="primary" onClick={() => showModal(record)}>
@@ -393,59 +394,42 @@ const Offers = () => {
   return (
     <div style={{ padding: "20px" }}>
       <Col span={24} style={{ marginLeft: "20px" }}>
-        <h2  style={{ color: "#001529" }}>
+        <h2 style={{ color: "#001529" }}>
           Offer Transaction Window
         </h2>
         <h4>(Total offers received and sent from you.)</h4>
       </Col>
 
       <Row
-  gutter={16}
-  style={{
-    marginBottom: "20px",
-    marginTop: "20px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    paddingLeft:'2.5%',
-    paddingRight:'2.5%'
-  }}
->
-  <Col>
-    <Input
-      placeholder="Search"
-      value={searchText}
-      onChange={handleSearchChange}
-      style={{
-        width: 300,
-        border: "1px solid #6698005c",
-        borderRadius: "5px",
-        height: 30,
-        fontSize:'16px',
-        backgroundColor:'white'
-      }}
-    />
-  </Col>
-  {/* <Col>
-    <Select
-      placeholder="Filter by Status"
-      onChange={handleStatusChange}
-      style={{
-        width: 200,
-        border: "1px solid #6698005c",
-        borderRadius: "5px",
-        height: 30,
-      }}
-      allowClear
-    >
-      <Option value="Pending">Pending</Option>
-      <Option value="Accepted">Accepted</Option>
-      <Option value="Rejected">Rejected</Option>
-      <Option value="Negotiated">Negotiated</Option>
-    </Select>
-  </Col> */}
-</Row>
+        gutter={16}
+        style={{
+          marginBottom: "20px",
+          marginTop: "20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+          paddingLeft: '2.5%',
+          paddingRight: '2.5%'
+        }}
+      >
+        <Col>
+          <Input
+            placeholder="Search"
+            value={searchText}
+            onChange={handleSearchChange}
+            style={{
+              width: 300,
+              border: "1px solid #6698005c",
+              borderRadius: "5px",
+              height: 30,
+              fontSize: '16px',
+              backgroundColor: 'white'
+            }}
+          />
+        </Col>
+
+      </Row>
 
 
       {error ? (
@@ -467,7 +451,10 @@ const Offers = () => {
           style={{
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
             width: "95%",
-            margin: "0 auto",
+            margin: "0 auto"
+          }}
+          locale={{
+            emptyText: <Empty description="You haven’t sent or received any offers yet" />,
           }}
         />
       )}

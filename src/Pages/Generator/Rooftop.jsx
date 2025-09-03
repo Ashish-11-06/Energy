@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Typography, Button, Modal, Col, Row, Input } from "antd";
+import { Table, Typography, Button, Empty } from "antd";
 import RooftopModal from "../../Components/Generator/RooftopModal";
 import OnSiteOfferSendModal from "../../Components/Modals/OnSiteOfferSendModal";
 import roofTop from "../../Redux/api/roofTop";
@@ -17,7 +17,7 @@ const GeneratorRooftop = () => {
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [refreshData, setRefreshData] = useState(false);
-  
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -117,7 +117,7 @@ const GeneratorRooftop = () => {
           style={{ background: "#669800", borderRadius: 4 }}
           onClick={() => handleOfferAction(record)}
         >
-        View
+          View
         </Button>
       ),
     },
@@ -140,6 +140,9 @@ const GeneratorRooftop = () => {
           cursor: "pointer",
         }}
         loading={loading}
+        locale={{
+          emptyText: <Empty description="No offers received yet" />,
+        }}
       />
 
       {/* Consumer details modal */}
