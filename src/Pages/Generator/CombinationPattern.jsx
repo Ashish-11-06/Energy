@@ -31,6 +31,7 @@ import { fetchSensitivity } from "../../Redux/Slices/Generator/sensitivitySlice"
 import { Tooltip as ChartTooltip } from "chart.js";
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 import { decryptData } from "../../Utils/cryptoHelper";
+import { handleDownloadCombinationPatternPDF } from "../../Components/Consumer/Pdf";
 
 const { Title, Text } = Typography;
 
@@ -770,6 +771,24 @@ const CombinationPattern = () => {
         </Tooltip>
       ),
     },
+    {
+      title: "Action",
+      key: "action",
+      width: 120,
+      render: (_, record) => (
+        <Button
+          type="primary"
+          style={{ background: "#669800", borderColor: "#669800" }}
+          onClick={() => {
+            // Pass the record and consumerDetails to PDF generator
+            handleDownloadCombinationPatternPDF(record, consumerDetails);
+          }}
+        >
+          Download
+        </Button>
+      ),
+    },
+    
   ];
 
   const chartData = {

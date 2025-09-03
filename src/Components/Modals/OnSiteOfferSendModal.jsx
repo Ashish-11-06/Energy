@@ -128,14 +128,14 @@ const OnSiteOfferSendModal = ({
                 <Col span={12}>{formValues?.industry}</Col>
 
                 <Col span={12} style={{ fontWeight: 600 }}>
-                    Contracted Demand:
+                    Contracted Demand (MW):
                 </Col>
                 <Col span={12}>{formValues?.contracted_demand}</Col>
 
                 <Col span={12} style={{ fontWeight: 600 }}>
-                    Roof Area:
+                    Roof Area (square meters):
                 </Col>
-                <Col span={12}>{formValues?.roof_area} square meters</Col>
+                <Col span={12}>{formValues?.roof_area} </Col>
 
                 {/* Editable fields */}
                 <Col span={12} style={{ fontWeight: 600 }}>

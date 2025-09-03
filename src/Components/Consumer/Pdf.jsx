@@ -38,7 +38,7 @@ const formatCurrency = (amount) => {
  * @param {Object} combinationData - The selected combination object.
  * @param {Object} consumerDetails - The consumer details object.
  */
-export const handleDownloadCombinationPatternPDF = (combinationData, consumerDetails) => {
+export const handleDownloadCombinationPatternPDF = (combinationData, consumerDetails, quotationData = {}, isGenerator = false) => {
   const doc = new jsPDF();
 
   const colors = {
@@ -89,7 +89,7 @@ const getVal = (obj, ...keys) => {
   logo.src = EXGLogo;
 
   logo.onload = () => {
-    // ===== HEADER =====
+
     doc.addImage(logo, "PNG", 160, 10, 30, 15);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
@@ -97,38 +97,64 @@ const getVal = (obj, ...keys) => {
     doc.text("OPTIMIZED COMBINATION REPORT", 105, 35, { align: "center" });
     doc.setDrawColor(colors.primary);
     doc.setLineWidth(1);
-    doc.line(20, 38, 190, 38);
-
-    // ===== Consumer Details =====
+    doc.line(20, 38, 190, 38);
+    
+    // ===== Consumer/Generator Details =====
     doc.setFontSize(14);
     doc.setTextColor(colors.primary);
-    doc.text("Consumer Details", 20, 50);
 
-    const d = consumerDetails || {};
-    const consumerDetailsArr = [
-      ["Username", d.username ?? "N/A"],
-      ["Credit Rating", d.credit_rating ?? "N/A"],
-      ["State", d.state ?? "N/A"],
-      ["Tariff Category", d.tariff_category ?? "N/A"],
-      ["Voltage Level (kV)", d.voltage_level !== undefined && d.voltage_level !== null ? `${d.voltage_level} ` : "N/A"],
-      ["Contracted Demand (MW)", d.contracted_demand !== undefined && d.contracted_demand !== null ? `${d.contracted_demand} ` : "N/A"],
-      ["Industry", d.industry ?? "N/A"],
-      ["Annual Consumption (MWh)", d.annual_consumption !== undefined && d.annual_consumption !== null ? d.annual_consumption : "N/A"],
-    ];
-
-    doc.autoTable({
-      startY: 55,
-      body: consumerDetailsArr,
-      theme: "grid",
-      styles: { fontSize: 8, textColor: colors.textDarkRgb, cellPadding: 1.5 },
-      columnStyles: {
-        0: { fontStyle: "bold", cellWidth: 60 },
-        1: { cellWidth: 80 },
-      },
-      margin: { left: 20, right: 20 },
-      tableWidth: "auto",
-      pageBreak: "avoid",
-    });
+    if (isGenerator) {
+      doc.text("Generator Details", 20, 50);
+      const g = consumerDetails || {};
+      const generatorDetailsArr = [
+        ["Username", g.username ?? "N/A"],
+        ["Company Name", g.company_name ?? "N/A"],
+        ["State", g.state ?? "N/A"],
+        ["Connectivity", g.connectivity ?? "N/A"],
+        ["Voltage Level (kV)", g.voltage_level !== undefined && g.voltage_level !== null ? `${g.voltage_level} ` : "N/A"],
+        ["Industry", g.industry ?? "N/A"],
+        ["Annual Generation (MWh)", g.annual_generation !== undefined && g.annual_generation !== null ? g.annual_generation : "N/A"],
+      ];
+      doc.autoTable({
+        startY: 55,
+        body: generatorDetailsArr,
+        theme: "grid",
+        styles: { fontSize: 8, textColor: colors.textDarkRgb, cellPadding: 1.5 },
+        columnStyles: {
+          0: { fontStyle: "bold", cellWidth: 60 },
+          1: { cellWidth: 80 },
+        },
+        margin: { left: 20, right: 20 },
+        tableWidth: "auto",
+        pageBreak: "avoid",
+      });
+    } else {
+      doc.text("Consumer Details", 20, 50);
+      const d = consumerDetails || {};
+      const consumerDetailsArr = [
+        ["Username", d.username ?? "N/A"],
+        ["Credit Rating", d.credit_rating ?? "N/A"],
+        ["State", d.state ?? "N/A"],
+        ["Tariff Category", d.tariff_category ?? "N/A"],
+        ["Voltage Level (kV)", d.voltage_level !== undefined && d.voltage_level !== null ? `${d.voltage_level} ` : "N/A"],
+        ["Contracted Demand (MW)", d.contracted_demand !== undefined && d.contracted_demand !== null ? `${d.contracted_demand} ` : "N/A"],
+        ["Industry", d.industry ?? "N/A"],
+        ["Annual Consumption (MWh)", d.annual_consumption !== undefined && d.annual_consumption !== null ? d.annual_consumption : "N/A"],
+      ];
+      doc.autoTable({
+        startY: 55,
+        body: consumerDetailsArr,
+        theme: "grid",
+        styles: { fontSize: 8, textColor: colors.textDarkRgb, cellPadding: 1.5 },
+        columnStyles: {
+          0: { fontStyle: "bold", cellWidth: 60 },
+          1: { cellWidth: 80 },
+        },
+        margin: { left: 20, right: 20 },
+        tableWidth: "auto",
+        pageBreak: "avoid",
+      });
+    }
 
     // ===== Combination Details =====
     doc.setFontSize(14);
