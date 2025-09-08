@@ -99,20 +99,26 @@ const handleReject = async () => {
 
   // ----- Conditions -----
   const count = selectedOffer?.count;
-  const status = selectedOffer?.status;
+  const status = selectedOffer?.consumer_status;
   let showButtons = false;
   let acceptRejectButtons = false;
   let note = null;
   const isPriceInvalid =
     formValues?.price === null ||
     formValues?.price === 0 ||
-    formValues?.price < 0;
+    formValues?.price < 0 ||
+    selectedOffer?.price === undefined ||
+    selectedOffer?.price === null ||
+    selectedOffer?.price === 0 ||
+    selectedOffer?.price < 0;
 
   if (fromConsumer) {
-    if (count === 1 || count === 3) {
-      note = "Awaiting response from generator";
-    } else if (status === "Accepted" || status === "Rejected") {
+    console.log("Count:", count, "Status:", status);
+    if (status === "Accepted" || status === "Rejected") {
       note = `The offer is ${status.toLowerCase()}`;
+    } else if 
+      (count === 1 || count === 3) {
+      note = "Awaiting response from generator";
     } else if (count === 2 || count === 4) {
       showButtons = true;
     }
@@ -215,7 +221,7 @@ const handleReject = async () => {
           />
         </Col>
 
-        {formValues?.mode_of_development === "CAPEX" ? (
+        {formValues?.mode_of_development === "Capex" ? (
           <>
             <Col span={12} style={{ fontWeight: 600 }}>
               CAPEX Price (INR lakhs/kWp):

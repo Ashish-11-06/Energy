@@ -110,7 +110,7 @@ const OnsiteREOffers = () => {
       <Title level={4} style={{ marginBottom: 20 }}>
         Onsite RE Offers
       </Title>
-      <Card>
+      {/* <Card> */}
       <Table
         style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.15)", borderRadius: 8 }}
         dataSource={offers}
@@ -123,7 +123,7 @@ const OnsiteREOffers = () => {
           emptyText: <Empty description="No offers sent yet" />,
         }}
       />
-      </Card>
+      {/* </Card> */}
 
       {selectedOffer && (
         <OnSiteOfferSendModal
