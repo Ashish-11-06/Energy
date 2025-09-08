@@ -88,8 +88,8 @@ const OnsiteREOffers = () => {
     },
     {
       title: "Status",
-      dataIndex: "generator_status",
-      key: "generator_status",
+      dataIndex: "consumer_status",
+      key: "consumer_status",
       render: (status) => {
         let color = "";
         if (status === "Rejected") color = "orange";

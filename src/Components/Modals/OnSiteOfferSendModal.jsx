@@ -106,11 +106,14 @@ const handleReject = async () => {
   const isPriceInvalid =
     formValues?.price === null ||
     formValues?.price === 0 ||
-    formValues?.price < 0 ||
-    selectedOffer?.price === undefined ||
+    formValues?.price < 0 ;
+
+ const disbleAcceptReject =
+   selectedOffer?.price === undefined ||
     selectedOffer?.price === null ||
     selectedOffer?.price === 0 ||
     selectedOffer?.price < 0;
+  
 
   if (fromConsumer) {
     console.log("Count:", count, "Status:", status);
@@ -148,7 +151,7 @@ const handleReject = async () => {
                   borderColor: "#ff6666",
                   color: "#fff",
                 }}
-                disabled={isPriceInvalid} // disable if invalid
+                disabled={isPriceInvalid || disbleAcceptReject} // disable if invalid
                 onClick={handleReject}
               >
                 Reject
@@ -167,7 +170,7 @@ const handleReject = async () => {
                 key="accept"
                 type="primary"
                 style={{ background: "#669800" }}
-                disabled={isPriceInvalid} // disable if invalid
+                disabled={isPriceInvalid || disbleAcceptReject} // disable if invalid
                 onClick={handleAccept}
               >
                 Accept
@@ -221,7 +224,7 @@ const handleReject = async () => {
           />
         </Col>
 
-        {formValues?.mode_of_development === "Capex" ? (
+        {formValues?.mode_of_development === "CAPEX" ? (
           <>
             <Col span={12} style={{ fontWeight: 600 }}>
               CAPEX Price (INR lakhs/kWp):
