@@ -128,7 +128,7 @@ const GeneratorRooftop = () => {
       <Title level={4} style={{ marginBottom: 20 }}>
         Onsite RE Offers
       </Title>
-      <Card>
+      {/* <Card> */}
       <Table
         columns={columns}
         dataSource={consumers}
@@ -145,7 +145,7 @@ const GeneratorRooftop = () => {
           emptyText: <Empty description="No offers received yet" />,
         }}
       />
-      </Card>
+      {/* </Card> */}
 
       {/* Consumer details modal */}
       <RooftopModal
