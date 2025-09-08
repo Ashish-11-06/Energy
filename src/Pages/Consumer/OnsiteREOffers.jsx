@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Typography, Empty } from "antd";
+import { Table, Button, Typography, Empty, Card } from "antd";
 import { decryptData } from "../../Utils/cryptoHelper";
 import roofTop from "../../Redux/api/roofTop";
 import OnSiteOfferSendModal from "../../Components/Modals/OnSiteOfferSendModal";
@@ -81,7 +81,7 @@ const OnsiteREOffers = () => {
       key: "state",
     },
     {
-      title: "Required Capacity",
+      title: "Required Capacity (kWp)",
       dataIndex: "offered_capacity",
       key: "offered_capacity",
       render: (value) => value ?? "NA",
@@ -110,18 +110,20 @@ const OnsiteREOffers = () => {
       <Title level={4} style={{ marginBottom: 20 }}>
         Onsite RE Offers
       </Title>
+      <Card>
       <Table
         style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.15)", borderRadius: 8 }}
         dataSource={offers}
         columns={columns}
-        pagination={false}
+        pagination={{ pageSize: 10 }}
         bordered
-        loading={loading} // 👈 loader here
-        rowKey={(record, index) => record.id || index} // ensure unique keys
+        loading={loading} 
+        rowKey={(record, index) => record.id || index} 
         locale={{
           emptyText: <Empty description="No offers sent yet" />,
         }}
       />
+      </Card>
 
       {selectedOffer && (
         <OnSiteOfferSendModal
@@ -129,6 +131,7 @@ const OnsiteREOffers = () => {
           onClose={() => setOfferModalVisible(false)}
           formValues={selectedOffer}
           fromConsumer={true}
+          setRefreshData={setRefreshData}
           selectedOffer={selectedOffer}
         />
       )}

@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button, Descriptions } from "antd";
 
 const RooftopModal = ({ visible, onClose, consumer }) => {
-  console.log("RooftopModal consumer data:", consumer);
+  // console.log("RooftopModal consumer data:", consumer);
 
   return (
     <Modal
@@ -25,10 +25,10 @@ const RooftopModal = ({ visible, onClose, consumer }) => {
           <Descriptions.Item label="Industry">{consumer.industry}</Descriptions.Item>
           <Descriptions.Item label="Sub-Industry">{consumer.sub_industry}</Descriptions.Item>
           <Descriptions.Item label="Tarrif Category">{consumer.tariff_category}</Descriptions.Item>
-          <Descriptions.Item label="Voltage Level">{consumer.voltage_level} kV</Descriptions.Item>
-          <Descriptions.Item label="Roof Area">{consumer.roof_area} square meters</Descriptions.Item>
+          <Descriptions.Item label="Voltage Level (kV)">{consumer.voltage_level}</Descriptions.Item>
+          <Descriptions.Item label="Roof Area (square meters)">{consumer.roof_area} </Descriptions.Item>
           <Descriptions.Item label="State">{consumer.state}</Descriptions.Item>
-          <Descriptions.Item label="Required Capacity">
+          <Descriptions.Item label="Required Capacity (kWp)">
             {consumer.offered_capacity || "N/A"}
           </Descriptions.Item>
         </Descriptions>

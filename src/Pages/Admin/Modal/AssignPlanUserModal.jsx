@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Form, Input, DatePicker, Modal, Row, Select, Table, message } from 'antd';
+import { Card, Col, Form, Input, DatePicker, Modal, Row, Select, message } from 'antd';
 import dayjs from 'dayjs';
+import assignPlanApi from '../../../Redux/Admin/api/assignPlanApi';
+
 
 const { Option } = Select;
 
 const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', onUpdate, recordList = [] }) => {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(null);
 
   useEffect(() => {
     if ((mode === 'edit' && record) || (mode === 'add' && record)) {
-      // Determine user category based on the page context
       let userCategory = "Consumer";
-      // If record comes from generator page, set to Generator
       if (record?.fromGeneratorPage || (!record?.company_representative && record?.company)) {
         userCategory = "Generator";
       }
@@ -28,18 +27,19 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
     } else {
       form.resetFields();
     }
-  }, [record, mode, visible]);
+  }, [record, mode, visible, form]);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
 
-      // Check for duplicate plan assignment
-      const isDuplicate = recordList?.some((item) =>
-        item.userCategory === values.userCategory &&
-        item.name === values.name &&
-        item.companyName === values.companyName &&
-        item.subscriptionPlan === values.subscriptionPlan
+      // Prevent duplicate assignment
+      const isDuplicate = recordList?.some(
+        (item) =>
+          item.userCategory === values.userCategory &&
+          item.name === values.name &&
+          item.companyName === values.companyName &&
+          item.subscriptionPlan === values.subscriptionPlan
       );
 
       if (isDuplicate && mode === 'add') {
@@ -48,52 +48,44 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
       }
 
       setConfirmLoading(true);
-    
+
+      // Build payload for API
       const payload = {
-        ...values,
-        startDate: values.startDate.format('YYYY-MM-DD'),
-        endDate: values.endDate.format('YYYY-MM-DD'),
+        user_id: record?.id || 10, // 👈 Ideally this should come from your record
+        subscription_id:
+          values.subscriptionPlan === "Free"
+            ? 1
+            : values.subscriptionPlan === "Lite"
+            ? 2
+            : 3,
       };
 
-      console.log('Form Submitted:', payload);
+      console.log("Submitting payload:", payload);
 
-      // Simulate API success
+      // Call API
+      await assignPlanApi.assignPlan(payload);
+
       message.success(mode === 'edit' ? 'Updated successfully' : 'Added successfully');
       onUpdate?.();
       onCancel();
     } catch (error) {
-      message.error('Operation failed');
+      console.error("Assign plan error:", error);
+      message.error(error?.message || "Operation failed");
     } finally {
       setConfirmLoading(false);
     }
   };
 
-  const columns = [
-    { title: 'User Category', dataIndex: 'userCategory', key: 'userCategory' },
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Company Name', dataIndex: 'companyName', key: 'companyName' },
-    { title: 'Subscription Plan', dataIndex: 'subscriptionPlan', key: 'subscriptionPlan' },
-    { title: 'Start Date', dataIndex: 'startDate', key: 'startDate' },
-    { title: 'End Date', dataIndex: 'endDate', key: 'endDate' },
-  ];
-
   return (
     <Modal
       title="Assign Subscription Plan"
       open={visible}
-      onCancel={() => {
-        setSelectedPlan(null);
-        onCancel();
-      }}
+      onCancel={onCancel}
       onOk={handleSubmit}
       okText={mode === 'edit' ? 'Update' : 'Add'}
       confirmLoading={confirmLoading}
       width={1000}
     >
-      {/* <Card>
-        <Table columns={columns} dataSource={data} pagination={false} />
-      </Card> */}
-
       <Card style={{ marginTop: 20 }} title={mode === 'edit' ? 'Edit Plan Details' : 'Add Plan Details'}>
         <Form form={form} layout="vertical">
           <Row gutter={16}>
@@ -150,11 +142,7 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                name="endDate"
-                label="End Date"
-                // rules={[{ required: true, message: 'End date is required' }]}
-              >
+              <Form.Item name="endDate" label="End Date">
                 <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
               </Form.Item>
             </Col>

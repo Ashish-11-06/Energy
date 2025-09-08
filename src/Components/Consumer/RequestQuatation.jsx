@@ -19,7 +19,7 @@ const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop, rooftop_t
       const response = await roofTop.requestQuotation(payload); // wait for API response
 
 
-      message.success("Quotation request submitted!");
+      message.success("Quotation sent to all the Generators!");
       form.resetFields();
 
       if (onCancel) onCancel();
@@ -74,7 +74,7 @@ const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop, rooftop_t
 
         <Form.Item>
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
-            Send Quotation
+            Request Quotation
           </Button>
         </Form.Item>
       </Form>

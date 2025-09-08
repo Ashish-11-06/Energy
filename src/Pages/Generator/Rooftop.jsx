@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Typography, Button, Empty } from "antd";
+import { Table, Typography, Button, Empty, Card } from "antd";
 import RooftopModal from "../../Components/Generator/RooftopModal";
 import OnSiteOfferSendModal from "../../Components/Modals/OnSiteOfferSendModal";
 import roofTop from "../../Redux/api/roofTop";
@@ -97,7 +97,7 @@ const GeneratorRooftop = () => {
       align: "center",
     },
     {
-      title: "Roof Area",
+      title: "Roof Area (square meters)",
       dataIndex: "roof_area",
       key: "roof_area",
       align: "center",
@@ -128,12 +128,13 @@ const GeneratorRooftop = () => {
       <Title level={4} style={{ marginBottom: 20 }}>
         Onsite RE Offers
       </Title>
+      <Card>
       <Table
         columns={columns}
         dataSource={consumers}
         rowKey="id"
         bordered
-        pagination={false}
+        pagination={{pageSize: 10}}
         style={{
           boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
           borderRadius: 8,
@@ -144,6 +145,7 @@ const GeneratorRooftop = () => {
           emptyText: <Empty description="No offers received yet" />,
         }}
       />
+      </Card>
 
       {/* Consumer details modal */}
       <RooftopModal
