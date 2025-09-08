@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Typography, Empty, Card } from "antd";
+import { Table, Button, Typography, Empty, Card, Tag } from "antd";
 import { decryptData } from "../../Utils/cryptoHelper";
 import roofTop from "../../Redux/api/roofTop";
 import OnSiteOfferSendModal from "../../Components/Modals/OnSiteOfferSendModal";
@@ -87,9 +87,17 @@ const OnsiteREOffers = () => {
       render: (value) => value ?? "NA",
     },
     {
-      title: "status",
-      dataIndex: "consumer_status",
-      key: "consumer_status",
+      title: "Status",
+      dataIndex: "generator_status",
+      key: "generator_status",
+      render: (status) => {
+        let color = "";
+        if (status === "Rejected") color = "orange";
+        else if (status === "Accepted") color = "green";
+        else if (status === "Counter offer recieved" || status === "Counter offer sent") color = "yellow";
+
+        return <Tag color={color}>{status}</Tag>;
+      },
     },
     {
       title: "Action",
@@ -117,8 +125,8 @@ const OnsiteREOffers = () => {
         columns={columns}
         pagination={{ pageSize: 10 }}
         bordered
-        loading={loading} 
-        rowKey={(record, index) => record.id || index} 
+        loading={loading}
+        rowKey={(record, index) => record.id || index}
         locale={{
           emptyText: <Empty description="No offers sent yet" />,
         }}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Typography, Button, Empty, Card } from "antd";
+import { Table, Typography, Button, Empty, Card, Tag } from "antd";
 import RooftopModal from "../../Components/Generator/RooftopModal";
 import OnSiteOfferSendModal from "../../Components/Modals/OnSiteOfferSendModal";
 import roofTop from "../../Redux/api/roofTop";
@@ -106,6 +106,14 @@ const GeneratorRooftop = () => {
       title: "Status",
       dataIndex: "generator_status",
       key: "generator_status",
+      render: (status) => {
+        let color = "";
+        if (status === "Rejected") color = "orange";
+        else if (status === "Accepted") color = "green";
+        else if (status === "Counter offer recieved" || status === "Counter offer sent") color = "yellow";
+
+        return <Tag color={color}>{status}</Tag>;
+      },
     },
     {
       title: "Action",
@@ -134,7 +142,7 @@ const GeneratorRooftop = () => {
         dataSource={consumers}
         rowKey="id"
         bordered
-        pagination={{pageSize: 10}}
+        pagination={{ pageSize: 10 }}
         style={{
           boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
           borderRadius: 8,

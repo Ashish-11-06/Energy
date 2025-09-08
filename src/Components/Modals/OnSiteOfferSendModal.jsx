@@ -115,7 +115,7 @@ const handleReject = async () => {
   if (fromConsumer) {
     console.log("Count:", count, "Status:", status);
     if (status === "Accepted" || status === "Rejected") {
-      note = `The offer is ${status.toLowerCase()}`;
+      note = `This offer is ${status.toLowerCase()}`;
     } else if 
       (count === 1 || count === 3) {
       note = "Awaiting response from generator";
