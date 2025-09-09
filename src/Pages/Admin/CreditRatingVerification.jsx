@@ -85,7 +85,8 @@ const CreditRatingVerification = () => {
       });
 
       setData(updatedData);
-      message.success(`Credit rating ${action} successfully`);
+      // message.success(`Credit rating ${action} successfully`);
+      message.success(updatedData.data.message);
       setIsModalVisible(false);
     } catch (error) {
       message.error("Failed to update status");

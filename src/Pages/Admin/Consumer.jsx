@@ -94,6 +94,8 @@ const Consumer = () => {
     setModalLoading(false);
 
     if (res?.meta?.requestStatus === "fulfilled") {
+      console.log(res);
+      
       message.success("Consumer updated");
       setEditModalVisible(false);
       await getList();

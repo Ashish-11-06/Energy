@@ -14,6 +14,7 @@ import {
   Tooltip,
   Form,
   Input,
+  Spin,
 } from "antd";
 import { fetchRequirements } from "../../Redux/Slices/Consumer/consumerRequirementSlice";
 import { addPWatt } from "../../Redux/Slices/Consumer/pwattSlice";
@@ -541,7 +542,11 @@ const Rooftop = (props) => {
           </Button>
         </div>
       </Card>
-      <Card
+
+
+     {
+      loading?(<>
+ <Card
         style={{
           width: "100%",
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
@@ -549,7 +554,21 @@ const Rooftop = (props) => {
           padding: "20px",
           borderRadius: "10px",
         }}
-      >
+       >
+ <Spin></Spin>
+</Card>
+
+     
+      </>):(
+          <Card
+        style={{
+          width: "100%",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+          marginTop: "20px",
+          padding: "20px",
+          borderRadius: "10px",
+        }}
+       >
         {submittedType && (
           <h2 style={{ textAlign: "center" }}>
             Optimized Onsite Solar Option for{" "}
@@ -701,6 +720,8 @@ const Rooftop = (props) => {
                     marginLeft: "10px",
                   }}
                   onClick={() => setQuotationModalVisible(true)}
+                  loading={loading}
+                  
                 >
                   Request Quotation
                 </Button>
@@ -727,9 +748,15 @@ const Rooftop = (props) => {
           data={incompleteRequirement}
           fromRooftop={true}
           isEdit={true}
+          
         />
 
       </Card>
+      
+      )
+     }
+
+    
     </main>
   );
 };

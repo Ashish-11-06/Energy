@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Input, Radio, Button, message, Modal } from "antd";
 import roofTop from "../../Redux/api/roofTop";
 
 const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop, rooftop_type, requirement }) => {
 
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values) => {
+    setLoading(true);
     try {
       const payload = {
         capacity: values.capacity,
@@ -16,16 +18,19 @@ const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop, rooftop_t
       };
 
 
-      const response = await roofTop.requestQuotation(payload); // wait for API response
+      const response = await roofTop.requestQuotation(payload); 
 
 
-      message.success("Quotation sent to all the Generators!");
+      // message.success("Quotation sent to all the Generators!");
+      message.success(response.data.message);
       form.resetFields();
 
       if (onCancel) onCancel();
     } catch (error) {
       console.error("Error submitting quotation:", error.response.data.error);
       message.error(error.response.data.error || "Failed to submit quotation. Please try again.", 5);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,7 +52,7 @@ const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop, rooftop_t
         }}
       >
         <Form.Item
-          label="Capacity (kWp/MW)*"
+          label="Capacity (kWp)"
           name="capacity"
           rules={[
             { required: true, message: "Please enter capacity" },
@@ -55,9 +60,9 @@ const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop, rooftop_t
           ]}
         >
           <Input
-            placeholder="Enter capacity (kWp/MW)"
+            placeholder="Enter capacity (kWp)"
             value={capacity_of_solar_rooftop}
-            disabled
+            
           />
         </Form.Item>
 
@@ -73,7 +78,7 @@ const RequestQuatation = ({ open, onCancel, capacity_of_solar_rooftop, rooftop_t
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+          <Button type="primary" htmlType="submit" style={{ width: "100%" }} loading={loading}>
             Request Quotation
           </Button>
         </Form.Item>

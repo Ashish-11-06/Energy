@@ -91,7 +91,7 @@ const GeneratorRooftop = () => {
       align: "center",
     },
     {
-      title: "Contracted Demand",
+      title: "Contracted Demand (MW)",
       dataIndex: "contracted_demand",
       key: "contracted_demand",
       align: "center",

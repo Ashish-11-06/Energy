@@ -27,7 +27,7 @@ const OnsiteREOffers = () => {
       }
 
       try {
-        setLoading(true); // 👈 start loader
+        setLoading(true); 
         const userData = decryptData(storedUser);
         // console.log("Decrypted user data:", userData);
 
@@ -52,12 +52,12 @@ const OnsiteREOffers = () => {
       } catch (error) {
         console.error("Error parsing user data:", error);
       } finally {
-        setLoading(false); // 👈 stop loader
+        setLoading(false); 
       }
     };
 
     fetchData();
-  }, []);
+  }, [refreshData]);
 
   const columns = [
     {
@@ -141,6 +141,7 @@ const OnsiteREOffers = () => {
           fromConsumer={true}
           setRefreshData={setRefreshData}
           selectedOffer={selectedOffer}
+          loading={loading}
         />
       )}
     </div>

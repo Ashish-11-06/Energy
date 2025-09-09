@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Row, Col, Input, message, Tooltip } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import roofTop from "../../Redux/api/roofTop";
 
 const OnSiteOfferSendModal = ({
@@ -10,7 +11,7 @@ const OnSiteOfferSendModal = ({
   fromConsumer,
 }) => {
   const [formValues, setFormValues] = useState({});
-
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (selectedOffer) {
@@ -35,7 +36,7 @@ const OnSiteOfferSendModal = ({
     id: formValues?.id,
     sent_from: fromConsumer ? "Consumer" : "Generator",
     offered_capacity: formValues?.offered_capacity
-      ? parseInt(formValues.offered_capacity, 10)
+      ? parseFloat(formValues.offered_capacity) // send as decimal
       : null,
     price:
       formValues?.price !== null && formValues?.price !== undefined
@@ -45,57 +46,57 @@ const OnSiteOfferSendModal = ({
   });
 
   const handleNegotiate = async () => {
+    setLoading(true);
     try {
-      await roofTop.sendOnSiteOffer(buildPayload(undefined));
-      message.success("Negotiation request sent");
+      const response = await roofTop.sendOnSiteOffer(buildPayload(undefined));
+      message.success(response.data.message);
       setRefreshData((prev) => !prev);
-      onClose();
+      onClose();  
     } catch (error) {
-      console.error("Negotiation request failed:", error);
       message.error(
         error.response?.data?.error || "Failed to send negotiation request"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleAccept = async () => {
-  try {
-    const res = await roofTop.sendOnSiteOffer(buildPayload("Accepted"));
-
-    if (res?.status === 200 || res?.status === 201) {
-      message.success("Offer accepted");
-      setRefreshData((prev) => !prev);
-      onClose();
-      return; // ✅ stop execution, avoid going into error
+    setLoading(true);
+    try {
+      const res = await roofTop.sendOnSiteOffer(buildPayload("Accepted"));
+      if (res?.status === 200 || res?.status === 201) {
+        message.success(res.data.message);
+        setRefreshData((prev) => !prev);
+        onClose();
+        // No page reload
+        return;
+      }
+    } catch (error) {
+      message.error(error?.response?.data?.error || "Failed to accept offer");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // only show error if explicitly failed
-    message.error("Failed to accept offer");
-  } catch (error) {
-    console.error("Accept offer error:", error);
-    message.error(error?.response?.data?.error || "Failed to accept offer");
-  }
-};
-
-
-  
-const handleReject = async () => {
-  try {
-    const res = await roofTop.sendOnSiteOffer(buildPayload("Rejected"));
-
-    if (res?.status === 200 || res?.status === 201) {
-      message.success("Offer rejected");
-      setRefreshData((prev) => !prev);
-      onClose();
-      return; // ✅ stop execution
+  const handleReject = async () => {
+    setLoading(true);
+    try {
+      const res = await roofTop.sendOnSiteOffer(buildPayload("Rejected"));
+      if (res?.status === 200 || res?.status === 201) {
+        message.success(res.data.message);
+        setRefreshData((prev) => !prev);
+        onClose();
+        // No page reload
+        return;
+      }
+      message.error("Failed to reject offer");
+    } catch (error) {
+      message.error(error?.response?.data?.error || "Failed to reject offer");
+    } finally {
+      setLoading(false);
     }
-
-    message.error("Failed to reject offer");
-  } catch (error) {
-    console.error("Reject offer error:", error);
-    message.error(error?.response?.data?.error || "Failed to reject offer");
-  }
-};
+  };
 
   // ----- Conditions -----
   const count = selectedOffer?.count;
@@ -106,30 +107,28 @@ const handleReject = async () => {
   const isPriceInvalid =
     formValues?.price === null ||
     formValues?.price === 0 ||
-    formValues?.price < 0 ;
+    formValues?.price < 0;
 
- const disbleAcceptReject =
-   selectedOffer?.price === undefined ||
+  const disbleAcceptReject =
+    selectedOffer?.price === undefined ||
     selectedOffer?.price === null ||
     selectedOffer?.price === 0 ||
     selectedOffer?.price < 0;
-  
 
   if (fromConsumer) {
     console.log("Count:", count, "Status:", status);
     if (status === "Accepted" || status === "Rejected") {
       note = `This offer is ${status.toLowerCase()}`;
-    } else if 
-      (count === 1 || count === 3) {
+    } else if (count === 1 || count === 3) {
       note = "Awaiting response from generator";
     } else if (count === 2 || count === 4) {
       showButtons = true;
     }
   } else {
-    if (count === 1 || count === 3) {
-      showButtons = true;
-    } else if (status === "Accepted" || status === "Rejected") {
+    if (status === "Accepted" || status === "Rejected") {
       note = `The offer is ${status.toLowerCase()}`;
+    } else if (count === 1 || count === 3) {
+      showButtons = true;
     } else {
       note = "Awaiting response from consumer";
     }
@@ -153,6 +152,8 @@ const handleReject = async () => {
                 }}
                 disabled={isPriceInvalid || disbleAcceptReject} // disable if invalid
                 onClick={handleReject}
+                loading={loading}
+                icon={loading ? <LoadingOutlined /> : null}
               >
                 Reject
               </Button>,
@@ -164,7 +165,13 @@ const handleReject = async () => {
                     : ""
                 }
               >
-                <Button onClick={handleNegotiate}>Negotiate</Button>
+                <Button
+                  onClick={handleNegotiate}
+                  loading={loading}
+                  icon={loading ? <LoadingOutlined /> : null}
+                >
+                  Negotiate
+                </Button>
               </Tooltip>,
               <Button
                 key="accept"
@@ -172,6 +179,8 @@ const handleReject = async () => {
                 style={{ background: "#669800" }}
                 disabled={isPriceInvalid || disbleAcceptReject} // disable if invalid
                 onClick={handleAccept}
+                loading={loading}
+                icon={loading ? <LoadingOutlined /> : null}
               >
                 Accept
               </Button>,
@@ -227,7 +236,7 @@ const handleReject = async () => {
         {formValues?.mode_of_development === "CAPEX" ? (
           <>
             <Col span={12} style={{ fontWeight: 600 }}>
-              CAPEX Price (INR lakhs/kWp):
+              CAPEX Price (INR/kWp):
             </Col>
             <Col span={12}>
               <Input

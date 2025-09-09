@@ -43,7 +43,8 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
       );
 
       if (isDuplicate && mode === 'add') {
-        message.warning('This plan for the user is already present');
+        // message.warning('This plan for the user is already present');
+
         return;
       }
 
@@ -64,6 +65,8 @@ const AssignPlanUserModal = ({ visible, onCancel, record = null, mode = 'add', o
 
       // Call API
       await assignPlanApi.assignPlan(payload);
+      console.log();
+      
 
       message.success(mode === 'edit' ? 'Updated successfully' : 'Added successfully');
       onUpdate?.();
