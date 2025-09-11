@@ -28,6 +28,8 @@ const RooftopModal = ({ visible, onClose, consumer }) => {
           <Descriptions.Item label="Voltage Level (kV)">{consumer.voltage_level}</Descriptions.Item>
           <Descriptions.Item label="Roof Area (square meters)">{consumer.roof_area} </Descriptions.Item>
           <Descriptions.Item label="State">{consumer.state}</Descriptions.Item>
+          <Descriptions.Item label="District">{consumer.district}</Descriptions.Item>
+          <Descriptions.Item label="Consumption Unit (Site Name)">{consumer.site_name}</Descriptions.Item>
           <Descriptions.Item label="Required Capacity (kWp)">
             {consumer.offered_capacity || "N/A"}
           </Descriptions.Item>

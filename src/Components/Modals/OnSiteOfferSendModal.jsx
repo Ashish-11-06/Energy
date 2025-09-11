@@ -12,10 +12,12 @@ const OnSiteOfferSendModal = ({
 }) => {
   const [formValues, setFormValues] = useState({});
   const [loading, setLoading] = useState(false);
+  const [capacityConfirmed, setCapacityConfirmed] = useState(false);
 
   useEffect(() => {
     if (selectedOffer) {
       setFormValues(selectedOffer); // initialize with selectedOffer
+      setCapacityConfirmed(false);
     }
   }, [selectedOffer]);
 
@@ -23,10 +25,43 @@ const OnSiteOfferSendModal = ({
     let parsedValue = value;
 
     if (field === "price") {
-      parsedValue = value ? parseFloat(value) : null; // ✅ allow floats
+      parsedValue = value ? parseFloat(value) : null; // allow floats
     }
+
     if (field === "offered_capacity") {
-      parsedValue = value ? parseInt(value, 10) : null; // keep integer
+      parsedValue = value ? parseInt(value, 10) : null;
+
+      const originalCapacity = selectedOffer?.offered_capacity ?? null;
+      const currentValue = formValues?.offered_capacity ?? originalCapacity;
+
+      // --- Case 1: Trying to increase ---
+      if (originalCapacity !== null && parsedValue > originalCapacity) {
+        message.warning("You cannot increase the capacity value.");
+        parsedValue = currentValue; // revert back
+      }
+
+      // --- Case 2: Trying to decrease ---
+      if (
+        originalCapacity !== null &&
+        parsedValue < currentValue &&
+        !capacityConfirmed
+      ) {
+        Modal.confirm({
+          title: "Are you sure you want to decrease the capacity?",
+          content: "This action will apply the decreased value.",
+          okText: "Yes",
+          cancelText: "No",
+          onOk: () => {
+            setCapacityConfirmed(true); // don’t ask again
+            setFormValues((prev) => ({ ...prev, [field]: parsedValue }));
+          },
+          onCancel: () => {
+            // reset to previous
+            setFormValues((prev) => ({ ...prev, [field]: currentValue }));
+          },
+        });
+        return; // stop further update until confirm
+      }
     }
 
     setFormValues((prev) => ({ ...prev, [field]: parsedValue }));
@@ -51,7 +86,7 @@ const OnSiteOfferSendModal = ({
       const response = await roofTop.sendOnSiteOffer(buildPayload(undefined));
       message.success(response.data.message);
       setRefreshData((prev) => !prev);
-      onClose();  
+      onClose();
     } catch (error) {
       message.error(
         error.response?.data?.error || "Failed to send negotiation request"
@@ -115,6 +150,15 @@ const OnSiteOfferSendModal = ({
     selectedOffer?.price === 0 ||
     selectedOffer?.price < 0;
 
+  let showWithdraw = false;
+  if (
+    status &&
+    (status.toLowerCase().includes("negotiate") || status.toLowerCase().includes("counter offer")) &&
+    !showButtons
+  ) {
+    showWithdraw = true;
+  }
+
   if (fromConsumer) {
     console.log("Count:", count, "Status:", status);
     if (status === "Accepted" || status === "Rejected") {
@@ -177,8 +221,17 @@ const OnSiteOfferSendModal = ({
                 key="accept"
                 type="primary"
                 style={{ background: "#669800" }}
-                disabled={isPriceInvalid || disbleAcceptReject} // disable if invalid
-                onClick={handleAccept}
+                disabled={isPriceInvalid || disbleAcceptReject}
+                onClick={() => {
+                  Modal.confirm({
+                    title: "Are you sure you want to accept this offer?",
+                    content:
+                      "All other offers under negotiation will be auto-rejected.",
+                    okText: "Yes, Accept",
+                    cancelText: "Cancel",
+                    onOk: handleAccept, // only call handleAccept if user confirms
+                  });
+                }}
                 loading={loading}
                 icon={loading ? <LoadingOutlined /> : null}
               >
@@ -215,7 +268,7 @@ const OnSiteOfferSendModal = ({
         <Col span={12}>{formValues?.contracted_demand}</Col>
 
         <Col span={12} style={{ fontWeight: 600 }}>
-          Roof Area (square meters):
+          Roof Area Available(square meters):
         </Col>
         <Col span={12}>{formValues?.roof_area} </Col>
 
@@ -236,7 +289,8 @@ const OnSiteOfferSendModal = ({
         {formValues?.mode_of_development === "CAPEX" ? (
           <>
             <Col span={12} style={{ fontWeight: 600 }}>
-              CAPEX Price (INR/kWp):
+              {/* CAPEX Price (INR/kWp): */}
+              Rooftop System Price (INR/kWp):
             </Col>
             <Col span={12}>
               <Input
@@ -252,7 +306,8 @@ const OnSiteOfferSendModal = ({
         ) : formValues?.mode_of_development === "RESCO" ? (
           <>
             <Col span={12} style={{ fontWeight: 600 }}>
-              RESCO Price (INR/kWh):
+              {/* RESCO Price (INR/kWh): */}
+              Rooftop Per Unit Price (INR/kWh):
             </Col>
             <Col span={12}>
               <Input
@@ -274,17 +329,45 @@ const OnSiteOfferSendModal = ({
         )}
       </Row>
       {!showButtons && note && (
-        <p
-          style={{
-            fontSize: "16px",
-            fontWeight: "500",
-            textAlign: "center",
-            margin: "20px 0",
-            color: "#888",
-          }}
-        >
-          {note}
-        </p>
+        <div style={{ textAlign: "center" }}>
+          <p
+            style={{
+              fontSize: "16px",
+              fontWeight: "500",
+              textAlign: "center",
+              margin: "20px 0",
+              color: "#888",
+              display: "inline-block"
+            }}
+          >
+            {note}
+          </p>
+          {showWithdraw && (
+            <Button
+              style={{ marginLeft: 16, background: '#ff6666', color: '#fff', borderColor: '#ff6666' }}
+              onClick={async () => {
+                setLoading(true);
+                try {
+                  const res = await roofTop.sendOnSiteOffer({ ...buildPayload("Withdrawn"), consumer_status: status, sent_from: fromConsumer ? "Consumer" : "Generator" });
+                  if (res?.status === 200 || res?.status === 201) {
+                    message.success(res.data.message || "Offer withdrawn");
+                    setRefreshData((prev) => !prev);
+                    onClose();
+                  } else {
+                    message.error("Failed to withdraw offer");
+                  }
+                } catch (error) {
+                  message.error(error?.response?.data?.error || "Failed to withdraw offer");
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              loading={loading}
+            >
+              Withdraw
+            </Button>
+          )}
+        </div>
       )}
     </Modal>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Typography, Button, Empty, Card, Tag } from "antd";
+import { Table, Typography, Button, Empty, Card, Tag, Input } from "antd";
 import RooftopModal from "../../Components/Generator/RooftopModal";
 import OnSiteOfferSendModal from "../../Components/Modals/OnSiteOfferSendModal";
 import roofTop from "../../Redux/api/roofTop";
@@ -17,7 +17,7 @@ const GeneratorRooftop = () => {
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [refreshData, setRefreshData] = useState(false);
-
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -63,6 +63,18 @@ const GeneratorRooftop = () => {
     setSelectedOffer((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Add filteredData for search
+  const filteredData = consumers.filter((consumer) => {
+    const searchLower = searchText.toLowerCase();
+    return (
+      (consumer.consumer && consumer.consumer.toLowerCase().includes(searchLower)) ||
+      (consumer.industry && consumer.industry.toLowerCase().includes(searchLower)) ||
+      (consumer.state && consumer.state.toLowerCase().includes(searchLower)) ||
+      (consumer.generator_status && consumer.generator_status.toLowerCase().includes(searchLower)) 
+      // (consumer.site_name && consumer.site_name.toLowerCase().includes(searchLower))
+    );
+  });
+
   const columns = [
     {
       title: "Sr. No.",
@@ -90,6 +102,18 @@ const GeneratorRooftop = () => {
       key: "industry",
       align: "center",
     },
+    {
+      title: "State",
+      dataIndex: "state",
+      key: "state",
+      align: "center",
+    },
+    // {
+    //   title: "Consumption Unit (Site Name)",
+    //   dataIndex: "site_name",
+    //   key: "site_name",
+    //   align: "center",
+    // },
     {
       title: "Contracted Demand (MW)",
       dataIndex: "contracted_demand",
@@ -136,10 +160,16 @@ const GeneratorRooftop = () => {
       <Title level={4} style={{ marginBottom: 20 }}>
         Onsite RE Offers
       </Title>
-      {/* <Card> */}
+      <Input
+        placeholder="Search by Consumer ID, Industry, State or Status"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        allowClear
+        style={{ width: 400, marginBottom: 16 }}
+      />
       <Table
         columns={columns}
-        dataSource={consumers}
+        dataSource={searchText ? filteredData : consumers}
         rowKey="id"
         bordered
         pagination={{ pageSize: 10 }}
@@ -153,7 +183,6 @@ const GeneratorRooftop = () => {
           emptyText: <Empty description="No offers received yet" />,
         }}
       />
-      {/* </Card> */}
 
       {/* Consumer details modal */}
       <RooftopModal
@@ -170,7 +199,6 @@ const GeneratorRooftop = () => {
         setRefreshData={setRefreshData}
         fromConsumer={false}
       />
-
     </div>
   );
 };

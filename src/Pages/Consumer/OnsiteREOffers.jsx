@@ -1,22 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Typography, Empty, Card, Tag } from "antd";
+import { Table, Button, Typography, Empty, Card, Tag, Input } from "antd";
 import { decryptData } from "../../Utils/cryptoHelper";
 import roofTop from "../../Redux/api/roofTop";
 import OnSiteOfferSendModal from "../../Components/Modals/OnSiteOfferSendModal";
+import RooftopConsumerModal from "../../Components/Consumer/RooftopConsumerModal";
 
 const { Title } = Typography;
 
 const OnsiteREOffers = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+const [selectedGenerator, setSelectedGenerator] = useState(null);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(false); // 👈 loader state
   const [refreshData, setRefreshData] = useState(false); // to trigger data refresh after actions     
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   const handleOfferAction = (record) => {
     setSelectedOffer(record);
     setOfferModalVisible(true);
   };
+
+  const handleRowClick = (record) => {
+  setSelectedGenerator(record);
+  setModalVisible(true);
+};
+
+  const filteredData = offers.filter((offer) => {
+    const searchLower = searchText.toLowerCase();
+    return (
+      offer.generator.toLowerCase().includes(searchLower) ||
+      (offer.industry && offer.industry.toLowerCase().includes(searchLower)) ||
+      (offer.state && offer.state.toLowerCase().includes(searchLower)) ||
+      (offer.site_name && offer.site_name.toLowerCase().includes(searchLower)) ||
+      (offer.consumer_status && offer.consumer_status.toLowerCase().includes(searchLower))
+    );
+  });
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,6 +90,14 @@ const OnsiteREOffers = () => {
       title: "Generator ID",
       dataIndex: "generator",
       key: "generator",
+      render: (text, record) => (
+        <a
+          style={{ color: "#9a8406", cursor: "pointer" }}
+          onClick={() => handleRowClick(record)}
+        >
+          {text}
+        </a>
+      ),
     },
     {
       title: "Industry",
@@ -79,6 +108,11 @@ const OnsiteREOffers = () => {
       title: "State",
       dataIndex: "state",
       key: "state",
+    },
+    {
+      title: "Consumption Unit (Site Name)",
+      dataIndex: "site_name",
+      key: "site_name",
     },
     {
       title: "Required Capacity (kWp)",
@@ -118,10 +152,17 @@ const OnsiteREOffers = () => {
       <Title level={4} style={{ marginBottom: 20 }}>
         Onsite RE Offers
       </Title>
+      <Input
+        placeholder="Search by Generate ID, Industry, State, Site Name or Status"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        allowClear
+        style={{ width: 440, marginBottom: 16 }}
+      />
       {/* <Card> */}
       <Table
         style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.15)", borderRadius: 8 }}
-        dataSource={offers}
+        dataSource={searchText ? filteredData : offers}
         columns={columns}
         pagination={{ pageSize: 10 }}
         bordered
@@ -132,6 +173,13 @@ const OnsiteREOffers = () => {
         }}
       />
       {/* </Card> */}
+
+       {/* generator details modal */}
+      <RooftopConsumerModal
+  visible={modalVisible}
+  onClose={() => setModalVisible(false)}
+  consumer={selectedGenerator}
+/>
 
       {selectedOffer && (
         <OnSiteOfferSendModal
